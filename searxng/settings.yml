@@ -1,7 +1,8 @@
+# see https://docs.searxng.org/admin/settings/settings.html#settings-use-default-settings
 use_default_settings: true
 
 general:
-  instance_name: 'searxng'
+  instance_name: 'SearXNG'
 
 search:
   autocomplete: 'google'
@@ -10,8 +11,30 @@ search:
     - json
 
 server:
+  # base_url is defined in the SEARXNG_BASE_URL environment variable, see .env and docker-compose.yml
   secret_key: 'a2fb23f1b02e6ee83875b09826990de0f6bd908b6638e8c10277d415f6ab852b' # Is overwritten by ${SEARXNG_SECRET}
+
+redis:
+   url: redis://redis:6379
+
+ui:
+  static_use_hash: true
 
 engines:
   - name: wolframalpha
     disabled: false
+
+  - name: vimeo
+    disabled: true
+
+  - name: internetarchivescholar
+    disabled: true
+
+  - name: duckduckgo
+    disabled: true
+
+  - name: library of congress
+    disabled: true
+
+  - name: openverse
+    disabled: true

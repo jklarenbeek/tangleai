@@ -1,14 +1,15 @@
 import express from 'express';
 import logger from '../utils/logger';
-import { BaseChatModel } from 'langchain/chat_models/base';
-import { Embeddings } from 'langchain/embeddings/base';
-import { ChatOpenAI } from '@langchain/openai';
-import {
-  getAvailableChatModelProviders,
-  getAvailableEmbeddingModelProviders,
+
+import { 
+  resolveChatModelConfig, 
+  resolveEmbedModelConfig, 
+  BaseMessage,
+  HumanMessage, 
+  AIMessage 
 } from '../lib/providers';
+
 import { searchHandlers } from '../websocket/messageHandler';
-import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 
 const router = express.Router();
 
@@ -37,10 +38,11 @@ router.post('/', async (req, res) => {
   try {
     const body: ChatRequestBody = req.body;
 
-    if (!body.focusMode || !body.query) {
-      return res.status(400).json({ message: 'Missing focus mode or query' });
+    if (!body.query) {
+      return res.status(400).json({ message: 'Missing query' });
     }
 
+    body.focusMode = body.focusMode || 'webSearch';
     body.history = body.history || [];
     body.optimizationMode = body.optimizationMode || 'balanced';
 
@@ -56,69 +58,38 @@ router.post('/', async (req, res) => {
       }
     });
 
-    const [chatModelProviders, embeddingModelProviders] = await Promise.all([
-      getAvailableChatModelProviders(),
-      getAvailableEmbeddingModelProviders(),
-    ]);
+    const chatConfig = await resolveChatModelConfig(
+      body.chatModel?.provider,
+      body.chatModel?.model,
+      body.chatModel?.customOpenAIKey,
+      body.chatModel?.customOpenAIBaseURL,
+    );
 
-    const chatModelProvider =
-      body.chatModel?.provider || Object.keys(chatModelProviders)[0];
-    const chatModel =
-      body.chatModel?.model ||
-      Object.keys(chatModelProviders[chatModelProvider])[0];
+    const embedConfig = await resolveEmbedModelConfig(
+      body.embeddingModel?.provider,
+      body.embeddingModel?.model,
+    );
 
-    const embeddingModelProvider =
-      body.embeddingModel?.provider || Object.keys(embeddingModelProviders)[0];
-    const embeddingModel =
-      body.embeddingModel?.model ||
-      Object.keys(embeddingModelProviders[embeddingModelProvider])[0];
+    const llm = chatConfig.model;
+    const embeddings = embedConfig.model;
 
-    let llm: BaseChatModel | undefined;
-    let embeddings: Embeddings | undefined;
-
-    if (body.chatModel?.provider === 'custom_openai') {
-      if (
-        !body.chatModel?.customOpenAIBaseURL ||
-        !body.chatModel?.customOpenAIKey
-      ) {
-        return res
-          .status(400)
-          .json({ message: 'Missing custom OpenAI base URL or key' });
-      }
-
-      llm = new ChatOpenAI({
-        modelName: body.chatModel.model,
-        openAIApiKey: body.chatModel.customOpenAIKey,
-        temperature: 0.7,
-        configuration: {
-          baseURL: body.chatModel.customOpenAIBaseURL,
-        },
-      }) as unknown as BaseChatModel;
-    } else if (
-      chatModelProviders[chatModelProvider] &&
-      chatModelProviders[chatModelProvider][chatModel]
-    ) {
-      llm = chatModelProviders[chatModelProvider][chatModel]
-        .model as unknown as BaseChatModel | undefined;
-    }
-
-    if (
-      embeddingModelProviders[embeddingModelProvider] &&
-      embeddingModelProviders[embeddingModelProvider][embeddingModel]
-    ) {
-      embeddings = embeddingModelProviders[embeddingModelProvider][
-        embeddingModel
-      ].model as Embeddings | undefined;
+    if (chatConfig.isCustom && chatConfig.model == null) {
+      return res
+        .status(400)
+        .json({ message: 'Missing or invalid custom OpenAI base URL or key' });
     }
 
     if (!llm || !embeddings) {
-      return res.status(400).json({ message: 'Invalid model selected' });
+      return res
+        .status(400)
+        .json({ message: 'Invalid model selected' });
     }
 
     const searchHandler = searchHandlers[body.focusMode];
-
     if (!searchHandler) {
-      return res.status(400).json({ message: 'Invalid focus mode' });
+      return res
+        .status(400)
+        .json({ message: 'Invalid focus mode' });
     }
 
     const emitter = searchHandler(
@@ -149,7 +120,8 @@ router.post('/', async (req, res) => {
       const parsedData = JSON.parse(data);
       res.status(500).json({ message: parsedData.data });
     });
-  } catch (err: any) {
+  } 
+  catch (err: any) {
     logger.error(`Error in getting search results: ${err.message}`);
     res.status(500).json({ message: 'An error has occurred.' });
   }

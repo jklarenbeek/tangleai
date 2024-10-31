@@ -31,15 +31,18 @@ const useSocket = (
   useEffect(() => {
     if (!ws) {
       const connectWs = async () => {
+        
         let chatModel = localStorage.getItem('chatModel');
         let chatModelProvider = localStorage.getItem('chatModelProvider');
         let embeddingModel = localStorage.getItem('embeddingModel');
-        let embeddingModelProvider = localStorage.getItem(
-          'embeddingModelProvider',
-        );
+        let embeddingModelProvider = localStorage.getItem('embeddingModelProvider');
+        console.log(`localStorage['chatModel'] = ${chatModel}`);
+        console.log(`localStorage['chatModelProvider'] = ${chatModelProvider}`);
+        console.log(`localStorage['embeddingModel'] = ${embeddingModel}`);
+        console.log(`localStorage['embeddingModelProvider'] = ${embeddingModelProvider}`);
 
-        const providers = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/models`,
+        const remoteConfig = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/config`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -47,103 +50,78 @@ const useSocket = (
           },
         ).then(async (res) => await res.json());
 
-        if (
-          !chatModel ||
-          !chatModelProvider ||
-          !embeddingModel ||
-          !embeddingModelProvider
-        ) {
-          if (!chatModel || !chatModelProvider) {
-            const chatModelProviders = providers.chatModelProviders;
-
-            chatModelProvider = Object.keys(chatModelProviders)[0];
-
-            if (chatModelProvider === 'custom_openai') {
-              toast.error(
-                'Seems like you are using the custom OpenAI provider, please open the settings and configure the API key and base URL',
-              );
-              setError(true);
-              return;
-            } else {
-              chatModel = Object.keys(chatModelProviders[chatModelProvider])[0];
-              if (
-                !chatModelProviders ||
-                Object.keys(chatModelProviders).length === 0
-              )
-                return toast.error('No chat models available');
-            }
+        if (!chatModel || !chatModelProvider) {
+          const defaultChatProvider = remoteConfig.generalSettings.defaultChatProvider;
+          const defaultChatModel = remoteConfig.generalSettings.defaultChatModel;
+          console.log(`remoteConfig.generalSettings.defaultChatProvider = ${defaultChatProvider}`);
+          console.log(`remoteConfig.generalSettings.defaultChatModel = ${defaultChatModel}`);
+          
+          const chatModelProviders = remoteConfig.chatModelProviders;
+          if (!chatModelProviders || Object.keys(chatModelProviders).length === 0) {
+            setError(true);
+            return toast.error('No chat providers available');
           }
 
-          if (!embeddingModel || !embeddingModelProvider) {
-            const embeddingModelProviders = providers.embeddingModelProviders;
-
-            if (
-              !embeddingModelProviders ||
-              Object.keys(embeddingModelProviders).length === 0
-            )
-              return toast.error('No embedding models available');
-
-            embeddingModelProvider = Object.keys(embeddingModelProviders)[0];
-            embeddingModel = Object.keys(
-              embeddingModelProviders[embeddingModelProvider],
-            )[0];
-          }
-
-          localStorage.setItem('chatModel', chatModel!);
-          localStorage.setItem('chatModelProvider', chatModelProvider);
-          localStorage.setItem('embeddingModel', embeddingModel!);
-          localStorage.setItem(
-            'embeddingModelProvider',
-            embeddingModelProvider,
-          );
-        } else {
-          const chatModelProviders = providers.chatModelProviders;
-          const embeddingModelProviders = providers.embeddingModelProviders;
-
-          if (
-            Object.keys(chatModelProviders).length > 0 &&
-            !chatModelProviders[chatModelProvider]
-          ) {
-            chatModelProvider = Object.keys(chatModelProviders)[0];
-            localStorage.setItem('chatModelProvider', chatModelProvider);
-          }
-
-          if (
-            chatModelProvider &&
-            chatModelProvider != 'custom_openai' &&
-            !chatModelProviders[chatModelProvider][chatModel]
-          ) {
-            chatModel = Object.keys(chatModelProviders[chatModelProvider])[0];
-            localStorage.setItem('chatModel', chatModel);
-          }
-
-          if (
-            Object.keys(embeddingModelProviders).length > 0 &&
-            !embeddingModelProviders[embeddingModelProvider]
-          ) {
-            embeddingModelProvider = Object.keys(embeddingModelProviders)[0];
-            localStorage.setItem(
-              'embeddingModelProvider',
-              embeddingModelProvider,
+          chatModelProvider = defaultChatProvider || Object.keys(chatModelProviders)[0];
+          console.log(`sessionSettings.chatModelProvider = ${chatModelProvider}`);
+          if (chatModelProvider === 'custom_openai') {
+            setError(true);
+            return toast.error(
+              'Seems like you are using the custom OpenAI provider, please open the settings and configure the API key and base URL',
             );
+          } 
+          const chatModels = chatModelProviders[chatModelProvider!] as any[];
+          if (!chatModels || chatModels.length === 0) {
+            setError(true);
+            return toast.error('No chat models available');
+          }
+          localStorage.setItem('chatModelProvider', chatModelProvider!);
+  
+          chatModel = defaultChatModel || chatModels[0]?.name;
+          console.log(`sessionSettings.chatModel = ${chatModel}`);
+          if (!chatModels.some((value) => value.name == chatModel)) {
+            setError(true);
+            return toast.error(`Chat model '${chatModel}' is not available`);
+          }
+          localStorage.setItem('chatModel', chatModel!);
+        }
+
+        if (!embeddingModel || !embeddingModelProvider) {
+          const defaultEmbedProvider = remoteConfig.generalSettings.defaultEmbedProvider;
+          const defaultEmbedModel = remoteConfig.generalSettings.defaultEmbedModel;
+          console.log(`remoteConfig.generalSettings.defaultEmbedProvider = ${defaultEmbedProvider}`);
+          console.log(`remoteConfig.generalSettings.defaultEmbedModel = ${defaultEmbedModel}`);
+
+          const embeddingModelProviders = remoteConfig.embeddingModelProviders;
+          if (!embeddingModelProviders || Object.keys(embeddingModelProviders).length === 0) {
+            setError(true);
+            return toast.error('No embedding providers available');
           }
 
-          if (
-            embeddingModelProvider &&
-            !embeddingModelProviders[embeddingModelProvider][embeddingModel]
-          ) {
-            embeddingModel = Object.keys(
-              embeddingModelProviders[embeddingModelProvider],
-            )[0];
-            localStorage.setItem('embeddingModel', embeddingModel);
+          embeddingModelProvider = defaultEmbedProvider || Object.keys(embeddingModelProviders)[0];
+          console.log(`sessionSettings.embeddingModelProvider = ${embeddingModelProvider}`);
+
+          const embeddingModels = embeddingModelProviders[embeddingModelProvider!] as any[];
+          if (!embeddingModels || embeddingModels.length === 0) {
+            setError(true);
+            return toast.error('No embedding models available');
           }
+          localStorage.setItem('embeddingModelProvider', embeddingModelProvider!);
+
+          embeddingModel = defaultEmbedModel || embeddingModels[0]?.name;
+          console.log(`sessionSettings.embeddingModel = ${embeddingModel}`);
+          if (!embeddingModels.some((value) => value.name == embeddingModel)) {
+            setError(true);
+            return toast.error(`Embeddings model '${embeddingModel}' is not avaiable`);
+          }
+          localStorage.setItem('embeddingModel', embeddingModel!);
         }
 
         const wsURL = new URL(url);
         const searchParams = new URLSearchParams({});
 
         searchParams.append('chatModel', chatModel!);
-        searchParams.append('chatModelProvider', chatModelProvider);
+        searchParams.append('chatModelProvider', chatModelProvider!);
 
         if (chatModelProvider === 'custom_openai') {
           searchParams.append(
@@ -157,7 +135,7 @@ const useSocket = (
         }
 
         searchParams.append('embeddingModel', embeddingModel!);
-        searchParams.append('embeddingModelProvider', embeddingModelProvider);
+        searchParams.append('embeddingModelProvider', embeddingModelProvider!);
 
         wsURL.search = searchParams.toString();
 
@@ -165,6 +143,7 @@ const useSocket = (
 
         const timeoutId = setTimeout(() => {
           if (ws.readyState !== 1) {
+            setError(true);
             toast.error(
               'Failed to connect to the server. Please try again later.',
             );
@@ -184,6 +163,7 @@ const useSocket = (
             console.log('[DEBUG] opened');
           }
           if (data.type === 'error') {
+            setError(true);
             toast.error(data.data);
           }
         });

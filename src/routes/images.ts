@@ -1,9 +1,13 @@
 import express from 'express';
-import handleImageSearch from '../agents/imageSearchAgent';
-import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { getAvailableChatModelProviders } from '../lib/providers';
-import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import logger from '../utils/logger';
+
+import { 
+  resolveChatModelConfig, 
+  HumanMessage, 
+  AIMessage 
+} from '../lib/providers';
+
+import handleImageSearch from '../agents/imageSearchAgent';
 
 const router = express.Router();
 
@@ -19,16 +23,12 @@ router.post('/', async (req, res) => {
       }
     });
 
-    const chatModels = await getAvailableChatModelProviders();
-    const provider = chat_model_provider ?? Object.keys(chatModels)[0];
-    const chatModel = chat_model ?? Object.keys(chatModels[provider])[0];
+    const chatConfig = await resolveChatModelConfig(
+      chat_model_provider,
+      chat_model,
+    );
 
-    let llm: BaseChatModel | undefined;
-
-    if (chatModels[provider] && chatModels[provider][chatModel]) {
-      llm = chatModels[provider][chatModel].model as BaseChatModel | undefined;
-    }
-
+    const llm = chatConfig.model;
     if (!llm) {
       res.status(500).json({ message: 'Invalid LLM model selected' });
       return;

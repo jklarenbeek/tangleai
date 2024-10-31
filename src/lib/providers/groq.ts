@@ -1,5 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
-import { getGroqApiKey } from '../../config';
+import { getDefaultTemperature, getGroqApiKey } from '../../config';
 import logger from '../../utils/logger';
 
 export const loadGroqChatModels = async () => {
@@ -15,7 +15,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama-3.2-3b-preview',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -28,7 +28,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama-3.2-11b-vision-preview',
-            temperature: 0.7,
+            temperature:  getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -41,7 +41,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama-3.2-90b-vision-preview',
-            temperature: 0.7,
+            temperature:  getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -54,7 +54,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama-3.1-70b-versatile',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -67,7 +67,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama-3.1-8b-instant',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -80,7 +80,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama3-8b-8192',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -93,7 +93,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'llama3-70b-8192',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -106,7 +106,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'mixtral-8x7b-32768',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -119,7 +119,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'gemma-7b-it',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',
@@ -132,7 +132,7 @@ export const loadGroqChatModels = async () => {
           {
             openAIApiKey: groqApiKey,
             modelName: 'gemma2-9b-it',
-            temperature: 0.7,
+            temperature: getDefaultTemperature(),
           },
           {
             baseURL: 'https://api.groq.com/openai/v1',

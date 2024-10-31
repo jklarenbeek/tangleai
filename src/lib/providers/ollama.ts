@@ -1,10 +1,17 @@
 import { OllamaEmbeddings } from '@langchain/community/embeddings/ollama';
-import { getOllamaApiEndpoint } from '../../config';
+import { getDefaultTemperature, getOllamaApiEndpoint, getOllamaEmbedModels } from '../../config';
 import logger from '../../utils/logger';
 import { ChatOllama } from '@langchain/community/chat_models/ollama';
 
+const removeModelVersion = (name: string) => name.lastIndexOf(':') > 0
+  ? name.substring(0, name.lastIndexOf(':'))
+  : name;
+
+const removeModelVersions = (arr: string[]) => arr.map((value) => removeModelVersion(value));
+
 export const loadOllamaChatModels = async () => {
   const ollamaEndpoint = getOllamaApiEndpoint();
+  const ollamaDefEmbeds = removeModelVersions(getOllamaEmbedModels());
 
   if (!ollamaEndpoint) return {};
 
@@ -18,14 +25,16 @@ export const loadOllamaChatModels = async () => {
     const { models: ollamaModels } = (await response.json()) as any;
 
     const chatModels = ollamaModels.reduce((acc, model) => {
-      acc[model.model] = {
-        displayName: model.name,
-        model: new ChatOllama({
-          baseUrl: ollamaEndpoint,
-          model: model.model,
-          temperature: 0.7,
-        }),
-      };
+      if (!ollamaDefEmbeds.includes(removeModelVersion(model.name))) {
+        acc[model.model] = {
+          displayName: model.name,
+          model: new ChatOllama({
+            baseUrl: ollamaEndpoint,
+            model: model.model,
+            temperature: getDefaultTemperature(),
+          }),
+        };
+      }
 
       return acc;
     }, {});
@@ -39,7 +48,8 @@ export const loadOllamaChatModels = async () => {
 
 export const loadOllamaEmbeddingsModels = async () => {
   const ollamaEndpoint = getOllamaApiEndpoint();
-
+  const ollamaDefEmbeds = removeModelVersions(getOllamaEmbedModels());
+  
   if (!ollamaEndpoint) return {};
 
   try {
@@ -52,13 +62,16 @@ export const loadOllamaEmbeddingsModels = async () => {
     const { models: ollamaModels } = (await response.json()) as any;
 
     const embeddingsModels = ollamaModels.reduce((acc, model) => {
-      acc[model.model] = {
-        displayName: model.name,
-        model: new OllamaEmbeddings({
-          baseUrl: ollamaEndpoint,
-          model: model.model,
-        }),
-      };
+
+      if (ollamaDefEmbeds.includes(removeModelVersion(model.name))) {
+        acc[model.model] = {
+          displayName: model.name,
+          model: new OllamaEmbeddings({
+            baseUrl: ollamaEndpoint,
+            model: model.model,
+          }),
+        };
+      }
 
       return acc;
     }, {});

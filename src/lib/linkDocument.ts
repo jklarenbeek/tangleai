@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { htmlToText } from 'html-to-text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Document } from '@langchain/core/documents';
@@ -12,20 +11,22 @@ export const getDocumentsFromLinks = async ({ links }: { links: string[] }) => {
 
   await Promise.all(
     links.map(async (link) => {
-      link =
-        link.startsWith('http://') || link.startsWith('https://')
-          ? link
-          : `https://${link}`;
+      link = link.startsWith('http://') || link.startsWith('https://')
+        ? link
+        : `https://${link}`;
 
       try {
-        const res = await axios.get(link, {
-          responseType: 'arraybuffer',
-        });
-
-        const isPdf = res.headers['content-type'] === 'application/pdf';
+        
+        const response = await fetch(link);
+        if (!response.ok)
+          throw new Error(`Error ${response.status} fetching: ${link}`);
+        
+        const buffer = Buffer.from(await response.arrayBuffer());
+    
+        const isPdf = response.headers['content-type'] === 'application/pdf';
 
         if (isPdf) {
-          const pdfText = await pdfParse(res.data);
+          const pdfText = await pdfParse(buffer);
           const parsedText = pdfText.text
             .replace(/(\r\n|\n|\r)/gm, ' ')
             .replace(/\s+/g, ' ')
@@ -48,7 +49,7 @@ export const getDocumentsFromLinks = async ({ links }: { links: string[] }) => {
           return;
         }
 
-        const parsedText = htmlToText(res.data.toString('utf8'), {
+        const parsedText = htmlToText(buffer.toString('utf8'), {
           selectors: [
             {
               selector: 'a',
@@ -63,8 +64,7 @@ export const getDocumentsFromLinks = async ({ links }: { links: string[] }) => {
           .trim();
 
         const splittedText = await splitter.splitText(parsedText);
-        const title = res.data
-          .toString('utf8')
+        const title = buffer.toString('utf8')
           .match(/<title>(.*?)<\/title>/)?.[1];
 
         const linkDocs = splittedText.map((text) => {

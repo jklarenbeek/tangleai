@@ -1,12 +1,29 @@
 [GENERAL]
+HOSTNAME = "" # Hostname to run the server on
 PORT = 3001 # Port to run the server on
 SIMILARITY_MEASURE = "cosine" # "cosine" or "dot"
+DEFAULT_CHAT_PROVIDER = "ollama"
+DEFAULT_CHAT_MODEL = "llama3.2:3b"
+DEFAULT_EMBED_PROVIDER = "ollama"
+DEFAULT_EMBED_MODEL = "nomic-embed-text:latest"
 
-[API_KEYS]
-OPENAI = "" # OpenAI API key - sk-1234567890abcdef1234567890abcdef
-GROQ = "" # Groq API key - gsk_1234567890abcdef1234567890abcdef
-ANTHROPIC = "" # Anthropic API key - sk-ant-1234567890abcdef1234567890abcdef
+[GROQ]
+GROQ_API_KEY = "" # Groq API key - gsk_1234567890abcdef1234567890abcdef
+# GROQ_API_ENDPOINT = "" # use default!
 
-[API_ENDPOINTS]
-SEARXNG = "http://localhost:32768" # SearxNG API URL
-OLLAMA = "" # Ollama API URL - http://host.docker.internal:11434
+[OPENAI]
+OPENAI_API_KEY = "" # OpenAI API key - sk-1234567890abcdef1234567890abcdef
+# OPENAI_API_ENDPOINT = ""
+OPENAI_EMBED_MODELS = "text-embedding-3-small;text-embedding-3-large"
+
+[ANTHROPIC]
+ANTHROPIC_API_KEY = "" # Anthropic API key - sk-ant-1234567890abcdef1234567890abcdef
+# ANTHROPIC_API_ENDPOINT = ""
+
+[OLLAMA]
+OLLAMA_API_KEY = "" # use "mock-api-key" when ollama is available
+OLLAMA_API_ENDPOINT = "" # "http://ollama:11434" # http://host.docker.internal:11434
+OLLAMA_EMBED_MODELS = "nomic-embed-text:latest;all-minilm:latest;mxbai-embed-large:latest"
+
+[SEARXNG]
+SEARXNG_API_ENDPOINT = "http://searxng:8080" # http://host.docker.internal:8080

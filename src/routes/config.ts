@@ -1,15 +1,24 @@
 import express from 'express';
+
 import {
   getAvailableChatModelProviders,
   getAvailableEmbeddingModelProviders,
 } from '../lib/providers';
+
 import {
   getGroqApiKey,
   getOllamaApiEndpoint,
   getAnthropicApiKey,
   getOpenaiApiKey,
   updateConfig,
+  getDefaultTemperature,
+  getDefaultChatProvider,
+  getDefaultChatModel,
+  getDefaultEmbedProvider,
+  getDefaultEmbedModel,
+  getSimilarityMeasure,
 } from '../config';
+
 import logger from '../utils/logger';
 
 const router = express.Router();
@@ -53,6 +62,15 @@ router.get('/', async (_, res) => {
     config['anthropicApiKey'] = getAnthropicApiKey();
     config['groqApiKey'] = getGroqApiKey();
 
+    config['generalSettings'] = {
+      similarityMeasure: getSimilarityMeasure(),
+      temperature: getDefaultTemperature(),
+      defaultChatProvider: getDefaultChatProvider(),
+      defaultChatModel: getDefaultChatModel(),
+      defaultEmbedProvider: getDefaultEmbedProvider(),
+      defaultEmbedModel: getDefaultEmbedModel(),
+    };
+
     res.status(200).json(config);
   } catch (err: any) {
     res.status(500).json({ message: 'An error has occurred.' });
@@ -64,13 +82,17 @@ router.post('/', async (req, res) => {
   const config = req.body;
 
   const updatedConfig = {
-    API_KEYS: {
-      OPENAI: config.openaiApiKey,
-      GROQ: config.groqApiKey,
-      ANTHROPIC: config.anthropicApiKey,
+    GROQ: {
+      GROQ_API_KEY: config.groqApiKey,
     },
-    API_ENDPOINTS: {
-      OLLAMA: config.ollamaApiUrl,
+    OPENAI: {
+      OPENAI_API_KEY: config.openaiApiKey,
+    },
+    ANTHROPIC: {
+      ANTHROPIC_API_KEY: config.anthropicApiKey,
+    },
+    OLLAMA: {
+      OLLAMA_API_ENDPOINT: config.ollamaApiUrl,
     },
   };
 

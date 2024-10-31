@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:3001
+
+### request a websearch
+POST {{baseUrl}}/api/search
+content-type: application/json
+
+{
+    "query": "What are the benefits of using Vitamine E"
+}
+
+### request related videos
+
+POST {{baseUrl}}/api/images
+content-type: application/json
+
+{
+    "query":"What are the benefits of vitamin e",
+}
+
+### request related videos
+
+POST {{baseUrl}}/api/videos
+content-type: application/json
+
+{
+    "query":"What are the benefits of vitamin e",
+    "chat_history":[],
+    "chat_model_provider":"ollama",
+    "chat_model":"llama3.2:3b"
+}

@@ -1,5 +1,5 @@
 import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
-import { getOpenaiApiKey } from '../../config';
+import { getDefaultTemperature, getOpenaiApiKey } from '../../config';
 import logger from '../../utils/logger';
 
 export const loadOpenAIChatModels = async () => {
@@ -14,7 +14,7 @@ export const loadOpenAIChatModels = async () => {
         model: new ChatOpenAI({
           openAIApiKey,
           modelName: 'gpt-3.5-turbo',
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
         }),
       },
       'gpt-4': {
@@ -22,7 +22,7 @@ export const loadOpenAIChatModels = async () => {
         model: new ChatOpenAI({
           openAIApiKey,
           modelName: 'gpt-4',
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
         }),
       },
       'gpt-4-turbo': {
@@ -30,7 +30,7 @@ export const loadOpenAIChatModels = async () => {
         model: new ChatOpenAI({
           openAIApiKey,
           modelName: 'gpt-4-turbo',
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
         }),
       },
       'gpt-4o': {
@@ -38,7 +38,7 @@ export const loadOpenAIChatModels = async () => {
         model: new ChatOpenAI({
           openAIApiKey,
           modelName: 'gpt-4o',
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
         }),
       },
       'gpt-4o-mini': {
@@ -46,7 +46,7 @@ export const loadOpenAIChatModels = async () => {
         model: new ChatOpenAI({
           openAIApiKey,
           modelName: 'gpt-4o-mini',
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
         }),
       },
     };

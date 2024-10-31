@@ -1,5 +1,5 @@
 import { ChatAnthropic } from '@langchain/anthropic';
-import { getAnthropicApiKey } from '../../config';
+import { getAnthropicApiKey, getDefaultTemperature } from '../../config';
 import logger from '../../utils/logger';
 
 export const loadAnthropicChatModels = async () => {
@@ -12,7 +12,7 @@ export const loadAnthropicChatModels = async () => {
       'claude-3-5-sonnet-20240620': {
         displayName: 'Claude 3.5 Sonnet',
         model: new ChatAnthropic({
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
           anthropicApiKey: anthropicApiKey,
           model: 'claude-3-5-sonnet-20240620',
         }),
@@ -20,7 +20,7 @@ export const loadAnthropicChatModels = async () => {
       'claude-3-opus-20240229': {
         displayName: 'Claude 3 Opus',
         model: new ChatAnthropic({
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
           anthropicApiKey: anthropicApiKey,
           model: 'claude-3-opus-20240229',
         }),
@@ -28,7 +28,7 @@ export const loadAnthropicChatModels = async () => {
       'claude-3-sonnet-20240229': {
         displayName: 'Claude 3 Sonnet',
         model: new ChatAnthropic({
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
           anthropicApiKey: anthropicApiKey,
           model: 'claude-3-sonnet-20240229',
         }),
@@ -36,7 +36,7 @@ export const loadAnthropicChatModels = async () => {
       'claude-3-haiku-20240307': {
         displayName: 'Claude 3 Haiku',
         model: new ChatAnthropic({
-          temperature: 0.7,
+          temperature: getDefaultTemperature(),
           anthropicApiKey: anthropicApiKey,
           model: 'claude-3-haiku-20240307',
         }),

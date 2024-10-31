@@ -42,7 +42,7 @@ services:
     profiles: ["cpu"]
     <<: *service-ollama
 
-  ollama-nvidia:
+  ollama-gpu:
     profiles: ["nvidia"]
     <<: *service-ollama
     deploy:
@@ -53,32 +53,17 @@ services:
               count: 1
               capabilities: [gpu]
 
-  ollama-radeon:
-    profiles: ["radeon"]
-    <<: *service-ollama
-    environment:
-      - HSA_OVERRIDE_GFX_VERSION=9.0.0
-
   ollama-pull-llama-cpu:
     profiles: ["cpu"]
     <<: *init-ollama
     depends_on:
       - ollama-cpu
 
-  ollama-pull-llama-nvidia:
+  ollama-pull-llama-gpu:
     profiles: ["nvidia"]
     <<: *init-ollama
     depends_on:
-      - ollama-nvidia
-
-  ollama-pull-llama-radeon:
-    profiles: ["radeon"]
-    <<: *init-ollama
-    environment:
-      # gfx90c iGPU
-      - HSA_OVERRIDE_GFX_VERSION=9.0.0
-    depends_on:
-      - ollama-radeon
+      - ollama-gpu
 
   redis:
     image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
@@ -117,6 +102,7 @@ services:
       dockerfile: backend.dockerfile
     image: backend
     environment:
+      - NODE_ENV=development
       - LANGCHAIN_VERBOSE=true
       - SEARXNG_API_ENDPOINT=http://searxng:8080
       - OLLAMA_API_ENDPOINT=http://ollama:11434
@@ -125,17 +111,16 @@ services:
       - ollama-cpu
     ports:
       - 3001:3001
+      - 9229:9229
     volumes:
       - backend_dbstore:/usr/src/app/data
       - ./config.toml:/usr/src/app/config.toml
     networks:
       - demo-docker
     restart: unless-stopped
+    command: ["yarn", "dev:docker"]
 
   frontend:
-    profiles:
-      - frontend
-      - all
     build:
       context: .
       dockerfile: app.dockerfile
