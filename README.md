@@ -23,6 +23,8 @@
 
 ## Overview
 
+TangleAI is an open-source fork of Perplexica and ment to add better docker support and a almost complete docker-compose environment that will speed development choices. This will probably only be a pull request upstream to the Perplexica repo.
+
 Perplexica is an open-source AI-powered searching tool or an AI-powered search engine that goes deep into the internet to find answers. Inspired by Perplexity AI, it's an open-source option that not just searches the web but understands your questions. It uses advanced machine learning algorithms like similarity searching and embeddings to refine results and provides clear answers with sources cited.
 
 Using SearxNG to stay current and fully open source, Perplexica ensures you always get the most up-to-date information without compromising your privacy.
@@ -77,10 +79,39 @@ There are mainly 2 ways of installing Perplexica - With Docker, Without Docker. 
 
    - `SIMILARITY_MEASURE`: The similarity measure to use (This is filled by default; you can leave it as is if you are unsure about it.)
 
+```ini
+[GENERAL]
+PORT = 3_001
+SIMILARITY_MEASURE = "cosine"
+TEMPERATURE = 0.7
+DEFAULT_CHAT_PROVIDER = "ollama"
+DEFAULT_CHAT_MODEL = "llama3.2:3b"
+DEFAULT_EMBED_PROVIDER = "ollama"
+DEFAULT_EMBED_MODEL = "nomic-embed-text:latest"
+
+[GROQ]
+GROQ_API_KEY = ""
+
+[OPENAI]
+OPENAI_API_KEY = ""
+OPENAI_EMBED_MODELS = "text-embedding-3-small;text-embedding-3-large"
+
+[ANTHROPIC]
+ANTHROPIC_API_KEY = ""
+
+[OLLAMA]
+OLLAMA_API_KEY = ""
+OLLAMA_API_ENDPOINT = "http://localhost:11434"
+OLLAMA_EMBED_MODELS = "nomic-embed-text:latest;all-minilm:latest;mxbai-embed-large:latest"
+
+[SEARXNG]
+SEARXNG_API_ENDPOINT = "http://localhost:8080"
+```
+
 5. Ensure you are in the directory containing the `docker-compose.yaml` file and execute:
 
    ```bash
-   docker compose up -d
+   docker compose --profile cpu --profile all up --build
    ```
 
 6. Wait a few minutes for the setup to complete. You can access Perplexica at http://localhost:3000 in your web browser.
