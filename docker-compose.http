@@ -1,0 +1,46 @@
+# download the vscode extension: rest client (+5mil users)
+
+### SearXNG queries
+
+@searxngUrl = http://localhost:8080
+
+GET {{searxngUrl}}/search?format=json&q=vitamin+e
+
+
+### Tangle-AI queries
+
+@backendUrl = http://localhost:3001
+
+### Get configuration
+
+GET {{backendUrl}}/api/config
+content-type: application/json
+
+### request a websearch
+POST {{backendUrl}}/api/search
+content-type: application/json
+
+{
+    "query": "What are the benefits of using Vitamine E"
+}
+
+### request related videos
+
+POST {{backendUrl}}/api/images
+content-type: application/json
+
+{
+    "query":"What are the benefits of vitamin e",
+}
+
+### request related videos
+
+POST {{backendUrl}}/api/videos
+content-type: application/json
+
+{
+    "query":"What are the benefits of vitamin e",
+    "chat_history":[],
+    "chat_model_provider":"ollama",
+    "chat_model":"llama3.2:3b"
+}

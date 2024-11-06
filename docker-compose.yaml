@@ -117,7 +117,6 @@ services:
       dockerfile: backend.dockerfile
     image: backend
     environment:
-      - LANGCHAIN_VERBOSE=true
       - SEARXNG_API_ENDPOINT=http://searxng:8080
       - OLLAMA_API_ENDPOINT=http://ollama:11434
     depends_on:

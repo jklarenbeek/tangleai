@@ -24,6 +24,8 @@ import { getDocumentsFromLinks } from '../lib/linkDocument';
 import LineOutputParser from '../lib/outputParsers/lineOutputParser';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 import { ChatOpenAI } from '@langchain/openai';
+import { RunnableConfig } from '@langchain/core/runnables';
+import { dispatchCustomEvent } from '@langchain/core/callbacks/dispatch/web';
 
 const basicSearchRetrieverPrompt = `
 You are an AI question rephraser. You will be given a conversation and a follow-up question, you will have to rephrase the follow up question so it is a standalone question and can be used by another LLM to search the web for information to answer it.
@@ -121,29 +123,31 @@ const handleStream = async (
   emitter: eventEmitter,
 ) => {
   for await (const event of stream) {
-    if (
-      event.event === 'on_chain_end' &&
-      event.name === 'FinalSourceRetriever'
-    ) {
-      emitter.emit(
-        'data',
-        JSON.stringify({ type: 'sources', data: event.data.output }),
-      );
+    const type = event.event;
+    const name = event.name;
+    const data = event.data;
+    if (type === 'on_chain_stream') {
+      if (name === 'FinalResponseGenerator')
+        emitter.emit(
+          'data',
+          JSON.stringify({ type: 'response', data: event.data.chunk }),
+        );
+      else
+        console.log(event);
     }
-    if (
-      event.event === 'on_chain_stream' &&
-      event.name === 'FinalResponseGenerator'
-    ) {
-      emitter.emit(
-        'data',
-        JSON.stringify({ type: 'response', data: event.data.chunk }),
-      );
+    else if (type === 'on_chain_end') {
+      if (name === 'FinalSourceRetriever')
+        emitter.emit(
+          'data',
+          JSON.stringify({ type: 'sources', data: event.data.output }),
+        );
+      else if (name === 'FinalResponseGenerator')
+        emitter.emit('end');
+      else
+        console.log(event);
     }
-    if (
-      event.event === 'on_chain_end' &&
-      event.name === 'FinalResponseGenerator'
-    ) {
-      emitter.emit('end');
+    else {
+      console.log(event);
     }
   }
 };
@@ -160,7 +164,7 @@ const createBasicWebSearchRetrieverChain = (llm: BaseChatModel) => {
     PromptTemplate.fromTemplate(basicSearchRetrieverPrompt),
     llm,
     strParser,
-    RunnableLambda.from(async (input: string) => {
+    RunnableLambda.from(async (input: string, config?: RunnableConfig) => {
       const linksOutputParser = new LineListOutputParser({
         key: 'links',
       });
@@ -170,13 +174,18 @@ const createBasicWebSearchRetrieverChain = (llm: BaseChatModel) => {
       });
 
       const links = await linksOutputParser.parse(input);
-      let question = await questionOutputParser.parse(input);
+      const question = await questionOutputParser.parse(input);
+
+      return { question, links };
+    }),
+    RunnableLambda.from(async ({question, links} : {question:string, links:string[]}, config?: RunnableConfig) => {
 
       if (question === 'not_needed') {
         return { query: '', docs: [] };
       }
 
       if (links.length > 0) {
+        await dispatchCustomEvent("progress", { description: "retrieving documents"}, config);
         if (question.length === 0) {
           question = 'summarize';
         }
@@ -311,7 +320,7 @@ const createBasicWebSearchRetrieverChain = (llm: BaseChatModel) => {
         return { query: question, docs: documents };
       }
     }),
-  ]);
+  ], "WebSearchRetrieverChain");
 };
 
 const createBasicWebSearchAnsweringChain = (
@@ -399,7 +408,7 @@ const createBasicWebSearchAnsweringChain = (
     ]),
     llm,
     strParser,
-  ]).withConfig({
+  ], "WebSearchAnswerChain").withConfig({
     runName: 'FinalResponseGenerator',
   });
 };
@@ -426,7 +435,7 @@ const basicWebSearch = (
         query: query,
       },
       {
-        version: 'v1',
+        version: 'v2',
       },
     );
 

@@ -14,6 +14,8 @@ interface Config {
     DEFAULT_CHAT_MODEL: string; // llama3.2:3b
     DEFAULT_EMBED_PROVIDER: string; // ollama
     DEFAULT_EMBED_MODEL: string; // nomic-embed-text:latest
+    REDIS_URL: string; // your redis url
+    REDIS_SESSION: string | null;
   };
   GROQ: {
     GROQ_API_KEY: string | null;
@@ -27,6 +29,15 @@ interface Config {
   ANTHROPIC: {
     ANTHROPIC_API_KEY: string | null;
     // ANTHROPIC_API_ENDPOINT: string;
+  };
+  FIREWORKSAI: {
+    FIREWORKS_API_KEY: string | null;
+  };
+  MISTRAL: {
+    MISTRAL_API_KEY: string | null;
+  };
+  VERTEXAI: {
+    GOOGLE_APPLICATION_CREDENTIALS: string | null;
   };
   OLLAMA: {
     OLLAMA_API_KEY: string | null; // when has id, ollama config is valid
@@ -109,6 +120,8 @@ export const getDefaultChatModel = () => NullIfEmpty(process.env.DEFAULT_CHAT_MO
 export const getDefaultEmbedProvider = () => NullIfEmpty(process.env.DEFAULT_EMBED_PROVIDER || loadConfig().GENERAL.DEFAULT_EMBED_PROVIDER);
 export const getDefaultEmbedModel = () => NullIfEmpty(process.env.DEFAULT_EMBED_MODEL || loadConfig().GENERAL.DEFAULT_EMBED_MODEL);
 
+export const getRedisUrl = () => NullIfEmpty(process.env.REDIS_URL || loadConfig().GENERAL.REDIS_URL);
+
 //#endregion
 
 //#region GROQ CONFIG
@@ -122,6 +135,18 @@ export const getOpenaiEmbedModels = () => SplitString(process.env.OPENAI_EMBED_M
 
 //#region ANTHROPIC CONFIG
 export const getAnthropicApiKey = () => NullIfEmpty(process.env.ANTHROPIC_API_KEY || loadConfig().ANTHROPIC.ANTHROPIC_API_KEY);
+//#endregion
+
+//#region FIREWORKS AI config
+export const getFireworksAIApiKey = () => NullIfEmpty(process.env.FIREWORKS_API_KEY || loadConfig().FIREWORKSAI.FIREWORKS_API_KEY);
+//#endregion
+
+//#region MISTRAL CONFIG
+export const getMistralApiKey = () => NullIfEmpty(process.env.MISTRAL_API_KEY || loadConfig().MISTRAL.MISTRAL_API_KEY);
+//#endregion
+
+//#region VERTEX AI CONFIG
+export const getVertexAIApiKey = () => NullIfEmpty(process.env.GOOGLE_APPLICATION_CREDENTIALS || loadConfig().VERTEXAI.GOOGLE_APPLICATION_CREDENTIALS);
 //#endregion
 
 //#region OLLAMA CONFIG
