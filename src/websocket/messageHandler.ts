@@ -1,6 +1,7 @@
 import { EventEmitter, WebSocket } from 'ws';
 import { BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
 import handleWebSearch from '../agents/webSearchAgent';
+import handleFactCheck from '../agents/factCheckAgent';
 import handleAcademicSearch from '../agents/academicSearchAgent';
 import handleWritingAssistant from '../agents/writingAssistant';
 import handleWolframAlphaSearch from '../agents/wolframAlphaSearchAgent';
@@ -30,6 +31,7 @@ type WSMessage = {
 
 export const searchHandlers = {
   webSearch: handleWebSearch,
+  factCheck: handleFactCheck,
   academicSearch: handleAcademicSearch,
   writingAssistant: handleWritingAssistant,
   wolframAlphaSearch: handleWolframAlphaSearch,

@@ -5,7 +5,15 @@ POST {{baseUrl}}/api/search
 content-type: application/json
 
 {
-    "query": "What are the benefits of using Vitamine E"
+    "query": "What are the benefits of using Vitamin E"
+}
+
+### request a websearch
+POST {{baseUrl}}/api/factcheck
+content-type: application/json
+
+{
+    "query": "Vitamin E is an essential building block"
 }
 
 ### request related videos
