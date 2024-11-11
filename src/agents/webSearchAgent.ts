@@ -132,8 +132,8 @@ const handleStream = async (
           'data',
           JSON.stringify({ type: 'response', data: event.data.chunk }),
         );
-      else
-        console.log(event);
+      // else
+      //   console.log(event);
     }
     else if (type === 'on_chain_end') {
       if (name === 'FinalSourceRetriever')
@@ -143,12 +143,12 @@ const handleStream = async (
         );
       else if (name === 'FinalResponseGenerator')
         emitter.emit('end');
-      else
-        console.log(event);
+      // else
+      //   console.log(event);
     }
-    else {
-      console.log(event);
-    }
+    // else {
+    //   console.log(event);
+    // }
   }
 };
 
