@@ -37,3 +37,12 @@ Before committing changes:
 3. We currently do not have a code of conduct, but it is in the works. In the meantime, please be mindful of how you engage with the project and its community.
 
 Following these steps will help maintain the integrity of Perplexica's codebase and facilitate a smoother integration of your valuable contributions. Thank you for your support and commitment to improving Perplexica.
+
+## Building and pushing the docker images
+
+```sh
+docker login
+docker build -t jipinx/tangleai-backend -f backend.dockerfile .
+docker build -t jipinx/tangleai-frontend -f app.dockerfile .
+docker push jipinx/tangleai-backend
+```
