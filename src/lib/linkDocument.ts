@@ -1,8 +1,12 @@
 import { htmlToText } from 'html-to-text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Document } from '@langchain/core/documents';
-import pdfParse from 'pdf-parse';
+//import pdfParse from 'pdf-parse';
 import logger from '../utils/logger';
+
+async function pdfParse(buffer) {
+  return { text: "" };
+}
 
 export const getDocumentsFromLinks = async ({ links }: { links: string[] }) => {
   const splitter = new RecursiveCharacterTextSplitter();

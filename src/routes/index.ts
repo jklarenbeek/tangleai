@@ -5,6 +5,7 @@ import configRouter from './config';
 import suggestionsRouter from './suggestions';
 import chatsRouter from './chats';
 import searchRouter from './search';
+import newSearchRouter from './newsearch';
 import factRouter from './factcheck';
 import discoverRouter from './discover';
 
@@ -16,6 +17,7 @@ router.use('/config', configRouter);
 router.use('/suggestions', suggestionsRouter);
 router.use('/chats', chatsRouter);
 router.use('/search', searchRouter);
+router.use('/newsearch', newSearchRouter);
 router.use('/factcheck', factRouter);
 router.use('/discover', discoverRouter);
 

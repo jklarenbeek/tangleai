@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import toml from '@iarna/toml';
+import { NullIfEmpty, SplitString } from './utils/tools';
 
 const configFileName = 'config.toml';
 
@@ -43,6 +44,8 @@ interface Config {
     OLLAMA_API_KEY: string | null; // when has id, ollama config is valid
     OLLAMA_API_ENDPOINT: string;
     OLLAMA_EMBED_MODELS: string; // "nomic-embed-text;all-minilm;mxbai-embed-large"
+    OLLAMA_EMBED_QPREFIX: string; // "search_query: "
+    OLLAMA_EMBED_DPREFIX: string; // "search_document: "
   };
   SEARXNG: {
     SEARXNG_API_ENDPOINT: string;
@@ -85,26 +88,6 @@ export const updateConfig = (config: RecursivePartial<Config>) => {
     toml.stringify(config),
   );
 };
-
-function isEmpty(str) {
-  return (str == null) || /^\s*$/.test(str);
-}
-
-
-/**
- * Returns null if the input string is empty or null, otherwise returns the input string.
- * 
- * @param {string} str - The input string to check for emptiness.
- * @returns {string | null} - The input string or null.
- */
-function NullIfEmpty(str) {
-  return isEmpty(str) ? null : str;
-}
-
-function SplitString(str) {
-  const re = /\s*(?:;|$)\s*/;
-  return isEmpty(str) ? [] : str.split(re);
-}
 
 //#endregion
 
@@ -153,6 +136,9 @@ export const getVertexAIApiKey = () => NullIfEmpty(process.env.GOOGLE_APPLICATIO
 export const getOllamaApiKey = () => NullIfEmpty(process.env.OLLAMA_API_KEY || loadConfig().OLLAMA.OLLAMA_API_KEY);
 export const getOllamaApiEndpoint = () => NullIfEmpty(process.env.OLLAMA_API_ENDPOINT || loadConfig().OLLAMA.OLLAMA_API_ENDPOINT);
 export const getOllamaEmbedModels = () => SplitString(process.env.OLLAMA_EMBED_MODELS || loadConfig().OLLAMA.OLLAMA_EMBED_MODELS);
+export const getOllamaEmbedQPrefix = () => NullIfEmpty(loadConfig().OLLAMA.OLLAMA_EMBED_QPREFIX);
+export const getOllamaEmbedDPrefix = () => NullIfEmpty(loadConfig().OLLAMA.OLLAMA_EMBED_DPREFIX);
+
 //#endregion
 
 //#region SEARXNG CONFIG

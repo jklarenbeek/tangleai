@@ -53,8 +53,8 @@ export const getAvailableEmbeddingModelProviders = async () => {
 };
 
 export const resolveChatModelConfig = async(
-  defChatProvider:string|undefined, 
-  defChatModel:string|undefined, 
+  defChatProvider?:string|undefined, 
+  defChatModel?:string|undefined, 
   customApiKey:string|undefined = undefined,
   customBaseUrl:string|undefined = undefined,
 ) => {
@@ -94,8 +94,8 @@ export const resolveChatModelConfig = async(
 }
 
 export const resolveEmbedModelConfig = async(
-  defEmbedProvider:string|undefined, 
-  defEmbedModel:string|undefined,
+  defEmbedProvider?:string|undefined, 
+  defEmbedModel?:string|undefined,
 ) => {
 
   const embedProviders = await getAvailableEmbeddingModelProviders();
@@ -120,5 +120,7 @@ export const resolveEmbedModelConfig = async(
     provider: embedProviderName,
     displayName: embedModelName,
     model: embedModel as unknown as Embeddings | undefined,
+    dprefix: '',
+    qprefix: '',
   };
 }

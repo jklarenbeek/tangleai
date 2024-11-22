@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    //"strict": true, // I can't find myself doing this right now.
     "lib": ["ESNext"],
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "target": "ESNext",
     "outDir": "dist",
     "sourceMap": false,
@@ -11,7 +12,9 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "plugins": [{ "name": "typescript-plugin-toml" }]
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/*.spec.ts"]

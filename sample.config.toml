@@ -24,6 +24,8 @@ ANTHROPIC_API_KEY = "" # Anthropic API key - sk-ant-1234567890abcdef1234567890ab
 OLLAMA_API_KEY = "" # use "mock-api-key" when ollama is available
 OLLAMA_API_ENDPOINT = "" # "http://ollama:11434" # http://host.docker.internal:11434
 OLLAMA_EMBED_MODELS = "nomic-embed-text:latest;all-minilm:latest;mxbai-embed-large:latest"
+OLLAMA_EMBED_QPREFIX = "search_query: "
+OLLAMA_EMBED_DPREFIX = "search_document: "
 
 [SEARXNG]
 SEARXNG_API_ENDPOINT = "http://searxng:8080" # http://host.docker.internal:8080

@@ -24,6 +24,14 @@ content-type: application/json
     "query": "What are the benefits of using Vitamine E"
 }
 
+### request a newWebsearch
+POST {{backendUrl}}/api/newsearch
+content-type: application/json
+
+{
+    "query": "What are the benefits of using Vitamine E"
+}
+
 ### request a fact-check
 POST {{backendUrl}}/api/factcheck
 content-type: application/json

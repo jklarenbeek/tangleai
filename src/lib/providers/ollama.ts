@@ -1,7 +1,8 @@
-import { OllamaEmbeddings } from '@langchain/community/embeddings/ollama';
+import { ChatOllama } from '@langchain/ollama';
+import { OllamaEmbeddings } from '@langchain/ollama';
+
 import { getDefaultTemperature, getOllamaApiEndpoint, getOllamaEmbedModels } from '../../config';
 import logger from '../../utils/logger';
-import { ChatOllama } from '@langchain/community/chat_models/ollama';
 
 const removeModelVersion = (name: string) => name.lastIndexOf(':') > 0
   ? name.substring(0, name.lastIndexOf(':'))

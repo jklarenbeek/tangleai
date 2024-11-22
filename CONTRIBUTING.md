@@ -18,7 +18,9 @@ Before diving into coding, setting up your local environment is key. Here's what
 1. In the root directory, locate the `sample.config.toml` file.
 2. Rename it to `config.toml` and fill in the necessary configuration fields specific to the backend.
 3. Run `npm install` to install dependencies.
-4. Use `npm run dev` to start the backend in development mode.
+4. Run `npx playwright install --with-deps`.
+5. Check version with `npx playwright --version`.
+6. Use `npm run dev` to start the backend in development mode.
 
 ### Frontend
 

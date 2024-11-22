@@ -1,0 +1,132 @@
+[defaults]
+temperature = 0.8
+measure = "cosine"
+maxSync = 4
+
+[[providers.ollama]]
+endpoint = "http://localhost:11434"
+
+[embeddings.nomic]
+provider = "ollama"
+model = "nomic-embed-test:latest"
+maxCtx = 8192
+maxDim = 768
+prefix = { query = "search_query", document = "search_document: ", ranking = "classification: ", grouping = "clustering: " }
+
+[embeddings.minilm]
+provider = "ollama"
+model = "all-minilm:latest"
+maxDim = 384
+maxCtx = 5000
+
+[embeddings.mxbai]
+provider = "ollama"
+model = "mxbai-embed-large:latest"
+
+[chats.llama3b]
+provider = "ollama"
+model = "llama3.2:3b"
+maxCtx = 32768
+temperature = 0.8
+
+[chats.gemma2]
+disabled = true
+provider = "ollama"
+model = "gemma2:2b"
+maxCtx = 32768
+
+[[providers.openai]]
+disabled = true
+endpoint = "https://api.openai.com/v1"
+apiKey = "{OPENAI_API_KEY}"
+
+[[providers.openai]]
+disabled = true
+endpoint = "https://api.openai.com/v1"
+apiKey = "{OPENAI_API_KEY2}"
+
+[embeddings.openai]
+disabled = true
+provider = "openai"
+model = "text-embedding-3-small"
+encoding = "float"
+
+[[providers.azure]]
+disabled = true
+apiKey = "{AZURE_OPENAI_API_KEY}"
+deployment = "{AZURE_OPENAI_DEPLOYMENT}"
+version = "{AZURE_OPENAI_API_VERSION}"
+endpoint = "{AZURE_OPENAI_ENDPOINT}"
+
+[embeddings.azure]
+disabled = true
+provider = "azure"
+deployment = "{AZURE_EMBEDDING_DEPLOYMENT}"
+version = "{AZURE_EMBEDDING_API_VERSION}"
+model = "text-embedding-3-small"
+encoding = "float"
+
+[[providers.siliconcloud]]
+disabled = true
+endpoint = "https://api.siliconflow.cn/v1/"
+apiKey = "{SILICONFLOW_API_KEY}"
+
+[embeddings.siliconcloud]
+disabled = true
+provider = "siliconcloud"
+endpoint = "https://api.siliconflow.cn/v1/embeddings"
+model = "netease-youdao/bce-embedding-base_v1"
+encoding = "base64"
+maxCtx = 512
+
+[chats.siliconcloud]
+disabled = true
+provider = "siliconcloud"
+model = "Qwen/Qwen2.5-7B-Instruct"
+
+[[providers.oracle]]
+disabled = true
+endpoint = "http://xxx.xxx.xxx.xxx:8088/v1/"
+apiKey = "ocigenerativeai"
+
+[embeddings.oracle]
+disabled = true
+provider = "oracle"
+model = "cohere.embed-multilingual-v3.0"
+maxCtx = 512
+
+[chats.oracle]
+disabled = true
+provider = "oracle"
+model = "cohere.command-r-plus"
+
+[[providers.bedrock]]
+disabled = true
+apiKey = "{AWS_ACCESS_KEY_ID}"
+secret = "{AWS_SECRET_ACCESS_KEY}"
+token = "{AWS_SESSION_TOKEN}"
+
+[embeddings.bedrock]
+provider = "bedrock"
+model = "amazon.titan-embed-text-v2:0"
+encoding = "float"
+maxCtx = 8192
+maxDim = 1024
+
+[chats.bedrock]
+provider = "bedrock"
+model = "Anthropic Claude 3 Haiku // Amazon Bedrock"
+
+[[providers.upstage]]
+disabled = true
+apiKey = "{UPSTAGE_API_KEY}"
+endpoint = "https://api.upstage.ai/v1/solar"
+
+[embeddings.upstage]
+provider = "upstage"
+model = "solar-embedding-1-large-query"
+maxCtx = 8192
+
+[chats.upstage]
+provider = "upstage"
+model = "solar-mini"
