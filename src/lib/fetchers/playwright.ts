@@ -7,7 +7,7 @@ import { Document } from '@langchain/core/documents';
 import { isEmpty, sanitizeContentType } from '../../utils/tools';
 import { ProgressCallback } from '../../utils/progress';
 import { sanitizeHtml } from './cheerio';
-import { estimateTokens } from '../../utils/computeSimilarity';
+import { estimateTokens } from '../../utils/similarity';
 
 
 async function fetchPlaywrightDocument(source: Document, context: BrowserContext, selector?: string) : Promise<Document> {

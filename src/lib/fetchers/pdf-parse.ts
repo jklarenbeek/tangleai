@@ -4,7 +4,7 @@ import pdfParse from 'pdf-parse';
 import { Document } from '@langchain/core/documents';
 import { sanitizeContentType } from '../../utils/tools';
 import { ProgressCallback } from '../../utils/progress';
-import { estimateTokens } from '../../utils/computeSimilarity';
+import { estimateTokens } from '../../utils/similarity';
 
 async function fetchPdfDocument(source: Document) : Promise<Document> {
   const url = source.metadata.url;

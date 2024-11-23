@@ -11,13 +11,13 @@ import {
 } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { Document } from '@langchain/core/documents';
-import { searchSearxng } from '../lib/searxng';
+import { searchSearxng } from '../lib/fetchers/searxng';
 import type { StreamEvent } from '@langchain/core/tracers/log_stream';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { Embeddings } from '@langchain/core/embeddings';
-import formatChatHistoryAsString from '../utils/formatHistory';
+import formatChatHistoryAsString from '../utils/format';
 import eventEmitter from 'events';
-import { computeSimilarity } from '../utils/computeSimilarity';
+import { computeSimilarity } from '../utils/similarity';
 import logger from '../utils/logger';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 

@@ -4,7 +4,7 @@ import {
   RunnableLambda,
 } from '@langchain/core/runnables';
 import { PromptTemplate } from '@langchain/core/prompts';
-import formatChatHistoryAsString from '../utils/formatHistory';
+import formatChatHistoryAsString from '../utils/format';
 import { BaseMessage } from '@langchain/core/messages';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { searchSearxng } from '../lib/searxng';
