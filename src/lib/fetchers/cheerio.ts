@@ -1,6 +1,6 @@
 import { CheerioAPI, load } from 'cheerio'
 import XXH from 'xxhashjs';
-import { isEmpty } from '../tools';
+import { isEmpty } from '../../utils/tools';
 import { Element } from 'domhandler';
 
 interface LinkRef {

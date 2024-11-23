@@ -8,9 +8,9 @@ import {
 
 import { Document } from '@langchain/core/documents';
 
-import fetchSearchQuery from '../utils/fetchers/searxng';
-import fetchPlaywrightDocuments from '../utils/fetchers/playwright';
-import fetchPdfDocuments from '../utils/fetchers/pdf-parse';
+import fetchSearchQuery from '../lib/fetchers/searxng';
+import fetchPlaywrightDocuments from '../lib/fetchers/playwright';
+import fetchPdfDocuments from '../lib/fetchers/pdf-parse';
 
 const router = express.Router();
 

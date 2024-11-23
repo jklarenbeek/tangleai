@@ -3,8 +3,8 @@ import XXH from 'xxhashjs';
 
 import { getSearxngApiEndpoint } from '../../config';
 
-import type { ProgressCallback } from '../progress';
-import { collapseWhitespaces, sanitizeContentType, sanitizeUrl } from '../tools';
+import type { ProgressCallback } from '../../utils/progress';
+import { collapseWhitespaces, sanitizeContentType, sanitizeUrl } from '../../utils/tools';
 
 export interface SearxngSearchOptions {
   categories?: string[];

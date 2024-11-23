@@ -3,11 +3,12 @@ import cosineSimilarity from 'compute-cosine-similarity';
 import { getSimilarityMeasure } from '../config';
 
 const computeSimilarity = (x: number[], y: number[]): number => {
-  const similarityMeasure = getSimilarityMeasure();
+  const similarityMeasure = getSimilarityMeasure() || "cosine";
 
   if (similarityMeasure === 'cosine') {
     return cosineSimilarity(x, y);
-  } else if (similarityMeasure === 'dot') {
+  } 
+  else if (similarityMeasure === 'dot') {
     return dot(x, y);
   }
 

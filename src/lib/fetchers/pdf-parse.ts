@@ -2,9 +2,9 @@ import pdfParse from 'pdf-parse';
 // import html2md from 'html2md';
 
 import { Document } from '@langchain/core/documents';
-import { sanitizeContentType } from '../tools';
-import { ProgressCallback } from '../progress';
-import { estimateTokens } from '../computeSimilarity';
+import { sanitizeContentType } from '../../utils/tools';
+import { ProgressCallback } from '../../utils/progress';
+import { estimateTokens } from '../../utils/computeSimilarity';
 
 async function fetchPdfDocument(source: Document) : Promise<Document> {
   const url = source.metadata.url;
