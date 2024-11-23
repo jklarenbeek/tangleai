@@ -4,6 +4,7 @@ measure = "cosine"
 maxSync = 4
 
 [[providers.ollama]]
+driver = "ollama"
 endpoint = "http://localhost:11434"
 
 [embeddings.nomic]
@@ -16,8 +17,8 @@ prefix = { query = "search_query", document = "search_document: ", ranking = "cl
 [embeddings.minilm]
 provider = "ollama"
 model = "all-minilm:latest"
-maxDim = 384
 maxCtx = 5000
+maxDim = 384
 
 [embeddings.mxbai]
 provider = "ollama"
@@ -37,11 +38,13 @@ maxCtx = 32768
 
 [[providers.openai]]
 disabled = true
+driver = "openai"
 endpoint = "https://api.openai.com/v1"
 apiKey = "{OPENAI_API_KEY}"
 
 [[providers.openai]]
 disabled = true
+driver = "openai"
 endpoint = "https://api.openai.com/v1"
 apiKey = "{OPENAI_API_KEY2}"
 
@@ -53,6 +56,7 @@ encoding = "float"
 
 [[providers.azure]]
 disabled = true
+driver = "openai"
 apiKey = "{AZURE_OPENAI_API_KEY}"
 deployment = "{AZURE_OPENAI_DEPLOYMENT}"
 version = "{AZURE_OPENAI_API_VERSION}"
@@ -68,6 +72,7 @@ encoding = "float"
 
 [[providers.siliconcloud]]
 disabled = true
+driver = "openai"
 endpoint = "https://api.siliconflow.cn/v1/"
 apiKey = "{SILICONFLOW_API_KEY}"
 
@@ -86,6 +91,7 @@ model = "Qwen/Qwen2.5-7B-Instruct"
 
 [[providers.oracle]]
 disabled = true
+driver = "oracle"
 endpoint = "http://xxx.xxx.xxx.xxx:8088/v1/"
 apiKey = "ocigenerativeai"
 
@@ -102,6 +108,7 @@ model = "cohere.command-r-plus"
 
 [[providers.bedrock]]
 disabled = true
+driver = "bedrock"
 apiKey = "{AWS_ACCESS_KEY_ID}"
 secret = "{AWS_SECRET_ACCESS_KEY}"
 token = "{AWS_SESSION_TOKEN}"
@@ -115,10 +122,12 @@ maxDim = 1024
 
 [chats.bedrock]
 provider = "bedrock"
-model = "Anthropic Claude 3 Haiku // Amazon Bedrock"
+description = "Anthropic Claude 3 Haiku // Amazon Bedrock"
+model = "anthropic.claude-3-haiku-20240307-v1:0"
 
 [[providers.upstage]]
 disabled = true
+driver = "openai"
 apiKey = "{UPSTAGE_API_KEY}"
 endpoint = "https://api.upstage.ai/v1/solar"
 

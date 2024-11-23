@@ -4,6 +4,7 @@ import pdfParse from 'pdf-parse';
 import { Document } from '@langchain/core/documents';
 import { sanitizeContentType } from '../tools';
 import { ProgressCallback } from '../progress';
+import { estimateTokens } from '../computeSimilarity';
 
 async function fetchPdfDocument(source: Document) : Promise<Document> {
   const url = source.metadata.url;
@@ -34,7 +35,8 @@ export default async function fetchPdfDocuments(sources: Document[], progress: P
     promises.push(new Promise((resolve, reject) => {
       fetchPdfDocument(source)
         .then((document) => {
-          progress("fetch_success", { id: source.id })
+          const estimate = estimateTokens(document.pageContent);
+          progress("fetch_success", { id: source.id, count: estimate })
           resolve(document)
         })
         .catch((error) => {

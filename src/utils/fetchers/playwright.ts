@@ -7,6 +7,7 @@ import { Document } from '@langchain/core/documents';
 import { isEmpty, sanitizeContentType } from '../tools';
 import { ProgressCallback } from '../progress';
 import { sanitizeHtml } from './cheerio';
+import { estimateTokens } from '../computeSimilarity';
 
 
 async function fetchPlaywrightDocument(source: Document, context: BrowserContext, selector?: string) : Promise<Document> {
@@ -18,7 +19,7 @@ async function fetchPlaywrightDocument(source: Document, context: BrowserContext
     page.emulateMedia({ media: "print" });
 
     // abort all unnecessary requests
-    await page.route('**/*.{png,jpg,jpeg,webp,gif,ico}', route => route.abort());
+    await page.route('**/*.{png,jpg,jpeg,webp,gif,ico,svg}', route => route.abort());
     await page.route('**/*.{woff, woff2}', (route) => route.abort());
     //await page.route('**/*.{css}', (route) => route.abort());
 
@@ -28,18 +29,19 @@ async function fetchPlaywrightDocument(source: Document, context: BrowserContext
     });
 
     // Wait until every resource is loaded and the network is silent for 500ms.
-    const response = await page.goto(url, { waitUntil: "networkidle", timeout: 10_000 });
+    const response = await page.goto(url, { waitUntil: "load" /*, timeout: 10_000 */});
 
-    const contentType = sanitizeContentType((await response.headerValue("content-type")) || "")
-    if (contentType !== 'text/html')
-      throw new Error(`Content-Type not supported: ${contentType} @ ${url}`);
+    //const contentType = sanitizeContentType((await response.headerValue("content-type")) || "")
+    //if (contentType !== 'text/html')
+    //  throw new Error(`Content-Type not supported: ${contentType} @ ${url}`);
 
-    const html = sanitizeHtml((await page.content()), selector);
-    if (isEmpty(html))
+    const content = await page.content();
+    const sanitized = sanitizeHtml(content, selector);
+    if (isEmpty(sanitized.html))
       throw new Error(`Document is empty @ ${url}`);
 
-    const content = NodeHtmlMarkdown.translate(html);
-    source.pageContent = content;
+    const markdown = NodeHtmlMarkdown.translate(sanitized.html);
+    source.pageContent = markdown;
 
     return source;
   }
@@ -56,7 +58,7 @@ export default async function fetchPlaywrightDocuments(sources: Document[], prog
   const browser = await firefox.launch({
     headless: true,
   });
-  const context = await browser.newContext({ acceptDownloads:false });
+  const context = await browser.newContext(/*{ acceptDownloads:false} */);
 
   const promises: Promise<Document>[] = [];
   for (let i = 0; i < sources.length; ++i) {
@@ -64,7 +66,9 @@ export default async function fetchPlaywrightDocuments(sources: Document[], prog
     promises.push(new Promise((resolve, reject) => {
       fetchPlaywrightDocument(source, context, selector)
         .then((document) => {
-          progress("fetch_success", { id: source.id })
+          const estimate = estimateTokens(document.pageContent);
+          document.metadata.estimateTokens = estimate;
+          progress("fetch_success", { id: source.id, count: estimate });
           resolve(document)
         })
         .catch((error) => {
