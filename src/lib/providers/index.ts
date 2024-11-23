@@ -2,7 +2,7 @@ import { loadGroqChatModels } from './groq';
 import { loadOllamaChatModels, loadOllamaEmbeddingsModels } from './ollama';
 import { loadOpenAIChatModels, loadOpenAIEmbeddingsModels } from './openai';
 import { loadAnthropicChatModels } from './anthropic';
-import { loadTransformersEmbeddingsModels } from './transformers';
+import { loadTransformersEmbeddingsModels } from './huggingface';
 import { getDefaultChatModel, getDefaultChatProvider, getDefaultEmbedModel, getDefaultEmbedProvider, getDefaultTemperature } from '../../config';
 
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
