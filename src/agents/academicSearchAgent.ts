@@ -17,7 +17,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../utils/formatHistory';
 import eventEmitter from 'events';
-import computeSimilarity from '../utils/computeSimilarity';
+import { computeSimilarity } from '../utils/computeSimilarity';
 import logger from '../utils/logger';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 
