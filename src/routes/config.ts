@@ -20,6 +20,7 @@ import {
 } from '../config';
 
 import logger from '../utils/logger';
+import { getConversationConfigDefaults, getConversationConfigNames, getEmbeddingConfigDefaults, getEmbeddingConfigNames, getProviderConfigDefaults, getProviderConfigNames, getVectorStoreConfig } from '../backend';
 
 const router = express.Router();
 
@@ -71,6 +72,13 @@ router.get('/', async (_, res) => {
       defaultEmbedModel: getDefaultEmbedModel(),
     };
 
+    console.log(getProviderConfigDefaults());
+    console.log(getProviderConfigNames())
+    console.log(getEmbeddingConfigDefaults());
+    console.log(getEmbeddingConfigNames());
+    console.log(getConversationConfigDefaults());
+    console.log(getConversationConfigNames());
+    console.log(getVectorStoreConfig("redis"));
     res.status(200).json(config);
   } catch (err: any) {
     res.status(500).json({ message: 'An error has occurred.' });

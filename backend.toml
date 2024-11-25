@@ -1,7 +1,17 @@
-[defaults]
-temperature = 0.8
-measure = "cosine"
+[vectorstore.redis]
+driver="redis"
+endpoint="redis://localhost:6379"
+collection="default-tangleai"
+prefix="tangleai-"
+
+[provider.defaults]
 maxSync = 4
+
+[embedding.defaults]
+measure = "cosine"
+
+[chat.defaults]
+temperature = 0.8
 
 [[providers.ollama]]
 driver = "ollama"
@@ -15,12 +25,14 @@ maxDim = 768
 prefix = { query = "search_query", document = "search_document: ", ranking = "classification: ", grouping = "clustering: " }
 
 [embeddings.minilm]
+disabled = true
 provider = "ollama"
 model = "all-minilm:latest"
 maxCtx = 5000
 maxDim = 384
 
 [embeddings.mxbai]
+disabled = true
 provider = "ollama"
 model = "mxbai-embed-large:latest"
 
@@ -28,6 +40,12 @@ model = "mxbai-embed-large:latest"
 provider = "ollama"
 model = "llama3.2:3b"
 maxCtx = 32768
+temperature = 0.8
+
+[chats.llama1b]
+provider = "ollama"
+model = "llama3.2:1b"
+maxCtx = 8192
 temperature = 0.8
 
 [chats.gemma2]
@@ -139,3 +157,20 @@ maxCtx = 8192
 [chats.upstage]
 provider = "upstage"
 model = "solar-mini"
+[[provider.huggingface]]
+
+[embeddings.xenova]
+provider="huggingface"
+model="Xenova/all-MiniLM-L6-v2"
+
+[embeddings.xenova_bge]
+provider="huggingface"
+model="Xenova/bge-small-en-v1.5"
+
+[embeddings.xenova_gte]
+provider="huggingface"
+model="Xenova/gte-small"
+
+[embeddings.xenova_bert]
+provider="huggingface"
+model="Xenova/bert-base-multilingual-uncased"

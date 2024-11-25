@@ -3,7 +3,7 @@ import { chunkArray } from '@langchain/core/utils/chunk_array';
 
 import logger from '../../utils/logger';
 
-export interface HuggingFaceTransformersEmbeddingsParams
+interface HuggingFaceTransformersEmbeddingsParams
   extends EmbeddingsParams {
   modelName: string;
 
@@ -35,8 +35,8 @@ class HuggingFaceTransformersEmbeddings
   constructor(fields?: Partial<HuggingFaceTransformersEmbeddingsParams>) {
     super(fields ?? {});
 
-    this.modelName = fields?.model ?? fields?.modelName ?? this.model;
-    this.model = this.modelName;
+    this.modelName = fields?.modelName ?? fields?.model ?? this.modelName ?? this.model;
+    this.model = fields?.model ?? this.model ?? this.modelName;
     this.stripNewLines = fields?.stripNewLines ?? this.stripNewLines;
     this.timeout = fields?.timeout;
   }
@@ -86,6 +86,10 @@ class HuggingFaceTransformersEmbeddings
 export const loadTransformersEmbeddingsModels = async () => {
   try {
     const embeddingModels = {
+      'all-MiniLM-L6-v2': {
+        displayName: 'Huggingface Default',
+        model: new HuggingFaceTransformersEmbeddings()
+      },
       'xenova-bge-small-en-v1.5': {
         displayName: 'BGE Small',
         model: new HuggingFaceTransformersEmbeddings({

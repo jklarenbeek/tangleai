@@ -30,10 +30,13 @@ x-init-ollama: &init-ollama
   container_name: ollama-pull-llama
   volumes:
     - ollama_storage:/root/.ollama
-  entrypoint: /bin/sh
-  command:
-    - "-c"
-    - "sleep 3; OLLAMA_HOST=ollama:11434 ollama pull llama3.2:3b;  OLLAMA_HOST=ollama:11434 ollama pull nemotron-mini:4b; OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text:latest"
+  entrypoint: ["/bin/sh","-c"]
+  command: >
+    - |
+      sleep 3;
+      OLLAMA_HOST=ollama:11434 ollama pull llama3.2:3b;
+      OLLAMA_HOST=ollama:11434 ollama pull llama3.2:1b;
+      OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text:latest;
 
 services:
   ollama-cpu:
@@ -96,6 +99,8 @@ services:
 
   searxng:
     image: docker.io/searxng/searxng:latest
+    environment:
+      - SEARXNG_REDIS_URL=redis://redis:6379
     volumes:
       - ./searxng:/etc/searxng:rw
     ports:
@@ -115,6 +120,7 @@ services:
       dockerfile: backend.dockerfile
     image: backend
     environment:
+      - REDIS_URL=redis://redis:6379
       - SEARXNG_API_ENDPOINT=http://searxng:8080
       - OLLAMA_API_ENDPOINT=http://ollama:11434
     depends_on:

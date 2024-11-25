@@ -6,7 +6,6 @@
   "scripts": {
     "start": "npm run db:push && node dist/app.js",
     "build": "tsc",
-    "cheerio": "nodemon cheerio.ts",
     "dev": "nodemon src/app.ts",
     "dev:docker": "node --inspect-brk=0.0.0.0:9229 src/app.ts",
     "db:push": "drizzle-kit push sqlite",

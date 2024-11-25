@@ -53,7 +53,7 @@ content-type: application/json
     "query": "Vitamin E is vital for trees"
 }
 
-### request related videos
+### request related images
 
 POST {{backendUrl}}/api/images
 content-type: application/json
