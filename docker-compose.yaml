@@ -102,7 +102,7 @@ services:
     environment:
       - SEARXNG_REDIS_URL=redis://redis:6379
     volumes:
-      - ./searxng:/etc/searxng:rw
+      - ./compose/searxng:/etc/searxng:rw
     ports:
       - 8080:8080
     networks: 
@@ -116,8 +116,8 @@ services:
       - backend
       - all
     build:
-      context: .
-      dockerfile: backend.dockerfile
+      context: ./app/backend
+      dockerfile: Dockerfile
     image: backend
     environment:
       - REDIS_URL=redis://redis:6379
@@ -130,7 +130,7 @@ services:
       - 3001:3001
     volumes:
       - backend_dbstore:/usr/src/app/data
-      - ./config.toml:/usr/src/app/config.toml
+      - ./app/backend/config.toml:/usr/src/app/config.toml
     networks:
       - demo-docker
     restart: unless-stopped
@@ -140,8 +140,8 @@ services:
       - frontend
       - all
     build:
-      context: .
-      dockerfile: app.dockerfile
+      context: ./app/frontend
+      dockerfile: Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=http://localhost:3001/api
         - NEXT_PUBLIC_WS_URL=ws://localhost:3001

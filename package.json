@@ -1,0 +1,10 @@
+{
+    "name": "tangleai-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "authors": ["jklarenbeek", "ItzCrazyKns"],
+    "workspaces": [
+      "app/*",
+      "packages/*"
+    ]
+  }
