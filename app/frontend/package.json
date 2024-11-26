@@ -1,6 +1,46 @@
 {
   "name": "@tangleai/frontend",
-  "version": "1.9.1",
+  "private": true,
+  "version": "1.9.2",
   "license": "MIT",
-  "authors": ["ItzCrazyKns","jklarenbeek"]
+  "authors": [
+    "ItzCrazyKns",
+    "jklarenbeek"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format:write": "prettier . --write"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "^15.0.3",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.0",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@icons-pack/react-simple-icons": "^10.2.0",
+    "@tailwindcss/typography": "^0.5.15",
+    "clsx": "^2.1.1",
+    "langchain": "^0.3.6",
+    "lucide-react": "^0.461.0",
+    "markdown-to-jsx": "^7.7.0",
+    "next": "^15.0.3",
+    "next-themes": "^0.4.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-text-to-speech": "^0.19.5",
+    "react-textarea-autosize": "^8.5.5",
+    "sonner": "^1.7.0",
+    "tailwind-merge": "^2.5.5",
+    "yet-another-react-lightbox": "^3.21.7"
+  }
 }
