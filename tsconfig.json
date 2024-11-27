@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "ESNext",
+    // Treat files as modules even if it doesn't use import/export
+    "moduleDetection": "force",
+    // Ignore module structure
+    "module": "ES2022",
+    // Bundle the models, or whatever
+    "moduleResolution": "bundler",
+    // Allow JSON modules to be imported
+    "resolveJsonModule": true,
+    // Allow JS files to be imported from TS and vice versa
+    "allowJs": true,
+    // Use correct ESM import behavior
+    "esModuleInterop": true,
+    // Disallow features that require cross-file awareness
+    "isolatedModules": true,
+    // Make sure it works the same on all filesystems
+    "forceConsistentCasingInFileNames": true,
+    // Allow process.send('hello world');
+    // "interProcessCommunication": true
+  },
+  "exclude": ["node_modules", "**/*/lib", "**/*/dist"],
+}

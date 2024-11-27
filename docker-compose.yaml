@@ -111,6 +111,19 @@ services:
       - redis
     restart: unless-stopped
   
+  scraper:
+    profiles:
+      - scraper
+      - backend
+      - all
+    build:
+      context: ./app/scraper
+      dockerfile: Dockerfile
+    security_opt:
+      - seccomp=./app/scraper/seccomp-chrome.json
+    ports:
+      - 3002:3002
+
   backend:
     profiles:
       - backend

@@ -19,6 +19,12 @@ q=What+are+the+benefits+of+using+Vitamine+E
 &safesearch=0
 &format=json
 
+### Scraper Queries
+
+@scraperUrl = http://localhost:3002
+
+GET {{scraperUrl}}/api/scrape?kind=text/html&url=https://en.wikipedia.org/wiki/Vitamin_E
+
 
 ### Tangle-AI queries
 

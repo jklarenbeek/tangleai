@@ -6,5 +6,9 @@
     "workspaces": [
       "app/*",
       "packages/*"
-    ]
+    ],
+    "scripts": {
+      "dev": "npm run dev --workspaces --if-present",
+      "dev:scraper": "npm run dev --workspace @tangleai/scraper"
+    }
   }

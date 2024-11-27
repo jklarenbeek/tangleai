@@ -1,0 +1,14 @@
+{
+    "name": "@tangleai/utils",
+    "private": true,
+    "version": "0.0.1",
+    "license": "MIT",
+    "authors": [
+        "jklarenbeek"
+    ],
+    "type": "module",
+    "main": "src/index.ts",
+    "dependencies": {
+        "winston": "^3.17.0"
+    }
+}
