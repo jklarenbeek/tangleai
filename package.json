@@ -9,6 +9,13 @@
     ],
     "scripts": {
       "dev": "npm run dev --workspaces --if-present",
-      "dev:scraper": "npm run dev --workspace @tangleai/scraper"
+      "dev:scraper": "npm run dev --workspace @tangleai/scraper",
+      "up": "docker compose --profile cpu --profile all up",
+      "up:scraper": "docker compose --profile cpu --profile scraper up",
+      "up:backend": "docker compose --profile cpu --profile backend up",
+      "up:frontend": "docker compose --profile cpu --profile frontend up",
+      "deploy": "npm run deploy:build && npm run deploy:push",
+      "deploy:build": "npm run docker:build --workspaces --if-present",
+      "deploy:push": "npm run docker:push --workspaces --if-present"
     }
   }

@@ -6,14 +6,14 @@ import routes from './routes';
 
 import { isEmpty, logger } from '@tangleai/utils'
 
-import { BrowserContext, chromium } from 'playwright-chromium';
+import { BrowserContext, chromium as browserExec } from 'playwright-chromium';
 
 // import dotenv from 'dotenv'; 
 // dotenv.config();  // Load environment variables from .env file 
 
-const scraperPort = process.env.SCRAPER_PORT;
+const scraperPort = process.env.PORT || 1975; // let explicitly set another port if env is not available
 const remoteBrowserUrl = process.env.REMOTE_BROWSER_URL;
-const chromiumOptions = isEmpty(process.env.CHROME_BIN)
+const browserOptions = isEmpty(process.env.CHROME_BIN)
   ? { headless: true }
   : { headless: true, executablePath: process.env.CHROME_BIN }
 
@@ -29,14 +29,14 @@ app.use(express.json());
 
 // create a playwrite instance and pass it to the request
 const browser = isEmpty(remoteBrowserUrl)
-  ? await chromium.launch(chromiumOptions)
-  : await chromium.connectOverCDP(remoteBrowserUrl);
+  ? await browserExec.launch(browserOptions)
+  : await browserExec.connectOverCDP(remoteBrowserUrl);
 
 const context = await browser.newContext(/*{ acceptDownloads:false} */);
 
 app.use((req, res, next) => {
   res.locals.browserContext = context;
-  res.setHeader("Content-Type", "text/markdown; charset=UTF-8");
+  //res.setHeader("Content-Type", "text/markdown; charset=UTF-8");
   next();
 })
 
@@ -51,7 +51,7 @@ server.listen(scraperPort, () => {
 });
 
 const shutdownProcess = (name: string) => async (reason, origin) => {
-  logger.info(`${name} signal received at: ${origin}, reason: ${reason}.`);
+  logger.info(`Scraper has ${name} signal received at: ${origin}, reason: ${reason}.`);
 
   server.close(() => {
     logger.info("HTTP server closed");
@@ -63,7 +63,7 @@ const shutdownProcess = (name: string) => async (reason, origin) => {
   process.exit(isNaN(+reason) ? 1 : reason);
 }
 
-process.on('uncaughtException', shutdownProcess("uncaughtException"));
-process.on('unhandledRejection', shutdownProcess("unhandledRejection"));
+// process.on('uncaughtException', shutdownProcess("uncaughtException"));
+// process.on('unhandledRejection', shutdownProcess("unhandledRejection"));
 process.on("SIGINT", shutdownProcess("SIGINT"));
 process.on("SIGTERM", shutdownProcess("SIGTERM"));

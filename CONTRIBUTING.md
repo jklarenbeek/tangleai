@@ -46,5 +46,6 @@ Following these steps will help maintain the integrity of Perplexica's codebase 
 docker login
 docker build -t jipinx/tangleai-backend -f backend.dockerfile .
 docker build -t jipinx/tangleai-frontend -f app.dockerfile .
+docker run --rm -it --entrypoint /bin/sh jipinx/tangleai-backend
 docker push jipinx/tangleai-backend
 ```

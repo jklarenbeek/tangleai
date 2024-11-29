@@ -8,7 +8,13 @@ yarn.lock
 # Build output
 /.next/
 /out/
-/dist/
+dist/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
 # IDE/Editor specific
 .vscode/

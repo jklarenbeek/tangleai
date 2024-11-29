@@ -30,10 +30,10 @@ router.get('/', async (req, res) => {
 
     switch(kind) {
       case 'text/html':
-        res.send(fetchHtmlDocument(url, context));
+        res.send(await fetchHtmlDocument(url, context));
         break;
       case 'application/pdf':
-        res.send(fetchPdfDocument(url));
+        res.send(await fetchPdfDocument(url));
         break;
       default: {
         sendMessage404(res, `unknown type: ${kind}`);

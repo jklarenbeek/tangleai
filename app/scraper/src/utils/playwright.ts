@@ -1,14 +1,11 @@
-import type { Browser, BrowserContext } from 'playwright'
-import { chromium } from 'playwright-chromium';
+import type { Browser, BrowserContext } from 'playwright-chromium'
 
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-import { Document } from '@langchain/core/documents';
-import { isEmpty, sanitizeContentType } from '@tangleai/utils';
+import { isEmpty } from '@tangleai/utils';
 import { sanitizeHtml } from './cheerio';
 
-
-export default async function fetchHtmlDocument(url: string, context: BrowserContext, selector?: string) : Promise<string> {
+export default async function fetchHtmlDocument(url: string, context: BrowserContext, selector?: string) : Promise<any> {
 
   const page = await context.newPage();
 
@@ -38,7 +35,9 @@ export default async function fetchHtmlDocument(url: string, context: BrowserCon
     const sanitized = sanitizeHtml(content, selector);
     return (isEmpty(sanitized.html))
       ? null
-      : NodeHtmlMarkdown.translate(sanitized.html);
+      : { 
+          metadata: { url, links: sanitized.links },
+          pageContent: NodeHtmlMarkdown.translate(sanitized.html) };
   }
   finally {
     if (!page.isClosed())

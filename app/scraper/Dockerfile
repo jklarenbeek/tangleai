@@ -1,44 +1,82 @@
-FROM node:22.11-alpine3.20
+# This docker file is written for a monorepo that is two parents up root.
+# build this docker image with the tangleai workspace in mind!
 
-# Install Chrome and tini
+ARG NODE_VERSION=22.11
+ARG PORT=3002
+
+# Playwright
+ARG CHROME_BIN=/usr/bin/chromium-browser
+ARG CHROME_PATH=/usr/lib/chromium/
+ARG CHROMIUM_FLAGS="--disable-software-rasterizer --disable-dev-shm-usage"
+# ARG CHROMIUM_FLAGS="--use-gl=angle --use-angle=swiftshader-webgl"
+
+ARG PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ARG PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+#### BASE IMAGE (TODO: we need to push this to docker hub)
+FROM node:${NODE_VERSION}-alpine3.20 as base-playwright
+
+ARG CHROME_BIN
+ARG CHROME_PATH
+ARG CHROMIUM_FLAGS
+ARG PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+ARG PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+
+ENV CHROME_BIN=${CHROME_BIN} \
+    CHROME_PATH=${CHROME_PATH} \
+    CHROMIUM_FLAGS=${CHROMIUM_FLAGS} \
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=${PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD} \
+    PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}
+
 USER root
-# RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
-#    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-#    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-#    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/main" >> /etc/apk/repositories \
+
+# Install chromium and tini
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repositories \
   && echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/main" >> /etc/apk/repositories \
   && apk upgrade -U -a \
-  && apk add \
+  && apk add --no-cache \
     libstdc++ \
-    chromium \
+    libc6-compat \
+    tini \
+  && apk add \
+    chromium-swiftshader \
     harfbuzz \
     nss \
     freetype \
     ttf-freefont \
     font-noto-emoji \
     wqy-zenhei \
-  && apk add --no-cache tini \
   && rm -rf /var/cache/* \
   && mkdir /var/cache/apk
 
-# RUN npx -y playwright@1.49.0 install --with-deps
+COPY app/scraper/local.conf /etc/fonts/local.conf
 
-COPY local.conf /etc/fonts/local.conf
+### BUILDER IMAGE
+FROM base-playwright as builder
+WORKDIR /usr/src/app
+# RUN npm install pnpm turbo --global
+# RUN pnpm config set store-dir ~/.pnpm-store
 
-# Playwright
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_PATH=/usr/lib/chromium/ \
-    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+# copy all project files from workspace
+COPY . .
 
-# App
-RUN mkdir -p /app && chown -R node:node /app
-WORKDIR /app
+# and install them with npm for now
+RUN npm install --workspace=@tangleai/scraper
+RUN npm run build --workspace=@tangleai/scraper
+
+# PRODUCTION IMAGE
+FROM base-playwright AS prod
+WORKDIR /usr/src/app
 USER node
+COPY --from=builder --chown=node /usr/src/app/app/scraper/dist .
 
-COPY --chown=node package.json ./
-RUN npm i
-COPY --chown=node  ./src ./
+ARG PORT
+ENV NODE_ENV=production
+
+ENV PORT=${PORT}
+
+EXPOSE ${PORT}
 
 ENTRYPOINT ["tini", "--"]
-CMD [ "node", "index.js" ]
+
+CMD node index.js

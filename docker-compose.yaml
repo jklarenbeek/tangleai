@@ -117,8 +117,10 @@ services:
       - backend
       - all
     build:
-      context: ./app/scraper
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./app/scraper/Dockerfile
+
+    image: jipinx/tangleai-scraper
     security_opt:
       - seccomp=./app/scraper/seccomp-chrome.json
     ports:
@@ -131,7 +133,8 @@ services:
     build:
       context: ./app/backend
       dockerfile: Dockerfile
-    image: backend
+
+    image: jipinx/tangleai-backend
     environment:
       - REDIS_URL=redis://redis:6379
       - SEARXNG_API_ENDPOINT=http://searxng:8080
@@ -155,10 +158,11 @@ services:
     build:
       context: ./app/frontend
       dockerfile: Dockerfile
+
       args:
         - NEXT_PUBLIC_API_URL=http://localhost:3001/api
         - NEXT_PUBLIC_WS_URL=ws://localhost:3001
-    image: frontend
+    image: jipinx/tangleai-frontend
     depends_on:
       - backend
     ports:
