@@ -49,7 +49,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repo
   && rm -rf /var/cache/* \
   && mkdir /var/cache/apk
 
-COPY app/scraper/local.conf /etc/fonts/local.conf
+COPY apps/scraper/local.conf /etc/fonts/local.conf
 
 ### BUILDER IMAGE
 FROM base-playwright as builder
@@ -68,7 +68,7 @@ RUN npm run build --workspace=@tangleai/scraper
 FROM base-playwright AS prod
 WORKDIR /usr/src/app
 USER node
-COPY --from=builder --chown=node /usr/src/app/app/scraper/dist .
+COPY --from=builder --chown=node /usr/src/app/apps/scraper/dist .
 
 ARG PORT
 ENV NODE_ENV=production

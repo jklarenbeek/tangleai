@@ -118,11 +118,11 @@ services:
       - all
     build:
       context: .
-      dockerfile: ./app/scraper/Dockerfile
+      dockerfile: ./apps/scraper/Dockerfile
 
     image: jipinx/tangleai-scraper
     security_opt:
-      - seccomp=./app/scraper/seccomp-chrome.json
+      - seccomp=./apps/scraper/seccomp-chrome.json
     ports:
       - 3002:3002
 
@@ -131,7 +131,7 @@ services:
       - backend
       - all
     build:
-      context: ./app/backend
+      context: ./apps/backend
       dockerfile: Dockerfile
 
     image: jipinx/tangleai-backend
@@ -146,7 +146,7 @@ services:
       - 3001:3001
     volumes:
       - backend_dbstore:/usr/src/app/data
-      - ./app/backend/config.toml:/usr/src/app/config.toml
+      - ./apps/backend/config.toml:/usr/src/app/config.toml
     networks:
       - demo-docker
     restart: unless-stopped
@@ -156,7 +156,7 @@ services:
       - frontend
       - all
     build:
-      context: ./app/frontend
+      context: ./apps/frontend
       dockerfile: Dockerfile
 
       args:
