@@ -2,7 +2,7 @@ import { htmlToText } from 'html-to-text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Document } from '@langchain/core/documents';
 //import pdfParse from 'pdf-parse';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 
 async function pdfParse(buffer) {
   return { text: "" };

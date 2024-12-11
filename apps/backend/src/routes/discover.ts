@@ -1,6 +1,6 @@
 import express from 'express';
 import { searchSearxng } from '../lib/fetchers/searxng';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 
 const router = express.Router();
 

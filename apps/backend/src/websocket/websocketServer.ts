@@ -2,7 +2,7 @@ import { WebSocketServer } from 'ws';
 import { handleConnection } from './connectionManager';
 import http from 'http';
 import { getPort } from '../config';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 
 export const initServer = (
   server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>,

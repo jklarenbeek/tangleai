@@ -1,4 +1,5 @@
-import { EventEmitter, WebSocket } from 'ws';
+import { WebSocket } from 'ws';
+import EventEmitter from 'events';
 import { BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
 import handleWebSearch from '../agents/webSearchAgent';
 import handleFactCheck from '../agents/factCheckAgent';
@@ -9,7 +10,7 @@ import handleYoutubeSearch from '../agents/youtubeSearchAgent';
 import handleRedditSearch from '../agents/redditSearchAgent';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { Embeddings } from '@langchain/core/embeddings';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 import db from '../db';
 import { chats, messages as messagesSchema } from '../db/schema';
 import { eq, asc, gt } from 'drizzle-orm';

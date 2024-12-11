@@ -1,6 +1,6 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { getDefaultTemperature, getGroqApiKey } from '../../config';
-import logger from '../../utils/logger';
+import { logger } from '@tangleai/utils';
 
 export const loadGroqChatModels = async () => {
   const groqApiKey = getGroqApiKey();

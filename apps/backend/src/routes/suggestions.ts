@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 
 import { 
   resolveChatModelConfig, 

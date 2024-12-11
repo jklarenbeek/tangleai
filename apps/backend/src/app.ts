@@ -4,7 +4,8 @@ import cors from 'cors';
 import http from 'http';
 import routes from './routes';
 import { getPort } from './config';
-import logger from './utils/logger';
+
+import { logger } from '@tangleai/utils';
 
 const port = getPort();
 

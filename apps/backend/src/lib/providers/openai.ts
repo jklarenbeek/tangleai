@@ -1,6 +1,6 @@
 import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import { getDefaultTemperature, getOpenaiApiKey } from '../../config';
-import logger from '../../utils/logger';
+import { logger } from '@tangleai/utils';
 
 export const loadOpenAIChatModels = async () => {
   const openAIApiKey = getOpenaiApiKey();

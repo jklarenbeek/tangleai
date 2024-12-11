@@ -1,21 +1,7 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    //"strict": true, // I can't find myself doing this right now.
-    "lib": ["ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
-    "target": "ESNext",
-    "outDir": "dist",
-    "sourceMap": false,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "plugins": [{ "name": "typescript-plugin-toml" }]
+    "outDir": "./dist", // Your outDir
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": ["./src"]
 }

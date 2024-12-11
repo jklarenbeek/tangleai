@@ -21,5 +21,5 @@
     // Allow process.send('hello world');
     // "interProcessCommunication": true
   },
-  "exclude": ["node_modules", "**/*/lib", "**/*/dist"],
+  "exclude": ["node_modules", "**/*/dist", "**/*/data"],
 }

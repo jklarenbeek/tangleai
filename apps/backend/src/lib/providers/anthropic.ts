@@ -1,6 +1,6 @@
 import { ChatAnthropic } from '@langchain/anthropic';
 import { getAnthropicApiKey, getDefaultTemperature } from '../../config';
-import logger from '../../utils/logger';
+import { logger } from '@tangleai/utils';
 
 export const loadAnthropicChatModels = async () => {
   const anthropicApiKey = getAnthropicApiKey();

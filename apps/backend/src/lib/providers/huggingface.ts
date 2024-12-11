@@ -1,7 +1,7 @@
 import { Embeddings, type EmbeddingsParams } from '@langchain/core/embeddings';
 import { chunkArray } from '@langchain/core/utils/chunk_array';
 
-import logger from '../../utils/logger';
+import { logger } from '@tangleai/utils';
 
 interface HuggingFaceTransformersEmbeddingsParams
   extends EmbeddingsParams {

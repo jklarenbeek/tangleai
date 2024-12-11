@@ -9,7 +9,7 @@ import type { StreamEvent } from '@langchain/core/tracers/log_stream';
 import eventEmitter from 'events';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { Embeddings } from '@langchain/core/embeddings';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 
 const writingAssistantPrompt = `

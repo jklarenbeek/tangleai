@@ -18,7 +18,7 @@ import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../utils/format';
 import eventEmitter from 'events';
 import { computeSimilarity } from '../utils/similarity';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 
 const basicAcademicSearchRetrieverPrompt = `

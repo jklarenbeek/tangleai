@@ -2,7 +2,7 @@ import { WebSocket } from 'ws';
 import { handleMessage } from './messageHandler';
 import { resolveChatModelConfig, resolveEmbedModelConfig, } from '../lib/providers';
 import type { IncomingMessage } from 'http';
-import logger from '../utils/logger';
+import { logger } from '@tangleai/utils';
 
 export const handleConnection = async (
   ws: WebSocket,
