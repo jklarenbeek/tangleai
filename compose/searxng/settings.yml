@@ -25,7 +25,7 @@ server:
   bind_address: "0.0.0.0"
   # rate limit the number of request on the instance, block some bots.
   # Is overwritten by ${SEARXNG_LIMITER}
-  limiter: true
+  limiter: false
 
   # If your instance owns a /etc/searxng/settings.yml file, then set the following
   # values there.
@@ -34,7 +34,7 @@ server:
   # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
   image_proxy: true
   # 1.0 and 1.1 are supported
-  http_protocol_version: "1.1"
+  http_protocol_version: "1.0"
 
 redis:
   # URL to connect redis database. Is overwritten by ${SEARXNG_REDIS_URL}.
@@ -67,3 +67,8 @@ ui:
 #   - 'Hostnames plugin'  # see 'hostnames' configuration below
 #   - 'Open Access DOI rewrite'
 #   - 'Tor check plugin'
+
+engines:
+
+  - name: erowid
+    disabled: false
