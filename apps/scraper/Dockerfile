@@ -30,7 +30,7 @@ ENV CHROME_BIN=${CHROME_BIN} \
 
 USER root
 
-# Install chromium and tini
+# Install chromium and tini (chromium-swiftshader)
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repositories \
   && echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/main" >> /etc/apk/repositories \
   && apk upgrade -U -a \
@@ -39,7 +39,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repo
     libc6-compat \
     tini \
   && apk add \
-    chromium-swiftshader \
+    chromium \
     harfbuzz \
     nss \
     freetype \
@@ -51,8 +51,36 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repo
 
 COPY apps/scraper/local.conf /etc/fonts/local.conf
 
-### BUILDER IMAGE
-FROM base-playwright as builder
+# DEVELOPMENT IMAGE
+FROM base-playwright as dev-builder
+WORKDIR /usr/src/app
+# copy all project files from workspace
+COPY . .
+
+# and install them with npm for now
+RUN npm install --workspace=@tangleai/scraper
+RUN npm run build --workspace=@tangleai/scraper
+
+FROM base-playwright AS development
+WORKDIR /usr/src/app
+USER node
+COPY --from=prod-builder --chown=node /usr/src/app/apps/scraper/dist .
+
+
+ARG PORT
+ENV NODE_ENV=production
+
+ENV PORT=${PORT}
+
+EXPOSE ${PORT}
+
+ENTRYPOINT ["tini", "--"]
+
+CMD node index.js
+
+
+# PRODUCTION IMAGE
+FROM base-playwright as prod-builder
 WORKDIR /usr/src/app
 # RUN npm install pnpm turbo --global
 # RUN pnpm config set store-dir ~/.pnpm-store
@@ -65,10 +93,10 @@ RUN npm install --workspace=@tangleai/scraper
 RUN npm run build --workspace=@tangleai/scraper
 
 # PRODUCTION IMAGE
-FROM base-playwright AS prod
+FROM base-playwright AS production
 WORKDIR /usr/src/app
 USER node
-COPY --from=builder --chown=node /usr/src/app/apps/scraper/dist .
+COPY --from=prod-builder --chown=node /usr/src/app/apps/scraper/dist .
 
 ARG PORT
 ENV NODE_ENV=production
@@ -79,4 +107,4 @@ EXPOSE ${PORT}
 
 ENTRYPOINT ["tini", "--"]
 
-CMD node index.js
+CMD ["node", "index.js"]

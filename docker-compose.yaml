@@ -101,8 +101,13 @@ services:
     image: docker.io/searxng/searxng:latest
     environment:
       - SEARXNG_REDIS_URL=redis://redis:6379
+      - UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS:-4}
+      - UWSGI_THREADS=${SEARXNG_UWSGI_THREADS:-4}
     volumes:
-      - ./compose/searxng:/etc/searxng:rw
+      # - ./compose/searxng:/etc/searxng:rw
+      - ./compose/searxng/settings.yml:/etc/searxng/settings.yml:rw
+      - ./compose/searxng/limiter.toml:/etc/searxng/limiter.toml:rw
+      - ./compose/searxng/favicons.toml:/etc/searxng/favicons.toml:rw
     ports:
       - 8080:8080
     networks: 
@@ -110,6 +115,12 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
   
   scraper:
     profiles:
@@ -119,6 +130,7 @@ services:
     build:
       context: .
       dockerfile: ./apps/scraper/Dockerfile
+      target: production
 
     image: jipinx/tangleai-scraper
     security_opt:

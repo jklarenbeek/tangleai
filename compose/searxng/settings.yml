@@ -1,40 +1,69 @@
 # see https://docs.searxng.org/admin/settings/settings.html#settings-use-default-settings
 use_default_settings: true
 
-general:
-  instance_name: 'SearXNG'
-
 search:
-  autocomplete: 'google'
+  # Filter results. 0: None, 1: Moderate, 2: Strict
+  safe_search: 0
+  # Existing autocomplete backends: "dbpedia", "duckduckgo", "google", "yandex", "mwmbl",
+  # "seznam", "startpage", "stract", "swisscows", "qwant", "wikipedia" - leave blank to turn it off
+  # by default.
+  autocomplete: "duckduckgo"
+  # minimun characters to type before autocompleter starts
+  autocomplete_min: 4
+  # backend for the favicon near URL in search results.
+  # Available resolvers: "allesedv", "duckduckgo", "google", "yandex" - leave blank to turn it off by default.
+  favicon_resolver: "duckduckgo"
+  # remove format to deny access, use lower case.
+  # formats: [html, csv, json, rss]
   formats:
     - html
     - json
 
 server:
-  # base_url is defined in the SEARXNG_BASE_URL environment variable, see .env and docker-compose.yml
-  secret_key: 'a2fb23f1b02e6ee83875b09826990de0f6bd908b6638e8c10277d415f6ab852b' # Is overwritten by ${SEARXNG_SECRET}
+  # Is overwritten by ${SEARXNG_PORT} and ${SEARXNG_BIND_ADDRESS}
+  port: 8080
+  bind_address: "0.0.0.0"
+  # rate limit the number of request on the instance, block some bots.
+  # Is overwritten by ${SEARXNG_LIMITER}
+  limiter: true
+
+  # If your instance owns a /etc/searxng/settings.yml file, then set the following
+  # values there.
+
+  secret_key: "20a1337e1a76b9f7fdfbd0644cb221be5547d91a7523e374efc206d64aae1e3a"  # Is overwritten by ${SEARXNG_SECRET}
+  # Proxy image results through SearXNG. Is overwritten by ${SEARXNG_IMAGE_PROXY}
+  image_proxy: true
+  # 1.0 and 1.1 are supported
+  http_protocol_version: "1.1"
 
 redis:
-   url: redis://redis:6379
+  # URL to connect redis database. Is overwritten by ${SEARXNG_REDIS_URL}.
+  # https://docs.searxng.org/admin/settings/settings_redis.html#settings-redis
+  url: false
 
 ui:
+  # Is overwritten by ${SEARXNG_STATIC_USE_HASH}.
   static_use_hash: true
 
-engines:
-  - name: wolframalpha
-    disabled: false
+# External plugin configuration, for more details see
+#   https://docs.searxng.org/dev/plugins.html
+#
+# plugins:
+#   - plugin1
+#   - plugin2
+#   - ...
 
-  - name: vimeo
-    disabled: true
-
-  - name: internetarchivescholar
-    disabled: true
-
-  - name: duckduckgo
-    disabled: true
-
-  - name: library of congress
-    disabled: true
-
-  - name: openverse
-    disabled: true
+# Comment or un-comment plugin to activate / deactivate by default.
+#
+# enabled_plugins:
+#   # these plugins are enabled if nothing is configured ..
+#   - 'Basic Calculator'
+#   - 'Hash plugin'
+#   - 'Self Information'
+#   - 'Tracker URL remover'
+#   - 'Unit converter plugin'
+#   - 'Ahmia blacklist'  # activation depends on outgoing.using_tor_proxy
+#   # these plugins are disabled if nothing is configured ..
+#   - 'Hostnames plugin'  # see 'hostnames' configuration below
+#   - 'Open Access DOI rewrite'
+#   - 'Tor check plugin'

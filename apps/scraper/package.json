@@ -22,11 +22,11 @@
         "start": "tsx ./index.js",
         "start:dist": "tsx ./dist/index.js",
         "dev": "tsx watch --conditions=development --clear-screen=false --env-file=./.env --include ./.env ./src/index.ts",
-        "build": "esbuild ./src/index.ts --bundle --minify --tree-shaking=true --platform=node --format=esm --external:chromium-bidi --banner:\"js=import { createRequire } from 'module'; import path from 'path'; import { fileURLToPath } from 'url'; const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename); const require = createRequire(import.meta.url);\" --outfile=dist/index.js",
+        "build": "esbuild ./src/index.ts --sourcemap --bundle --minify --tree-shaking=true --platform=node --format=esm --external:chromium-bidi --banner:\"js=import { createRequire } from 'module'; import path from 'path'; import { fileURLToPath } from 'url'; const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename); const require = createRequire(import.meta.url);\" --outfile=dist/index.js",
         "docker:build": "docker build -t jipinx/tangleai-scraper -f ./Dockerfile ../../",
         "docker:push": "docker push jipinx/tangleai-scraper",
         "docker:history": "docker history --human --format \"{{.Size}}: {{.CreatedBy}}\" --no-trunc jipinx/tangleai-scraper",
-        "docker:run": "docker run -p 3002:3002 --name tangleai_scraper jipinx/tangleai-scraper"
+        "docker:run": "docker run --rm -p 3002:3002 --name tangleai_scraper jipinx/tangleai-scraper"
     },
     "dependencies": {
         "@types/node": "^22.10.0",

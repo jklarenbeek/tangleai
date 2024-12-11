@@ -24,6 +24,8 @@ router.get('/', async (req, res) => {
       return;
     }
 
+    logger.info(`@tangleai/scraper:fetching:${kind}:${url}`);
+    
     const context = res.locals.browserContext as BrowserContext;
     if (!context)
       throw new Error('Locals BrowserContext is empty!');
@@ -43,8 +45,9 @@ router.get('/', async (req, res) => {
     
   } 
   catch (err: any) {
+    const json = JSON.stringify(err, Object.getOwnPropertyNames(err));
     res.status(500).json({ message: 'An error has occurred.' });
-    logger.error(`Error while scraping: ${err.message}`);
+    logger.error(`@tangleai/scraper:Error while scraping: ${err.message}\n${json}`);
   }
 });
 

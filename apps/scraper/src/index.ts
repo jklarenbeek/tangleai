@@ -17,6 +17,8 @@ const browserOptions = isEmpty(process.env.CHROME_BIN)
   ? { headless: true }
   : { headless: true, executablePath: process.env.CHROME_BIN }
 
+logger.info(`@tangleai/scraper:env:CHROME_BIN:${process.env.CHROME_BIN}`);
+
 const app = express();
 const server = http.createServer(app);
 
@@ -47,11 +49,11 @@ app.get('/api', (_, res) => {
 });
 
 server.listen(scraperPort, () => {
-  logger.info(`Server is running on port ${scraperPort}`);
+  logger.info(`@tangleai/scraper:Server is running on port ${scraperPort}`);
 });
 
 const shutdownProcess = (name: string) => async (reason, origin) => {
-  logger.info(`Scraper has ${name} signal received at: ${origin}, reason: ${reason}.`);
+  logger.info(`@tangleai/scraper:${name} signal received at: ${origin}, reason: ${reason}.`);
 
   server.close(() => {
     logger.info("HTTP server closed");
