@@ -30,7 +30,7 @@ export function compressMarkdown(content: string) {
     .replace(/[\t\v\f]/g, ' ') // reset all white spaces to spaces
     .replace(/ +\n/g, '\n') // trim end of lines
     .replace(/\n{3,}/g, '\n\n') // compress all 3 or more new lines to 2 new lines
-    .replace(/\|-+(?=\|)/g, '|-') // compress all table splitters
+    .replace(/\|[\s-]+(?=[\|\n])/g, '|-') // compress all table splitters
     .replace(/ +\|/g, '|') // remove white spaces at the beginning of a table
     .replace(/ *-{4,} *\n/g, '---\n'); // remove all white space around a page separator and shink it
 }
