@@ -109,8 +109,8 @@ export const handleMessage = async (
     const parsedWSMessage = JSON.parse(message) as WSMessage;
     const parsedMessage = parsedWSMessage.message;
 
-    const humanMessageId =
-      parsedMessage.messageId ?? crypto.randomBytes(7).toString('hex');
+    const humanMessageId = parsedMessage.messageId 
+      ?? crypto.randomBytes(7).toString('hex');
     const aiMessageId = crypto.randomBytes(7).toString('hex');
 
     if (!parsedMessage.content)

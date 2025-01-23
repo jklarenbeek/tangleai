@@ -1,0 +1,31 @@
+#####################
+### SearXNG GET query
+#####################
+
+@searxngUrl = http://localhost:8080
+
+GET {{searxngUrl}}/search?format=json&q=vitamin+e
+
+######################
+### SearXNG POST query
+######################
+
+POST {{searxngUrl}}/search
+content-type: application/x-www-form-urlencoded
+
+q=What+are+the+benefits+of+using+Vitamine+E
+&category_science=1
+&pageno=1
+&language=auto
+&safesearch=0
+&format=json
+
+###################
+### Scraper Queries
+###################
+
+@scraperUrl = http://localhost:1975
+
+GET {{scraperUrl}}/api/scrape?kind=text/html&url=https://en.wikipedia.org/wiki/Vitamin_E
+
+

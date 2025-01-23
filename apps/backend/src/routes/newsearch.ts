@@ -1,5 +1,6 @@
 import express from 'express';
-import logger from '../utils/logger';
+
+import { logger } from '@tangleai/utils';
 
 import { 
   resolveChatModelConfig,
@@ -26,18 +27,15 @@ router.post('/', async (req, res) => {
         .json({ message: 'Missing query' });
     }
 
-    const htmls:Document[] = [];
-    const pdfs:Document[] = [];
+    const urls:Document[] = []; //TODO: ??
     await fetchSearchQuery(body.query, (name, props) => {
       console.log(`== phase1: ${name}`, props);
       if (name === 'search_success') {
         const source = props.source;
         switch(source.metadata.urlType) {
           case 'text/html':
-            htmls.push(source)
-            break;
           case 'application/pdf':
-            pdfs.push(source);
+            urls.push(source);
             break;
           default:
             break;
@@ -45,20 +43,23 @@ router.post('/', async (req, res) => {
       }
     });
 
-    const htmlDocs = await fetchPlaywrightDocuments(htmls, (name, props) => {
-      console.log(`== phase2:html: ${name}`, props);
-    });
+    // const htmlDocs = await fetchPlaywrightDocuments(htmls, (name, props) => {
+    //   console.log(`== phase2:html: ${name}`, props);
+    // });
 
-    const pdfDocs = await fetchPdfDocuments(pdfs, (name, props) => {
-      console.log(`== phase2:pdf: ${name}`, props);
+    // const pdfDocs = await fetchPdfDocuments(pdfs, (name, props) => {
+    //   console.log(`== phase2:pdf: ${name}`, props);
+    // });
+
+    const docs = fetchDocuments(urls, (name, props) => {
+      console.log(`== phase2:url: ${name}`, props);
     });
 
     const chatConfig = await resolveChatModelConfig();
     const embedConfig = await resolveEmbedModelConfig();
 
-    return res.json({ 
-      sources: [ ...htmlDocs, ...pdfDocs ]
-    });
+    return res.status(200)
+      .json({ sources: docs });
   }
   catch (err: any) {
     logger.error(`Error in search route: ${err.message}`);

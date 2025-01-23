@@ -29,6 +29,7 @@
         "docker:run": "docker run --rm -p 3002:3002 --name tangleai_scraper jipinx/tangleai-scraper"
     },
     "dependencies": {
+        "@langchain/core": "^0.3.19",
         "@types/node": "^22.10.0",
         "cheerio": "^1.0.0",
         "cors": "^2.8.5",

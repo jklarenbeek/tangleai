@@ -24,6 +24,17 @@ export function collapseWhitespaces(str) {
     ? ''
     : str.replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g, ' ');
 }
+export function compressMarkdown(content: string) {
+  return content.trim()
+    .replace(/\r?\n|\r/g, '\n') // set all types of newlines to \n
+    .replace(/[\t\v\f]/g, ' ') // reset all white spaces to spaces
+    .replace(/ +\n/g, '\n') // trim end of lines
+    .replace(/\n{3,}/g, '\n\n') // compress all 3 or more new lines to 2 new lines
+    .replace(/\|-+(?=\|)/g, '|-') // compress all table splitters
+    .replace(/ +\|/g, '|') // remove white spaces at the beginning of a table
+    .replace(/ *-{4,} *\n/g, '---\n'); // remove all white space around a page separator and shink it
+}
+
 export function sanitizeUrl(link) {
   if (isEmpty(link))
   return ''; // throw new Error("Document url is empty");

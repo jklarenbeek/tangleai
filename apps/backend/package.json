@@ -8,10 +8,14 @@
         "jklarenbeek"
     ],
     "scripts": {
-        "start": "npm run db:push && node dist/app.js",
-        "build": "tsc",
-        "dev": "nodemon src/app.ts",
-        "dev:docker": "node --inspect-brk=0.0.0.0:9229 src/app.ts",
+        "start": "tsx ./index.js",
+        "start:dist": "tsx ./dist/index.js",
+        "dev": "tsx watch --conditions=development --clear-screen=false --env-file=./.env --include ./.env ./src/index.ts",
+        "build": "esbuild ./src/index.ts --sourcemap --bundle --minify --tree-shaking=true --platform=node --format=esm --external:chromium-bidi --banner:\"js=import { createRequire } from 'module'; import path from 'path'; import { fileURLToPath } from 'url'; const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename); const require = createRequire(import.meta.url);\" --outfile=dist/index.js",
+        "docker:build": "docker build -t jipinx/tangleai-backend -f ./Dockerfile ../../",
+        "docker:push": "docker push jipinx/tangleai-backend",
+        "docker:history": "docker history --human --format \"{{.Size}}: {{.CreatedBy}}\" --no-trunc jipinx/tangleai-backend",
+        "docker:run": "docker run --rm -p 3002:3002 --name tangleai_backend jipinx/tangleai-backend",
         "db:push": "drizzle-kit push sqlite",
         "format": "prettier . --check",
         "format:write": "prettier . --write"
@@ -20,14 +24,11 @@
         "@types/better-sqlite3": "^7.6.10",
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.0",
-        "@types/html-to-text": "^9.0.4",
-        "@types/pdf-parse": "^1.1.4",
         "@types/ws": "^8.5.13",
         "drizzle-kit": "^0.28.1",
-        "nodemon": "^3.1.7",
         "prettier": "^3.3.3",
-        "ts-node": "^10.9.2",
         "tsx": "^4.19.2",
+        "esbuild": "~0.23.0",
         "typescript": "^5.7.2",
         "typescript-plugin-toml": "^0.5.0"
     },
@@ -41,21 +42,16 @@
         "@langchain/redis": "^0.1.0",
         "@xenova/transformers": "^2.17.2",
         "better-sqlite3": "^11.5.0",
-        "cheerio": "^1.0.0",
         "compute-cosine-similarity": "^1.1.0",
         "compute-dot": "^1.1.0",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "drizzle-orm": "^0.36.4",
         "express": "^4.21.1",
-        "html-to-text": "^9.0.5",
         "langchain": "^0.3.6",
-        "pdf-parse": "^1.1.1",
-        "playwright": "^1.49.0",
         "redis": "^4.7.0",
         "winston": "^3.17.0",
         "ws": "^8.18.0",
-        "xxhashjs": "^0.2.2",
-        "zod": "^3.23.8"
+        "xxhashjs": "^0.2.2"
     }
 }

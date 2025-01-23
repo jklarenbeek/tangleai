@@ -1,8 +1,11 @@
 import type { Browser, BrowserContext, Page } from 'playwright-chromium'
 
+import { Document } from '@langchain/core/documents';
+import XXH from 'xxhashjs';
+
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
-import { isEmpty, logger } from '@tangleai/utils';
+import { compressMarkdown, logger } from '@tangleai/utils';
 import { sanitizeHtml } from './cheerio';
 
 async function newPage(context: BrowserContext) {
@@ -31,11 +34,11 @@ async function closePage(page:Page) {
     }
   }
   catch(_) {
-    logger.error('@tangleai/scraper:playwright:closing page, already closed');
+    logger.debug('@tangleai/scraper:playwright:page:already closed');
   }
 }
 
-export default async function fetchHtmlDocument(url: string, context: BrowserContext, selector?: string): Promise<any> {
+export default async function fetchHtmlDocument(url: string, context: BrowserContext, selector?: string): Promise<Document> {
 
   const page = await newPage(context);
 
@@ -49,12 +52,13 @@ export default async function fetchHtmlDocument(url: string, context: BrowserCon
 
     const content = await page.content();
     const sanitized = sanitizeHtml(content, selector);
-    return (isEmpty(sanitized.html))
-      ? null
-      : {
-        metadata: { url, links: sanitized.links },
-        pageContent: NodeHtmlMarkdown.translate(sanitized.html)
-      };
+
+    const id = XXH.h64(url, 0xABCD).toString(16);
+    const html = sanitized.html;
+    const md = compressMarkdown(NodeHtmlMarkdown.translate(html));
+    const links = sanitized.links;
+    
+    return new Document({ id, metadata: { url, links }, pageContent: md });
   }
   finally {
     closePage(page);

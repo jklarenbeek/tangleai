@@ -1,8 +1,7 @@
 import { htmlToText } from 'html-to-text';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { Document } from '@langchain/core/documents';
-//import pdfParse from 'pdf-parse';
-import { logger } from '@tangleai/utils';
+import { compressMarkdown, logger } from '@tangleai/utils';
 
 async function pdfParse(buffer) {
   return { text: "" };
@@ -31,12 +30,9 @@ export const getDocumentsFromLinks = async ({ links }: { links: string[] }) => {
 
         if (isPdf) {
           const pdfText = await pdfParse(buffer);
-          const parsedText = pdfText.text
-            .replace(/(\r\n|\n|\r)/gm, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
+          const content = compressMarkdown(pdfText.text);
 
-          const splittedText = await splitter.splitText(parsedText);
+          const splittedText = await splitter.splitText(content);
           const title = 'PDF Document';
 
           const linkDocs = splittedText.map((text) => {

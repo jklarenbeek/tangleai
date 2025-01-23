@@ -26,14 +26,15 @@ router.get('/', async (req, res) => {
 
     logger.info(`@tangleai/scraper:fetching:${kind}:${url}`);
     
-    const context = res.locals.browserContext as BrowserContext;
-    if (!context)
-      throw new Error('Locals BrowserContext is empty!');
-
     switch(kind) {
-      case 'text/html':
+      case 'text/html': {
+        const context = res.locals.browserContext as BrowserContext;
+        if (!context)
+          throw new Error('Locals BrowserContext is empty!');
+        
         res.send(await fetchHtmlDocument(url, context));
         break;
+      }
       case 'application/pdf':
         res.send(await fetchPdfDocument(url));
         break;
