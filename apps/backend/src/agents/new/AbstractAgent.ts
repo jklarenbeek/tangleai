@@ -18,12 +18,12 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../../utils/format';
 import eventEmitter from 'events';
-import { computeSimilarity } from '../../utils/similarity';
+import { computeSimilarity } from '@tangleai/utils';
 import { logger } from '@tangleai/utils';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
 import { RedisVectorStore } from '@langchain/redis';
 import { createClient } from 'redis';
-import { getRedisUrl } from '../../config';
+import { getRedisUrl, getSimilarityMeasure } from '../../config';
 import LineListOutputParser from '../../lib/outputParsers/listLineOutputParser';
 import LineOutputParser from '../../lib/outputParsers/lineOutputParser';
 
@@ -125,7 +125,7 @@ export default abstract class AbstractAgent {
       ]);
 
       const similarity = docEmbeddings.map((docEmbedding, i) => {
-        const sim = computeSimilarity(queryEmbedding, docEmbedding);
+        const sim = computeSimilarity(queryEmbedding, docEmbedding, getSimilarityMeasure());
         return { index: i, similarity: sim };
       });
 

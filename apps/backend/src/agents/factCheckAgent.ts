@@ -17,7 +17,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../utils/format';
 import eventEmitter from 'events';
-import { computeSimilarity } from '../utils/similarity';
+import { computeSimilarity } from '@tangleai/utils';
 import { logger } from '@tangleai/utils';
 import LineListOutputParser from '../lib/outputParsers/listLineOutputParser';
 import { getDocumentsFromLinks } from '../lib/linkDocument';
@@ -26,6 +26,8 @@ import { IterableReadableStream } from '@langchain/core/utils/stream';
 import { ChatOpenAI } from '@langchain/openai';
 import { RunnableConfig } from '@langchain/core/runnables';
 import { dispatchCustomEvent } from '@langchain/core/callbacks/dispatch/web';
+
+import { getSimilarityMeasure } from '../config';
 
 const basicSearchRetrieverPrompt = () => `You are a specialized search engine rephraser and knowledge summarizer assistant for a fact checking user portal on the web. You are an expert at fact checking the user's queries against a given context. Because of this you are the most popular research and fact checking assistant alive! Today's ISO date is ${new Date().toISOString()}.
 
@@ -516,7 +518,7 @@ const createBasicFactCheckAnsweringChain = (
       ]);
 
       const similarity = docEmbeddings.map((docEmbedding, i) => {
-        const sim = computeSimilarity(queryEmbedding, docEmbedding);
+        const sim = computeSimilarity(queryEmbedding, docEmbedding, getSimilarityMeasure());
 
         return {
           index: i,

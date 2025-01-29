@@ -17,7 +17,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../utils/format';
 import eventEmitter from 'events';
-import { computeSimilarity } from '../utils/similarity';
+import { computeSimilarity } from '@tangleai/utils';
 import { logger } from '@tangleai/utils';
 import LineListOutputParser from '../lib/outputParsers/listLineOutputParser';
 import { getDocumentsFromLinks } from '../lib/linkDocument';
@@ -26,6 +26,8 @@ import { IterableReadableStream } from '@langchain/core/utils/stream';
 import { ChatOpenAI } from '@langchain/openai';
 import { RunnableConfig } from '@langchain/core/runnables';
 import { dispatchCustomEvent } from '@langchain/core/callbacks/dispatch/web';
+
+import { getSimilarityMeasure } from '../config';
 
 const basicSearchRetrieverPrompt = `
 You are an AI question rephraser. You will be given a conversation and a follow-up question, you will have to rephrase the follow up question so it is a standalone question and can be used by another LLM to search the web for information to answer it.
@@ -366,7 +368,7 @@ const createBasicWebSearchAnsweringChain = (
       ]);
 
       const similarity = docEmbeddings.map((docEmbedding, i) => {
-        const sim = computeSimilarity(queryEmbedding, docEmbedding);
+        const sim = computeSimilarity(queryEmbedding, docEmbedding, getSimilarityMeasure());
 
         return {
           index: i,

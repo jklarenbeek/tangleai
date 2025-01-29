@@ -34,7 +34,7 @@ interface ChatRequestBody {
   history: Array<[string, string]>;
 }
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res): Promise<any> => {
   try {
     const body: ChatRequestBody = req.body;
 

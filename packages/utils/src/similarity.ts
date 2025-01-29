@@ -1,9 +1,8 @@
 import dot from 'compute-dot';
 import cosineSimilarity from 'compute-cosine-similarity';
-import { getSimilarityMeasure } from '../config';
 
-export function computeSimilarity(x: number[], y: number[]): number {
-  const similarityMeasure = getSimilarityMeasure() || "cosine";
+export function computeSimilarity(x: number[], y: number[], measure?: string): number {
+  const similarityMeasure = measure || "cosine";
 
   if (similarityMeasure === 'cosine') {
     return cosineSimilarity(x, y);

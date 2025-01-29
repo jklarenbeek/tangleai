@@ -42,7 +42,13 @@ export function sanitizeUrl(link) {
   const url = link.startsWith('http://') || link.startsWith('https://')
       ? link
       : `https://${link}`;
-  return url;
+
+  try {
+    return new URL(url).toString();
+  }
+  catch (e) {
+    return '';
+  }
 }
 
 export function sanitizeContentType(contentType: string) : string {

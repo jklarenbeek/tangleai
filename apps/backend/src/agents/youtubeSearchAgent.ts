@@ -17,9 +17,11 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { Embeddings } from '@langchain/core/embeddings';
 import formatChatHistoryAsString from '../utils/format';
 import eventEmitter from 'events';
-import { computeSimilarity } from '../utils/similarity';
+import { computeSimilarity } from '@tangleai/utils';
 import { logger } from '@tangleai/utils';
 import { IterableReadableStream } from '@langchain/core/utils/stream';
+
+import { getSimilarityMeasure } from '../config';
 
 const basicYoutubeSearchRetrieverPrompt = `
 You will be given a conversation below and a follow up question. You need to rephrase the follow-up question if needed so it is a standalone question that can be used by the LLM to search the web for information.
@@ -175,7 +177,7 @@ const createBasicYoutubeSearchAnsweringChain = (
       ]);
 
       const similarity = docEmbeddings.map((docEmbedding, i) => {
-        const sim = computeSimilarity(queryEmbedding, docEmbedding);
+        const sim = computeSimilarity(queryEmbedding, docEmbedding, getSimilarityMeasure());
 
         return {
           index: i,

@@ -3,7 +3,7 @@ import XXH from 'xxhashjs';
 
 import { getSearxngApiEndpoint } from '../../config';
 
-import type { ProgressCallback } from '@tangleai/utils';
+import type { ProgressCallback } from '@tangleai/utils'
 
 import { 
   collapseWhitespaces, 

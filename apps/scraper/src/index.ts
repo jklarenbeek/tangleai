@@ -17,7 +17,10 @@ const browserOptions = isEmpty(process.env.CHROME_BIN)
   ? { headless: true }
   : { headless: true, executablePath: process.env.CHROME_BIN }
 
-logger.info(`@tangleai/scraper:env:CHROME_BIN:${process.env.CHROME_BIN}`);
+if (process.platform === "win32")
+  logger.info("@tangleai/scraper:platform:${process.platform}");
+else
+  logger.info(`@tangleai/scraper:env:CHROME_BIN:${process.env.CHROME_BIN}`);
 
 const app = express();
 const server = http.createServer(app);

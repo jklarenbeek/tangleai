@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import toml from '@iarna/toml';
-import { NullIfEmpty, SplitString } from './utils/tools';
+import { NullIfEmpty, SplitString } from '@tangleai/utils';
 
 const configFileName = 'config.toml';
 
