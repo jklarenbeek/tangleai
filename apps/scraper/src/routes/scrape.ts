@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
   catch (err: any) {
     const json = JSON.stringify(err, Object.getOwnPropertyNames(err));
     res.status(500).json({ message: 'An error has occurred.' });
-    logger.error(`@tangleai/scraper:Error while scraping: ${err.message}\n${json}`);
+    logger.error(`@tangleai/scraper:scrape: ${err.message}\n${json}`);
   }
 });
 

@@ -21,11 +21,21 @@ q=What+are+the+benefits+of+using+Vitamine+E
 &format=json
 
 ###################
-### Scraper Queries
+### Scraper Health
 ###################
 
 @scraperUrl = http://localhost:1975
 
+GET {{scraperUrl}}/api
+
+#################
+### Scraper Query
+#################
+
 GET {{scraperUrl}}/api/scrape?kind=text/html&url=https://en.wikipedia.org/wiki/Vitamin_E
 
+##################
+### Search Queries
+##################
 
+GET {{scraperUrl}}/api/search?context=science&q=What+are+the+benefits+of+using+Vitamine+E

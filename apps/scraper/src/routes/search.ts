@@ -1,7 +1,13 @@
 import express, { Request, Response } from 'express';
-import { logger } from '@tangleai/utils';
+
+import { 
+  logger,
+  sanitizeUrl, 
+  collapseWhitespaces, 
+  isEmpty
+} from '@tangleai/utils';
+
 import { searchSearxng, SearxngSearchResult } from '../utils/searxng';
-import { sanitizeUrl, collapseWhitespaces } from '@tangleai/utils';
 
 const router = express.Router();
 
@@ -13,22 +19,22 @@ ${result.content ? `\n${collapseWhitespaces(result.content)}\n` : ''}
 ${result.author ? `*Author: ${result.author}*` : ''}\n`;
 };
 
-router.get('/', async (req , res) => {
+function sendMessage404(res: Response, message: string) {
+  res.status(404).json({ message })
+}
+
+router.get('/', async (req, res) => {
   try {
     const query = req.query.q as string;
-    if (!query) {
-      return res.status(400).json({ error: 'Missing search query parameter "q"' });
+    if (isEmpty(query)) {
+      sendMessage404(res, 'Missing search query parameter "q"');
+      return;
     }
 
     const response = await searchSearxng(query, {
       language: 'en',
       pageno: parseInt(req.query.pageno as string) || 1
     });
-
-    if (response.err) {
-      logger.error('SearXNG search failed', response.err);
-      return res.status(500).json({ error: 'Failed to perform search' });
-    }
 
     const markdownResults = response.results
       .filter(result => result.url && result.title)
@@ -38,9 +44,11 @@ router.get('/', async (req , res) => {
     res.set('Content-Type', 'text/markdown');
     res.send(markdownResults);
 
-  } catch (error) {
-    logger.error('Search route error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } 
+  catch (err: any) {
+    const json = JSON.stringify(err, Object.getOwnPropertyNames(err));
+    res.status(500).json({ message: 'An error has occurred.' });
+    logger.error(`@tangleai/scraper:search: ${err.message}\n${json}`);
   }
 });
 

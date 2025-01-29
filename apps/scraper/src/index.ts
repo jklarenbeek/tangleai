@@ -18,7 +18,7 @@ const browserOptions = isEmpty(process.env.CHROME_BIN)
   : { headless: true, executablePath: process.env.CHROME_BIN }
 
 if (process.platform === "win32")
-  logger.info("@tangleai/scraper:platform:${process.platform}");
+  logger.info(`@tangleai/scraper:platform:${process.platform}`);
 else
   logger.info(`@tangleai/scraper:env:CHROME_BIN:${process.env.CHROME_BIN}`);
 
@@ -45,11 +45,11 @@ app.use((req, res, next) => {
   next();
 })
 
-app.use('/api', routes);
 app.get('/api', (_, res) => {
   // healthcheck
   res.status(200).json({ status: 'ok' });
 });
+app.use('/api', routes);
 
 server.listen(scraperPort, () => {
   logger.info(`@tangleai/scraper:Server is running on port ${scraperPort}`);

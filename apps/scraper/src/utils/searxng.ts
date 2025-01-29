@@ -1,7 +1,7 @@
 import { Document } from '@langchain/core/documents';
 import XXH from 'xxhashjs';
 
-import { getSearxngApiEndpoint } from '../../config';
+import { getSearxngApiEndpoint } from '../config';
 
 import type { ProgressCallback } from '@tangleai/utils'
 
@@ -27,6 +27,7 @@ export interface SearxngSearchResult {
   content?: string;
   author?: string;
   iframe_src?: string;
+  //err?: any;
 }
 
 async function getUrlContentType(link) {
