@@ -8,6 +8,7 @@ import {
 } from '@tangleai/utils';
 
 import { searchSearxng, SearxngSearchResult } from '../utils/searxng';
+import type { SearxngCategoryOptions } from '../utils/searxng';
 
 const router = express.Router();
 
@@ -31,8 +32,19 @@ router.get('/', async (req, res) => {
       return;
     }
 
+    const context_out = req.query.c as string;
+    const context: SearxngCategoryOptions = isEmpty(req.query.c)
+      ? 'general'
+      : context_out as SearxngCategoryOptions;
+
+    const language_out = req.query.l as string;
+    const language = isEmpty(language_out)
+      ? "en"
+      : language_out;
+
     const response = await searchSearxng(query, {
-      language: 'en',
+      language,
+      categories: context,
       pageno: parseInt(req.query.pageno as string) || 1
     });
 

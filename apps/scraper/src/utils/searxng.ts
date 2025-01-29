@@ -11,11 +11,15 @@ import {
   sanitizeUrl 
 } from '@tangleai/utils';
 
+export type SearxngCategoryOptions = 'general' | 'images' | 'videos' | 'news' | 'map' | 'news' | 'it' | 'science' | 'files' | 'social_media';
+
+export type SearxngFormatOptions = 'json' | 'csv' | 'json'; 
+
 export interface SearxngSearchOptions {
-  categories?: string[];
-  engines?: string[];
+  categories?: SearxngCategoryOptions;
   language?: string;
-  pageno?: number;
+  format?: SearxngFormatOptions,
+  pageno?: number
 }
 
 export interface SearxngSearchResult {
@@ -118,7 +122,9 @@ export default async function fetchSearchQuery(query: string, progress: Progress
   // fetch searxng results
   const response = await searchSearxng(query, {
     language: 'en',
-    ...opts
+    categories: 'general',
+    ...opts,
+    format: 'json'
   });
 
   // search results to documents
