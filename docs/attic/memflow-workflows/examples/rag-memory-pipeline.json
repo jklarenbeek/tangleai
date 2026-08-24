@@ -1,0 +1,99 @@
+{
+  "name": "rag-memory-pipeline",
+  "version": "2.0",
+  "description": "Full RAG pipeline using composable sub-workflows: query translation → S2 chunking → graph indexing (sub-workflow) → three-tier memory (SimpleMem → LightMem → StructMem sub-workflows) → hybrid retrieval (sub-workflow) → PriHA fusion (sub-workflow). Demonstrates the complete memory lifecycle with sub-workflow composition.",
+  "entry": "translate",
+  "stages": [
+    {
+      "id": "translate",
+      "module": "QueryTranslator",
+      "config": {
+        "techniques": ["hyde", "multi_query"],
+        "useLLM": true
+      },
+      "next": "parse"
+    },
+    {
+      "id": "parse",
+      "module": "MarkdownSpatialParser",
+      "config": {},
+      "next": "chunk"
+    },
+    {
+      "id": "chunk",
+      "module": "S2Chunker",
+      "config": {
+        "chunkSize": 512,
+        "alpha": 0.5
+      },
+      "next": "embed"
+    },
+    {
+      "id": "embed",
+      "module": "Embedder",
+      "config": {
+        "provider": "ollama",
+        "model": "nomic-embed-text"
+      },
+      "next": "graph"
+    },
+    {
+      "id": "graph",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/graph-indexing.json",
+      "inputMap": { "chunks": "chunks", "embeddings": "embeddings" },
+      "outputMap": { "entities": "entities", "relationships": "relationships" },
+      "next": "simplemem"
+    },
+    {
+      "id": "simplemem",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/simplemem-pipeline.json",
+      "inputMap": { "chunks": "chunks", "memoryUnits": "memoryUnits" },
+      "outputMap": { "memoryUnits": "memoryUnits" },
+      "next": "lightmem"
+    },
+    {
+      "id": "lightmem",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/lightmem-pipeline.json",
+      "inputMap": { "memoryUnits": "memoryUnits" },
+      "outputMap": { "memoryUnits": "memoryUnits" },
+      "next": "structmem"
+    },
+    {
+      "id": "structmem",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/structmem-pipeline.json",
+      "inputMap": { "memoryUnits": "memoryUnits" },
+      "outputMap": { "memoryUnits": "memoryUnits" },
+      "next": "retrieve"
+    },
+    {
+      "id": "retrieve",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/hybrid-retrieval.json",
+      "inputMap": { "query": "query" },
+      "outputMap": { "retrievalResult": "retrievalResult", "graphContext": "graphContext" },
+      "next": "fuse"
+    },
+    {
+      "id": "fuse",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/priha-fusion.json",
+      "inputMap": { "query": "query", "retrievalResult": "retrievalResult" },
+      "outputMap": { "finalAnswer": "finalAnswer", "sources": "sources", "confidence": "confidence" }
+    }
+  ],
+  "globalConfig": {
+    "llmProvider": "ollama",
+    "llmModel": "qwen3.5:9b",
+    "embeddingProvider": "ollama",
+    "embeddingModel": "nomic-embed-text",
+    "maxConcurrency": 4,
+    "logLevel": "info"
+  },
+  "meta": {
+    "learning": false
+  }
+}

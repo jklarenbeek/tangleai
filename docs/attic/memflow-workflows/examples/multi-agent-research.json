@@ -1,0 +1,72 @@
+{
+  "name": "multi-agent-research",
+  "version": "2.0",
+  "description": "Advanced multi-agent research pipeline using sub-workflows: query translation → parallel hybrid retrieval branches (sub-workflows) → HERA orchestration (sub-workflow) with learning loop → PriHA fusion (sub-workflow). Demonstrates parallel DAG execution with composable sub-workflows.",
+  "entry": "translate",
+  "stages": [
+    {
+      "id": "translate",
+      "module": "QueryTranslator",
+      "config": {
+        "techniques": ["hyde", "multi_query", "step_back"],
+        "useLLM": true
+      },
+      "next": ["vector_retrieve", "graph_retrieve"]
+    },
+    {
+      "id": "vector_retrieve",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/hybrid-retrieval.json",
+      "inputMap": { "query": "query" },
+      "outputMap": { "retrievalResult": "retrievalResult" },
+      "next": "orchestrate",
+      "dependsOn": ["translate"]
+    },
+    {
+      "id": "graph_retrieve",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/hybrid-retrieval.json",
+      "inputMap": { "query": "query" },
+      "outputMap": { "retrievalResult": "retrievalResult" },
+      "next": "orchestrate",
+      "dependsOn": ["translate"]
+    },
+    {
+      "id": "orchestrate",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/hera-orchestration.json",
+      "inputMap": {
+        "query": "query",
+        "retrievalResult": "retrievalResult"
+      },
+      "outputMap": {
+        "finalAnswer": "finalAnswer",
+        "trajectory": "trajectory",
+        "insights": "insights"
+      },
+      "dependsOn": ["vector_retrieve", "graph_retrieve"],
+      "next": "fuse"
+    },
+    {
+      "id": "fuse",
+      "module": "SubWorkflow",
+      "workflowRef": "src/workflows/sub/priha-fusion.json",
+      "inputMap": { "query": "query", "retrievalResult": "retrievalResult", "finalAnswer": "finalAnswer" },
+      "outputMap": { "finalAnswer": "finalAnswer", "sources": "sources", "confidence": "confidence" }
+    }
+  ],
+  "globalConfig": {
+    "llmProvider": "ollama",
+    "llmModel": "qwen3.5:9b",
+    "embeddingProvider": "ollama",
+    "embeddingModel": "nomic-embed-text",
+    "maxConcurrency": 4,
+    "logLevel": "info"
+  },
+  "meta": {
+    "learning": true,
+    "maxIterations": 3,
+    "metrics": ["avgScore", "agents", "experienceSize"],
+    "autoResearch": false
+  }
+}

@@ -1,0 +1,44 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Embedding Capability Registry
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Maps vendor-agnostic capability tags to concrete embedding models.
+# IMPORTANT: The embedding model is a SYSTEM-LEVEL SINGLETON.
+# Once chosen at initialization, it cannot be changed mid-workflow because
+# vectors from different models are incompatible in the same vector index.
+#
+# However, different AgentConfigProfiles can request different capabilities
+# for DIFFERENT workflows — each workflow gets its own WorkflowContext.
+# ──────────────────────────────────────────────────────────────────────────────
+
+[capabilities.general]
+ollama     = "nomic-embed-text"
+openrouter = "openai/text-embedding-3-small"
+openai     = "text-embedding-3-small"
+description = "General-purpose text embedding. Good default for RAG, memory, and graph indexing."
+dimensions = 768
+maxSeqLen  = 8192
+
+[capabilities.multilingual]
+ollama     = "nomic-embed-text"
+openrouter = "openai/text-embedding-3-large"
+openai     = "text-embedding-3-large"
+description = "Optimized for non-English text and cross-lingual retrieval."
+dimensions = 3072
+maxSeqLen  = 8191
+
+[capabilities.code]
+ollama     = "nomic-embed-text"
+openrouter = "openai/text-embedding-3-small"
+openai     = "text-embedding-3-small"
+description = "Optimized for source code and technical documentation."
+dimensions = 1536
+maxSeqLen  = 8191
+
+[capabilities.high_dim]
+ollama     = "mxbai-embed-large"
+openrouter = "openai/text-embedding-3-large"
+openai     = "text-embedding-3-large"
+description = "High-dimensional embeddings for maximum retrieval precision."
+dimensions = 1024
+maxSeqLen  = 512

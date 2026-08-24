@@ -1,0 +1,46 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# LLM Capability Registry
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Maps vendor-agnostic capability tags to concrete models per provider.
+# When a workflow requests "reasoning", ConfigResolver picks the best match
+# for the active provider (from GlobalConfig or AgentConfigProfile).
+#
+# To add a new provider column, simply add a key under each [capabilities.*]
+# section. No code changes needed — ConfigResolver reads this file at runtime.
+#
+# Cost estimates are OPTIONAL and used for benchmark efficiency analysis.
+# Units: USD per 1K tokens.
+# ──────────────────────────────────────────────────────────────────────────────
+
+[capabilities.reasoning]
+ollama     = "qwen3.5:9b"
+openrouter = "anthropic/claude-3.5-sonnet"
+openai     = "gpt-4o"
+description = "Highest quality reasoning. Use for synthesis, validation, complex extraction, and event graph construction."
+costPer1KInputTokens  = 0.0   # varies by provider; overridden in LLMConfiguration node
+costPer1KOutputTokens = 0.0
+
+[capabilities.fast]
+ollama     = "llama3.2:3b"
+openrouter = "meta-llama/llama-3.2-3b-instruct"
+openai     = "gpt-4o-mini"
+description = "Low-latency responses. Use for classification, routing, intent detection, and simple extraction."
+
+[capabilities.cheap]
+ollama     = "phi3:mini"
+openrouter = "google/gemma-2-2b-it"
+openai     = "gpt-4o-mini"
+description = "Minimize cost. Use for high-volume batch processing, embedding-adjacent tasks, and fallback generation."
+
+[capabilities.vision]
+ollama     = "llava:13b"
+openrouter = "anthropic/claude-3.5-sonnet"
+openai     = "gpt-4o"
+description = "Image understanding. Use when multimodal input is present (e.g., LoCoMo image turns with BLIP captions)."
+
+[capabilities.long_context]
+ollama     = "qwen3.5:9b"
+openrouter = "anthropic/claude-3.5-sonnet"
+openai     = "gpt-4o"
+description = "Very long context windows. Use when the full conversation history must fit in a single prompt."
