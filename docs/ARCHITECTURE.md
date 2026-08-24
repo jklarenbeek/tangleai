@@ -87,3 +87,32 @@ memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
 thing. Servers, persistence beyond in-memory, graph indexing of `relations`,
 and the GMPL multi-agent patterns all wait behind their orders.
+
+## The surfaces (added 2026-08-24)
+
+Two packages and two apps sit on top of the loop, jarenjs-suite-only:
+
+- `@tangleai/store` — the same 4-method `MemoryStore` contract over SQLite
+  (`@jarenjs/db` `openStore`; node:sqlite under Node, bun:sqlite in the
+  compiled binary, picked at runtime), plus the run/event log. The pipeline
+  test suite runs the identical scenario over both stores — the policies
+  cannot tell them apart, which is the seam's proof.
+- `@tangleai/pipeline` — the loop as a `jaren-dag` DOCUMENT. `@jarenjs/flow`
+  executes it (per-node `onNode` records feed the run log and the live SSE
+  stream); `@jarenjs/mermaid` projects the drawing FROM the document via the
+  suite's own `dag-to-flowchart` stylesheet. The picture is the pipeline.
+- `apps/desktop` — one `@jarenjs/contract` document is the whole API
+  (`serveHttp` → `toNodeHandler` over node:http, which Bun also implements);
+  the UI is a `@jarenjs/app` document rendered by `@jarenjs/view`, with
+  charts/mermaid/markdown from their suite packages. `bun build --compile`
+  produces a single self-contained executable (`npm run desktop:compile`).
+  The UI is tested HEADLESS in node — the app document drives
+  `openHttpClient` whose fetch is `toFetchHandler` over the real dispatcher —
+  and end-to-end in a real browser (`.e2e/`, via the playwright distrobox).
+- `apps/pages` — the GitHub Pages site; its demo executes the real pipeline
+  document in the browser over the in-memory store.
+
+Chat grounding: question → embed → `rankByEmbedding` over live memories →
+citations; the model (optional, `@jarenjs/ai` `createChatClient`) answers
+ONLY from those memories, and a missing or dead provider degrades to
+grounded recall — cited memories, never invention.

@@ -25,8 +25,9 @@ of jarenjs's published types under a strict TS consumer; findings live in
 
 ```sh
 npm install
-npm run check      # strict typecheck + 69 tests, no network
+npm run check      # strict typecheck + 91 tests, no network
 npm run skeleton   # the whole loop, end to end, offline
+npm run desktop    # the desktop app: chat over a folder's curated memory
 ```
 
 The skeleton ingests evidenced observations and runs them through the
@@ -54,6 +55,40 @@ ledger mirror: 3 live memories admitted to a @jarenjs/ai ledger
 | `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `rankByEmbedding` |
 | `@tangleai/providers` | embedding client for Ollama-native and OpenAI-compatible wires (chat stays on `@jarenjs/ai`) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
+| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite via `@jarenjs/db` (node:sqlite under Node, bun:sqlite in the compiled binary — the driver is picked at runtime), plus the run/event log the DAG surface reads |
+| `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with the offline trigram embedder and the rule judge as injectable stand-ins |
+
+## The apps
+
+Both are jarenjs-suite-only — no third-party runtime dependency anywhere,
+per the house rule (Bun and Node are runtimes, not dependencies).
+
+**`apps/desktop`** — a self-hosting desktop app: point it at a folder,
+sync it (content-hash incremental) through the pipeline, watch the DAG
+run LIVE over an SSE stream and browse every past run's per-node story,
+search the curated memory (superseded chains included), and chat
+grounded on it with citations. Chat degrades honestly: with no model
+configured (or a dead wire) you get grounded recall — the memories
+themselves, cited — never an invention. The whole API is one
+`@jarenjs/contract` document served over `node:http`; the UI is a
+`@jarenjs/app` document rendered by `@jarenjs/view`; storage is SQLite
+through `@jarenjs/db`.
+
+```sh
+npm run desktop            # dev (Node or Bun), http://127.0.0.1:4700
+npm run desktop:compile    # one self-contained executable → dist/tangle
+./dist/tangle --folder ~/notes
+```
+
+Cross-compile with Bun's targets, e.g.
+`bun build --compile --target=bun-windows-x64 apps/desktop/src/main.ts`
+(run `bun scripts/embed-assets.ts` first so the UI travels inside).
+
+**`apps/pages`** — the GitHub Pages site (`bun apps/pages/build.ts` →
+`apps/pages/dist`, deployed by `.github/workflows/pages.yml`). Its demo
+is not a mock: the real pipeline document executes in your browser over
+the in-memory store, and the recall you ask for afterwards is real
+ranked retrieval — the superseded record provably cannot surface.
 
 ## Where things stand
 

@@ -10,10 +10,13 @@
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "types": ["node"]
   },
   "include": [
     "packages/*/src/**/*.ts",
+    "apps/*/src/**/*.ts",
+    "apps/*/build.ts",
     "examples/**/*.ts",
     "test/**/*.ts"
   ]

@@ -10,7 +10,8 @@
     "node": ">=24"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
@@ -18,8 +19,15 @@
     "test:memory": "node --test \"test/memory/*.test.ts\"",
     "test:search": "node --test \"test/search/*.test.ts\"",
     "test:providers": "node --test \"test/providers/*.test.ts\"",
+    "test:store": "node --test \"test/store/*.test.ts\"",
+    "test:pipeline": "node --test \"test/pipeline/*.test.ts\"",
+    "test:desktop": "node --test \"test/desktop/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json",
     "skeleton": "node examples/skeleton.ts",
+    "desktop:ui": "bun build apps/desktop/src/ui/main.ts --outfile apps/desktop/public/app.js --format esm --target browser && cat node_modules/@jarenjs/charts/styles/charts.css node_modules/@jarenjs/mermaid/styles/mermaid.css node_modules/@jarenjs/md/styles/md.css > apps/desktop/public/vendor.css",
+    "desktop": "npm run desktop:ui && node apps/desktop/src/main.ts",
+    "desktop:compile": "npm run desktop:ui && bun scripts/embed-assets.ts && bun build --compile apps/desktop/src/main.ts --outfile dist/tangle; git checkout -- apps/desktop/src/assets.gen.ts",
+    "pages:build": "bun apps/pages/build.ts",
     "check": "npm run typecheck && npm test"
   },
   "devDependencies": {

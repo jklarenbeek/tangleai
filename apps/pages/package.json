@@ -1,0 +1,20 @@
+{
+  "name": "@tangleai/pages",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tangle AI website for GitHub Pages — an app document with a live in-browser run of the memory loop",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@tangleai/core": "^0.1.0",
+    "@tangleai/memory": "^0.1.0",
+    "@tangleai/pipeline": "^0.1.0",
+    "@jarenjs/app": "^0.43.1",
+    "@jarenjs/md": "^0.43.1",
+    "@jarenjs/mermaid": "^0.43.1",
+    "@jarenjs/view": "^0.43.1"
+  }
+}

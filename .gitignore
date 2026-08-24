@@ -7,3 +7,10 @@ coverage/
 !.env.example
 harness/
 test-output/
+
+# generated build artifacts
+apps/desktop/public/app.js
+dist/
+apps/desktop/public/vendor.css
+apps/pages/dist/
+.e2e/*.png

@@ -1,0 +1,27 @@
+{
+  "name": "@tangleai/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tangle AI desktop — a single self-hosting binary: chat over your folder's curated memory, watch the pipeline DAG live and historically. jarenjs suite only.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/main.ts",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@tangleai/core": "^0.1.0",
+    "@tangleai/memory": "^0.1.0",
+    "@tangleai/pipeline": "^0.1.0",
+    "@tangleai/providers": "^0.1.0",
+    "@tangleai/store": "^0.1.0",
+    "@jarenjs/ai": "^0.43.1",
+    "@jarenjs/app": "^0.43.1",
+    "@jarenjs/charts": "^0.43.1",
+    "@jarenjs/contract": "^0.43.1",
+    "@jarenjs/json": "^0.43.1",
+    "@jarenjs/md": "^0.43.1",
+    "@jarenjs/mermaid": "^0.43.1",
+    "@jarenjs/view": "^0.43.1"
+  }
+}
