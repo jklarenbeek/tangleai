@@ -100,6 +100,10 @@ ranked retrieval — the superseded record provably cannot surface.
   load-bearing ordering rules, the house style
 - [docs/PAPERS.md](docs/PAPERS.md) — the research this implements, with
   per-paper status; PDFs archived in [docs/refs/](docs/refs/)
+- [docs/workflow/](docs/workflow/README.md) — how this repo is changed and
+  proved: conventions, campaign, health pass, release — each with a
+  machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
+  the gated design for running these workflows as evolvable DAGs
 - `prompts/` — memflow's TOML prompt packs, carried as data for orders 04–07
 
 ## Provenance
