@@ -1,0 +1,30 @@
+{
+  "name": "tangleai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tangle AI — self-improving memory and retrieval for agents, built on the @jarenjs suite",
+  "author": "Joham <jklarenbeek@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "test:core": "node --test \"test/core/*.test.ts\"",
+    "test:memory": "node --test \"test/memory/*.test.ts\"",
+    "test:search": "node --test \"test/search/*.test.ts\"",
+    "test:providers": "node --test \"test/providers/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "skeleton": "node examples/skeleton.ts",
+    "check": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@jarenjs/ai": "^0.43.1",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}

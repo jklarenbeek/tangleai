@@ -1,0 +1,20 @@
+{
+  "name": "@tangleai/search",
+  "version": "0.1.0",
+  "description": "Tangle AI search — a zero-dependency SearxNG client, salvaged from the tangleai Perplexica fork",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./searxng": "./src/searxng.ts",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@tangleai/core": "^0.1.0"
+  }
+}
