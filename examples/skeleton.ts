@@ -15,9 +15,11 @@
  *
  * Two stand-ins keep it offline, both at seams where a host would inject
  * the real thing:
- *  - the embedder is a deterministic character-trigram hash (real enough
- *    that paraphrases land near each other) — swap in
- *    `createEmbeddingClient` from @tangleai/providers for real vectors
+ *  - the embedder is @jarenjs/ai's `createHashEmbedder` at the width the
+ *    pipeline measured (`createOfflineEmbedder`; a deterministic
+ *    character-trigram hash — lexical, but real enough that paraphrases
+ *    land near each other) — swap in `createEmbeddingClient` from
+ *    `@jarenjs/ai/embed` for real vectors; the seam is identical
  *  - the contradiction judge is a rule — swap in @jarenjs/ai
  *    `createStructuredOutput({ client, schema: CONTRADICTION_VERDICT_SCHEMA })`
  *    over `contradictionMessages(a, b)` for a real one
@@ -26,7 +28,7 @@
  */
 
 import { createLedger, createMemoryStorage } from '@jarenjs/ai';
-import { l2Normalize, cosineSimilarity } from '@tangleai/core/similarity';
+import { cosineSimilarity } from '@jarenjs/core/vector';
 import { toLedgerMemory, type MemoryUnit } from '@tangleai/core/schemas/memory';
 import {
   createMemoryUnitStore,
@@ -40,24 +42,17 @@ import {
   rankByEmbedding,
   type ContradictionVerdict,
 } from '@tangleai/memory';
+import { createOfflineEmbedder } from '@tangleai/pipeline';
 
 // ---------------------------------------------------------------------------
-// stand-in embedder: character trigrams hashed into 64 dims, L2-normalised
+// stand-in embedder: the suite's own hashed-trigram reference at the
+// pipeline's measured width, L2-normalised — one seam,
+// `{ embed, model, dims }`, for this and for a wire
 // ---------------------------------------------------------------------------
 
-function embed(text: string): number[] {
-  const v: number[] = new Array(64).fill(0);
-  const s = ` ${text.toLowerCase()} `;
-  for (let i = 0; i < s.length - 2; i++) {
-    let h = 2166136261;
-    for (let j = i; j < i + 3; j++) {
-      h ^= s.charCodeAt(j);
-      h = Math.imul(h, 16777619);
-    }
-    v[(h >>> 0) % 64] += 1;
-  }
-  return l2Normalize(v);
-}
+const embedder = createOfflineEmbedder();
+const embeddedBy = { model: embedder.model, dims: embedder.dims };
+const embed = async (text: string): Promise<number[]> => Array.from((await embedder.embed([text]))[0]);
 
 const now = (): string => new Date().toISOString();
 
@@ -75,7 +70,10 @@ const observations = [
 ];
 
 const store = createMemoryUnitStore();
-const candidates = observations.map((o) => createMemoryUnit({ ...o, embedding: embed(o.text), confidence: 0.5 }));
+const vectors = await embedder.embed(observations.map((o) => o.text));
+const candidates = observations.map((o, i) => createMemoryUnit({
+  ...o, embedding: Array.from(vectors[i]), embeddedBy, confidence: 0.5,
+}));
 
 // ---------------------------------------------------------------------------
 // 2. novelty gate — near-verbatim repeats only; a contradiction is similar
@@ -135,7 +133,7 @@ if (gateMemory) {
 // ---------------------------------------------------------------------------
 
 const question = 'what is the current api rate limit?';
-const ranked = rankByEmbedding(await store.list(), embed(question), { k: 3 });
+const ranked = rankByEmbedding(await store.list(), await embed(question), { k: 3, identity: embeddedBy });
 console.log(`\nrecall for: "${question}"`);
 for (const { unit, score } of ranked) {
   console.log(`  ${score.toFixed(3)}  [${unit.kind}] ${unit.text}  (evidence: ${unit.evidence.slice(0, 48)})`);
@@ -145,23 +143,29 @@ if (best) console.log(`answer (grounded): ${best.text} — per ${best.evidence}`
 
 // ---------------------------------------------------------------------------
 // 7. mirror the LIVE curated memories into an unmodified @jarenjs/ai
-//    ledger, where a plain jarenjs agent recalls them by tag
+//    ledger, where a plain jarenjs agent recalls them by tag — and, since
+//    the vectors travel with their identity, by meaning through the same
+//    embedder seam
 // ---------------------------------------------------------------------------
 
-const ledger = createLedger({ storage: createMemoryStorage(), now });
+const ledger = createLedger({ storage: createMemoryStorage(), now, embedder });
 let mirrored = 0;
 for (const unit of await store.list()) {
   if (unit.supersededBy) continue; // superseded records are audit trail, not knowledge
-  const outcome = await ledger.addMemory(toLedgerMemory(unit)) as { error?: string };
-  if (outcome.error === undefined) mirrored++;
+  const outcome = await ledger.addMemory(toLedgerMemory(unit));
+  if (!('error' in outcome)) mirrored++;
 }
 console.log(`\nledger mirror: ${mirrored} live memories admitted to a @jarenjs/ai ledger`);
 const fromLedger = await ledger.recall({ tags: ['api'], limit: 5 });
 if (Array.isArray(fromLedger)) {
   for (const memory of fromLedger) console.log(`  ledger recall [api]: ${memory.text}`);
 }
+const byMeaning = await ledger.recall({ near: question, limit: 1 });
+if (!Array.isArray(byMeaning) && !('error' in byMeaning)) {
+  console.log(`  ledger recall near "${question}": ${byMeaning.memories[0]?.text} (${byMeaning.scores[0]?.toFixed(3)}, skipped ${byMeaning.skipped})`);
+}
 
-console.log(`\nwhy the stages fired (trigram cosine): repeat=${
-  cosineSimilarity(embed(observations[0].text), embed(observations[1].text)).toFixed(3)} paraphrase=${
-  cosineSimilarity(embed(observations[0].text), embed(observations[2].text)).toFixed(3)} contradiction=${
-  cosineSimilarity(embed(observations[4].text), embed(observations[5].text)).toFixed(3)}`);
+console.log(`\nwhy the stages fired (${embedder.model} cosine): repeat=${
+  cosineSimilarity(vectors[0], vectors[1]).toFixed(3)} paraphrase=${
+  cosineSimilarity(vectors[0], vectors[2]).toFixed(3)} contradiction=${
+  cosineSimilarity(vectors[4], vectors[5]).toFixed(3)}`);

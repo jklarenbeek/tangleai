@@ -35,12 +35,18 @@ async function runOver(store: MemoryStore): Promise<{ report: any, records: DagN
   const records: DagNodeRecord[] = [];
   const pipeline = createPipeline({ store, now });
   const report = await pipeline.run(OBSERVATIONS, { onNode: (r) => records.push(r) });
+  // every stored vector carries the identity of the embedder that wrote it
+  for (const unit of await store.list()) {
+    assert.deepEqual(unit.embeddedBy, { model: 'hash-trigram-256', dims: 256 });
+    assert.equal(unit.embedding?.length, 256);
+  }
   return { report, records };
 }
 
 function assertStory(report: any): void {
   assert.equal(report.observations, 5);
   assert.equal(report.embedded, 5, 'all observations arrived without vectors');
+  assert.equal(report.model, 'hash-trigram-256', "the suite's reference embedder is the offline default");
   assert.equal(report.novelty.filtered, 1, 'the near-verbatim repeat is gated');
   assert.equal(report.novelty.admitted, 4);
   assert.equal(report.contradiction.contradictions, 1, 'the rate-limit conflict is caught');
@@ -79,7 +85,7 @@ describe('createPipeline', () => {
     const store = createMemoryUnitStore();
     const pipeline = createPipeline({
       store,
-      embedder: { model: 'broken', embed: async () => { throw new Error('wire down'); } },
+      embedder: { model: 'broken', dims: undefined, embed: async () => { throw new Error('wire down'); } },
     });
     await assert.rejects(
       () => pipeline.run(OBSERVATIONS),

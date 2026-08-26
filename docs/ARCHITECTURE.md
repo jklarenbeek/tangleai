@@ -5,30 +5,35 @@ foundational layer. memflow proved the designs and died of its own weight —
 a bespoke workflow engine, a Zod type system, LangChain plumbing and a
 Memgraph dependency it carried everywhere. Every one of those has a jarenjs
 replacement that is smaller, tested, and already shipped; Tangle keeps only
-what jarenjs does not do: memory policies, providers, search, and (to come)
-the evolution loops. See [BOUNDARY.md](BOUNDARY.md) for the rule that keeps
+what jarenjs does not do: memory policies, search, persistence, the apps,
+and (to come) the evolution loops. See [BOUNDARY.md](BOUNDARY.md) for the rule that keeps
 it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 
 ## Packages
 
 ```
-@tangleai/core        errors (TA-coded) · similarity strategies · k-means
-                      (injected RNG) · token heuristics · memory-unit schema
-                      (JSON Schema, superset of the jarenjs ledger memory)
+@tangleai/core        errors (TA-coded) · k-means (injected RNG) · token
+                      heuristics · memory-unit schema (JSON Schema, superset
+                      of the jarenjs ledger memory; a vector always carries
+                      its `embeddedBy` identity)
 @tangleai/memory      the policy layer, over an injected 4-method store:
                         novelty     — LightMem Tier-1 gate (batch-aware)
                         crystallize — plan/apply near-duplicate merge
                         contradiction — plan pairs / injected judge / supersede
                         outcome     — ground-truth confidence adjustment
-                        retrieval   — rankByEmbedding (the injectable ranker)
-@tangleai/providers   embedding client: Ollama native + OpenAI-compatible
-                      wires, fetch injected, coded errors, order-verified
-@tangleai/search      SearxNG JSON client (salvaged from the Perplexica fork)
+                        retrieval   — recallByEmbedding (identity-gated ranker)
+@tangleai/search      SearxNG JSON client
 ```
 
 Chat completions, structured output, tool use, the agent loop, budgets,
 compaction, the durable ledger and gated self-refinement are NOT here —
-they are `@jarenjs/ai`, consumed as a dependency.
+they are `@jarenjs/ai`, consumed as a dependency. So are embeddings: the
+wire client, the deterministic reference embedder, the probe and the
+`{ embed, model, dims }` seam are `@jarenjs/ai/embed`, and every cosine
+is `@jarenjs/core/vector`'s. Every policy above compares vectors only
+within one identity — the jarenjs rule that vectors from two models never
+meet — and `recallByEmbedding` reports what it skipped rather than
+scoring it.
 
 ## The loop (examples/skeleton.ts runs all of it offline)
 
@@ -44,10 +49,12 @@ crystallization      paraphrase merge; provenance in mergedFrom; skips supersede
    ▼
 outcome learning     confidence moves on evidenced real-world reports only
    ▼
-recall               rankByEmbedding (excludes superseded and un-embedded)
+recall               recallByEmbedding (excludes superseded, un-embedded and
+                     other-identity records — and says how many it skipped)
    │
    └─ mirror: live units → toLedgerMemory() → @jarenjs/ai createLedger,
-      where a plain jarenjs agent recalls them by tag
+      where a plain jarenjs agent recalls them by tag — and by meaning,
+      because the vector travels with its identity
 ```
 
 Two ordering rules are load-bearing and test-pinned:
@@ -112,7 +119,7 @@ Two packages and two apps sit on top of the loop, jarenjs-suite-only:
 - `apps/pages` — the GitHub Pages site; its demo executes the real pipeline
   document in the browser over the in-memory store.
 
-Chat grounding: question → embed → `rankByEmbedding` over live memories →
-citations; the model (optional, `@jarenjs/ai` `createChatClient`) answers
+Chat grounding: question → embed → `recallByEmbedding` over live memories
+(only those embedded by the same identity as the question) → citations; the model (optional, `@jarenjs/ai` `createChatClient`) answers
 ONLY from those memories, and a missing or dead provider degrades to
 grounded recall — cited memories, never invention.

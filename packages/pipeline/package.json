@@ -10,7 +10,7 @@
     "./dag": "./src/dag.ts",
     "./run": "./src/run.ts",
     "./mermaid": "./src/mermaid.ts",
-    "./embedders": "./src/embedders.ts",
+    "./standins": "./src/standins.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -20,8 +20,9 @@
   "dependencies": {
     "@tangleai/core": "^0.1.0",
     "@tangleai/memory": "^0.1.0",
-    "@jarenjs/flow": "^0.43.1",
-    "@jarenjs/json": "^0.43.1",
-    "@jarenjs/mermaid": "^0.43.1"
+    "@jarenjs/ai": "^0.46.4",
+    "@jarenjs/flow": "^0.46.4",
+    "@jarenjs/json": "^0.46.4",
+    "@jarenjs/mermaid": "^0.46.4"
   }
 }

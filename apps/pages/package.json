@@ -12,9 +12,9 @@
     "@tangleai/core": "^0.1.0",
     "@tangleai/memory": "^0.1.0",
     "@tangleai/pipeline": "^0.1.0",
-    "@jarenjs/app": "^0.43.1",
-    "@jarenjs/md": "^0.43.1",
-    "@jarenjs/mermaid": "^0.43.1",
-    "@jarenjs/view": "^0.43.1"
+    "@jarenjs/app": "^0.46.4",
+    "@jarenjs/md": "^0.46.4",
+    "@jarenjs/mermaid": "^0.46.4",
+    "@jarenjs/view": "^0.46.4"
   }
 }

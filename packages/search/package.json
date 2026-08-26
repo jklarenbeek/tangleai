@@ -1,7 +1,7 @@
 {
   "name": "@tangleai/search",
   "version": "0.1.0",
-  "description": "Tangle AI search — a zero-dependency SearxNG client, salvaged from the tangleai Perplexica fork",
+  "description": "Tangle AI search — a zero-dependency SearxNG client.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",

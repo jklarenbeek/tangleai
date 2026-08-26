@@ -3,9 +3,15 @@
  *
  * `createPipeline` binds the DAG's named task handlers to injected
  * seams — the store (any MemoryStore: in-memory for tests and the pages
- * demo, SQLite in the desktop app), an embedder, a contradiction judge,
+ * demo, SQLite in the desktop app), an embedder (the @jarenjs/ai seam:
+ * `{ embed, model, dims }` — `createEmbeddingClient` for a wire,
+ * `createHashEmbedder` as the offline default), a contradiction judge,
  * a clock, and the tuned thresholds (salvaged memflow defaults). The
  * document stays pure JSON; everything replaceable arrives here.
+ *
+ * Every vector the embed node writes carries its identity
+ * (`embeddedBy: { model, dims }`), the jarenjs rule that lets every
+ * later policy refuse to compare vectors from two models.
  *
  * `run()` returns a compact report; the units themselves live in the
  * store, not in the return value. Per-node timing/status records stream
@@ -13,6 +19,7 @@
  */
 
 import { compileDag } from '@jarenjs/flow';
+import type { Embedder } from '@jarenjs/ai/embed';
 import {
   createMemoryUnit,
   noveltyGate,
@@ -25,7 +32,7 @@ import {
 } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
-import { type Embedder, type Judge, createTrigramEmbedder, numericContrastJudge } from './embedders.ts';
+import { type Judge, createOfflineEmbedder, numericContrastJudge } from './standins.ts';
 import { PIPELINE_DAG } from './dag.ts';
 
 export interface PipelineThresholds {
@@ -76,7 +83,7 @@ export const DEFAULT_THRESHOLDS: Required<PipelineThresholds> = {
 
 export function createPipeline(options: PipelineOptions): Pipeline {
   const store = options.store;
-  const embedder = options.embedder ?? createTrigramEmbedder();
+  const embedder = options.embedder ?? createOfflineEmbedder();
   const judge = options.judge ?? numericContrastJudge();
   const now = options.now ?? ((): string => new Date().toISOString());
   const thresholds = { ...DEFAULT_THRESHOLDS, ...options.thresholds };
@@ -88,12 +95,16 @@ export function createPipeline(options: PipelineOptions): Pipeline {
       const vectors = missing.length > 0
         ? await embedder.embed(missing.map((o) => o.text), { signal })
         : [];
+      // the identity: the embedder's settled width, or the reply's
+      const dims = embedder.dims ?? vectors[0]?.length;
+      const embeddedBy = dims === undefined ? undefined : { model: embedder.model, dims };
       let next = 0;
-      const units = observations.map((o) => createMemoryUnit({
-        ...o,
-        embedding: o.embedding ?? vectors[next++],
-        confidence: o.confidence ?? 0.5,
-      }));
+      const units = observations.map((o) => {
+        if (o.embedding !== undefined) return createMemoryUnit({ ...o, confidence: o.confidence ?? 0.5 });
+        // the seam answers Float32Array; the record stores plain numbers
+        const vector = Array.from(vectors[next++]);
+        return createMemoryUnit({ ...o, embedding: vector, embeddedBy, confidence: o.confidence ?? 0.5 });
+      });
       return { units, embedded: missing.length, model: embedder.model };
     },
 

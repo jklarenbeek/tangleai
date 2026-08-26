@@ -4,16 +4,6 @@ Self-improving memory and retrieval for agents, built on the
 [jarenjs](https://github.com/jklarenbeek/jarenjs) suite as the foundational
 layer.
 
-Tangle is the second life of two earlier projects: **memflow** (a
-self-improving RAG / lifelong-memory workflow engine that proved the designs
-and sank under its own infrastructure) and the original **tangleai**
-(a Perplexica fork, from which the SearxNG search layer survives). The
-rebuild keeps the ideas, replaces the plumbing: workflow engine → 
-`@jarenjs/flow`, Zod → `@jarenjs/validate`, LangChain → `@jarenjs/ai`
-seams, and every policy now lands with a test — and, per the campaign
-rule, no self-evolving capability ships before the instrument that can
-call it an improvement.
-
 The codebase is **TypeScript-only with no build step**: Node 24's native
 type stripping runs `.ts` directly (tests and workspace packages included),
 and `tsc --noEmit` under `strict` is the type gate. That inversion of the
@@ -25,7 +15,7 @@ of jarenjs's published types under a strict TS consumer; findings live in
 
 ```sh
 npm install
-npm run check      # strict typecheck + 91 tests, no network
+npm run check      # strict typecheck + 84 tests, no network
 npm run skeleton   # the whole loop, end to end, offline
 npm run desktop    # the desktop app: chat over a folder's curated memory
 ```
@@ -42,21 +32,33 @@ contradiction: judged 2 similar pairs, resolved 1
 crystallize: examined 5, merged 1
 outcome: "Deploys must run the full gate before shipping" boosted to confidence 0.65
 recall for: "what is the current api rate limit?"
-  0.676  [fact] The API rate limit is 500 requests per minute  (evidence: gateway config v2)
+  0.594  [fact] The API rate limit is 500 requests per minute  (evidence: gateway config v2)
 answer (grounded): The API rate limit is 500 requests per minute — per gateway config v2
 ledger mirror: 3 live memories admitted to a @jarenjs/ai ledger
+  ledger recall near "what is the current api rate limit?": The API rate limit is 500 requests per minute (0.594, skipped 0)
 ```
+
+The vectors travel with their identity (`embeddedBy: { model, dims }`),
+which is what lets the mirrored ledger rank them by meaning through the
+same `@jarenjs/ai` embedder seam that wrote them — and what lets every
+Tangle policy refuse to compare vectors from two models.
 
 ## Packages
 
 | package | what it is |
 |---|---|
-| `@tangleai/core` | coded errors, similarity strategies, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory) |
-| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `rankByEmbedding` |
-| `@tangleai/providers` | embedding client for Ollama-native and OpenAI-compatible wires (chat stays on `@jarenjs/ai`) |
+| `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
+| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `recallByEmbedding` (identity-gated, skip-reporting) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
 | `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite via `@jarenjs/db` (node:sqlite under Node, bun:sqlite in the compiled binary — the driver is picked at runtime), plus the run/event log the DAG surface reads |
-| `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with the offline trigram embedder and the rule judge as injectable stand-ins |
+| `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@jarenjs/ai`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
+
+Embeddings are not a Tangle package any more: the wire client
+(`createEmbeddingClient`, the same OpenAI-compatible provider family the
+chat client speaks), the deterministic reference (`createHashEmbedder`),
+the probe and the `{ embed, model, dims }` seam are `@jarenjs/ai/embed`,
+and the kernels are `@jarenjs/core/vector`. Tangle brings the policies
+and the configuration.
 
 ## The apps
 
@@ -105,10 +107,3 @@ ranked retrieval — the superseded record provably cannot surface.
   machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
   the gated design for running these workflows as evolvable DAGs
 - `prompts/` — memflow's TOML prompt packs, carried as data for orders 04–07
-
-## Provenance
-
-memflow (private prototype, 2026) supplied the memory-policy designs and the
-paper corpus. The original tangleai was a fork of
-[Perplexica](https://github.com/ItzCrazyKns/Perplexica) (MIT); the SearxNG
-client here descends from that code. License: MIT.

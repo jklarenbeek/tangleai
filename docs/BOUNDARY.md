@@ -26,10 +26,10 @@ pipelines, servers, UI — is Tangle's.
 | Concern | @jarenjs/ai side (contract) | Tangle side (policy/infra) |
 |---|---|---|
 | chat completions | `createChatClient` (OpenAI-compatible wire, retry, streaming) | configuration only |
-| embeddings | *(none, deliberately)* | `@tangleai/providers` `createEmbeddingClient` (Ollama + OpenAI wires) |
-| durable memory | ledger: 4 kinds, evidence-mandatory, 4-method storage seam | `@tangleai/memory` store of full units (vectors, confidence, supersession) |
+| embeddings | `@jarenjs/ai/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (the OpenAI-compatible `/embeddings` wire over the chat client's provider set, replies reassembled by index), `createHashEmbedder` (deterministic reference), `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration (the desktop's embed setting), and the measured WIDTH of the offline default (`createOfflineEmbedder`, 256 — see `packages/pipeline/src/standins.ts`) |
+| durable memory | ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
-| retrieval ranking | ledger recall = tag + recency; a `where` needs the injected `compileQuery` | `rankByEmbedding` — the injectable ranker a host brings |
+| retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
 | LLM judgment | `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
 | self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (TODO 05/06) |
 | orchestration | `@jarenjs/flow` FSM/DAG compile + durable sessions | future: GMPL patterns as flow documents (TODO 07) |
@@ -39,12 +39,17 @@ pipelines, servers, UI — is Tangle's.
 ## The one load-bearing contract
 
 `toLedgerMemory()` in `@tangleai/core/schemas/memory` projects a Tangle memory
-unit onto the five fields a jarenjs ledger memory holds (`id`, `text`,
-`evidence`, `tags`, `at`). Tangle's schema is a strict superset under the same
-field names, evidence stays mandatory, and `test/memory/ledger-mirror.test.ts`
-pins that the projection is admissible to an UNMODIFIED `createLedger` and that
-the ledger's own field-stripping agrees with the projection. If that test
-breaks, the two projects have drifted at the seam that matters most.
+unit onto what a jarenjs ledger memory holds: the five fields (`id`, `text`,
+`evidence`, `tags`, `at`) and, when present, the embedding pair (`embedding`
++ `embeddedBy`). Tangle's schema is a strict superset under the same field
+names, evidence stays mandatory, the pair is both-or-neither on both sides,
+and `test/memory/ledger-mirror.test.ts` pins that the projection is
+admissible to an UNMODIFIED `createLedger`, recallable there by tag AND by
+meaning through the same embedder, stored verbatim — and that a full Tangle
+unit is REFUSED (since 0.44 the ledger refuses unknown members rather than
+dropping them, so the projection is the only door). The record types are
+pinned to each other at compile time too. If that test breaks, the two
+projects have drifted at the seam that matters most.
 
 ## Changing @jarenjs/ai
 
@@ -57,12 +62,21 @@ Only from concrete friction, never speculatively. The loop:
 3. Land it in jarenjs on its own merits (house discipline applies: measurement
    first, README argument, deps test). Tangle then deletes its workaround.
 
-The first candidate is already visible: an injectable **ranker** seam on ledger
-recall, which jarenjs's ROADMAP wants for its own reasons and
-`rankByEmbedding` already implements on this side.
+It has happened once. The first candidate this document named — an
+injectable **ranker** seam on ledger recall — landed in jarenjs's vector
+campaign (v0.44–v0.46, 2026-08-25), together with the embed wire, the
+deterministic reference embedder, the vector kernels, the identity rule and
+a vector column in `@jarenjs/db`. Tangle absorbed it on 2026-08-26: the
+`@tangleai/providers` package, `@tangleai/core/similarity` and the pipeline's
+own trigram embedder were retired against the released packages; what
+stayed on this side is the policies, the identity-gated `recallByEmbedding`
+over Tangle's own units, and the measured width of the offline embedder.
 
 ## What must never migrate down
 
-Memgraph/graph drivers, embedding provider wires, SearxNG, TOML prompt packs,
-schedulers, HTTP servers, desktop shells, and any policy whose justification is
-a paper rather than a measurement jarenjs itself publishes.
+Memgraph/graph drivers, embedding wires that are not OpenAI-compatible
+(Tangle's one such wire, Ollama's native `/api/embed`, was retired rather than
+migrated — Ollama speaks the OpenAI wire the suite already owns), SearxNG,
+TOML prompt packs, schedulers, HTTP servers, desktop shells, and any policy
+whose justification is a paper rather than a measurement jarenjs itself
+publishes.

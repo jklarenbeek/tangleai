@@ -2,8 +2,11 @@
  * Chat, grounded on the curated memory.
  *
  * Every question is embedded, ranked against the live memory
- * (`rankByEmbedding` — superseded records can't surface), and the top
- * hits become both the model's context and the visible citations. The
+ * (`recallByEmbedding` — superseded records can't surface, and only
+ * records embedded by the SAME identity as the question are ranked; a
+ * folder synced under another embedder is skipped, never scored), and
+ * the top hits become both the model's context and the visible
+ * citations. The
  * model is @jarenjs/ai's `createChatClient` when the user configured
  * one; when none is configured OR the wire fails, the answer degrades
  * to grounded recall — the memories themselves, cited, with an honest
@@ -13,7 +16,7 @@
 import { createChatClient } from '@jarenjs/ai';
 import { hashContent } from '@jarenjs/core/string';
 import { excerpt } from '@jarenjs/core/chunk';
-import { rankByEmbedding, type MemoryStore } from '@tangleai/memory';
+import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { TangleDb } from '@tangleai/store';
 
@@ -104,7 +107,8 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       let ranked: Array<{ unit: MemoryUnit, score: number }> = [];
       try {
         const [vector] = await embedder.embed([text]);
-        ranked = rankByEmbedding(await memoryStore.list(), vector, { k: recallK });
+        const identity = { model: embedder.model, dims: embedder.dims ?? vector.length };
+        ranked = recallByEmbedding(await memoryStore.list(), vector, { k: recallK, identity }).ranked;
       } catch {
         ranked = []; // a dead embedding wire degrades recall, never chat
       }

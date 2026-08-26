@@ -7,6 +7,7 @@ import {
   MEMORY_RELATION_SCHEMA,
   OUTCOME_REPORT_SCHEMA,
   toLedgerMemory,
+  sameEmbeddedBy,
   type JsonSchema,
   type MemoryUnit,
 } from '@tangleai/core/schemas/memory';
@@ -43,6 +44,7 @@ describe('MEMORY_UNIT_SCHEMA', () => {
   it('accepts the full optional surface', () => {
     assert.ok(check(unit({
       embedding: [0.1, 0.2],
+      embeddedBy: { model: 'hash-trigram-2', dims: 2 },
       confidence: 0.8,
       supersededBy: 'm-2',
       supersededAt: AT,
@@ -63,6 +65,22 @@ describe('MEMORY_UNIT_SCHEMA', () => {
   it('rejects a junk timestamp — recency sorts these strings', () => {
     assert.ok(!check(unit({ at: 'yesterday-ish' })).valid);
   });
+  it('embedding and embeddedBy travel together — the jarenjs ledger rule', () => {
+    assert.ok(!check(unit({ embedding: [0.1] })).valid, 'a vector without its identity');
+    assert.ok(!check(unit({ embeddedBy: { model: 'm', dims: 1 } })).valid, 'an identity without its vector');
+    assert.ok(!check(unit({ embedding: [], embeddedBy: { model: 'm', dims: 1 } })).valid, 'an empty vector');
+    assert.ok(!check(unit({ embedding: [0.1], embeddedBy: { model: 'm' } as unknown as MemoryUnit['embeddedBy'] })).valid, 'an identity without a width');
+  });
+});
+
+describe('sameEmbeddedBy', () => {
+  it('is model AND width, and two absences are not the same space', () => {
+    assert.ok(sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'a', dims: 2 }));
+    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'a', dims: 3 }));
+    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'b', dims: 2 }));
+    assert.ok(!sameEmbeddedBy(undefined, undefined));
+    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, undefined));
+  });
 });
 
 describe('OUTCOME_REPORT_SCHEMA', () => {
@@ -78,10 +96,17 @@ describe('OUTCOME_REPORT_SCHEMA', () => {
 });
 
 describe('toLedgerMemory', () => {
-  it('projects exactly the five jarenjs ledger fields', () => {
-    const projected = toLedgerMemory(unit({ embedding: [1], confidence: 0.9 }));
+  it('projects the five jarenjs ledger fields and nothing tangle-only', () => {
+    const projected = toLedgerMemory(unit({ confidence: 0.9, mergedFrom: ['m-0'] }));
     assert.deepEqual(projected, {
       id: 'm-1', text: 'the sky is blue', evidence: 'observed at noon', tags: ['sky'], at: AT,
+    });
+  });
+  it('carries the embedding pair across, so the ledger can recall by meaning', () => {
+    const projected = toLedgerMemory(unit({ embedding: [1], embeddedBy: { model: 'm', dims: 1 }, confidence: 0.9 }));
+    assert.deepEqual(projected, {
+      id: 'm-1', text: 'the sky is blue', evidence: 'observed at noon', tags: ['sky'], at: AT,
+      embedding: [1], embeddedBy: { model: 'm', dims: 1 },
     });
   });
 });

@@ -1,14 +1,17 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { rankByEmbedding } from '@tangleai/memory';
+import { rankByEmbedding, recallByEmbedding } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
 const AT = '2026-08-24T12:00:00Z';
 
 function unit(id: string, embedding?: number[], extra: Partial<MemoryUnit> = {}): MemoryUnit {
   const u: MemoryUnit = { id, text: `text ${id}`, evidence: 'e', tags: [], at: AT, kind: 'fact', ...extra };
-  if (embedding) u.embedding = embedding;
+  if (embedding) {
+    u.embedding = embedding;
+    u.embeddedBy = extra.embeddedBy ?? { model: 'test', dims: embedding.length };
+  }
   return u;
 }
 
@@ -32,5 +35,24 @@ describe('rankByEmbedding', () => {
   it('applies minScore', () => {
     const units = [unit('orthogonal', [0, 1]), unit('aligned', [1, 0])];
     assert.equal(rankByEmbedding(units, [1, 0], { minScore: 0.5 }).length, 1);
+  });
+});
+
+describe('recallByEmbedding', () => {
+  it('ranks only records embedded by the query identity and reports the rest as skipped', () => {
+    const units = [
+      unit('mine', [1, 0]),
+      unit('theirs', [1, 0], { embeddedBy: { model: 'other', dims: 2 } }),
+      unit('bare'),
+      unit('gone', [1, 0], { supersededBy: 'mine' }),
+    ];
+    const { ranked, skipped } = recallByEmbedding(units, [1, 0], { identity: { model: 'test', dims: 2 } });
+    assert.deepEqual(ranked.map((r) => r.unit.id), ['mine']);
+    assert.equal(skipped, 2, 'the other identity and the bare record — never the superseded one');
+  });
+
+  it('takes the Float32Array an embedder answers as the query', () => {
+    const { ranked } = recallByEmbedding([unit('a', [0, 1]), unit('b', [1, 0])], new Float32Array([1, 0]));
+    assert.equal(ranked[0].unit.id, 'b');
   });
 });

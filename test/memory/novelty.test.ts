@@ -6,8 +6,11 @@ import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
 const AT = '2026-08-24T12:00:00Z';
 
-function unit(id: string, embedding: number[]): MemoryUnit {
-  return { id, text: `text ${id}`, evidence: 'test', tags: [], at: AT, kind: 'fact', embedding };
+function unit(id: string, embedding: number[], model = 'test'): MemoryUnit {
+  return {
+    id, text: `text ${id}`, evidence: 'test', tags: [], at: AT, kind: 'fact',
+    embedding, embeddedBy: { model, dims: embedding.length },
+  };
 }
 
 describe('noveltyGate', () => {
@@ -31,6 +34,13 @@ describe('noveltyGate', () => {
     const bare: MemoryUnit = { id: 'c1', text: 't', evidence: 'e', tags: [], at: AT, kind: 'fact' };
     const { novel, filtered } = noveltyGate([bare], [unit('e1', [1, 0])]);
     assert.equal(novel.length, 1);
+    assert.equal(filtered.length, 0);
+  });
+
+  it('never measures across embedders — another identity is unmeasurable, so novel', () => {
+    const existing = [unit('e1', [1, 0, 0], 'model-a')];
+    const { novel, filtered } = noveltyGate([unit('c1', [1, 0, 0], 'model-b')], existing);
+    assert.deepEqual(novel.map((u) => u.id), ['c1']);
     assert.equal(filtered.length, 0);
   });
 

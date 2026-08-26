@@ -16,7 +16,10 @@ const NOW = '2026-08-24T13:00:00Z';
 const now = () => NOW;
 
 function unit(id: string, text: string, at: string, embedding: number[]): MemoryUnit {
-  return { id, text, evidence: `evidence for ${id}`, tags: [id], at, kind: 'fact', embedding };
+  return {
+    id, text, evidence: `evidence for ${id}`, tags: [id], at, kind: 'fact',
+    embedding, embeddedBy: { model: 'test', dims: embedding.length },
+  };
 }
 
 describe('planContradictionPairs', () => {

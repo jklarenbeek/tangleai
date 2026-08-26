@@ -29,6 +29,10 @@ const MEMORY_SUMMARY = {
     supersededReason: { type: 'string' },
     mergedFrom: { type: 'array', items: { type: 'string' } },
     hasEmbedding: { type: 'boolean' },
+    embeddedBy: {
+      type: 'object',
+      properties: { model: { type: 'string' }, dims: { type: 'integer' } },
+    },
   },
 } as const;
 
@@ -74,7 +78,7 @@ export const SETTINGS_SCHEMA = {
     embed: {
       type: 'object',
       properties: {
-        provider: { enum: ['builtin', 'ollama', 'openai'] },
+        provider: { enum: ['builtin', 'ollama', 'lmstudio', 'openrouter', 'custom'] },
         baseUrl: { type: ['string', 'null'] },
         model: { type: ['string', 'null'] },
         apiKey: { type: ['string', 'null'] },
@@ -256,6 +260,22 @@ export const DESKTOP_CONTRACT = {
         },
       },
       http: { method: 'GET', path: '/api/provider/probe' },
+    },
+    'embed.probe': {
+      kind: 'read',
+      input: { type: 'object', properties: {} },
+      output: {
+        type: 'object',
+        required: ['ok'],
+        properties: {
+          ok: { type: 'boolean' },
+          model: { type: 'string' },
+          dims: { type: 'integer' },
+          status: {},
+          error: { type: 'string' },
+        },
+      },
+      http: { method: 'GET', path: '/api/embed/probe' },
     },
   },
 } as const;

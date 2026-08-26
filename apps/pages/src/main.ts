@@ -2,18 +2,18 @@
  * The Tangle AI pages site — one @jarenjs/app document, and a live
  * demo that is NOT a mock: the real @tangleai/pipeline (the same
  * jaren-dag document the desktop executes) runs here in the browser
- * over the in-memory store with the built-in trigram embedder — zero
- * network, zero backend. The diagram is projected from the executable
+ * over the in-memory store with @jarenjs/ai's built-in hash embedder —
+ * zero network, zero backend. The diagram is projected from the executable
  * document; the numbers on screen are a real run's numbers.
  */
 
 import { createApp } from '@jarenjs/app';
 import { renderMermaid } from '@jarenjs/mermaid';
-import { createMemoryUnitStore, rankByEmbedding, type MemoryStore } from '@tangleai/memory';
+import { createMemoryUnitStore, recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import {
+  createOfflineEmbedder,
   createPipeline,
   dagToMermaid,
-  trigramEmbedding,
   PIPELINE_NODES,
   type DagNodeRecord,
 } from '@tangleai/pipeline';
@@ -32,6 +32,7 @@ const OBSERVATIONS = [
 ];
 
 let store: MemoryStore = createMemoryUnitStore();
+const embedder = createOfflineEmbedder();
 
 // ---------------------------------------------------------------------------
 // vnode helpers
@@ -97,7 +98,7 @@ function view(state: any): any {
 
     ['section', { class: 'panel demo' },
       ['h2', {}, 'Run it. Here. Now.'],
-      ['p', {}, 'This button executes the real pipeline in your browser — in-memory store, deterministic trigram embedder, no network. Six observations go in: a near-verbatim repeat, a paraphrase pair, and two rate limits that cannot both be true.'],
+      ['p', {}, 'This button executes the real pipeline in your browser — in-memory store, @jarenjs/ai\'s deterministic hash embedder, no network. Six observations go in: a near-verbatim repeat, a paraphrase pair, and two rate limits that cannot both be true.'],
       ['button', { class: 'button', disabled: state.running ? true : null, on: { click: 'run' } },
         state.ran ? 'run it again' : 'run the loop'],
       nodeStrip(state.records),
@@ -174,7 +175,7 @@ const app = createApp({
   effects: {
     pipeline: (_props: any, dispatch: (a: string, p?: any) => void): void => {
       store = createMemoryUnitStore(); // each run starts from an empty loom
-      const pipeline = createPipeline({ store });
+      const pipeline = createPipeline({ store, embedder });
       void pipeline.run(OBSERVATIONS, {
         onNode: (record) => dispatch('record', record),
       }).then((report) => dispatch('run/done', report));
@@ -183,8 +184,9 @@ const app = createApp({
       const question = typeof props.question === 'string' && props.question !== ''
         ? props.question
         : 'what is the current api rate limit?';
-      void store.list().then((units) => {
-        const ranked = rankByEmbedding(units, trigramEmbedding(question), { k: 3 });
+      void Promise.all([store.list(), embedder.embed([question])]).then(([units, [vector]]) => {
+        const identity = { model: embedder.model, dims: embedder.dims };
+        const { ranked } = recallByEmbedding(units, vector, { k: 3, identity });
         dispatch('ask/done', {
           results: ranked.map(({ unit, score }) => ({
             score: score.toFixed(3),

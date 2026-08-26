@@ -11,7 +11,7 @@ const now = () => LATER;
 function unit(id: string, embedding: number[], extra: Partial<MemoryUnit> = {}): MemoryUnit {
   return {
     id, text: `text ${id}`, evidence: `evidence ${id}`, tags: [id], at: AT,
-    kind: 'fact', embedding, ...extra,
+    kind: 'fact', embedding, embeddedBy: { model: 'test', dims: embedding.length }, ...extra,
   };
 }
 
@@ -33,6 +33,14 @@ describe('planCrystallization', () => {
       unit('c', [0.9998, 0.0002], { confidence: 0.7 }),
     ]);
     assert.equal(plan.merges.length, 1);
+  });
+
+  it('never merges across embedders', () => {
+    const plan = planCrystallization([
+      unit('a', [1, 0]),
+      unit('b', [1, 0], { embeddedBy: { model: 'other', dims: 2 } }),
+    ]);
+    assert.deepEqual(plan.merges, []);
   });
 
   it('skips superseded records and records without embeddings', () => {

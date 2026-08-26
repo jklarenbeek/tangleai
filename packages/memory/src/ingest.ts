@@ -10,7 +10,7 @@
  */
 
 import { hashContent } from '@jarenjs/core/string';
-import type { MemoryKind, MemoryUnit } from '@tangleai/core/schemas/memory';
+import type { EmbeddedBy, MemoryKind, MemoryUnit } from '@tangleai/core/schemas/memory';
 
 export function memoryId(text: string): string {
   return `m-${hashContent(text)}-${text.length}`;
@@ -26,7 +26,9 @@ export interface MemoryUnitInput {
   at: string;
   tags?: string[];
   kind?: MemoryKind;
+  /** The vector and its identity travel together, or not at all. */
   embedding?: number[];
+  embeddedBy?: EmbeddedBy;
   confidence?: number;
 }
 
@@ -39,7 +41,10 @@ export function createMemoryUnit(input: MemoryUnitInput): MemoryUnit {
     at: input.at,
     kind: input.kind ?? 'fact',
   };
-  if (input.embedding !== undefined) unit.embedding = input.embedding;
+  if (input.embedding !== undefined && input.embeddedBy !== undefined) {
+    unit.embedding = input.embedding;
+    unit.embeddedBy = { ...input.embeddedBy };
+  }
   if (input.confidence !== undefined) unit.confidence = input.confidence;
   return unit;
 }

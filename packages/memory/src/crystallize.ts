@@ -11,6 +11,9 @@
  *  - the higher-confidence record survives; ties keep the first
  *  - a record participates in at most one merge per pass — a chain
  *    A~B~C collapses over successive passes, not in one ambiguous step
+ *  - only records embedded by the same identity are compared (the
+ *    jarenjs rule: vectors from two models never rank against each
+ *    other); the metric is `@jarenjs/core/vector`'s cosine
  *
  * Application details that changed, deliberately:
  *  - the survivor's confidence rises by `boost` (0.05), clamped to
@@ -23,8 +26,8 @@
  *    `mergedFrom` is the tombstone
  */
 
-import { cosineSimilarity } from '@tangleai/core/similarity';
-import type { MemoryRelation, MemoryUnit } from '@tangleai/core/schemas/memory';
+import { cosineSimilarity } from '@jarenjs/core/vector';
+import { sameEmbeddedBy, type MemoryRelation, type MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from './store.ts';
 
 export const DEFAULT_CRYSTALLIZE_THRESHOLD = 0.92;
@@ -56,7 +59,7 @@ export function planCrystallization(units: MemoryUnit[], options: CrystallizeOpt
     for (let j = i + 1; j < units.length; j++) {
       const a = units[i];
       const b = units[j];
-      if (!a.embedding || !b.embedding) continue;
+      if (!sameEmbeddedBy(a.embeddedBy, b.embeddedBy)) continue;
       if (a.supersededBy || b.supersededBy) continue;
       const sim = cosineSimilarity(a.embedding, b.embedding);
       if (sim >= threshold) {

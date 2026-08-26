@@ -36,6 +36,7 @@ export const INITIAL_STATE = {
     draft: null as any,
     saved: false,
     probe: null as any,
+    embedProbe: null as any,
   },
 };
 
@@ -160,6 +161,7 @@ export const ACTIONS: Record<string, any> = {
   'settings/embed-provider': { patch: [{ op: 'replace', path: '/settings/draft/embed/provider', value: '$event.value' }] },
   'settings/embed-baseurl': { patch: [{ op: 'replace', path: '/settings/draft/embed/baseUrl', value: '$event.value' }] },
   'settings/embed-model': { patch: [{ op: 'replace', path: '/settings/draft/embed/model', value: '$event.value' }] },
+  'settings/embed-apikey': { patch: [{ op: 'replace', path: '/settings/draft/embed/apiKey', value: '$event.value' }] },
   'settings/save': {
     effects: [{ run: 'saveSettings', with: { settings: '$.settings.draft' } }],
   },
@@ -168,6 +170,7 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/settings/draft', value: '$payload' },
       { op: 'replace', path: '/settings/saved', value: true },
       { op: 'replace', path: '/settings/probe', value: null },
+      { op: 'replace', path: '/settings/embedProbe', value: null },
     ],
     effects: [invoke('status.get', {}, 'status/done', 'noop')],
   },
@@ -176,4 +179,9 @@ export const ACTIONS: Record<string, any> = {
     effects: [invoke('provider.probe', {}, 'probe/done', 'noop')],
   },
   'probe/done': { patch: [{ op: 'replace', path: '/settings/probe', value: '$payload' }] },
+  embedProbe: {
+    patch: [{ op: 'replace', path: '/settings/embedProbe', value: { pending: true } }],
+    effects: [invoke('embed.probe', {}, 'embedProbe/done', 'noop')],
+  },
+  'embedProbe/done': { patch: [{ op: 'replace', path: '/settings/embedProbe', value: '$payload' }] },
 };

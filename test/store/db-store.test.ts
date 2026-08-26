@@ -34,6 +34,7 @@ describe('createDbMemoryStore over node:sqlite', () => {
       tags: ['gate'],
       at: AT,
       embedding: [0.1, 0.2],
+      embeddedBy: { model: 'test', dims: 2 },
       confidence: 0.8,
     });
     await store.put(unit);

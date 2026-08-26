@@ -268,6 +268,7 @@ function settingsPage(state: any): any {
   const draft = state.settings.draft;
   if (draft === null) return ['section', { class: 'page' }, ['p', { class: 'hint' }, 'loading…']];
   const probe = state.settings.probe;
+  const embedProbe = state.settings.embedProbe;
   return ['section', { class: 'page settings' },
     ['h2', {}, 'Settings'],
     ['div', { class: 'group' },
@@ -283,16 +284,20 @@ function settingsPage(state: any): any {
       ['p', { class: 'hint' }, 'Optional. Without one, chat answers are grounded recall — cited memories, no generation.']],
     ['div', { class: 'group' },
       ['h3', {}, 'Embeddings'],
-      select('provider', 'settings/embed-provider', draft.embed.provider, ['builtin', 'ollama', 'openai']),
+      select('provider', 'settings/embed-provider', draft.embed.provider, ['builtin', 'ollama', 'lmstudio', 'openrouter', 'custom']),
       field('base url', 'settings/embed-baseurl', draft.embed.baseUrl, 'http://localhost:11434'),
       field('model', 'settings/embed-model', draft.embed.model, 'nomic-embed-text'),
-      ['p', { class: 'hint' }, '`builtin` is a deterministic offline trigram embedder — demo-grade, zero setup. Configure a real provider for serious recall.']],
+      field('api key', 'settings/embed-apikey', draft.embed.apiKey),
+      ['p', { class: 'hint' }, '`builtin` is @jarenjs/ai\'s deterministic hash-trigram embedder — lexical, demo-grade, zero setup. Configure a real model for semantic recall; memories synced under one embedder are only ever ranked by that embedder.']],
     ['div', { class: 'actions-row' },
       ['button', { class: 'send', on: { click: on('settings/save') } }, 'save'],
       ['button', { class: 'tab', on: { click: on('probe') } }, 'probe chat provider'],
+      ['button', { class: 'tab', on: { click: on('embedProbe') } }, 'probe embedder'],
       state.settings.saved ? ['span', { class: 'saved' }, 'saved ✓'] : null,
       probe ? ['span', { class: probe.ok ? 'saved' : 'error-inline' },
-        probe.pending ? 'probing…' : probe.ok ? `reachable — ${(probe.models ?? []).length} models` : `unreachable: ${probe.error ?? probe.status ?? ''}`] : null],
+        probe.pending ? 'probing…' : probe.ok ? `reachable — ${(probe.models ?? []).length} models` : `unreachable: ${probe.error ?? probe.status ?? ''}`] : null,
+      embedProbe ? ['span', { class: embedProbe.ok ? 'saved' : 'error-inline' },
+        embedProbe.pending ? 'probing…' : embedProbe.ok ? `embeds — ${embedProbe.model} @ ${embedProbe.dims} dims` : `cannot embed: ${embedProbe.error ?? embedProbe.status ?? ''}`] : null],
   ];
 }
 

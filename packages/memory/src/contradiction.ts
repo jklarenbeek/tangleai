@@ -24,8 +24,8 @@
  * summary, which is how the winner disappears from ranked recall.
  */
 
-import { cosineSimilarity } from '@tangleai/core/similarity';
-import type { JsonSchema, MemoryUnit } from '@tangleai/core/schemas/memory';
+import { cosineSimilarity } from '@jarenjs/core/vector';
+import { sameEmbeddedBy, type JsonSchema, type MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createMemoryUnit } from './ingest.ts';
 import type { MemoryStore } from './store.ts';
 

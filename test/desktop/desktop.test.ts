@@ -162,6 +162,39 @@ describe('tangle desktop API', () => {
     assert.equal(probe.json.ok, false);
   });
 
+  it('the embed probe answers for the built-in embedder without a network', async () => {
+    const probe = await call(desktop, 'GET', '/api/embed/probe');
+    assert.equal(probe.status, 200);
+    assert.deepEqual(probe.json, { ok: true, model: 'hash-trigram-256', dims: 256 });
+  });
+
+  it('a configured embedding wire is probed through @jarenjs/ai, and a legacy `openai` setting reads as `custom`', async () => {
+    let seen: string | null = null;
+    const scripted = async (url: any): Promise<Response> => {
+      seen = String(url);
+      return new Response(JSON.stringify({ data: [{ index: 0, embedding: [0.1, 0.2, 0.3] }] }),
+        { status: 200, headers: { 'content-type': 'application/json' } });
+    };
+    const stubbed = await createDesktop({
+      driver: nodeDriver(),
+      now,
+      fetch: scripted as any,
+      presetSettings: {
+        folder,
+        embed: { provider: 'openai' as any, baseUrl: 'http://stub.local:8000/v1', model: 'stub-embed', apiKey: 'k' },
+      },
+    });
+    try {
+      const settings = await call(stubbed, 'GET', '/api/settings');
+      assert.equal(settings.json.embed.provider, 'custom');
+      const probe = await call(stubbed, 'GET', '/api/embed/probe');
+      assert.deepEqual(probe.json, { ok: true, model: 'stub-embed', dims: 3 });
+      assert.equal(seen, 'http://stub.local:8000/v1/embeddings');
+    } finally {
+      await stubbed.close();
+    }
+  });
+
   it('chat uses a configured model through an injected fetch', async () => {
     const scripted = async (): Promise<Response> => new Response(JSON.stringify({
       choices: [{ message: { role: 'assistant', content: 'The limit is 500 rpm. [cited]' }, finish_reason: 'stop' }],

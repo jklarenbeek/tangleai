@@ -19,7 +19,7 @@
   "sideEffects": false,
   "dependencies": {
     "@tangleai/core": "^0.1.0",
-    "@jarenjs/db": "^0.43.1",
-    "@jarenjs/validate": "^0.43.1"
+    "@jarenjs/db": "^0.46.4",
+    "@jarenjs/validate": "^0.46.4"
   }
 }

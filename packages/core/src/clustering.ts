@@ -7,7 +7,24 @@
  * generator and the whole run is a pure function of its inputs.
  */
 
-import { euclideanDistance } from './similarity.ts';
+/**
+ * Squared Euclidean distance, private to this module. `@jarenjs/core/vector`
+ * is the suite's one home for vector arithmetic, but it publishes
+ * SIMILARITIES (higher-is-better, `1 / (1 + distance)` for Euclidean) and
+ * k-means++ seeding needs the squared distance itself; inverting the
+ * similarity back into a distance is a round trip nobody should have to
+ * read. Mismatched lengths answer Infinity — such a point joins no
+ * cluster rather than a wrong one.
+ */
+function squaredDistance(a: number[], b: number[]): number {
+  if (a.length !== b.length) return Infinity;
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) {
+    const d = a[i] - b[i];
+    sum += d * d;
+  }
+  return sum;
+}
 
 export interface KMeansResult {
   /** Final centroid positions. */
@@ -49,7 +66,7 @@ export function kMeans(vectors: number[][], k: number, options: KMeansOptions = 
       let minDist = Infinity;
       let minIdx = 0;
       for (let c = 0; c < effectiveK; c++) {
-        const dist = euclideanDistance(vectors[i], centroids[c]);
+        const dist = squaredDistance(vectors[i], centroids[c]);
         if (dist < minDist) {
           minDist = dist;
           minIdx = c;
@@ -90,10 +107,10 @@ function initCentroids(vectors: number[][], k: number, random: () => number): nu
     const distances = vectors.map((v) => {
       let minDist = Infinity;
       for (const cent of centroids) {
-        const d = euclideanDistance(v, cent);
+        const d = squaredDistance(v, cent);
         if (d < minDist) minDist = d;
       }
-      return minDist * minDist;
+      return minDist;
     });
 
     const totalDist = distances.reduce((a, b) => a + b, 0);

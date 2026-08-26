@@ -7,6 +7,7 @@
 import { stat } from 'node:fs/promises';
 
 import { probeProvider } from '@jarenjs/ai';
+import { probeEmbeddings } from '@jarenjs/ai/embed';
 import type { MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createPipeline, dagToMermaid, numericContrastJudge, PIPELINE_DAG, PIPELINE_NODES } from '@tangleai/pipeline';
@@ -15,7 +16,7 @@ import { asRows } from '@tangleai/store';
 
 import type { LiveHub } from './live.ts';
 import type { SettingsStore } from './settings.ts';
-import { embedderFor } from './settings.ts';
+import { embedderFor, embedWireConfigured } from './settings.ts';
 import type { ChatEngine } from './chat.ts';
 import { syncFolder } from './ingest.ts';
 
@@ -171,6 +172,28 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       return outcome.ok
         ? { ok: true, models: outcome.models ?? [] }
         : { ok: false, status: outcome.status, error: outcome.error ?? 'unreachable' };
+    },
+
+    /** Can the configured embedder embed, and at what width? The
+     * built-in answers without a network; a wire is probed with one
+     * attempt through @jarenjs/ai's `probeEmbeddings`. Never an error. */
+    'embed.probe': async () => {
+      const current = await settings.read();
+      if (!embedWireConfigured(current.embed)) {
+        const builtin = embedderFor(current);
+        return { ok: true, model: builtin.model, dims: builtin.dims };
+      }
+      const outcome = await probeEmbeddings({
+        provider: current.embed.provider,
+        baseUrl: current.embed.baseUrl ?? undefined,
+        model: current.embed.model ?? undefined,
+        apiKey: current.embed.apiKey ?? undefined,
+        fetch: seams.fetch,
+        timeoutMs: 4000,
+      });
+      return outcome.ok
+        ? { ok: true, model: outcome.model, dims: outcome.dims }
+        : { ok: false, status: outcome.status, error: outcome.error };
     },
   };
 }

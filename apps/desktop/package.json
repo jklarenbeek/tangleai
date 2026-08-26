@@ -13,15 +13,14 @@
     "@tangleai/core": "^0.1.0",
     "@tangleai/memory": "^0.1.0",
     "@tangleai/pipeline": "^0.1.0",
-    "@tangleai/providers": "^0.1.0",
     "@tangleai/store": "^0.1.0",
-    "@jarenjs/ai": "^0.43.1",
-    "@jarenjs/app": "^0.43.1",
-    "@jarenjs/charts": "^0.43.1",
-    "@jarenjs/contract": "^0.43.1",
-    "@jarenjs/json": "^0.43.1",
-    "@jarenjs/md": "^0.43.1",
-    "@jarenjs/mermaid": "^0.43.1",
-    "@jarenjs/view": "^0.43.1"
+    "@jarenjs/ai": "^0.46.4",
+    "@jarenjs/app": "^0.46.4",
+    "@jarenjs/charts": "^0.46.4",
+    "@jarenjs/contract": "^0.46.4",
+    "@jarenjs/json": "^0.46.4",
+    "@jarenjs/md": "^0.46.4",
+    "@jarenjs/mermaid": "^0.46.4",
+    "@jarenjs/view": "^0.46.4"
   }
 }

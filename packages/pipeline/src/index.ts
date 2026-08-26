@@ -10,9 +10,5 @@ export type {
   DagNodeRecord,
 } from './run.ts';
 export { dagToMermaid } from './mermaid.ts';
-export {
-  trigramEmbedding,
-  createTrigramEmbedder,
-  numericContrastJudge,
-} from './embedders.ts';
-export type { Embedder, Judge } from './embedders.ts';
+export { createOfflineEmbedder, OFFLINE_EMBEDDER_DIMS, numericContrastJudge } from './standins.ts';
+export type { Judge } from './standins.ts';

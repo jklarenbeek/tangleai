@@ -1,5 +1,5 @@
 /**
- * SearxNG JSON client — salvaged from the old tangleai (Perplexica fork)
+ * SearxNG JSON client
  * `apps/scraper/src/utils/searxng.ts`, stripped to the part that earned
  * its keep. What fell away: the LangChain `Document` wrapper, the
  * xxhash id (a URL already identifies a result), the per-result
