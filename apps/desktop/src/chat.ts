@@ -79,7 +79,7 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
   const { db, memoryStore } = options;
   const now = options.now ?? ((): string => new Date().toISOString());
   const recallK = options.recallK ?? 6;
-  const chats = db.collection('chats');
+  const chats = db.collection<ChatMessageRecord>('chats');
   let sequence = 0;
 
   async function persist(message: Omit<ChatMessageRecord, 'id'>): Promise<ChatMessageRecord> {
@@ -92,8 +92,8 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
 
   return {
     async history(limit = 200) {
-      const rows = asRows<ChatMessageRecord>(
-        await chats.execute({ $for: { c: '$[*]' }, $return: '$c' }),
+      const rows = asRows(
+        await chats.execute<ChatMessageRecord>({ $for: { c: '$[*]' }, $return: '$c' }),
       );
       rows.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
       return rows.slice(-limit);

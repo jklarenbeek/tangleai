@@ -71,10 +71,18 @@ export interface SyncOptions {
   runId?: string;
 }
 
+/** One ingested file, keyed by its folder-relative path. */
+export interface DocumentRecord {
+  path: string;
+  hash: string;
+  chunks: number;
+  ingestedAt: string;
+}
+
 export async function syncFolder(options: SyncOptions): Promise<SyncOutcome> {
   const { folder, db, pipeline } = options;
   const now = options.now ?? ((): string => new Date().toISOString());
-  const documents = db.collection('documents');
+  const documents = db.collection<DocumentRecord>('documents');
 
   const paths = await walkFolder(folder);
   const observations: MemoryUnitInput[] = [];

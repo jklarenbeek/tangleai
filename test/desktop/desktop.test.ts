@@ -165,7 +165,7 @@ describe('tangle desktop API', () => {
   it('the embed probe answers for the built-in embedder without a network', async () => {
     const probe = await call(desktop, 'GET', '/api/embed/probe');
     assert.equal(probe.status, 200);
-    assert.deepEqual(probe.json, { ok: true, model: 'hash-trigram-256', dims: 256 });
+    assert.deepEqual(probe.json, { ok: true, model: 'hash-trigram-64', dims: 64 });
   });
 
   it('a configured embedding wire is probed through @jarenjs/ai, and a legacy `openai` setting reads as `custom`', async () => {

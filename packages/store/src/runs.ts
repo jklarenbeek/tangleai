@@ -53,8 +53,8 @@ const seqKey = (n: number): string => String(n).padStart(4, '0');
 
 export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog {
   const now = options.now ?? ((): string => new Date().toISOString());
-  const runs = db.collection('runs');
-  const events = db.collection('events');
+  const runs = db.collection<RunRecord>('runs');
+  const events = db.collection<RunEvent>('events');
   let sequence = 0;
   const eventSeq = new Map<string, number>();
 
@@ -86,22 +86,22 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
     },
 
     async finishRun(runId, status, summary = null) {
-      const run = await runs.get(runId) as RunRecord | undefined;
+      const run = await runs.get(runId);
       if (run === undefined) return;
       await runs.put({ ...run, finishedAt: now(), status, summary });
       eventSeq.delete(runId);
     },
 
     async listRuns(limit = 50) {
-      const rows = asRows<RunRecord>(await runs.execute({ $for: { r: '$[*]' }, $return: '$r' }));
+      const rows = asRows(await runs.execute<RunRecord>({ $for: { r: '$[*]' }, $return: '$r' }));
       rows.sort((a, b) => (a.startedAt < b.startedAt ? 1 : a.startedAt > b.startedAt ? -1 : 0));
       return rows.slice(0, limit);
     },
 
     async getRun(id) {
-      const run = await runs.get(id) as RunRecord | undefined;
+      const run = await runs.get(id);
       if (run === undefined) return undefined;
-      const rows = asRows<RunEvent>(await events.execute({
+      const rows = asRows(await events.execute<RunEvent>({
         $for: { e: '$[*]' },
         $where: { $eq: ['$e.runId', id] },
         $return: '$e',

@@ -20,19 +20,22 @@ import {
   type MemoryUnit,
 } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from '@tangleai/memory/store';
+import type { SequenceResult } from '@jarenjs/db';
 
 import type { DbCollection } from './db.ts';
 
 const LIST_ALL = { $for: { u: '$[*]' }, $return: '$u' };
 
 /**
- * @jarenjs/db's query engine answers with sequence semantics: an array
- * for many rows, the bare value for exactly one, `undefined` for none.
- * Every Tangle row is an object, so the disambiguation is total.
+ * @jarenjs/db's `execute` answers in the engine's result shape,
+ * `SequenceResult<T>`: `undefined` for no rows, the item itself for
+ * exactly one, an array for more. Every Tangle row is an object, so
+ * the disambiguation is total (an array-valued item would not be).
  */
-export function asRows<T>(result: unknown): T[] {
+export function asRows<T>(result: SequenceResult<T>): T[] {
   if (result === undefined) return [];
-  return (Array.isArray(result) ? result : [result]) as T[];
+  const rows: T[] = [];
+  return rows.concat(result);
 }
 
 export interface DbMemoryStoreOptions {
@@ -40,7 +43,7 @@ export interface DbMemoryStoreOptions {
 }
 
 export function createDbMemoryStore(
-  collection: DbCollection,
+  collection: DbCollection<MemoryUnit>,
   options: DbMemoryStoreOptions = {},
 ): MemoryStore {
   const validator = options.validator
@@ -50,8 +53,7 @@ export function createDbMemoryStore(
 
   return {
     async get(id: string): Promise<MemoryUnit | undefined> {
-      const doc = await collection.get(id);
-      return doc === undefined ? undefined : (doc as MemoryUnit);
+      return collection.get(id);
     },
     async put(unit: MemoryUnit): Promise<void> {
       const outcome = validate(unit);
@@ -66,7 +68,7 @@ export function createDbMemoryStore(
       await collection.delete(id);
     },
     async list(): Promise<MemoryUnit[]> {
-      return asRows<MemoryUnit>(await collection.execute(LIST_ALL));
+      return asRows(await collection.execute<MemoryUnit>(LIST_ALL));
     },
   };
 }

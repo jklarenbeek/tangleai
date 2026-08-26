@@ -30,7 +30,7 @@
     "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
-    "@jarenjs/ai": "^0.46.4",
+    "@jarenjs/ai": "^0.46.5",
     "@types/node": "^24.3.0",
     "typescript": "^5.9.2"
   }

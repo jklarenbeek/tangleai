@@ -74,6 +74,8 @@ describe('tangle → jarenjs ledger mirror', () => {
       text: 'x', evidence: 'e', at: AT,
       embedding: [1, 2], embeddedBy: { model: 'test', dims: 2 }, confidence: 0.7,
     });
+    // @ts-expect-error — nor is a unit a ledger input in the TYPE: its vector
+    // pair is independently optional, the ledger's is both-or-neither
     const refused = await ledger.addMemory(unit);
     assert.ok('error' in refused, 'kind/confidence are unknown to the ledger');
     const stored = await ledger.addMemory(toLedgerMemory(unit));
@@ -83,6 +85,7 @@ describe('tangle → jarenjs ledger mirror', () => {
   it('a vector without its identity is refused by the ledger — and never leaves Tangle in the first place', async () => {
     const ledger = createLedger({ storage: createMemoryStorage(), now });
     const orphan = { ...toLedgerMemory(createMemoryUnit({ text: 'y', evidence: 'e', at: AT })), embedding: [1, 2] };
+    // @ts-expect-error — an orphan vector does not type; this pins the runtime half of the rule
     const stored = await ledger.addMemory(orphan);
     assert.ok('error' in stored, 'the ledger holds the both-or-neither rule');
     // createMemoryUnit drops a vector that arrives without embeddedBy

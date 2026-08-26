@@ -18,7 +18,7 @@ import type { LiveHub } from './live.ts';
 import type { SettingsStore } from './settings.ts';
 import { embedderFor, embedWireConfigured } from './settings.ts';
 import type { ChatEngine } from './chat.ts';
-import { syncFolder } from './ingest.ts';
+import { syncFolder, type DocumentRecord } from './ingest.ts';
 
 export interface HandlerSeams {
   db: TangleDb;
@@ -46,7 +46,8 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
     'status.get': async () => {
       const current = await settings.read();
       const all = await memoryStore.list();
-      const documents = asRows(await db.collection('documents').execute({ $for: { d: '$[*]' }, $return: '$d' }));
+      const documents = asRows(await db.collection<DocumentRecord>('documents')
+        .execute<DocumentRecord>({ $for: { d: '$[*]' }, $return: '$d' }));
       const runs = await runLog.listRuns(500);
       return {
         version: seams.version,

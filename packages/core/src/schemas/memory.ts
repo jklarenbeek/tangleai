@@ -39,13 +39,11 @@
  * one, and the schema tests are what keep them honest with each other.
  */
 
-/** A JSON Schema document. `Record<string, any>` rather than
- * `Record<string, unknown>` on purpose: this package is dependency-free
- * and cannot name `@jarenjs/validate`'s `JSONSchema` type, and `unknown`
- * values do not assign to its keyword intersection — `any` does, in both
- * directions, which is exactly what a document crossing that boundary
- * needs. (Recorded in JARENASK.md.) */
-export type JsonSchema = Record<string, any>;
+/** A JSON Schema document as a plain map: this package is dependency-free
+ * and does not name `@jarenjs/validate`'s `JSONSchema` type. The
+ * validator's boundary methods take `JSONSchemaLike` (`JSONSchema |
+ * Record<string, unknown>`), so a plain map crosses without a cast. */
+export type JsonSchema = Record<string, unknown>;
 
 /** RFC 3339 timestamp — same shape and same reasoning as the jarenjs ledger:
  * `format` is honest metadata, `pattern` is the zero-dependency enforcement,
@@ -135,20 +133,28 @@ export interface OutcomeReport {
   evidence: string;
 }
 
-/** What a @jarenjs/ai ledger memory holds: the five fields, plus the
- * optional embedding pair. Structurally identical to `LedgerMemory` in
- * `@jarenjs/ai/schemas/ledger` — restated because this package is
- * dependency-free; `test/memory/ledger-mirror.test.ts` pins the two
- * against each other at compile time. */
-export interface LedgerMemory {
+/** The vector pair, both-or-neither: the schema's `dependencies` rule
+ * (`EMBEDDING_PAIR`) stated in the type. Narrow on either member and
+ * the other follows; an orphan vector does not type. */
+export type EmbeddingPair =
+  | { embedding?: undefined, embeddedBy?: undefined }
+  | { embedding: number[], embeddedBy: EmbeddedBy };
+
+/** A @jarenjs/ai ledger memory's own five fields. */
+export interface LedgerMemoryFields {
   id: string;
   text: string;
   evidence: string;
   tags: string[];
   at: string;
-  embedding?: number[];
-  embeddedBy?: EmbeddedBy;
 }
+
+/** What a @jarenjs/ai ledger memory holds: the five fields, plus the
+ * vector pair. Structurally identical to `LedgerMemory` in
+ * `@jarenjs/ai/schemas/ledger` — restated because this package is
+ * dependency-free; `test/memory/ledger-mirror.test.ts` pins the two
+ * against each other at compile time, in both directions. */
+export type LedgerMemory = LedgerMemoryFields & EmbeddingPair;
 
 export const MEMORY_RELATION_SCHEMA: JsonSchema = {
   $id: 'https://tangleai.dev/schemas/memory-relation.json',
@@ -215,16 +221,14 @@ export const MEMORY_SCHEMAS = {
  * Lossy on purpose; see the header.
  */
 export function toLedgerMemory(unit: MemoryUnit): LedgerMemory {
-  const memory: LedgerMemory = {
+  const fields: LedgerMemoryFields = {
     id: unit.id,
     text: unit.text,
     evidence: unit.evidence,
     tags: unit.tags,
     at: unit.at,
   };
-  if (unit.embedding !== undefined && unit.embeddedBy !== undefined) {
-    memory.embedding = unit.embedding;
-    memory.embeddedBy = { ...unit.embeddedBy };
-  }
-  return memory;
+  return unit.embedding !== undefined && unit.embeddedBy !== undefined
+    ? { ...fields, embedding: unit.embedding, embeddedBy: { ...unit.embeddedBy } }
+    : fields;
 }

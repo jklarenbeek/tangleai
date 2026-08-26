@@ -58,12 +58,18 @@ function readEmbed(stored: Partial<EmbedSettings> | undefined): EmbedSettings {
   return embed;
 }
 
+/** The one settings row, keyed by its `key`. */
+interface SettingsRow {
+  key: string;
+  value: Settings;
+}
+
 export function createSettingsStore(db: TangleDb): SettingsStore {
-  const collection = db.collection('settings');
+  const collection = db.collection<SettingsRow>('settings');
   return {
     async read() {
       const row = await collection.get('settings');
-      const stored = (row?.value ?? {}) as Partial<Settings>;
+      const stored: Partial<Settings> = row?.value ?? {};
       return {
         folder: stored.folder ?? DEFAULT_SETTINGS.folder,
         chat: { ...DEFAULT_SETTINGS.chat, ...stored.chat },

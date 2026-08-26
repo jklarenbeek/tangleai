@@ -14,3 +14,10 @@ dist/
 apps/desktop/public/vendor.css
 apps/pages/dist/
 .e2e/*.png
+
+# TODO: AI integration
+.gitignore
+TODO*.md
+PROGRESS*.md
+NEXT_SESSION.md
+.claude/
