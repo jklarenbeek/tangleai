@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.0'
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm run documents:benchmark
+      - name: Compile and execute document smoke
+        run: |
+          bun build --compile --minify scripts/document-compile-smoke.ts --outfile /tmp/tangle-document-smoke
+          TANGLE_EXPECT_STANDALONE=1 /tmp/tangle-document-smoke

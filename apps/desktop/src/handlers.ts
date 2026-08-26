@@ -13,6 +13,18 @@ import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createPipeline, dagToMermaid, numericContrastJudge, PIPELINE_DAG, PIPELINE_NODES } from '@tangleai/pipeline';
 import type { RunLog, TangleDb } from '@tangleai/store';
 import { asRows } from '@tangleai/store';
+import {
+  BunWebViewFetcher,
+  createDocumentIngester,
+  DocumentError,
+  RemoteBrowserFetcher,
+  searchDocuments,
+  UnavailableBrowserFetcher,
+  type BrowserFetcher,
+  type DocumentCorpusStore,
+  type SafeStaticFetcher,
+} from '@tangleai/documents';
+import { createSearxngClient } from '@tangleai/search';
 
 import type { LiveHub } from './live.ts';
 import type { SettingsStore } from './settings.ts';
@@ -27,9 +39,25 @@ export interface HandlerSeams {
   settings: SettingsStore;
   live: LiveHub;
   chat: ChatEngine;
+  documentStore: DocumentCorpusStore;
+  documentFetcher: SafeStaticFetcher;
   version: string;
   fetch?: typeof globalThis.fetch;
   now?: () => string;
+}
+
+function configuredBrowser(current: Awaited<ReturnType<SettingsStore['read']>>, fetchImpl?: typeof globalThis.fetch): BrowserFetcher {
+  if (current.browser.mode === 'webview') {
+    return new BunWebViewFetcher({ allowUnsafeLocalBrowser: current.browser.allowUnsafeLocal });
+  }
+  if (current.browser.mode === 'remote' && current.browser.endpoint !== null) {
+    try {
+      return new RemoteBrowserFetcher({ endpoint: current.browser.endpoint, token: current.browser.token ?? undefined, fetch: fetchImpl });
+    } catch (error) {
+      return new UnavailableBrowserFetcher(`Invalid remote renderer endpoint: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  return new UnavailableBrowserFetcher('Dynamic rendering is disabled in Settings');
 }
 
 function memorySummary(unit: MemoryUnit): any {
@@ -38,7 +66,7 @@ function memorySummary(unit: MemoryUnit): any {
 }
 
 export function createHandlers(seams: HandlerSeams): Record<string, any> {
-  const { db, memoryStore, runLog, settings, live, chat } = seams;
+  const { db, memoryStore, runLog, settings, live, chat, documentStore, documentFetcher } = seams;
   const now = seams.now ?? ((): string => new Date().toISOString());
   let syncing = false;
 
@@ -49,6 +77,8 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       const documents = asRows(await db.collection<DocumentRecord>('documents')
         .execute<DocumentRecord>({ $for: { d: '$[*]' }, $return: '$d' }));
       const runs = await runLog.listRuns(500);
+      const sources = await documentStore.listSources();
+      const documentChunks = await documentStore.listChunks();
       return {
         version: seams.version,
         folder: current.folder,
@@ -59,6 +89,8 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
           live: all.filter((u) => u.supersededBy === undefined).length,
           runs: runs.length,
           documents: documents.length,
+          sources: sources.length,
+          documentChunks: documentChunks.length,
         },
       };
     },
@@ -113,6 +145,145 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       }
     },
 
+    'documents.ingest': async (input: {
+      url: string; strategy?: 'recursive' | 'semantic-boundary' | 's2'; allowBrowser?: boolean;
+      force?: boolean; maxTokens?: number; overlapTokens?: number;
+    }, ctx: any) => {
+      const current = await settings.read();
+      const run = await runLog.startRun('document');
+      live.start(run);
+      const started = new Map<string, number>();
+      const eventWrites: Promise<unknown>[] = [];
+      try {
+        const ingester = createDocumentIngester({
+          store: documentStore,
+          fetcher: documentFetcher,
+          embedder: embedderFor(current, seams.fetch),
+          browser: configuredBrowser(current, seams.fetch),
+          now,
+        });
+        const outcome = await ingester.ingest({
+          ...input,
+          strategy: input.strategy ?? current.documents.chunker,
+          maxTokens: input.maxTokens ?? current.documents.maxTokens,
+          overlapTokens: input.overlapTokens ?? current.documents.overlapTokens,
+          onProgress: (event) => {
+            if (event.status === 'start') started.set(event.stage, performance.now());
+            if (event.status === 'ok') {
+              const record = { id: event.stage, status: 'ok' as const, ms: Math.max(0, performance.now() - (started.get(event.stage) ?? performance.now())) };
+              started.delete(event.stage);
+              live.node(record);
+              eventWrites.push(runLog.recordEvent(run.id, record));
+            }
+            if (event.status === 'error' && started.has(event.stage)) {
+              const record = { id: event.stage, status: 'error' as const, ms: Math.max(0, performance.now() - (started.get(event.stage) as number)) };
+              started.delete(event.stage);
+              live.node(record);
+              eventWrites.push(runLog.recordEvent(run.id, record));
+            }
+          },
+        });
+        await Promise.all(eventWrites);
+        await runLog.finishRun(run.id, 'ok', {
+          status: outcome.status,
+          sourceId: outcome.source.id,
+          versionId: outcome.version.id,
+          metrics: outcome.version.metrics,
+        });
+        live.finish('ok');
+        return outcome;
+      } catch (error) {
+        await Promise.allSettled(eventWrites);
+        const reason = error instanceof Error ? error.message : String(error);
+        const code = error instanceof DocumentError ? error.code : 'ingest-failed';
+        await runLog.finishRun(run.id, 'error', { code, error: reason });
+        live.finish('error');
+        return ctx.fail('ingest-failed', {}, { code, reason });
+      }
+    },
+
+    'documents.ingestbatch': async (input: {
+      urls: string[]; strategy?: 'recursive' | 'semantic-boundary' | 's2'; allowBrowser?: boolean;
+    }) => {
+      const current = await settings.read();
+      const run = await runLog.startRun('documents');
+      live.start(run);
+      const started = new Map<string, number>();
+      const eventWrites: Promise<unknown>[] = [];
+      try {
+        const ingester = createDocumentIngester({
+          store: documentStore,
+          fetcher: documentFetcher,
+          embedder: embedderFor(current, seams.fetch),
+          browser: configuredBrowser(current, seams.fetch),
+          now,
+        });
+        const results = await ingester.ingestMany(input.urls.map((url) => {
+          const onProgress = (event: { stage: string; status: string }): void => {
+            const key = `${url}\u0000${event.stage}`;
+            if (event.status === 'start') started.set(key, performance.now());
+            if ((event.status === 'ok' || event.status === 'error') && started.has(key)) {
+              const record = {
+                id: event.stage,
+                status: event.status as 'ok' | 'error',
+                ms: Math.max(0, performance.now() - (started.get(key) as number)),
+              };
+              started.delete(key);
+              live.node(record);
+              eventWrites.push(runLog.recordEvent(run.id, record));
+            }
+          };
+          return {
+            url,
+            strategy: input.strategy ?? current.documents.chunker,
+            allowBrowser: input.allowBrowser,
+            maxTokens: current.documents.maxTokens,
+            overlapTokens: current.documents.overlapTokens,
+            onProgress,
+          };
+        }));
+        await Promise.all(eventWrites);
+        const succeeded = results.filter((result) => result.outcome !== undefined).length;
+        await runLog.finishRun(run.id, 'ok', { requested: results.length, succeeded, failed: results.length - succeeded });
+        live.finish('ok');
+        return results;
+      } catch (error) {
+        await Promise.allSettled(eventWrites);
+        await runLog.finishRun(run.id, 'error', { error: error instanceof Error ? error.message : String(error) });
+        live.finish('error');
+        throw error;
+      }
+    },
+
+    'documents.list': () => documentStore.listSources(),
+
+    'documents.search': async (input: { q: string; limit?: number }) => {
+      const current = await settings.read();
+      const recalled = await searchDocuments(documentStore, embedderFor(current, seams.fetch), input.q, { k: input.limit ?? 8 });
+      return {
+        skipped: recalled.skipped,
+        ranked: recalled.ranked.map((item) => {
+          const { embedding: _embedding, ...chunk } = item.chunk;
+          return {
+            chunk,
+            source: item.source,
+            score: item.score,
+            context: item.context.map(({ embedding: _contextEmbedding, ...context }) => context),
+            citation: item.citation,
+          };
+        }),
+      };
+    },
+
+    'browser.status': async () => configuredBrowser(await settings.read(), seams.fetch).capability(),
+
+    'web.search': async (input: { q: string; limit?: number }, ctx: any) => {
+      const current = await settings.read();
+      if (current.search.searxngUrl === null) return ctx.fail('search-unconfigured');
+      const outcome = await createSearxngClient({ baseUrl: current.search.searxngUrl, fetch: seams.fetch }).search(input.q);
+      return { ...outcome, results: outcome.results.slice(0, input.limit ?? 10) };
+    },
+
     'runs.list': async (input: { limit?: number }) => runLog.listRuns(input.limit ?? 50),
 
     'runs.get': async (input: { id: string }, ctx: any) => {
@@ -154,6 +325,10 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       return {
         reply: outcome.reply,
         citations: outcome.citations.map(memorySummary),
+        documentCitations: outcome.documentCitations.map((item) => {
+          const { embedding: _embedding, ...chunk } = item.chunk;
+          return { chunk, source: item.source, score: item.score, citation: item.citation };
+        }),
         provider: outcome.provider,
       };
     },

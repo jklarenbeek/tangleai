@@ -15,9 +15,12 @@ of jarenjs's published types under a strict TS consumer; findings live in
 
 ```sh
 npm install
-npm run check      # strict typecheck + 84 tests, no network
+npm run check      # strict typecheck + complete offline test suite
 npm run skeleton   # the whole loop, end to end, offline
-npm run desktop    # the desktop app: chat over a folder's curated memory
+npm run desktop    # folder memory + versioned web/PDF document corpus
+npm run documents:benchmark
+# after copying .env.example to .env and adding an OpenRouter key:
+npm run documents:live-smoke
 ```
 
 The skeleton ingests evidenced observations and runs them through the
@@ -50,7 +53,8 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
 | `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `recallByEmbedding` (identity-gated, skip-reporting) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
-| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite via `@jarenjs/db` (node:sqlite under Node, bun:sqlite in the compiled binary — the driver is picked at runtime), plus the run/event log the DAG surface reads |
+| `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
+| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus transactional source/version/element/chunk activation and the run/event log |
 | `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@jarenjs/ai`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
 
 Embeddings are not a Tangle package any more: the wire client
@@ -62,14 +66,16 @@ and the configuration.
 
 ## The apps
 
-Both are jarenjs-suite-only — no third-party runtime dependency anywhere,
-per the house rule (Bun and Node are runtimes, not dependencies).
+The desktop keeps browser automation optional. Ordinary HTML, text, Markdown, and PDF
+documents are fetched and parsed inside the application; only client-rendered shells need
+a browser process.
 
 **`apps/desktop`** — a self-hosting desktop app: point it at a folder,
 sync it (content-hash incremental) through the pipeline, watch the DAG
 run LIVE over an SSE stream and browse every past run's per-node story,
-search the curated memory (superseded chains included), and chat
-grounded on it with citations. Chat degrades honestly: with no model
+search the curated memory (superseded chains included), ingest/search versioned web and
+PDF sources on the Documents page, and chat over the two explicit retrieval lanes with
+citations. Chat degrades honestly: with no model
 configured (or a dead wire) you get grounded recall — the memories
 themselves, cited — never an invention. The whole API is one
 `@jarenjs/contract` document served over `node:http`; the UI is a
@@ -81,6 +87,18 @@ npm run desktop            # dev (Node or Bun), http://127.0.0.1:4700
 npm run desktop:compile    # one self-contained executable → dist/tangle
 ./dist/tangle --folder ~/notes
 ```
+
+Document ingestion defaults to recursive heading-aware chunks. Changed sources activate
+transactionally only after extraction, chunking, embedding, and persistence succeed;
+unchanged content is not embedded again. Configure SearxNG discovery, experimental S2,
+or a dynamic-page renderer in Settings. Results are recorded in
+[docs/DOCUMENT_BENCHMARK.md](docs/DOCUMENT_BENCHMARK.md).
+The opt-in live smoke uses the OpenRouter chat/embedding models configured in `.env`;
+offline CI never requires those credentials.
+
+**`apps/scraper`** — the optional isolated Playwright renderer. It is not required by the
+desktop and is intended to run in the `ubuntu-playwright` distrobox or another sandboxed
+container. See [apps/scraper/README.md](apps/scraper/README.md).
 
 Cross-compile with Bun's targets, e.g.
 `bun build --compile --target=bun-windows-x64 apps/desktop/src/main.ts`

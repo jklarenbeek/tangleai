@@ -62,8 +62,47 @@ export function createTangleUi(options: TangleUiOptions): any {
       });
     },
 
+    documentSearch: (props: any, dispatch: Dispatch): void => {
+      if (typeof props.q !== 'string' || props.q.trim() === '') {
+        dispatch('documents/searchDone', { ranked: [], skipped: 0 });
+        return;
+      }
+      void client.invoke('documents.search', { q: props.q, limit: 12 }).then((outcome: any) => {
+        if (outcome.ok) dispatch('documents/searchDone', outcome.value);
+      });
+    },
+
+    documentIngest: (props: any, dispatch: Dispatch): void => {
+      void client.invoke('documents.ingest', { url: props.url, allowBrowser: true }).then((outcome: any) => {
+        if (outcome.ok) dispatch('documents/ingested', outcome.value);
+        else dispatch('documents/fail', failText(outcome));
+      });
+    },
+
+    documentBatchIngest: (props: any, dispatch: Dispatch): void => {
+      void client.invoke('documents.ingestbatch', { urls: props.urls, allowBrowser: true }).then((outcome: any) => {
+        if (outcome.ok) dispatch('documents/webIngested', outcome.value);
+        else dispatch('documents/fail', failText(outcome));
+      });
+    },
+
+    webDiscover: (props: any, dispatch: Dispatch): void => {
+      void client.invoke('web.search', { q: props.q, limit: 10 }).then((outcome: any) => {
+        if (outcome.ok) dispatch('documents/webDone', outcome.value);
+        else dispatch('documents/webFail', failText(outcome));
+      });
+    },
+
     saveSettings: (props: any, dispatch: Dispatch): void => {
-      void client.invoke('settings.set', { settings: props.settings }).then((outcome: any) => {
+      const settings = {
+        ...props.settings,
+        documents: {
+          ...props.settings.documents,
+          maxTokens: Number(props.settings.documents.maxTokens),
+          overlapTokens: Number(props.settings.documents.overlapTokens),
+        },
+      };
+      void client.invoke('settings.set', { settings }).then((outcome: any) => {
         if (outcome.ok) dispatch('settings/saved', outcome.value);
       });
     },

@@ -7,7 +7,8 @@
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=24"
+    "node": ">=24",
+    "bun": ">=1.4.0"
   },
   "workspaces": [
     "packages/*",
@@ -25,7 +26,10 @@
     "skeleton": "node examples/skeleton.ts",
     "desktop:ui": "bun build apps/desktop/src/ui/main.ts --outfile apps/desktop/public/app.js --format esm --target browser && cat node_modules/@jarenjs/charts/styles/charts.css node_modules/@jarenjs/mermaid/styles/mermaid.css node_modules/@jarenjs/md/styles/md.css > apps/desktop/public/vendor.css",
     "desktop": "npm run desktop:ui && node apps/desktop/src/main.ts",
-    "desktop:compile": "npm run desktop:ui && bun scripts/embed-assets.ts && bun build --compile apps/desktop/src/main.ts --outfile dist/tangle; git checkout -- apps/desktop/src/assets.gen.ts",
+    "desktop:compile": "bun scripts/compile-desktop.ts",
+    "scraper": "bun apps/scraper/src/main.ts",
+    "documents:benchmark": "bun scripts/benchmark-documents.ts",
+    "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
     "check": "npm run typecheck && npm test"
   },

@@ -16,6 +16,7 @@ export const INITIAL_STATE = {
     error: null as string | null,
     messages: [] as any[],
     citations: [] as any[],
+    documentCitations: [] as any[],
   },
   loom: {
     mermaid: '',
@@ -31,6 +32,22 @@ export const INITIAL_STATE = {
     superseded: false,
     items: [] as any[],
     detail: null as any,
+  },
+  documents: {
+    url: '',
+    q: '',
+    busy: false,
+    error: null as string | null,
+    items: [] as any[],
+    results: [] as any[],
+    skipped: 0,
+    browser: null as any,
+    webQ: '',
+    webBusy: false,
+    webError: null as string | null,
+    webResults: [] as any[],
+    webSelected: [] as string[],
+    webIngestResults: [] as any[],
   },
   settings: {
     draft: null as any,
@@ -52,6 +69,8 @@ export const ACTIONS: Record<string, any> = {
       invoke('chat.history', {}, 'chat/history', 'noop'),
       invoke('runs.list', {}, 'runs/done', 'noop'),
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
+      invoke('documents.list', {}, 'documents/done', 'noop'),
+      invoke('browser.status', {}, 'browser/done', 'noop'),
       invoke('settings.get', {}, 'settings/done', 'noop'),
     ],
   },
@@ -85,6 +104,7 @@ export const ACTIONS: Record<string, any> = {
     patch: [
       { op: 'add', path: '/chat/messages/-', value: '$payload.reply' },
       { op: 'replace', path: '/chat/citations', value: '$payload.citations' },
+      { op: 'replace', path: '/chat/documentCitations', value: '$payload.documentCitations' },
       { op: 'replace', path: '/chat/busy', value: false },
     ],
   },
@@ -146,6 +166,94 @@ export const ACTIONS: Record<string, any> = {
   'memory/select': { patch: [{ op: 'replace', path: '/memory/detail', value: '$payload' }] },
   'memory/close': { patch: [{ op: 'replace', path: '/memory/detail', value: null }] },
 
+  // -- documents ------------------------------------------------------------
+  'documents/url': { patch: [{ op: 'replace', path: '/documents/url', value: '$event.value' }] },
+  'documents/q': {
+    patch: [{ op: 'replace', path: '/documents/q', value: '$event.value' }],
+    effects: [{ run: 'documentSearch', with: { q: '$event.value' } }],
+  },
+  'documents/ingest': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: true },
+      { op: 'replace', path: '/documents/error', value: null },
+    ],
+    effects: [{ run: 'documentIngest', with: { url: '$.documents.url' } }],
+  },
+  'documents/ingestUrl': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: true },
+      { op: 'replace', path: '/documents/error', value: null },
+    ],
+    effects: [{ run: 'documentIngest', with: { url: '$payload' } }],
+  },
+  'documents/ingested': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: false },
+      { op: 'replace', path: '/documents/url', value: '' },
+    ],
+    effects: [
+      invoke('documents.list', {}, 'documents/done', 'noop'),
+      invoke('status.get', {}, 'status/done', 'noop'),
+      invoke('runs.list', {}, 'runs/done', 'noop'),
+    ],
+  },
+  'documents/fail': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: false },
+      { op: 'replace', path: '/documents/error', value: '$payload' },
+    ],
+  },
+  'documents/done': { patch: [{ op: 'replace', path: '/documents/items', value: '$payload' }] },
+  'documents/searchDone': {
+    patch: [
+      { op: 'replace', path: '/documents/results', value: '$payload.ranked' },
+      { op: 'replace', path: '/documents/skipped', value: '$payload.skipped' },
+    ],
+  },
+  'browser/done': { patch: [{ op: 'replace', path: '/documents/browser', value: '$payload' }] },
+  'documents/webQ': { patch: [{ op: 'replace', path: '/documents/webQ', value: '$event.value' }] },
+  'documents/webSearch': {
+    patch: [
+      { op: 'replace', path: '/documents/webBusy', value: true },
+      { op: 'replace', path: '/documents/webError', value: null },
+    ],
+    effects: [{ run: 'webDiscover', with: { q: '$.documents.webQ' } }],
+  },
+  'documents/webDone': {
+    patch: [
+      { op: 'replace', path: '/documents/webBusy', value: false },
+      { op: 'replace', path: '/documents/webResults', value: '$payload.results' },
+      { op: 'replace', path: '/documents/webSelected', value: [] },
+      { op: 'replace', path: '/documents/webIngestResults', value: [] },
+    ],
+  },
+  'documents/webSelected': { patch: [{ op: 'replace', path: '/documents/webSelected', value: '$payload' }] },
+  'documents/webIngest': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: true },
+      { op: 'replace', path: '/documents/error', value: null },
+    ],
+    effects: [{ run: 'documentBatchIngest', with: { urls: '$.documents.webSelected' } }],
+  },
+  'documents/webIngested': {
+    patch: [
+      { op: 'replace', path: '/documents/busy', value: false },
+      { op: 'replace', path: '/documents/webSelected', value: [] },
+      { op: 'replace', path: '/documents/webIngestResults', value: '$payload' },
+    ],
+    effects: [
+      invoke('documents.list', {}, 'documents/done', 'noop'),
+      invoke('status.get', {}, 'status/done', 'noop'),
+      invoke('runs.list', {}, 'runs/done', 'noop'),
+    ],
+  },
+  'documents/webFail': {
+    patch: [
+      { op: 'replace', path: '/documents/webBusy', value: false },
+      { op: 'replace', path: '/documents/webError', value: '$payload' },
+    ],
+  },
+
   // -- settings -------------------------------------------------------------
   'settings/done': {
     patch: [
@@ -162,6 +270,14 @@ export const ACTIONS: Record<string, any> = {
   'settings/embed-baseurl': { patch: [{ op: 'replace', path: '/settings/draft/embed/baseUrl', value: '$event.value' }] },
   'settings/embed-model': { patch: [{ op: 'replace', path: '/settings/draft/embed/model', value: '$event.value' }] },
   'settings/embed-apikey': { patch: [{ op: 'replace', path: '/settings/draft/embed/apiKey', value: '$event.value' }] },
+  'settings/document-chunker': { patch: [{ op: 'replace', path: '/settings/draft/documents/chunker', value: '$event.value' }] },
+  'settings/document-max': { patch: [{ op: 'replace', path: '/settings/draft/documents/maxTokens', value: '$event.value' }] },
+  'settings/document-overlap': { patch: [{ op: 'replace', path: '/settings/draft/documents/overlapTokens', value: '$event.value' }] },
+  'settings/browser-mode': { patch: [{ op: 'replace', path: '/settings/draft/browser/mode', value: '$event.value' }] },
+  'settings/browser-endpoint': { patch: [{ op: 'replace', path: '/settings/draft/browser/endpoint', value: '$event.value' }] },
+  'settings/browser-token': { patch: [{ op: 'replace', path: '/settings/draft/browser/token', value: '$event.value' }] },
+  'settings/browser-unsafe': { patch: [{ op: 'replace', path: '/settings/draft/browser/allowUnsafeLocal', value: '$event.checked' }] },
+  'settings/search-url': { patch: [{ op: 'replace', path: '/settings/draft/search/searxngUrl', value: '$event.value' }] },
   'settings/save': {
     effects: [{ run: 'saveSettings', with: { settings: '$.settings.draft' } }],
   },
@@ -172,7 +288,10 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/settings/probe', value: null },
       { op: 'replace', path: '/settings/embedProbe', value: null },
     ],
-    effects: [invoke('status.get', {}, 'status/done', 'noop')],
+    effects: [
+      invoke('status.get', {}, 'status/done', 'noop'),
+      invoke('browser.status', {}, 'browser/done', 'noop'),
+    ],
   },
   probe: {
     patch: [{ op: 'replace', path: '/settings/probe', value: { pending: true } }],

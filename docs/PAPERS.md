@@ -22,9 +22,12 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
     The full two-phase pending-decision → resolution → reflection loop is TODO 06.
   - 📄 [`refs/2412.20138v7.pdf`](refs/2412.20138v7.pdf)
 
-- **Enhancing Efficiency in Text Splitting: Exploring Semantic Clustering Methods** (Traets, 2024)
-  - The zero-dependency k-means (k-means++ seeding, injected RNG) is `@tangleai/core/clustering`.
-  - 📄 [`refs/Exploring Semantic Clustering Methods.pdf`](refs/Exploring%20Semantic%20Clustering%20Methods.pdf)
+- **S2 Chunking** (arXiv:2501.05485v1, Verma, Jan 2025)
+  - A corrected, capped experiment is `S2DocumentChunker` in `@tangleai/documents`:
+    deterministic k-means, convergence diagnostics, atomic hard-limit fallback, and
+    contiguous output runs. It remains behind a strategy setting; the fixed benchmark did
+    not earn a default change from recursive heading-aware chunks.
+  - 📄 [`refs/2501.05485v1.pdf`](refs/2501.05485v1.pdf)
 
 Crystallization (near-duplicate merge) and contradiction supersession in
 `@tangleai/memory` consolidate ideas that recur across the memory papers rather than
@@ -50,9 +53,6 @@ implementing any single one.
 - **MASFactory** (arXiv:2603.06007v1, Zhou et al., Mar 2026) — intent-to-workflow
   compilation; Tangle's version targets @jarenjs/flow documents. TODO 07.
   - 📄 [`refs/2603.06007v1.pdf`](refs/2603.06007v1.pdf)
-- **S2 Chunking** (arXiv:2501.05485v1, Verma, Jan 2025) — spatial+semantic spectral
-  chunking; port waits until ingestion of PDFs/DOCX returns (TODO 08 territory).
-  - 📄 [`refs/2501.05485v1.pdf`](refs/2501.05485v1.pdf)
 
 ## Reference-only
 
@@ -64,4 +64,9 @@ implementing any single one.
   weight-based consolidation; the honest caveat under everything this repo does. 📄 [`refs/2604.27707v1.pdf`](refs/2604.27707v1.pdf)
 - **OMNI-SIMPLEMEM** (arXiv:2604.01007v2) — autonomous experiment loops over memory configs. 📄 [`refs/2604.01007v2.pdf`](refs/2604.01007v2.pdf)
 - **AutoResearchClaw** (aiming-lab, 2026) — self-evolving research pipelines. 📄 [`refs/AutoResearchClaw.pdf`](refs/AutoResearchClaw.pdf)
+- **Enhancing Efficiency in Text Splitting: Exploring Semantic Clustering Methods**
+  (Traets, 2024) — a supervised boundary classifier over embedding-window differences,
+  PCA, and SVM/forest/boosting models. Tangle's deterministic k-means utility is unrelated;
+  `SemanticBoundaryChunker` is only an untrained adjacent-similarity comparison baseline,
+  not an implementation of this paper. 📄 [`refs/Exploring Semantic Clustering Methods.pdf`](refs/Exploring%20Semantic%20Clustering%20Methods.pdf)
 - **memflow S2Chunker notes** — 📄 [`refs/memflow-s2chunker.docx`](refs/memflow-s2chunker.docx)

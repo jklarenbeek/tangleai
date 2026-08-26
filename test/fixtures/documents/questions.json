@@ -1,0 +1,5 @@
+[
+  { "question": "What is the release gate?", "relevant": ["Release guide", "npm run check"], "citation": "/guide" },
+  { "question": "What causes vitamin E deficiency?", "relevant": ["underlying problem", "dietary fat"], "citation": "Vitamin E" },
+  { "question": "Which column contains Right second?", "relevant": ["Right heading", "Right second"], "citation": "page 1" }
+]

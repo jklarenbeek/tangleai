@@ -84,6 +84,67 @@ export const SETTINGS_SCHEMA = {
         apiKey: { type: ['string', 'null'] },
       },
     },
+    documents: {
+      type: 'object',
+      properties: {
+        chunker: { enum: ['recursive', 'semantic-boundary', 's2'] },
+        maxTokens: { type: 'integer', minimum: 16, maximum: 4000 },
+        overlapTokens: { type: 'integer', minimum: 0, maximum: 1000 },
+      },
+    },
+    browser: {
+      type: 'object',
+      properties: {
+        mode: { enum: ['disabled', 'webview', 'remote'] },
+        endpoint: { type: ['string', 'null'] },
+        token: { type: ['string', 'null'] },
+        allowUnsafeLocal: { type: 'boolean' },
+      },
+    },
+    search: {
+      type: 'object',
+      properties: { searxngUrl: { type: ['string', 'null'] } },
+    },
+  },
+} as const;
+
+const DOCUMENT_SOURCE = {
+  type: 'object',
+  required: ['id', 'requestedUrl', 'finalUrl', 'canonicalUrl', 'title', 'mimeType', 'fetchMode', 'status', 'fetchedAt'],
+  properties: {
+    id: { type: 'string' },
+    requestedUrl: { type: 'string' },
+    finalUrl: { type: 'string' },
+    canonicalUrl: { type: 'string' },
+    title: { type: ['string', 'null'] },
+    mimeType: { type: 'string' },
+    fetchMode: { type: 'string' },
+    status: { type: 'string' },
+    fetchedAt: { type: 'string' },
+    activeVersionId: { type: 'string' },
+    error: { type: 'string' },
+  },
+} as const;
+
+const DOCUMENT_VERSION = {
+  type: 'object',
+  required: ['id', 'sourceId', 'contentHash', 'extractionVersion', 'chunkerVersion', 'chunkerConfig', 'embeddedBy', 'status', 'fetchedAt', 'metrics'],
+  properties: {
+    id: { type: 'string' },
+    sourceId: { type: 'string' },
+    contentHash: { type: 'string' },
+    extractionVersion: { type: 'string' },
+    chunkerVersion: { type: 'string' },
+    chunkerConfig: {
+      type: 'object',
+      required: ['maxTokens', 'overlapTokens'],
+      properties: { maxTokens: { type: 'integer' }, overlapTokens: { type: 'integer' } },
+    },
+    embeddedBy: { type: 'object' },
+    status: { type: 'string' },
+    fetchedAt: { type: 'string' },
+    activatedAt: { type: 'string' },
+    metrics: { type: 'object' },
   },
 } as const;
 
@@ -110,6 +171,8 @@ export const DESKTOP_CONTRACT = {
               live: { type: 'integer' },
               runs: { type: 'integer' },
               documents: { type: 'integer' },
+              sources: { type: 'integer' },
+              documentChunks: { type: 'integer' },
             },
           },
         },
@@ -152,6 +215,86 @@ export const DESKTOP_CONTRACT = {
         'bad-folder': { status: 409 },
       },
       http: { method: 'POST', path: '/api/folder/sync' },
+    },
+    'documents.ingest': {
+      kind: 'command',
+      input: {
+        type: 'object',
+        required: ['url'],
+        properties: {
+          url: { type: 'string', minLength: 1, maxLength: 4096 },
+          strategy: { enum: ['recursive', 'semantic-boundary', 's2'] },
+          allowBrowser: { type: 'boolean' },
+          force: { type: 'boolean' },
+          maxTokens: { type: 'integer', minimum: 16, maximum: 4000 },
+          overlapTokens: { type: 'integer', minimum: 0, maximum: 1000 },
+        },
+      },
+      output: {
+        type: 'object',
+        required: ['status', 'source', 'version', 'browserFallback'],
+        properties: {
+          status: { enum: ['ingested', 'unchanged'] },
+          source: DOCUMENT_SOURCE,
+          version: DOCUMENT_VERSION,
+          browserFallback: { type: 'boolean' },
+        },
+      },
+      errors: { 'ingest-failed': { status: 422 } },
+      http: { method: 'POST', path: '/api/documents/ingest' },
+    },
+    'documents.ingestbatch': {
+      kind: 'command',
+      input: {
+        type: 'object',
+        required: ['urls'],
+        properties: {
+          urls: { type: 'array', minItems: 1, maxItems: 20, items: { type: 'string', minLength: 1, maxLength: 4096 } },
+          strategy: { enum: ['recursive', 'semantic-boundary', 's2'] },
+          allowBrowser: { type: 'boolean' },
+        },
+      },
+      output: { type: 'array', items: { type: 'object' } },
+      http: { method: 'POST', path: '/api/documents/ingest-many' },
+    },
+    'documents.list': {
+      kind: 'read',
+      input: { type: 'object', properties: {} },
+      output: { type: 'array', items: DOCUMENT_SOURCE },
+      http: { method: 'GET', path: '/api/documents' },
+    },
+    'documents.search': {
+      kind: 'read',
+      input: {
+        type: 'object', required: ['q'],
+        properties: { q: { type: 'string', minLength: 1, maxLength: 8000 }, limit: { type: 'integer', minimum: 1, maximum: 50 } },
+      },
+      output: {
+        type: 'object', required: ['ranked', 'skipped'],
+        properties: { ranked: { type: 'array', items: { type: 'object' } }, skipped: { type: 'integer' } },
+      },
+      http: { method: 'GET', path: '/api/documents/search' },
+    },
+    'browser.status': {
+      kind: 'read',
+      input: { type: 'object', properties: {} },
+      output: {
+        type: 'object', required: ['mode', 'available', 'safeForUntrusted', 'detail'],
+        properties: {
+          mode: { type: 'string' }, available: { type: 'boolean' }, safeForUntrusted: { type: 'boolean' }, detail: { type: 'string' },
+        },
+      },
+      http: { method: 'GET', path: '/api/browser/status' },
+    },
+    'web.search': {
+      kind: 'read',
+      input: {
+        type: 'object', required: ['q'],
+        properties: { q: { type: 'string', minLength: 1, maxLength: 1000 }, limit: { type: 'integer', minimum: 1, maximum: 20 } },
+      },
+      output: { type: 'object', required: ['results', 'suggestions'], properties: { results: { type: 'array' }, suggestions: { type: 'array' } } },
+      errors: { 'search-unconfigured': { status: 409 } },
+      http: { method: 'GET', path: '/api/web/search' },
     },
     'runs.list': {
       kind: 'read',
@@ -237,10 +380,11 @@ export const DESKTOP_CONTRACT = {
       },
       output: {
         type: 'object',
-        required: ['reply', 'citations', 'provider'],
+        required: ['reply', 'citations', 'documentCitations', 'provider'],
         properties: {
           reply: CHAT_MESSAGE,
           citations: { type: 'array', items: MEMORY_SUMMARY },
+          documentCitations: { type: 'array', items: { type: 'object' } },
           provider: { type: ['string', 'null'] },
         },
       },

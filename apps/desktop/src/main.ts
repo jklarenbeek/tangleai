@@ -6,8 +6,8 @@
  *
  * Same file under Bun, and the target of `bun build --compile`. The
  * server is node:http (Bun implements it); SQLite arrives through
- * @jarenjs/db's runtime-picked driver. Everything else is the jarenjs
- * suite and the Tangle packages — no third party anywhere.
+ * @jarenjs/db's runtime-picked driver. Document dependencies are bundled
+ * into the executable; the optional Playwright service remains separate.
  */
 
 import { createServer } from 'node:http';

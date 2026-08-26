@@ -7,3 +7,4 @@ export { createDbMemoryStore, asRows } from './memory-store.ts';
 export type { DbMemoryStoreOptions } from './memory-store.ts';
 export { createRunLog } from './runs.ts';
 export type { RunLog, RunRecord, RunEvent, RunLogOptions } from './runs.ts';
+export { createDocumentStore } from './document-store.ts';

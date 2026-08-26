@@ -33,16 +33,39 @@ export interface EmbedSettings {
   apiKey: string | null;
 }
 
+export interface DocumentSettings {
+  chunker: 'recursive' | 'semantic-boundary' | 's2';
+  maxTokens: number;
+  overlapTokens: number;
+}
+
+export interface BrowserSettings {
+  mode: 'disabled' | 'webview' | 'remote';
+  endpoint: string | null;
+  token: string | null;
+  allowUnsafeLocal: boolean;
+}
+
+export interface SearchSettings {
+  searxngUrl: string | null;
+}
+
 export interface Settings {
   folder: string | null;
   chat: ChatSettings;
   embed: EmbedSettings;
+  documents: DocumentSettings;
+  browser: BrowserSettings;
+  search: SearchSettings;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   folder: null,
   chat: { provider: null, baseUrl: null, model: null, apiKey: null },
   embed: { provider: 'builtin', baseUrl: null, model: null, apiKey: null },
+  documents: { chunker: 'recursive', maxTokens: 450, overlapTokens: 48 },
+  browser: { mode: 'disabled', endpoint: null, token: null, allowUnsafeLocal: false },
+  search: { searxngUrl: null },
 };
 
 export interface SettingsStore {
@@ -74,6 +97,9 @@ export function createSettingsStore(db: TangleDb): SettingsStore {
         folder: stored.folder ?? DEFAULT_SETTINGS.folder,
         chat: { ...DEFAULT_SETTINGS.chat, ...stored.chat },
         embed: readEmbed(stored.embed),
+        documents: { ...DEFAULT_SETTINGS.documents, ...stored.documents },
+        browser: { ...DEFAULT_SETTINGS.browser, ...stored.browser },
+        search: { ...DEFAULT_SETTINGS.search, ...stored.search },
       };
     },
     async write(next) {
@@ -82,6 +108,9 @@ export function createSettingsStore(db: TangleDb): SettingsStore {
         folder: next.folder !== undefined ? next.folder : current.folder,
         chat: { ...current.chat, ...next.chat },
         embed: readEmbed({ ...current.embed, ...next.embed }),
+        documents: { ...current.documents, ...next.documents },
+        browser: { ...current.browser, ...next.browser },
+        search: { ...current.search, ...next.search },
       };
       await collection.put({ key: 'settings', value: merged });
       return merged;

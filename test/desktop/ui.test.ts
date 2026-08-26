@@ -32,7 +32,30 @@ describe('tangle desktop UI (headless)', () => {
     await writeFile(join(folder, 'notes.md'),
       'The deploy gate for this repo is npm run check and nothing else\n\nThe service listens on port 8080 by default');
 
-    desktop = await createDesktop({ driver: nodeDriver(), presetSettings: { folder } });
+    const fetchImpl = async (url: any): Promise<Response> => {
+      const target = String(url);
+      if (target.startsWith('http://searx.test/search')) {
+        return Response.json({
+          results: [
+            { title: 'Alpha handbook', url: 'https://alpha.example/handbook', content: 'Alpha operations guide' },
+            { title: 'Beta handbook', url: 'https://beta.example/handbook', content: 'Beta operations guide' },
+          ],
+          suggestions: [],
+        });
+      }
+      return new Response(`<!doctype html><html><body><main><h1>Web handbook</h1><p>${target} documents the violet deployment channel and its verified operational procedure for every production client.</p></main></body></html>`, {
+        headers: { 'content-type': 'text/html' },
+      });
+    };
+    desktop = await createDesktop({
+      driver: nodeDriver(),
+      fetch: fetchImpl as any,
+      presetSettings: { folder, search: { searxngUrl: 'http://searx.test' } },
+      documentFetch: {
+        lookup: async () => [{ address: '93.184.216.34', family: 4 }],
+        limits: { respectRobots: false, perHostDelayMs: 0 },
+      },
+    });
     const handler = toFetchHandler(desktop.dispatcher);
     const client = openHttpClient(compileContract(DESKTOP_CONTRACT), {
       baseUrl: 'http://tangle.test',
@@ -91,6 +114,27 @@ describe('tangle desktop UI (headless)', () => {
     const detail = app.getState().loom.detail;
     assert.equal(detail.run.id, runId);
     assert.ok(detail.events.some((e: any) => e.node === 'crystallize'));
+  });
+
+  it('selects SearxNG results and ingests them through the bounded batch operation', async () => {
+    app.setState({
+      ...app.getState(),
+      documents: { ...app.getState().documents, webQ: 'operations handbooks' },
+    });
+    app.dispatch('documents/webSearch');
+    await settle();
+    const urls = app.getState().documents.webResults.map((result: any) => result.url);
+    assert.equal(urls.length, 2);
+
+    app.dispatch('documents/webSelected', urls);
+    app.dispatch('documents/webIngest');
+    await settle();
+    await settle();
+    const documents = app.getState().documents;
+    assert.equal(documents.busy, false);
+    assert.equal(documents.webIngestResults.length, 2);
+    assert.ok(documents.webIngestResults.every((result: any) => result.outcome?.status === 'ingested'));
+    assert.equal(documents.items.length, 2);
   });
 
   it('the whole session raised no UI errors', () => {

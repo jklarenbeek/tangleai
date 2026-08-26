@@ -1,0 +1,23 @@
+services:
+  renderer:
+    build:
+      context: ..
+      dockerfile: apps/scraper/Dockerfile
+    init: true
+    user: pwuser
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    shm_size: 1gb
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    environment:
+      TANGLE_SCRAPER_TOKEN: ${TANGLE_SCRAPER_TOKEN:?set TANGLE_SCRAPER_TOKEN}
+      TANGLE_SCRAPER_CONCURRENCY: ${TANGLE_SCRAPER_CONCURRENCY:-2}
+      TANGLE_SCRAPER_QUEUE: ${TANGLE_SCRAPER_QUEUE:-16}
+      TANGLE_SCRAPER_MAX_BYTES: ${TANGLE_SCRAPER_MAX_BYTES:-25165824}
+    ports:
+      - 127.0.0.1:${TANGLE_SCRAPER_PORT:-4720}:4720
+    restart: unless-stopped

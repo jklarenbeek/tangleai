@@ -33,7 +33,7 @@ const on = (action: string, withValue?: any, event?: string[]): any => {
 };
 
 const PAGES: Array<[string, string]> = [
-  ['chat', 'Chat'], ['loom', 'Loom'], ['memory', 'Memory'], ['settings', 'Settings'],
+  ['chat', 'Chat'], ['loom', 'Loom'], ['memory', 'Memory'], ['documents', 'Documents'], ['settings', 'Settings'],
 ];
 
 function header(state: any): any {
@@ -47,7 +47,7 @@ function header(state: any): any {
         on: { click: on('nav', id) },
       }, label])],
     ['div', { class: 'meta' },
-      counts ? `${counts.live} live · ${counts.memories} total · ${counts.runs} runs` : '…'],
+      counts ? `${counts.live} live · ${counts.sources ?? 0} sources · ${counts.runs} runs` : '…'],
   ];
 }
 
@@ -79,6 +79,15 @@ function chatPage(state: any): any {
           chat.citations.map((c: any) => ['div', { key: c.id, class: 'citation', on: { click: on('memory/select', c) } },
             ['span', { class: 'cite-text' }, c.text],
             ['span', { class: 'cite-evidence' }, c.evidence]])]
+      : null,
+    chat.documentCitations.length > 0
+      ? ['div', { class: 'citations' },
+          ['h3', {}, 'document sources'],
+          chat.documentCitations.map((item: any) => ['a', {
+            key: item.chunk.id, class: 'citation', href: item.citation.url, target: '_blank', rel: 'noreferrer',
+          },
+            ['span', { class: 'cite-text' }, item.chunk.text],
+            ['span', { class: 'cite-evidence' }, `${item.source.title ?? item.citation.url}${item.citation.page ? ` · page ${item.citation.page}` : ''}`]])]
       : null,
     ['form', { class: 'composer', on: { submit: { action: 'chat/send', preventDefault: true } } },
       ['input', {
@@ -152,6 +161,9 @@ function runRow(run: any, selected: boolean): any {
 function loomPage(state: any): any {
   const loom = state.loom;
   const running = loom.live.run?.status === 'running';
+  const nodeIds = ['document', 'documents'].includes(loom.live.run?.kind)
+    ? ['fetch', 'extract', 'chunk', 'embed', 'store']
+    : loom.nodes;
   return ['section', { class: 'page loom' },
     ['div', { class: 'loom-head' },
       ['h2', {}, 'The loom'],
@@ -164,7 +176,7 @@ function loomPage(state: any): any {
     loom.syncError ? ['div', { class: 'error' }, String(loom.syncError)] : null,
     ['div', { class: 'dag-panel' },
       ['div', { class: 'dag-svg' }, mermaidSvg(loom.mermaid)],
-      nodeStrip(loom.nodes, loom.live.nodes, running),
+      nodeStrip(nodeIds, loom.live.nodes, running),
     ],
     memoryGrowthChart(loom.runs),
     stageChart(loom.detail),
@@ -244,6 +256,100 @@ function memoryPage(state: any): any {
   ];
 }
 
+// -- documents --------------------------------------------------------------
+
+function documentPage(state: any): any {
+  const documents = state.documents;
+  const capability = documents.browser;
+  return ['section', { class: 'page memory' },
+    ['div', { class: 'loom-head' },
+      ['h2', {}, 'Documents'],
+      ['span', { class: capability?.available ? 'saved' : 'hint' },
+        capability === null ? 'checking renderer…' : `${capability.mode}: ${capability.detail}`],
+    ],
+    ['form', { class: 'composer', on: { submit: { action: 'documents/ingest', preventDefault: true } } },
+      ['input', {
+        class: 'chat-input', type: 'url', placeholder: 'https://example.org/document', value: documents.url,
+        disabled: documents.busy ? true : null,
+        on: { input: on('documents/url', undefined, ['value']) },
+      }],
+      ['button', { class: 'send', type: 'submit', disabled: documents.busy || documents.url === '' ? true : null },
+        documents.busy ? 'ingesting…' : 'ingest'],
+    ],
+    documents.error ? ['div', { class: 'error' }, documents.error] : null,
+    ['div', { class: 'group' },
+      ['h3', {}, 'Discover with SearxNG'],
+      ['form', { class: 'composer', on: { submit: { action: 'documents/webSearch', preventDefault: true } } },
+        ['input', {
+          class: 'chat-input', type: 'search', placeholder: 'find documents on the web…', value: documents.webQ,
+          on: { input: on('documents/webQ', undefined, ['value']) },
+        }],
+        ['button', { class: 'send', type: 'submit', disabled: documents.webBusy || documents.webQ === '' ? true : null },
+          documents.webBusy ? 'searching…' : 'search']],
+      documents.webError ? ['div', { class: 'error-inline' }, documents.webError] : null,
+      documents.webResults.length > 0
+        ? ['div', { class: 'actions-row' },
+            ['button', {
+              class: 'send', disabled: documents.busy || documents.webSelected.length === 0 ? true : null,
+              on: { click: on('documents/webIngest') },
+            }, documents.busy ? 'ingesting…' : `ingest selected (${documents.webSelected.length})`]]
+        : null,
+      documents.webResults.map((result: any) => {
+        const selected = documents.webSelected.includes(result.url);
+        const next = selected
+          ? documents.webSelected.filter((url: string) => url !== result.url)
+          : [...documents.webSelected, result.url];
+        return ['div', { key: result.url, class: 'unit' },
+          ['div', { class: 'unit-text' }, result.title || result.url],
+          result.content ? ['p', { class: 'hint' }, result.content] : null,
+          ['div', { class: 'unit-meta' },
+            ['label', { class: 'check' },
+              ['input', { type: 'checkbox', checked: selected ? true : null, on: { change: on('documents/webSelected', next) } }],
+              ' select'],
+            ['a', { href: result.url, target: '_blank', rel: 'noreferrer' }, result.url],
+            ['button', { class: 'tab', disabled: documents.busy ? true : null, on: { click: on('documents/ingestUrl', result.url) } }, 'ingest one']]];
+      }),
+      documents.webIngestResults.length > 0
+        ? ['div', { class: 'units' }, documents.webIngestResults.map((result: any) =>
+            ['div', { key: result.url, class: 'unit-meta' },
+              ['span', { class: `run-status ${result.outcome ? 'ok' : 'error'}` }, result.outcome?.status ?? result.error?.code ?? 'error'],
+              ['span', {}, result.url],
+              result.error ? ['span', {}, result.error.message] : null])]
+        : null],
+    ['div', { class: 'loom-head' },
+      ['h3', {}, 'Search the corpus'],
+      ['input', {
+        class: 'chat-input', type: 'search', placeholder: 'semantic search…', value: documents.q,
+        on: { input: on('documents/q', undefined, ['value']) },
+      }],
+    ],
+    documents.results.length > 0
+      ? ['div', { class: 'units' }, documents.results.map((result: any) =>
+          ['div', { key: result.chunk.id, class: 'unit' },
+            ['div', { class: 'unit-text' }, result.chunk.text],
+            ['div', { class: 'unit-meta' },
+              ['span', {}, result.score.toFixed(3)],
+              ['a', { href: result.citation.url, target: '_blank', rel: 'noreferrer' },
+                `${result.source.title ?? result.citation.url}${result.citation.page ? ` · page ${result.citation.page}` : ''}`],
+              result.citation.headingPath.length > 0
+                ? ['span', {}, result.citation.headingPath.join(' › ')]
+                : null],
+          ])]
+      : null,
+    ['h3', {}, 'Sources'],
+    ['div', { class: 'units' },
+      documents.items.length === 0
+        ? ['p', { class: 'hint' }, 'No web documents ingested yet.']
+        : documents.items.map((source: any) => ['div', { key: source.id, class: 'unit' },
+            ['div', { class: 'unit-text' }, source.title ?? source.canonicalUrl],
+            ['div', { class: 'unit-meta' },
+              ['span', { class: `run-status ${source.status === 'ready' ? 'ok' : 'error'}` }, source.status],
+              ['span', {}, source.mimeType],
+              ['span', {}, source.fetchMode],
+              ['a', { href: source.canonicalUrl, target: '_blank', rel: 'noreferrer' }, source.canonicalUrl]]])],
+  ];
+}
+
 // -- settings ---------------------------------------------------------------
 
 function field(label: string, action: string, value: any, placeholder = ''): any {
@@ -289,6 +395,25 @@ function settingsPage(state: any): any {
       field('model', 'settings/embed-model', draft.embed.model, 'nomic-embed-text'),
       field('api key', 'settings/embed-apikey', draft.embed.apiKey),
       ['p', { class: 'hint' }, '`builtin` is @jarenjs/ai\'s deterministic hash-trigram embedder — lexical, demo-grade, zero setup. Configure a real model for semantic recall; memories synced under one embedder are only ever ranked by that embedder.']],
+    ['div', { class: 'group' },
+      ['h3', {}, 'Document corpus'],
+      select('chunker', 'settings/document-chunker', draft.documents.chunker, ['recursive', 'semantic-boundary', 's2']),
+      field('maximum tokens', 'settings/document-max', draft.documents.maxTokens, '450'),
+      field('overlap tokens', 'settings/document-overlap', draft.documents.overlapTokens, '48'),
+      ['p', { class: 'hint' }, 'Recursive heading-aware chunking is the safe default. Semantic-boundary and corrected S2 remain measurable experiments.']],
+    ['div', { class: 'group' },
+      ['h3', {}, 'Dynamic-page fallback'],
+      select('mode', 'settings/browser-mode', draft.browser.mode, ['disabled', 'webview', 'remote']),
+      field('remote endpoint', 'settings/browser-endpoint', draft.browser.endpoint, 'http://127.0.0.1:4720'),
+      field('renderer token', 'settings/browser-token', draft.browser.token),
+      ['label', { class: 'check' },
+        ['input', { type: 'checkbox', checked: draft.browser.allowUnsafeLocal ? true : null,
+          on: { change: on('settings/browser-unsafe', undefined, ['checked']) } }],
+        ' permit experimental local WebView for trusted pages'],
+      ['p', { class: 'hint' }, 'Static fetch always runs first. Use the remote Playwright service for untrusted dynamic pages; WebView cannot enforce the full subresource address policy.']],
+    ['div', { class: 'group' },
+      ['h3', {}, 'Web discovery'],
+      field('SearxNG URL', 'settings/search-url', draft.search.searxngUrl, 'http://127.0.0.1:8080')],
     ['div', { class: 'actions-row' },
       ['button', { class: 'send', on: { click: on('settings/save') } }, 'save'],
       ['button', { class: 'tab', on: { click: on('probe') } }, 'probe chat provider'],
@@ -307,6 +432,7 @@ export function rootView(state: any): any {
   const page = state.page === 'chat' ? chatPage(state)
     : state.page === 'loom' ? loomPage(state)
     : state.page === 'memory' ? memoryPage(state)
+    : state.page === 'documents' ? documentPage(state)
     : settingsPage(state);
   return ['div', { class: 'shell' }, header(state), page];
 }

@@ -15,7 +15,8 @@ import { readFile } from 'node:fs/promises';
 import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
 import { toNodeHandler } from '@jarenjs/contract/node';
-import { createDbMemoryStore, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
+import { createDbMemoryStore, createDocumentStore, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
+import { SafeStaticFetcher, type StaticFetchOptions } from '@tangleai/documents';
 
 import { DESKTOP_CONTRACT } from './contract.ts';
 import { ASSETS } from './assets.gen.ts';
@@ -32,6 +33,7 @@ export interface DesktopOptions {
   fetch?: typeof globalThis.fetch;
   now?: () => string;
   presetSettings?: Partial<Settings>;
+  documentFetch?: Omit<StaticFetchOptions, 'fetch' | 'now'>;
 }
 
 export interface Desktop {
@@ -51,12 +53,19 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
   const db = await openTangleDb({ path: options.dbPath, driver: options.driver });
   const memoryStore = createDbMemoryStore(db.collection('memories'));
   const runLog = createRunLog(db, { now: options.now });
+  const documentStore = createDocumentStore(db);
+  const documentFetcher = new SafeStaticFetcher({
+    ...options.documentFetch,
+    fetch: options.fetch,
+    now: options.now,
+  });
   const settings = createSettingsStore(db);
   if (options.presetSettings !== undefined) await settings.write(options.presetSettings);
   const live = createLiveHub();
   const chat = createChatEngine({
     db,
     memoryStore,
+    documentStore,
     settings: () => settings.read(),
     fetch: options.fetch,
     now: options.now,
@@ -64,7 +73,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
 
   const contract = compileContract(DESKTOP_CONTRACT);
   const handlers = createHandlers({
-    db, memoryStore, runLog, settings, live, chat,
+    db, memoryStore, runLog, settings, live, chat, documentStore, documentFetcher,
     version: DESKTOP_VERSION,
     fetch: options.fetch,
     now: options.now,

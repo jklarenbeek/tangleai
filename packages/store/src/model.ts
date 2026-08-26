@@ -2,7 +2,7 @@
  * The Tangle database model — a `jaren-model` 0.1 document for
  * @jarenjs/db `openStore`.
  *
- * Six collections, one decision each:
+ * Ten collections, one decision each:
  *
  *   memories  — the MemoryUnit records. The db-level schema is
  *               deliberately minimal: the REAL write gate is
@@ -15,6 +15,8 @@
  *   chats     — the conversation transcript with citations.
  *   documents — folder-sync state: content hash per file, so an
  *               unchanged file is skipped on re-sync.
+ *   sources / document_versions / document_elements / document_chunks —
+ *               the independent, replaceable web-document corpus lane.
  *   settings  — key/value host configuration (folder, provider).
  *
  * Keys are JSON Pointers into the document (`key: '/id'`), so the id
@@ -90,6 +92,79 @@ export const TANGLE_DB_MODEL = {
         },
       },
       key: '/path',
+    },
+    sources: {
+      schema: {
+        type: 'object',
+        required: ['id', 'requestedUrl', 'finalUrl', 'canonicalUrl', 'title', 'mimeType', 'fetchMode', 'status', 'fetchedAt'],
+        properties: {
+          id: ID,
+          requestedUrl: { type: 'string' },
+          finalUrl: { type: 'string' },
+          canonicalUrl: { type: 'string' },
+          title: { type: ['string', 'null'] },
+          mimeType: { type: 'string' },
+          fetchMode: { enum: ['static', 'bun-webview', 'remote-playwright'] },
+          status: { enum: ['ready', 'failed', 'blocked', 'dynamic-unavailable'] },
+          fetchedAt: { type: 'string' },
+          activeVersionId: { type: 'string' },
+        },
+      },
+      key: '/id',
+    },
+    document_versions: {
+      schema: {
+        type: 'object',
+        required: ['id', 'sourceId', 'contentHash', 'extractionVersion', 'chunkerVersion', 'chunkerConfig', 'embeddedBy', 'status', 'fetchedAt', 'metrics'],
+        properties: {
+          id: ID,
+          sourceId: ID,
+          contentHash: { type: 'string' },
+          extractionVersion: { type: 'string' },
+          chunkerVersion: { type: 'string' },
+          chunkerConfig: { type: 'object' },
+          embeddedBy: { type: 'object' },
+          status: { enum: ['staging', 'active', 'failed', 'superseded'] },
+          fetchedAt: { type: 'string' },
+          metrics: { type: 'object' },
+        },
+      },
+      key: '/id',
+    },
+    document_elements: {
+      schema: {
+        type: 'object',
+        required: ['id', 'sourceId', 'versionId', 'text', 'role', 'order', 'headingPath'],
+        properties: {
+          id: ID,
+          sourceId: ID,
+          versionId: ID,
+          text: { type: 'string' },
+          role: { type: 'string' },
+          order: { type: 'integer' },
+          headingPath: { type: 'array', items: { type: 'string' } },
+        },
+      },
+      key: '/id',
+    },
+    document_chunks: {
+      schema: {
+        type: 'object',
+        required: ['id', 'sourceId', 'versionId', 'elementIds', 'text', 'tokenCount', 'order', 'headingPath', 'embedding', 'embeddedBy'],
+        properties: {
+          id: ID,
+          sourceId: ID,
+          versionId: ID,
+          elementIds: { type: 'array', items: { type: 'string' } },
+          text: { type: 'string' },
+          tokenCount: { type: 'integer' },
+          order: { type: 'integer' },
+          headingPath: { type: 'array', items: { type: 'string' } },
+          embedding: { type: 'array', items: { type: 'number' } },
+          embeddedBy: { type: 'object' },
+        },
+      },
+      key: '/id',
     },
     settings: {
       schema: {

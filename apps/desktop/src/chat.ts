@@ -19,6 +19,7 @@ import { excerpt } from '@jarenjs/core/chunk';
 import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { TangleDb } from '@tangleai/store';
+import { recallDocumentChunks, type DocumentCorpusStore, type RankedDocumentChunk } from '@tangleai/documents';
 
 import type { Settings } from './settings.ts';
 import { embedderFor } from './settings.ts';
@@ -36,12 +37,14 @@ export interface ChatMessageRecord {
 export interface ChatOutcome {
   reply: ChatMessageRecord;
   citations: MemoryUnit[];
+  documentCitations: RankedDocumentChunk[];
   provider: string | null;
 }
 
 export interface ChatEngineOptions {
   db: TangleDb;
   memoryStore: MemoryStore;
+  documentStore: DocumentCorpusStore;
   settings: () => Promise<Settings>;
   fetch?: typeof globalThis.fetch;
   now?: () => string;
@@ -49,9 +52,9 @@ export interface ChatEngineOptions {
 }
 
 const SYSTEM_PROMPT = [
-  'You are Tangle, an assistant whose ONLY knowledge source is the memory list below,',
-  'curated from the user\'s own folder. Answer from these memories and cite the ones you',
-  'used by their [id]. If the memories do not contain the answer, say so plainly —',
+  'You are Tangle, an assistant whose ONLY knowledge sources are the two explicit lanes below:',
+  'curated memories and verbatim document chunks. Answer from these sources and cite the ones you',
+  'used by their [id]. If neither lane contains the answer, say so plainly —',
   'do not invent. Keep answers short and concrete.',
 ].join(' ');
 
@@ -62,6 +65,15 @@ function memoryContext(ranked: Array<{ unit: MemoryUnit, score: number }>): stri
   return `MEMORIES:\n${lines.join('\n')}`;
 }
 
+function documentContext(ranked: RankedDocumentChunk[]): string {
+  if (ranked.length === 0) return 'DOCUMENT CHUNKS: (none recalled)';
+  const lines = ranked.map(({ chunk, context, source, score }) => {
+    const expanded = context.map((item) => item.text).join('\n\n');
+    return `[${chunk.id}] (${score.toFixed(3)}) ${expanded}\n    source: ${source.canonicalUrl}${chunk.pageStart === undefined ? '' : ` page ${chunk.pageStart}`}`;
+  });
+  return `DOCUMENT CHUNKS:\n${lines.join('\n')}`;
+}
+
 function offlineReply(ranked: Array<{ unit: MemoryUnit, score: number }>, note: string): string {
   if (ranked.length === 0) {
     return `${note}\n\nNo memories matched this question yet — sync a folder first, or ask something the ingested documents cover.`;
@@ -70,13 +82,25 @@ function offlineReply(ranked: Array<{ unit: MemoryUnit, score: number }>, note: 
   return `${note}\n\nGrounded recall:\n${lines.join('\n')}`;
 }
 
+function groundedOfflineReply(
+  memories: Array<{ unit: MemoryUnit, score: number }>,
+  documents: RankedDocumentChunk[],
+  note: string,
+): string {
+  if (memories.length === 0 && documents.length === 0) return offlineReply(memories, note);
+  const memoryLines = memories.map(({ unit }) => `- ${unit.text} — *${excerpt(unit.evidence, 72)}* \`[${unit.id}]\``);
+  const documentLines = documents.map(({ chunk, source }) =>
+    `- ${chunk.text} — *${source.title ?? source.canonicalUrl}* \`[${chunk.id}]\``);
+  return `${note}\n\nGrounded recall:\n${[...memoryLines, ...documentLines].join('\n')}`;
+}
+
 export interface ChatEngine {
   history(limit?: number): Promise<ChatMessageRecord[]>;
   send(text: string): Promise<ChatOutcome>;
 }
 
 export function createChatEngine(options: ChatEngineOptions): ChatEngine {
-  const { db, memoryStore } = options;
+  const { db, memoryStore, documentStore } = options;
   const now = options.now ?? ((): string => new Date().toISOString());
   const recallK = options.recallK ?? 6;
   const chats = db.collection<ChatMessageRecord>('chats');
@@ -105,12 +129,15 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
 
       const embedder = embedderFor(settings, options.fetch);
       let ranked: Array<{ unit: MemoryUnit, score: number }> = [];
+      let documentRanked: RankedDocumentChunk[] = [];
       try {
         const [vector] = await embedder.embed([text]);
         const identity = { model: embedder.model, dims: embedder.dims ?? vector.length };
         ranked = recallByEmbedding(await memoryStore.list(), vector, { k: recallK, identity }).ranked;
+        documentRanked = (await recallDocumentChunks(documentStore, vector, identity, { k: recallK, maxPerSource: 2 })).ranked;
       } catch {
         ranked = []; // a dead embedding wire degrades recall, never chat
+        documentRanked = [];
       }
       const citations = ranked.map((r) => r.unit);
 
@@ -122,7 +149,7 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       let provider: string | null = null;
 
       if (!configured) {
-        replyText = offlineReply(ranked, '_No chat model is configured (Settings → Chat provider)._');
+        replyText = groundedOfflineReply(ranked, documentRanked, '_No chat model is configured (Settings → Chat provider)._');
       } else {
         try {
           const client = createChatClient({
@@ -136,18 +163,18 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
           const history = await this.history(12);
           const outcome = await client.complete({
             messages: [
-              { role: 'system', content: `${SYSTEM_PROMPT}\n\n${memoryContext(ranked)}` },
+              { role: 'system', content: `${SYSTEM_PROMPT}\n\n${memoryContext(ranked)}\n\n${documentContext(documentRanked)}` },
               ...history.slice(0, -1).map((m) => ({ role: m.role, content: m.text })),
               { role: 'user', content: text },
             ],
             stream: false,
           });
           replyText = String(outcome.message?.content ?? '').trim()
-            || offlineReply(ranked, '_The model returned an empty reply._');
+            || groundedOfflineReply(ranked, documentRanked, '_The model returned an empty reply._');
           provider = `${chat.provider}/${chat.model}`;
         } catch (error) {
           const reason = error instanceof Error ? error.message : String(error);
-          replyText = offlineReply(ranked, `_The chat wire failed (${excerpt(reason, 120)}) — answering from memory alone._`);
+          replyText = groundedOfflineReply(ranked, documentRanked, `_The chat wire failed (${excerpt(reason, 120)}) — answering from retrieved sources._`);
         }
       }
 
@@ -155,10 +182,10 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
         role: 'assistant',
         text: replyText,
         at: now(),
-        citations: citations.map((u) => u.id),
+        citations: [...citations.map((u) => u.id), ...documentRanked.map((item) => item.chunk.id)],
         provider,
       });
-      return { reply, citations, provider };
+      return { reply, citations, documentCitations: documentRanked, provider };
     },
   };
 }
