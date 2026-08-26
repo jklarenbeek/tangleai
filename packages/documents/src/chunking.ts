@@ -1,6 +1,7 @@
 import type { Embedder } from '@jarenjs/ai/embed';
+import { cosineSimilarity } from '@jarenjs/core/vector';
 import { kMeans } from '@tangleai/core/clustering';
-import { estimateTokens } from '@tangleai/core/tokens';
+import { CHARS_PER_TOKEN, estimateTokens } from '@tangleai/core/tokens';
 
 import {
   RECURSIVE_CHUNKER_VERSION,
@@ -11,6 +12,9 @@ import {
   type Chunker,
   type DocumentElement,
 } from './contracts.ts';
+
+/** Below this a repeated tail carries no recoverable context. */
+const MIN_OVERLAP_CHARS = 16;
 
 interface AtomicPart {
   element: DocumentElement;
@@ -39,8 +43,8 @@ function splitAtBoundary(text: string, maxChars: number): string[] {
   return output;
 }
 
-function atomicParts(elements: DocumentElement[], maxTokens: number): AtomicPart[] {
-  const maxChars = Math.max(4, maxTokens * 4);
+function atomicParts(elements: DocumentElement[], contentTokens: number): AtomicPart[] {
+  const maxChars = Math.max(4, contentTokens * CHARS_PER_TOKEN);
   return elements.flatMap((element) => splitAtBoundary(element.text, maxChars).map((text) => ({
     element,
     text,
@@ -89,34 +93,85 @@ function draft(parts: AtomicPart[], order: number): ChunkDraft {
   };
 }
 
+/** The characters a list of parts occupies once joined, without joining
+ * them — the same `'\n\n'` separator `draft` uses. */
+function joinedChars(parts: AtomicPart[]): number {
+  if (parts.length === 0) return 0;
+  return parts.reduce((sum, part) => sum + part.text.length, 0) + (parts.length - 1) * 2;
+}
+
+/** The last `budget` characters of `text`, started at a word boundary when
+ * one falls near the cut. Empty below `MIN_OVERLAP_CHARS`, where a repeated
+ * fragment is noise rather than context. */
+function tailAtBoundary(text: string, budget: number): string {
+  if (budget < MIN_OVERLAP_CHARS) return '';
+  if (text.length <= budget) return text;
+  const window = text.slice(text.length - budget);
+  const boundary = window.search(/\s/);
+  return (boundary >= 0 && boundary < budget / 2 ? window.slice(boundary + 1) : window).trim();
+}
+
+/** The tail of an emitted chunk, repeated at the head of the next one so a
+ * match spanning a cut is still found whole in one piece.
+ *
+ * Whole parts are carried while they fit, and the last one is CUT to the
+ * remaining budget rather than dropped. Carrying whole parts only — which
+ * is what this did before 2026-08-26 — meant the budget applied solely to
+ * elements smaller than itself, so ordinary prose (a paragraph is normally
+ * longer than 48 tokens) silently got no overlap at all. The element id
+ * travels with the cut text, so a repeated tail stays attributable to the
+ * element it came from. */
+function overlapTail(parts: AtomicPart[], budget: number): AtomicPart[] {
+  if (budget < MIN_OVERLAP_CHARS || parts.length === 0) return [];
+  const tail: AtomicPart[] = [];
+  let used = 0;
+  for (let index = parts.length - 1; index >= 0; index--) {
+    const part = parts[index];
+    const separator = tail.length === 0 ? 0 : 2;
+    if (used + separator + part.text.length <= budget) {
+      tail.unshift(part);
+      used += separator + part.text.length;
+      continue;
+    }
+    const cut = tailAtBoundary(part.text, budget - used - separator);
+    if (cut !== '') tail.unshift({ element: part.element, text: cut, tokens: estimateTokens(cut) });
+    break;
+  }
+  return tail;
+}
+
+/** Group parts into chunks that never exceed `maxTokens`, repeating an
+ * `overlapTokens` tail across every cut. Sizes are compared in characters
+ * (`ceil(chars / 4)` is the token estimate, so the two orders agree
+ * exactly) and carried forward, which keeps the pass linear in the
+ * document instead of re-joining `current` for every part. */
 function pack(parts: AtomicPart[], maxTokens: number, overlapTokens: number): ChunkDraft[] {
+  const maxChars = maxTokens * CHARS_PER_TOKEN;
+  const overlapChars = overlapTokens * CHARS_PER_TOKEN - 2;
   const chunks: ChunkDraft[] = [];
   let current: AtomicPart[] = [];
-  let currentTokens = 0;
-  const flush = (): void => {
-    if (current.length === 0) return;
-    chunks.push(draft(current, chunks.length));
-    const overlap: AtomicPart[] = [];
-    for (let index = current.length - 1; index >= 0; index--) {
-      const candidate = [current[index], ...overlap];
-      if (estimateTokens(candidate.map((part) => part.text).join('\n\n')) > overlapTokens) break;
-      overlap.unshift(current[index]);
-    }
-    current = overlap;
-    currentTokens = estimateTokens(current.map((part) => part.text).join('\n\n'));
-  };
+  let chars = 0;
+  const withPart = (part: AtomicPart): number => chars + part.text.length + (current.length === 0 ? 0 : 2);
   for (const part of parts) {
-    const headingBoundary = part.element.role === 'heading' && current.length > 0 && currentTokens >= Math.floor(maxTokens * 0.55);
-    const prospective = (): number => estimateTokens([...current, part].map((item) => item.text).join('\n\n'));
-    if (headingBoundary || prospective() > maxTokens) flush();
-    if (prospective() > maxTokens) {
-      current = [];
-      currentTokens = 0;
+    const headingBoundary = part.element.role === 'heading' && current.length > 0
+      && Math.ceil(chars / CHARS_PER_TOKEN) >= Math.floor(maxTokens * 0.55);
+    if (headingBoundary || withPart(part) > maxChars) {
+      if (current.length > 0) {
+        chunks.push(draft(current, chunks.length));
+        current = overlapTail(current, overlapChars);
+        chars = joinedChars(current);
+      }
+      // The carry is context, never content: drop it whole rather than
+      // let it push this part over the budget or split it again.
+      if (withPart(part) > maxChars) {
+        current = [];
+        chars = 0;
+      }
     }
+    chars = withPart(part);
     current.push(part);
-    currentTokens = estimateTokens(current.map((item) => item.text).join('\n\n'));
   }
-  flush();
+  if (current.length > 0) chunks.push(draft(current, chunks.length));
   return chunks;
 }
 
@@ -130,26 +185,19 @@ export class RecursiveDocumentChunker implements Chunker {
     this.overlapTokens = Math.max(0, Math.min(options.overlapTokens ?? 48, Math.floor(this.maxTokens / 3)));
   }
 
+  /** The budget an atomic part is split to: the chunk budget less the tail
+   * the next chunk repeats, so a part and its carried overlap always fit. */
+  get contentTokens(): number {
+    return this.maxTokens - this.overlapTokens;
+  }
+
   async chunk(elements: DocumentElement[]): Promise<ChunkResult> {
-    const parts = atomicParts(elements, this.maxTokens);
+    const parts = atomicParts(elements, this.contentTokens);
     return {
       chunks: pack(parts, this.maxTokens, this.overlapTokens),
       diagnostic: { algorithm: this.version, warnings: [] },
     };
   }
-}
-
-function cosine(a: number[], b: number[]): number {
-  if (a.length !== b.length || a.length === 0) return 0;
-  let dot = 0;
-  let aa = 0;
-  let bb = 0;
-  for (let index = 0; index < a.length; index++) {
-    dot += a[index] * b[index];
-    aa += a[index] * a[index];
-    bb += b[index] * b[index];
-  }
-  return aa === 0 || bb === 0 ? 0 : dot / Math.sqrt(aa * bb);
 }
 
 function seedFrom(value: string): () => number {
@@ -251,6 +299,8 @@ export interface S2ChunkerOptions extends RecursiveChunkerOptions {
 export class S2DocumentChunker implements Chunker {
   readonly version = S2_CHUNKER_VERSION;
   private readonly baseline: RecursiveDocumentChunker;
+  get maxTokens(): number { return this.baseline.maxTokens; }
+  get overlapTokens(): number { return this.baseline.overlapTokens; }
   private readonly alpha: number;
   private readonly structuralWeight: number;
   private readonly maxSpectralElements: number;
@@ -278,7 +328,7 @@ export class S2DocumentChunker implements Chunker {
     const affinity = Array.from({ length: n }, () => new Array<number>(n).fill(0));
     for (let row = 0; row < n; row++) {
       for (let col = row + 1; col < n; col++) {
-        const semantic = (Math.max(-1, Math.min(1, cosine(embeddings[row], embeddings[col]))) + 1) / 2;
+        const semantic = (Math.max(-1, Math.min(1, cosineSimilarity(embeddings[row], embeddings[col]))) + 1) / 2;
         const dx = (points[row].x - points[col].x) * this.structuralWeight;
         const dy = points[row].y - points[col].y;
         const spatial = 1 / (1 + Math.hypot(dx, dy) / diagonal);
@@ -319,7 +369,7 @@ export class S2DocumentChunker implements Chunker {
   }
 
   async chunk(elements: DocumentElement[], options: { signal?: AbortSignal } = {}): Promise<ChunkResult> {
-    const parts = atomicParts(elements, this.baseline.maxTokens);
+    const parts = atomicParts(elements, this.baseline.contentTokens);
     if (parts.length < 3) return this.baseline.chunk(elements);
     const raw = await this.embedder.embed(parts.map((part) => part.text), { signal: options.signal });
     const embeddings = raw.map((vector) => Array.from(vector));
@@ -379,6 +429,8 @@ export interface SemanticBoundaryOptions extends RecursiveChunkerOptions {
 export class SemanticBoundaryChunker implements Chunker {
   readonly version = 'semantic-boundary/1';
   private readonly baseline: RecursiveDocumentChunker;
+  get maxTokens(): number { return this.baseline.maxTokens; }
+  get overlapTokens(): number { return this.baseline.overlapTokens; }
   private readonly embedder: Embedder;
   private readonly threshold: number;
 
@@ -389,13 +441,13 @@ export class SemanticBoundaryChunker implements Chunker {
   }
 
   async chunk(elements: DocumentElement[], options: { signal?: AbortSignal } = {}): Promise<ChunkResult> {
-    const parts = atomicParts(elements, this.baseline.maxTokens);
+    const parts = atomicParts(elements, this.baseline.contentTokens);
     const vectors = (await this.embedder.embed(parts.map((part) => part.text), { signal: options.signal })).map((vector) => Array.from(vector));
     const groups: AtomicPart[][] = [];
     let current: AtomicPart[] = [];
     let tokens = 0;
     parts.forEach((part, index) => {
-      const boundary = index > 0 && cosine(vectors[index - 1], vectors[index]) < this.threshold;
+      const boundary = index > 0 && cosineSimilarity(vectors[index - 1], vectors[index]) < this.threshold;
       if (current.length > 0 && (boundary || tokens + part.tokens > this.baseline.maxTokens)) {
         groups.push(current);
         current = [];

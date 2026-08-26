@@ -32,6 +32,32 @@ describe('document chunkers', () => {
     assert.ok(result.chunks.every((chunk) => chunk.elementIds[0] === 'e-0'));
   });
 
+  it('carries a real overlap between neighbouring chunks of ordinary prose', async () => {
+    const paragraph = (n: number): string =>
+      Array.from({ length: 60 }, (_, index) => `sentence ${n}-${index} about the subject matter here`).join(' ');
+    const elements: DocumentElement[] = Array.from({ length: 6 }, (_, order) => ({
+      id: `p-${order}`, sourceId: 'source', versionId: 'version', text: paragraph(order),
+      role: 'paragraph', order, headingPath: [],
+    }));
+    const chunker = new RecursiveDocumentChunker({ maxTokens: 450, overlapTokens: 48 });
+    const { chunks } = await chunker.chunk(elements);
+    assert.ok(chunks.length > 2);
+    assert.ok(chunks.every((chunk) => chunk.tokenCount <= 450));
+    for (let index = 1; index < chunks.length; index++) {
+      const head = chunks[index].text.slice(0, 40);
+      assert.ok(
+        chunks[index - 1].text.includes(head),
+        `chunk ${index} does not repeat the tail of chunk ${index - 1}`,
+      );
+    }
+  });
+
+  it('reports the overlap it actually applied, not the one that was requested', async () => {
+    const chunker = new RecursiveDocumentChunker({ maxTokens: 64, overlapTokens: 48 });
+    assert.equal(chunker.maxTokens, 64);
+    assert.equal(chunker.overlapTokens, 21);
+  });
+
   it('runs deterministic, capped S2 clustering and preserves contiguous reading order', async () => {
     const elements = Array.from({ length: 12 }, (_, order): DocumentElement => ({
       id: `e-${order}`, sourceId: 's', versionId: 'v', order,

@@ -75,7 +75,9 @@ describe('versioned document ingestion and retrieval', () => {
       const reindexed = await ingester.ingest({ url: 'https://docs.example/ops', maxTokens: 64 });
       assert.equal(reindexed.status, 'ingested');
       assert.notEqual(reindexed.version.id, three.version.id, 'chunk configuration participates in version identity');
-      assert.deepEqual(reindexed.version.chunkerConfig, { maxTokens: 64, overlapTokens: 48 });
+      // The EFFECTIVE budgets, not the requested ones: 48 clamps to a third
+      // of 64, and a version that recorded 48 could not be re-indexed from.
+      assert.deepEqual(reindexed.version.chunkerConfig, { maxTokens: 64, overlapTokens: 21 });
       assert.equal((await store.getVersion(three.version.id))?.status, 'superseded');
       assert.deepEqual(await store.listChunks(three.version.id), [], 're-indexing removes chunks for the previous configuration');
 

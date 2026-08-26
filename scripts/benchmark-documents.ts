@@ -3,6 +3,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { cosineSimilarity } from '@jarenjs/core/vector';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import { estimateTokens } from '@tangleai/core/tokens';
 import {
@@ -15,6 +16,14 @@ import {
   type Chunker,
   type DocumentElement,
 } from '@tangleai/documents';
+
+/** The budget the table is measured at. It is deliberately far below the
+ * desktop's 450-token default: the fixed corpus is small, and at the
+ * shipped budget every document collapses into one or two chunks, which
+ * no chunker can be told apart by. Stated here and in the report so the
+ * numbers are never read as describing the default. */
+const MAX_TOKENS = 64;
+const OVERLAP_TOKENS = 8;
 
 const root = process.cwd();
 const fixtures = join(root, 'test/fixtures/documents');
@@ -39,14 +48,6 @@ function elements(sourceId: string, drafts: Array<Omit<DocumentElement, 'id' | '
   return drafts.map((draft, order) => ({ ...draft, id: `${sourceId}-e${order}`, sourceId, versionId: `${sourceId}-v1`, order }));
 }
 
-function cosine(a: ArrayLike<number>, b: ArrayLike<number>): number {
-  let dot = 0, aa = 0, bb = 0;
-  for (let index = 0; index < a.length; index++) {
-    dot += a[index] * b[index]; aa += a[index] * a[index]; bb += b[index] * b[index];
-  }
-  return aa === 0 || bb === 0 ? 0 : dot / Math.sqrt(aa * bb);
-}
-
 const extractionStarted = performance.now();
 const staticDoc = extractHtml(await load('static.html'), 'https://docs.example/original', { minUsefulChars: 1 });
 const wiki = extractHtml(await load('noisy-wikipedia.html'), 'https://en.wikipedia.org/wiki/Vitamin_E', { minUsefulChars: 1 });
@@ -65,9 +66,9 @@ const corpus = [
 const questions = JSON.parse(await load('questions.json')) as Array<{ question: string; relevant: string[] }>;
 
 const strategies: Array<{ name: string; make(): Chunker }> = [
-  { name: 'heading-recursive', make: () => new RecursiveDocumentChunker({ maxTokens: 64, overlapTokens: 8 }) },
-  { name: 'semantic-boundary', make: () => new SemanticBoundaryChunker({ embedder, maxTokens: 64, overlapTokens: 8 }) },
-  { name: 'corrected-s2', make: () => new S2DocumentChunker({ embedder, maxTokens: 64, overlapTokens: 8, maxSpectralElements: 32 }) },
+  { name: 'heading-recursive', make: () => new RecursiveDocumentChunker({ maxTokens: MAX_TOKENS, overlapTokens: OVERLAP_TOKENS }) },
+  { name: 'semantic-boundary', make: () => new SemanticBoundaryChunker({ embedder, maxTokens: MAX_TOKENS, overlapTokens: OVERLAP_TOKENS }) },
+  { name: 'corrected-s2', make: () => new S2DocumentChunker({ embedder, maxTokens: MAX_TOKENS, overlapTokens: OVERLAP_TOKENS, maxSpectralElements: 32 }) },
 ];
 
 const rows: Array<Record<string, string | number>> = [];
@@ -93,7 +94,7 @@ for (const strategy of strategies) {
   let reciprocalRank = 0;
   let recalled = 0;
   questions.forEach((question, qIndex) => {
-    const ranked = chunks.map((chunk) => ({ chunk, score: cosine(queryVectors[qIndex], chunk.vector) }))
+    const ranked = chunks.map((chunk) => ({ chunk, score: cosineSimilarity(queryVectors[qIndex], chunk.vector) }))
       .sort((a, b) => b.score - a.score);
     const rank = ranked.findIndex(({ chunk }) => question.relevant.every((needle) => chunk.text.toLowerCase().includes(needle.toLowerCase()))) + 1;
     if (rank > 0) reciprocalRank += 1 / rank;
@@ -107,7 +108,7 @@ for (const strategy of strategies) {
     chunks: chunks.length,
     recall: recalled / questions.length,
     mrr: reciprocalRank / questions.length,
-    violations: chunks.filter((chunk) => chunk.tokenCount > 64 || estimateTokens(chunk.text) > 64).length,
+    violations: chunks.filter((chunk) => chunk.tokenCount > MAX_TOKENS || estimateTokens(chunk.text) > MAX_TOKENS).length,
     citations: provenance ? '100%' : 'failed',
     ms: elapsed.toFixed(1),
     heap: ((process.memoryUsage().heapUsed - heapBefore) / 1024 / 1024).toFixed(2),
@@ -126,7 +127,8 @@ const generated = new Date().toISOString();
 console.log(`# Document ingestion benchmark\n\nGenerated ${generated} with Bun ${bun}; embedder ${embedder.model}/${embedder.dims}.`);
 console.log(`\nFixed corpus: ${corpus.length} documents, ${corpus.reduce((sum, document) => sum + document.elements.length, 0)} typed elements, ${questions.length} labelled questions.`);
 console.log(`\nExtraction: ${extractionMs.toFixed(1)} ms; known Wikipedia boilerplate hits: ${noiseHits}/${noiseTerms.length}; multi-column order: ${multi.elements.map((element) => element.text).join(' → ')}.`);
-console.log('\n| Strategy | Chunks | Recall@5 | MRR | >64-token violations | Resolvable provenance | ms | heap delta MiB | embed calls | embedded texts | est. tokens |');
+console.log(`\nBudget: ${MAX_TOKENS} tokens per chunk, ${OVERLAP_TOKENS}-token overlap.`);
+console.log('\n| Strategy | Chunks | Recall@5 | MRR | over-budget chunks | Resolvable provenance | ms | heap delta MiB | embed calls | embedded texts | est. tokens |');
 console.log('|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|');
 for (const row of rows) {
   console.log(`| ${row.strategy} | ${row.chunks} | ${(Number(row.recall) * 100).toFixed(1)}% | ${Number(row.mrr).toFixed(3)} | ${row.violations} | ${row.citations} | ${row.ms} | ${row.heap} | ${row.calls} | ${row.embeddedTexts} | ${row.embeddedTokens} |`);

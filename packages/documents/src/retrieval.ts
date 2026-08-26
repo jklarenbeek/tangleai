@@ -1,4 +1,6 @@
 import type { Embedder } from '@jarenjs/ai/embed';
+import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
+import { sameEmbeddedBy } from '@tangleai/core/schemas/memory';
 
 import type { DocumentChunk, DocumentCorpusStore, DocumentSource, EmbeddedBy } from './contracts.ts';
 
@@ -32,26 +34,9 @@ export interface DocumentSearchOptions {
   neighbours?: number;
 }
 
-function sameIdentity(a: EmbeddedBy, b: EmbeddedBy): boolean {
-  return a.model === b.model && a.dims === b.dims;
-}
-
-function cosine(a: number[], b: ArrayLike<number>): number {
-  if (a.length !== b.length || a.length === 0) return 0;
-  let dot = 0;
-  let aa = 0;
-  let bb = 0;
-  for (let index = 0; index < a.length; index++) {
-    dot += a[index] * b[index];
-    aa += a[index] * a[index];
-    bb += b[index] * b[index];
-  }
-  return aa === 0 || bb === 0 ? 0 : dot / Math.sqrt(aa * bb);
-}
-
 export async function recallDocumentChunks(
   store: DocumentCorpusStore,
-  query: ArrayLike<number>,
+  query: Vector,
   identity: EmbeddedBy,
   options: DocumentSearchOptions = {},
 ): Promise<DocumentRecall> {
@@ -61,11 +46,11 @@ export async function recallDocumentChunks(
   let skipped = 0;
   const scored: Array<{ chunk: DocumentChunk; source: DocumentSource; score: number }> = [];
   for (const chunk of chunks) {
-    if (!sameIdentity(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) {
+    if (!sameEmbeddedBy(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) {
       skipped++;
       continue;
     }
-    scored.push({ chunk, source: sourceByVersion.get(chunk.versionId) as DocumentSource, score: cosine(chunk.embedding, query) });
+    scored.push({ chunk, source: sourceByVersion.get(chunk.versionId) as DocumentSource, score: cosineSimilarity(chunk.embedding, query) });
   }
   scored.sort((a, b) => b.score - a.score || a.chunk.id.localeCompare(b.chunk.id));
   const k = Math.max(1, options.k ?? 8);

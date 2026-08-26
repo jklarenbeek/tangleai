@@ -31,13 +31,20 @@ export function normalizeUrl(input: string): string {
   return url.toString();
 }
 
+/** A URL's `hostname` keeps the brackets around an IPv6 literal; the
+ * address inside them is what a policy and a resolver both work on. */
+function bareHost(hostname: string): string {
+  return hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname;
+}
+
 function ipv4Parts(address: string): number[] | undefined {
   if (isIP(address) !== 4) return undefined;
   const parts = address.split('.').map(Number);
   return parts.length === 4 && parts.every((part) => part >= 0 && part <= 255) ? parts : undefined;
 }
 
-export function isReservedAddress(address: string): boolean {
+export function isReservedAddress(input: string): boolean {
+  const address = bareHost(input);
   const mapped = address.toLowerCase().match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/)?.[1];
   const v4 = ipv4Parts(mapped ?? address);
   if (v4 !== undefined) {
@@ -65,9 +72,10 @@ export function isReservedAddress(address: string): boolean {
 }
 
 const defaultLookup: AddressLookup = async (hostname) => {
-  const literal = isIP(hostname);
-  if (literal !== 0) return [{ address: hostname, family: literal }];
-  return nodeLookup(hostname, { all: true, verbatim: true });
+  const host = bareHost(hostname);
+  const literal = isIP(host);
+  if (literal !== 0) return [{ address: host, family: literal }];
+  return nodeLookup(host, { all: true, verbatim: true });
 };
 
 /** Resolve and validate every address immediately before each request. */
@@ -75,10 +83,11 @@ export async function assertPublicUrl(input: string, options: UrlPolicyOptions =
   const normalized = normalizeUrl(input);
   if (options.allowPrivate === true) return normalized;
   const url = new URL(normalized);
-  const literal = isIP(url.hostname);
+  const host = bareHost(url.hostname);
+  const literal = isIP(host);
   const addresses = literal === 0
-    ? await (options.lookup ?? defaultLookup)(url.hostname)
-    : [{ address: url.hostname, family: literal }];
+    ? await (options.lookup ?? defaultLookup)(host)
+    : [{ address: host, family: literal }];
   if (addresses.length === 0) throw new DocumentError('dns-failed', `No address resolved for ${url.hostname}`);
   const blocked = addresses.find(({ address }) => isReservedAddress(address));
   if (blocked !== undefined) {

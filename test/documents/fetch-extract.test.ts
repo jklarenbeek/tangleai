@@ -30,6 +30,22 @@ describe('document URL policy and bounded fetch', () => {
     );
   });
 
+  it('refuses a bracketed IPv6 literal by policy, never by a DNS failure', async () => {
+    let looked = 0;
+    const lookup = async (): Promise<Array<{ address: string; family: number }>> => {
+      looked++;
+      throw new Error('getaddrinfo ENOTFOUND');
+    };
+    for (const url of ['http://[::1]:8080/x', 'http://[fd00::1]/x', 'http://[fe80::1]/x']) {
+      await assert.rejects(
+        assertPublicUrl(url, { lookup }),
+        (error: any) => error instanceof DocumentError && error.code === 'blocked-address',
+        url,
+      );
+    }
+    assert.equal(looked, 0, 'an IP literal must never reach the resolver');
+  });
+
   it('validates a redirect before making any request to its protected target', async () => {
     const calls: string[] = [];
     const fetchImpl = async (url: any): Promise<Response> => {

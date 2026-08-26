@@ -70,6 +70,22 @@ The desktop keeps browser automation optional. Ordinary HTML, text, Markdown, an
 documents are fetched and parsed inside the application; only client-rendered shells need
 a browser process.
 
+**The house rule, and its one recorded exemption.** Everything here is
+jarenjs-suite-only — no third-party runtime dependency — except the document
+lane, which takes three, deliberately (CONVENTIONS §1 asks that a new exemption
+be a recorded decision rather than a default):
+
+| Dependency | Where | Why the suite cannot supply it |
+|---|---|---|
+| `unpdf` 1.6.2 | `@tangleai/documents` | A PDF text/geometry extractor. Out of scope for jarenjs for the foreseeable future; `@jarenjs/core/chunk` cuts text, it does not read page boxes. |
+| `linkedom` 0.18.12 | `@tangleai/documents` | An HTML5 parse tree with browser error recovery, plus a CSS selector engine. `@jarenjs/md/html` is explicitly *not* an HTML5 parser: it is an allow-list for raw HTML inside Markdown and drops what it does not recognise — correct for rendering trusted fragments, unusable for scraping hostile pages. |
+| `playwright-core` 1.62.1 | `apps/scraper` only | A browser driver, and a browser is not a library. It never enters `dist/tangle`; the desktop reaches it over the adapter seam or not at all. |
+
+The first two DO travel inside the compiled binary. They are the price of reading
+PDFs and real web pages; the boundary they must not cross is the API — no
+LangChain `Document`, no DOM type, and no `unpdf` type appears in
+`@tangleai/documents`' contracts.
+
 **`apps/desktop`** — a self-hosting desktop app: point it at a folder,
 sync it (content-hash incremental) through the pipeline, watch the DAG
 run LIVE over an SSE stream and browse every past run's per-node story,

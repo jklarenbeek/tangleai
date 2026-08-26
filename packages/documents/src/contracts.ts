@@ -1,5 +1,11 @@
 /** Plain, storage-safe contracts for the document corpus lane. */
 
+import type { EmbeddedBy } from '@tangleai/core/schemas/memory';
+
+/** The corpus lane ranks against the SAME identity the memory lane does —
+ * one definition per repo, not one per lane. */
+export type { EmbeddedBy };
+
 export const EXTRACTION_VERSION = 'tangle-extract/1';
 export const RECURSIVE_CHUNKER_VERSION = 'heading-recursive/1';
 export const S2_CHUNKER_VERSION = 's2-contiguous/1';
@@ -11,11 +17,6 @@ export type ElementRole =
   | 'title' | 'heading' | 'paragraph' | 'list-item' | 'code' | 'quote'
   | 'table' | 'figure-caption' | 'navigation' | 'toc' | 'reference-list'
   | 'footer' | 'related' | 'unknown';
-
-export interface EmbeddedBy {
-  model: string;
-  dims: number;
-}
 
 export interface BoundingBox {
   x: number;
@@ -147,6 +148,10 @@ export interface ChunkResult {
 
 export interface Chunker {
   readonly version: string;
+  /** The EFFECTIVE budgets, after clamping — what a re-index must repeat
+   * to be deterministic, which is not always what the caller asked for. */
+  readonly maxTokens: number;
+  readonly overlapTokens: number;
   chunk(elements: DocumentElement[], options?: { signal?: AbortSignal }): Promise<ChunkResult>;
 }
 

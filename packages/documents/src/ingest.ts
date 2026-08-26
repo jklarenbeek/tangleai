@@ -109,8 +109,19 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
       const strategy = input.strategy ?? 'recursive';
       const maxTokens = Math.max(16, input.maxTokens ?? 450);
       const overlapTokens = Math.max(0, input.overlapTokens ?? 48);
-      const chunker = chunkerFor(strategy, embedder, maxTokens, overlapTokens);
-      const chunkerConfig = { maxTokens, overlapTokens };
+      let chunkerEmbedCalls = 0;
+      const chunkerEmbedder: Embedder = {
+        model: embedder.model,
+        dims: embedder.dims,
+        embed: async (texts, embedOptions) => {
+          chunkerEmbedCalls++;
+          return embedder.embed(texts, embedOptions);
+        },
+      };
+      const chunker = chunkerFor(strategy, chunkerEmbedder, maxTokens, overlapTokens);
+      // The chunker clamps what it was asked for; a re-index is only
+      // deterministic against the budgets that actually ran.
+      const chunkerConfig = { maxTokens: chunker.maxTokens, overlapTokens: chunker.overlapTokens };
 
       try {
         progress(now, input.onProgress, 'fetch', 'start');
@@ -161,7 +172,8 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         const active = existing?.activeVersionId === undefined ? undefined : await store.getVersion(existing.activeVersionId);
         if (input.force !== true && active !== undefined && active.contentHash === contentHash
           && active.chunkerVersion === chunker.version && active.embeddedBy.model === identity.model
-          && active.chunkerConfig?.maxTokens === maxTokens && active.chunkerConfig.overlapTokens === overlapTokens
+          && active.chunkerConfig?.maxTokens === chunkerConfig.maxTokens
+          && active.chunkerConfig.overlapTokens === chunkerConfig.overlapTokens
           && (identity.dims === 0 || active.embeddedBy.dims === identity.dims)) {
           const source: DocumentSource = {
             ...(existing as DocumentSource), finalUrl, canonicalUrl, title: extracted.title, mimeType,
@@ -172,7 +184,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           return { status: 'unchanged', source, version: active, browserFallback };
         }
 
-        const provisionalVersionId = `ver-${hash(`${id}|${contentHash}|${EXTRACTION_VERSION}|${chunker.version}|${maxTokens}|${overlapTokens}|${identity.model}|${identity.dims}`).slice(0, 32)}`;
+        const provisionalVersionId = `ver-${hash(`${id}|${contentHash}|${EXTRACTION_VERSION}|${chunker.version}|${chunkerConfig.maxTokens}|${chunkerConfig.overlapTokens}|${identity.model}|${identity.dims}`).slice(0, 32)}`;
         const elements: DocumentElement[] = extracted.elements.map((element, order) => ({
           ...element,
           id: `el-${hash(`${provisionalVersionId}|${order}|${element.text}`).slice(0, 32)}`,
@@ -186,15 +198,17 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         const chunkingStarted = performance.now();
         const chunked = await chunker.chunk(elements, { signal: input.signal });
         const chunkingMs = performance.now() - chunkingStarted;
-        if (chunked.chunks.some((chunk) => chunk.tokenCount > maxTokens)) {
-          throw new DocumentError('chunk-budget', `Chunker emitted a chunk larger than ${maxTokens} tokens`);
+        if (chunked.chunks.some((chunk) => chunk.tokenCount > chunkerConfig.maxTokens)) {
+          throw new DocumentError('chunk-budget', `Chunker emitted a chunk larger than ${chunkerConfig.maxTokens} tokens`);
         }
         progress(now, input.onProgress, 'chunk', 'ok', { chunks: chunked.chunks.length, ms: chunkingMs, diagnostic: chunked.diagnostic });
 
         progress(now, input.onProgress, 'embed', 'start');
         const embeddingStarted = performance.now();
         const vectors: number[][] = [];
-        let embeddingCalls = strategy === 'recursive' ? 0 : 1;
+        // Counted, never assumed: a chunker that embeds its elements has
+        // already spent calls, and how many is its business, not ours.
+        let embeddingCalls = chunkerEmbedCalls;
         for (let start = 0; start < chunked.chunks.length; start += batchSize) {
           const batch = chunked.chunks.slice(start, start + batchSize);
           const embedded = await embedder.embed(batch.map((chunk) => chunk.text), { signal: input.signal });
