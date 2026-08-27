@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/locomo10",
+  "title": "LoCoMo 10 — the released dataset, as it actually is",
+  "description": "The contract for benchmark/locomo/data/locomo10.json. It describes the file as MEASURED, not as the paper describes it: `answer` is optional because 444 of 446 adversarial questions do not carry one, and it is string OR number because six answers are bare integers. A validation failure here means the upstream submodule moved, which is a fact the run must state before it scores anything.",
+  "type": "array",
+  "minItems": 1,
+  "items": { "$ref": "#/definitions/sample" },
+  "definitions": {
+    "sample": {
+      "type": "object",
+      "required": ["sample_id", "conversation", "qa"],
+      "properties": {
+        "sample_id": { "type": "string", "minLength": 1 },
+        "conversation": { "$ref": "#/definitions/conversation" },
+        "qa": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/qa" } },
+        "observation": { "type": "object" },
+        "session_summary": { "type": "object" },
+        "event_summary": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "conversation": {
+      "description": "Two speakers, then one `session_<n>` array and one `session_<n>_date_time` string per session. The numbers are the chronological order.",
+      "type": "object",
+      "required": ["speaker_a", "speaker_b"],
+      "properties": {
+        "speaker_a": { "type": "string", "minLength": 1 },
+        "speaker_b": { "type": "string", "minLength": 1 }
+      },
+      "patternProperties": {
+        "^session_[0-9]+$": { "type": "array", "items": { "$ref": "#/definitions/turn" } },
+        "^session_[0-9]+_date_time$": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "turn": {
+      "description": "`dia_id` is unique WITHIN a sample and repeats across samples — every one of the ten conversations restarts at D1:1 — so an evidence id is only meaningful beside its sample_id.",
+      "type": "object",
+      "required": ["speaker", "dia_id", "text"],
+      "properties": {
+        "speaker": { "type": "string", "minLength": 1 },
+        "dia_id": { "type": "string", "pattern": "^D[0-9]+:[0-9]+$" },
+        "text": { "type": "string" },
+        "img_url": { "type": ["string", "array"] },
+        "blip_caption": { "type": "string" },
+        "query": { "type": "string" },
+        "re-download": { "type": ["integer", "boolean", "string"] }
+      },
+      "additionalProperties": false
+    },
+    "qa": {
+      "type": "object",
+      "required": ["question", "category"],
+      "properties": {
+        "question": { "type": "string", "minLength": 1 },
+        "answer": {
+          "description": "Absent on 444 of the 446 category-5 questions. Six answers across the file are integers rather than strings; the official evaluator coerces with str(), so a port must too.",
+          "type": ["string", "number"]
+        },
+        "adversarial_answer": { "type": "string" },
+        "evidence": {
+          "description": "Dialog ids the answer is grounded in. Not all of them are well formed and not all of them resolve — the loader counts both rather than repairing them.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "category": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

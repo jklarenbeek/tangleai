@@ -18,6 +18,8 @@
     "apps/*/src/**/*.ts",
     "apps/*/build.ts",
     "examples/**/*.ts",
+    "benchmark/*.ts",
+    "benchmark/lib/**/*.ts",
     "test/**/*.ts"
   ]
 }

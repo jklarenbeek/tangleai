@@ -1,0 +1,11 @@
+{
+  "name": "tangleai-benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tangle AI measurement workspace — the instruments every published number names, and the upstream suites they run against",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  }
+}

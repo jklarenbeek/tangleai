@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # benchmark/locomo is the LoCoMo dataset (CC BY-NC 4.0, never vendored).
+          # Every instrument degrades to a stated skip without it; fetching it here
+          # is what keeps the dataset-contract suite honest about upstream drift.
+          submodules: recursive
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -19,6 +24,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run check
       - run: npm run documents:benchmark
+      - run: npm run benchmark:locomo:census
       - name: Compile and execute document smoke
         run: |
           bun build --compile --minify scripts/document-compile-smoke.ts --outfile /tmp/tangle-document-smoke

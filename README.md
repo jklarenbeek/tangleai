@@ -19,6 +19,11 @@ npm run check      # strict typecheck + complete offline test suite
 npm run skeleton   # the whole loop, end to end, offline
 npm run desktop    # folder memory + versioned web/PDF document corpus
 npm run documents:benchmark
+
+# the LoCoMo benchmark dataset is a submodule and is never vendored here:
+git submodule update --init benchmark/locomo
+npm run benchmark:locomo:census
+
 # after copying .env.example to .env and adding an OpenRouter key:
 npm run documents:live-smoke
 ```
@@ -63,6 +68,27 @@ chat client speaks), the deterministic reference (`createHashEmbedder`),
 the probe and the `{ embed, model, dims }` seam are `@jarenjs/ai/embed`,
 and the kernels are `@jarenjs/core/vector`. Tangle brings the policies
 and the configuration.
+
+## Measurement
+
+Every published number names the command that produced it, and the
+instruments live in [`benchmark/`](benchmark/README.md) — a private
+workspace of its own, so that a comparison against a rival memory system
+can be run without a single third-party dependency reaching a package a
+user installs.
+
+`benchmark/locomo` is the [LoCoMo](https://github.com/snap-research/locomo)
+benchmark (Maharana et al., ACL 2024) as a **git submodule**: the data is
+CC BY-NC 4.0 and this repository is MIT, so nothing here redistributes it,
+and the submodule pins exactly which release produced a number. Every
+instrument degrades to a stated skip when its submodule is absent.
+
+`npm run benchmark:locomo:census` measures the release rather than
+describing it, and what it found is why it exists — 272 transcribed
+sessions against 288 timestamps, six integer answers where the schema
+suggests strings, and 9 of 2,815 evidence ids that resolve to no turn at
+all, which caps evidence recall at 0.996 and makes an oracle row that
+scores 1.000 a bug rather than a triumph.
 
 ## The apps
 
@@ -128,8 +154,8 @@ ranked retrieval — the superseded record provably cannot surface.
 
 ## Where things stand
 
-- [TODO.md](TODO.md) — the campaign; next order is the LoCoMo benchmark,
-  which gates all further policy work
+- [TODO.md](TODO.md) — the campaign; the LoCoMo instrument (orders 02, 15,
+  16, 17) gates all further policy work
 - [docs/BOUNDARY.md](docs/BOUNDARY.md) — what belongs in `@jarenjs/ai`
   versus here, and the one test-pinned contract between them
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two

@@ -38,6 +38,7 @@ Every other workflow file points here instead of restating these.
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |
 | Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`) | when apps/pages or the pipeline document changed |
+| Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census` | when a measured claim, a chunker, or a benchmark's corpus changed |
 | Binary | `npm run desktop:compile`, then run `dist/tangle` from a foreign cwd | when the server, static layer or embed script changed |
 
 A gate passes when its **exit code is 0**. Grepping output for the word
@@ -51,6 +52,13 @@ before it is believed.
   the campaign rule at the top, `## Done` as the ledger, `## Open` as
   the orders. There are no per-order files and no session-record files —
   an order's record is its ledger entry plus its commit.
+- **`benchmark/`** (committed) is the measurement workspace: the instruments
+  every published number names, a private `package.json` so a rival's
+  dependencies never reach a shipped package, and upstream suites as git
+  submodules (`benchmark/locomo` is CC BY-NC 4.0 and is never vendored). An
+  instrument degrades to a stated skip when its submodule is absent — see
+  [`benchmark/README.md`](../../benchmark/README.md) for the six rules one
+  follows.
 - **`docs/attic/`** is salvage: read-only source material from the
   predecessors. Never import from it; port out of it.
 - **`.e2e/`** holds the browser-verification scripts (committed) and
@@ -100,6 +108,7 @@ folder, including EVOLVE.md's ambitions.
     "skeleton": { "cmd": "npm run skeleton", "pass": "exit==0" },
     "e2e-desktop": { "cmd": "distrobox: node .e2e/desktop.e2e.mjs", "pass": "exit==0" },
     "pages": { "cmd": "bun apps/pages/build.ts", "pass": "exit==0" },
+    "instruments": { "cmd": "npm run documents:benchmark && npm run benchmark:locomo:census", "pass": "exit==0" },
     "binary": { "cmd": "npm run desktop:compile", "pass": "exit==0" }
   }
 }

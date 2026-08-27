@@ -12,7 +12,8 @@
   },
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "benchmark"
   ],
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
@@ -22,6 +23,7 @@
     "test:store": "node --test \"test/store/*.test.ts\"",
     "test:pipeline": "node --test \"test/pipeline/*.test.ts\"",
     "test:desktop": "node --test \"test/desktop/*.test.ts\"",
+    "test:benchmark": "node --test \"test/benchmark/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json",
     "skeleton": "node examples/skeleton.ts",
     "desktop:ui": "bun build apps/desktop/src/ui/main.ts --outfile apps/desktop/public/app.js --format esm --target browser && cat node_modules/@jarenjs/charts/styles/charts.css node_modules/@jarenjs/mermaid/styles/mermaid.css node_modules/@jarenjs/md/styles/md.css > apps/desktop/public/vendor.css",
@@ -29,12 +31,13 @@
     "desktop:compile": "bun scripts/compile-desktop.ts",
     "scraper": "bun apps/scraper/src/main.ts",
     "documents:benchmark": "bun scripts/benchmark-documents.ts",
+    "benchmark:locomo:census": "node benchmark/locomo-census.ts",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
     "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
-    "@jarenjs/ai": "^0.46.5",
+    "@jarenjs/ai": "^0.49.2",
     "@types/node": "^24.3.0",
     "typescript": "^5.9.2"
   }
