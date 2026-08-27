@@ -13,7 +13,6 @@ export {
   OUTCOME_REPORT_SCHEMA,
   MEMORY_SCHEMAS,
   toLedgerMemory,
-  sameEmbeddedBy,
 } from './schemas/memory.ts';
 export type {
   JsonSchema,

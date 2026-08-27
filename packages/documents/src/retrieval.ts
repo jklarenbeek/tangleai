@@ -1,6 +1,6 @@
 import type { Embedder } from '@jarenjs/ai/embed';
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
-import { sameEmbeddedBy } from '@tangleai/core/schemas/memory';
+import { sameIdentity } from '@jarenjs/ai';
 
 import type { DocumentChunk, DocumentCorpusStore, DocumentSource, EmbeddedBy } from './contracts.ts';
 
@@ -46,7 +46,7 @@ export async function recallDocumentChunks(
   let skipped = 0;
   const scored: Array<{ chunk: DocumentChunk; source: DocumentSource; score: number }> = [];
   for (const chunk of chunks) {
-    if (!sameEmbeddedBy(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) {
+    if (!sameIdentity(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) {
       skipped++;
       continue;
     }

@@ -235,6 +235,10 @@ ranked retrieval — the superseded record provably cannot surface.
   policy entry
 - [docs/BOUNDARY.md](docs/BOUNDARY.md) — what belongs in `@jarenjs/ai`
   versus here, and the one test-pinned contract between them
+- [docs/UPSTREAM.md](docs/UPSTREAM.md) — the brief for the jarenjs team:
+  the line concern by concern, what Tangle asks the suite to implement and
+  the evidence behind each ask, what it deliberately does not ask, and what
+  it hands back
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two
   load-bearing ordering rules, the house style
 - [docs/PAPERS.md](docs/PAPERS.md) — the research this implements, with

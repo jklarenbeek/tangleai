@@ -27,7 +27,8 @@
  */
 
 import { cosineSimilarity } from '@jarenjs/core/vector';
-import { sameEmbeddedBy, type MemoryRelation, type MemoryUnit } from '@tangleai/core/schemas/memory';
+import { sameIdentity } from '@jarenjs/ai';
+import type { MemoryRelation, MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from './store.ts';
 
 export const DEFAULT_CRYSTALLIZE_THRESHOLD = 0.92;
@@ -59,7 +60,7 @@ export function planCrystallization(units: MemoryUnit[], options: CrystallizeOpt
     for (let j = i + 1; j < units.length; j++) {
       const a = units[i];
       const b = units[j];
-      if (!sameEmbeddedBy(a.embeddedBy, b.embeddedBy)) continue;
+      if (!sameIdentity(a.embeddedBy, b.embeddedBy)) continue;
       if (a.supersededBy || b.supersededBy) continue;
       const sim = cosineSimilarity(a.embedding, b.embedding);
       if (sim >= threshold) {

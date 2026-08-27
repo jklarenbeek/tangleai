@@ -23,7 +23,8 @@
  */
 
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
-import { sameEmbeddedBy, type EmbeddedBy, type MemoryUnit } from '@tangleai/core/schemas/memory';
+import { sameIdentity } from '@jarenjs/ai';
+import type { EmbeddedBy, MemoryUnit } from '@tangleai/core/schemas/memory';
 
 export interface RankOptions {
   k?: number;
@@ -63,7 +64,7 @@ export function recallByEmbedding(
   for (const unit of units) {
     if (unit.supersededBy !== undefined) continue;
     const comparable = unit.embedding !== undefined && unit.embeddedBy !== undefined
-      && (identity === undefined || sameEmbeddedBy(unit.embeddedBy, identity));
+      && (identity === undefined || sameIdentity(unit.embeddedBy, identity));
     if (!comparable) {
       skipped++;
       continue;

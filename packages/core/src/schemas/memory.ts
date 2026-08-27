@@ -96,13 +96,6 @@ export interface EmbeddedBy {
   dims: number;
 }
 
-/** Whether two identities name the same vector space. Two absent
- * identities are NOT the same: an un-embedded record has no space to
- * share, and "no identity" must never rank against "no identity". */
-export function sameEmbeddedBy(a: EmbeddedBy | undefined, b: EmbeddedBy | undefined): boolean {
-  return a !== undefined && b !== undefined && a.model === b.model && a.dims === b.dims;
-}
-
 export interface MemoryUnit {
   id: string;
   text: string;

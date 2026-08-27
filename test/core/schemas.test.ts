@@ -7,7 +7,6 @@ import {
   MEMORY_RELATION_SCHEMA,
   OUTCOME_REPORT_SCHEMA,
   toLedgerMemory,
-  sameEmbeddedBy,
   type JsonSchema,
   type MemoryUnit,
 } from '@tangleai/core/schemas/memory';
@@ -70,16 +69,6 @@ describe('MEMORY_UNIT_SCHEMA', () => {
     assert.ok(!check(unit({ embeddedBy: { model: 'm', dims: 1 } })).valid, 'an identity without its vector');
     assert.ok(!check(unit({ embedding: [], embeddedBy: { model: 'm', dims: 1 } })).valid, 'an empty vector');
     assert.ok(!check(unit({ embedding: [0.1], embeddedBy: { model: 'm' } as unknown as MemoryUnit['embeddedBy'] })).valid, 'an identity without a width');
-  });
-});
-
-describe('sameEmbeddedBy', () => {
-  it('is model AND width, and two absences are not the same space', () => {
-    assert.ok(sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'a', dims: 2 }));
-    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'a', dims: 3 }));
-    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, { model: 'b', dims: 2 }));
-    assert.ok(!sameEmbeddedBy(undefined, undefined));
-    assert.ok(!sameEmbeddedBy({ model: 'a', dims: 2 }, undefined));
   });
 });
 

@@ -22,7 +22,8 @@
  */
 
 import { cosineSimilarity } from '@jarenjs/core/vector';
-import { sameEmbeddedBy, type MemoryUnit } from '@tangleai/core/schemas/memory';
+import { sameIdentity } from '@jarenjs/ai';
+import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
 export const DEFAULT_NOVELTY_THRESHOLD = 0.75;
 
@@ -47,7 +48,7 @@ export function noveltyGate(
 
   const duplicates = (unit: MemoryUnit, against: MemoryUnit[]): boolean => {
     for (const other of against) {
-      if (!sameEmbeddedBy(unit.embeddedBy, other.embeddedBy)) continue;
+      if (!sameIdentity(unit.embeddedBy, other.embeddedBy)) continue;
       if (cosineSimilarity(unit.embedding, other.embedding) >= threshold) return true;
     }
     return false;
