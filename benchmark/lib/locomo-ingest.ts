@@ -24,6 +24,14 @@ import { createPipeline, type PipelineReport, type PipelineThresholds } from '@t
 
 import type { ConversationCorpus } from './locomo-corpus.ts';
 
+/**
+ * What the ingest reads of a corpus: its sessions and its clock. The
+ * turn corpus satisfies it, and so do the release's derived corpora
+ * (order 17's observation and summary rows) — the same ingest over a
+ * different set of inputs is exactly the comparison those rows make.
+ */
+export type IngestCorpus = Pick<ConversationCorpus, 'sessions' | 'lastAt'>;
+
 /** A similarity no cosine reaches: the pipeline runs, every policy is inert. */
 export const POLICIES_OFF: Required<PipelineThresholds> = { novelty: 2, contradiction: 2, crystallize: 2 };
 
@@ -70,7 +78,7 @@ export interface IngestOptions {
 }
 
 /** The pipeline's clock for a conversation: its last session instant. */
-export function clockOf(corpus: ConversationCorpus): string {
+export function clockOf(corpus: IngestCorpus): string {
   return new Date(corpus.lastAt).toISOString();
 }
 
@@ -80,7 +88,7 @@ export function clockOf(corpus: ConversationCorpus): string {
  * ranking with `recallByEmbedding` sees exactly what the app would.
  */
 export async function ingestConversation(
-  corpus: ConversationCorpus,
+  corpus: IngestCorpus,
   options: IngestOptions,
 ): Promise<{ units: MemoryUnit[], census: IngestCensus }> {
   const census = options.census ?? emptyCensus();

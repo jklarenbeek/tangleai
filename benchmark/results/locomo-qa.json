@@ -31,6 +31,30 @@
       "end": "2024-01-12T13:41:00.000Z"
     }
   },
+  "corpora": {
+    "observation": {
+      "blocks": 272,
+      "orphanBlocks": 0,
+      "empty": 0,
+      "entries": 2541,
+      "references": 2561,
+      "listReferences": 15,
+      "unresolved": 0,
+      "collapsed": 0,
+      "chars": 223487
+    },
+    "summary": {
+      "blocks": 272,
+      "orphanBlocks": 0,
+      "empty": 0,
+      "entries": 272,
+      "references": 5882,
+      "listReferences": 272,
+      "unresolved": 0,
+      "collapsed": 0,
+      "chars": 177694
+    }
+  },
   "questions": {
     "total": 1986,
     "scorable": 1540,
@@ -157,8 +181,36 @@
   },
   "configurations": [
     {
+      "key": "long-context",
+      "label": "long context (the whole conversation in the request)",
+      "kind": "long-context",
+      "ceiling": {
+        "all": {
+          "overall": 0.996134817563389,
+          "byCategory": {
+            "1": 0.9942586963863561,
+            "2": 0.9968847352024922,
+            "3": 0.96875,
+            "4": 0.9996036464526357
+          }
+        },
+        "sample": {
+          "overall": 0.9977678571428572,
+          "byCategory": {
+            "1": 0.9910714285714286,
+            "2": 1,
+            "3": 1,
+            "4": 1
+          }
+        }
+      },
+      "verbatim": null
+    },
+    {
       "key": "near-raw",
-      "label": "near (policies off)",
+      "label": "RAG over dialog turns (the pipeline, policies off)",
+      "kind": "pipeline",
+      "corpus": "turns",
       "thresholds": {
         "novelty": 2,
         "contradiction": 2,
@@ -223,8 +275,153 @@
       }
     },
     {
+      "key": "rag-observation",
+      "label": "RAG over the release's observations",
+      "kind": "rag",
+      "corpus": "observation",
+      "thresholds": {
+        "novelty": 2,
+        "contradiction": 2,
+        "crystallize": 2
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 2541,
+        "embedded": 2541,
+        "admitted": 2541,
+        "filtered": 0,
+        "judged": 0,
+        "contradictions": 0,
+        "resolutions": 0,
+        "merged": 0,
+        "live": 2541,
+        "total": 2541,
+        "superseded": 0
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "ceiling": {
+        "all": {
+          "overall": 0.3531949489234581,
+          "byCategory": {
+            "1": 0.17498131612073392,
+            "2": 0.44132917964693663,
+            "3": 0.1657169117647059,
+            "4": 0.40071343638525564
+          }
+        },
+        "sample": {
+          "overall": 0.29947916666666663,
+          "byCategory": {
+            "1": 0.05208333333333333,
+            "2": 0.40625,
+            "3": 0.23958333333333331,
+            "4": 0.5
+          }
+        }
+      },
+      "verbatim": {
+        "all": {
+          "overall": 0.02849319637774822,
+          "byCategory": {
+            "1": 0.058216139277593754,
+            "2": 0.005856635681630393,
+            "3": 0.018684824694371462,
+            "4": 0.028286382783576456
+          }
+        },
+        "sample": {
+          "overall": 0.032648223195475216,
+          "byCategory": {
+            "1": 0.07238906866300338,
+            "2": 0.00837890057029812,
+            "3": 0.024647080977250914,
+            "4": 0.025177842571348467
+          }
+        }
+      }
+    },
+    {
+      "key": "rag-summary",
+      "label": "RAG over the release's session summaries",
+      "kind": "rag",
+      "corpus": "summary",
+      "thresholds": {
+        "novelty": 2,
+        "contradiction": 2,
+        "crystallize": 2
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 272,
+        "embedded": 272,
+        "admitted": 272,
+        "filtered": 0,
+        "judged": 0,
+        "contradictions": 0,
+        "resolutions": 0,
+        "merged": 0,
+        "live": 272,
+        "total": 272,
+        "superseded": 0
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "ceiling": {
+        "all": {
+          "overall": 0.5717555361277467,
+          "byCategory": {
+            "1": 0.4887019625681441,
+            "2": 0.5869678089304259,
+            "3": 0.41256498811645875,
+            "4": 0.6119698771304003
+          }
+        },
+        "sample": {
+          "overall": 0.5626860119047619,
+          "byCategory": {
+            "1": 0.5111607142857143,
+            "2": 0.6875,
+            "3": 0.36458333333333337,
+            "4": 0.6875
+          }
+        }
+      },
+      "verbatim": {
+        "all": {
+          "overall": 0.02794492492287671,
+          "byCategory": {
+            "1": 0.13048892422745245,
+            "2": 0.004045323661814558,
+            "3": 0.004989929561757545,
+            "4": 0.005302884204182333
+          }
+        },
+        "sample": {
+          "overall": 0.026697469747474577,
+          "byCategory": {
+            "1": 0.09295375059858345,
+            "2": 0.0035817682839522553,
+            "3": 0.006601966877704247,
+            "4": 0.003652393229658361
+          }
+        }
+      }
+    },
+    {
+      "key": "long-horizon",
+      "label": "long-horizon agent (createLongHorizonAgent over createEnvironment)",
+      "kind": "long-horizon",
+      "ceiling": null,
+      "verbatim": null
+    },
+    {
       "key": "near",
-      "label": "near (pipeline defaults)",
+      "label": "Tangle (the pipeline, shipped defaults)",
+      "kind": "pipeline",
+      "corpus": "turns",
       "thresholds": {
         "novelty": 0.97,
         "contradiction": 0.8,

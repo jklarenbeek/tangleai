@@ -122,19 +122,46 @@ ceiling at k = 10 and a model-free floor (the ten memories quoted as the
 answer, ≈ 0.02). `--live` puts a real model over a seeded sample of 64
 questions through the desktop's own provider settings, answering with
 `{ answer, citations }` so every citation is checked against the prompt,
-and meters every call through `createBudgetAccount`. The first table
-(2026-08-27, `qwen/qwen3.8-flash` over `baai/bge-m3`, thinking off): the
-shipped policies **win** on F1, 0.161 against 0.095 with the policies
-inert, ahead in every category, under a ceiling of 0.223 — but the win
-is published with its confound: the upstream rate-limited 30 of 152
-calls, so the rows answered 58 and 41 of the same 64 questions, and a
-decision that survives needs a run without wire failures. p50 latency of
-15–20 s is the retry queue, not the model. The category-5 judge lane
-(83–100 % refused the false premise, where the official keyword rule
-would have scored every one of them 0) is reported apart and folded into
-nothing. [docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md) is the
-rendered report; the live JSON beside it is a dated record the tests
-validate but never regenerate.
+and meters every call through `createBudgetAccount`. The baselines that
+make the number mean something sit in the same table — one scorer, one
+sample, one corpus: the whole conversation in the request (the paper's
+headline baseline), retrieval over the paper's three corpora (raw dialog
+turns, the release's own `observation` facts, its `session_summary`),
+the suite's `createLongHorizonAgent` over `createEnvironment`, and
+Tangle — each with its ceiling, cited recall, cost and latency in the
+row. Six rows do not fit one request ceiling, so the table is the merge
+of runs, each inside `TANGLE_AI_MAX_CALLS`, and everything a run buys is
+kept in a wire cache (`benchmark/cache/`, deletable at will) so a re-run
+replays what it holds and spends only on the rest. **The table**
+(2026-08-27, `z-ai/glm-5.3-flash` at its default thinking — its endpoint
+refuses to disable reasoning — over `baai/bge-m3`, four runs, zero wire
+errors, every row 64 of 64): **Tangle loses to every rival.** Long
+context answers at F1 0.421 under a ceiling of 0.998; RAG over the
+release's observations at 0.331 (ceiling 0.573); RAG over its session
+summaries at 0.182 (ceiling 0.804); RAG over raw dialog turns — the same
+pipeline with every policy inert — at 0.148; Tangle at **0.139**
+(ceiling 0.202): 28.2 points behind long context, 19.2 behind the
+observation corpus, 4.4 behind the summaries and 0.9 behind the inert
+pipeline, the last two within noise over a sample this size. The suite's
+own long-horizon agent, bounded to 16 turns and 12 sub-calls per question
+so that a 12-question subset fits one ceiling, answers at 0.020: it cuts
+a conversation into 43–79 pieces, reads the 12 the cap allows, and
+answers null whenever the gold turn was in one of the 526 of 670 pieces
+it never read — Tangle is ahead of it by 23 points over those 12
+questions, a count too small to decide anything and stated as such. The
+pipeline pair says where the loss lives: the shipped policies left the
+prompt byte-identical on 47 of the 64 questions (the cache replayed those
+answers), and on the 17 they changed, Tangle scores 0.088 against 0.122
+under the same ceiling — the policies cost F1 without changing what
+evidence arrives, which is the number orders 03 and 13 exist to move. The
+earlier win (0.161 against 0.095, under a rate-limited run that answered
+unequal sets) did not survive a run without wire failures. The
+category-5 judge lane (50–100 % refused the false premise, where the
+official keyword rule would have scored every one of them 0) is reported
+apart and folded into nothing.
+[docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md) is the rendered
+report; the live JSON beside it is a dated record the tests validate but
+never regenerate.
 
 ## The apps
 
