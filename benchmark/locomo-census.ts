@@ -26,6 +26,7 @@ import { parseArgs } from './lib/args.ts';
 import { count, score, table } from './lib/table.ts';
 import { mean } from './lib/stats.ts';
 import {
+  CATEGORY_NAMES,
   DIA_ID,
   INIT_COMMAND,
   LOCOMO_DATASET,
@@ -46,10 +47,6 @@ if (!dataset.available) {
   console.log(`Fetch it with:\n\n    ${dataset.hint}\n`);
   process.exit(args.flags.has('require') ? 1 : 0);
 }
-
-const CATEGORY_NAMES: Record<number, string> = {
-  1: 'multi-hop', 2: 'temporal', 3: 'open-domain', 4: 'single-hop', 5: 'adversarial',
-};
 
 const perSample: Array<Record<string, string | number>> = [];
 const categories = new Map<number, { total: number, withAnswer: number, integerAnswer: number }>();

@@ -25,6 +25,7 @@ jobs:
       - run: npm run check
       - run: npm run documents:benchmark
       - run: npm run benchmark:locomo:census
+      - run: npm run benchmark:locomo:recall
       - name: Compile and execute document smoke
         run: |
           bun build --compile --minify scripts/document-compile-smoke.ts --outfile /tmp/tangle-document-smoke

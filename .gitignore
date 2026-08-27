@@ -16,7 +16,6 @@ apps/pages/dist/
 .e2e/*.png
 
 # TODO: AI integration
-.gitignore
 TODO*.md
 PROGRESS*.md
 NEXT_SESSION.md

@@ -74,16 +74,21 @@ spends an afternoon looking:
   stemmer, token-level F1, the comma-split multi-hop variant. `@jarenjs/core/text`
   is a *format-validation* toolbox — emails, hostnames, IPs, URIs/IRIs, UUIDs,
   punycode, I-Regexp — and there is no tokenizer, no stemmer and no
-  string-similarity metric anywhere in the suite. Order 02 writes these, and
-  writes them to the official evaluator's exact spelling, because parity with
-  the published numbers is the entire point of porting rather than improving.
+  string-similarity metric anywhere in the suite. Written on order 15, to the
+  official evaluator's exact spelling, because parity with the published
+  numbers is the entire point of porting rather than improving:
+  `benchmark/lib/porter.ts` (NLTK's variant) and
+  `benchmark/lib/locomo-parity.ts`, pinned by fixtures the official evaluator
+  itself produced.
 - **Descriptive statistics.** No median, no percentile. `@jarenjs/core/math` is
   the graphics/numeric kernel (int32/float64, vectors, `mat4`, root finders,
   `geoMean`); the p50/p95 helpers exist only in jarenjs's unpublished
-  `benchmark/lib/measure.js`. A few lines, written once here.
+  `benchmark/lib/measure.js`. A few lines, written once here
+  (`benchmark/lib/stats.ts`, 02a).
 - **A seeded PRNG.** Published by no package; jarenjs keeps its seeds inside
   the benchmark harness. `@tangleai/core/clustering` already injects one, which
-  is the right shape.
+  is the right shape. Written once, on 02: `benchmark/lib/random.ts`
+  (mulberry32 — the generator jarenjs's seeded corpora use).
 - **k-means.** Not in the suite. `@tangleai/core/clustering` is legitimately
   Tangle's, and its header already explains why it does not reach for
   `@jarenjs/core/vector` (the suite publishes similarities; k-means++ needs the

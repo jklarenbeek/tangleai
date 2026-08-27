@@ -25,6 +25,8 @@ nowhere else.
 | Instrument | What it answers | Command |
 |---|---|---|
 | [`locomo-census.ts`](./locomo-census.ts) | What is actually in the LoCoMo release — categories, ground truth, parseable timestamps, and how many evidence ids resolve | `npm run benchmark:locomo:census` |
+| [`scripts/locomo-parity-fixtures.py`](./scripts/locomo-parity-fixtures.py) | The parity oracle: loads the official `task_eval/evaluation.py` verbatim (`bert_score` stubbed) and RUNS it over a hand-authored table and over the release's vocabulary, writing `test/fixtures/locomo-parity*.json` — the rows the TypeScript scorer must reproduce at ten decimals. Needs Python with `nltk`, `regex`, `numpy` | `npm run benchmark:locomo:parity` |
+| [`locomo-recall.ts`](./locomo-recall.ts) | The keyless ceiling: evidence recall@{5,10,20} per category over the 1,540 scorable questions, for the pipeline with its policies off and on, beside a recency baseline and the two gate rows — with the ingest census of what each policy did. Report: [`results/locomo-recall.json`](./results/locomo-recall.json), rendered as [`docs/LOCOMO_RECALL.md`](../docs/LOCOMO_RECALL.md) | `npm run benchmark:locomo:recall` (`--json`, `--md`, `--samples`, `--dims`, `--seed`, `--novelty`, `--contradiction`, `--crystallize`) |
 
 `lib/` holds what the suite does not publish and what therefore must exist
 exactly once here:
@@ -35,6 +37,19 @@ exactly once here:
 | [`lib/table.ts`](./lib/table.ts) | The Markdown table idiom `docs/DOCUMENT_BENCHMARK.md` already publishes, extracted so a second instrument does not invent a second format. |
 | [`lib/args.ts`](./lib/args.ts) | An unknown flag is an error, not a silent default — a benchmark that ignored `--sizes` would publish the wrong row under the right name. |
 | [`lib/locomo.ts`](./lib/locomo.ts) | Loading, validating and reading the LoCoMo release. Nothing is repaired here. |
+| [`lib/locomo-corpus.ts`](./lib/locomo-corpus.ts) | Turns as Tangle observations: one memory per turn, `evidence` = `<sample_id>/<dia_id>`, `at` = the session instant. The `seq` a turn has inside its session lives here, not on the record — LoCoMo stamps sessions, not turns. |
+| [`lib/recall.ts`](./lib/recall.ts) | The official `recall_acc`, the k-dependent oracle ceiling, and the hypergeometric band a seeded draw must land in. Fractional recall, unlike jarenjs's recall@k — so an oracle is not 1.000 at every k, and the gate knows why. |
+| [`lib/random.ts`](./lib/random.ts) | mulberry32 and one distinct draw — the only random source an instrument may use. No published package has a seeded PRNG; `@tangleai/core`'s k-means injects one. |
+| [`lib/locomo-recall.ts`](./lib/locomo-recall.ts) | The run itself, the gate, and the Markdown derived from the report. Importable, so the tests run it. |
+| [`lib/porter.ts`](./lib/porter.ts) | The Porter stemmer as NLTK runs it (`NLTK_EXTENSIONS`, the official scorer's default) — ported branch for branch over code points, because there is no stemmer anywhere in `@jarenjs/*` and the paper's variant would differ on the third decimal of every F1. |
+| [`lib/locomo-parity.ts`](./lib/locomo-parity.ts) | `normalize_answer`, `f1_score`, the multi-hop `f1` and the category routing of `task_eval/evaluation.py`, to the letter — including the punctuation-before-articles order, `and` as an article, Python's `\b` and whitespace, and NumPy's pairwise mean. Category 5 answers a reason, never a number. |
+
+`schemas/` holds the committed contracts — the release as measured
+(`locomo10.schema.json`) and every report an instrument writes
+(`locomo-recall.schema.json`), validated by `@jarenjs/validate` before a
+byte is written. `results/` holds the committed reports; a test asserts
+each is exactly what its command produces today, so a published number
+whose command no longer reproduces it goes red.
 
 ## The submodules
 

@@ -23,6 +23,7 @@
  * benchmark that cannot be compared with the published numbers.
  */
 
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -85,8 +86,8 @@ export interface LocomoSession {
 
 export type LoadOutcome =
   | { available: false, reason: string, hint: string }
-  | { available: true, samples: LocomoSample[], bytes: number, valid: true }
-  | { available: true, samples: LocomoSample[], bytes: number, valid: false, errors: string[] };
+  | { available: true, samples: LocomoSample[], bytes: number, sha256: string, valid: true }
+  | { available: true, samples: LocomoSample[], bytes: number, sha256: string, valid: false, errors: string[] };
 
 // ---------------------------------------------------------------------------
 // instants — the one date format, parsed by the suite's kernel
@@ -145,19 +146,22 @@ export async function loadLocomo(root = process.cwd()): Promise<LoadOutcome> {
   }
 
   const samples = JSON.parse(text) as LocomoSample[];
+  // the identity of the bytes a number was measured over — what
+  // `sha256sum data/locomo10.json` prints, so a reader can check it
+  const sha256 = createHash('sha256').update(text).digest('hex');
   // `collectErrors: true` makes the compiled validator answer
   // `{ valid, errors }` rather than a boolean — the same shape
   // `@tangleai/memory`'s store boundary reads.
   const validator = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' });
   const validate = validator.compile(SCHEMA as Record<string, unknown>);
   const outcome = validate(samples);
-  if (outcome.valid) return { available: true, samples, bytes: text.length, valid: true };
+  if (outcome.valid) return { available: true, samples, bytes: text.length, sha256, valid: true };
 
   const errors = (outcome.errors ?? []).slice(0, 20).map((error) => {
     const e = error as { dataPath?: string, message?: string, msgid?: string };
     return `${e.dataPath ?? '/'} — ${e.message ?? e.msgid ?? 'invalid'}`;
   });
-  return { available: true, samples, bytes: text.length, valid: false, errors };
+  return { available: true, samples, bytes: text.length, sha256, valid: false, errors };
 }
 
 /** The sessions of one sample, in chronological order. */
@@ -226,3 +230,11 @@ export function sessionOfDiaId(id: string): number | null {
 
 /** The shape a well-formed evidence id has. Anything else is malformed. */
 export const DIA_ID = /^D\d+:\d+$/;
+
+/** The five QA categories, numbered as the release numbers them. */
+export const CATEGORY_NAMES: Record<number, string> = {
+  1: 'multi-hop', 2: 'temporal', 3: 'open-domain', 4: 'single-hop', 5: 'adversarial',
+};
+
+/** The categories the parity scorer reads; 5 is excluded (see the census). */
+export const SCORABLE_CATEGORIES = [1, 2, 3, 4] as const;

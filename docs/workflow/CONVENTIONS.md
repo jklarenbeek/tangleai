@@ -108,7 +108,7 @@ folder, including EVOLVE.md's ambitions.
     "skeleton": { "cmd": "npm run skeleton", "pass": "exit==0" },
     "e2e-desktop": { "cmd": "distrobox: node .e2e/desktop.e2e.mjs", "pass": "exit==0" },
     "pages": { "cmd": "bun apps/pages/build.ts", "pass": "exit==0" },
-    "instruments": { "cmd": "npm run documents:benchmark && npm run benchmark:locomo:census", "pass": "exit==0" },
+    "instruments": { "cmd": "npm run documents:benchmark && npm run benchmark:locomo:census && npm run benchmark:locomo:recall", "pass": "exit==0" },
     "binary": { "cmd": "npm run desktop:compile", "pass": "exit==0" }
   }
 }

@@ -1,0 +1,1108 @@
+{
+  "generated": {
+    "mode": "oracle",
+    "evaluator": "benchmark/locomo/task_eval/evaluation.py",
+    "stemmer": "nltk.stem.PorterStemmer mode=NLTK_EXTENSIONS",
+    "python": "3.14.7",
+    "nltk": "3.10.3",
+    "regex": "2026.7.19",
+    "numpy": "2.4.6",
+    "command": "python3 benchmark/scripts/locomo-parity-fixtures.py",
+    "lowerCaseMismatches": "str.lower() and String.prototype.toLowerCase() disagree on U+A7CE, U+A7D2, U+A7D4 and U+16EA0–U+16EB8 (measured over every code point, 2026-08-27); none occur in the release"
+  },
+  "normalize": [
+    {
+      "input": "The cat, and the dog.",
+      "expected": "cat dog"
+    },
+    {
+      "input": "the-cat",
+      "expected": "thecat"
+    },
+    {
+      "input": "A band and an anthem",
+      "expected": "band anthem"
+    },
+    {
+      "input": "Caroline's 1,000 friends!",
+      "expected": "carolines 1000 friends"
+    },
+    {
+      "input": "  Multiple   spaces\tand\nnewlines ",
+      "expected": "multiple spaces newlines"
+    },
+    {
+      "input": "café A LA carte",
+      "expected": "café la carte"
+    },
+    {
+      "input": "éa and aé",
+      "expected": "éa aé"
+    },
+    {
+      "input": "x\u001cthe\u001fy",
+      "expected": "x y"
+    },
+    {
+      "input": "﻿the answer",
+      "expected": "﻿ answer"
+    },
+    {
+      "input": "ΣΟΦΊΑ ΚΑΙ Σ",
+      "expected": "σοφία και σ"
+    },
+    {
+      "input": "İstanbul",
+      "expected": "i̇stanbul"
+    },
+    {
+      "input": "straße",
+      "expected": "straße"
+    },
+    {
+      "input": "",
+      "expected": ""
+    },
+    {
+      "input": "a",
+      "expected": ""
+    },
+    {
+      "input": "and",
+      "expected": ""
+    },
+    {
+      "input": "2022",
+      "expected": "2022"
+    },
+    {
+      "input": "a_b the_c",
+      "expected": "ab thec"
+    },
+    {
+      "input": "“smart” quotes — and dashes…",
+      "expected": "“smart” quotes — dashes…"
+    },
+    {
+      "input": "the 🎉 party",
+      "expected": "🎉 party"
+    },
+    {
+      "input": "‍the‍",
+      "expected": "‍the‍"
+    },
+    {
+      "input": "anna and andy",
+      "expected": "anna andy"
+    }
+  ],
+  "stems": [
+    [
+      "caresses",
+      "caress"
+    ],
+    [
+      "ponies",
+      "poni"
+    ],
+    [
+      "ties",
+      "tie"
+    ],
+    [
+      "caress",
+      "caress"
+    ],
+    [
+      "cats",
+      "cat"
+    ],
+    [
+      "feed",
+      "feed"
+    ],
+    [
+      "agreed",
+      "agre"
+    ],
+    [
+      "plastered",
+      "plaster"
+    ],
+    [
+      "bled",
+      "bled"
+    ],
+    [
+      "motoring",
+      "motor"
+    ],
+    [
+      "sing",
+      "sing"
+    ],
+    [
+      "conflated",
+      "conflat"
+    ],
+    [
+      "troubled",
+      "troubl"
+    ],
+    [
+      "sized",
+      "size"
+    ],
+    [
+      "hopping",
+      "hop"
+    ],
+    [
+      "tanned",
+      "tan"
+    ],
+    [
+      "falling",
+      "fall"
+    ],
+    [
+      "hissing",
+      "hiss"
+    ],
+    [
+      "fizzed",
+      "fizz"
+    ],
+    [
+      "failing",
+      "fail"
+    ],
+    [
+      "filing",
+      "file"
+    ],
+    [
+      "happy",
+      "happi"
+    ],
+    [
+      "sky",
+      "sky"
+    ],
+    [
+      "relational",
+      "relat"
+    ],
+    [
+      "conditional",
+      "condit"
+    ],
+    [
+      "rational",
+      "ration"
+    ],
+    [
+      "valenci",
+      "valenc"
+    ],
+    [
+      "hesitanci",
+      "hesit"
+    ],
+    [
+      "digitizer",
+      "digit"
+    ],
+    [
+      "conformabli",
+      "conform"
+    ],
+    [
+      "radicalli",
+      "radic"
+    ],
+    [
+      "differentli",
+      "differ"
+    ],
+    [
+      "vileli",
+      "vile"
+    ],
+    [
+      "analogousli",
+      "analog"
+    ],
+    [
+      "vietnamization",
+      "vietnam"
+    ],
+    [
+      "predication",
+      "predic"
+    ],
+    [
+      "operator",
+      "oper"
+    ],
+    [
+      "feudalism",
+      "feudal"
+    ],
+    [
+      "decisiveness",
+      "decis"
+    ],
+    [
+      "hopefulness",
+      "hope"
+    ],
+    [
+      "callousness",
+      "callous"
+    ],
+    [
+      "formaliti",
+      "formal"
+    ],
+    [
+      "sensitiviti",
+      "sensit"
+    ],
+    [
+      "sensibiliti",
+      "sensibl"
+    ],
+    [
+      "triplicate",
+      "triplic"
+    ],
+    [
+      "formative",
+      "form"
+    ],
+    [
+      "formalize",
+      "formal"
+    ],
+    [
+      "electriciti",
+      "electr"
+    ],
+    [
+      "electrical",
+      "electr"
+    ],
+    [
+      "hopeful",
+      "hope"
+    ],
+    [
+      "goodness",
+      "good"
+    ],
+    [
+      "revival",
+      "reviv"
+    ],
+    [
+      "allowance",
+      "allow"
+    ],
+    [
+      "inference",
+      "infer"
+    ],
+    [
+      "airliner",
+      "airlin"
+    ],
+    [
+      "gyroscopic",
+      "gyroscop"
+    ],
+    [
+      "adjustable",
+      "adjust"
+    ],
+    [
+      "defensible",
+      "defens"
+    ],
+    [
+      "irritant",
+      "irrit"
+    ],
+    [
+      "replacement",
+      "replac"
+    ],
+    [
+      "adjustment",
+      "adjust"
+    ],
+    [
+      "dependent",
+      "depend"
+    ],
+    [
+      "adoption",
+      "adopt"
+    ],
+    [
+      "homologou",
+      "homolog"
+    ],
+    [
+      "communism",
+      "commun"
+    ],
+    [
+      "activate",
+      "activ"
+    ],
+    [
+      "angulariti",
+      "angular"
+    ],
+    [
+      "homologous",
+      "homolog"
+    ],
+    [
+      "effective",
+      "effect"
+    ],
+    [
+      "bowdlerize",
+      "bowdler"
+    ],
+    [
+      "probate",
+      "probat"
+    ],
+    [
+      "rate",
+      "rate"
+    ],
+    [
+      "cease",
+      "ceas"
+    ],
+    [
+      "controll",
+      "control"
+    ],
+    [
+      "roll",
+      "roll"
+    ],
+    [
+      "skies",
+      "sky"
+    ],
+    [
+      "dying",
+      "die"
+    ],
+    [
+      "lying",
+      "lie"
+    ],
+    [
+      "tying",
+      "tie"
+    ],
+    [
+      "news",
+      "news"
+    ],
+    [
+      "innings",
+      "inning"
+    ],
+    [
+      "outing",
+      "outing"
+    ],
+    [
+      "cannings",
+      "canning"
+    ],
+    [
+      "howe",
+      "howe"
+    ],
+    [
+      "proceed",
+      "proceed"
+    ],
+    [
+      "exceed",
+      "exceed"
+    ],
+    [
+      "succeed",
+      "succeed"
+    ],
+    [
+      "flies",
+      "fli"
+    ],
+    [
+      "dies",
+      "die"
+    ],
+    [
+      "ties",
+      "tie"
+    ],
+    [
+      "spied",
+      "spi"
+    ],
+    [
+      "died",
+      "die"
+    ],
+    [
+      "tried",
+      "tri"
+    ],
+    [
+      "cried",
+      "cri"
+    ],
+    [
+      "enjoy",
+      "enjoy"
+    ],
+    [
+      "enjoyment",
+      "enjoy"
+    ],
+    [
+      "spy",
+      "spi"
+    ],
+    [
+      "fly",
+      "fli"
+    ],
+    [
+      "try",
+      "tri"
+    ],
+    [
+      "happily",
+      "happili"
+    ],
+    [
+      "radically",
+      "radic"
+    ],
+    [
+      "fully",
+      "fulli"
+    ],
+    [
+      "carefully",
+      "care"
+    ],
+    [
+      "geology",
+      "geolog"
+    ],
+    [
+      "theology",
+      "theolog"
+    ],
+    [
+      "archaeology",
+      "archaeolog"
+    ],
+    [
+      "philology",
+      "philolog"
+    ],
+    [
+      "logi",
+      "logi"
+    ],
+    [
+      "generalization",
+      "gener"
+    ],
+    [
+      "oscillators",
+      "oscil"
+    ],
+    [
+      "agreement",
+      "agreement"
+    ],
+    [
+      "abli",
+      "abli"
+    ],
+    [
+      "ably",
+      "abli"
+    ],
+    [
+      "stably",
+      "stabli"
+    ],
+    [
+      "a",
+      "a"
+    ],
+    [
+      "ab",
+      "ab"
+    ],
+    [
+      "abc",
+      "abc"
+    ],
+    [
+      "y",
+      "y"
+    ],
+    [
+      "yy",
+      "yy"
+    ],
+    [
+      "yyy",
+      "yyy"
+    ],
+    [
+      "yyyy",
+      "yyyi"
+    ],
+    [
+      "by",
+      "by"
+    ],
+    [
+      "toy",
+      "toy"
+    ],
+    [
+      "syzygy",
+      "syzygi"
+    ],
+    [
+      "day",
+      "day"
+    ],
+    [
+      "days",
+      "day"
+    ],
+    [
+      "played",
+      "play"
+    ],
+    [
+      "playing",
+      "play"
+    ],
+    [
+      "Running",
+      "run"
+    ],
+    [
+      "RUNS",
+      "run"
+    ],
+    [
+      "WALKED",
+      "walk"
+    ],
+    [
+      "İstanbul",
+      "i̇stanbul"
+    ],
+    [
+      "straße",
+      "straße"
+    ],
+    [
+      "🎉",
+      "🎉"
+    ],
+    [
+      "🎉🎉🎉",
+      "🎉🎉🎉"
+    ],
+    [
+      "a🎉🎉",
+      "a🎉🎉"
+    ],
+    [
+      "party🎉",
+      "party🎉"
+    ],
+    [
+      "hopp🎉🎉",
+      "hopp🎉🎉"
+    ],
+    [
+      "sized🎉",
+      "sized🎉"
+    ],
+    [
+      "painted",
+      "paint"
+    ],
+    [
+      "painting",
+      "paint"
+    ],
+    [
+      "adopted",
+      "adopt"
+    ],
+    [
+      "adoption",
+      "adopt"
+    ],
+    [
+      "counseling",
+      "counsel"
+    ],
+    [
+      "certification",
+      "certif"
+    ],
+    [
+      "graduated",
+      "graduat"
+    ],
+    [
+      "traveled",
+      "travel"
+    ],
+    [
+      "travelling",
+      "travel"
+    ],
+    [
+      "moved",
+      "move"
+    ],
+    [
+      "moving",
+      "move"
+    ],
+    [
+      "started",
+      "start"
+    ],
+    [
+      "studies",
+      "studi"
+    ],
+    [
+      "studying",
+      "studi"
+    ],
+    [
+      "married",
+      "marri"
+    ],
+    [
+      "marriage",
+      "marriag"
+    ],
+    [
+      "babies",
+      "babi"
+    ],
+    [
+      "family",
+      "famili"
+    ],
+    [
+      "families",
+      "famili"
+    ],
+    [
+      "volunteering",
+      "volunt"
+    ],
+    [
+      "organizations",
+      "organ"
+    ],
+    [
+      "university",
+      "univers"
+    ],
+    [
+      "anxiety",
+      "anxieti"
+    ],
+    [
+      "therapy",
+      "therapi"
+    ],
+    [
+      "photography",
+      "photographi"
+    ],
+    [
+      "hiking",
+      "hike"
+    ]
+  ],
+  "rows": [
+    {
+      "id": "identical",
+      "category": 4,
+      "prediction": "Psychology",
+      "answer": "Psychology",
+      "expected": 1.0
+    },
+    {
+      "id": "empty prediction",
+      "category": 4,
+      "prediction": "",
+      "answer": "Psychology",
+      "expected": 0.0
+    },
+    {
+      "id": "both empty",
+      "category": 4,
+      "prediction": "",
+      "answer": "",
+      "expected": 0.0
+    },
+    {
+      "id": "prediction normalizes to nothing",
+      "category": 4,
+      "prediction": "a",
+      "answer": "cat",
+      "expected": 0.0
+    },
+    {
+      "id": "answer normalizes to nothing",
+      "category": 4,
+      "prediction": "cat",
+      "answer": "the",
+      "expected": 0.0
+    },
+    {
+      "id": "extra words",
+      "category": 4,
+      "prediction": "She studied psychology at university",
+      "answer": "Psychology",
+      "expected": 0.3333333333
+    },
+    {
+      "id": "case and punctuation",
+      "category": 4,
+      "prediction": "psychology!",
+      "answer": "PSYCHOLOGY.",
+      "expected": 1.0
+    },
+    {
+      "id": "punctuation before articles keeps the article",
+      "category": 4,
+      "prediction": "the-cat",
+      "answer": "cat",
+      "expected": 0.0
+    },
+    {
+      "id": "plural stems to singular",
+      "category": 4,
+      "prediction": "cats",
+      "answer": "cat",
+      "expected": 1.0
+    },
+    {
+      "id": "stem conflation",
+      "category": 4,
+      "prediction": "running runs",
+      "answer": "run runner",
+      "expected": 0.5
+    },
+    {
+      "id": "nltk irregulars",
+      "category": 4,
+      "prediction": "flies dies skies",
+      "answer": "fly die sky",
+      "expected": 1.0
+    },
+    {
+      "id": "and is an article",
+      "category": 4,
+      "prediction": "salt and pepper",
+      "answer": "salt pepper",
+      "expected": 1.0
+    },
+    {
+      "id": "band is not",
+      "category": 4,
+      "prediction": "band",
+      "answer": "and",
+      "expected": 0.0
+    },
+    {
+      "id": "commas vanish before anything else",
+      "category": 4,
+      "prediction": "1,000",
+      "answer": "1000",
+      "expected": 1.0
+    },
+    {
+      "id": "apostrophe",
+      "category": 4,
+      "prediction": "Caroline's",
+      "answer": "carolines",
+      "expected": 1.0
+    },
+    {
+      "id": "repeated tokens count as a multiset",
+      "category": 4,
+      "prediction": "no no no yes",
+      "answer": "no yes",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "unicode letters differ",
+      "category": 4,
+      "prediction": "naïve",
+      "answer": "naive",
+      "expected": 0.0
+    },
+    {
+      "id": "unicode letters agree",
+      "category": 4,
+      "prediction": "résumé",
+      "answer": "Résumé",
+      "expected": 1.0
+    },
+    {
+      "id": "an emoji is a token",
+      "category": 4,
+      "prediction": "🎉 party",
+      "answer": "party",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "unicode word boundary keeps éa",
+      "category": 4,
+      "prediction": "éa",
+      "answer": "a",
+      "expected": 0.0
+    },
+    {
+      "id": "python whitespace",
+      "category": 4,
+      "prediction": "blue\u001cgreen",
+      "answer": "blue green",
+      "expected": 1.0
+    },
+    {
+      "id": "bom is not whitespace",
+      "category": 4,
+      "prediction": "﻿blue",
+      "answer": "blue",
+      "expected": 0.0
+    },
+    {
+      "id": "integer answer matched",
+      "category": 2,
+      "prediction": "2022",
+      "answer": 2022,
+      "expected": 1.0
+    },
+    {
+      "id": "integer answer in a sentence",
+      "category": 2,
+      "prediction": "She painted it in 2022.",
+      "answer": 2022,
+      "expected": 0.3333333333
+    },
+    {
+      "id": "integer answer missed",
+      "category": 2,
+      "prediction": "2023",
+      "answer": 2022,
+      "expected": 0.0
+    },
+    {
+      "id": "date order does not matter",
+      "category": 2,
+      "prediction": "May 7, 2023",
+      "answer": "7 May 2023",
+      "expected": 1.0
+    },
+    {
+      "id": "relative date",
+      "category": 2,
+      "prediction": "25 May 2023",
+      "answer": "The sunday before 25 May 2023",
+      "expected": 0.75
+    },
+    {
+      "id": "the year alone",
+      "category": 2,
+      "prediction": "2023",
+      "answer": "7 May 2023",
+      "expected": 0.5
+    },
+    {
+      "id": "semicolon truncates the truth",
+      "category": 3,
+      "prediction": "psychology",
+      "answer": "Psychology; counseling certification",
+      "expected": 1.0
+    },
+    {
+      "id": "second clause is invisible",
+      "category": 3,
+      "prediction": "counseling certification",
+      "answer": "Psychology; counseling certification",
+      "expected": 0.0
+    },
+    {
+      "id": "semicolon with spaces",
+      "category": 3,
+      "prediction": "hiking and camping",
+      "answer": "  hiking ; camping  ",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "no semicolon",
+      "category": 3,
+      "prediction": "hiking",
+      "answer": "hiking, camping",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "semicolon inside prediction is punctuation",
+      "category": 3,
+      "prediction": "hiking; camping",
+      "answer": "hiking",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "multi-hop reordered",
+      "category": 1,
+      "prediction": "counseling certification, psychology",
+      "answer": "Psychology, counseling certification",
+      "expected": 1.0
+    },
+    {
+      "id": "multi-hop half",
+      "category": 1,
+      "prediction": "psychology",
+      "answer": "Psychology, counseling certification",
+      "expected": 0.5
+    },
+    {
+      "id": "multi-hop empty",
+      "category": 1,
+      "prediction": "",
+      "answer": "Psychology, counseling certification",
+      "expected": 0.0
+    },
+    {
+      "id": "multi-hop all articles",
+      "category": 1,
+      "prediction": "a, an, the",
+      "answer": "Psychology, counseling certification",
+      "expected": 0.0
+    },
+    {
+      "id": "multi-hop one part against two truths",
+      "category": 1,
+      "prediction": "psychology counseling certification",
+      "answer": "Psychology, counseling certification",
+      "expected": 0.65
+    },
+    {
+      "id": "multi-hop more parts than truths",
+      "category": 1,
+      "prediction": "psychology, counseling, certification, art",
+      "answer": "Psychology, counseling certification",
+      "expected": 0.8333333333
+    },
+    {
+      "id": "multi-hop trailing comma",
+      "category": 1,
+      "prediction": "a, b",
+      "answer": "a, b,",
+      "expected": 0.3333333333
+    },
+    {
+      "id": "multi-hop truth without commas",
+      "category": 1,
+      "prediction": "one, two",
+      "answer": "one two",
+      "expected": 0.6666666667
+    },
+    {
+      "id": "multi-hop integer answer",
+      "category": 1,
+      "prediction": "42",
+      "answer": 42,
+      "expected": 1.0
+    },
+    {
+      "id": "multi-hop nine truths",
+      "category": 1,
+      "prediction": "one, three, five, seven, nine",
+      "answer": "one, two, three, four, five, six, seven, eight, nine",
+      "expected": 0.5555555556
+    },
+    {
+      "id": "multi-hop nineteen truths",
+      "category": 1,
+      "prediction": "alpha beta, gamma, epsilon zeta, theta, kappa lambda mu, xi, pi rho, tau, phi chi psi omega",
+      "answer": "alpha, beta, gamma, delta, epsilon, zeta, eta, theta, iota, kappa, lambda, mu, nu, xi, omicron, pi, rho, sigma, tau",
+      "expected": 0.5
+    },
+    {
+      "id": "multi-hop partial overlaps",
+      "category": 1,
+      "prediction": "red apples and green pears, a blue car, the old house",
+      "answer": "green apples, red car, old house, new boat",
+      "expected": 0.5416666667
+    }
+  ],
+  "adversarial": [
+    {
+      "output": "No information available",
+      "expected": 1
+    },
+    {
+      "output": "There is no information available in the conversation.",
+      "expected": 1
+    },
+    {
+      "output": "This was not mentioned.",
+      "expected": 1
+    },
+    {
+      "output": "NOT MENTIONED",
+      "expected": 1
+    },
+    {
+      "output": "Paris",
+      "expected": 0
+    },
+    {
+      "output": "",
+      "expected": 0
+    },
+    {
+      "output": "She never mentioned it",
+      "expected": 0
+    }
+  ]
+}

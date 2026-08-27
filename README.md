@@ -90,6 +90,30 @@ suggests strings, and 9 of 2,815 evidence ids that resolve to no turn at
 all, which caps evidence recall at 0.996 and makes an oracle row that
 scores 1.000 a bug rather than a triumph.
 
+`npm run benchmark:locomo:recall` is the first number — the keyless
+ceiling. Every turn is ingested through the real pipeline, one store per
+conversation and one run per session, and each of the 1,540 scorable
+questions asks for k memories; the official `recall_acc` says how much
+of its gold evidence arrived. The gate reproduces the 0.996 ceiling
+exactly at k = 20 (and its lower, k-dependent ceiling at 5 and 10) before
+a row prints, and the headline is a **published loss**: with the suite's
+lexical reference embedder, the shipped memory policies cost 0.9 points
+of evidence recall at k = 20 against the same pipeline with every policy
+inert (0.241 vs 0.250), and the ingest census says exactly what they did
+to the corpus. [docs/LOCOMO_RECALL.md](docs/LOCOMO_RECALL.md) is the
+rendered report; the run is deterministic, keyless, and 13 seconds.
+
+The scorer that will read a model's answers beside those ceilings is at
+parity with the published one: `benchmark/lib/locomo-parity.ts` ports
+`task_eval/evaluation.py` to the letter — the article-after-punctuation
+order, `and` as an article, NLTK's own Porter variant — and
+`npm run benchmark:locomo:parity` produces its fixtures by *running* the
+official evaluator, which the port reproduces on every row: 45
+hand-authored cases at ten decimals, every one of the release's 3,263
+question-and-answer tokens stemmed identically, and 4,602 dataset-derived
+rows checked locally. Category 5 is excluded with its reason in the
+report, never folded into a number.
+
 ## The apps
 
 The desktop keeps browser automation optional. Ordinary HTML, text, Markdown, and PDF
