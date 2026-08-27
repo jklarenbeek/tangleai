@@ -1,5 +1,5 @@
 /**
- * The LoCoMo scorer, at parity with the published one — order 15.
+ * The LoCoMo scorer, at parity with the published one.
  *
  * `benchmark/locomo/task_eval/evaluation.py` is the code every LoCoMo
  * number in the literature came through, and this module is that code

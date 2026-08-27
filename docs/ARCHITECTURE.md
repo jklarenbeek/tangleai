@@ -87,13 +87,14 @@ Two ordering rules are load-bearing and test-pinned:
 - Every record is schema-validated at the store boundary; evidence is
   mandatory on memories AND on outcome reports.
 
-## What is deliberately absent (see TODO.md)
+## What is deliberately absent (see ROADMAP.md)
 
-The fitness signal (LoCoMo, TODO 02) comes before any further policy work —
+The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)
+comes before any further policy work —
 memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
-thing. Servers, persistence beyond in-memory, graph indexing of `relations`,
-and the GMPL multi-agent patterns all wait behind their orders.
+thing. Graph indexing of `relations`, the consolidation tiers and the GMPL
+multi-agent patterns all wait behind their roadmap entries.
 
 ## The surfaces (added 2026-08-24)
 

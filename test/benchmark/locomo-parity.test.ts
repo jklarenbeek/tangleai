@@ -1,5 +1,5 @@
 /**
- * Order 15: the scorer at parity with the published one.
+ * The scorer at parity with the published one.
  *
  * The fixtures were produced by RUNNING `task_eval/evaluation.py`
  * (`benchmark/scripts/locomo-parity-fixtures.py`, mode `oracle`), and

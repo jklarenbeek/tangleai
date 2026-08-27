@@ -153,7 +153,8 @@ pipeline pair says where the loss lives: the shipped policies left the
 prompt byte-identical on 47 of the 64 questions (the cache replayed those
 answers), and on the 17 they changed, Tangle scores 0.088 against 0.122
 under the same ceiling — the policies cost F1 without changing what
-evidence arrives, which is the number orders 03 and 13 exist to move. The
+evidence arrives, which is the number the policy matrix and the temporal
+lane ([docs/ROADMAP.md](docs/ROADMAP.md)) exist to move. The
 earlier win (0.161 against 0.095, under a rate-limited run that answered
 unequal sets) did not survive a run without wire failures. The
 category-5 judge lane (50–100 % refused the false premise, where the
@@ -227,8 +228,11 @@ ranked retrieval — the superseded record provably cannot surface.
 
 ## Where things stand
 
-- [TODO.md](TODO.md) — the campaign; the LoCoMo instrument (orders 02, 15,
-  16, 17) gates all further policy work
+- [docs/ROADMAP.md](docs/ROADMAP.md) — what Tangle wants to have and does
+  not yet: open work only, each entry with the constraint that makes it
+  hard and the measurement that would close it; the LoCoMo instrument
+  ([docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md)) gates every
+  policy entry
 - [docs/BOUNDARY.md](docs/BOUNDARY.md) — what belongs in `@jarenjs/ai`
   versus here, and the one test-pinned contract between them
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two
@@ -236,7 +240,9 @@ ranked retrieval — the superseded record provably cannot surface.
 - [docs/PAPERS.md](docs/PAPERS.md) — the research this implements, with
   per-paper status; PDFs archived in [docs/refs/](docs/refs/)
 - [docs/workflow/](docs/workflow/README.md) — how this repo is changed and
-  proved: conventions, campaign, health pass, release — each with a
-  machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
+  proved: conventions, the bootstrap prompt, campaigns (router, orders,
+  session records — gitignored scratch), health pass, release — each with
+  a machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
   the gated design for running these workflows as evolvable DAGs
-- `prompts/` — memflow's TOML prompt packs, carried as data for orders 04–07
+- `prompts/` — memflow's TOML prompt packs, carried as data for the
+  consolidation, skill-loop, outcome and pattern entries of the roadmap

@@ -1,7 +1,8 @@
 /**
- * LoCoMo turns as Tangle observations — the ingest side of order 02.
+ * LoCoMo turns as Tangle observations — the ingest side of the recall
+ * instrument.
  *
- * The settled rules (TODO 02), each of which is a line below:
+ * The settled rules, each of which is a line below:
  *
  *  - **A memory is a turn, and its evidence is its address.** One
  *    `MemoryUnitInput` per turn. `text` is the turn text; a turn that
@@ -140,7 +141,7 @@ export function addressesOf(evidence: string, sampleId: string): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// the transcript as a request — order 17's long-context row
+// the transcript as a request — the long-context row
 // ---------------------------------------------------------------------------
 
 /**

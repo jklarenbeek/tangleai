@@ -6,7 +6,7 @@
  * `npm run benchmark:locomo:census`. The test exists so that a submodule
  * that moves cannot silently change what a published LoCoMo row means:
  * if upstream re-releases the file, this suite goes red with the exact
- * quantity that changed, and the campaign decides what to do about it
+ * quantity that changed, and the operator decides what to do about it
  * before any score is recompared.
  *
  * The whole suite degrades to a stated skip when the submodule is not

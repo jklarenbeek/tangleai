@@ -3,9 +3,8 @@
  *
  * Same four methods, same write gate, same isolation guarantees as
  * `createMemoryUnitStore` — the policies in @tangleai/memory cannot tell
- * the difference, which is the whole point of the seam (and the delivery
- * of TODO order 10's first half: "replace the in-memory store behind the
- * SAME 4-method contract, node:sqlite first").
+ * the difference, which is the whole point of the seam: the in-memory
+ * store is replaced behind the SAME 4-method contract, node:sqlite first.
  *
  * Isolation comes free: every read is a fresh parse out of SQLite, every
  * write serializes the document — no caller ever holds a live reference

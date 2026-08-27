@@ -3,7 +3,7 @@
  * The LoCoMo census — what is actually in the dataset, before anything
  * is scored against it.
  *
- * This is the first instrument of TODO 02 and it deliberately measures
+ * This is the first LoCoMo instrument and it deliberately measures
  * no model and no policy. It answers the questions every later row
  * depends on and that a paper's summary table cannot: how many QA pairs
  * per category really survive, how many carry no ground truth, how many
@@ -174,7 +174,7 @@ console.log(table({
 const adversarial = categories.get(5);
 console.log(`\n${count(qaTotal)} questions in total; **${count(scorable)} are scorable for parity** (categories 1–4).`);
 if (adversarial !== undefined) {
-  console.log(`Category 5 is excluded from parity scoring: ${adversarial.total - adversarial.withAnswer} of its ${adversarial.total} questions carry no \`answer\` key at all, and the official evaluator scores the category by looking for the words "no information available" in the output — which marks the factually correct answer wrong. See TODO 02.`);
+  console.log(`Category 5 is excluded from parity scoring: ${adversarial.total - adversarial.withAnswer} of its ${adversarial.total} questions carry no \`answer\` key at all, and the official evaluator scores the category by looking for the words "no information available" in the output — which marks the factually correct answer wrong. See docs/LOCOMO_BENCHMARK.md.`);
 }
 
 console.log(`\n## Evidence — the ceiling on any recall metric\n`);

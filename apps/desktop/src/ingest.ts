@@ -32,7 +32,7 @@ const MAX_FILE_BYTES = 512 * 1024;
 // `size: 1` under the separator strategy forces every paragraph into its
 // own piece (a unit longer than `size` is its own piece by chunkText's
 // documented oversized-unit rule) — a memory unit is a STATEMENT, not a
-// page. Coarser, smarter chunking (S2) is TODO order 08, not here.
+// page. Coarser, smarter chunking (S2) is the document lane's, not here.
 const PARAGRAPH = { strategy: 'separator' as const, size: 1 };
 const MAX_CHUNKS_PER_FILE = 64;
 const MAX_UNIT_CHARS = 2000;

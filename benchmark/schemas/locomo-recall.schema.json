@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://tangleai.dev/schemas/locomo-recall",
-  "title": "LoCoMo evidence-recall report — order 02's document",
-  "description": "What `benchmark/locomo-recall.ts` writes, validated before it is written. Orders 15, 16 and 03 EXTEND this document (a `parity`, an `answers`, a `temporal` block beside these); they do not fork it. No timing and no clock reading is allowed in here: the same dataset and config must produce byte-identical bytes.",
+  "title": "LoCoMo evidence-recall report — the committed document",
+  "description": "What `benchmark/locomo-recall.ts` writes, validated before it is written. Later instruments EXTEND this document (a `parity`, an `answers`, a `temporal` block beside these); they do not fork it. No timing and no clock reading is allowed in here: the same dataset and config must produce byte-identical bytes.",
   "type": "object",
   "required": ["benchmark", "instrument", "dataset", "config", "corpus", "questions", "ceiling", "floor", "rows", "gate"],
   "additionalProperties": false,

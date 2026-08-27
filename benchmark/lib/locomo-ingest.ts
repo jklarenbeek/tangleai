@@ -2,19 +2,21 @@
  * One conversation through the real pipeline — the ingest every LoCoMo
  * instrument shares.
  *
- * Order 02 settled it and orders 16 and 03 inherit it unchanged: one
+ * The recall instrument settled it and the answer path and the policy
+ * matrix inherit it unchanged: one
  * store per conversation, one `pipeline.run` per session, every policy
  * running each time against what the earlier sessions left, and the
  * pipeline's clock the conversation's last session instant so that
  * `supersededAt` and a crystallized record's `at` are data rather than
  * a reading of the wall. What the policies did is the census beside
  * the row, because "the policies changed the corpus" is exactly what
- * order 03 measures and every instrument has to say what the baseline
+ * the policy matrix measures and every instrument has to say what the
+ * baseline
  * was.
  *
- * Extracted from `locomo-recall.ts` when the answer path (16) needed
- * the same units: the recall report is asserted byte-identical across
- * the move, so this file changes nothing about order 02's number.
+ * Shared by the recall and the answer instruments; the recall report is
+ * asserted byte-identical to its committed document, so nothing here may
+ * change its number.
  */
 
 import type { Embedder } from '@jarenjs/ai/embed';
@@ -27,7 +29,7 @@ import type { ConversationCorpus } from './locomo-corpus.ts';
 /**
  * What the ingest reads of a corpus: its sessions and its clock. The
  * turn corpus satisfies it, and so do the release's derived corpora
- * (order 17's observation and summary rows) — the same ingest over a
+ * (the observation and summary rows) — the same ingest over a
  * different set of inputs is exactly the comparison those rows make.
  */
 export type IngestCorpus = Pick<ConversationCorpus, 'sessions' | 'lastAt'>;

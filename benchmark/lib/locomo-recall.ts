@@ -1,5 +1,5 @@
 /**
- * The LoCoMo evidence-recall instrument — order 02's number.
+ * The LoCoMo evidence-recall instrument — the keyless ceiling.
  *
  * For every scorable question (categories 1–4, 1,540 of them) each
  * retrieval row hands back k memories, and the official `recall_acc`
@@ -15,7 +15,7 @@
  * time: the novelty gate against what earlier sessions left, the
  * contradiction judge over the store, the crystallizer over the store.
  * What they did is the ingest census beside the row, because "the
- * policies changed the corpus" is exactly what order 03 will be
+ * policies changed the corpus" is exactly what the policy matrix will be
  * measuring and this instrument has to say what the baseline was.
  *
  * **The rows.** Two gate rows over the turn universe — `oracle` (the
@@ -41,7 +41,7 @@
  * score high when they share letters. A `near` row therefore says
  * whether the MECHANISM — ingest, gate, rank, cite — carries a fact to
  * the prompt, and nothing about embedding quality; a real model behind
- * the same seam (order 03) is where quality enters. Published beside
+ * the same seam (the policy matrix) is where quality enters. Published beside
  * every table, as jarenjs publishes it.
  */
 
@@ -501,7 +501,7 @@ export function renderMarkdown(report: RecallReport): string {
     ]),
   }));
   out.push('');
-  out.push('`filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus order 03 measures against.');
+  out.push('`filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus the policy matrix measures against.');
   out.push('');
   out.push('## The gate');
   out.push('');
@@ -548,7 +548,7 @@ export function renderMarkdown(report: RecallReport): string {
     out.push('');
     out.push(`At k = ${k} the shipped policies move overall evidence recall by ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)} points against the same pipeline with every policy inert (${pct(near.recall[k].overall, 2)} vs ${pct(raw.recall[k].overall, 2)}), at a ceiling of ${pct(report.ceiling[k].overall, 2)}. ${delta < 0 ? 'That is a LOSS, and it is published as one: ' : 'That is the sign to read, and it is small: '}what the gate filtered and the judge superseded is what these questions could no longer retrieve.`);
     out.push('');
-    out.push('What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. Order 03 puts a real embedding client behind the same seam and re-runs this exact instrument; order 13 gives the ranker a notion of *when*; order 16\'s F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.');
+    out.push('What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. The policy matrix (open in `docs/ROADMAP.md`) puts a real embedding client behind the same seam and re-runs this exact instrument; the temporal lane gives the ranker a notion of *when*; the answer path\'s F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.');
     out.push('');
   }
   out.push('---');

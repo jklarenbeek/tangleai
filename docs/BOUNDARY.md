@@ -31,9 +31,9 @@ pipelines, servers, UI — is Tangle's.
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
 | LLM judgment | `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
-| self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (TODO 05/06) |
-| orchestration | `@jarenjs/flow` FSM/DAG compile + durable sessions | future: GMPL patterns as flow documents (TODO 07) |
-| scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (TODO 04) |
+| self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
+| orchestration | `@jarenjs/flow` FSM/DAG compile + durable sessions | future: GMPL patterns as flow documents (roadmap: patterns as flow documents) |
+| scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 
 ## What the suite already has — read before building (audited 2026-08-26, v0.49.2)
@@ -42,30 +42,30 @@ The rule above decides where a NEW capability goes. This section answers the
 prior question — *does it already exist below?* — because the expensive mistake
 in a downstream repo is not putting something on the wrong side of the line, it
 is building something the line already has. Audited against the sibling
-checkout at `@jarenjs/*` 0.49.2, one row per thing an open order would
+checkout at `@jarenjs/*` 0.49.2, one row per thing an open roadmap entry would
 otherwise write.
 
 **Use it — do not write it again.**
 
-| What an open order needs | What the suite publishes | Where it lands |
+| What an open entry needs | What the suite publishes | Where it lands |
 |---|---|---|
-| A question answered over a whole corpus that will not fit a request | `createEnvironment` (RFC-style slots; `digest`/`peek`/`chunk`/`grep`/`select`/`stat`/`read`, none of which return bulk content), `compileProgram` + `createProgramRunner` (the model authors a compile-gated program; `map` is the only step that calls a model), `createLongHorizonAgent` (depth default 1, cap 3, children scoped so no sibling is reachable, a child's failure is a value) | **17** (landed: the `long-horizon` row of `benchmark/lib/locomo-qa.ts` — the program path at depth 0, under a per-question turn budget, the ceiling read from the sub-call requests). The LoCoMo baseline IS this, not a hand-built RAG loop. jarenjs measures it: needle 100 % / pairwise 100 % in a **937-char request against a 17 719-char corpus**, where compaction alone scores 17.5 % / 0 % while spending 5 781 chars. LoCoMo is that claim's first public corpus. |
-| Cost, and a run that stops instead of overrunning | `createBudgetAccount`, `BUDGET_DIMENSIONS` (`turns`/`tokens`/`ms`), the agent's `budget` with `spent` seeded for resume, a named `stopReason`, and one account shared by a whole recursion tree | **16** (landed: `benchmark/lib/locomo-qa.ts` meters every live call through one account), **13.** The cost column is this, not `@tangleai/core/tokens`. The suite already prefers the provider's own `usage` and falls back to a 4-char estimate only when a token budget is set — `estimateTokens` stays a truncation helper and stops being a cost number. |
-| A trajectory to cluster into skills | `createTrajectory` (sequenced entries, excerpted answers, `summary()` by kind/depth), `describeTrajectory` | **05.** |
-| Skills as records, and getting them back into a prompt | `SKILL_SCHEMA`, `ledger.recallSkills({ near })`, the agent's `retrieval.skills` slot | **05** (already named in the order). |
-| Self-modification that cannot go rogue | `createRefiner`: RFC 6902 patch → shape → semantics-on-a-copy → ledger legality → commit with snapshot rollback; the base system prompt is not in the patched document at all | **05, 06, 12** (already named). |
-| Structured output with a repair loop | `createStructuredOutput`, `unfence`, coded errors carrying a `docPath` into the offending document | **13** (window extraction), **02** (the cat-5 judge). |
-| Constrained decoding against a local model | `@jarenjs/josl/gbnf` — a character-level GBNF for the llama.cpp family, beside the hosted `json_schema` twins the query and JSLT grammars publish | **09**, if a local provider becomes a profile. |
-| Reading memflow's TOML prompt packs | `parseToml` from `@jarenjs/josl` — passes the official toml-test 1.0.0 suite in strict mode, the only engine in its benchmark that does | **07.** Do not write a TOML reader. (The packs themselves stay Tangle's — see *What must never migrate down*; consuming the suite's parser is not migrating anything down.) |
-| Tabular import/export of results | `parseCsv`, `stringifyCsv`, `sniffCsvDialect`, and a `repair: true` mode that logs every fix under a stable `CSV1xxx` code | **02, 03.** |
-| Catching a malformed dataset at the door | `@jarenjs/validate`, plus the `$query` keyword for cross-field assertions (sums, ordering, quantification) | **02.** Validate `locomo10.json` on load against a committed schema: the 444/446 missing-`answer` adversarial bug becomes a **schema-detected count in the report**, not a surprise in the scorer. |
-| Keeping hand-written interfaces honest with their schemas | `emitTypeScript` (a function, not only the `jaren-emit` CLI) with `--check` failing CI when a schema moved and the type did not, verified cyclically against the validator over an instance corpus | **02+.** Dev-only, so exempt under CONVENTIONS §1. Candidate replacement for the hand-maintained interface/schema drift tests in `@tangleai/core/schemas`. |
-| A stable identity for a dataset or a report | `@jarenjs/json/canonical` (RFC 8785 canonical bytes) and the SHA-256-over-canonical pattern `contract.revision()` already uses; `hashContent` in `@jarenjs/core/string` (exact FNV-1a) for a cheap fingerprint | **02.** The checksummed `manifest.json` the plan asks for. |
+| A question answered over a whole corpus that will not fit a request | `createEnvironment` (RFC-style slots; `digest`/`peek`/`chunk`/`grep`/`select`/`stat`/`read`, none of which return bulk content), `compileProgram` + `createProgramRunner` (the model authors a compile-gated program; `map` is the only step that calls a model), `createLongHorizonAgent` (depth default 1, cap 3, children scoped so no sibling is reachable, a child's failure is a value) | **Landed** — the `long-horizon` row of `benchmark/lib/locomo-qa.ts` (the program path at depth 0, under a per-question turn budget, the ceiling read from the sub-call requests). The LoCoMo baseline IS this, not a hand-built RAG loop. jarenjs measures it: needle 100 % / pairwise 100 % in a **937-char request against a 17 719-char corpus**, where compaction alone scores 17.5 % / 0 % while spending 5 781 chars. LoCoMo is that claim's first public corpus. |
+| Cost, and a run that stops instead of overrunning | `createBudgetAccount`, `BUDGET_DIMENSIONS` (`turns`/`tokens`/`ms`), the agent's `budget` with `spent` seeded for resume, a named `stopReason`, and one account shared by a whole recursion tree | **Landed** — `benchmark/lib/locomo-qa.ts` meters every live call through one account; the temporal lane inherits it. The cost column is this, not `@tangleai/core/tokens`. The suite already prefers the provider's own `usage` and falls back to a 4-char estimate only when a token budget is set — `estimateTokens` stays a truncation helper and stops being a cost number. |
+| A trajectory to cluster into skills | `createTrajectory` (sequenced entries, excerpted answers, `summary()` by kind/depth), `describeTrajectory` | The skill loop. |
+| Skills as records, and getting them back into a prompt | `SKILL_SCHEMA`, `ledger.recallSkills({ near })`, the agent's `retrieval.skills` slot | The skill loop. |
+| Self-modification that cannot go rogue | `createRefiner`: RFC 6902 patch → shape → semantics-on-a-copy → ledger legality → commit with snapshot rollback; the base system prompt is not in the patched document at all | The skill loop, outcome-grounded decisions, the evolution loop. |
+| Structured output with a repair loop | `createStructuredOutput`, `unfence`, coded errors carrying a `docPath` into the offending document | The temporal lane (window extraction); landed as the answer path's category-5 judge. |
+| Constrained decoding against a local model | `@jarenjs/josl/gbnf` — a character-level GBNF for the llama.cpp family, beside the hosted `json_schema` twins the query and JSLT grammars publish | Config profiles, if a local provider becomes a profile. |
+| Reading memflow's TOML prompt packs | `parseToml` from `@jarenjs/josl` — passes the official toml-test 1.0.0 suite in strict mode, the only engine in its benchmark that does | Patterns as flow documents. Do not write a TOML reader. (The packs themselves stay Tangle's — see *What must never migrate down*; consuming the suite's parser is not migrating anything down.) |
+| Tabular import/export of results | `parseCsv`, `stringifyCsv`, `sniffCsvDialect`, and a `repair: true` mode that logs every fix under a stable `CSV1xxx` code | The instruments; the policy matrix. |
+| Catching a malformed dataset at the door | `@jarenjs/validate`, plus the `$query` keyword for cross-field assertions (sums, ordering, quantification) | **Landed** in the census — `locomo10.json` is validated on load against a committed schema, so the 444/446 missing-`answer` adversarial bug is a **schema-detected count in the report**, not a surprise in the scorer. |
+| Keeping hand-written interfaces honest with their schemas | `emitTypeScript` (a function, not only the `jaren-emit` CLI) with `--check` failing CI when a schema moved and the type did not, verified cyclically against the validator over an instance corpus | Any instrument. Dev-only, so exempt under CONVENTIONS §1. Candidate replacement for the hand-maintained interface/schema drift tests in `@tangleai/core/schemas`. |
+| A stable identity for a dataset or a report | `@jarenjs/json/canonical` (RFC 8785 canonical bytes) and the SHA-256-over-canonical pattern `contract.revision()` already uses; `hashContent` in `@jarenjs/core/string` (exact FNV-1a) for a cheap fingerprint | The instruments — the checksummed manifest the salvage plan asks for. |
 | Running the eval as a document, and drawing it | `@jarenjs/flow` jaren-dag, and `@jarenjs/mermaid`'s `dag-to-flowchart` stylesheet | Already correct — `@tangleai/pipeline` uses both, and `packages/pipeline/src/mermaid.ts` derives the drawing from the executable document rather than hand-drawing it. |
-| A benchmark run as an operation, live progress, and a CI gate on its shape | `@jarenjs/contract`: a `subscribe` operation streamed as a `@jarenjs/db` live query (SSE over http, frames over port, resumable by seq), `contract.revision()`, and `diffContracts --fail-on breaking` | **11.** |
-| Excerpting, truncating, sizing text | `excerpt`, `truncate`, `sizeOf`, `chunkText` in `@jarenjs/core/chunk` | Everywhere. Note the standing exception: this is NOT the document chunker — 08a recorded why (no element or heading model). |
-| Time as an answerable structure | `@jarenjs/core/series` | **13.** |
-| Geography | `@jarenjs/core/geo`, `@jarenjs/ai/spatial` (the gates), `@jarenjs/ai/geo-tools` | **14.** |
+| A benchmark run as an operation, live progress, and a CI gate on its shape | `@jarenjs/contract`: a `subscribe` operation streamed as a `@jarenjs/db` live query (SSE over http, frames over port, resumable by seq), `contract.revision()`, and `diffContracts --fail-on breaking` | The desktop's open ends (the benchmark reaching the surface). |
+| Excerpting, truncating, sizing text | `excerpt`, `truncate`, `sizeOf`, `chunkText` in `@jarenjs/core/chunk` | Everywhere. Note the standing exception: this is NOT the document chunker — it has no element or heading model, which the document lane needs. |
+| Time as an answerable structure | `@jarenjs/core/series` | The temporal lane. |
+| Geography | `@jarenjs/core/geo`, `@jarenjs/ai/spatial` (the gates), `@jarenjs/ai/geo-tools` | The place lane. |
 
 **Build it here — the suite genuinely does not have it.** Written down so nobody
 spends an afternoon looking:
@@ -74,7 +74,7 @@ spends an afternoon looking:
   stemmer, token-level F1, the comma-split multi-hop variant. `@jarenjs/core/text`
   is a *format-validation* toolbox — emails, hostnames, IPs, URIs/IRIs, UUIDs,
   punycode, I-Regexp — and there is no tokenizer, no stemmer and no
-  string-similarity metric anywhere in the suite. Written on order 15, to the
+  string-similarity metric anywhere in the suite. Written once for the scorer, to the
   official evaluator's exact spelling, because parity with the published
   numbers is the entire point of porting rather than improving:
   `benchmark/lib/porter.ts` (NLTK's variant) and
@@ -84,10 +84,10 @@ spends an afternoon looking:
   the graphics/numeric kernel (int32/float64, vectors, `mat4`, root finders,
   `geoMean`); the p50/p95 helpers exist only in jarenjs's unpublished
   `benchmark/lib/measure.js`. A few lines, written once here
-  (`benchmark/lib/stats.ts`, 02a).
+  (`benchmark/lib/stats.ts`).
 - **A seeded PRNG.** Published by no package; jarenjs keeps its seeds inside
   the benchmark harness. `@tangleai/core/clustering` already injects one, which
-  is the right shape. Written once, on 02: `benchmark/lib/random.ts`
+  is the right shape. Written once: `benchmark/lib/random.ts`
   (mulberry32 — the generator jarenjs's seeded corpora use).
 - **k-means.** Not in the suite. `@tangleai/core/clustering` is legitimately
   Tangle's, and its header already explains why it does not reach for
@@ -97,7 +97,7 @@ spends an afternoon looking:
   Tangle's by the rule at the top of this file.
 
 **Copy the method, not the code.** jarenjs's benchmark scripts are not published
-packages, so nothing below is importable — but each is a decision this campaign
+packages, so nothing below is importable — but each is a decision this repo
 would otherwise have to learn the hard way:
 
 - `benchmark/retrieval.js` scores recall@{1,5,10}, MRR and latency per policy,
@@ -110,12 +110,12 @@ would otherwise have to learn the hard way:
   score**. The ceiling asks only "was the fact needed to answer present in the
   request at all" — no key, no cost, no flake, so it is the tier CI runs — and
   the GAP between it and a real model's score says whether a failure is a
-  retrieval problem or a prompt problem. This is how order 02 runs on every
+  retrieval problem or a prompt problem. This is how the recall instrument runs on every
   commit without a key, and it is a better sub-metric than F1 alone.
 - `readAiEnv` and the `JAREN_AI_MAX_CALLS` spend guard: the live tier is never a
   test dependency, a missing key is a *stated skip* rather than a failure, and a
   run that would exceed the call ceiling is skipped up front with that reason
-  instead of being half-spent. Copied on order 16 as `benchmark/lib/ai-env.ts`
+  instead of being half-spent. Copied as `benchmark/lib/ai-env.ts`
   (`TANGLE_AI_*`), resolving to the desktop's own settings shape so the
   benchmark's clients are the app's.
 

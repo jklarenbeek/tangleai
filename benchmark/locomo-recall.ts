@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /**
- * LoCoMo evidence recall — order 02's instrument, the keyless ceiling.
+ * LoCoMo evidence recall — the keyless ceiling.
  *
  * Ingests the ten conversations through the real pipeline (one store
  * per conversation, one run per session), retrieves k memories for each

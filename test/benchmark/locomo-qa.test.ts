@@ -1,5 +1,5 @@
 /**
- * Order 16's instrument, pinned — and order 17's rows with it.
+ * The answer instrument, pinned — and the baseline rows with it.
  *
  * Four layers. The environment reader and the prompt pieces are tested
  * on hand cases that need no dataset — a missing key is a stated skip,
@@ -518,7 +518,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     assert.equal(report.gate.passed, true);
     for (const c of ['1', '2', '3', '4'] as const) assert.equal(report.gate.oracle.byCategory[c], 1, `category ${c}`);
     assert.equal(report.gate.oracle.overall, 1);
-    // order 15 measured: 11 category-3 answers cannot match themselves uncut
+    // measured on the way to parity: 11 category-3 answers cannot match themselves uncut
     assert.equal(report.gate.released.byCategory['1'], 1);
     assert.equal(report.gate.released.byCategory['2'], 1);
     assert.equal(report.gate.released.byCategory['4'], 1);
@@ -577,11 +577,11 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     const horizon = rowOf(report, 'long-horizon');
     assert.equal(horizon.ceiling, null, 'the agent authors its own retrieval');
     assert.equal(horizon.verbatim, null);
-    // the same k=10 ranking as the recall instrument, so the ceilings agree with order 02's published rows
+    // the same k=10 ranking as the recall instrument, so the ceilings agree with the recall instrument's published rows
     const recall = JSON.parse(await readFile('benchmark/results/locomo-recall.json', 'utf8'));
     for (const c of CONFIGURATIONS) {
       const row = recall.rows.find((r: { key: string }) => r.key === c.key);
-      assert.equal(rowOf(report, c.key).ceiling!.all.overall, row.recall['10'].overall, `${c.key}: the ceiling IS order 02's recall@10`);
+      assert.equal(rowOf(report, c.key).ceiling!.all.overall, row.recall['10'].overall, `${c.key}: the ceiling IS the recall instrument's recall@10`);
     }
   });
 

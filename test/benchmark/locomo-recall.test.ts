@@ -1,5 +1,5 @@
 /**
- * Order 02's instrument, pinned.
+ * The recall instrument, pinned.
  *
  * Three layers. The scorer and the corpus builder are tested on hand
  * cases that need no dataset — the official `recall_acc` arithmetic,

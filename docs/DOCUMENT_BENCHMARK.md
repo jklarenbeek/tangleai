@@ -38,7 +38,7 @@ The default therefore rests on cost, not on quality: recursive chunking answers 
 embedding pass, S2 spends an extra element-level pass (34 embedded texts against 9) for
 a number this instrument cannot show a gain in. **Recursive heading-aware chunking stays
 the default**, and S2 stays behind a strategy setting until a representative corpus —
-TODO 02's instrument, over a real embedder — has a verdict. That the hash embedder
+the LoCoMo instrument (`LOCOMO_BENCHMARK.md`), over a real embedder — has a verdict. That the hash embedder
 scores 100% here is not evidence that it predicts production semantic quality.
 
 ## Standalone checks

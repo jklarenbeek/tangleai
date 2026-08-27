@@ -43,6 +43,10 @@ the second time, and "found nothing" is a valid, reportable outcome.
    layer with the gate between batches.
 7. Report: what moved, what was fixed (each with its test), what was
    found and deliberately left, and the second-run-finds-nothing check.
+   A hunt scoped for a campaign (CAMPAIGN.md) reports as three lists —
+   confirmed in the campaign's path, confirmed beside it with its
+   disposition, checked-and-dropped with the reason — so no executor
+   re-investigates the same guard.
 
 Close out per CONVENTIONS §5, one commit for the pass.
 

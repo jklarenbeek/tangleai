@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /**
- * LoCoMo answer path — order 16's instrument, with order 17's baselines
+ * LoCoMo answer path — the answer instrument, with the baselines
  * in the same table: the ceiling and the F1, published together, for
  * Tangle and for every rival.
  *
@@ -9,7 +9,7 @@
  * ceiling at k and the model-free verbatim floor, over every scorable
  * question and over the seeded sample the live tier answers. `--live`
  * adds a real model over the same sample for the rows named by
- * `--rows` (order 16's pair when unnamed), through the desktop's
+ * `--rows` (the pipeline pair when unnamed), through the desktop's
  * provider settings read from `.env` (see `.env.example`); no key is a
  * stated skip, and a plan that would exceed `TANGLE_AI_MAX_CALLS` is
  * skipped up front without a request. Six rows do not fit one ceiling,

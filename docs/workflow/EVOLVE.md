@@ -1,12 +1,13 @@
 # EVOLVE.md — workflows as executable, measurable, evolvable DAGs
 
 **Status: DESIGN.** Nothing in this file is built. It is written down now
-because the pieces finally line up, and because the campaign rule at the
-top of `TODO.md` must be applied to it, not waved at: *no self-evolving
+because the pieces finally line up, and because the standing rule
+(CONVENTIONS §6) must be applied to it, not waved at: *no self-evolving
 capability ships before the instrument that can call it an improvement.*
-This is the capability that rule was written for. TODO order 12 tracks it;
-orders 02 (the instrument), 05 (Trace2Skill) and 06 (outcome-grounded
-decisions) are its prerequisites.
+This is the capability that rule was written for. `docs/ROADMAP.md`
+carries it as the evolution-loop entry; the instrument now exists
+(`docs/LOCOMO_BENCHMARK.md`), and the skill loop and outcome-grounded
+decisions — roadmap entries of their own — are its prerequisites.
 
 ## The idea
 
@@ -51,8 +52,10 @@ signal this repo insists on.
    - health/refactor: duplicate count, dead exports, doc-drift findings
      — behavior must be UNCHANGED (the gate is the proof);
    - perf: the repo's own benchmark numbers, N runs, medians;
-   - memory-policy experiments: the LoCoMo number (order 02) —
-     unavailable until 02 lands, which is why this file is gated;
+   - memory-policy experiments: the LoCoMo number
+     (`docs/LOCOMO_BENCHMARK.md`, keyless tier) — the instrument exists;
+     what gates this file now is the policy matrix over it and the two
+     prerequisite loops;
    - flakiness discipline inherited: a moving failure is rerun in
      isolation before it is believed.
 6. **Decide.** Strict improvement with green gate → commit **on the
@@ -77,7 +80,7 @@ signal this repo insists on.
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |
 | worktree executor (add/apply/gate/measure/remove) | missing — `node:child_process` over git, no new dependencies |
 | mutation/proposal operators | missing — starts hand-authored; LLM-backed via `createStructuredOutput` later |
-| the fitness instrument for memory policies | **order 02, the gate for all of it** |
+| the fitness instrument for memory policies | exists — `benchmark/locomo-qa.ts`, published as `docs/LOCOMO_BENCHMARK.md`; the policy matrix over it is the open roadmap entry |
 
 ## The rails (non-negotiable, written before the first run)
 

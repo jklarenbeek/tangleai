@@ -48,10 +48,25 @@ before it is believed.
 
 ## 3. Artifacts
 
-- **`TODO.md`** (committed) is router, orders and status ledger in one:
-  the campaign rule at the top, `## Done` as the ledger, `## Open` as
-  the orders. There are no per-order files and no session-record files —
-  an order's record is its ledger entry plus its commit.
+- **Campaign files are gitignored scratch** (`TODO*.md`). The **router** —
+  one per campaign: charter, measured baseline, fixed D-number decisions,
+  the order table, the status ledger — is `TODO_<PROGRAM>.md`, specified
+  section by section in [`CAMPAIGN.md`](CAMPAIGN.md) §"The router". The
+  **work order** — one per step, self-contained, ending in an acceptance
+  checklist that IS the definition of done — is `TODO_<PROGRAM>_NN.md`,
+  and the **session record** — one per executed order, written after the
+  work is green — is `TODO_<PROGRAM>_NN_RECORD.md`; both have a template
+  in [`templates/`](templates/). The local **index** `TODO.md` says which
+  campaign is in flight, which bases are drafted, and what earlier ones
+  shipped. Never write a record under any other name, never create a
+  `PROGRESS*.md`, and never force-add any of them: they will not exist in
+  a fresh clone and are not recoverable once deleted — before clearing a
+  campaign, move any unexecuted intent into `docs/ROADMAP.md`.
+- **`docs/ROADMAP.md`** (committed) is what the repository wants to have
+  and does not yet: open work only, each entry a problem with the
+  constraint that makes it hard and the measurement that would close it.
+  It carries no orders, no status and no "next" marker; a campaign is
+  what the operator makes of an entry.
 - **`benchmark/`** (committed) is the measurement workspace: the instruments
   every published number names, a private `package.json` so a rival's
   dependencies never reach a shipped package, and upstream suites as git
@@ -70,21 +85,36 @@ before it is believed.
 
 ## 4. Documentation rules
 
-- Docs state what IS, dated when it matters; plans live in `TODO.md`
-  orders, not in product docs.
+- Docs state what IS, dated when it matters; wants live in
+  `docs/ROADMAP.md` (open work only — a shipped capability moves into the
+  package docs and its entry leaves) and plans in campaign scratch, never
+  in product docs.
 - Numbers in docs are derived from runs, never asserted. Losses are
   published beside wins — a comparison that only reports victories is
   marketing, and this repo does not ship marketing.
-- Committed files may reference `TODO.md` (it is committed here, unlike
-  jarenjs's scratch): use order numbers, e.g. "TODO 08".
+- **Never reference a gitignored file from committed code, comments,
+  documentation or a commit message** — not a `TODO_*` file, not an order
+  number, not a D-number. Naming the *convention* (as this file does) is
+  fine; naming "order 08" is the rot the rule prevents. When intent must
+  survive, restate the meaning where it belongs — never flatten it into a
+  hollow word.
+- Comments state intent and constraints, not history: no "moved from X",
+  no "added in order 04". The source is the source of truth when prose
+  disagrees; the prose is repaired, never the behavior invented.
 
 ## 5. Close-out & commit protocol
+
+Work lands on `master` uncommitted, for review; this protocol runs only
+when the operator explicitly asks, and what happens to a landed order —
+commit, re-scope, park, abandon — is the operator's decision. Then, in
+order, aborting at the first failure:
 
 1. Run the gate (§2) — exit code 0, on the full suite, not a subset.
 2. Re-read the diff (`git diff` / `git status`) — nothing generated,
    nothing populated-stub, nothing accidental.
-3. Update what the change made stale: `TODO.md` ledger, README counts,
-   `docs/` claims.
+3. Update what the change made stale: the router's status ledger
+   (scratch), the `docs/ROADMAP.md` entry the change closes or narrows,
+   README counts, `docs/` claims, the regenerated benchmark documents.
 4. Commit as Joham. **One short message, present tense, no attribution
    footer, no tool names, no version numbers in the message.** Tags
    carry versions when releasing (RELEASE.md).
@@ -92,12 +122,18 @@ before it is believed.
 
 ## 6. Decisions and authority
 
-An order's text binds its executor. Divergence from an order is
-recorded in the ledger entry ("diverged: …why"). A conflict between an
-order and these conventions is a stop-and-ask, not a judgment call.
-The campaign rule at the top of `TODO.md` — **no self-evolving
-capability before its instrument** — outranks everything in this
-folder, including EVOLVE.md's ambitions.
+An order's text binds its executor, and a router's D-numbers are
+immutable for the life of the campaign: an executor who believes one is
+wrong records the conflict in the session record, and only the operator
+amends the router. Divergence from an order is recorded in the session
+record ("diverged: …why"). A conflict between an order and these
+conventions is a stop-and-ask, not a judgment call. Preflight is a clean
+tree: every pass and every order starts from `git status --porcelain`
+printing nothing (scratch does not count), so the work is one reviewable
+diff against a known commit. The standing rule — **no self-evolving
+capability ships before the instrument that can call it an
+improvement** — outranks everything in this folder, including EVOLVE.md's
+ambitions; the instrument is the LoCoMo pair in `docs/`.
 
 ```json
 {

@@ -19,7 +19,7 @@ One memory per turn, `evidence` = `<sample_id>/<dia_id>`, tags = speaker and ses
 | near-raw | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
 | near | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 63 | 0 | 339 | 5485 | 5537 | 0 |
 
-`filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus order 03 measures against.
+`filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus the policy matrix measures against.
 
 ## The gate
 
@@ -76,7 +76,7 @@ Gold hits credited through a crystallized survivor's absorbed address rather tha
 
 At k = 20 the shipped policies move overall evidence recall by -0.91 points against the same pipeline with every policy inert (24.14% vs 25.05%), at a ceiling of 99.61%. That is a LOSS, and it is published as one: what the gate filtered and the judge superseded is what these questions could no longer retrieve.
 
-What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. Order 03 puts a real embedding client behind the same seam and re-runs this exact instrument; order 13 gives the ranker a notion of *when*; order 16's F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.
+What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. The policy matrix (open in `docs/ROADMAP.md`) puts a real embedding client behind the same seam and re-runs this exact instrument; the temporal lane gives the ranker a notion of *when*; the answer path's F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.
 
 ---
 

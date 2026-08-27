@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-The parity fixtures for order 15 — produced by RUNNING the official
+The parity fixtures — produced by RUNNING the official
 LoCoMo evaluator, never by reading it.
 
 `benchmark/locomo/task_eval/evaluation.py` is loaded verbatim from the
