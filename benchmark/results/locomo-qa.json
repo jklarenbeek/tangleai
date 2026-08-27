@@ -1,0 +1,292 @@
+{
+  "benchmark": "locomo",
+  "instrument": "locomo-qa",
+  "dataset": {
+    "path": "benchmark/locomo/data/locomo10.json",
+    "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "bytes": 2805274,
+    "schemaValid": true,
+    "conversations": 10,
+    "restricted": null
+  },
+  "config": {
+    "embedder": {
+      "model": "hash-trigram-64",
+      "dims": 64
+    },
+    "k": 10,
+    "ingest": "per-session",
+    "clock": "the last session instant of each conversation",
+    "maxPairs": 20
+  },
+  "corpus": {
+    "conversations": 10,
+    "sessions": 272,
+    "refusedSessions": 0,
+    "turns": 5882,
+    "imageTurns": 910,
+    "collapsed": 5,
+    "span": {
+      "start": "2022-01-21T19:31:00.000Z",
+      "end": "2024-01-12T13:41:00.000Z"
+    }
+  },
+  "questions": {
+    "total": 1986,
+    "scorable": 1540,
+    "byCategory": {
+      "1": 282,
+      "2": 321,
+      "3": 96,
+      "4": 841,
+      "5": 446
+    },
+    "noEvidence": 4,
+    "excluded": {
+      "category": 5,
+      "count": 446,
+      "reason": "adversarial questions carry no `answer` (444 of 446) and the official evaluator scores the category by keyword, which marks the factually correct answer wrong; the judge lane below reports them separately"
+    }
+  },
+  "sample": {
+    "seed": 17753,
+    "perCategory": 16,
+    "adversarial": 6,
+    "scorable": 64,
+    "byCategory": {
+      "1": 16,
+      "2": 16,
+      "3": 16,
+      "4": 16,
+      "5": 6
+    },
+    "ids": [
+      "conv-26#39",
+      "conv-26#66",
+      "conv-26#67",
+      "conv-26#117",
+      "conv-26#150",
+      "conv-26#197",
+      "conv-30#5",
+      "conv-30#12",
+      "conv-41#21",
+      "conv-41#31",
+      "conv-41#32",
+      "conv-41#45",
+      "conv-41#50",
+      "conv-41#64",
+      "conv-41#104",
+      "conv-41#160",
+      "conv-42#4",
+      "conv-42#11",
+      "conv-42#33",
+      "conv-42#39",
+      "conv-42#66",
+      "conv-42#70",
+      "conv-42#85",
+      "conv-42#86",
+      "conv-42#98",
+      "conv-42#107",
+      "conv-42#127",
+      "conv-42#159",
+      "conv-43#1",
+      "conv-43#5",
+      "conv-43#6",
+      "conv-43#8",
+      "conv-43#11",
+      "conv-43#16",
+      "conv-43#18",
+      "conv-43#19",
+      "conv-43#34",
+      "conv-43#43",
+      "conv-43#213",
+      "conv-44#7",
+      "conv-44#44",
+      "conv-44#51",
+      "conv-44#122",
+      "conv-47#44",
+      "conv-47#51",
+      "conv-47#58",
+      "conv-47#154",
+      "conv-48#2",
+      "conv-48#5",
+      "conv-48#27",
+      "conv-48#32",
+      "conv-48#40",
+      "conv-48#126",
+      "conv-49#13",
+      "conv-49#14",
+      "conv-49#66",
+      "conv-49#88",
+      "conv-49#126",
+      "conv-50#4",
+      "conv-50#22",
+      "conv-50#42",
+      "conv-50#47",
+      "conv-50#65",
+      "conv-50#71",
+      "conv-50#107",
+      "conv-50#109",
+      "conv-50#150",
+      "conv-50#155",
+      "conv-50#163",
+      "conv-50#183"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "failures": [],
+    "oracle": {
+      "overall": 1,
+      "byCategory": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      }
+    },
+    "released": {
+      "overall": 0.9954732537680026,
+      "byCategory": {
+        "1": 1,
+        "2": 1,
+        "3": 0.9273834458617066,
+        "4": 1
+      }
+    }
+  },
+  "configurations": [
+    {
+      "key": "near-raw",
+      "label": "near (policies off)",
+      "thresholds": {
+        "novelty": 2,
+        "contradiction": 2,
+        "crystallize": 2
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 5882,
+        "embedded": 5882,
+        "admitted": 5882,
+        "filtered": 0,
+        "judged": 0,
+        "contradictions": 0,
+        "resolutions": 0,
+        "merged": 0,
+        "live": 5877,
+        "total": 5877,
+        "superseded": 0
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "ceiling": {
+        "all": {
+          "overall": 0.17407014748773222,
+          "byCategory": {
+            "1": 0.07260599246881441,
+            "2": 0.20768431983385255,
+            "3": 0.07215073529411765,
+            "4": 0.20689655172413793
+          }
+        },
+        "sample": {
+          "overall": 0.19921875,
+          "byCategory": {
+            "1": 0.03125,
+            "2": 0.25,
+            "3": 0.140625,
+            "4": 0.375
+          }
+        }
+      },
+      "verbatim": {
+        "all": {
+          "overall": 0.017608704762793692,
+          "byCategory": {
+            "1": 0.054158192336484015,
+            "2": 0.002670226963460033,
+            "3": 0.010678469596601944,
+            "4": 0.01184603942838209
+          }
+        },
+        "sample": {
+          "overall": 0.015390471965449959,
+          "byCategory": {
+            "1": 0.03238632608515813,
+            "2": 0.004107892106678402,
+            "3": 0.014406694141580674,
+            "4": 0.010660975528382624
+          }
+        }
+      }
+    },
+    {
+      "key": "near",
+      "label": "near (pipeline defaults)",
+      "thresholds": {
+        "novelty": 0.97,
+        "contradiction": 0.8,
+        "crystallize": 0.9
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 5882,
+        "embedded": 5882,
+        "admitted": 5876,
+        "filtered": 6,
+        "judged": 5326,
+        "contradictions": 63,
+        "resolutions": 0,
+        "merged": 339,
+        "live": 5485,
+        "total": 5537,
+        "superseded": 52
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "ceiling": {
+        "all": {
+          "overall": 0.16526663434693872,
+          "byCategory": {
+            "1": 0.0716027994443448,
+            "2": 0.18380062305295952,
+            "3": 0.07623570261437909,
+            "4": 0.19976218787158145
+          }
+        },
+        "sample": {
+          "overall": 0.22395833333333331,
+          "byCategory": {
+            "1": 0.078125,
+            "2": 0.21875,
+            "3": 0.16145833333333331,
+            "4": 0.4375
+          }
+        }
+      },
+      "verbatim": {
+        "all": {
+          "overall": 0.017566248292632723,
+          "byCategory": {
+            "1": 0.05157368211539359,
+            "2": 0.0026452081394799753,
+            "3": 0.01130110773825214,
+            "4": 0.01257339578890383
+          }
+        },
+        "sample": {
+          "overall": 0.01653022841739848,
+          "byCategory": {
+            "1": 0.03532798512056717,
+            "2": 0.004420088320900517,
+            "3": 0.014919967311984259,
+            "4": 0.011452872916141983
+          }
+        }
+      }
+    }
+  ]
+}

@@ -27,6 +27,7 @@ nowhere else.
 | [`locomo-census.ts`](./locomo-census.ts) | What is actually in the LoCoMo release — categories, ground truth, parseable timestamps, and how many evidence ids resolve | `npm run benchmark:locomo:census` |
 | [`scripts/locomo-parity-fixtures.py`](./scripts/locomo-parity-fixtures.py) | The parity oracle: loads the official `task_eval/evaluation.py` verbatim (`bert_score` stubbed) and RUNS it over a hand-authored table and over the release's vocabulary, writing `test/fixtures/locomo-parity*.json` — the rows the TypeScript scorer must reproduce at ten decimals. Needs Python with `nltk`, `regex`, `numpy` | `npm run benchmark:locomo:parity` |
 | [`locomo-recall.ts`](./locomo-recall.ts) | The keyless ceiling: evidence recall@{5,10,20} per category over the 1,540 scorable questions, for the pipeline with its policies off and on, beside a recency baseline and the two gate rows — with the ingest census of what each policy did. Report: [`results/locomo-recall.json`](./results/locomo-recall.json), rendered as [`docs/LOCOMO_RECALL.md`](../docs/LOCOMO_RECALL.md) | `npm run benchmark:locomo:recall` (`--json`, `--md`, `--samples`, `--dims`, `--seed`, `--novelty`, `--contradiction`, `--crystallize`) |
+| [`locomo-qa.ts`](./locomo-qa.ts) | The answer path: per configuration, the evidence-recall ceiling at k and the official F1 of a real model's answers over the same memories, published together with the cost (`createBudgetAccount`, provider `usage`) and p50/p95 latency in the same row; citations checked against the prompt; category 5 through an LLM judge, apart. The keyless tier (the scorer's gate, the ceilings, a verbatim floor, the seeded sample) is the committed, byte-reproducible report [`results/locomo-qa.json`](./results/locomo-qa.json); `--live` writes the dated [`results/locomo-qa-live.json`](./results/locomo-qa-live.json) through the desktop's provider settings read from `.env` — no key is a stated skip, a plan over `TANGLE_AI_MAX_CALLS` is skipped before the first request. Rendered as [`docs/LOCOMO_BENCHMARK.md`](../docs/LOCOMO_BENCHMARK.md) | `npm run benchmark:locomo:qa` (`--live`, `--json`, `--live-json`, `--md`, `--k`, `--questions`, `--adversarial`, `--seed`, `--samples`, `--dims`) |
 
 `lib/` holds what the suite does not publish and what therefore must exist
 exactly once here:
@@ -42,14 +43,21 @@ exactly once here:
 | [`lib/random.ts`](./lib/random.ts) | mulberry32 and one distinct draw — the only random source an instrument may use. No published package has a seeded PRNG; `@tangleai/core`'s k-means injects one. |
 | [`lib/locomo-recall.ts`](./lib/locomo-recall.ts) | The run itself, the gate, and the Markdown derived from the report. Importable, so the tests run it. |
 | [`lib/porter.ts`](./lib/porter.ts) | The Porter stemmer as NLTK runs it (`NLTK_EXTENSIONS`, the official scorer's default) — ported branch for branch over code points, because there is no stemmer anywhere in `@jarenjs/*` and the paper's variant would differ on the third decimal of every F1. |
+| [`lib/locomo-ingest.ts`](./lib/locomo-ingest.ts) | One conversation through the real pipeline — one store, one `pipeline.run` per session, the clock the last session instant, the census of what each policy did — shared by the recall and answer instruments so order 03 tunes one ingest, not two. |
+| [`lib/ai-env.ts`](./lib/ai-env.ts) | The ONE reader of the live-model environment (`TANGLE_AI_*`, `OPENROUTER_AI_KEY`), jarenjs's `readAiEnv` method: a missing key is a stated skip, the key is never printed, the spend guards are ceilings. It resolves to the desktop's `ChatSettings`/`EmbedSettings`, so a benchmark builds its clients with the app's own factories. |
+| [`lib/locomo-qa.ts`](./lib/locomo-qa.ts) | The answer path: the grounded prompt and its `{ answer, citations }` schema, the citation check, the seeded stratified sample, the keyless and live runs, the category-5 judge, and the Markdown. |
 | [`lib/locomo-parity.ts`](./lib/locomo-parity.ts) | `normalize_answer`, `f1_score`, the multi-hop `f1` and the category routing of `task_eval/evaluation.py`, to the letter — including the punctuation-before-articles order, `and` as an article, Python's `\b` and whitespace, and NumPy's pairwise mean. Category 5 answers a reason, never a number. |
 
 `schemas/` holds the committed contracts — the release as measured
 (`locomo10.schema.json`) and every report an instrument writes
-(`locomo-recall.schema.json`), validated by `@jarenjs/validate` before a
-byte is written. `results/` holds the committed reports; a test asserts
-each is exactly what its command produces today, so a published number
-whose command no longer reproduces it goes red.
+(`locomo-recall.schema.json`; `locomo-qa.schema.json` and
+`locomo-qa-live.schema.json` extend it by `$ref` rather than forking it),
+validated by `@jarenjs/validate` before a byte is written. `results/` holds
+the committed reports; a test asserts each keyless report is exactly what
+its command produces today, so a published number whose command no longer
+reproduces it goes red. The one exception is stated: `locomo-qa-live.json`
+is a dated record of a real model's run — validated, rendered and pinned to
+the keyless sample by the tests, never regenerated by them.
 
 ## The submodules
 

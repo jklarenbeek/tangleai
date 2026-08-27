@@ -50,7 +50,7 @@ otherwise write.
 | What an open order needs | What the suite publishes | Where it lands |
 |---|---|---|
 | A question answered over a whole corpus that will not fit a request | `createEnvironment` (RFC-style slots; `digest`/`peek`/`chunk`/`grep`/`select`/`stat`/`read`, none of which return bulk content), `compileProgram` + `createProgramRunner` (the model authors a compile-gated program; `map` is the only step that calls a model), `createLongHorizonAgent` (depth default 1, cap 3, children scoped so no sibling is reachable, a child's failure is a value) | **02.** The LoCoMo baseline IS this, not a hand-built RAG loop. jarenjs measures it: needle 100 % / pairwise 100 % in a **937-char request against a 17 719-char corpus**, where compaction alone scores 17.5 % / 0 % while spending 5 781 chars. LoCoMo is that claim's first public corpus. |
-| Cost, and a run that stops instead of overrunning | `createBudgetAccount`, `BUDGET_DIMENSIONS` (`turns`/`tokens`/`ms`), the agent's `budget` with `spent` seeded for resume, a named `stopReason`, and one account shared by a whole recursion tree | **02, 13.** The cost column is this, not `@tangleai/core/tokens`. The suite already prefers the provider's own `usage` and falls back to a 4-char estimate only when a token budget is set — `estimateTokens` stays a truncation helper and stops being a cost number. |
+| Cost, and a run that stops instead of overrunning | `createBudgetAccount`, `BUDGET_DIMENSIONS` (`turns`/`tokens`/`ms`), the agent's `budget` with `spent` seeded for resume, a named `stopReason`, and one account shared by a whole recursion tree | **16** (landed: `benchmark/lib/locomo-qa.ts` meters every live call through one account), **13.** The cost column is this, not `@tangleai/core/tokens`. The suite already prefers the provider's own `usage` and falls back to a 4-char estimate only when a token budget is set — `estimateTokens` stays a truncation helper and stops being a cost number. |
 | A trajectory to cluster into skills | `createTrajectory` (sequenced entries, excerpted answers, `summary()` by kind/depth), `describeTrajectory` | **05.** |
 | Skills as records, and getting them back into a prompt | `SKILL_SCHEMA`, `ledger.recallSkills({ near })`, the agent's `retrieval.skills` slot | **05** (already named in the order). |
 | Self-modification that cannot go rogue | `createRefiner`: RFC 6902 patch → shape → semantics-on-a-copy → ledger legality → commit with snapshot rollback; the base system prompt is not in the patched document at all | **05, 06, 12** (already named). |
@@ -115,7 +115,9 @@ would otherwise have to learn the hard way:
 - `readAiEnv` and the `JAREN_AI_MAX_CALLS` spend guard: the live tier is never a
   test dependency, a missing key is a *stated skip* rather than a failure, and a
   run that would exceed the call ceiling is skipped up front with that reason
-  instead of being half-spent.
+  instead of being half-spent. Copied on order 16 as `benchmark/lib/ai-env.ts`
+  (`TANGLE_AI_*`), resolving to the desktop's own settings shape so the
+  benchmark's clients are the app's.
 
 ## The one load-bearing contract
 

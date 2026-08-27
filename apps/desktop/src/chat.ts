@@ -13,7 +13,6 @@
  * note. Errors are values here: a dead Ollama never breaks chat.
  */
 
-import { createChatClient } from '@jarenjs/ai';
 import { hashContent } from '@jarenjs/core/string';
 import { excerpt } from '@jarenjs/core/chunk';
 import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
@@ -22,7 +21,7 @@ import type { TangleDb } from '@tangleai/store';
 import { recallDocumentChunks, type DocumentCorpusStore, type RankedDocumentChunk } from '@tangleai/documents';
 
 import type { Settings } from './settings.ts';
-import { embedderFor } from './settings.ts';
+import { chatClientFor, chatWireConfigured, embedderFor } from './settings.ts';
 import { asRows } from '@tangleai/store';
 
 export interface ChatMessageRecord {
@@ -142,24 +141,15 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       const citations = ranked.map((r) => r.unit);
 
       const chat = settings.chat;
-      const configured = chat.provider !== null && chat.model !== null
-        && (chat.baseUrl !== null || chat.provider === 'openrouter');
 
       let replyText: string;
       let provider: string | null = null;
 
-      if (!configured) {
+      if (!chatWireConfigured(chat)) {
         replyText = groundedOfflineReply(ranked, documentRanked, '_No chat model is configured (Settings → Chat provider)._');
       } else {
         try {
-          const client = createChatClient({
-            provider: chat.provider as any,
-            baseUrl: chat.baseUrl ?? undefined,
-            model: chat.model ?? undefined,
-            apiKey: chat.apiKey ?? undefined,
-            fetch: options.fetch,
-            retry: { attempts: 1 },
-          });
+          const client = chatClientFor(chat, { fetch: options.fetch, retry: { attempts: 1 } });
           const history = await this.history(12);
           const outcome = await client.complete({
             messages: [

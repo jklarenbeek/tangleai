@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/locomo-qa",
+  "title": "LoCoMo answer-path report, keyless tier — order 16's committed document",
+  "description": "What `benchmark/locomo-qa.ts` writes without a key, validated before it is written. EXTENDS the recall document by `$ref` (dataset, corpus, questions, thresholds, ingest census, the unit types are the same definitions) rather than forking it. No timing and no clock reading is allowed in here: the same dataset and options must produce byte-identical bytes.",
+  "type": "object",
+  "required": ["benchmark", "instrument", "dataset", "config", "corpus", "questions", "sample", "gate", "configurations"],
+  "additionalProperties": false,
+  "properties": {
+    "benchmark": { "const": "locomo" },
+    "instrument": { "const": "locomo-qa" },
+    "dataset": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/properties/dataset" },
+    "config": { "$ref": "#/definitions/config" },
+    "corpus": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/properties/corpus" },
+    "questions": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/properties/questions" },
+    "sample": { "$ref": "#/definitions/sample" },
+    "gate": {
+      "type": "object",
+      "required": ["passed", "failures", "oracle", "released"],
+      "additionalProperties": false,
+      "properties": {
+        "passed": { "type": "boolean" },
+        "failures": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "oracle": { "$ref": "#/definitions/byCategory" },
+        "released": { "$ref": "#/definitions/byCategory" }
+      }
+    },
+    "configurations": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["key", "label", "thresholds", "ingest", "retrieval", "ceiling", "verbatim"],
+        "additionalProperties": false,
+        "properties": {
+          "key": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "thresholds": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/thresholds" },
+          "ingest": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/ingest" },
+          "retrieval": { "$ref": "#/definitions/retrieval" },
+          "ceiling": { "$ref": "#/definitions/allAndSample" },
+          "verbatim": { "$ref": "#/definitions/allAndSample" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "config": {
+      "type": "object",
+      "required": ["embedder", "k", "ingest", "clock", "maxPairs"],
+      "additionalProperties": false,
+      "properties": {
+        "embedder": {
+          "type": "object",
+          "required": ["model", "dims"],
+          "additionalProperties": false,
+          "properties": { "model": { "type": "string", "minLength": 1 }, "dims": { "type": "integer", "minimum": 1 } }
+        },
+        "k": { "type": "integer", "minimum": 1 },
+        "ingest": { "const": "per-session" },
+        "clock": { "type": "string", "minLength": 1 },
+        "maxPairs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "countsByCategory": {
+      "type": "object",
+      "required": ["1", "2", "3", "4", "5"],
+      "additionalProperties": false,
+      "properties": {
+        "1": { "type": "integer", "minimum": 0 },
+        "2": { "type": "integer", "minimum": 0 },
+        "3": { "type": "integer", "minimum": 0 },
+        "4": { "type": "integer", "minimum": 0 },
+        "5": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "sample": {
+      "description": "The seeded, stratified draw the live tier answers; listed by id so both tiers agree on what was asked.",
+      "type": "object",
+      "required": ["seed", "perCategory", "adversarial", "scorable", "byCategory", "ids"],
+      "additionalProperties": false,
+      "properties": {
+        "seed": { "type": "integer" },
+        "perCategory": { "type": "integer", "minimum": 0 },
+        "adversarial": { "type": "integer", "minimum": 0 },
+        "scorable": { "type": "integer", "minimum": 0 },
+        "byCategory": { "$ref": "#/definitions/countsByCategory" },
+        "ids": { "type": "array", "items": { "type": "string", "pattern": "^conv-[0-9]+#[0-9]+$" } }
+      }
+    },
+    "byCategory": {
+      "description": "A mean per scorable category and over all four; a category with no question is absent, never 0.",
+      "type": "object",
+      "required": ["overall", "byCategory"],
+      "additionalProperties": false,
+      "properties": {
+        "overall": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/unit" },
+        "byCategory": {
+          "type": "object",
+          "required": ["1", "2", "3", "4"],
+          "additionalProperties": false,
+          "properties": {
+            "1": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/unitOrAbsent" },
+            "2": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/unitOrAbsent" },
+            "3": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/unitOrAbsent" },
+            "4": { "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/unitOrAbsent" }
+          }
+        }
+      }
+    },
+    "allAndSample": {
+      "type": "object",
+      "required": ["all", "sample"],
+      "additionalProperties": false,
+      "properties": {
+        "all": { "$ref": "#/definitions/byCategory" },
+        "sample": { "$ref": "#/definitions/byCategory" }
+      }
+    },
+    "retrieval": {
+      "type": "object",
+      "required": ["unranked"],
+      "additionalProperties": false,
+      "properties": { "unranked": { "type": "integer", "minimum": 0 } }
+    }
+  }
+}

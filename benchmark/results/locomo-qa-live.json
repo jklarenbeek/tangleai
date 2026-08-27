@@ -1,0 +1,353 @@
+{
+  "benchmark": "locomo",
+  "instrument": "locomo-qa-live",
+  "generated": {
+    "at": "2026-08-27T13:34:07.779Z",
+    "provider": "openrouter",
+    "model": "qwen/qwen3.8-flash",
+    "judgeModel": "qwen/qwen3.8-27b",
+    "embedder": {
+      "model": "baai/bge-m3",
+      "dims": 1024
+    },
+    "keySource": "OPENROUTER_AI_KEY",
+    "thinking": "off"
+  },
+  "dataset": {
+    "path": "benchmark/locomo/data/locomo10.json",
+    "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "bytes": 2805274,
+    "schemaValid": true,
+    "conversations": 10,
+    "restricted": null
+  },
+  "config": {
+    "embedder": {
+      "model": "baai/bge-m3",
+      "dims": 1024
+    },
+    "k": 10,
+    "ingest": "per-session",
+    "clock": "the last session instant of each conversation",
+    "maxPairs": 20
+  },
+  "sample": {
+    "seed": 17753,
+    "perCategory": 16,
+    "adversarial": 6,
+    "scorable": 64,
+    "byCategory": {
+      "1": 16,
+      "2": 16,
+      "3": 16,
+      "4": 16,
+      "5": 6
+    },
+    "ids": [
+      "conv-26#39",
+      "conv-26#66",
+      "conv-26#67",
+      "conv-26#117",
+      "conv-26#150",
+      "conv-26#197",
+      "conv-30#5",
+      "conv-30#12",
+      "conv-41#21",
+      "conv-41#31",
+      "conv-41#32",
+      "conv-41#45",
+      "conv-41#50",
+      "conv-41#64",
+      "conv-41#104",
+      "conv-41#160",
+      "conv-42#4",
+      "conv-42#11",
+      "conv-42#33",
+      "conv-42#39",
+      "conv-42#66",
+      "conv-42#70",
+      "conv-42#85",
+      "conv-42#86",
+      "conv-42#98",
+      "conv-42#107",
+      "conv-42#127",
+      "conv-42#159",
+      "conv-43#1",
+      "conv-43#5",
+      "conv-43#6",
+      "conv-43#8",
+      "conv-43#11",
+      "conv-43#16",
+      "conv-43#18",
+      "conv-43#19",
+      "conv-43#34",
+      "conv-43#43",
+      "conv-43#213",
+      "conv-44#7",
+      "conv-44#44",
+      "conv-44#51",
+      "conv-44#122",
+      "conv-47#44",
+      "conv-47#51",
+      "conv-47#58",
+      "conv-47#154",
+      "conv-48#2",
+      "conv-48#5",
+      "conv-48#27",
+      "conv-48#32",
+      "conv-48#40",
+      "conv-48#126",
+      "conv-49#13",
+      "conv-49#14",
+      "conv-49#66",
+      "conv-49#88",
+      "conv-49#126",
+      "conv-50#4",
+      "conv-50#22",
+      "conv-50#42",
+      "conv-50#47",
+      "conv-50#65",
+      "conv-50#71",
+      "conv-50#107",
+      "conv-50#109",
+      "conv-50#150",
+      "conv-50#155",
+      "conv-50#163",
+      "conv-50#183"
+    ]
+  },
+  "plan": {
+    "embedRequests": 24,
+    "chatCalls": 128,
+    "judgeCalls": 24,
+    "planned": 176,
+    "maxCalls": 200,
+    "skipped": null
+  },
+  "embedding": {
+    "requests": 24,
+    "texts": 5943
+  },
+  "spent": {
+    "turns": 175,
+    "tokens": 78645,
+    "ms": 3457637.612909
+  },
+  "errors": {
+    "count": 30,
+    "sample": [
+      "conv-26#66: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-26#39: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-30#5: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-41#32: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-41#160: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-42#4: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-42#11: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-42#39: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-42#85: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…",
+      "conv-42#86: AI0002: HTTP 429 from https://openrouter.ai/api/v1/chat/completions: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3.8-flash is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Alibaba\",\"is_byok\":false,\"limit…"
+    ]
+  },
+  "configurations": [
+    {
+      "key": "near-raw",
+      "label": "near (policies off)",
+      "thresholds": {
+        "novelty": 2,
+        "contradiction": 2,
+        "crystallize": 2
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 5882,
+        "embedded": 5882,
+        "admitted": 5882,
+        "filtered": 0,
+        "judged": 0,
+        "contradictions": 0,
+        "resolutions": 0,
+        "merged": 0,
+        "live": 5877,
+        "total": 5877,
+        "superseded": 0
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "questions": {
+        "planned": 64,
+        "answered": 41,
+        "unanswered": {
+          "wire": 23,
+          "budget": 0
+        },
+        "invalid": 0
+      },
+      "f1": {
+        "overall": 0.09486245461855218,
+        "byCategory": {
+          "1": 0.052910052910052914,
+          "2": 0.21590909090909088,
+          "3": 0.06235431235431235,
+          "4": 0.07692307692307693
+        }
+      },
+      "ceiling": {
+        "overall": 0.1524390243902439,
+        "byCategory": {
+          "1": 0.08333333333333333,
+          "2": 0.375,
+          "3": 0.13636363636363635,
+          "4": 0.07692307692307693
+        }
+      },
+      "citedRecall": {
+        "overall": 0.11585365853658537,
+        "byCategory": {
+          "1": 0.08333333333333333,
+          "2": 0.25,
+          "3": 0.09090909090909091,
+          "4": 0.07692307692307693
+        }
+      },
+      "citations": {
+        "cited": 7,
+        "uncited": 34,
+        "total": 9,
+        "unresolved": 1,
+        "answersWithUnresolved": 1
+      },
+      "cost": {
+        "turns": 41,
+        "tokens": 27810,
+        "promptTokens": 26549,
+        "completionTokens": 1261,
+        "ms": 1262137.9468190002
+      },
+      "latency": {
+        "count": 41,
+        "medianMs": 20018.587630000082,
+        "p95Ms": 73968.58921399992
+      },
+      "adversarial": {
+        "planned": 6,
+        "judged": 5,
+        "correct": 5,
+        "accuracy": 1,
+        "keyword": 0,
+        "unanswered": {
+          "wire": 1,
+          "budget": 0
+        },
+        "judgeFailed": 0,
+        "cost": {
+          "turns": 10,
+          "tokens": 5057,
+          "promptTokens": 4602,
+          "completionTokens": 455,
+          "ms": 145659.07186600036
+        }
+      }
+    },
+    {
+      "key": "near",
+      "label": "near (pipeline defaults)",
+      "thresholds": {
+        "novelty": 0.97,
+        "contradiction": 0.8,
+        "crystallize": 0.9
+      },
+      "ingest": {
+        "runs": 272,
+        "observations": 5882,
+        "embedded": 5882,
+        "admitted": 5877,
+        "filtered": 5,
+        "judged": 4721,
+        "contradictions": 2,
+        "resolutions": 0,
+        "merged": 69,
+        "live": 5806,
+        "total": 5808,
+        "superseded": 2
+      },
+      "retrieval": {
+        "unranked": 0
+      },
+      "questions": {
+        "planned": 64,
+        "answered": 58,
+        "unanswered": {
+          "wire": 6,
+          "budget": 0
+        },
+        "invalid": 0
+      },
+      "f1": {
+        "overall": 0.1614475314865352,
+        "byCategory": {
+          "1": 0.05339362553155657,
+          "2": 0.3259368836291913,
+          "3": 0.15505819707108032,
+          "4": 0.13333333333333333
+        }
+      },
+      "ceiling": {
+        "overall": 0.22270114942528738,
+        "byCategory": {
+          "1": 0.1277777777777778,
+          "2": 0.5384615384615384,
+          "3": 0.13333333333333333,
+          "4": 0.13333333333333333
+        }
+      },
+      "citedRecall": {
+        "overall": 0.20545977011494254,
+        "byCategory": {
+          "1": 0.1277777777777778,
+          "2": 0.5,
+          "3": 0.1,
+          "4": 0.13333333333333333
+        }
+      },
+      "citations": {
+        "cited": 20,
+        "uncited": 38,
+        "total": 26,
+        "unresolved": 0,
+        "answersWithUnresolved": 0
+      },
+      "cost": {
+        "turns": 58,
+        "tokens": 39709,
+        "promptTokens": 37793,
+        "completionTokens": 1916,
+        "ms": 1477746.67973
+      },
+      "latency": {
+        "count": 58,
+        "medianMs": 14609.941748000216,
+        "p95Ms": 77888.914415
+      },
+      "adversarial": {
+        "planned": 6,
+        "judged": 6,
+        "correct": 5,
+        "accuracy": 0.8333333333333334,
+        "keyword": 0,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "judgeFailed": 0,
+        "cost": {
+          "turns": 12,
+          "tokens": 6069,
+          "promptTokens": 5508,
+          "completionTokens": 561,
+          "ms": 178143.54840299953
+        }
+      }
+    }
+  ]
+}

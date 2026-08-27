@@ -11,8 +11,14 @@
  * configures, never a requirement to start. A half-configured wire
  * (no model; a custom provider with no base URL) falls back to the
  * built-in rather than failing every sync.
+ *
+ * The chat client is built here for the same reason: the chat engine
+ * and the benchmark's live tier (`benchmark/lib/ai-env.ts`) both turn
+ * a `ChatSettings` into `createChatClient`, and one factory means one
+ * idea of "configured".
  */
 
+import { createChatClient } from '@jarenjs/ai';
 import { createEmbeddingClient, type Embedder } from '@jarenjs/ai/embed';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import type { TangleDb } from '@tangleai/store';
@@ -134,5 +140,44 @@ export function embedderFor(settings: Settings, fetchImpl?: typeof globalThis.fe
     model: embed.model ?? undefined,
     apiKey: embed.apiKey ?? undefined,
     fetch: fetchImpl,
+  });
+}
+
+/** The chat client the desktop and the benchmarks build from a chat setting. */
+export type ChatClient = ReturnType<typeof createChatClient>;
+
+/** Whether the chat setting names a usable wire (OpenRouter needs no base URL). */
+export function chatWireConfigured(chat: ChatSettings): boolean {
+  return chat.provider !== null && chat.model !== null
+    && (chat.baseUrl !== null || chat.provider === 'openrouter');
+}
+
+/**
+ * The chat setting, turned into a live client. Injected fetch for
+ * tests; `retry` is the caller's (the chat engine disables it so a dead
+ * wire answers at once, a benchmark retries a rate limit for minutes);
+ * `reasoning` is the client's default thinking control, forwarded
+ * verbatim (a benchmark turns thinking off for short-answer extraction,
+ * the measured case in @jarenjs/ai's README; the chat engine leaves the
+ * model's default). Throws when `chatWireConfigured` is false — check
+ * first.
+ */
+export function chatClientFor(
+  chat: ChatSettings,
+  options: {
+    fetch?: typeof globalThis.fetch;
+    retry?: { attempts?: number, baseMs?: number, maxMs?: number };
+    reasoning?: { effort?: 'none' | 'minimal' | 'low' | 'medium' | 'high', enabled?: boolean, exclude?: boolean, max_tokens?: number };
+  } = {},
+): ChatClient {
+  if (!chatWireConfigured(chat)) throw new Error('no chat wire is configured');
+  return createChatClient({
+    provider: chat.provider!,
+    baseUrl: chat.baseUrl ?? undefined,
+    model: chat.model!,
+    apiKey: chat.apiKey ?? undefined,
+    fetch: options.fetch,
+    retry: options.retry,
+    reasoning: options.reasoning,
   });
 }

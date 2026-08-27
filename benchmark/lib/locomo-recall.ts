@@ -46,14 +46,11 @@
  */
 
 import { normalizeSeries } from '@jarenjs/core/series';
-import type { MemoryUnit } from '@tangleai/core/schemas/memory';
-import { createMemoryUnitStore, recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
+import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
 import {
-  createPipeline,
   createOfflineEmbedder,
   DEFAULT_THRESHOLDS,
   OFFLINE_EMBEDDER_DIMS,
-  type PipelineReport,
   type PipelineThresholds,
 } from '@tangleai/pipeline';
 import { createHashEmbedder } from '@jarenjs/ai/embed';
@@ -65,6 +62,7 @@ import {
   type LocomoSample,
 } from './locomo.ts';
 import { addressOf, addressesOf, conversationCorpus, type ConversationCorpus } from './locomo-corpus.ts';
+import { POLICIES_OFF, emptyCensus, ingestConversation, type IngestCensus } from './locomo-ingest.ts';
 import {
   average,
   evidenceRecall,
@@ -80,8 +78,8 @@ import { count, pct, score, table, type Cell } from './table.ts';
 export const KS = [5, 10, 20] as const;
 /** The random row's seed — LoCoMo's arXiv number, so it is not a magic constant. */
 export const RANDOM_SEED = 17753;
-/** A similarity no cosine reaches: the pipeline runs, every policy is inert. */
-export const POLICIES_OFF: Required<PipelineThresholds> = { novelty: 2, contradiction: 2, crystallize: 2 };
+/** The inert-policy thresholds, from the shared ingest (re-exported: this row's key names them). */
+export { POLICIES_OFF, type IngestCensus };
 /** Why category 5 is not in any number here. */
 export const CATEGORY_5_EXCLUSION = 'adversarial questions carry no `answer` (444 of 446) and the official evaluator scores the category by keyword, which marks the factually correct answer wrong';
 
@@ -96,22 +94,6 @@ export interface RecallAtK {
   overall: number;
   /** `null` when a restricted run holds no question of that category. */
   byCategory: Record<CategoryKey, number | null>;
-}
-
-export interface IngestCensus {
-  /** `pipeline.run` calls — one per ingested session. */
-  runs: number;
-  observations: number;
-  embedded: number;
-  admitted: number;
-  filtered: number;
-  judged: number;
-  contradictions: number;
-  resolutions: number;
-  merged: number;
-  live: number;
-  total: number;
-  superseded: number;
 }
 
 export interface RecallRow {
@@ -219,25 +201,6 @@ class Scores {
     }
     return out;
   }
-}
-
-function emptyCensus(): IngestCensus {
-  return {
-    runs: 0, observations: 0, embedded: 0, admitted: 0, filtered: 0, judged: 0,
-    contradictions: 0, resolutions: 0, merged: 0, live: 0, total: 0, superseded: 0,
-  };
-}
-
-function addReport(census: IngestCensus, report: PipelineReport): void {
-  census.runs++;
-  census.observations += report.observations;
-  census.embedded += report.embedded;
-  census.admitted += report.novelty.admitted;
-  census.filtered += report.novelty.filtered;
-  census.judged += report.contradiction.judged;
-  census.contradictions += report.contradiction.contradictions;
-  census.resolutions += report.contradiction.resolutions.length;
-  census.merged += report.crystallize.merged;
 }
 
 // ---------------------------------------------------------------------------
@@ -361,23 +324,8 @@ export async function runLocomoRecall(
 
     // --- the pipeline rows: one store each, the real DAG, session by session
     const queryVectors = questions.length === 0 ? [] : await embedder.embed(questions.map((q) => q.text));
-    const clock = new Date(corpus.lastAt).toISOString();
     for (const row of pipelineRows) {
-      const store = createMemoryUnitStore();
-      const pipeline = createPipeline({ store, embedder, now: () => clock, thresholds: row.thresholds });
-      const rowCensus = census.get(row.key)!;
-      let last: PipelineReport | null = null;
-      for (const session of corpus.sessions) {
-        last = await pipeline.run(session.inputs);
-        addReport(rowCensus, last);
-      }
-      if (last !== null) {
-        rowCensus.live += last.memories.live;
-        rowCensus.total += last.memories.total;
-        rowCensus.superseded += last.memories.total - last.memories.live;
-      }
-
-      const units: MemoryUnit[] = await store.list();
+      const { units } = await ingestConversation(corpus, { embedder, thresholds: row.thresholds, census: census.get(row.key)! });
       const rowScores = scores.get(row.key)!;
       const rowMerge = viaMerge.get(row.key)!;
       let skippedSeen = false;
@@ -600,7 +548,7 @@ export function renderMarkdown(report: RecallReport): string {
     out.push('');
     out.push(`At k = ${k} the shipped policies move overall evidence recall by ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)} points against the same pipeline with every policy inert (${pct(near.recall[k].overall, 2)} vs ${pct(raw.recall[k].overall, 2)}), at a ceiling of ${pct(report.ceiling[k].overall, 2)}. ${delta < 0 ? 'That is a LOSS, and it is published as one: ' : 'That is the sign to read, and it is small: '}what the gate filtered and the judge superseded is what these questions could no longer retrieve.`);
     out.push('');
-    out.push('What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. Order 03 puts a real embedding client behind the same seam and re-runs this exact instrument; order 13 gives the ranker a notion of *when*; order 16\'s F1 will say what recall could not. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.');
+    out.push('What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. Order 03 puts a real embedding client behind the same seam and re-runs this exact instrument; order 13 gives the ranker a notion of *when*; order 16\'s F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.');
     out.push('');
   }
   out.push('---');

@@ -103,7 +103,7 @@ inert (0.241 vs 0.250), and the ingest census says exactly what they did
 to the corpus. [docs/LOCOMO_RECALL.md](docs/LOCOMO_RECALL.md) is the
 rendered report; the run is deterministic, keyless, and 13 seconds.
 
-The scorer that will read a model's answers beside those ceilings is at
+The scorer that reads a model's answers beside those ceilings is at
 parity with the published one: `benchmark/lib/locomo-parity.ts` ports
 `task_eval/evaluation.py` to the letter — the article-after-punctuation
 order, `and` as an article, NLTK's own Porter variant — and
@@ -113,6 +113,28 @@ hand-authored cases at ten decimals, every one of the release's 3,263
 question-and-answer tokens stemmed identically, and 4,602 dataset-derived
 rows checked locally. Category 5 is excluded with its reason in the
 report, never folded into a number.
+
+`npm run benchmark:locomo:qa` is the answer path — the first F1, and it
+is published only beside its ceiling. The keyless tier runs on every
+commit: the released answer must score exactly 1.000 against itself
+before a row prints, and each configuration gets its evidence-recall
+ceiling at k = 10 and a model-free floor (the ten memories quoted as the
+answer, ≈ 0.02). `--live` puts a real model over a seeded sample of 64
+questions through the desktop's own provider settings, answering with
+`{ answer, citations }` so every citation is checked against the prompt,
+and meters every call through `createBudgetAccount`. The first table
+(2026-08-27, `qwen/qwen3.8-flash` over `baai/bge-m3`, thinking off): the
+shipped policies **win** on F1, 0.161 against 0.095 with the policies
+inert, ahead in every category, under a ceiling of 0.223 — but the win
+is published with its confound: the upstream rate-limited 30 of 152
+calls, so the rows answered 58 and 41 of the same 64 questions, and a
+decision that survives needs a run without wire failures. p50 latency of
+15–20 s is the retry queue, not the model. The category-5 judge lane
+(83–100 % refused the false premise, where the official keyword rule
+would have scored every one of them 0) is reported apart and folded into
+nothing. [docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md) is the
+rendered report; the live JSON beside it is a dated record the tests
+validate but never regenerate.
 
 ## The apps
 

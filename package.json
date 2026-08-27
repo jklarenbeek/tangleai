@@ -33,6 +33,7 @@
     "documents:benchmark": "bun scripts/benchmark-documents.ts",
     "benchmark:locomo:census": "node benchmark/locomo-census.ts",
     "benchmark:locomo:recall": "node benchmark/locomo-recall.ts",
+    "benchmark:locomo:qa": "node --env-file-if-exists=.env benchmark/locomo-qa.ts",
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
