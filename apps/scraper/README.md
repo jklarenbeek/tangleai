@@ -8,7 +8,7 @@ blocks images/media/fonts, validates the main URL and every routed HTTP(S) subre
 applies time, actual transferred-byte, concurrency, and queue budgets. A non-loopback bind
 is rejected unless `TANGLE_SCRAPER_TOKEN` is set.
 
-On this Fedora-family host, run it in the existing browser distrobox:
+On a Fedora-family host, run it in a browser distrobox:
 
 ```sh
 distrobox enter ubuntu-playwright -- bash -lc \
