@@ -74,7 +74,7 @@ its JSON, an invariant that breaks silently).>
 ## A real one, reconstructed
 
 The record for the example order in [`work-order.md`](work-order.md),
-written after the fact from the work as it shipped (commit `90af07c`) — not
+written after the fact from the work as it shipped (commit `b9491ff`) — not
 by an executor at the time. The first order executed under this playbook
 replaces both examples with the real pair.
 
