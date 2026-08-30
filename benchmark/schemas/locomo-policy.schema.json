@@ -1,0 +1,2819 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/locomo-policy",
+  "title": "LoCoMo policy-matrix report \u2014 the measurement contract",
+  "description": "What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose \u2014 the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.",
+  "type": "object",
+  "required": [
+    "benchmark",
+    "instrument",
+    "dataset",
+    "source",
+    "registration",
+    "plan",
+    "census",
+    "attempts",
+    "comparisons",
+    "selection",
+    "widthDecision",
+    "gate",
+    "reportId"
+  ],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.cells[*].cellId"
+          },
+          {
+            "$count": {
+              "$distinct": "$.registration.cells[*].cellId"
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.attempts[*].runId"
+          },
+          {
+            "$count": {
+              "$distinct": "$.attempts[*].runId"
+            }
+          }
+        ]
+      },
+      {
+        "$every": {
+          "a": "$.attempts[*]"
+        },
+        "$satisfies": {
+          "$exists": {
+            "$index-of": [
+              "$.registration.cells[*].cellId",
+              "$a.cellId"
+            ]
+          }
+        }
+      },
+      {
+        "$every": {
+          "c": "$.comparisons[*]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$exists": {
+                "$index-of": [
+                  "$.registration.cells[*].cellId",
+                  "$c.treatment"
+                ]
+              }
+            },
+            {
+              "$exists": {
+                "$index-of": [
+                  "$.registration.cells[*].cellId",
+                  "$c.control"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.selection.state",
+              "open"
+            ]
+          },
+          {
+            "$not": {
+              "$some": {
+                "a": "$.attempts[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$a.phase",
+                  "confirmation"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.selection.state",
+              "open"
+            ]
+          },
+          {
+            "$exists": "$.selection.shortlist[*]"
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.selection.state",
+              "confirmed"
+            ]
+          },
+          {
+            "$exists": "$.selection.decision.default"
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.selection.state",
+              "confirmed"
+            ]
+          },
+          {
+            "$empty": "$.selection.decision.default"
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              "$.selection.state",
+              "open"
+            ]
+          },
+          {
+            "$exists": "$.selection.frozen.identity"
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.selection.state",
+              "open"
+            ]
+          },
+          {
+            "$empty": "$.selection.frozen.identity"
+          }
+        ]
+      },
+      {
+        "$every": {
+          "a": "$.attempts[*]"
+        },
+        "$satisfies": {
+          "$or": [
+            {
+              "$eq": [
+                "$a.run.tier",
+                "keyless"
+              ]
+            },
+            {
+              "$exists": "$.registration.inference.identity"
+            }
+          ]
+        }
+      },
+      {
+        "$or": [
+          {
+            "$not": {
+              "$some": {
+                "a": "$.attempts[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$a.phase",
+                  "confirmation"
+                ]
+              }
+            }
+          },
+          {
+            "$exists": "$.selection.transition.identity"
+          }
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "benchmark": {
+      "const": "locomo"
+    },
+    "instrument": {
+      "const": "locomo-policy"
+    },
+    "dataset": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "schemaValid",
+        "conversations",
+        "restricted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/definitions/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "schemaValid": {
+          "type": "boolean"
+        },
+        "conversations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restricted": {
+          "description": "The sample ids the run was restricted to, or null for the whole release.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    "source": {
+      "description": "What was actually running. HEAD alone is not enough while reviewed work is uncommitted, so the revision is HEAD plus an ordered path/digest manifest of the instrument, policy, pipeline and schema files a cell's behaviour depends on.",
+      "type": "object",
+      "required": [
+        "head",
+        "clean",
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/definitions/sha256"
+              }
+            }
+          }
+        },
+        "sha256": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "registration": {
+      "$ref": "#/definitions/registration"
+    },
+    "plan": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/plan"
+        }
+      ]
+    },
+    "census": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/census"
+        }
+      ]
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attempt"
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/comparison"
+      }
+    },
+    "selection": {
+      "$ref": "#/definitions/selection"
+    },
+    "widthDecision": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/widthDecision"
+        }
+      ]
+    },
+    "gate": {
+      "description": "The instrument proven before any result is read: the oracle equals its analytic ceiling, the seeded random row sits in its band, the inert cell reproduces the published baseline.",
+      "type": "object",
+      "required": [
+        "passed",
+        "failures"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "reportId": {
+      "$ref": "#/definitions/sha256"
+    }
+  },
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "unit": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "unitOrAbsent": {
+      "description": "A restricted run may hold no question of a category; that is an absent measurement, never 0.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/unit"
+        }
+      ]
+    },
+    "byCategory": {
+      "description": "A mean over categories 1-4 together, and one per category.",
+      "type": "object",
+      "required": [
+        "overall",
+        "byCategory"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "overall": {
+          "type": "number"
+        },
+        "byCategory": {
+          "type": "object",
+          "required": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "1": {
+              "$ref": "#/definitions/numberOrAbsent"
+            },
+            "2": {
+              "$ref": "#/definitions/numberOrAbsent"
+            },
+            "3": {
+              "$ref": "#/definitions/numberOrAbsent"
+            },
+            "4": {
+              "$ref": "#/definitions/numberOrAbsent"
+            }
+          }
+        }
+      }
+    },
+    "numberOrAbsent": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "reason": {
+      "type": "object",
+      "required": [
+        "code",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "required": [
+        "conversations",
+        "perCategory",
+        "adversarial",
+        "scorable"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.scorable",
+          {
+            "$sum": "$.perCategory[*]"
+          }
+        ]
+      },
+      "properties": {
+        "conversations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "perCategory": {
+          "type": "object",
+          "required": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "1": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "2": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "3": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "4": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "adversarial": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scorable": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "objective": {
+      "description": "The rule that may change a default, registered before a score is read. A null result is published as a bounded null, the acting set can block but never promote, and no cell passing nothing is itself an outcome.",
+      "type": "object",
+      "required": [
+        "primary",
+        "statistic",
+        "resamples",
+        "bootstrapSeed",
+        "level",
+        "quantileMethod",
+        "categoryLowerBound",
+        "categoryLevel",
+        "tokenRatioMax",
+        "callRatioMax",
+        "actingSet",
+        "futility",
+        "publishedPower"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "const": "locomo-f1"
+        },
+        "statistic": {
+          "const": "paired-bootstrap"
+        },
+        "resamples": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bootstrapSeed": {
+          "type": "integer"
+        },
+        "level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "quantileMethod": {
+          "const": "nearest-rank"
+        },
+        "categoryLowerBound": {
+          "type": "number"
+        },
+        "categoryLevel": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "tokenRatioMax": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "callRatioMax": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "actingSet": {
+          "const": "blocking-secondary"
+        },
+        "futility": {
+          "const": "the inert cell becomes the default and the null is published as a bounded null"
+        },
+        "publishedPower": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "enum": [
+              "pairedSd",
+              "standardError",
+              "minimumDetectableEffect",
+              "tiedPairs",
+              "actingSetSize"
+            ]
+          }
+        }
+      }
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "axis",
+        "inert",
+        "levels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "axis": {
+          "enum": [
+            "novelty",
+            "contradiction",
+            "crystallize",
+            "k",
+            "minScore",
+            "offlineWidth"
+          ]
+        },
+        "inert": {
+          "description": "The reference level every isolated cell changes exactly one of. `off` for the three ingest policies is a similarity no cosine reaches.",
+          "type": "number"
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "cell": {
+      "description": "A treatment cell as effective VALUES \u2014 never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.",
+      "type": "object",
+      "required": [
+        "cellId",
+        "key",
+        "label",
+        "role",
+        "axis",
+        "ingest",
+        "retrieval",
+        "embedding"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cellId": {
+          "$ref": "#/definitions/sha256"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "inert",
+            "shipped",
+            "isolated",
+            "interaction",
+            "combination"
+          ]
+        },
+        "axis": {
+          "description": "The one axis an isolated cell moves; null for the inert reference, the shipped cell and every combination.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": [
+                "novelty",
+                "contradiction",
+                "crystallize",
+                "k",
+                "minScore",
+                "offlineWidth"
+              ]
+            }
+          ]
+        },
+        "ingest": {
+          "type": "object",
+          "required": [
+            "novelty",
+            "contradiction",
+            "crystallize",
+            "maxPairs"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "novelty": {
+              "type": "number",
+              "minimum": 0
+            },
+            "contradiction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "crystallize": {
+              "type": "number",
+              "minimum": 0
+            },
+            "maxPairs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "retrieval": {
+          "type": "object",
+          "required": [
+            "k",
+            "minScore"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "k": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "minScore": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "embedding": {
+          "description": "The registered built-in width a cell may move. The identity a live run actually resolves is a tier of the run, not a treatment, and lives in the attempt.",
+          "type": "object",
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "registration": {
+      "description": "Everything fixed before a score is read. `registrationId` is the canonical digest of the splits, the objective, the axes and the ordered cell registry; a source revision, a clock or an observed result never enters it.",
+      "type": "object",
+      "required": [
+        "registrationId",
+        "seed",
+        "splits",
+        "objective",
+        "axes",
+        "cells",
+        "inference"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "registrationId": {
+          "$ref": "#/definitions/sha256"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "splits": {
+          "type": "object",
+          "required": [
+            "selection",
+            "confirmation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "selection": {
+              "$ref": "#/definitions/split"
+            },
+            "confirmation": {
+              "$ref": "#/definitions/split"
+            }
+          }
+        },
+        "objective": {
+          "$ref": "#/definitions/objective"
+        },
+        "axes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/axis"
+          }
+        },
+        "cells": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/cell"
+          }
+        },
+        "inference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/inference"
+            }
+          ]
+        }
+      }
+    },
+    "operations": {
+      "description": "What the policies did, with both halves of every fork: an attempt was judged or it failed, a confirmed verdict was applied or its older record had vanished, a planned merge was written or its records had vanished. The `$query` on the attempt is what refuses a census that does not reconcile.",
+      "type": "object",
+      "required": [
+        "runs",
+        "observations",
+        "embedded",
+        "admitted",
+        "filtered",
+        "judgeAttempts",
+        "judged",
+        "judgeFailures",
+        "confirmed",
+        "contradictions",
+        "contradictionSkips",
+        "resolutions",
+        "crystallizePlanned",
+        "merged",
+        "mergeSkips",
+        "live",
+        "total",
+        "superseded"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embedded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "admitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "filtered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "judgeAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "judged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "judgeFailures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "confirmed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contradictions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contradictionSkips": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolutions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "crystallizePlanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "merged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mergeSkips": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "live": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "superseded": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "run": {
+      "description": "Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares \u2014 never a hand-written subset. The key itself never appears; only the name of the variable it came from.",
+      "type": "object",
+      "required": [
+        "tier",
+        "provider",
+        "endpoint",
+        "answerModel",
+        "judgeModel",
+        "embedder",
+        "thinking",
+        "responseSchema",
+        "retry",
+        "deadlineMs",
+        "concurrency",
+        "budgetCeiling",
+        "keySource",
+        "questionSet",
+        "sampleIds",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "enum": [
+            "keyless",
+            "live"
+          ]
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "description": "The normalized, credential-free base URL the requests went to; null on the keyless tier.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "answerModel": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "judgeModel": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "embedder": {
+          "type": "object",
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "thinking": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": [
+                "off",
+                "default"
+              ]
+            }
+          ]
+        },
+        "responseSchema": {
+          "description": "The answer contract the replies were decoded against, by id and revision.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "retry": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "attempts",
+                "baseMs",
+                "maxMs"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "attempts": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "baseMs": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "maxMs": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "deadlineMs": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "budgetCeiling": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ]
+        },
+        "keySource": {
+          "description": "The NAME of the environment variable the key was read from, never the key.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "questionSet": {
+          "description": "The canonical digest of the sorted scored question ids \u2014 what a comparison compares instead of walking two lists.",
+          "$ref": "#/definitions/sha256"
+        },
+        "sampleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "source": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "questionResult": {
+      "type": "object",
+      "required": [
+        "id",
+        "category",
+        "score",
+        "f1",
+        "ceiling",
+        "promptSha256",
+        "tokens",
+        "calls"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "score": {
+          "description": "The value this attempt's phase is compared on: F1 on a live tier, evidence recall on the keyless screen.",
+          "type": "number"
+        },
+        "f1": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "ceiling": {
+          "description": "The evidence recall this row's own retrieval reached for this question \u2014 the model-free ceiling the score is read against. On a tier that scores recall itself, the two are the same number, and saying so is the point.",
+          "$ref": "#/definitions/unit"
+        },
+        "promptSha256": {
+          "description": "The digest of the serialized prompt this cell produced for this question. Two cells act on a question when their digests differ \u2014 the acting set is read from the prompt, never from the score.",
+          "$ref": "#/definitions/sha256"
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "causes": {
+      "description": "Where every gold address went, at each scored k. Exhaustive and mutually exclusive: the partition must sum to the registered gold-address denominator and no cause may appear twice, or the report does not validate. `version` names the vocabulary a row was written against.",
+      "type": "object",
+      "required": [
+        "version",
+        "byK"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "byK": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": {
+              "$ref": "#/definitions/causeAtK"
+            }
+          }
+        }
+      }
+    },
+    "attempt": {
+      "description": "One cell measured once, in one phase, under one run identity. Failures stay in the row and make it ineligible; they are never dropped so a mean can look complete.",
+      "type": "object",
+      "required": [
+        "cellId",
+        "runId",
+        "phase",
+        "run",
+        "denominators",
+        "eligibility",
+        "operations",
+        "causes",
+        "prompts",
+        "recall",
+        "oracleCeiling",
+        "verbatimFloor",
+        "quality",
+        "cost",
+        "results"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.denominators.planned",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      "$.denominators.answered",
+                      "$.denominators.invalid"
+                    ]
+                  },
+                  {
+                    "$add": [
+                      "$.denominators.unanswered.wire",
+                      "$.denominators.unanswered.budget"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.denominators.answered",
+              {
+                "$count": "$.results[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.operations.observations",
+              {
+                "$add": [
+                  "$.operations.admitted",
+                  "$.operations.filtered"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.operations.judgeAttempts",
+              {
+                "$add": [
+                  "$.operations.judged",
+                  "$.operations.judgeFailures"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.operations.confirmed",
+              {
+                "$add": [
+                  "$.operations.contradictions",
+                  "$.operations.contradictionSkips"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.operations.crystallizePlanned",
+              {
+                "$add": [
+                  "$.operations.merged",
+                  "$.operations.mergeSkips"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.operations.total",
+              {
+                "$add": [
+                  "$.operations.live",
+                  "$.operations.superseded"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.denominators.questionSet",
+              "$.run.questionSet"
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$not": "$.eligibility.eligible"
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.denominators.planned",
+                      "$.denominators.answered"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.denominators.invalid"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.denominators.unanswered.wire"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.denominators.unanswered.budget"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.operations.judgeFailures"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.operations.contradictionSkips"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      0,
+                      "$.operations.mergeSkips"
+                    ]
+                  },
+                  {
+                    "$empty": "$.eligibility.reasons[*]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.run.tier",
+                  "keyless"
+                ]
+              },
+              {
+                "$exists": "$.run.answerModel"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.denominators.answered",
+              {
+                "$add": [
+                  "$.prompts.unchanged",
+                  "$.prompts.changed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "cellId": {
+          "$ref": "#/definitions/sha256"
+        },
+        "runId": {
+          "$ref": "#/definitions/sha256"
+        },
+        "phase": {
+          "enum": [
+            "screen",
+            "selection",
+            "confirmation"
+          ]
+        },
+        "run": {
+          "$ref": "#/definitions/run"
+        },
+        "denominators": {
+          "type": "object",
+          "required": [
+            "planned",
+            "answered",
+            "unanswered",
+            "invalid",
+            "questionSet"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unanswered": {
+              "type": "object",
+              "required": [
+                "wire",
+                "budget"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "wire": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "budget": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "invalid": {
+              "description": "Replies that failed their contract after repair; they are not scored and they are not answers.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "questionSet": {
+              "$ref": "#/definitions/sha256"
+            }
+          }
+        },
+        "eligibility": {
+          "type": "object",
+          "required": [
+            "eligible",
+            "reasons"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "eligible": {
+              "type": "boolean"
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/reason"
+              }
+            }
+          }
+        },
+        "operations": {
+          "$ref": "#/definitions/operations"
+        },
+        "causes": {
+          "description": "Null on a phase that does not trace addresses: the live tier buys answers and reads the census from the screen that traced them.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/causes"
+            }
+          ]
+        },
+        "prompts": {
+          "$ref": "#/definitions/prompts"
+        },
+        "recall": {
+          "description": "Evidence recall at the cell's own k. null where the phase cannot measure it.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/byCategory"
+            }
+          ]
+        },
+        "oracleCeiling": {
+          "description": "The best any top-k retrieval could have scored on these questions \u2014 analytic, not observed. Null where the phase does not compute it.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/byCategory"
+            }
+          ]
+        },
+        "verbatimFloor": {
+          "description": "The retrieved context quoted as the answer, scored by the official evaluator \u2014 the model-free floor at this cell's own k. null where quoting the context is not a floor.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/byCategory"
+            }
+          ]
+        },
+        "quality": {
+          "type": "object",
+          "required": [
+            "f1",
+            "ceiling",
+            "citedRecall"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "f1": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/byCategory"
+                }
+              ]
+            },
+            "ceiling": {
+              "description": "The evidence recall the retrieval reached, averaged \u2014 what the F1 beside it is read against.",
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/byCategory"
+                }
+              ]
+            },
+            "citedRecall": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/byCategory"
+                }
+              ]
+            }
+          }
+        },
+        "cost": {
+          "description": "null on a tier that buys nothing. Per-answer figures are what the objective's ratios are read from, so they are published rather than recomputed by a reader.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "calls",
+                "replayed",
+                "tokens",
+                "promptTokens",
+                "completionTokens",
+                "tokensPerAnswer",
+                "callsPerAnswer"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "calls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "replayed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "promptTokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "completionTokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tokensPerAnswer": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "callsPerAnswer": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/questionResult"
+          }
+        }
+      }
+    },
+    "power": {
+      "description": "What the comparison could have seen. A mean cannot be published without it, which is why every member is required: a null result is 'no effect larger than this was detectable', never 'no effect'.",
+      "type": "object",
+      "required": [
+        "pairedSd",
+        "standardError",
+        "minimumDetectableEffect",
+        "tiedPairs",
+        "actingSetSize"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "pairedSd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "standardError": {
+          "type": "number",
+          "minimum": 0
+        },
+        "minimumDetectableEffect": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tiedPairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "actingSetSize": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "interval": {
+      "type": "object",
+      "required": [
+        "low",
+        "high"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "low": {
+          "type": "number"
+        },
+        "high": {
+          "type": "number"
+        }
+      }
+    },
+    "comparison": {
+      "description": "One treatment against one control on the questions they BOTH answered. The acting set travels beside the overall interval and can block a cell, never promote it: the estimand for a global default is the whole corpus.",
+      "type": "object",
+      "required": [
+        "key",
+        "phase",
+        "metric",
+        "treatment",
+        "control",
+        "eligible",
+        "reasons",
+        "pairs",
+        "questionSet",
+        "mean",
+        "interval",
+        "power",
+        "byCategory",
+        "actingSet",
+        "cost",
+        "boundedNull",
+        "verdict"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$le": [
+              "$.power.tiedPairs",
+              "$.pairs"
+            ]
+          },
+          {
+            "$le": [
+              "$.power.actingSetSize",
+              "$.pairs"
+            ]
+          },
+          {
+            "$le": [
+              "$.actingSet.size",
+              "$.pairs"
+            ]
+          },
+          {
+            "$eq": [
+              "$.actingSet.size",
+              "$.power.actingSetSize"
+            ]
+          },
+          {
+            "$le": [
+              "$.interval.low",
+              "$.interval.high"
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$not": "$.eligible"
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      2,
+                      {
+                        "$count": {
+                          "$for": {
+                            "a": "$root.attempts[*]"
+                          },
+                          "$where": {
+                            "$and": [
+                              {
+                                "$eq": [
+                                  "$a.phase",
+                                  "$.phase"
+                                ]
+                              },
+                              {
+                                "$or": [
+                                  {
+                                    "$eq": [
+                                      "$a.cellId",
+                                      "$.treatment"
+                                    ]
+                                  },
+                                  {
+                                    "$eq": [
+                                      "$a.cellId",
+                                      "$.control"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          "$return": "$a.runId"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$every": {
+                      "a": "$root.attempts[*]"
+                    },
+                    "$satisfies": {
+                      "$or": [
+                        {
+                          "$not": {
+                            "$and": [
+                              {
+                                "$eq": [
+                                  "$a.phase",
+                                  "$.phase"
+                                ]
+                              },
+                              {
+                                "$or": [
+                                  {
+                                    "$eq": [
+                                      "$a.cellId",
+                                      "$.treatment"
+                                    ]
+                                  },
+                                  {
+                                    "$eq": [
+                                      "$a.cellId",
+                                      "$.control"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "$and": [
+                            {
+                              "$eq": [
+                                "$a.denominators.questionSet",
+                                "$.questionSet"
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$a.denominators.answered",
+                                "$.pairs"
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                true,
+                                "$a.eligibility.eligible"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$not": "$.verdict.promotes"
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      true,
+                      "$.eligible"
+                    ]
+                  },
+                  {
+                    "$gt": [
+                      "$.interval.low",
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$not": "$.verdict.promotes"
+              },
+              {
+                "$every": {
+                  "c": "$.verdict.clauses[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    true,
+                    "$c.passed"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "phase": {
+          "enum": [
+            "screen",
+            "selection",
+            "confirmation"
+          ]
+        },
+        "metric": {
+          "enum": [
+            "locomo-f1",
+            "evidence-recall"
+          ]
+        },
+        "treatment": {
+          "$ref": "#/definitions/sha256"
+        },
+        "control": {
+          "$ref": "#/definitions/sha256"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/reason"
+          }
+        },
+        "pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questionSet": {
+          "$ref": "#/definitions/sha256"
+        },
+        "mean": {
+          "type": "number"
+        },
+        "interval": {
+          "$ref": "#/definitions/interval"
+        },
+        "power": {
+          "$ref": "#/definitions/power"
+        },
+        "byCategory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "category",
+              "pairs",
+              "mean",
+              "sd",
+              "lowerBound"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "pairs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mean": {
+                "type": "number"
+              },
+              "sd": {
+                "type": "number",
+                "minimum": 0
+              },
+              "lowerBound": {
+                "description": "The one-sided lower bound at the registered level; the floor it is read against is the objective's.",
+                "type": "number"
+              }
+            }
+          }
+        },
+        "actingSet": {
+          "type": "object",
+          "required": [
+            "size",
+            "mean",
+            "sd",
+            "interval",
+            "blocks"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "mean": {
+              "type": "number"
+            },
+            "sd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "interval": {
+              "$ref": "#/definitions/interval"
+            },
+            "blocks": {
+              "description": "True when the acting-set upper bound is below zero: harmful exactly where it acts, whatever the diluted overall interval says.",
+              "type": "boolean"
+            }
+          }
+        },
+        "cost": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "tokenRatio",
+                "callRatio"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "tokenRatio": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "callRatio": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "boundedNull": {
+          "description": "What this comparison could have seen, in words, so a null is never read as 'no effect'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "verdict": {
+          "type": "object",
+          "required": [
+            "promotes",
+            "clauses",
+            "reasons"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "promotes": {
+              "type": "boolean"
+            },
+            "clauses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/clause"
+              }
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/reason"
+              }
+            }
+          }
+        }
+      }
+    },
+    "selection": {
+      "description": "The state that keeps a held-out result from reaching cell design. Confirmation cannot be attempted while the shortlist is open, and a decision exists only once confirmation is in.",
+      "type": "object",
+      "required": [
+        "state",
+        "rule",
+        "shortlist",
+        "excluded",
+        "frozen",
+        "transition",
+        "finalist",
+        "decision"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "open",
+            "frozen",
+            "confirmed"
+          ]
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shortlist": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/sha256"
+          }
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/exclusion"
+          }
+        },
+        "frozen": {
+          "description": "What order the shortlist was frozen in, by which algorithm at which revision, and the canonical identity of that decision. Null until a screen has frozen one; a confirmation cannot be attempted before it exists.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "cells",
+                "algorithm",
+                "revision",
+                "identity"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/sha256"
+                  }
+                },
+                "algorithm": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "revision": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "identity": {
+                  "$ref": "#/definitions/sha256"
+                }
+              }
+            }
+          ]
+        },
+        "transition": {
+          "description": "The challenger, the calculation that chose it and the canonical identity of that choice. Confirmation is gated on this identity, so no cell, prompt or inference control can move after it exists.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "challenger",
+                "rule",
+                "calculation",
+                "identity"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "challenger": {
+                  "$ref": "#/definitions/sha256"
+                },
+                "rule": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "calculation": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "identity": {
+                  "$ref": "#/definitions/sha256"
+                }
+              }
+            }
+          ]
+        },
+        "finalist": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/sha256"
+            }
+          ]
+        },
+        "decision": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "default",
+                "qualifiesAsDefault",
+                "rule",
+                "statement",
+                "reasons"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "default": {
+                  "$ref": "#/definitions/sha256"
+                },
+                "qualifiesAsDefault": {
+                  "description": "Whether a challenger passed every registered clause. False is a real outcome: the inert cell becomes the default and the null is published as a bounded null.",
+                  "type": "boolean"
+                },
+                "rule": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "statement": {
+                  "description": "The decision in words, including what the design could have detected when nothing qualified.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reasons": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/reason"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "causeAtK": {
+      "description": "Every gold address of every scored question lands in exactly one bucket at this k. The buckets are ordered from what the release lost before any policy ran to what the prompt actually carried, so the row says WHERE a fact was lost rather than only that it was.",
+      "type": "object",
+      "required": [
+        "denominator",
+        "partition"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.denominator",
+              {
+                "$sum": "$.partition[*].count"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.partition[*].cause"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.partition[*].cause"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "denominator": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "partition": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "items": {
+            "type": "object",
+            "required": [
+              "cause",
+              "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "cause": {
+                "enum": [
+                  "source-unresolved",
+                  "content-collapsed",
+                  "novelty-filtered",
+                  "contradiction-superseded",
+                  "crystallized-not-carried",
+                  "identity-unranked",
+                  "below-min-score",
+                  "outside-k",
+                  "retrieved"
+                ]
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "prompts": {
+      "description": "What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters \u2014 the suite's one size rule \u2014 where none did.",
+      "type": "object",
+      "required": [
+        "unchanged",
+        "changed",
+        "changedIds",
+        "tokenProxy",
+        "proxy",
+        "against"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          {
+            "$count": "$.changedIds[*]"
+          },
+          "$.changed"
+        ]
+      },
+      "properties": {
+        "unchanged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changedIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "tokenProxy": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proxy": {
+          "description": "What `tokenProxy` actually counts. A tier that buys nothing has no provider usage, so it counts characters and says so; a tier that buys reports the provider's own prompt tokens, which is not a proxy at all.",
+          "enum": [
+            "sizeOf-characters",
+            "provider-prompt-tokens"
+          ]
+        },
+        "against": {
+          "description": "The cell whose prompts these were compared with \u2014 the inert reference, or the cell itself.",
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "widthDecision": {
+      "description": "The built-in embedding width, decided on the tier that can decide it. This is a LEXICAL retrieval result governing the width used when no provider is configured; it never serves a live answer, is never an answer-quality result, and never enters the objective's clauses.",
+      "type": "object",
+      "required": [
+        "tier",
+        "k",
+        "proposedDims",
+        "rows",
+        "caveat"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "const": "lexical"
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "proposedDims": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "cellId",
+              "dims",
+              "recall",
+              "verbatimFloor",
+              "tokenProxy",
+              "operations"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "cellId": {
+                "$ref": "#/definitions/sha256"
+              },
+              "dims": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "recall": {
+                "type": "number"
+              },
+              "verbatimFloor": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              },
+              "tokenProxy": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "operations": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "caveat": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "required": [
+        "cellId",
+        "code",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cellId": {
+          "$ref": "#/definitions/sha256"
+        },
+        "code": {
+          "enum": [
+            "cost-infeasible",
+            "live-inapplicable",
+            "dominated",
+            "category-loss",
+            "ineligible"
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "inference": {
+      "description": "The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be \u2014 only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.",
+      "type": "object",
+      "required": [
+        "authorized",
+        "provider",
+        "endpoint",
+        "answerModel",
+        "judgeModel",
+        "embedder",
+        "thinking",
+        "responseSchema",
+        "retry",
+        "deadlineMs",
+        "concurrency",
+        "perRunCeiling",
+        "campaignCeiling",
+        "keySource",
+        "identity"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "authorized": {
+          "description": "True only when the operator approved the printed plan. Credentials are not authorization.",
+          "const": true
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answerModel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "judgeModel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "embedder": {
+          "type": "object",
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "description": "The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it \u2014 a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed."
+        },
+        "thinking": {
+          "enum": [
+            "off",
+            "default"
+          ]
+        },
+        "responseSchema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retry": {
+          "type": "object",
+          "required": [
+            "attempts",
+            "baseMs",
+            "maxMs"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "attempts": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "baseMs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxMs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "deadlineMs": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ]
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "perRunCeiling": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "campaignCeiling": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "keySource": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "identity": {
+          "$ref": "#/definitions/sha256"
+        }
+      }
+    },
+    "plan": {
+      "description": "What a run WOULD spend, printed before anything is bought. A plan is not permission: the operator reads this and approves or amends it, and a warm cache or a present key is never an approval.",
+      "type": "object",
+      "required": [
+        "phase",
+        "cells",
+        "questions",
+        "requests",
+        "ceilings",
+        "withinCeilings",
+        "inference"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.requests.total",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.requests.embedFresh",
+                  "$.requests.chat"
+                ]
+              },
+              "$.requests.judge"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "phase": {
+          "enum": [
+            "census",
+            "selection",
+            "confirmation"
+          ]
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/sha256"
+          }
+        },
+        "questions": {
+          "type": "object",
+          "required": [
+            "scorable",
+            "adversarial"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "scorable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "adversarial": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "required": [
+            "embedFresh",
+            "embedCached",
+            "chat",
+            "judge",
+            "total"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "embedFresh": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "embedCached": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "chat": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "judge": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ceilings": {
+          "type": "object",
+          "required": [
+            "perRun",
+            "campaign"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "perRun": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "campaign": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "withinCeilings": {
+          "type": "boolean"
+        },
+        "inference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/sha256"
+            }
+          ]
+        }
+      }
+    },
+    "census": {
+      "description": "The frozen shortlist re-measured under the real embedder before any answer exists. It reads OPERATION COUNTS and never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do, and buying its answers would buy the inert cell twice. It may drop such a cell by that registered rule and may never reorder, re-rank, add or substitute one.",
+      "type": "object",
+      "required": [
+        "embedRequests",
+        "chatCalls",
+        "rows"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          0,
+          "$.chatCalls"
+        ]
+      },
+      "properties": {
+        "embedRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "chatCalls": {
+          "description": "Zero, and asserted to be zero: a census that answered a question would be a selection.",
+          "const": 0
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "cellId",
+              "operations",
+              "mechanicallyInert",
+              "dropped"
+            ],
+            "additionalProperties": false,
+            "$query": {
+              "$or": [
+                {
+                  "$not": "$.dropped"
+                },
+                {
+                  "$eq": [
+                    true,
+                    "$.mechanicallyInert"
+                  ]
+                }
+              ]
+            },
+            "properties": {
+              "cellId": {
+                "$ref": "#/definitions/sha256"
+              },
+              "operations": {
+                "$ref": "#/definitions/operations"
+              },
+              "mechanicallyInert": {
+                "description": "Every operation count equals the inert cell's under this embedder.",
+                "type": "boolean"
+              },
+              "dropped": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "clause": {
+      "type": "object",
+      "required": [
+        "clause",
+        "passed",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "clause": {
+          "enum": [
+            "eligible",
+            "primary-objective",
+            "held-out-split",
+            "overall-interval",
+            "category-floor",
+            "token-ratio",
+            "call-ratio",
+            "acting-set"
+          ]
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

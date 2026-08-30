@@ -163,6 +163,85 @@
     }
   },
   "definitions": {
+    "ingestAsMeasured": {
+      "description": "A live report is a dated record of calls that were paid for, so it is never regenerated to a newer shape. A run made before the policies counted their own failures carries the census as it was measured then; a run made after carries the complete one. Backfilling the missing counters with zeros would assert measurements nobody took.",
+      "anyOf": [
+        {
+          "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/ingest"
+        },
+        {
+          "$ref": "#/definitions/ingestBeforeFailureAccounting"
+        }
+      ]
+    },
+    "ingestBeforeFailureAccounting": {
+      "type": "object",
+      "required": [
+        "runs",
+        "observations",
+        "embedded",
+        "admitted",
+        "filtered",
+        "judged",
+        "contradictions",
+        "resolutions",
+        "merged",
+        "live",
+        "total",
+        "superseded"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embedded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "admitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "filtered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "judged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contradictions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolutions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "merged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "live": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "superseded": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
     "cost": {
       "type": "object",
       "required": [
@@ -296,7 +375,7 @@
           "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/thresholds"
         },
         "ingest": {
-          "$ref": "https://tangleai.dev/schemas/locomo-recall#/definitions/ingest"
+          "$ref": "#/definitions/ingestAsMeasured"
         },
         "retrieval": {
           "$ref": "https://tangleai.dev/schemas/locomo-qa#/definitions/retrieval"
@@ -689,6 +768,11 @@
         "replayed": {
           "type": "integer",
           "minimum": 0
+        },
+        "promptSha256": {
+          "description": "The digest of the serialized context this row put in the prompt. Present when the caller asked for one \u2014 a policy matrix reads its acting set from these bytes, never from a score.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
         }
       }
     },

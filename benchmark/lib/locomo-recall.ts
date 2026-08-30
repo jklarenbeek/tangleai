@@ -490,18 +490,21 @@ export function renderMarkdown(report: RecallReport): string {
   out.push('');
   const pipelineRows = report.rows.filter((r) => r.kind === 'pipeline');
   out.push(table({
-    head: ['row', 'novelty / contradiction / crystallize', 'runs', 'observations', 'admitted', 'filtered', 'judged', 'contradictions', 'resolutions', 'merged', 'live', 'total', 'unranked'],
-    numeric: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    head: ['row', 'novelty / contradiction / crystallize', 'runs', 'observations', 'admitted', 'filtered', 'judged', 'judge failed', 'contradictions', 'unapplied', 'resolutions', 'merged', 'unmerged', 'live', 'total', 'unranked'],
+    numeric: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     rows: pipelineRows.map((r) => [
       r.key,
       r.thresholds === undefined ? '—' : `${r.thresholds.novelty} / ${r.thresholds.contradiction} / ${r.thresholds.crystallize}`,
       r.ingest?.runs ?? null, r.ingest?.observations ?? null, r.ingest?.admitted ?? null, r.ingest?.filtered ?? null,
-      r.ingest?.judged ?? null, r.ingest?.contradictions ?? null, r.ingest?.resolutions ?? null, r.ingest?.merged ?? null,
+      r.ingest?.judged ?? null, r.ingest?.judgeFailures ?? null, r.ingest?.contradictions ?? null, r.ingest?.contradictionSkips ?? null,
+      r.ingest?.resolutions ?? null, r.ingest?.merged ?? null, r.ingest?.mergeSkips ?? null,
       r.ingest?.live ?? null, r.ingest?.total ?? null, r.retrieval?.unranked ?? null,
     ]),
   }));
   out.push('');
   out.push('`filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus the policy matrix measures against.');
+  out.push('');
+  out.push('`judge failed` is a judge call that threw — the pair is skipped and the pass goes on, but a row that judged nothing because the judge was down is not a row that judged everything and found nothing. `unapplied` and `unmerged` are the confirmed contradictions and the planned merges whose records had already been raced away when the write came. Every attempt is judged or failed; every confirmed verdict is applied or unapplied; every planned merge is merged or unmerged. A zero in these columns is a measurement, not an absence.');
   out.push('');
   out.push('## The gate');
   out.push('');

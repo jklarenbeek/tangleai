@@ -102,7 +102,7 @@ const resolved = await resolveContradictions(store, pairs, {
     return { contradiction: false };
   },
 });
-console.log(`contradiction: judged ${resolved.judged} similar pairs, resolved ${resolved.contradictions}`);
+console.log(`contradiction: attempted ${resolved.attempted} similar pairs, judged ${resolved.judged} (${resolved.judgeFailures} judge failures), confirmed ${resolved.confirmed}, resolved ${resolved.contradictions} (${resolved.applicationSkips} unapplied)`);
 for (const r of resolved.resolutions) console.log(`  resolution: "${r.text}" (${r.evidence.slice(0, 72)}…)`);
 
 // ---------------------------------------------------------------------------
@@ -111,8 +111,8 @@ for (const r of resolved.resolutions) console.log(`  resolution: "${r.text}" (${
 // ---------------------------------------------------------------------------
 
 const plan = planCrystallization(await store.list(), { threshold: 0.9 });
-const { crystallized } = await applyCrystallization(store, plan, { now });
-console.log(`crystallize: examined ${plan.examined}, merged ${crystallized}`);
+const crystallize = await applyCrystallization(store, plan, { now });
+console.log(`crystallize: examined ${plan.examined}, planned ${crystallize.planned}, merged ${crystallize.crystallized} (${crystallize.applicationSkips} unmerged)`);
 
 // ---------------------------------------------------------------------------
 // 5. outcome — ground truth moves confidence

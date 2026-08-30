@@ -17,6 +17,14 @@
  * deleted — "what did we believe before" stays answerable). A judge
  * failure skips the pair; it never kills the pass.
  *
+ * Tolerance is not silence. A pass that skipped every pair because the
+ * judge was down and a pass that judged every pair and found nothing
+ * are different outcomes, and a measurement that cannot tell them apart
+ * cannot say what a threshold did — so the outcome counts both halves
+ * of both forks: every attempt is judged or failed, and every confirmed
+ * verdict is applied or skipped because its older record was already
+ * gone.
+ *
  * Only a SYNTHESIZED resolution becomes a new record. When the judge
  * answers with the newer record's own text (or nothing), the newer
  * record IS the resolution — writing it again would content-address to
@@ -121,8 +129,18 @@ export interface ResolveOptions {
 }
 
 export interface ResolveOutcome {
-  contradictions: number;
+  /** Planned pairs handed to the judge. */
+  attempted: number;
+  /** Pairs the judge answered. */
   judged: number;
+  /** Judge calls that threw: the pair is skipped, the pass continues. */
+  judgeFailures: number;
+  /** Verdicts that confirmed a contradiction — applied or skipped. */
+  confirmed: number;
+  /** Confirmed contradictions written: the older record marked superseded. */
+  contradictions: number;
+  /** Confirmed contradictions whose older record was gone at write time. */
+  applicationSkips: number;
   resolutions: MemoryUnit[];
 }
 
@@ -134,6 +152,9 @@ export async function resolveContradictions(
 ): Promise<ResolveOutcome> {
   let contradictions = 0;
   let judged = 0;
+  let judgeFailures = 0;
+  let confirmed = 0;
+  let applicationSkips = 0;
   const resolutions: MemoryUnit[] = [];
 
   for (const pair of pairs) {
@@ -142,17 +163,19 @@ export async function resolveContradictions(
       verdict = await options.judge(pair.a, pair.b);
     }
     catch {
-      continue; // a judge failure skips the pair, never the pass
+      judgeFailures++; // a judge failure skips the pair, never the pass — and is counted
+      continue;
     }
     judged++;
     if (!verdict?.contradiction) continue;
+    confirmed++;
 
     const older = pair.a.at <= pair.b.at ? pair.a : pair.b;
     const newer = older === pair.a ? pair.b : pair.a;
 
     const supersededAt = options.now();
     const loser = await store.get(older.id);
-    if (!loser) continue;
+    if (!loser) { applicationSkips++; continue; } // a prior pass or a host raced us
     loser.supersededBy = newer.id;
     loser.supersededAt = supersededAt;
     loser.supersededReason = verdict.reason ?? 'contradiction detected';
@@ -172,5 +195,5 @@ export async function resolveContradictions(
     contradictions++;
   }
 
-  return { contradictions, judged, resolutions };
+  return { attempted: pairs.length, judged, judgeFailures, confirmed, contradictions, applicationSkips, resolutions };
 }

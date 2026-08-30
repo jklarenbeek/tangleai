@@ -63,8 +63,18 @@ export interface PipelineReport {
   embedded: number;
   model: string;
   novelty: { admitted: number, filtered: number };
-  contradiction: { judged: number, contradictions: number, resolutions: string[] };
-  crystallize: { examined: number, merged: number };
+  /** Every attempt is judged or failed; every confirmed verdict is applied or skipped. */
+  contradiction: {
+    attempted: number,
+    judged: number,
+    judgeFailures: number,
+    confirmed: number,
+    contradictions: number,
+    applicationSkips: number,
+    resolutions: string[],
+  };
+  /** Every planned merge is written or skipped. */
+  crystallize: { examined: number, planned: number, merged: number, applicationSkips: number };
   memories: { live: number, total: number };
 }
 
@@ -121,16 +131,25 @@ export function createPipeline(options: PipelineOptions): Pipeline {
       const pairs = planContradictionPairs(units, { threshold: thresholds.contradiction });
       const outcome = await resolveContradictions(store, pairs, { now, judge });
       return {
+        attempted: outcome.attempted,
         judged: outcome.judged,
+        judgeFailures: outcome.judgeFailures,
+        confirmed: outcome.confirmed,
         contradictions: outcome.contradictions,
+        applicationSkips: outcome.applicationSkips,
         resolutions: outcome.resolutions.map((r) => r.text),
       };
     },
 
     async crystallize(): Promise<any> {
       const plan = planCrystallization(await store.list(), { threshold: thresholds.crystallize });
-      const { crystallized } = await applyCrystallization(store, plan, { now });
-      return { examined: plan.examined, merged: crystallized };
+      const outcome = await applyCrystallization(store, plan, { now });
+      return {
+        examined: plan.examined,
+        planned: outcome.planned,
+        merged: outcome.crystallized,
+        applicationSkips: outcome.applicationSkips,
+      };
     },
   };
 

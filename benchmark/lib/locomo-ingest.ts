@@ -37,6 +37,14 @@ export type IngestCorpus = Pick<ConversationCorpus, 'sessions' | 'lastAt'>;
 /** A similarity no cosine reaches: the pipeline runs, every policy is inert. */
 export const POLICIES_OFF: Required<PipelineThresholds> = { novelty: 2, contradiction: 2, crystallize: 2 };
 
+/**
+ * What the policies did, counted so that nothing they attempted can
+ * disappear. Every fork has both of its halves here — an attempt is
+ * judged or it failed, a confirmed verdict is applied or its record had
+ * vanished, a planned merge is written or its records had vanished — so
+ * "the policy did nothing" and "the policy could not run" are never the
+ * same row.
+ */
 export interface IngestCensus {
   /** `pipeline.run` calls — one per ingested session. */
   runs: number;
@@ -44,10 +52,24 @@ export interface IngestCensus {
   embedded: number;
   admitted: number;
   filtered: number;
+  /** Pairs handed to the contradiction judge. */
+  judgeAttempts: number;
+  /** Pairs the judge answered. */
   judged: number;
+  /** Judge calls that threw. */
+  judgeFailures: number;
+  /** Verdicts confirming a contradiction. */
+  confirmed: number;
+  /** Confirmed contradictions written (the older record superseded). */
   contradictions: number;
+  /** Confirmed contradictions whose older record was gone at write time. */
+  contradictionSkips: number;
   resolutions: number;
+  /** Merges the crystallizer planned. */
+  crystallizePlanned: number;
   merged: number;
+  /** Planned merges whose records were gone at write time. */
+  mergeSkips: number;
   live: number;
   total: number;
   superseded: number;
@@ -55,8 +77,10 @@ export interface IngestCensus {
 
 export function emptyCensus(): IngestCensus {
   return {
-    runs: 0, observations: 0, embedded: 0, admitted: 0, filtered: 0, judged: 0,
-    contradictions: 0, resolutions: 0, merged: 0, live: 0, total: 0, superseded: 0,
+    runs: 0, observations: 0, embedded: 0, admitted: 0, filtered: 0,
+    judgeAttempts: 0, judged: 0, judgeFailures: 0, confirmed: 0, contradictions: 0,
+    contradictionSkips: 0, resolutions: 0, crystallizePlanned: 0, merged: 0, mergeSkips: 0,
+    live: 0, total: 0, superseded: 0,
   };
 }
 
@@ -66,10 +90,16 @@ function addReport(census: IngestCensus, report: PipelineReport): void {
   census.embedded += report.embedded;
   census.admitted += report.novelty.admitted;
   census.filtered += report.novelty.filtered;
+  census.judgeAttempts += report.contradiction.attempted;
   census.judged += report.contradiction.judged;
+  census.judgeFailures += report.contradiction.judgeFailures;
+  census.confirmed += report.contradiction.confirmed;
   census.contradictions += report.contradiction.contradictions;
+  census.contradictionSkips += report.contradiction.applicationSkips;
   census.resolutions += report.contradiction.resolutions.length;
+  census.crystallizePlanned += report.crystallize.planned;
   census.merged += report.crystallize.merged;
+  census.mergeSkips += report.crystallize.applicationSkips;
 }
 
 export interface IngestOptions {

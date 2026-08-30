@@ -96,7 +96,7 @@ describe('resolveContradictions', () => {
     assert.equal((await store.get('a'))?.supersededBy, 'b');
   });
 
-  it('a judge that says no changes nothing; a judge that throws skips the pair', async () => {
+  it('a judge that says no changes nothing; a judge that throws skips the pair AND is counted', async () => {
     const store = createMemoryUnitStore();
     const a = unit('a', 'x', EARLY, [1, 0]);
     const b = unit('b', 'y', LATE, [0.99, 0.01]);
@@ -107,14 +107,50 @@ describe('resolveContradictions', () => {
     const noVerdict = await resolveContradictions(store, pairs, {
       judge: async () => ({ contradiction: false }), now,
     });
-    assert.equal(noVerdict.contradictions, 0);
-    assert.equal(noVerdict.judged, 1);
+    assert.deepEqual(
+      { ...noVerdict, resolutions: noVerdict.resolutions.length },
+      { attempted: 1, judged: 1, judgeFailures: 0, confirmed: 0, contradictions: 0, applicationSkips: 0, resolutions: 0 },
+    );
 
     const thrown = await resolveContradictions(store, pairs, {
       judge: async () => { throw new Error('provider down'); }, now,
     });
-    assert.equal(thrown.contradictions, 0);
-    assert.equal(thrown.judged, 0);
+    assert.deepEqual(
+      { ...thrown, resolutions: thrown.resolutions.length },
+      { attempted: 1, judged: 0, judgeFailures: 1, confirmed: 0, contradictions: 0, applicationSkips: 0, resolutions: 0 },
+      'a pass that could not reach the judge is not a pass that found nothing',
+    );
+    // and the pass survives the failure: the pair after it is still judged
+    const c = unit('c', 'x', EARLY, [1, 0]);
+    const d = unit('d', 'y', LATE, [0.99, 0.01]);
+    for (const u of [c, d]) await store.put(u);
+    let call = 0;
+    const mixed = await resolveContradictions(store, planContradictionPairs([a, b, c, d], { maxPairs: 4 }), {
+      judge: async () => { if (call++ === 0) throw new Error('provider down'); return { contradiction: false }; },
+      now,
+    });
+    assert.equal(mixed.judgeFailures, 1);
+    assert.ok(mixed.judged > 0, 'one failure never kills the pass');
+    assert.equal(mixed.attempted, mixed.judged + mixed.judgeFailures);
+  });
+
+  it('a confirmed verdict whose older record vanished is an application skip, not a silent nothing', async () => {
+    const store = createMemoryUnitStore();
+    const older = unit('a', 'limit is 100', EARLY, [1, 0]);
+    const newer = unit('b', 'limit is 500', LATE, [0.99, 0.01]);
+    const pairs = planContradictionPairs([older, newer]);
+    // only the winner reaches the store: a prior pass or a host raced the loser away
+    await store.put(newer);
+
+    const outcome = await resolveContradictions(store, pairs, {
+      judge: async () => ({ contradiction: true, reason: 'the limit changed', resolution: 'the limit is 500' }),
+      now,
+    });
+    assert.deepEqual(
+      { ...outcome, resolutions: outcome.resolutions.length },
+      { attempted: 1, judged: 1, judgeFailures: 0, confirmed: 1, contradictions: 0, applicationSkips: 1, resolutions: 0 },
+    );
+    assert.equal(outcome.confirmed, outcome.contradictions + outcome.applicationSkips);
   });
 });
 

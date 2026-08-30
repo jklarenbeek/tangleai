@@ -168,8 +168,9 @@
       "patternProperties": { "^[0-9]+$": { "$ref": "#/definitions/recallAtK" } }
     },
     "ingest": {
+      "description": "What the policies did, with both halves of every fork: an attempt was judged or it failed, a confirmed verdict was applied or its older record had vanished, a planned merge was written or its records had vanished. A policy that could not run and a policy that found nothing are then different rows.",
       "type": "object",
-      "required": ["runs", "observations", "embedded", "admitted", "filtered", "judged", "contradictions", "resolutions", "merged", "live", "total", "superseded"],
+      "required": ["runs", "observations", "embedded", "admitted", "filtered", "judgeAttempts", "judged", "judgeFailures", "confirmed", "contradictions", "contradictionSkips", "resolutions", "crystallizePlanned", "merged", "mergeSkips", "live", "total", "superseded"],
       "additionalProperties": false,
       "properties": {
         "runs": { "type": "integer", "minimum": 0 },
@@ -177,10 +178,16 @@
         "embedded": { "type": "integer", "minimum": 0 },
         "admitted": { "type": "integer", "minimum": 0 },
         "filtered": { "type": "integer", "minimum": 0 },
+        "judgeAttempts": { "type": "integer", "minimum": 0 },
         "judged": { "type": "integer", "minimum": 0 },
+        "judgeFailures": { "type": "integer", "minimum": 0 },
+        "confirmed": { "type": "integer", "minimum": 0 },
         "contradictions": { "type": "integer", "minimum": 0 },
+        "contradictionSkips": { "type": "integer", "minimum": 0 },
         "resolutions": { "type": "integer", "minimum": 0 },
+        "crystallizePlanned": { "type": "integer", "minimum": 0 },
         "merged": { "type": "integer", "minimum": 0 },
+        "mergeSkips": { "type": "integer", "minimum": 0 },
         "live": { "type": "integer", "minimum": 0 },
         "total": { "type": "integer", "minimum": 0 },
         "superseded": { "type": "integer", "minimum": 0 }

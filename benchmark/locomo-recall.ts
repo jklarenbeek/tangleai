@@ -23,11 +23,10 @@
 
 import { writeFile } from 'node:fs/promises';
 
-import { JarenValidator } from '@jarenjs/validate';
-
 import { parseArgs } from './lib/args.ts';
 import { loadLocomo } from './lib/locomo.ts';
 import { renderMarkdown, runLocomoRecall, type RecallRunOptions } from './lib/locomo-recall.ts';
+import { createReportValidator, describeErrors } from './lib/validate.ts';
 import SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
 
 const args = parseArgs(process.argv.slice(2), {
@@ -80,12 +79,10 @@ const report = await runLocomoRecall(dataset, {
 console.error(`  total ${(performance.now() - started).toFixed(0)} ms (diagnostic only; the report carries no timing)`);
 
 // the document is validated before anything is written or printed
-const validator = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' });
-const validate = validator.compile(SCHEMA as Record<string, unknown>);
-const outcome = validate(report);
+const outcome = createReportValidator(SCHEMA)(report);
 if (!outcome.valid) {
   console.error('the report does not validate against benchmark/schemas/locomo-recall.schema.json:');
-  for (const error of (outcome.errors ?? []).slice(0, 20)) console.error(`  ${JSON.stringify(error)}`);
+  for (const line of describeErrors(outcome)) console.error(`  ${line}`);
   process.exit(1);
 }
 

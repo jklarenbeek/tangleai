@@ -51,6 +51,13 @@ function assertStory(report: any): void {
   assert.equal(report.novelty.admitted, 4);
   assert.equal(report.contradiction.contradictions, 1, 'the rate-limit conflict is caught');
   assert.equal(report.crystallize.merged, 1, 'the paraphrase pair crystallizes');
+  // every fork reconciles: an attempt was judged or failed, a confirmed
+  // verdict was applied or skipped, a planned merge was written or skipped
+  assert.equal(report.contradiction.attempted, report.contradiction.judged + report.contradiction.judgeFailures);
+  assert.equal(report.contradiction.confirmed, report.contradiction.contradictions + report.contradiction.applicationSkips);
+  assert.equal(report.crystallize.planned, report.crystallize.merged + report.crystallize.applicationSkips);
+  assert.equal(report.contradiction.judgeFailures, 0, 'the stand-in judge is a pure function; nothing failed');
+  assert.equal(report.crystallize.applicationSkips, 0);
   // 4 admitted − 1 absorbed by crystallization (deleted; `mergedFrom` is
   // its tombstone) = 3 records, of which the contradiction loser is
   // superseded audit trail — leaving 2 live memories.

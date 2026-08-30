@@ -14,12 +14,14 @@ One memory per turn, `evidence` = `<sample_id>/<dia_id>`, tags = speaker and ses
 
 ## What the pipeline did to the corpus
 
-| row | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | contradictions | resolutions | merged | live | total | unranked |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| near-raw | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
-| near | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 63 | 0 | 339 | 5485 | 5537 | 0 |
+| row | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | judge failed | contradictions | unapplied | resolutions | merged | unmerged | live | total | unranked |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| near-raw | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
+| near | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 0 | 63 | 0 | 0 | 339 | 0 | 5485 | 5537 | 0 |
 
 `filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus the policy matrix measures against.
+
+`judge failed` is a judge call that threw — the pair is skipped and the pass goes on, but a row that judged nothing because the judge was down is not a row that judged everything and found nothing. `unapplied` and `unmerged` are the confirmed contradictions and the planned merges whose records had already been raced away when the write came. Every attempt is judged or failed; every confirmed verdict is applied or unapplied; every planned merge is merged or unmerged. A zero in these columns is a measurement, not an absence.
 
 ## The gate
 

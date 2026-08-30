@@ -13,7 +13,7 @@ export {
   CONFIDENCE_BOOST,
   CONFIDENCE_FLOOR,
 } from './crystallize.ts';
-export type { CrystallizeMerge, CrystallizePlan, CrystallizeOptions } from './crystallize.ts';
+export type { CrystallizeMerge, CrystallizePlan, CrystallizeOptions, CrystallizeOutcome } from './crystallize.ts';
 export {
   planContradictionPairs,
   resolveContradictions,

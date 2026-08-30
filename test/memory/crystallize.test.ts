@@ -70,8 +70,8 @@ describe('applyCrystallization', () => {
     await store.put(remove);
 
     const plan = planCrystallization([keep, remove]);
-    const { crystallized } = await applyCrystallization(store, plan, { now });
-    assert.equal(crystallized, 1);
+    const outcome = await applyCrystallization(store, plan, { now });
+    assert.deepEqual(outcome, { planned: 1, crystallized: 1, applicationSkips: 0 });
 
     const merged = await store.get('a');
     assert.ok(merged);
@@ -95,11 +95,16 @@ describe('applyCrystallization', () => {
     assert.equal((await store.get('a'))?.confidence, 1);
   });
 
-  it('skips a merge whose records vanished instead of guessing', async () => {
+  it('skips a merge whose records vanished instead of guessing, and counts the skip', async () => {
     const store = createMemoryUnitStore();
-    const { crystallized } = await applyCrystallization(store, {
+    const outcome = await applyCrystallization(store, {
       merges: [{ keepId: 'ghost', removeId: 'ghost2', similarity: 1 }], examined: 0,
     }, { now });
-    assert.equal(crystallized, 0);
+    assert.deepEqual(outcome, { planned: 1, crystallized: 0, applicationSkips: 1 });
+    assert.equal(outcome.planned, outcome.crystallized + outcome.applicationSkips);
+
+    // an empty plan is the other zero: nothing was planned, nothing was lost
+    assert.deepEqual(await applyCrystallization(store, { merges: [], examined: 3 }, { now }),
+      { planned: 0, crystallized: 0, applicationSkips: 0 });
   });
 });

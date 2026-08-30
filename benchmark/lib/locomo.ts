@@ -27,11 +27,11 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { JarenValidator } from '@jarenjs/validate';
 import { compileDateParser } from '@jarenjs/core/dates/parse';
 import { epochOfRFC3339Parts } from '@jarenjs/core/dates/rfc3339';
 import type { DateNames } from '@jarenjs/core/dates/format';
 
+import { createReportValidator } from './validate.ts';
 import SCHEMA from '../schemas/locomo10.schema.json' with { type: 'json' };
 
 /** Where the submodule sits, relative to the repository root. */
@@ -149,12 +149,9 @@ export async function loadLocomo(root = process.cwd()): Promise<LoadOutcome> {
   // the identity of the bytes a number was measured over — what
   // `sha256sum data/locomo10.json` prints, so a reader can check it
   const sha256 = createHash('sha256').update(text).digest('hex');
-  // `collectErrors: true` makes the compiled validator answer
-  // `{ valid, errors }` rather than a boolean — the same shape
-  // `@tangleai/memory`'s store boundary reads.
-  const validator = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' });
-  const validate = validator.compile(SCHEMA as Record<string, unknown>);
-  const outcome = validate(samples);
+  // through the instruments' one validator factory, so the release is
+  // read under the same options every report is validated with
+  const outcome = createReportValidator(SCHEMA)(samples);
   if (outcome.valid) return { available: true, samples, bytes: text.length, sha256, valid: true };
 
   const errors = (outcome.errors ?? []).slice(0, 20).map((error) => {

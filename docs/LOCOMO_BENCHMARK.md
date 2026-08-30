@@ -36,12 +36,12 @@ One memory per turn, one store per conversation, one `pipeline.run` per session,
 
 ## The keyless tier — every commit, no model
 
-| row | corpus | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | contradictions | resolutions | merged | live | total | unranked |
-|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| near-raw | turns | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
-| rag-observation | observation | 2 / 2 / 2 | 272 | 2541 | 2541 | 0 | 0 | 0 | 0 | 0 | 2541 | 2541 | 0 |
-| rag-summary | summary | 2 / 2 / 2 | 272 | 272 | 272 | 0 | 0 | 0 | 0 | 0 | 272 | 272 | 0 |
-| near | turns | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 63 | 0 | 339 | 5485 | 5537 | 0 |
+| row | corpus | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | judge failed | contradictions | unapplied | resolutions | merged | unmerged | live | total | unranked |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| near-raw | turns | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
+| rag-observation | observation | 2 / 2 / 2 | 272 | 2541 | 2541 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 2541 | 2541 | 0 |
+| rag-summary | summary | 2 / 2 / 2 | 272 | 272 | 272 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 272 | 272 | 0 |
+| near | turns | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 0 | 63 | 0 | 0 | 339 | 0 | 5485 | 5537 | 0 |
 
 The ceiling at k = 10, over all 1,540 scorable questions and over the sample; and the model-free floor — the 10 retrieved memories quoted, unedited, as the answer — which any model has to beat to have earned its call. The long-context row has no floor (quoting a whole conversation is not an answer) and the long-horizon row has no keyless ceiling (the agent authors its own retrieval, so there is nothing to read without a model).
 
@@ -77,12 +77,12 @@ Six rows do not fit one request ceiling, so the table is the merge of runs, each
 
 A wire error is a question left unanswered, not scored; the first: `conv-47#51 sub-call: The operation was aborted due to timeout`. A re-run of a row replays every answer the cache holds and buys only the rest, so filling a rate-limited row costs the missing answers, not a run.
 
-| row | corpus | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | contradictions | resolutions | merged | live | total | unranked |
-|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| near-raw | turns | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
-| rag-observation | observation | 2 / 2 / 2 | 272 | 2541 | 2541 | 0 | 0 | 0 | 0 | 0 | 2541 | 2541 | 0 |
-| rag-summary | summary | 2 / 2 / 2 | 272 | 272 | 272 | 0 | 0 | 0 | 0 | 0 | 272 | 272 | 0 |
-| near | turns | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5877 | 5 | 4721 | 2 | 0 | 69 | 5806 | 5808 | 0 |
+| row | corpus | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | judge failed | contradictions | unapplied | resolutions | merged | unmerged | live | total | unranked |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| near-raw | turns | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | — | 0 | — | 0 | 0 | — | 5877 | 5877 | 0 |
+| rag-observation | observation | 2 / 2 / 2 | 272 | 2541 | 2541 | 0 | 0 | — | 0 | — | 0 | 0 | — | 2541 | 2541 | 0 |
+| rag-summary | summary | 2 / 2 / 2 | 272 | 272 | 272 | 0 | 0 | — | 0 | — | 0 | 0 | — | 272 | 272 | 0 |
+| near | turns | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5877 | 5 | 4721 | — | 2 | — | 0 | 69 | — | 5806 | 5808 | 0 |
 
 | row | run | answered | F1 | 1 multi-hop | 2 temporal | 3 open-domain | 4 single-hop | ceiling | cited recall | uncited | unresolved citations | invalid | calls | tokens | p50 | p95 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|

@@ -24,6 +24,13 @@
  *    weight summing, evidence strings are joined — nothing is dropped
  *  - the absorbed record is DELETED from the store; its id in
  *    `mergedFrom` is the tombstone
+ *
+ * The applier counts what it planned as well as what it did: a merge
+ * whose keep or remove record vanished between planning and writing is
+ * skipped rather than guessed, and that skip is a value, because a pass
+ * that merged nothing because nothing matched and a pass that merged
+ * nothing because every planned record had been raced away are
+ * different outcomes.
  */
 
 import { cosineSimilarity } from '@jarenjs/core/vector';
@@ -89,18 +96,28 @@ export interface ApplyOptions {
   now: () => string;
 }
 
+export interface CrystallizeOutcome {
+  /** Merges the plan asked for. */
+  planned: number;
+  /** Merges written. */
+  crystallized: number;
+  /** Planned merges whose keep or remove record was gone at write time. */
+  applicationSkips: number;
+}
+
 /** Execute a crystallization plan against a store. */
 export async function applyCrystallization(
   store: MemoryStore,
   plan: CrystallizePlan,
   options: ApplyOptions,
-): Promise<{ crystallized: number }> {
+): Promise<CrystallizeOutcome> {
   let crystallized = 0;
+  let applicationSkips = 0;
 
   for (const merge of plan.merges) {
     const keep = await store.get(merge.keepId);
     const remove = await store.get(merge.removeId);
-    if (!keep || !remove) continue; // a prior merge or a host raced us; skip, don't guess
+    if (!keep || !remove) { applicationSkips++; continue; } // a prior merge or a host raced us; skip, don't guess
 
     keep.confidence = Math.min(1, Math.max(CONFIDENCE_FLOOR, (keep.confidence ?? 0.5) + CONFIDENCE_BOOST));
     keep.at = options.now();
@@ -125,5 +142,5 @@ export async function applyCrystallization(
     crystallized++;
   }
 
-  return { crystallized };
+  return { planned: plan.merges.length, crystallized, applicationSkips };
 }

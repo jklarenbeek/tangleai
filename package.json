@@ -24,6 +24,8 @@
     "test:pipeline": "node --test \"test/pipeline/*.test.ts\"",
     "test:desktop": "node --test \"test/desktop/*.test.ts\"",
     "test:benchmark": "node --test \"test/benchmark/*.test.ts\"",
+    "emit:types": "jaren-emit --schema benchmark/schemas/locomo-policy.schema.json --out benchmark/lib --bundle locomo-policy.types.ts",
+    "emit:check": "npm run emit:types -- --check",
     "typecheck": "tsc -p tsconfig.json",
     "skeleton": "node examples/skeleton.ts",
     "desktop:ui": "bun build apps/desktop/src/ui/main.ts --outfile apps/desktop/public/app.js --format esm --target browser && cat node_modules/@jarenjs/charts/styles/charts.css node_modules/@jarenjs/mermaid/styles/mermaid.css node_modules/@jarenjs/md/styles/md.css > apps/desktop/public/vendor.css",
@@ -34,13 +36,15 @@
     "benchmark:locomo:census": "node benchmark/locomo-census.ts",
     "benchmark:locomo:recall": "node benchmark/locomo-recall.ts",
     "benchmark:locomo:qa": "node --env-file-if-exists=.env benchmark/locomo-qa.ts",
+    "benchmark:locomo:policy": "node benchmark/locomo-policy.ts",
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run emit:check && npm run typecheck && npm test"
   },
   "devDependencies": {
     "@jarenjs/ai": "^0.56.0",
+    "@jarenjs/emit": "^0.56.0",
     "@types/node": "^24.3.0",
     "typescript": "^5.9.2"
   }

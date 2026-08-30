@@ -52,8 +52,6 @@
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 
-import { JarenValidator } from '@jarenjs/validate';
-
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../apps/desktop/src/settings.ts';
 import { chatSettingsOf, describeAiEnv, embedSettingsOf, readAiEnv } from './lib/ai-env.ts';
 import { parseArgs } from './lib/args.ts';
@@ -68,6 +66,7 @@ import {
   type HorizonOptions,
   type LiveReport,
 } from './lib/locomo-qa.ts';
+import { createReportValidator, describeErrors, type ReportValidator } from './lib/validate.ts';
 import { WIRE_CACHE_PATH, openWireCache, type WireCache } from './lib/wire-cache.ts';
 import RECALL_SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from './schemas/locomo-qa.schema.json' with { type: 'json' };
@@ -119,18 +118,14 @@ const horizon: Partial<HorizonOptions> = {
 
 // one validator per compiled document: a schema registered for `$ref`
 // cannot also be the one compiled on the same instance
-const validateKeyless = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' })
-  .addSchema(RECALL_SCHEMA as Record<string, unknown>)
-  .compile(QA_SCHEMA as Record<string, unknown>);
-const validateLive = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' })
-  .addSchema([RECALL_SCHEMA as Record<string, unknown>, QA_SCHEMA as Record<string, unknown>])
-  .compile(LIVE_SCHEMA as Record<string, unknown>);
+const validateKeyless = createReportValidator(QA_SCHEMA, [RECALL_SCHEMA]);
+const validateLive = createReportValidator(LIVE_SCHEMA, [RECALL_SCHEMA, QA_SCHEMA]);
 
-function mustValidate(name: string, validate: (value: unknown) => { valid: boolean, errors?: unknown[] }, value: unknown): void {
+function mustValidate(name: string, validate: ReportValidator, value: unknown): void {
   const outcome = validate(value);
   if (outcome.valid) return;
   console.error(`the report does not validate against benchmark/schemas/${name}:`);
-  for (const error of (outcome.errors ?? []).slice(0, 20)) console.error(`  ${JSON.stringify(error)}`);
+  for (const line of describeErrors(outcome)) console.error(`  ${line}`);
   process.exit(1);
 }
 

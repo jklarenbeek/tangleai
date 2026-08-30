@@ -166,6 +166,12 @@ export interface QaRow {
   kind: RowKind;
   corpus?: RowCorpus;
   thresholds?: Required<PipelineThresholds>;
+  /**
+   * The row's own retrieval controls, when it has them. The published
+   * table's rows share the run's k; a policy cell IS its k and its
+   * minScore, so it carries them and the run's k is its default.
+   */
+  retrieval?: { k: number, minScore: number };
 }
 
 /** The table's rows, in the order they are published. */
@@ -698,8 +704,8 @@ function corpusFor(row: QaRow, entry: Conversation): IngestCorpus {
 }
 
 /** The k memories a question retrieves from a conversation's units, and the turn addresses they cite. */
-function retrieve(units: MemoryUnit[], vector: ArrayLike<number>, k: number, identity: { model: string, dims: number }, sampleId: string) {
-  const { ranked, skipped } = recallByEmbedding(units, vector as never, { k, identity });
+function retrieve(units: MemoryUnit[], vector: ArrayLike<number>, k: number, identity: { model: string, dims: number }, sampleId: string, minScore = 0) {
+  const { ranked, skipped } = recallByEmbedding(units, vector as never, { k, minScore, identity });
   const context = ranked.map((r) => r.unit);
   const retrieved = new Set<string>();
   for (const unit of context) for (const address of addressesOf(unit.evidence, sampleId)) retrieved.add(address);
@@ -849,6 +855,8 @@ export interface QuestionResult {
   ms: number;
   /** How many of the question's calls were replayed from the wire cache. */
   replayed: number;
+  /** The digest of the serialized context this row put in the prompt, when the caller asked for one. */
+  promptSha256?: string;
   /** Long-horizon only: what the question cost and how its program went. */
   calls?: number;
   subcalls?: number;
@@ -998,6 +1006,14 @@ export interface LiveRunOptions {
   thinking?: 'off' | 'default';
   /** The rows this run answers; the pipeline pair when absent. */
   rows?: readonly string[];
+  /**
+   * Rows given as values rather than by key — how a caller whose rows
+   * are not the published table's (a policy cell, which IS its effective
+   * values) runs through this one live path instead of writing a second.
+   */
+  rowSpecs?: readonly QaRow[];
+  /** Called with each answered question's serialized prompt, so the caller can digest it. */
+  digestPrompt?: (lines: readonly string[]) => Promise<string>;
   horizon?: Partial<HorizonOptions>;
   k?: number;
   seed?: number;
@@ -1235,7 +1251,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
   const { samples, restricted } = samplesOf(dataset, options.samples);
   const wire = options.embedder;
   const isWire = env.embedModel !== '';
-  const rows = rowsOf(options.rows ?? DEFAULT_LIVE_ROWS);
+  const rows = options.rowSpecs ?? rowsOf(options.rows ?? DEFAULT_LIVE_ROWS);
   const horizon: HorizonOptions = { ...HORIZON_DEFAULTS, ...options.horizon };
 
   // --- the corpus, the questions, the sample: exactly as the keyless tier draws them
@@ -1379,6 +1395,14 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
       if (own.length === 0) continue;
       const turnById = new Map(corpus.turns.map((t) => [t.address, t]));
       let skippedSeen = false;
+      // what this batch adds, so the line after concurrency settles reports
+      // what was ANSWERED rather than what was planned — a wire failure or a
+      // budget stop returns early, and a progress line that counted the plan
+      // would report answers nobody bought
+      const before = {
+        answered: f1.size, wire: unanswered.wire, budget: unanswered.budget, invalid,
+        judged: lane.judged, laneWire: lane.unanswered.wire, laneBudget: lane.unanswered.budget, judgeFailed: lane.judgeFailed,
+      };
 
       // what this row hands the prompt for one question
       let contextOf: (i: number) => { context: MemoryUnit[], retrieved: Set<string> };
@@ -1391,7 +1415,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
         units = (await ingestConversation(corpusFor(row, entry), { embedder, thresholds: row.thresholds!, census: ingest })).units;
         const vectors = await embedder.embed(own.map((q) => q.text));
         contextOf = (i) => {
-          const { context, retrieved, skipped } = retrieve(units, vectors[i], k, identity, s.sample_id);
+          const { context, retrieved, skipped } = retrieve(units, vectors[i], row.retrieval?.k ?? k, identity, s.sample_id, row.retrieval?.minScore ?? 0);
           if (!skippedSeen) { unranked += skipped; skippedSeen = true; }
           return { context, retrieved };
         };
@@ -1439,6 +1463,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
           results.push({
             id: q.id, category: q.category as 1 | 2 | 3 | 4, f1: own1, ceiling: ceil, citedRecall: citedR,
             cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: bad, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed,
+            ...(options.digestPrompt === undefined ? {} : { promptSha256: await options.digestPrompt(context.map(contextLine)) }),
           });
           return;
         }
@@ -1473,7 +1498,18 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
           else { lane.judgeFailed++; noteError(`${q.id} judge: ${error instanceof Error ? error.message : String(error)}`); }
         }
       });
-      progress(`${row.key} ${s.sample_id}: ${own.length} sampled questions answered`);
+      const plannedHere = own.filter((q) => q.category !== 5).length;
+      const adversarialHere = own.length - plannedHere;
+      progress(`${row.key} ${s.sample_id}: planned ${plannedHere}`
+        + ` / answered ${f1.size - before.answered}`
+        + ` / wire ${unanswered.wire - before.wire}`
+        + ` / budget ${unanswered.budget - before.budget}`
+        + ` / invalid ${invalid - before.invalid}`
+        + (adversarialHere === 0 ? '' : ` · adversarial planned ${adversarialHere}`
+          + ` / judged ${lane.judged - before.judged}`
+          + ` / wire ${lane.unanswered.wire - before.laneWire}`
+          + ` / budget ${lane.unanswered.budget - before.laneBudget}`
+          + ` / judge failed ${lane.judgeFailed - before.judgeFailed}`));
     }
 
     results.sort((a, b) => sample.ids.indexOf(a.id) - sample.ids.indexOf(b.id));
@@ -1738,14 +1774,18 @@ type IngestRow = { key: string, corpus?: RowCorpus, thresholds?: Required<Pipeli
 
 function ingestTable(rows: ReadonlyArray<IngestRow>): string {
   return table({
-    head: ['row', 'corpus', 'novelty / contradiction / crystallize', 'runs', 'observations', 'admitted', 'filtered', 'judged', 'contradictions', 'resolutions', 'merged', 'live', 'total', 'unranked'],
-    numeric: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    head: ['row', 'corpus', 'novelty / contradiction / crystallize', 'runs', 'observations', 'admitted', 'filtered', 'judged', 'judge failed', 'contradictions', 'unapplied', 'resolutions', 'merged', 'unmerged', 'live', 'total', 'unranked'],
+    numeric: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
     rows: rows.filter((r) => r.ingest !== undefined && r.thresholds !== undefined).map((r) => [
       r.key,
       r.corpus ?? '—',
       `${r.thresholds!.novelty} / ${r.thresholds!.contradiction} / ${r.thresholds!.crystallize}`,
-      r.ingest!.runs, r.ingest!.observations, r.ingest!.admitted, r.ingest!.filtered, r.ingest!.judged,
-      r.ingest!.contradictions, r.ingest!.resolutions, r.ingest!.merged, r.ingest!.live, r.ingest!.total, r.retrieval?.unranked ?? 0,
+      r.ingest!.runs, r.ingest!.observations, r.ingest!.admitted, r.ingest!.filtered,
+      // a dated live run made before the policies counted their own failures
+      // carries no such column: an em dash, never a zero nobody measured
+      r.ingest!.judged, r.ingest!.judgeFailures ?? null, r.ingest!.contradictions, r.ingest!.contradictionSkips ?? null,
+      r.ingest!.resolutions, r.ingest!.merged, r.ingest!.mergeSkips ?? null,
+      r.ingest!.live, r.ingest!.total, r.retrieval?.unranked ?? 0,
     ]),
   });
 }
