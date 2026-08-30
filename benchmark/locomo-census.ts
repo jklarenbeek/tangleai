@@ -24,7 +24,7 @@
 
 import { parseArgs } from './lib/args.ts';
 import { count, score, table } from './lib/table.ts';
-import { mean } from './lib/stats.ts';
+import { mean } from '@jarenjs/core/stats';
 import {
   CATEGORY_NAMES,
   DIA_ID,
@@ -194,10 +194,10 @@ console.log(table({
   head: ['category', 'name', 'questions', 'oracle evidence recall'],
   numeric: [2, 3],
   rows: oracleRows.map(([category, values]) => [
-    category, CATEGORY_NAMES[category] ?? '?', values.length, score(mean(values)),
+    category, CATEGORY_NAMES[category] ?? '?', values.length, score(mean(values) ?? null),
   ]),
 }));
-console.log(`\n**Categories 1–4 together: ${score(mean(scorableSamples))}.** This is the number an oracle row must reproduce. A run whose oracle scores 1.000 is resolving evidence it should not be able to resolve — almost always a global dia_id lookup reading another conversation's turns.`);
+console.log(`\n**Categories 1–4 together: ${score(mean(scorableSamples) ?? null)}.** This is the number an oracle row must reproduce. A run whose oracle scores 1.000 is resolving evidence it should not be able to resolve — almost always a global dia_id lookup reading another conversation's turns.`);
 
 console.log(`\n## Per conversation\n`);
 console.log(table({

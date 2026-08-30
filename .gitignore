@@ -20,6 +20,7 @@ apps/pages/dist/
 TODO*.md
 PROGRESS*.md
 NEXT_SESSION.md
+JAREN*.md
 .claude/
 
 # the live tiers' wire cache (embeddings and completions already paid for) — delete to start fresh

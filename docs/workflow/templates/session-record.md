@@ -52,9 +52,9 @@ the order touched a surface. Numbers, never "all green".>
 ## Open issues
 
 <Anything discovered but deliberately not done: follow-up candidates,
-latent bugs found in neighboring code, upstream friction for
-`JARENASK.md`. Each with enough context that a future
-session needs no archaeology.>
+latent bugs found in neighboring code, and upstream friction for the local
+gitignored upstream brief. Each with enough context that a future session
+needs no archaeology.>
 
 ## Handoff
 
@@ -74,7 +74,7 @@ its JSON, an invariant that breaks silently).>
 ## A real one, reconstructed
 
 The record for the example order in [`work-order.md`](work-order.md),
-written after the fact from the work as it shipped (commit `b9491ff`) — not
+written after the fact from the work as it shipped (commit `e471807`) — not
 by an executor at the time. The first order executed under this playbook
 replaces both examples with the real pair.
 

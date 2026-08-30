@@ -8,8 +8,8 @@ The codebase is **TypeScript-only with no build step**: Node 24's native
 type stripping runs `.ts` directly (tests and workspace packages included),
 and `tsc --noEmit` under `strict` is the type gate. That inversion of the
 jarenjs house style is deliberate — this repo doubles as the standing test
-of jarenjs's published types under a strict TS consumer; findings live in
-[JARENASK.md](JARENASK.md).
+of jarenjs's published types under a strict TS consumer, with `npm run check`
+as the compatibility gate.
 
 ## What runs today
 
@@ -235,10 +235,6 @@ ranked retrieval — the superseded record provably cannot surface.
   policy entry
 - [docs/BOUNDARY.md](docs/BOUNDARY.md) — what belongs in `@jarenjs/ai`
   versus here, and the one test-pinned contract between them
-- [docs/UPSTREAM.md](docs/UPSTREAM.md) — the brief for the jarenjs team:
-  the line concern by concern, what Tangle asks the suite to implement and
-  the evidence behind each ask, what it deliberately does not ask, and what
-  it hands back
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two
   load-bearing ordering rules, the house style
 - [docs/PAPERS.md](docs/PAPERS.md) — the research this implements, with

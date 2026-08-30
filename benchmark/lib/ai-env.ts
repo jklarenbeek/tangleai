@@ -128,27 +128,3 @@ export function embedSettingsOf(env: AiEnv): EmbedSettings {
   if (env.embedModel === '') return { provider: 'builtin', baseUrl: null, model: null, apiKey: null };
   return { provider: env.provider, baseUrl: env.baseUrl, model: env.embedModel, apiKey: env.apiKey };
 }
-
-/**
- * Run `task` over `items` with at most `limit` in flight, preserving
- * input order. The spend guard `TANGLE_AI_MAX_CONCURRENCY` is what this
- * exists to honour — a fan-out that ignored it would be a bill, not a
- * benchmark.
- */
-export async function mapLimit<T, R>(
-  items: readonly T[],
-  limit: number,
-  task: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  const out = new Array<R>(items.length);
-  let next = 0;
-  const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
-    for (;;) {
-      const index = next++;
-      if (index >= items.length) return;
-      out[index] = await task(items[index], index);
-    }
-  });
-  await Promise.all(workers);
-  return out;
-}

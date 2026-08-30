@@ -71,7 +71,7 @@ import {
   type GoldQuestion,
   type RandomBand,
 } from './recall.ts';
-import { drawDistinct, mulberry32 } from './random.ts';
+import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { count, pct, score, table, type Cell } from './table.ts';
 
 /** The cut-offs every row is scored at. */

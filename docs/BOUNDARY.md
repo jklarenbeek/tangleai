@@ -18,15 +18,16 @@ A thing belongs in @jarenjs/ai only if ALL of these hold:
 4. jarenjs itself has a consumer and a test for it — the suite never grows API
    for one external consumer that its own tests don't exercise.
 
-Everything else — provider wires, databases, schedulers, paper-specific
-pipelines, servers, UI — is Tangle's.
+Everything else — provider-specific wires outside the suite's published
+adapters, host databases, schedulers, paper-specific pipelines, servers and UI
+— is Tangle's.
 
 ## How the line runs today
 
 | Concern | @jarenjs/ai side (contract) | Tangle side (policy/infra) |
 |---|---|---|
-| chat completions | `createChatClient` (OpenAI-compatible wire, retry, streaming) | configuration only |
-| embeddings | `@jarenjs/ai/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (the OpenAI-compatible `/embeddings` wire over the chat client's provider set, replies reassembled by index), `createHashEmbedder` (deterministic reference), `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration (the desktop's embed setting), and the measured WIDTH of the offline default (`createOfflineEmbedder`, 256 — see `packages/pipeline/src/standins.ts`) |
+| chat completions | `createChatClient` (OpenAI-compatible wire, retry, streaming, effective-request replay key and injected cache seam) | configuration and the SQLite replay adapter |
+| embeddings | `@jarenjs/ai/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (OpenAI-compatible wire, reply reassembly, per-text partial replay), `createHashEmbedder`, `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration, the SQLite replay adapter, and the measured WIDTH of the offline default (`createOfflineEmbedder`, 64 — see `packages/pipeline/src/standins.ts`) |
 | durable memory | ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
@@ -36,13 +37,13 @@ pipelines, servers, UI — is Tangle's.
 | scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 
-## What the suite already has — read before building (audited 2026-08-26, v0.49.2)
+## What the suite already has — read before building (audited 2026-08-30, v0.56.0)
 
 The rule above decides where a NEW capability goes. This section answers the
 prior question — *does it already exist below?* — because the expensive mistake
 in a downstream repo is not putting something on the wrong side of the line, it
 is building something the line already has. Audited against the sibling
-checkout at `@jarenjs/*` 0.49.2, one row per thing an open roadmap entry would
+checkout and installed npm packages at `@jarenjs/*` 0.56.0, one row per thing an open roadmap entry would
 otherwise write.
 
 **Use it — do not write it again.**
@@ -61,6 +62,10 @@ otherwise write.
 | Catching a malformed dataset at the door | `@jarenjs/validate`, plus the `$query` keyword for cross-field assertions (sums, ordering, quantification) | **Landed** in the census — `locomo10.json` is validated on load against a committed schema, so the 444/446 missing-`answer` adversarial bug is a **schema-detected count in the report**, not a surprise in the scorer. |
 | Keeping hand-written interfaces honest with their schemas | `emitTypeScript` (a function, not only the `jaren-emit` CLI) with `--check` failing CI when a schema moved and the type did not, verified cyclically against the validator over an instance corpus | Any instrument. Dev-only, so exempt under CONVENTIONS §1. Candidate replacement for the hand-maintained interface/schema drift tests in `@tangleai/core/schemas`. |
 | A stable identity for a dataset or a report | `@jarenjs/json/canonical` (RFC 8785 canonical bytes) and the SHA-256-over-canonical pattern `contract.revision()` already uses; `hashContent` in `@jarenjs/core/string` (exact FNV-1a) for a cheap fingerprint | The instruments — the checksummed manifest the salvage plan asks for. |
+| Replaying paid chat replies and embeddings | the `cache` seam on `createChatClient` and `createEmbeddingClient`: effective credential-free keys, replay marking, per-text partial embedding hits and malformed-entry refusal | **Landed at 0.56.0.** `benchmark/lib/wire-cache.ts` is now only the SQLite adapter/audit trail; the client wrappers and key construction are gone. |
+| Repeatable random draws | `mulberry32`, `randomInt`, `shuffle`, `drawDistinct` from `@jarenjs/core/random` | **Landed at 0.56.0.** LoCoMo instruments import it directly; the local random module is gone. |
+| Descriptive statistics with explicit quantile semantics | `mean`, sample `variance`, `stddev`, `median`, and required-method `quantile` from `@jarenjs/core/stats` | **Landed at 0.56.0.** `benchmark/lib/stats.ts` retains only null/report shaping over nearest-rank p50/p95. |
+| Ordered bounded asynchronous work | `mapConcurrent` from `@jarenjs/core/async`, including abort/drain semantics | **Landed at 0.56.0.** The QA instrument imports it directly; the local clamping pool and redundant test are gone. |
 | Running the eval as a document, and drawing it | `@jarenjs/flow` jaren-dag, and `@jarenjs/mermaid`'s `dag-to-flowchart` stylesheet | Already correct — `@tangleai/pipeline` uses both, and `packages/pipeline/src/mermaid.ts` derives the drawing from the executable document rather than hand-drawing it. |
 | A benchmark run as an operation, live progress, and a CI gate on its shape | `@jarenjs/contract`: a `subscribe` operation streamed as a `@jarenjs/db` live query (SSE over http, frames over port, resumable by seq), `contract.revision()`, and `diffContracts --fail-on breaking` | The desktop's open ends (the benchmark reaching the surface). |
 | Excerpting, truncating, sizing text | `excerpt`, `truncate`, `sizeOf`, `chunkText` in `@jarenjs/core/chunk` | Everywhere. Note the standing exception: this is NOT the document chunker — it has no element or heading model, which the document lane needs. |
@@ -80,15 +85,6 @@ spends an afternoon looking:
   `benchmark/lib/porter.ts` (NLTK's variant) and
   `benchmark/lib/locomo-parity.ts`, pinned by fixtures the official evaluator
   itself produced.
-- **Descriptive statistics.** No median, no percentile. `@jarenjs/core/math` is
-  the graphics/numeric kernel (int32/float64, vectors, `mat4`, root finders,
-  `geoMean`); the p50/p95 helpers exist only in jarenjs's unpublished
-  `benchmark/lib/measure.js`. A few lines, written once here
-  (`benchmark/lib/stats.ts`).
-- **A seeded PRNG.** Published by no package; jarenjs keeps its seeds inside
-  the benchmark harness. `@tangleai/core/clustering` already injects one, which
-  is the right shape. Written once: `benchmark/lib/random.ts`
-  (mulberry32 — the generator jarenjs's seeded corpora use).
 - **k-means.** Not in the suite. `@tangleai/core/clustering` is legitimately
   Tangle's, and its header already explains why it does not reach for
   `@jarenjs/core/vector` (the suite publishes similarities; k-means++ needs the
@@ -145,7 +141,7 @@ Only from concrete friction, never speculatively. The loop:
 3. Land it in jarenjs on its own merits (house discipline applies: measurement
    first, README argument, deps test). Tangle then deletes its workaround.
 
-It has happened once. The first candidate this document named — an
+It first happened when the candidate this document named — an
 injectable **ranker** seam on ledger recall — landed in jarenjs's vector
 campaign (v0.44–v0.46, 2026-08-25), together with the embed wire, the
 deterministic reference embedder, the vector kernels, the identity rule and
@@ -154,6 +150,11 @@ a vector column in `@jarenjs/db`. Tangle absorbed it on 2026-08-26: the
 own trigram embedder were retired against the released packages; what
 stayed on this side is the policies, the identity-gated `recallByEmbedding`
 over Tangle's own units, and the measured width of the offline embedder.
+
+The loop closed again at v0.56.0 after the downstream audit identified four
+repeated mechanics. Replay identity/partial hits, seeded random,
+descriptive statistics and bounded ordered mapping landed with JarenJS
+consumers and tests; Tangle then deleted its wrappers and duplicate arithmetic.
 
 ## What must never migrate down
 

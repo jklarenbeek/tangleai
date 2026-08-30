@@ -66,7 +66,7 @@ the expected-vs-actual output.>
 ## A real one, reconstructed
 
 The order below is the scorer-parity step of the LoCoMo instrument, written
-after the fact from the work as it shipped (commit `b9491ff`) so that the
+after the fact from the work as it shipped (commit `e471807`) so that the
 shape has a real example against this repository. It was NOT executed from
 this text by a fresh session — the first order that is replaces it, together
 with the record it produces ([`session-record.md`](session-record.md)).

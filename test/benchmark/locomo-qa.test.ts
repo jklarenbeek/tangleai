@@ -35,7 +35,6 @@ import {
   chatSettingsOf,
   describeAiEnv,
   embedSettingsOf,
-  mapLimit,
   readAiEnv,
 } from '../../benchmark/lib/ai-env.ts';
 import { INIT_COMMAND, loadLocomo } from '../../benchmark/lib/locomo.ts';
@@ -74,7 +73,7 @@ import {
   type LiveReport,
   type QaReport,
 } from '../../benchmark/lib/locomo-qa.ts';
-import { cachedChatClient, openWireCache } from '../../benchmark/lib/wire-cache.ts';
+import { openWireCache, type ReplayCache } from '../../benchmark/lib/wire-cache.ts';
 import RECALL_SCHEMA from '../../benchmark/schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from '../../benchmark/schemas/locomo-qa.schema.json' with { type: 'json' };
 import LIVE_SCHEMA from '../../benchmark/schemas/locomo-qa-live.schema.json' with { type: 'json' };
@@ -157,18 +156,6 @@ describe('readAiEnv — the live tier is never a test dependency', () => {
     assert.throws(() => chatClientFor({ provider: null, baseUrl: null, model: null, apiKey: null }), /no chat wire/);
   });
 
-  it('mapLimit keeps order and honours the limit', async () => {
-    let inFlight = 0;
-    let peak = 0;
-    const out = await mapLimit([5, 1, 3, 2, 4], 2, async (n) => {
-      inFlight++; peak = Math.max(peak, inFlight);
-      await new Promise((resolve) => setTimeout(resolve, n));
-      inFlight--;
-      return n * 10;
-    });
-    assert.deepEqual(out, [50, 10, 30, 20, 40]);
-    assert.equal(peak, 2);
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -485,11 +472,16 @@ function scriptedEnv(overrides: Record<string, string> = {}) {
   });
 }
 
-function liveClients(env: ReturnType<typeof readAiEnv>, fetch: typeof globalThis.fetch) {
+function liveClients(
+  env: ReturnType<typeof readAiEnv>,
+  fetch: typeof globalThis.fetch,
+  cache?: ReplayCache,
+  reasoning?: { effort: 'none' },
+) {
   return {
-    chat: chatClientFor(chatSettingsOf(env), { fetch, retry: { attempts: 1 } }),
-    judge: chatClientFor(chatSettingsOf(env, env.modelStrong), { fetch, retry: { attempts: 1 } }),
-    embedder: embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }, fetch),
+    chat: chatClientFor(chatSettingsOf(env), { fetch, retry: { attempts: 1 }, cache, reasoning }),
+    judge: chatClientFor(chatSettingsOf(env, env.modelStrong), { fetch, retry: { attempts: 1 }, cache, reasoning }),
+    embedder: embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }, fetch, cache),
   };
 }
 
@@ -782,13 +774,10 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     const cache = await openWireCache({ path: ':memory:', driver: nodeDriver() });
     const options = { rows: ['near-raw', 'long-horizon'], horizon: { perCategory: 1, callTimeoutMs: 0 }, samples: ['conv-30'], perCategory: 2, adversarial: 1, cache };
     const remembered = (fetch: typeof globalThis.fetch, fresh = false) => {
-      const clients = liveClients(env, fetch);
-      const reasoning = { effort: 'none' };
+      const replay = cache.adapter({ fresh });
       return {
-        chat: cachedChatClient(clients.chat, cache, { fresh, defaults: { reasoning } }),
-        judge: cachedChatClient(clients.judge, cache, { fresh, defaults: { reasoning } }),
-        horizonClient: cachedChatClient(clients.chat, cache, { fresh }),
-        embedder: clients.embedder,
+        ...liveClients(env, fetch, replay, { effort: 'none' }),
+        horizonClient: chatClientFor(chatSettingsOf(env), { fetch, retry: { attempts: 1 }, cache: replay }),
       };
     };
     const first = scriptedFetch();

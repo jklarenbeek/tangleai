@@ -68,7 +68,7 @@ import {
   type HorizonOptions,
   type LiveReport,
 } from './lib/locomo-qa.ts';
-import { WIRE_CACHE_PATH, cachedChatClient, openWireCache, type WireCache } from './lib/wire-cache.ts';
+import { WIRE_CACHE_PATH, openWireCache, type WireCache } from './lib/wire-cache.ts';
 import RECALL_SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from './schemas/locomo-qa.schema.json' with { type: 'json' };
 import LIVE_SCHEMA from './schemas/locomo-qa-live.schema.json' with { type: 'json' };
@@ -184,18 +184,18 @@ if (args.flags.has('live')) {
     if (cache === undefined) console.error('wire cache: none — every call is bought');
     else {
       const stats = await cache.stats();
-      console.error(`wire cache: ${cache.path} — ${stats.embeddings} embeddings, ${stats.completions} completions remembered${freshRun ? ' and ignored (--fresh)' : ''}`);
+      const legacy = stats.legacyEmbeddings + stats.legacyCompletions;
+      console.error(`wire cache: ${cache.path} — ${stats.embeddings} embeddings, ${stats.completions} completions remembered${legacy === 0 ? '' : `; ${legacy} pre-0.56 audit rows retained but not replayed`}${freshRun ? ' and ignored (--fresh)' : ''}`);
     }
-    const remembered = <C extends { endpoint: { provider: string, base?: string, model: string } & Record<string, unknown>, complete: (request: any) => Promise<any> }>(client: C, defaults?: { reasoning?: unknown }): C =>
-      (cache === undefined ? client : cachedChatClient<C>(client, cache, { fresh: freshRun, defaults }));
-    const chat = remembered(chatClientFor(chatSettingsOf(env), wire), { reasoning: wire.reasoning });
-    const judge = remembered(chatClientFor(chatSettingsOf(env, env.modelStrong), wire), { reasoning: wire.reasoning });
+    const replay = cache?.adapter({ fresh: freshRun });
+    const chat = chatClientFor(chatSettingsOf(env), { ...wire, cache: replay });
+    const judge = chatClientFor(chatSettingsOf(env, env.modelStrong), { ...wire, cache: replay });
     // the long-horizon agent PLANS in its authoring call, and the suite's
     // measured finding is that thinking off wrecks planning — so its client
     // keeps the model's default there; sub-calls are extraction and the
     // harness sets the run's thinking control on them per request
-    const horizonClient = remembered(chatClientFor(chatSettingsOf(env), { retry }));
-    const embedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) });
+    const horizonClient = chatClientFor(chatSettingsOf(env), { retry, cache: replay });
+    const embedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }, undefined, replay);
     const liveStarted = performance.now();
     let fresh: LiveReport;
     try {

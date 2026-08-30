@@ -15,8 +15,8 @@ Every other workflow file points here instead of restating these.
   the README, not a default.
 - **The boundary** (`docs/BOUNDARY.md`): contracts and seams live in
   jarenjs; policies and infrastructure live here. Friction with the
-  suite's published types is not worked around silently — it is recorded
-  in `JARENASK.md` with the upstream fix path.
+  suite's published types is not worked around silently — it is recorded in
+  the local gitignored upstream brief with the upstream fix path.
 - **Dependency injection at every seam**: store, embedder, judge, clock,
   fetch, driver. A module that reaches for a global has a design bug.
 - **Errors are values** at content boundaries (`TangleError` codes

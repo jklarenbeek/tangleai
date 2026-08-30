@@ -79,6 +79,9 @@ export interface SettingsStore {
   write(next: Partial<Settings>): Promise<Settings>;
 }
 
+/** The replay seam published on both JarenJS wire-client factories. */
+export type AiReplayCache = NonNullable<NonNullable<Parameters<typeof createChatClient>[0]>['cache']>;
+
 /** The pre-0.46 embed setting named the OpenAI-compatible wire `openai`;
  * the provider set is now the chat client's, where that wire is `custom`. */
 function readEmbed(stored: Partial<EmbedSettings> | undefined): EmbedSettings {
@@ -131,7 +134,11 @@ export function embedWireConfigured(embed: EmbedSettings): boolean {
 }
 
 /** The embed setting, turned into a live embedder. Injected fetch for tests. */
-export function embedderFor(settings: Settings, fetchImpl?: typeof globalThis.fetch): Embedder {
+export function embedderFor(
+  settings: Settings,
+  fetchImpl?: typeof globalThis.fetch,
+  cache?: AiReplayCache,
+): Embedder {
   const embed = settings.embed;
   if (!embedWireConfigured(embed)) return createOfflineEmbedder();
   return createEmbeddingClient({
@@ -140,6 +147,7 @@ export function embedderFor(settings: Settings, fetchImpl?: typeof globalThis.fe
     model: embed.model ?? undefined,
     apiKey: embed.apiKey ?? undefined,
     fetch: fetchImpl,
+    cache,
   });
 }
 
@@ -168,6 +176,7 @@ export function chatClientFor(
     fetch?: typeof globalThis.fetch;
     retry?: { attempts?: number, baseMs?: number, maxMs?: number };
     reasoning?: { effort?: 'none' | 'minimal' | 'low' | 'medium' | 'high', enabled?: boolean, exclude?: boolean, max_tokens?: number };
+    cache?: AiReplayCache;
   } = {},
 ): ChatClient {
   if (!chatWireConfigured(chat)) throw new Error('no chat wire is configured');
@@ -179,5 +188,6 @@ export function chatClientFor(
     fetch: options.fetch,
     retry: options.retry,
     reasoning: options.reasoning,
+    cache: options.cache,
   });
 }

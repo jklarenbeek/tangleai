@@ -1,8 +1,8 @@
 # The workflow — how this repository is changed and proved
 
 Process lives here; product documentation lives one level up in `docs/`
-(`ARCHITECTURE.md`, `BOUNDARY.md`, `ROADMAP.md`, `PAPERS.md`,
-`JARENASK.md`, the benchmark documents).
+(`ARCHITECTURE.md`, `BOUNDARY.md`, `ROADMAP.md`, `PAPERS.md`, the benchmark
+documents).
 
 This is jarenjs's `docs/workflow/` re-derived for a smaller, younger repo —
 the same spine (rules once → build → tidy → ship), the same campaign model

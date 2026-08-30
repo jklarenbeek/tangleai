@@ -21,9 +21,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/ai": "^0.49.2",
+    "@jarenjs/ai": "^0.56.0",
     "@tangleai/core": "^0.1.0",
-    "@jarenjs/core": "^0.49.2",
-    "@jarenjs/validate": "^0.49.2"
+    "@jarenjs/core": "^0.56.0",
+    "@jarenjs/validate": "^0.56.0"
   }
 }

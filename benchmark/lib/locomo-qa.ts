@@ -101,10 +101,13 @@ import {
   createProgramAuthor,
   createProgramRunner,
   createStructuredOutput,
+  resolveEndpoint,
   transcriptText,
 } from '@jarenjs/ai';
 import { createHashEmbedder, type Embedder } from '@jarenjs/ai/embed';
+import { mapConcurrent } from '@jarenjs/core/async';
 import { excerpt } from '@jarenjs/core/chunk';
+import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { normalizeSeries } from '@jarenjs/core/series';
 import { compileJsonQuery } from '@jarenjs/json/query';
 import QUERY_SCHEMA from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };
@@ -113,7 +116,7 @@ import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
 import { createOfflineEmbedder, DEFAULT_THRESHOLDS, OFFLINE_EMBEDDER_DIMS, type PipelineThresholds } from '@tangleai/pipeline';
 
 import type { ChatClient } from '../../apps/desktop/src/settings.ts';
-import { mapLimit, type AiEnv } from './ai-env.ts';
+import type { AiEnv } from './ai-env.ts';
 import { CATEGORY_NAMES, LOCOMO_DATASET, SCORABLE_CATEGORIES, type LocomoSample } from './locomo.ts';
 import {
   addAuxCensus,
@@ -131,10 +134,9 @@ import {
 import { POLICIES_OFF, emptyCensus, ingestConversation, type IngestCensus, type IngestCorpus } from './locomo-ingest.ts';
 import { adversarialKeywordScore, numpyMean, officialScore, pyStrip } from './locomo-parity.ts';
 import { average, evidenceRecall, type GoldQuestion } from './recall.ts';
-import { drawDistinct, mulberry32 } from './random.ts';
 import { latency as latencyOf, type Latency } from './stats.ts';
 import { count, pct, score, table, type Cell } from './table.ts';
-import { isReplayed, type CachingChatClient, type WireCache } from './wire-cache.ts';
+import type { ReplayEndpoint, WireCache } from './wire-cache.ts';
 
 // ---------------------------------------------------------------------------
 // the settled constants
@@ -981,7 +983,7 @@ export interface LiveRunOptions {
   embedder: Embedder;
   /** The long-horizon agent's client — the answer model with its DEFAULT thinking, so the authoring call may plan; the answer client when absent. */
   horizonClient?: ChatClient;
-  /** The wire cache: embeddings looked up before the plan, replays counted by the meters; the chat clients are wrapped by the caller. */
+  /** The wire cache: embeddings are inspected before the plan; the caller gives both wire clients `cache.adapter(...)`. */
   cache?: WireCache;
   /** Ignore what the cache remembers (it still remembers what this run buys). */
   fresh?: boolean;
@@ -1039,33 +1041,37 @@ function charge(tallies: readonly Cost[], latencies: number[], usage: any, elaps
   latencies.push(elapsed);
 }
 
-/** Whether the client would answer this request from the wire cache (a plain client never does). */
-async function wouldReplay(client: ChatClient, request: unknown): Promise<boolean> {
-  const cached = (client as Partial<CachingChatClient>).cached;
-  return typeof cached === 'function' ? cached.call(client, request as Record<string, unknown>) : false;
+/** The purchase-time latency JarenJS attaches to a replay, or null for a wire reply. */
+function replayMs(result: unknown): number | null {
+  if (typeof result !== 'object' || result === null) return null;
+  const replayed = (result as { replayed?: unknown }).replayed;
+  if (typeof replayed !== 'object' || replayed === null) return null;
+  const ms = (replayed as { ms?: unknown }).ms;
+  return typeof ms === 'number' && Number.isFinite(ms) ? ms : null;
 }
 
 /**
- * A chat client whose every WIRE call is reserved on the account first
- * and settled after, into the given tallies; a call the wire cache
- * remembers is replayed instead — charged to the tallies as a replay,
- * to the account not at all.
+ * A chat client whose non-replayed logical calls are charged to the account
+ * and whose every result is charged to the report tallies. The up-front plan
+ * bounds all possible misses before concurrency starts; after the reply, the
+ * upstream replay marker distinguishes remembered work without a host-owned
+ * key preflight.
  */
 function meter(client: ChatClient, shared: Account, tallies: readonly Cost[], latencies: number[]): { endpoint: { provider: string }, complete: (request: any) => Promise<any> } {
   return {
     endpoint: client.endpoint,
     async complete(request: any) {
-      const hit = await wouldReplay(client, request);
-      if (!hit) {
-        const stop = shared.account.stop();
-        if (stop !== null) throw new BudgetStop(stop);
-        shared.account.reserve();
-      }
-      const started = hit ? 0 : shared.timer();
+      const stop = shared.account.stop();
+      if (stop !== null) throw new BudgetStop(stop);
+      const started = shared.timer();
       const result = await client.complete(request);
-      const replayed = isReplayed(result);
-      const elapsed = replayed ? result.replayedMs : shared.timer() - started;
-      if (!replayed) shared.account.settle(result.usage);
+      const rememberedMs = replayMs(result);
+      const replayed = rememberedMs !== null;
+      const elapsed = rememberedMs ?? shared.timer() - started;
+      if (!replayed) {
+        shared.account.reserve();
+        shared.account.settle(result.usage);
+      }
       charge(tallies, latencies, result.usage, elapsed, replayed);
       return result;
     },
@@ -1103,13 +1109,9 @@ function horizonClient(
         ...(signal === undefined ? {} : { signal }),
         ...(thinkingOff ? { reasoning: { effort: 'none' } } : {}),
       };
-      const hit = await wouldReplay(client, sent);
-      if (!hit) {
-        const stop = shared.account.stop();
-        if (stop !== null) throw new BudgetStop(stop);
-        shared.account.reserve();
-      }
-      const started = hit ? 0 : shared.timer();
+      const stop = shared.account.stop();
+      if (stop !== null) throw new BudgetStop(stop);
+      const started = shared.timer();
       let result: any;
       try {
         result = await client.complete(sent);
@@ -1119,9 +1121,13 @@ function horizonClient(
         hooks.onFailure(`${isAuthor ? 'authoring' : 'sub-call'}: ${error instanceof Error ? error.message : String(error)}`);
         throw error;
       }
-      const replayed = isReplayed(result);
-      const elapsed = replayed ? result.replayedMs : shared.timer() - started;
-      if (!replayed) shared.account.settle(result.usage);
+      const rememberedMs = replayMs(result);
+      const replayed = rememberedMs !== null;
+      const elapsed = rememberedMs ?? shared.timer() - started;
+      if (!replayed) {
+        shared.account.reserve();
+        shared.account.settle(result.usage);
+      }
       charge(tallies, latencies, result.usage, elapsed, replayed);
       return result;
     },
@@ -1137,13 +1143,13 @@ function horizonClient(
 async function partitionEmbeddings(
   cache: WireCache | undefined,
   fresh: boolean,
-  model: string,
+  endpoint: ReplayEndpoint,
   texts: readonly string[],
 ): Promise<{ known: Map<string, Float32Array>, missing: string[] }> {
   const unique = [...new Set(texts)];
   const known = new Map<string, Float32Array>();
   if (cache === undefined || fresh) return { known, missing: unique };
-  const vectors = await cache.embeddings.get(model, unique);
+  const vectors = await cache.embeddingHits(endpoint, unique);
   const missing: string[] = [];
   unique.forEach((text, i) => {
     const vector = vectors[i];
@@ -1167,7 +1173,6 @@ async function preEmbed(
   known: Map<string, Float32Array>,
   shared: Account,
   tally: { requests: number, texts: number, cached: number },
-  cache: WireCache | undefined,
 ): Promise<Map<string, Float32Array>> {
   const table = new Map<string, Float32Array>(known);
   tally.cached += known.size;
@@ -1180,7 +1185,6 @@ async function preEmbed(
     tally.requests++;
     tally.texts += batch.length;
     batch.forEach((text, j) => table.set(text, vectors[j]));
-    if (cache !== undefined) await cache.embeddings.put(wire.model, wire.dims ?? vectors[0]?.length ?? 0, batch, vectors);
   }
   return table;
 }
@@ -1258,8 +1262,18 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
   }
   if (corpora.size > 0) texts.push(...sampled.map((q) => q.text));
   const fresh = options.fresh === true;
+  const resolvedEmbed = resolveEndpoint({
+    provider: env.provider,
+    baseUrl: env.baseUrl ?? undefined,
+    model: wire.model,
+  });
+  const replayEndpoint: ReplayEndpoint = {
+    provider: resolvedEmbed.provider,
+    base: resolvedEmbed.base,
+    model: wire.model,
+  };
   const partition = isWire && texts.length > 0
-    ? await partitionEmbeddings(options.cache, fresh, wire.model, texts)
+    ? await partitionEmbeddings(options.cache, fresh, replayEndpoint, texts)
     : { known: new Map<string, Float32Array>(), missing: [] as string[] };
   const embedRequests = isWire ? embedRequestsFor(partition.missing) : 0;
   let chatCalls = 0;
@@ -1318,7 +1332,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
 
   // --- the corpora embedded once, through the wire, under the ceiling — the cache answering what it can
   const embedding = { requests: 0, texts: 0, cached: 0 };
-  const table = isWire && texts.length > 0 ? await preEmbed(wire, partition.missing, partition.known, shared, embedding, options.cache) : new Map<string, Float32Array>();
+  const table = isWire && texts.length > 0 ? await preEmbed(wire, partition.missing, partition.known, shared, embedding) : new Map<string, Float32Array>();
   const dims = wire.dims ?? table.values().next().value?.length ?? 0;
   const embedder = isWire ? tableEmbedder(wire, table, dims) : wire;
   const identity = { model: embedder.model, dims };
@@ -1383,7 +1397,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
         };
       }
 
-      await mapLimit(own, env.maxConcurrency, async (q, i) => {
+      await mapConcurrent(own, env.maxConcurrency, async (q, i) => {
         const { context, retrieved } = contextOf(i);
         const listed = new Set(context.map((u) => u.id));
 

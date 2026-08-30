@@ -29,7 +29,7 @@ import {
   randomExpectationOf,
   type GoldQuestion,
 } from '../../benchmark/lib/recall.ts';
-import { drawDistinct, mulberry32 } from '../../benchmark/lib/random.ts';
+import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import {
   KS,
   POLICIES_OFF,

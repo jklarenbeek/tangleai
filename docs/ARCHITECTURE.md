@@ -76,8 +76,7 @@ Two ordering rules are load-bearing and test-pinned:
   symlinks), `tsc --noEmit` under `strict` + `erasableSyntaxOnly` is the
   type gate, `node --test` runs `.ts` test files as-is. The inversion is
   deliberate: jarenjs is JSDoc-JS, and this repo being strict TS makes it
-  the standing compatibility test for jarenjs's generated `.d.ts` — see
-  [JARENASK.md](JARENASK.md) for what that audit found.
+  the standing compatibility test for jarenjs's generated `.d.ts`.
 - Policies are split plan/apply: the plan is a pure value you can assert on;
   only the applier touches the store.
 - Every edge is injected: `fetch`, `now`, RNG, store, judge, validator.
