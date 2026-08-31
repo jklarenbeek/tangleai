@@ -18,6 +18,9 @@
  *   sources / document_versions / document_elements / document_chunks —
  *               the independent, replaceable web-document corpus lane.
  *   settings  — key/value host configuration (folder, provider).
+ *   config_identities — the content-addressed, credential-free run
+ *               identities runs and chats refer to by id. Stored once
+ *               per identity; a run row carries only the reference.
  *
  * Keys are JSON Pointers into the document (`key: '/id'`), so the id
  * lives IN the record — a row is self-describing when exported.
@@ -45,6 +48,7 @@ export const TANGLE_DB_MODEL = {
           finishedAt: { type: ['string', 'null'] },
           status: { enum: ['running', 'ok', 'error'] },
           summary: {},
+          identityId: { type: 'string', pattern: '^[0-9a-f]{64}$' },
         },
       },
       key: '/id',
@@ -76,6 +80,8 @@ export const TANGLE_DB_MODEL = {
           at: { type: 'string' },
           citations: { type: 'array', items: { type: 'string' } },
           provider: { type: ['string', 'null'] },
+          identityId: { type: ['string', 'null'] },
+          usage: { type: ['object', 'null'] },
         },
       },
       key: '/id',
@@ -173,6 +179,17 @@ export const TANGLE_DB_MODEL = {
         properties: { key: ID, value: {} },
       },
       key: '/key',
+    },
+    config_identities: {
+      schema: {
+        type: 'object',
+        required: ['id', 'value'],
+        properties: {
+          id: { type: 'string', pattern: '^[0-9a-f]{64}$' },
+          value: { type: 'object' },
+        },
+      },
+      key: '/id',
     },
   },
 } as const;

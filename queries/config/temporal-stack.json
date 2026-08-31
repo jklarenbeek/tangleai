@@ -1,0 +1,132 @@
+{
+  "$comment": "The temporal-stack question: which exact effective stack produced and scored LoCoMo category-2 (temporal) QA. Filters temporal rows, joins each result row to the identity table, groups by the complete effective stack id, and publishes sample counts, score aggregates, token usage and the cost state, plus prompt/schema/policy/embedding revisions where an identity exists. Historic rows without a recorded identity stay one honest legacy-unrecorded group with an empty stack — no model fact is invented — and the keyless model-free ceiling rides beside as a not-run analytic row. Input: { live, keyless } — the two committed answer artifacts. Executed verbatim with compileJsonQuery.",
+  "$let": {
+    "liveGroups": [
+      {
+        "$for": {
+          "row": "$.live.configurations[*]"
+        },
+        "$let": {
+          "ref": {
+            "$head": {
+              "$for": {
+                "r": "$.live.configIdentities.rows[*]"
+              },
+              "$where": {
+                "$eq": [
+                  "$r.rowId",
+                  "$row.key"
+                ]
+              },
+              "$return": "$r"
+            }
+          }
+        },
+        "$groupby": {
+          "identityStatus": "$ref.identityStatus",
+          "identityId": "$ref.identityId"
+        },
+        "$return": {
+          "identityStatus": "$identityStatus",
+          "identityId": "$identityId",
+          "rows": [
+            {
+              "$for": {
+                "g": "$row"
+              },
+              "$orderby": [
+                "$g.key"
+              ],
+              "$return": "$g.key"
+            }
+          ],
+          "temporalQuestions": {
+            "$sum": {
+              "$for": {
+                "g": "$row"
+              },
+              "$return": {
+                "$count": "$g.questions.results[?(@.category==2)]"
+              }
+            }
+          },
+          "temporalF1": {
+            "$avg": "$row.f1.byCategory['2']"
+          },
+          "temporalCeiling": {
+            "$avg": "$row.ceiling.byCategory['2']"
+          },
+          "tokens": {
+            "$sum": "$row.cost.tokens"
+          },
+          "costState": "provider usage retained per row; no rate card is sourced, so cost is unknown"
+        }
+      }
+    ]
+  },
+  "$return": {
+    "question": "which exact effective stack produced and scored temporal (category 2) QA?",
+    "liveStacks": [
+      {
+        "$for": {
+          "group": "$liveGroups[*]"
+        },
+        "$let": {
+          "identity": {
+            "$head": {
+              "$for": {
+                "i": "$.live.configIdentities.identities[*]"
+              },
+              "$where": {
+                "$eq": [
+                  "$i.identityId",
+                  "$group.identityId"
+                ]
+              },
+              "$return": "$i"
+            }
+          }
+        },
+        "$orderby": [
+          "$group.identityStatus"
+        ],
+        "$return": {
+          "identityStatus": "$group.identityStatus",
+          "identityId": "$group.identityId",
+          "rows": "$group.rows",
+          "temporalQuestions": "$group.temporalQuestions",
+          "temporalF1": "$group.temporalF1",
+          "temporalCeiling": "$group.temporalCeiling",
+          "tokens": "$group.tokens",
+          "costState": "$group.costState",
+          "stack": {
+            "answerModel": "$identity.roles.chat.model",
+            "requestKind": "$identity.requested.kind",
+            "promptRevision": "$identity.roles.chat.prompt.revision",
+            "responseSchemaRevision": "$identity.roles.chat.responseSchema.revision",
+            "policyComponent": "$identity.components.policy",
+            "embedding": "$identity.embedding"
+          }
+        }
+      }
+    ],
+    "keylessAnalytic": {
+      "identityStatus": "not-run",
+      "detail": "the keyless answer instrument's model-free temporal ceiling; no provider stack ran",
+      "rows": [
+        {
+          "$for": {
+            "c": "$.keyless.configurations[?(@.ceiling)]"
+          },
+          "$orderby": [
+            "$c.key"
+          ],
+          "$return": "$c.key"
+        }
+      ],
+      "temporalCeiling": {
+        "$avg": "$.keyless.configurations[*].ceiling.all.byCategory['2']"
+      }
+    }
+  }
+}

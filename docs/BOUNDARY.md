@@ -36,6 +36,7 @@ adapters, host databases, schedulers, paper-specific pipelines, servers and UI
 | orchestration | `@jarenjs/flow` FSM/DAG compile + durable sessions | future: GMPL patterns as flow documents (roadmap: patterns as flow documents) |
 | scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
+| configuration identity | `PROVIDERS`/`resolveEndpoint` (the only endpoint authority), probes, clients, budget/structured-output/toolbox, the replay cache keyed by the effective request; `applyMergePatch`, `canonicalSha256`, `compileJsonQuery`, `$query` validation, `jaren-emit` types, `deepFreeze`/`cloneJson`, `sameIdentity`, `diffContracts` | `@tangleai/config`: the profile registry, pure resolution, TCFG refusal vocabulary and the run-identity envelope; the host adapter binding write-only secret slots; the identity repository beside runs/chats — a run identity is never a replay key (see CONFIGURATION.md) |
 
 ## What the suite already has — read before building (audited 2026-08-30, v0.56.0)
 

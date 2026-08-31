@@ -64,6 +64,7 @@ import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { createHashEmbedder, type Embedder } from '@jarenjs/ai/embed';
 import { sizeOf } from '@jarenjs/core/chunk';
 import { sameIdentity } from '@jarenjs/ai';
+import { analyticEnvelope } from './report-envelope.ts';
 import { memoryId, recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createOfflineEmbedder, OFFLINE_EMBEDDER_DIMS } from '@tangleai/pipeline';
@@ -1193,6 +1194,7 @@ export async function runLocomoPolicy(dataset: Dataset, options: PolicyRunOption
   const report: Omit<LocomoPolicy, 'reportId'> = {
     benchmark: 'locomo',
     instrument: 'locomo-policy',
+    configIdentities: analyticEnvelope(attempts.map((attempt) => attempt.runId)),
     dataset: {
       path: LOCOMO_DATASET,
       sha256: dataset.sha256,
@@ -1870,6 +1872,8 @@ export function decisionOf(
 
 /** What the live phase needs of the world; every seam injected, none created here. */
 export interface LivePhaseInput {
+  /** Resolves the run's config identity once the embedding identity is observed; required before spend by the live path. */
+  configIdentityFor?: (observed: { model: string, dims: number }) => Promise<import('@tangleai/config').RunIdentity>;
   dataset: Dataset;
   phase: 'selection' | 'confirmation';
   cells: readonly CellSpec[];
@@ -1919,6 +1923,7 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
   const seed = input.seed ?? POLICY_SEED;
   const live = await runLocomoQaLive(input.dataset, {
     env: input.env,
+    ...(input.configIdentityFor === undefined ? {} : { configIdentityFor: input.configIdentityFor }),
     chat: input.chat,
     judge: input.judge,
     embedder: input.embedder,

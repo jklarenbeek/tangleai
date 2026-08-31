@@ -15,7 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
 import { toNodeHandler } from '@jarenjs/contract/node';
-import { createDbMemoryStore, createDocumentStore, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
+import { createDbMemoryStore, createDocumentStore, createIdentityRepository, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
 import { SafeStaticFetcher, type StaticFetchOptions } from '@tangleai/documents';
 
 import { DESKTOP_CONTRACT } from './contract.ts';
@@ -24,6 +24,10 @@ import { createHandlers } from './handlers.ts';
 import { createLiveHub } from './live.ts';
 import { createSettingsStore, type Settings } from './settings.ts';
 import { createChatEngine } from './chat.ts';
+import { settingsStack } from './ai-host.ts';
+
+/** The run kinds that must say what stack produced them. */
+export const CONFIG_AWARE_RUN_KINDS = ['sync', 'document', 'documents'] as const;
 
 export const DESKTOP_VERSION = '0.1.0';
 
@@ -52,7 +56,8 @@ export interface Desktop {
 export async function createDesktop(options: DesktopOptions = {}): Promise<Desktop> {
   const db = await openTangleDb({ path: options.dbPath, driver: options.driver });
   const memoryStore = createDbMemoryStore(db.collection('memories'));
-  const runLog = createRunLog(db, { now: options.now });
+  const runLog = createRunLog(db, { now: options.now, configAwareKinds: CONFIG_AWARE_RUN_KINDS });
+  const identities = createIdentityRepository(db);
   const documentStore = createDocumentStore(db);
   const documentFetcher = new SafeStaticFetcher({
     ...options.documentFetch,
@@ -67,13 +72,15 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
     memoryStore,
     documentStore,
     settings: () => settings.read(),
+    stackFor: settingsStack,
+    identities,
     fetch: options.fetch,
     now: options.now,
   });
 
   const contract = compileContract(DESKTOP_CONTRACT);
   const handlers = createHandlers({
-    db, memoryStore, runLog, settings, live, chat, documentStore, documentFetcher,
+    db, memoryStore, runLog, settings, identities, stackFor: settingsStack, live, chat, documentStore, documentFetcher,
     version: DESKTOP_VERSION,
     fetch: options.fetch,
     now: options.now,

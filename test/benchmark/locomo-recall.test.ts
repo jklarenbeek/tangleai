@@ -40,6 +40,7 @@ import {
   type RecallReport,
 } from '../../benchmark/lib/locomo-recall.ts';
 import SCHEMA from '../../benchmark/schemas/locomo-recall.schema.json' with { type: 'json' };
+import RUN_IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 
 const REPORT_PATH = 'benchmark/results/locomo-recall.json';
 const DOC_PATH = 'docs/LOCOMO_RECALL.md';
@@ -159,6 +160,7 @@ describe('the corpus builder', () => {
 describe('the LoCoMo evidence-recall instrument', { skip: missing }, () => {
   const available = dataset.available ? dataset : null;
   const validator = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' });
+  validator.addSchema(RUN_IDENTITY_SCHEMA as Record<string, unknown>);
   const validate = validator.compile(SCHEMA as Record<string, unknown>);
 
   it('reproduces the committed report byte for byte, and the doc from it', async () => {

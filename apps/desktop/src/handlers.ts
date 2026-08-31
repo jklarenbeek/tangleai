@@ -26,10 +26,15 @@ import {
 } from '@tangleai/documents';
 import { createSearxngClient } from '@tangleai/search';
 
+import type { IdentityRepository } from '@tangleai/store';
+
+import { registryRevisionOf } from '@tangleai/config';
+
 import type { LiveHub } from './live.ts';
-import type { SettingsStore } from './settings.ts';
+import type { Settings, SettingsStore } from './settings.ts';
 import { embedderFor, embedWireConfigured } from './settings.ts';
 import type { ChatEngine } from './chat.ts';
+import { inspectStack, productionRegistry, type HostStack, type StackOptions } from './ai-host.ts';
 import { syncFolder, type DocumentRecord } from './ingest.ts';
 
 export interface HandlerSeams {
@@ -37,6 +42,9 @@ export interface HandlerSeams {
   memoryStore: MemoryStore;
   runLog: RunLog;
   settings: SettingsStore;
+  identities: IdentityRepository;
+  /** Resolves settings into the identity-bearing stack; injected so tests script it. */
+  stackFor: (settings: Settings, options: StackOptions) => Promise<HostStack>;
   live: LiveHub;
   chat: ChatEngine;
   documentStore: DocumentCorpusStore;
@@ -45,6 +53,10 @@ export interface HandlerSeams {
   fetch?: typeof globalThis.fetch;
   now?: () => string;
 }
+
+/** How a run-producing handler refuses a bad configuration: the issues, as data. */
+const refusalDetail = (stack: { issues: Array<{ code: string, path: string, detail: string }> }): { issues: Array<{ code: string, path: string, detail: string }> } =>
+  ({ issues: stack.issues.map(({ code, path, detail }) => ({ code, path, detail })) });
 
 function configuredBrowser(current: Awaited<ReturnType<SettingsStore['read']>>, fetchImpl?: typeof globalThis.fetch): BrowserFetcher {
   if (current.browser.mode === 'webview') {
@@ -66,9 +78,29 @@ function memorySummary(unit: MemoryUnit): any {
 }
 
 export function createHandlers(seams: HandlerSeams): Record<string, any> {
-  const { db, memoryStore, runLog, settings, live, chat, documentStore, documentFetcher } = seams;
+  const { db, memoryStore, runLog, settings, identities, stackFor, live, chat, documentStore, documentFetcher } = seams;
   const now = seams.now ?? ((): string => new Date().toISOString());
   let syncing = false;
+
+  /**
+   * Resolve the current stack for a run producer. A `ready` stack's
+   * identity is stored before any work; a `provisional` one finalizes
+   * from the first embedding reply — the onFinal hook persists the
+   * identity and attaches it to the run BEFORE the vectors reach the
+   * pipeline, so nothing is stored under an unproven identity.
+   */
+  async function stackForRun(current: Settings): Promise<{ stack: HostStack, setRunId: (id: string) => void }> {
+    let runId: string | null = null;
+    const stack = await stackFor(current, {
+      fetch: seams.fetch,
+      onFinal: async (identity) => {
+        await identities.put(identity);
+        if (runId !== null) await runLog.attachIdentity(runId, identity.identityId);
+      },
+    });
+    if (stack.state === 'ready') await identities.put(stack.identity);
+    return { stack, setRunId: (id) => { runId = id; } };
+  }
 
   return {
     'status.get': async () => {
@@ -95,9 +127,48 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       };
     },
 
-    'settings.get': () => settings.read(),
+    'settings.get': async () => {
+      const view = await settings.readPublic();
+      return { ...view.settings, slots: view.slots, issues: view.issues };
+    },
 
-    'settings.set': async (input: { settings: any }) => settings.write(input.settings),
+    'settings.set': async (input: { settings: any, clearChatKey?: boolean, clearEmbedKey?: boolean, clearBrowserToken?: boolean }) => {
+      await settings.write(input.settings, {
+        clearChatKey: input.clearChatKey,
+        clearEmbedKey: input.clearEmbedKey,
+        clearBrowserToken: input.clearBrowserToken,
+      });
+      const view = await settings.readPublic();
+      return { ...view.settings, slots: view.slots, issues: view.issues };
+    },
+
+    /** Read-only: the pure resolver over the current settings — no probe, no client, no secret. */
+    'config.inspect': async () => {
+      const { settings: current } = await settings.readValidated();
+      const inspection = await inspectStack(current);
+      const registry = productionRegistry as { capabilities: any[], profiles: any[] };
+      return {
+        registry: {
+          revision: await registryRevisionOf(productionRegistry as never),
+          tags: registry.capabilities.map((capability) => ({
+            tag: capability.tag,
+            intent: capability.intent,
+            candidates: capability.candidates.length,
+            limitations: capability.limitations,
+          })),
+          profiles: registry.profiles.map((profile) => ({ id: profile.id, kind: profile.kind, description: profile.description ?? '' })),
+        },
+        request: inspection.request,
+        resolution: { state: inspection.state, issues: inspection.issues },
+        identity: inspection.identity,
+        slots: {
+          chatKey: current.chat.apiKey !== null,
+          embedKey: current.embed.apiKey !== null,
+          browserToken: current.browser.token !== null,
+        },
+        hostObservation: null,
+      };
+    },
 
     'folder.sync': async (_input: unknown, ctx: any) => {
       const current = await settings.read();
@@ -110,13 +181,17 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       }
       if (syncing) return ctx.fail('bad-folder', {}, { reason: 'a sync is already running' });
 
+      const { stack, setRunId } = await stackForRun(current);
+      if (stack.state === 'refused') return ctx.fail('config-refused', {}, refusalDetail(stack));
+
       syncing = true;
-      const run = await runLog.startRun('sync');
+      const run = await runLog.startRun('sync', stack.state === 'ready' ? { identityId: stack.identity.identityId } : {});
+      setRunId(run.id);
       live.start(run);
       try {
         const pipeline = createPipeline({
           store: memoryStore,
-          embedder: embedderFor(current, seams.fetch),
+          embedder: stack.embedder,
           judge: numericContrastJudge(),
           now,
         });
@@ -131,7 +206,11 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
             void runLog.recordEvent(run.id, record);
           },
         });
-        await runLog.finishRun(run.id, 'ok', { files: outcome.files, report: outcome.report });
+        const finished = await runLog.finishRun(run.id, 'ok', { files: outcome.files, report: outcome.report });
+        if (!finished.ok) {
+          live.finish('error');
+          return ctx.fail('config-refused', {}, { issues: [{ code: 'TCFG1012', path: '/embed', detail: finished.reason }] });
+        }
         live.finish('ok');
         return { runId: run.id, files: outcome.files, report: outcome.report };
       } catch (error) {
@@ -150,7 +229,10 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       force?: boolean; maxTokens?: number; overlapTokens?: number;
     }, ctx: any) => {
       const current = await settings.read();
-      const run = await runLog.startRun('document');
+      const { stack, setRunId } = await stackForRun(current);
+      if (stack.state === 'refused') return ctx.fail('config-refused', {}, refusalDetail(stack));
+      const run = await runLog.startRun('document', stack.state === 'ready' ? { identityId: stack.identity.identityId } : {});
+      setRunId(run.id);
       live.start(run);
       const started = new Map<string, number>();
       const eventWrites: Promise<unknown>[] = [];
@@ -158,7 +240,7 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
         const ingester = createDocumentIngester({
           store: documentStore,
           fetcher: documentFetcher,
-          embedder: embedderFor(current, seams.fetch),
+          embedder: stack.embedder,
           browser: configuredBrowser(current, seams.fetch),
           now,
         });
@@ -184,12 +266,16 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
           },
         });
         await Promise.all(eventWrites);
-        await runLog.finishRun(run.id, 'ok', {
+        const finished = await runLog.finishRun(run.id, 'ok', {
           status: outcome.status,
           sourceId: outcome.source.id,
           versionId: outcome.version.id,
           metrics: outcome.version.metrics,
         });
+        if (!finished.ok) {
+          live.finish('error');
+          return ctx.fail('config-refused', {}, { issues: [{ code: 'TCFG1012', path: '/embed', detail: finished.reason }] });
+        }
         live.finish('ok');
         return outcome;
       } catch (error) {
@@ -204,9 +290,12 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
 
     'documents.ingestbatch': async (input: {
       urls: string[]; strategy?: 'recursive' | 'semantic-boundary' | 's2'; allowBrowser?: boolean;
-    }) => {
+    }, ctx: any) => {
       const current = await settings.read();
-      const run = await runLog.startRun('documents');
+      const { stack, setRunId } = await stackForRun(current);
+      if (stack.state === 'refused') return ctx.fail('config-refused', {}, refusalDetail(stack));
+      const run = await runLog.startRun('documents', stack.state === 'ready' ? { identityId: stack.identity.identityId } : {});
+      setRunId(run.id);
       live.start(run);
       const started = new Map<string, number>();
       const eventWrites: Promise<unknown>[] = [];
@@ -214,7 +303,7 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
         const ingester = createDocumentIngester({
           store: documentStore,
           fetcher: documentFetcher,
-          embedder: embedderFor(current, seams.fetch),
+          embedder: stack.embedder,
           browser: configuredBrowser(current, seams.fetch),
           now,
         });
@@ -244,7 +333,11 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
         }));
         await Promise.all(eventWrites);
         const succeeded = results.filter((result) => result.outcome !== undefined).length;
-        await runLog.finishRun(run.id, 'ok', { requested: results.length, succeeded, failed: results.length - succeeded });
+        const finished = await runLog.finishRun(run.id, 'ok', { requested: results.length, succeeded, failed: results.length - succeeded });
+        if (!finished.ok) {
+          live.finish('error');
+          return ctx.fail('config-refused', {}, { issues: [{ code: 'TCFG1012', path: '/embed', detail: finished.reason }] });
+        }
         live.finish('ok');
         return results;
       } catch (error) {

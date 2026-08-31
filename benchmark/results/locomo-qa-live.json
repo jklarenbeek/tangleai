@@ -116,6 +116,35 @@
       "conv-50#183"
     ]
   },
+  "configIdentities": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "long-context",
+        "identityStatus": "legacy-unrecorded"
+      },
+      {
+        "rowId": "near-raw",
+        "identityStatus": "legacy-unrecorded"
+      },
+      {
+        "rowId": "rag-observation",
+        "identityStatus": "legacy-unrecorded"
+      },
+      {
+        "rowId": "rag-summary",
+        "identityStatus": "legacy-unrecorded"
+      },
+      {
+        "rowId": "long-horizon",
+        "identityStatus": "legacy-unrecorded"
+      },
+      {
+        "rowId": "near",
+        "identityStatus": "legacy-unrecorded"
+      }
+    ]
+  },
   "runs": [
     {
       "at": "2026-08-27T18:34:34.504Z",

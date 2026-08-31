@@ -17,12 +17,12 @@ import { hashContent } from '@jarenjs/core/string';
 import { excerpt } from '@jarenjs/core/chunk';
 import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
-import type { TangleDb } from '@tangleai/store';
+import type { IdentityRepository, TangleDb } from '@tangleai/store';
 import { recallDocumentChunks, type DocumentCorpusStore, type RankedDocumentChunk } from '@tangleai/documents';
 
 import type { Settings } from './settings.ts';
-import { chatClientFor, chatWireConfigured, embedderFor } from './settings.ts';
 import { asRows } from '@tangleai/store';
+import type { HostStack, StackOptions } from './ai-host.ts';
 
 export interface ChatMessageRecord {
   id: string;
@@ -30,7 +30,12 @@ export interface ChatMessageRecord {
   text: string;
   at: string;
   citations?: string[];
+  /** Display metadata only — the identity reference is the identity. */
   provider?: string | null;
+  /** The content-addressed config identity that produced this answer; null when no stack ran or none could finalize. */
+  identityId?: string | null;
+  /** Provider-reported usage, kept verbatim as observation. */
+  usage?: unknown;
 }
 
 export interface ChatOutcome {
@@ -45,12 +50,15 @@ export interface ChatEngineOptions {
   memoryStore: MemoryStore;
   documentStore: DocumentCorpusStore;
   settings: () => Promise<Settings>;
+  /** Resolves settings into the identity-bearing stack; injected so tests script it. */
+  stackFor: (settings: Settings, options: StackOptions) => Promise<HostStack>;
+  identities: IdentityRepository;
   fetch?: typeof globalThis.fetch;
   now?: () => string;
   recallK?: number;
 }
 
-const SYSTEM_PROMPT = [
+export const SYSTEM_PROMPT = [
   'You are Tangle, an assistant whose ONLY knowledge sources are the two explicit lanes below:',
   'curated memories and verbatim document chunks. Answer from these sources and cite the ones you',
   'used by their [id]. If neither lane contains the answer, say so plainly —',
@@ -126,7 +134,24 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       const settings = await options.settings();
       await persist({ role: 'user', text, at: now() });
 
-      const embedder = embedderFor(settings, options.fetch);
+      const stack = await options.stackFor(settings, { fetch: options.fetch, retry: { attempts: 1 } });
+      if (stack.state === 'refused') {
+        // an incomplete or invalid configuration is a value the user can
+        // fix — never an answer that pretends another stack was asked
+        const detail = stack.issues.map((issue) => `${issue.code} ${issue.path}`).join('; ');
+        const reply = await persist({
+          role: 'assistant',
+          text: `_The AI configuration was refused (${detail}) — fix Settings; no source was consulted._`,
+          at: now(),
+          citations: [],
+          provider: null,
+          identityId: null,
+          usage: null,
+        });
+        return { reply, citations: [], documentCitations: [], provider: null };
+      }
+
+      const embedder = stack.embedder;
       let ranked: Array<{ unit: MemoryUnit, score: number }> = [];
       let documentRanked: RankedDocumentChunk[] = [];
       try {
@@ -140,18 +165,20 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       }
       const citations = ranked.map((r) => r.unit);
 
-      const chat = settings.chat;
+      const runIdentity = stack.state === 'ready' ? stack.identity : stack.embedder.finalIdentity();
+      if (runIdentity !== null) await options.identities.put(runIdentity);
 
+      const chat = settings.chat;
       let replyText: string;
       let provider: string | null = null;
+      let usage: unknown = null;
 
-      if (!chatWireConfigured(chat)) {
+      if (stack.chat === null) {
         replyText = groundedOfflineReply(ranked, documentRanked, '_No chat model is configured (Settings → Chat provider)._');
       } else {
         try {
-          const client = chatClientFor(chat, { fetch: options.fetch, retry: { attempts: 1 } });
           const history = await this.history(12);
-          const outcome = await client.complete({
+          const outcome = await stack.chat.complete({
             messages: [
               { role: 'system', content: `${SYSTEM_PROMPT}\n\n${memoryContext(ranked)}\n\n${documentContext(documentRanked)}` },
               ...history.slice(0, -1).map((m) => ({ role: m.role, content: m.text })),
@@ -162,6 +189,7 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
           replyText = String(outcome.message?.content ?? '').trim()
             || groundedOfflineReply(ranked, documentRanked, '_The model returned an empty reply._');
           provider = `${chat.provider}/${chat.model}`;
+          usage = (outcome as { usage?: unknown }).usage ?? null;
         } catch (error) {
           const reason = error instanceof Error ? error.message : String(error);
           replyText = groundedOfflineReply(ranked, documentRanked, `_The chat wire failed (${excerpt(reason, 120)}) — answering from retrieved sources._`);
@@ -174,6 +202,8 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
         at: now(),
         citations: [...citations.map((u) => u.id), ...documentRanked.map((item) => item.chunk.id)],
         provider,
+        identityId: runIdentity?.identityId ?? null,
+        usage,
       });
       return { reply, citations, documentCitations: documentRanked, provider };
     },

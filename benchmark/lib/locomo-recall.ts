@@ -73,6 +73,7 @@ import {
 } from './recall.ts';
 import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { count, pct, score, table, type Cell } from './table.ts';
+import { analyticEnvelope } from './report-envelope.ts';
 
 /** The cut-offs every row is scored at. */
 export const KS = [5, 10, 20] as const;
@@ -114,6 +115,8 @@ export interface RecallRow {
 export interface RecallReport {
   benchmark: 'locomo';
   instrument: 'locomo-recall';
+  /** The shared config-identity envelope: every recall row is not-run analysis. */
+  configIdentities: import('@tangleai/config').IdentityEnvelope;
   dataset: {
     path: string;
     sha256: string;
@@ -382,6 +385,7 @@ export async function runLocomoRecall(
   const report: RecallReport = {
     benchmark: 'locomo',
     instrument: 'locomo-recall',
+    configIdentities: analyticEnvelope(rows.map((row) => row.key)),
     dataset: {
       path: LOCOMO_DATASET,
       sha256: dataset.sha256,

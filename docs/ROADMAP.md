@@ -342,21 +342,17 @@ already has.
 
 ## Configuration and persistence
 
-- [ ] **Config profiles (capability tags).** *Wanted:* `reasoning | fast | cheap`
-  capability tags resolved to concrete models from validated JSON registries (not
-  TOML), per-role overrides, and the config recorded beside every result so "which
-  stack wins temporal QA" is a query — a `@jarenjs/json` document over the report
-  JSON (FLWOR, joins, grouping), replacing the predecessor's graph-store analysis
-  patterns with nothing to install. *Stands on:* `@jarenjs/validate` with `$query`
-  for the cross-field rules a plain schema cannot state (a tag resolving to a
-  model the provider does not list, a `dims` disagreeing with the embedder's
-  identity); `@jarenjs/josl/gbnf` beside the hosted `json_schema` twins if a
-  llama.cpp-family provider becomes a profile. *Salvage:* the seed registries in
-  `attic/memflow-config/` (refresh the dated model IDs, keep the shape) and the
-  profile design (`AgentConfigProfile` inheritance, cache key includes inference
-  params, embedding stays a singleton) in §1 of
-  `attic/memflow-PLAN_LOCOMO_INTEGRATION.md`. *Closes on:* the policy and
-  consolidation matrices become one config-file diff per cell.
+- [ ] **Desktop profile selection.** *Wanted:* the desktop selecting a NAMED
+  registry profile (`config/profiles.json` — shipped, resolved and inspected
+  read-only via [CONFIGURATION.md](CONFIGURATION.md)) instead of always running
+  the generated legacy projection of its settings: a settings control that
+  requests a profile, surfaces the resolver's refusals as fixable issues, and
+  never lets a named profile fall back to legacy or offline behavior. *Stands
+  on:* `@tangleai/config`'s resolver and the desktop host adapter, both
+  shipped; the read-only inspection operation showing what a selection would
+  resolve to. *Closes on:* a desktop run row whose identity carries
+  `requested.kind: "profile"`, produced from a control a user clicked, with a
+  refused selection rendering its `TCFG` issues.
 - [ ] **The vector column.** *Wanted:* `recallByEmbedding` and
   `recallDocumentChunks` over `@jarenjs/db`'s `derive: 'vector'` column and its
   k-nearest plan instead of `list()` plus a cosine sweep. *Constraint:* `dims` is

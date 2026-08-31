@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "credentialSlots": ["openrouter-primary"],
+  "candidates": [
+    {
+      "id": "openrouter-glm-flash",
+      "kind": "chat",
+      "provider": "openrouter",
+      "model": "z-ai/glm-5.3-flash",
+      "baseUrl": null,
+      "credentialSlot": "openrouter-primary",
+      "features": ["structured-json-schema"],
+      "rateCard": null,
+      "limitations": "the flash tier of its family; its endpoint refuses to disable reasoning, so thinking is always the provider default; no sourced rate card yet, so its cost is unknown, never free"
+    },
+    {
+      "id": "openrouter-qwen-27b",
+      "kind": "chat",
+      "provider": "openrouter",
+      "model": "qwen/qwen3.8-27b",
+      "baseUrl": null,
+      "credentialSlot": "openrouter-primary",
+      "features": ["structured-json-schema"],
+      "rateCard": null,
+      "limitations": "declared as the stronger judge model by operator configuration; no measured quality or cost evidence in this repository yet"
+    },
+    {
+      "id": "builtin-hash-64",
+      "kind": "embedding",
+      "provider": "builtin",
+      "model": "hash-trigram-64",
+      "dims": 64,
+      "baseUrl": null,
+      "credentialSlot": null,
+      "features": [],
+      "rateCard": null,
+      "limitations": "the deliberately offline reference embedder at the measured width; it costs nothing and proves nothing about semantic quality"
+    }
+  ],
+  "capabilities": [
+    {
+      "tag": "reasoning",
+      "intent": "prefer the model declared strongest at multi-step reasoning",
+      "candidates": [
+        { "candidate": "openrouter-qwen-27b", "priority": 1 },
+        { "candidate": "openrouter-glm-flash", "priority": 2 }
+      ],
+      "limitations": "an operator-declared ordering; no benchmark in this repository has measured reasoning quality for either candidate, and the tag's spelling proves nothing"
+    },
+    {
+      "tag": "fast",
+      "intent": "prefer the lowest-latency answer model",
+      "candidates": [{ "candidate": "openrouter-glm-flash", "priority": 1 }],
+      "limitations": "an operator-declared ordering; latency has not been measured by an instrument here, and the tag's spelling proves nothing"
+    },
+    {
+      "tag": "cheap",
+      "intent": "prefer the lowest-cost answer model",
+      "candidates": [{ "candidate": "openrouter-glm-flash", "priority": 1 }],
+      "limitations": "an operator-declared ordering; no rate card is sourced yet, so cost is unknown rather than low, and the tag's spelling proves nothing"
+    }
+  ],
+  "prompts": [
+    {
+      "id": "desktop-grounded-chat",
+      "revision": "dbb5ae4536d9258a79912c376ac75761f8592c67fa8db2cc4ca60b74d8b6bf17",
+      "description": "the desktop chat system template: two explicit source lanes, cite by id, never invent; the revision is the canonical SHA-256 of the template content and a test recomputes it from the shipped prompt"
+    }
+  ],
+  "responseSchemas": [],
+  "components": [
+    {
+      "id": "memory-policies-shipped",
+      "kind": "policy",
+      "package": "@tangleai/pipeline",
+      "export": "createPipeline",
+      "revision": "f67151cea75f246c313378d12b7217f7b7b9898b6d9a5e0bf7e6a8d060c1e306",
+      "description": "the shipped memory-policy defaults (novelty 0.97, contradiction 0.8, crystallize 0.9, maxPairs 20, k 10, minScore 0, built-in embedding); the revision is the policy instrument's published shipped-control cell identity, and the measured selection of a default beyond it is still open"
+    }
+  ],
+  "inference": [
+    {
+      "id": "chat-single-attempt",
+      "temperature": null,
+      "maxTokens": null,
+      "retry": { "attempts": 1, "baseMs": 0, "maxMs": 0 },
+      "reasoning": null
+    },
+    {
+      "id": "benchmark-patient",
+      "temperature": null,
+      "maxTokens": null,
+      "retry": { "attempts": 8, "baseMs": 3000, "maxMs": 60000 },
+      "reasoning": null
+    }
+  ],
+  "budgets": [
+    {
+      "id": "live-guard",
+      "maxCalls": 200,
+      "maxTokens": null,
+      "maxMs": null,
+      "maxConcurrency": 4
+    }
+  ],
+  "profiles": [
+    {
+      "id": "desktop-default",
+      "kind": "root",
+      "description": "the desktop's profile-selected stack: a fast chat wire over the built-in embedder and the shipped memory policies; a dead wire degrades to grounded recall at runtime, which is product behavior, not resolution fallback",
+      "roles": {
+        "chat": {
+          "capability": "fast",
+          "candidate": null,
+          "prompt": "desktop-grounded-chat",
+          "responseSchema": null,
+          "tools": [],
+          "toolsRequired": false,
+          "inference": "chat-single-attempt",
+          "ranker": null
+        }
+      },
+      "embedding": "builtin-hash-64",
+      "policyComponent": "memory-policies-shipped",
+      "budget": null
+    },
+    {
+      "id": "benchmark-live",
+      "kind": "root",
+      "description": "the benchmark's paid stack: a fast answer role and a reasoning judge role under the live spend guard, over the built-in embedder and the shipped memory policies",
+      "roles": {
+        "answer": {
+          "capability": "fast",
+          "candidate": null,
+          "prompt": null,
+          "responseSchema": null,
+          "tools": [],
+          "toolsRequired": false,
+          "inference": "benchmark-patient",
+          "ranker": null
+        },
+        "judge": {
+          "capability": "reasoning",
+          "candidate": null,
+          "prompt": null,
+          "responseSchema": null,
+          "tools": [],
+          "toolsRequired": false,
+          "inference": "benchmark-patient",
+          "ranker": null
+        }
+      },
+      "embedding": "builtin-hash-64",
+      "policyComponent": "memory-policies-shipped",
+      "budget": "live-guard"
+    },
+    {
+      "id": "benchmark-cheap",
+      "kind": "child",
+      "extends": "benchmark-live",
+      "patch": {
+        "description": "the benchmark's paid stack with the answer role asked as cheap instead of fast; everything else inherits",
+        "roles": { "answer": { "capability": "cheap" } }
+      }
+    }
+  ]
+}

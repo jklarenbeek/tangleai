@@ -19,7 +19,13 @@ import { createDesktop, type Desktop } from '../../apps/desktop/src/server.ts';
 import { DESKTOP_CONTRACT } from '../../apps/desktop/src/contract.ts';
 import { createTangleUi } from '../../apps/desktop/src/ui/app.ts';
 
-const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 25));
+/** Wait for the app to reach a condition (default: one macrotask breath) — a fixed sleep loses races under a loaded runner. */
+const settle = async (done: () => boolean = () => true, deadlineMs = 4000): Promise<void> => {
+  const start = Date.now();
+  do {
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  } while (!done() && Date.now() - start < deadlineMs);
+};
 
 describe('tangle desktop UI (headless)', () => {
   let desktop: Desktop;
@@ -82,7 +88,7 @@ describe('tangle desktop UI (headless)', () => {
 
   it('sync from the Loom updates runs, status and memory list', async () => {
     app.dispatch('sync');
-    await settle();
+    await settle(() => !app.getState().loom.syncing && app.getState().loom.runs.length > 0 && app.getState().memory.items.length > 0);
     const state = app.getState();
     assert.equal(state.loom.syncing, false);
     assert.equal(state.loom.syncError, null);
@@ -97,7 +103,7 @@ describe('tangle desktop UI (headless)', () => {
     // the input action reads $event.value; simulate the event object
     app.setState({ ...app.getState(), chat: { ...app.getState().chat, input: 'which port does the service use?' } });
     app.dispatch('chat/send');
-    await settle();
+    await settle(() => !app.getState().chat.busy && app.getState().chat.messages.length >= 2);
     const state = app.getState();
     assert.equal(state.chat.busy, false);
     assert.equal(state.chat.messages.length, 2);

@@ -108,6 +108,52 @@ export const SETTINGS_SCHEMA = {
   },
 } as const;
 
+/**
+ * What a settings READ returns: the same shape the browser always knew,
+ * with every credential value null (the fields stay nullable for the
+ * compatibility window; handlers never return a value), plus the
+ * additive slot statuses and the validation issues a corrupt stored row
+ * produced. Replacing a secret is write-only; clearing needs the
+ * explicit flag on `settings.set`.
+ */
+export const PUBLIC_SETTINGS_SCHEMA = {
+  type: 'object',
+  properties: {
+    ...SETTINGS_SCHEMA.properties,
+    slots: {
+      type: 'object',
+      required: ['chatKey', 'embedKey', 'browserToken'],
+      properties: {
+        chatKey: { type: 'boolean' },
+        embedKey: { type: 'boolean' },
+        browserToken: { type: 'boolean' },
+      },
+    },
+    issues: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['code', 'path', 'detail'],
+        properties: {
+          code: { type: 'string' },
+          path: { type: 'string' },
+          detail: { type: 'string' },
+        },
+      },
+    },
+  },
+} as const;
+
+const CONFIG_ISSUE = {
+  type: 'object',
+  required: ['code', 'path', 'detail'],
+  properties: {
+    code: { type: 'string' },
+    path: { type: 'string' },
+    detail: { type: 'string' },
+  },
+} as const;
+
 const DOCUMENT_SOURCE = {
   type: 'object',
   required: ['id', 'requestedUrl', 'finalUrl', 'canonicalUrl', 'title', 'mimeType', 'fetchMode', 'status', 'fetchedAt'],
@@ -182,14 +228,86 @@ export const DESKTOP_CONTRACT = {
     'settings.get': {
       kind: 'read',
       input: { type: 'object', properties: {} },
-      output: SETTINGS_SCHEMA,
+      output: PUBLIC_SETTINGS_SCHEMA,
       http: { method: 'GET', path: '/api/settings' },
     },
     'settings.set': {
       kind: 'command',
-      input: { type: 'object', required: ['settings'], properties: { settings: SETTINGS_SCHEMA } },
-      output: SETTINGS_SCHEMA,
+      input: {
+        type: 'object',
+        required: ['settings'],
+        properties: {
+          settings: SETTINGS_SCHEMA,
+          clearChatKey: { type: 'boolean' },
+          clearEmbedKey: { type: 'boolean' },
+          clearBrowserToken: { type: 'boolean' },
+        },
+      },
+      output: PUBLIC_SETTINGS_SCHEMA,
       http: { method: 'POST', path: '/api/settings' },
+    },
+    'config.inspect': {
+      kind: 'read',
+      input: { type: 'object', properties: {} },
+      output: {
+        type: 'object',
+        required: ['registry', 'request', 'resolution', 'slots'],
+        properties: {
+          registry: {
+            type: 'object',
+            required: ['revision', 'tags', 'profiles'],
+            properties: {
+              revision: { type: 'string' },
+              tags: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['tag', 'intent', 'candidates', 'limitations'],
+                  properties: {
+                    tag: { type: 'string' },
+                    intent: { type: 'string' },
+                    candidates: { type: 'integer' },
+                    limitations: { type: 'string' },
+                  },
+                },
+              },
+              profiles: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['id', 'kind'],
+                  properties: {
+                    id: { type: 'string' },
+                    kind: { type: 'string' },
+                    description: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          request: { type: 'object' },
+          resolution: {
+            type: 'object',
+            required: ['state', 'issues'],
+            properties: {
+              state: { enum: ['ready', 'refused', 'provisional'] },
+              issues: { type: 'array', items: CONFIG_ISSUE },
+            },
+          },
+          identity: { type: ['object', 'null'] },
+          slots: {
+            type: 'object',
+            required: ['chatKey', 'embedKey', 'browserToken'],
+            properties: {
+              chatKey: { type: 'boolean' },
+              embedKey: { type: 'boolean' },
+              browserToken: { type: 'boolean' },
+            },
+          },
+          hostObservation: { type: ['object', 'null'] },
+        },
+      },
+      http: { method: 'GET', path: '/api/config' },
     },
     'folder.sync': {
       kind: 'command',
@@ -213,6 +331,7 @@ export const DESKTOP_CONTRACT = {
       errors: {
         'no-folder': { status: 409 },
         'bad-folder': { status: 409 },
+        'config-refused': { status: 409 },
       },
       http: { method: 'POST', path: '/api/folder/sync' },
     },
@@ -240,7 +359,7 @@ export const DESKTOP_CONTRACT = {
           browserFallback: { type: 'boolean' },
         },
       },
-      errors: { 'ingest-failed': { status: 422 } },
+      errors: { 'ingest-failed': { status: 422 }, 'config-refused': { status: 409 } },
       http: { method: 'POST', path: '/api/documents/ingest' },
     },
     'documents.ingestbatch': {
@@ -255,6 +374,7 @@ export const DESKTOP_CONTRACT = {
         },
       },
       output: { type: 'array', items: { type: 'object' } },
+      errors: { 'config-refused': { status: 409 } },
       http: { method: 'POST', path: '/api/documents/ingest-many' },
     },
     'documents.list': {

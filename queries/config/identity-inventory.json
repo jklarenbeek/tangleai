@@ -1,0 +1,34 @@
+{
+  "$comment": "The identity inventory: every result row of every artifact joined to the identity that ran it, with the three honest states grouped separately. Input: { artifacts: [{ artifact, envelope }] } where each envelope is the shared configIdentities shape. Executed verbatim with @jarenjs/json's compileJsonQuery; no application grouping replaces what this document says.",
+  "$let": {
+    "joined": [{
+      "$for": { "a": "$.artifacts[*]", "row": "$a.envelope.rows[*]" },
+      "$let": { "identity": { "$head": { "$for": { "i": "$a.envelope.identities[*]" }, "$where": { "$eq": ["$i.identityId", "$row.identityId"] }, "$return": "$i" } } },
+      "$orderby": ["$a.artifact", "$row.rowId"],
+      "$return": {
+        "artifact": "$a.artifact",
+        "rowId": "$row.rowId",
+        "identityStatus": "$row.identityStatus",
+        "identityId": "$row.identityId",
+        "requestKind": "$identity.requested.kind",
+        "embedding": "$identity.embedding",
+        "policyComponent": "$identity.components.policy"
+      }
+    }]
+  },
+  "$return": {
+    "inventory": "$joined",
+    "byStatus": [{
+      "$for": { "j": "$joined[*]" },
+      "$groupby": { "identityStatus": "$j.identityStatus" },
+      "$orderby": ["$identityStatus"],
+      "$return": { "identityStatus": "$identityStatus", "rows": { "$count": "$j" } }
+    }],
+    "byArtifact": [{
+      "$for": { "j": "$joined[*]" },
+      "$groupby": { "artifact": "$j.artifact", "identityStatus": "$j.identityStatus" },
+      "$orderby": ["$artifact", "$identityStatus"],
+      "$return": { "artifact": "$artifact", "identityStatus": "$identityStatus", "rows": { "$count": "$j" } }
+    }]
+  }
+}

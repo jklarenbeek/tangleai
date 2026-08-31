@@ -370,6 +370,52 @@ function select(label: string, action: string, value: any, options: Array<string
       }, o ?? '(none)'])]];
 }
 
+/** A write-only credential input: blank after every save (the key re-mounts it), badge says configured, clearing is an explicit checkbox. Uncontrolled on purpose — a controlled empty value would wipe each keystroke, and the typed value must never render back. */
+function secretField(label: string, action: string, clearAction: string, configured: boolean, pendingClear: boolean, epoch: number): any {
+  return ['div', { class: 'field secret' },
+    ['label', { class: 'field' },
+      ['span', {}, label],
+      ['input', {
+        key: `${action}-${epoch}`,
+        placeholder: configured ? '(configured — type to replace)' : '(not configured)',
+        on: { input: on(action, undefined, ['value']) },
+      }]],
+    ['label', { class: 'check' },
+      ['input', { type: 'checkbox', checked: pendingClear ? true : null,
+        on: { change: on(clearAction, undefined, ['checked']) } }],
+      ` clear the stored ${label} on save`],
+    ['span', { class: configured ? 'saved' : 'hint' }, configured ? 'configured' : 'not configured']];
+}
+
+/** The read-only config inspection — what the resolver says about the current stack. */
+function configPanel(state: any): any {
+  const inspect = state.settings.inspect;
+  if (inspect === null || inspect === undefined) return null;
+  const identity = inspect.identity;
+  const resolution = inspect.resolution;
+  return ['div', { class: 'group' },
+    ['h3', {}, 'Effective configuration'],
+    ['p', { class: 'hint' },
+      `registry ${String(inspect.registry.revision).slice(0, 12)}… · intents ${inspect.registry.tags.map((t: any) => t.tag).join(', ')} · request ${inspect.request.kind}`],
+    ['p', { class: resolution.state === 'ready' ? 'saved' : resolution.state === 'provisional' ? 'hint' : 'error-inline' },
+      resolution.state === 'ready' ? 'resolved'
+        : resolution.state === 'provisional' ? 'provisional — the embedding width is unproven until a reply confirms it'
+        : 'refused'],
+    resolution.issues.length > 0
+      ? ['ul', { class: 'hint' }, resolution.issues.map((issue: any) =>
+          ['li', { key: `${issue.code}${issue.path}` }, `${issue.code} ${issue.path} — ${issue.detail}`])]
+      : null,
+    identity !== null && identity !== undefined
+      ? ['p', { class: 'hint' },
+          `identity ${String(identity.identityId).slice(0, 12)}…`
+          + (identity.roles.chat !== undefined ? ` · chat ${identity.roles.chat.provider}/${identity.roles.chat.model}` : ' · no chat wire')
+          + (identity.embedding !== null ? ` · embeddings ${identity.embedding.model} @ ${identity.embedding.dims}` : ' · no embedding identity')
+          + (identity.components.policy !== null ? ` · policies ${identity.components.policy.id}` : '')]
+      : null,
+    ['p', { class: 'hint' },
+      `key slots — chat: ${inspect.slots.chatKey ? 'configured' : 'none'} · embeddings: ${inspect.slots.embedKey ? 'configured' : 'none'} · renderer: ${inspect.slots.browserToken ? 'configured' : 'none'}. Values are write-only and never shown.`]];
+}
+
 function settingsPage(state: any): any {
   const draft = state.settings.draft;
   if (draft === null) return ['section', { class: 'page' }, ['p', { class: 'hint' }, 'loading…']];
@@ -377,6 +423,7 @@ function settingsPage(state: any): any {
   const embedProbe = state.settings.embedProbe;
   return ['section', { class: 'page settings' },
     ['h2', {}, 'Settings'],
+    configPanel(state),
     ['div', { class: 'group' },
       ['h3', {}, 'Folder'],
       field('path', 'settings/folder', draft.folder, '/path/to/your/notes'),
@@ -386,14 +433,14 @@ function settingsPage(state: any): any {
       select('provider', 'settings/chat-provider', draft.chat.provider, [null, 'ollama', 'lmstudio', 'openrouter', 'custom']),
       field('base url', 'settings/chat-baseurl', draft.chat.baseUrl, 'http://localhost:11434'),
       field('model', 'settings/chat-model', draft.chat.model, 'qwen3:4b'),
-      field('api key', 'settings/chat-apikey', draft.chat.apiKey),
+      secretField('api key', 'settings/chat-apikey', 'settings/clear-chat-key', state.settings.draft?.slots?.chatKey === true, state.settings.clear.chatKey, state.settings.saveCount),
       ['p', { class: 'hint' }, 'Optional. Without one, chat answers are grounded recall — cited memories, no generation.']],
     ['div', { class: 'group' },
       ['h3', {}, 'Embeddings'],
       select('provider', 'settings/embed-provider', draft.embed.provider, ['builtin', 'ollama', 'lmstudio', 'openrouter', 'custom']),
       field('base url', 'settings/embed-baseurl', draft.embed.baseUrl, 'http://localhost:11434'),
       field('model', 'settings/embed-model', draft.embed.model, 'nomic-embed-text'),
-      field('api key', 'settings/embed-apikey', draft.embed.apiKey),
+      secretField('api key', 'settings/embed-apikey', 'settings/clear-embed-key', state.settings.draft?.slots?.embedKey === true, state.settings.clear.embedKey, state.settings.saveCount),
       ['p', { class: 'hint' }, '`builtin` is @jarenjs/ai\'s deterministic hash-trigram embedder — lexical, demo-grade, zero setup. Configure a real model for semantic recall; memories synced under one embedder are only ever ranked by that embedder.']],
     ['div', { class: 'group' },
       ['h3', {}, 'Document corpus'],
@@ -405,7 +452,7 @@ function settingsPage(state: any): any {
       ['h3', {}, 'Dynamic-page fallback'],
       select('mode', 'settings/browser-mode', draft.browser.mode, ['disabled', 'webview', 'remote']),
       field('remote endpoint', 'settings/browser-endpoint', draft.browser.endpoint, 'http://127.0.0.1:4720'),
-      field('renderer token', 'settings/browser-token', draft.browser.token),
+      secretField('renderer token', 'settings/browser-token', 'settings/clear-browser-token', state.settings.draft?.slots?.browserToken === true, state.settings.clear.browserToken, state.settings.saveCount),
       ['label', { class: 'check' },
         ['input', { type: 'checkbox', checked: draft.browser.allowUnsafeLocal ? true : null,
           on: { change: on('settings/browser-unsafe', undefined, ['checked']) } }],

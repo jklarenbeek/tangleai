@@ -1,0 +1,423 @@
+{
+  "version": 1,
+  "secretSentinel": "[redacted sentinel]",
+  "base": {
+    "registry": {
+      "version": 1,
+      "credentialSlots": ["openrouter-primary"],
+      "candidates": [
+        { "id": "chat-alpha", "kind": "chat", "provider": "openrouter", "model": "example/alpha", "baseUrl": null, "credentialSlot": "openrouter-primary", "features": ["structured-json-schema"], "rateCard": { "currency": "USD", "inputPerMillionTokens": 0.1, "outputPerMillionTokens": 0.2, "source": "fixture", "asOf": "2026-08-30" } },
+        { "id": "chat-beta", "kind": "chat", "provider": "ollama", "model": "example/beta", "baseUrl": null, "credentialSlot": null, "features": [], "rateCard": null },
+        { "id": "embed-hash", "kind": "embedding", "provider": "builtin", "model": "hash-trigram-64", "dims": 64, "baseUrl": null, "credentialSlot": null, "features": [], "rateCard": null }
+      ],
+      "capabilities": [
+        { "tag": "fast", "intent": "lowest-latency fixture intent", "candidates": [{ "candidate": "chat-alpha", "priority": 1 }, { "candidate": "chat-beta", "priority": 2 }], "limitations": "fixture intent; proves nothing about real latency" }
+      ],
+      "prompts": [{ "id": "grounded-answer", "revision": "1111111111111111111111111111111111111111111111111111111111111111", "description": "fixture prompt revision" }],
+      "responseSchemas": [{ "id": "answer-v1", "revision": "2222222222222222222222222222222222222222222222222222222222222222", "description": "fixture response schema" }],
+      "components": [
+        { "id": "policy-shipped", "kind": "policy", "package": "@tangleai/pipeline", "export": "createPipeline", "revision": "3333333333333333333333333333333333333333333333333333333333333333", "description": "fixture policy component" },
+        { "id": "ranker-cosine", "kind": "ranker", "package": "@tangleai/memory", "export": "recallByEmbedding", "revision": "4444444444444444444444444444444444444444444444444444444444444444", "description": "fixture ranker component" }
+      ],
+      "inference": [{ "id": "chat-default", "temperature": null, "maxTokens": null, "retry": { "attempts": 1, "baseMs": 0, "maxMs": 0 }, "reasoning": null }],
+      "budgets": [{ "id": "guarded", "maxCalls": 100, "maxTokens": null, "maxMs": null, "maxConcurrency": 4 }],
+      "profiles": [
+        { "id": "base", "kind": "root", "description": "fixture root profile", "roles": { "answer": { "capability": "fast", "candidate": null, "prompt": "grounded-answer", "responseSchema": "answer-v1", "tools": ["recall_memories"], "toolsRequired": false, "inference": "chat-default", "ranker": "ranker-cosine" } }, "embedding": "embed-hash", "policyComponent": "policy-shipped", "budget": "guarded" },
+        { "id": "child", "kind": "child", "extends": "base", "patch": { "description": "fixture child profile" } }
+      ]
+    },
+    "request": { "kind": "profile", "profile": "base", "overrides": null },
+    "host": {
+      "sourceClass": "synthetic",
+      "credentialSlots": [{ "name": "openrouter-primary", "configured": true, "source": "OPENROUTER_AI_KEY" }],
+      "providers": [
+        { "provider": "openrouter", "base": "https://openrouter.ai/api/v1", "models": ["example/alpha"], "features": ["structured-json-schema"] },
+        { "provider": "ollama", "base": "http://localhost:11434/v1", "models": ["example/beta"], "features": [] }
+      ],
+      "embedding": [{ "provider": "builtin", "base": null, "model": "hash-trigram-64", "dims": 64 }],
+      "tools": [{ "name": "recall_memories", "description": "fixture tool", "inputSchemaRevision": "5555555555555555555555555555555555555555555555555555555555555555" }],
+      "components": [
+        { "id": "policy-shipped", "revision": "3333333333333333333333333333333333333333333333333333333333333333" },
+        { "id": "ranker-cosine", "revision": "4444444444444444444444444444444444444444444444444444444444444444" }
+      ],
+      "budget": { "maxCalls": 200, "maxTokens": null, "maxMs": null, "maxConcurrency": 4 },
+      "observation": null
+    }
+  },
+  "cases": [
+    {
+      "id": "e-endpoint-default-base",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "Ollama with an omitted base equals the suite-default base",
+      "input": { "kind": "documents", "left": { "provider": "ollama", "baseUrl": null }, "right": { "provider": "ollama", "baseUrl": "http://localhost:11434/v1" } },
+      "expect": { "relation": "same-identity", "issueCodes": null, "detail": "the suite's resolveEndpoint is the only endpoint authority; an omitted base and its explicit default resolve to one normalized base and therefore one effective identity" }
+    },
+    {
+      "id": "e-endpoint-lmstudio-default",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "LM Studio with an omitted base equals the suite-default base",
+      "input": { "kind": "documents", "left": { "provider": "lmstudio", "baseUrl": null }, "right": { "provider": "lmstudio", "baseUrl": "http://localhost:1234/v1" } },
+      "expect": { "relation": "same-identity", "issueCodes": null, "detail": "same normalized base, same effective identity" }
+    },
+    {
+      "id": "e-endpoint-trailing-slash",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "A trailing slash does not change the normalized base",
+      "input": { "kind": "documents", "left": { "provider": "custom", "baseUrl": "https://example.com/v1/" }, "right": { "provider": "custom", "baseUrl": "https://example.com/v1" } },
+      "expect": { "relation": "same-identity", "issueCodes": null, "detail": "suite normalization strips the trailing slash; both spellings are one base" }
+    },
+    {
+      "id": "e-endpoint-chat-path",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "A pasted /chat/completions path does not change the normalized base",
+      "input": { "kind": "documents", "left": { "provider": "custom", "baseUrl": "https://example.com/v1/chat/completions" }, "right": { "provider": "custom", "baseUrl": "https://example.com/v1" } },
+      "expect": { "relation": "same-identity", "issueCodes": null, "detail": "suite normalization removes the pasted chat path; both spellings are one base" }
+    },
+    {
+      "id": "e-reorder-members",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "Reordered members of the same registry document hash equally",
+      "input": {
+        "kind": "documents",
+        "left": { "id": "mini", "kind": "root", "description": "reorder fixture", "roles": {}, "embedding": "embed-hash", "policyComponent": null, "budget": null },
+        "right": { "budget": null, "policyComponent": null, "embedding": "embed-hash", "roles": {}, "description": "reorder fixture", "kind": "root", "id": "mini" }
+      },
+      "expect": { "relation": "same-identity", "issueCodes": null, "detail": "canonical RFC 8785 hashing makes member order irrelevant: same registry revision, same profile identity" }
+    },
+    {
+      "id": "s-model",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different chat model is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/0/model", "value": "example/alpha-v2" }], "request": null, "host": [{ "op": "replace", "path": "/providers/0/models", "value": ["example/alpha-v2"] }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the selected model is part of the effective role identity" }
+    },
+    {
+      "id": "s-endpoint-base",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different normalized base is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/0/provider", "value": "custom" }, { "op": "replace", "path": "/candidates/0/baseUrl", "value": "https://mirror.example.com/v1" }], "request": null, "host": [{ "op": "replace", "path": "/providers/0", "value": { "provider": "custom", "base": "https://mirror.example.com/v1", "models": ["example/alpha"], "features": ["structured-json-schema"] } }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "two hosts resolving the same model behind different bases cannot masquerade as one run" }
+    },
+    {
+      "id": "s-temperature",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different temperature is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/inference/0/temperature", "value": 0.7 }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "inference controls are identity fields, not incidental settings" }
+    },
+    {
+      "id": "s-reasoning",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different reasoning control is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/inference/0/reasoning", "value": { "effort": "high" } }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "thinking controls change what the provider does and therefore the identity" }
+    },
+    {
+      "id": "s-response-schema",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different structured-output schema revision is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/responseSchemas/0/revision", "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the response contract shapes every answer; its revision is identity" }
+    },
+    {
+      "id": "s-prompt-revision",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different prompt revision is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/prompts/0/revision", "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the versioned template is identity; user text and retrieved evidence are not" }
+    },
+    {
+      "id": "s-tool-manifest",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different tool input schema is a different effective identity",
+      "input": { "kind": "edits", "registry": null, "request": null, "host": [{ "op": "replace", "path": "/tools/0/inputSchemaRevision", "value": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the effective tool manifest is taken from the compiled toolbox; a changed tool schema changes the identity" }
+    },
+    {
+      "id": "s-embedding-model",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different embedding model is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/2", "value": { "id": "embed-hash", "kind": "embedding", "provider": "builtin", "model": "hash-trigram-128", "dims": 64, "baseUrl": null, "credentialSlot": null, "features": [], "rateCard": null } }], "request": null, "host": [{ "op": "replace", "path": "/embedding/0/model", "value": "hash-trigram-128" }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the singleton embedding identity is `{ model, dims }`; a model change is a different corpus space" }
+    },
+    {
+      "id": "s-embedding-dims",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different embedding width is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/2/dims", "value": 128 }], "request": null, "host": [{ "op": "replace", "path": "/embedding/0/dims", "value": 128 }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "width is identity; vectors of different widths never rank against each other" }
+    },
+    {
+      "id": "s-component-revision",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different policy component revision is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/components/0/revision", "value": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }], "request": null, "host": [{ "op": "replace", "path": "/components/0/revision", "value": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }] },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the selected policy/ranker component reference and revision are identity; the component's values stay owned by its package" }
+    },
+    {
+      "id": "s-budget-ceiling",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different effective budget ceiling is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/budgets/0/maxCalls", "value": 50 }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "the effective ceiling changes what a run may do and is identity" }
+    },
+    {
+      "id": "s-rate-card",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different rate card is a different effective identity",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/0/rateCard/asOf", "value": "2026-08-31" }], "request": null, "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "cost provenance is identity: a stale price must not silently stand behind a fresh number" }
+    },
+    {
+      "id": "r-registry-duplicate-id",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A duplicate candidate id refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "add", "path": "/candidates/-", "value": { "id": "chat-alpha", "kind": "chat", "provider": "ollama", "model": "example/dup", "baseUrl": null, "credentialSlot": null, "features": [], "rateCard": null } }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1004"], "detail": "unique ids are asserted by the registry schema's $query at validation time" }
+    },
+    {
+      "id": "r-registry-unknown-parent",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A child extending a missing parent refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/1/extends", "value": "ghost" }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1002"], "detail": "reference integrity is a schema assertion, not a runtime surprise" }
+    },
+    {
+      "id": "r-registry-kind-mismatch",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile whose embedding references a chat candidate refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/0/embedding", "value": "chat-alpha" }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1006"], "detail": "role/candidate kind agreement is asserted at validation time" }
+    },
+    {
+      "id": "r-registry-secret-member",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A registry member named like a credential refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "add", "path": "/candidates/0/apiKey", "value": "[redacted sentinel]" }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1014"], "detail": "every object closes its properties; an undeclared member cannot be carried, so a credential value has no place to live" }
+    },
+    {
+      "id": "r-registry-secret-url",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A candidate base URL carrying userinfo refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/candidates/1/provider", "value": "custom" }, { "op": "replace", "path": "/candidates/1/baseUrl", "value": "https://user:[redacted sentinel]@example.com/v1" }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1013"], "detail": "a credential-bearing base can enter no registry, identity, report or cache key; the sentinel must appear in no serialized outcome" }
+    },
+    {
+      "id": "r-dangling-identity-row",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A result row referencing an absent identity refuses",
+      "input": {
+        "kind": "documents",
+        "left": {
+          "identities": [
+            {
+              "identityId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "registryRevision": null,
+              "hostManifestRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "requested": { "kind": "legacy", "chat": { "state": "unconfigured" }, "embed": { "state": "unconfigured" }, "components": { "policy": null, "ranker": null }, "chatPrompt": null },
+              "roles": {},
+              "embedding": { "provider": "builtin", "base": null, "model": "hash-trigram-64", "dims": 64, "credentialSlot": null },
+              "components": { "policy": null, "ranker": null },
+              "budget": { "maxCalls": null, "maxTokens": null, "maxMs": null, "maxConcurrency": null }
+            }
+          ],
+          "rows": [{ "rowId": "row-1", "identityStatus": "run", "identityId": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" }]
+        },
+        "right": null
+      },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1018"], "detail": "every `run` row must resolve to exactly one identity in the table; the envelope's $query refuses a dangling reference" }
+    },
+    {
+      "id": "r-inheritance-cycle",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile inheritance cycle refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/1", "value": { "id": "child", "kind": "child", "extends": "child", "patch": {} } }], "request": [{ "op": "replace", "path": "", "value": { "kind": "profile", "profile": "child", "overrides": null } }], "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1003"], "detail": "ancestry is resolved root-to-leaf; a cycle is a stable issue, never a stack overflow" }
+    },
+    {
+      "id": "r-request-unknown-tag",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A request for an undeclared capability tag refuses",
+      "input": { "kind": "edits", "registry": null, "request": [{ "op": "replace", "path": "", "value": { "kind": "tag", "tag": "ghost", "overrides": null } }], "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1001"], "detail": "a tag is a declared intent; an undeclared spelling resolves to nothing and falls through to nothing" }
+    },
+    {
+      "id": "r-unavailable-slot",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required credential slot the host has not configured refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/0/roles/answer/capability", "value": null }, { "op": "replace", "path": "/profiles/0/roles/answer/candidate", "value": "chat-alpha" }], "request": null, "host": [{ "op": "replace", "path": "/credentialSlots/0/configured", "value": false }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1008"], "detail": "slot presence is a host fact; an unavailable slot refuses before any client exists, and no fallback candidate is substituted silently for a pinned candidate" }
+    },
+    {
+      "id": "r-model-unavailable",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A pinned model the host does not offer refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/0/roles/answer/capability", "value": null }, { "op": "replace", "path": "/profiles/0/roles/answer/candidate", "value": "chat-alpha" }], "request": null, "host": [{ "op": "replace", "path": "/providers/0/models", "value": ["example/other"] }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1009"], "detail": "a pinned candidate the host cannot serve refuses; it never falls through to another candidate or tag" }
+    },
+    {
+      "id": "r-feature-mismatch",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required provider feature the host lacks refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/0/roles/answer/capability", "value": null }, { "op": "replace", "path": "/profiles/0/roles/answer/candidate", "value": "chat-alpha" }], "request": null, "host": [{ "op": "replace", "path": "/providers/0/features", "value": [] }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1010"], "detail": "a candidate's declared feature requirements are checked against the host manifest before a paid answer" }
+    },
+    {
+      "id": "r-missing-required-tool",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required tool absent from the host allowlist refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/profiles/0/roles/answer/toolsRequired", "value": true }], "request": null, "host": [{ "op": "replace", "path": "/tools", "value": [] }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1011"], "detail": "a tool request is never permission; missing required tools refuse and extra host tools never silently enter" }
+    },
+    {
+      "id": "r-dims-disagreement",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "Registry and host disagreeing on embedding dimensions refuses",
+      "input": { "kind": "edits", "registry": null, "request": null, "host": [{ "op": "replace", "path": "/embedding/0/dims", "value": 128 }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1012"], "detail": "registry dimensions must equal the host probe/reply under the suite's sameIdentity semantics; disagreement refuses before indexed work" }
+    },
+    {
+      "id": "r-no-candidate-for-tag",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A tag with no available candidate refuses instead of falling through",
+      "input": { "kind": "edits", "registry": null, "request": [{ "op": "replace", "path": "", "value": { "kind": "tag", "tag": "fast", "overrides": null } }], "host": [{ "op": "replace", "path": "/providers", "value": [] }] },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1015"], "detail": "no available candidate returns an issue; it never falls through to another tag, the legacy profile or the offline model" }
+    },
+    {
+      "id": "r-budget-raise",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile budget above a host hard ceiling refuses",
+      "input": { "kind": "edits", "registry": [{ "op": "replace", "path": "/budgets/0/maxCalls", "value": 500 }], "request": null, "host": null },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1016"], "detail": "budgets remain host ceilings; a profile may lower one and can never raise one" }
+    },
+    {
+      "id": "l-unconfigured-offline",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A genuinely unconfigured legacy host stays grounded/offline",
+      "input": { "kind": "probe", "probe": "unconfigured-offline", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "default settings produce the built-in embedder identity and no chat wire; that fallback is intentional product behavior and only the unconfigured legacy request keeps it" }
+    },
+    {
+      "id": "l-custom-no-base",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A custom provider without a base is a stated unavailable value",
+      "input": { "kind": "probe", "probe": "custom-without-base", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "both the environment reader and the suite refuse a custom provider with no base before any client is created" }
+    },
+    {
+      "id": "l-missing-key-skip",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A missing key is a stated live-tier skip, not a failure",
+      "input": { "kind": "probe", "probe": "missing-key-skip", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "the keyless tiers stay runnable; the reason names the variable, never a value" }
+    },
+    {
+      "id": "l-half-configured-embed",
+      "family": "legacy",
+      "scope": "host",
+      "title": "An explicit half-configured embed request must refuse, not silently become the built-in",
+      "input": { "kind": "probe", "probe": "half-configured-embed", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": ["TCFG1021"], "detail": "today a wire request with no model silently becomes hash-trigram-64, making a requested remote indistinguishable from requested offline; the campaign keeps fallback only for the explicit unconfigured legacy state" }
+    },
+    {
+      "id": "l-loose-env-integers",
+      "family": "legacy",
+      "scope": "host",
+      "title": "Environment integers must be schema-normalized, never partially parsed",
+      "input": { "kind": "probe", "probe": "env-integer-parsing", "args": { "samples": ["4x", "2.5", "0", "-1"] } },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today parseInt turns '4x' into 4 and '2.5' into 2, and zero/negatives silently become the default; the campaign records explicit, defaulted and rejected states" }
+    },
+    {
+      "id": "l-corrupt-settings",
+      "family": "legacy",
+      "scope": "host",
+      "title": "Corrupt persisted settings must be a typed migration/refusal value",
+      "input": { "kind": "probe", "probe": "corrupt-settings-read", "args": { "row": { "chat": { "provider": "bogus", "model": 17 }, "documents": { "maxTokens": -9 } } } },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today the settings read structurally merges a corrupt row into typed runtime state; the campaign validates stored rows before treating them as Settings" }
+    },
+    {
+      "id": "l-settings-secret-reflection",
+      "family": "legacy",
+      "scope": "surface",
+      "title": "Settings reads must expose slot status, never credential values",
+      "input": { "kind": "probe", "probe": "settings-secret-reflection", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today settings.get returns stored API keys and the renderer token verbatim; the campaign makes credential values write-only host slots" }
+    },
+    {
+      "id": "l-endpoint-guard-disagreement",
+      "family": "legacy",
+      "scope": "host",
+      "title": "The local wire guard must not disagree with the suite's endpoint authority",
+      "input": { "kind": "probe", "probe": "endpoint-guard-disagreement", "args": { "providers": ["ollama", "lmstudio"] } },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "chatWireConfigured says false for Ollama/LM Studio without a base while resolveEndpoint resolves their suite defaults; the campaign deletes the local endpoint decision" }
+    },
+    {
+      "id": "l-endpoint-userinfo-passthrough",
+      "family": "legacy",
+      "scope": "host",
+      "title": "URL userinfo must be refused before suite resolution",
+      "input": { "kind": "probe", "probe": "endpoint-userinfo", "args": {} },
+      "expect": { "relation": "refusal", "issueCodes": ["TCFG1013"], "detail": "the suite preserves userinfo in the normalized base and the replay layer treats that base as credential-free; Tangle must refuse such a base as host policy before calling the suite" }
+    },
+    {
+      "id": "l-run-identity-absence",
+      "family": "legacy",
+      "scope": "store",
+      "title": "New runs must carry a config identity reference",
+      "input": { "kind": "probe", "probe": "run-producer-identity", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today zero of the three desktop run-producing handlers stores a config/profile identity; old rows stay honestly legacy-unrecorded and are never backfilled" }
+    },
+    {
+      "id": "l-chat-provider-label",
+      "family": "legacy",
+      "scope": "store",
+      "title": "Chat answers must reference an identity; a provider label is display metadata",
+      "input": { "kind": "probe", "probe": "chat-provider-label", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today a chat message stores only a 'provider/model' label; the campaign records the identity reference and provider-reported usage beside it" }
+    },
+    {
+      "id": "l-report-identity-absence",
+      "family": "legacy",
+      "scope": "report",
+      "title": "Every applicable benchmark artifact must carry the shared identity envelope",
+      "input": { "kind": "probe", "probe": "report-artifact-identities", "args": {} },
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "today only the policy report has registration/cell/run/report identities; recall, QA and QA-live rows have no shared run identity and must gain the envelope or an explicit not-run/legacy-unrecorded status" }
+    }
+  ]
+}

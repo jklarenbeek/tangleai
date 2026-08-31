@@ -1,0 +1,34 @@
+{
+  "$comment": "The profile-resolution comparison: the same requested profile or tag across host-manifest revisions, one row per (request, host, effective identity) — two hosts that legitimately map one tag to different stacks stay two rows, and nothing here may collapse different effective identities under a shared spelling. Input: { resolutions: [{ host, hostManifestRevision, request, identity }] } as the resolver produced them. Executed verbatim with compileJsonQuery.",
+  "$let": {
+    "rows": [{
+      "$for": { "r": "$.resolutions[*]" },
+      "$orderby": ["$r.request.kind", "$r.request.profile", "$r.request.tag", "$r.host"],
+      "$return": {
+        "requestKind": "$r.request.kind",
+        "profile": "$r.request.profile",
+        "tag": "$r.request.tag",
+        "host": "$r.host",
+        "hostManifestRevision": "$r.hostManifestRevision",
+        "identityId": "$r.identity.identityId",
+        "answerModel": "$r.identity.roles.chat.model",
+        "embedding": "$r.identity.embedding"
+      }
+    }]
+  },
+  "$return": {
+    "rows": "$rows",
+    "byRequest": [{
+      "$for": { "row": "$rows[*]" },
+      "$groupby": { "requestKind": "$row.requestKind", "profile": "$row.profile", "tag": "$row.tag" },
+      "$orderby": ["$requestKind", "$profile", "$tag"],
+      "$return": {
+        "requestKind": "$requestKind",
+        "profile": "$profile",
+        "tag": "$tag",
+        "hosts": { "$count": "$row" },
+        "distinctIdentities": { "$count": { "$distinct": "$row.identityId" } }
+      }
+    }]
+  }
+}

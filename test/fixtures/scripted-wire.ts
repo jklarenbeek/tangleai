@@ -14,7 +14,7 @@
 import { createHashEmbedder } from '@jarenjs/ai/embed';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../../apps/desktop/src/settings.ts';
-import { chatSettingsOf, embedSettingsOf, readAiEnv } from '../../benchmark/lib/ai-env.ts';
+import { chatSettingsOf, embedSettingsOf, envConfigIdentity, readAiEnv } from '../../benchmark/lib/ai-env.ts';
 import type { ReplayCache } from '../../benchmark/lib/wire-cache.ts';
 
 export interface ScriptOptions {
@@ -114,5 +114,8 @@ export function liveClients(
     chat: chatClientFor(chatSettingsOf(env), { fetch, retry: { attempts: 1 }, cache, reasoning }),
     judge: chatClientFor(chatSettingsOf(env, env.modelStrong), { fetch, retry: { attempts: 1 }, cache, reasoning }),
     embedder: embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }, fetch, cache),
+    // the identity a real live run resolves through the adapter, on the
+    // scripted host — a scripted run is a run, so it says what stack it is
+    configIdentityFor: (observed: { model: string, dims: number }) => envConfigIdentity(env, observed, 'scripted'),
   };
 }

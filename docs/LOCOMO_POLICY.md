@@ -1,7 +1,7 @@
 # LoCoMo policy matrix — the keyless screen
 
 Source: `benchmark/locomo/data/locomo10.json` (sha256 `79fa87e90f04…`, 2,805,274 bytes, schema valid) — restricted to `conv-26`, `conv-41`, `conv-42`, `conv-43`, `conv-47`, `conv-49`, `conv-50`.
-Registration `8565a3881370…` · report `784d806c7a9a…` · source `7e292776e6d8…` (HEAD `b16f518dcff1…`, working tree modified, 37 files in the manifest).
+Registration `8565a3881370…` · report `ee66a7ff9c86…` · source `de191aa495fc…` (HEAD `cfc52394c9ce…`, working tree modified, 41 files in the manifest).
 
 A memory policy becomes the default only when a preregistered comparison proves it improves answers without hiding a category loss, a cost overrun, a failed call or an unequal denominator. **Nothing on this page is such a proof.** The embedder here is the suite's hashed-trigram reference: two texts score high when they share letters, so every number below is a property of the MECHANISM — ingest, gate, rank, cite — and of no model. This page is a screen, and a screen allocates budget; it does not predict the wire. The same shipped cell fires the contradiction judge about thirty times more often under this lexical embedder than under a real one, so a frontier read here says what is worth paying to measure, never what a policy does to an answer. Only an eligible live comparison on the held-out split can select a default.
 

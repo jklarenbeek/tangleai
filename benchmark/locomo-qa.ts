@@ -53,7 +53,7 @@ import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../apps/desktop/src/settings.ts';
-import { chatSettingsOf, describeAiEnv, embedSettingsOf, readAiEnv } from './lib/ai-env.ts';
+import { chatSettingsOf, describeAiEnv, embedSettingsOf, readAiEnv , envConfigIdentity } from './lib/ai-env.ts';
 import { parseArgs } from './lib/args.ts';
 import { loadLocomo } from './lib/locomo.ts';
 import {
@@ -70,6 +70,7 @@ import { createReportValidator, describeErrors, type ReportValidator } from './l
 import { WIRE_CACHE_PATH, openWireCache, type WireCache } from './lib/wire-cache.ts';
 import RECALL_SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from './schemas/locomo-qa.schema.json' with { type: 'json' };
+import RUN_IDENTITY_SCHEMA from '../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import LIVE_SCHEMA from './schemas/locomo-qa-live.schema.json' with { type: 'json' };
 
 const args = parseArgs(process.argv.slice(2), {
@@ -118,8 +119,8 @@ const horizon: Partial<HorizonOptions> = {
 
 // one validator per compiled document: a schema registered for `$ref`
 // cannot also be the one compiled on the same instance
-const validateKeyless = createReportValidator(QA_SCHEMA, [RECALL_SCHEMA]);
-const validateLive = createReportValidator(LIVE_SCHEMA, [RECALL_SCHEMA, QA_SCHEMA]);
+const validateKeyless = createReportValidator(QA_SCHEMA, [RECALL_SCHEMA, RUN_IDENTITY_SCHEMA]);
+const validateLive = createReportValidator(LIVE_SCHEMA, [RECALL_SCHEMA, QA_SCHEMA, RUN_IDENTITY_SCHEMA]);
 
 function mustValidate(name: string, validate: ReportValidator, value: unknown): void {
   const outcome = validate(value);
@@ -194,7 +195,7 @@ if (args.flags.has('live')) {
     const liveStarted = performance.now();
     let fresh: LiveReport;
     try {
-      fresh = await runLocomoQaLive(dataset, { env, chat, judge, embedder, horizonClient, cache, fresh: freshRun, thinking, rows, horizon, ...knobs, onProgress });
+      fresh = await runLocomoQaLive(dataset, { env, chat, judge, embedder, horizonClient, cache, fresh: freshRun, thinking, rows, horizon, ...knobs, configIdentityFor: (observed) => envConfigIdentity(env, observed), onProgress });
     } finally {
       if (cache !== undefined) {
         const stats = await cache.stats();

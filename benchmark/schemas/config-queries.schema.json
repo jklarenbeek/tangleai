@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/config-queries",
+  "title": "Config query outputs — the pinned answers of the committed JSON Query documents",
+  "description": "What `benchmark/config-queries.ts` writes after executing the three committed FLWOR documents under `queries/config/` with `compileJsonQuery` over validated inputs. Deterministic and clock-free: the inputs are committed artifacts and keyless resolutions, so two runs are byte-identical. The structure of each answer belongs to its query document; this schema pins the envelope, the query names and the honesty constraints a rendering depends on.",
+  "type": "object",
+  "required": ["benchmark", "instrument", "queries", "reportId"],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      { "$every": { "g": "$.queries.temporalStack.liveStacks[?(@.identityStatus=='legacy-unrecorded')]" }, "$satisfies": { "$not": { "$exists": "$g.stack.answerModel" } } },
+      { "$every": { "r": "$.queries.profileResolution.byRequest[*]" }, "$satisfies": { "$not": { "$gt": ["$r.distinctIdentities", "$r.hosts"] } } }
+    ]
+  },
+  "properties": {
+    "benchmark": { "const": "config-queries" },
+    "instrument": {
+      "type": "object",
+      "required": ["entry", "queries"],
+      "additionalProperties": false,
+      "properties": {
+        "entry": { "const": "benchmark/config-queries.ts" },
+        "queries": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "string", "pattern": "^queries/config/[a-z-]+\\.json$" }
+        }
+      }
+    },
+    "queries": {
+      "type": "object",
+      "required": ["identityInventory", "profileResolution", "temporalStack"],
+      "additionalProperties": false,
+      "properties": {
+        "identityInventory": {
+          "type": "object",
+          "required": ["inventory", "byStatus", "byArtifact"],
+          "additionalProperties": false,
+          "properties": {
+            "inventory": { "type": "array", "items": { "type": "object" } },
+            "byStatus": { "type": "array", "items": { "type": "object" } },
+            "byArtifact": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "profileResolution": {
+          "type": "object",
+          "required": ["rows", "byRequest"],
+          "additionalProperties": false,
+          "properties": {
+            "rows": { "type": "array", "items": { "type": "object" } },
+            "byRequest": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "temporalStack": {
+          "type": "object",
+          "required": ["question", "liveStacks", "keylessAnalytic"],
+          "additionalProperties": false,
+          "properties": {
+            "question": { "type": "string", "minLength": 1 },
+            "liveStacks": { "type": "array", "items": { "type": "object" } },
+            "keylessAnalytic": { "type": "object" }
+          }
+        }
+      }
+    },
+    "reportId": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

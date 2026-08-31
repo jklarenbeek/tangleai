@@ -1,6 +1,35 @@
 {
   "benchmark": "locomo",
   "instrument": "locomo-qa",
+  "configIdentities": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "long-context",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "near-raw",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "rag-observation",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "rag-summary",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "long-horizon",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "near",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
   "dataset": {
     "path": "benchmark/locomo/data/locomo10.json",
     "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",

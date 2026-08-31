@@ -1,0 +1,354 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/config-conformance",
+  "title": "Config conformance report — the identity instrument's measurement contract",
+  "description": "What `benchmark/config-conformance.ts` writes: the source and suite census, the construction-path inventory, the registered equivalence/sensitivity/refusal/legacy cases with their measured status, and the reconciled counts. The registered cases live in `test/fixtures/config-conformance.json` (the `fixture` definition here); the report re-states each case without its input and adds what was measured. A case's `expect` describes the CAMPAIGN-required end state; `status` says what the tree does today — `holds` (current behavior already satisfies it), `gap` (current behavior contradicts it; a defect is published as a gap, never encoded as expected), or `pending` (no instrument can measure it yet). The counts reconcile by `$query` at validation time, the gate's call counters are literal zeros (a conformance run is keyless and clock-free by construction), and `reportId` is the canonical SHA-256 of the document with that field excluded.",
+  "type": "object",
+  "required": ["benchmark", "instrument", "source", "suite", "census", "cases", "counts", "gate", "reportId"],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      { "$eq": [{ "$count": "$.cases[*].id" }, { "$count": { "$distinct": "$.cases[*].id" } }] },
+      { "$eq": ["$.counts.cases", { "$count": "$.cases[*]" }] },
+      { "$eq": ["$.counts.byFamily.equivalence", { "$count": "$.cases[?(@.family=='equivalence')]" }] },
+      { "$eq": ["$.counts.byFamily.sensitivity", { "$count": "$.cases[?(@.family=='sensitivity')]" }] },
+      { "$eq": ["$.counts.byFamily.refusal", { "$count": "$.cases[?(@.family=='refusal')]" }] },
+      { "$eq": ["$.counts.byFamily.legacy", { "$count": "$.cases[?(@.family=='legacy')]" }] },
+      { "$eq": ["$.counts.byStatus.holds", { "$count": "$.cases[?(@.status=='holds')]" }] },
+      { "$eq": ["$.counts.byStatus.gap", { "$count": "$.cases[?(@.status=='gap')]" }] },
+      { "$eq": ["$.counts.byStatus.pending", { "$count": "$.cases[?(@.status=='pending')]" }] },
+      { "$eq": ["$.counts.cases", { "$add": [{ "$add": ["$.counts.byStatus.holds", "$.counts.byStatus.gap"] }, "$.counts.byStatus.pending"] }] },
+      { "$eq": ["$.counts.cases", { "$add": [{ "$add": ["$.counts.byFamily.equivalence", "$.counts.byFamily.sensitivity"] }, { "$add": ["$.counts.byFamily.refusal", "$.counts.byFamily.legacy"] }] }] },
+      { "$eq": ["$.census.factories.chatConsumerCalls", { "$sum": "$.census.factories.chatConsumers[*].count" }] },
+      { "$eq": ["$.census.factories.embedConsumerCalls", { "$sum": "$.census.factories.embedConsumers[*].count" }] },
+      { "$eq": ["$.census.summary.reportArtifacts", { "$count": "$.census.reportArtifacts[*]" }] },
+      { "$eq": ["$.census.summary.reportArtifactsWithIdentities", { "$count": "$.census.reportArtifacts[?(@.identityDiscipline=='complete')]" }] },
+      { "$eq": ["$.census.summary.runProducers", { "$count": "$.census.runProducers[*]" }] },
+      { "$eq": ["$.census.summary.runProducersRecordingIdentity", { "$count": "$.census.runProducers[?(@.recordsIdentity==true)]" }] },
+      { "$eq": ["$.census.summary.hostInputs", { "$count": "$.census.hostInputs[*]" }] }
+    ]
+  },
+  "properties": {
+    "benchmark": { "const": "config-conformance" },
+    "instrument": {
+      "type": "object",
+      "required": ["entry"],
+      "additionalProperties": false,
+      "properties": {
+        "entry": { "const": "benchmark/config-conformance.ts" }
+      }
+    },
+    "source": {
+      "description": "HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock.",
+      "type": "object",
+      "required": ["head", "clean", "files", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "head": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "clean": { "type": "boolean" },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "suite": {
+      "type": "object",
+      "required": ["packages"],
+      "additionalProperties": false,
+      "properties": {
+        "packages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "pattern": "^@jarenjs/[a-z0-9-]+$" },
+              "version": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "census": {
+      "description": "The explicit construction-path inventory. The site counts are re-derived by the test suite from the named files, so a factory or host input added without registering here fails the gate.",
+      "type": "object",
+      "required": ["factories", "hostInputs", "runProducers", "reportArtifacts", "desktopContract", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "factories": {
+          "type": "object",
+          "required": ["file", "chatFactory", "embedFactory", "chatConsumers", "embedConsumers", "chatConsumerCalls", "embedConsumerCalls"],
+          "additionalProperties": false,
+          "properties": {
+            "file": { "type": "string", "minLength": 1 },
+            "chatFactory": { "type": "string", "minLength": 1 },
+            "embedFactory": { "type": "string", "minLength": 1 },
+            "chatConsumers": { "type": "array", "items": { "$ref": "#/$defs/siteCount" } },
+            "embedConsumers": { "type": "array", "items": { "$ref": "#/$defs/siteCount" } },
+            "chatConsumerCalls": { "type": "integer", "minimum": 0 },
+            "embedConsumerCalls": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "hostInputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "kind", "names"],
+            "additionalProperties": false,
+            "properties": {
+              "file": { "type": "string", "minLength": 1 },
+              "kind": { "enum": ["desktop-settings", "environment"] },
+              "names": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        },
+        "runProducers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "operation", "recordsIdentity"],
+            "additionalProperties": false,
+            "properties": {
+              "file": { "type": "string", "minLength": 1 },
+              "operation": { "type": "string", "minLength": 1 },
+              "recordsIdentity": { "type": "boolean" }
+            }
+          }
+        },
+        "reportArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "identityDiscipline", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "identityDiscipline": {
+                "description": "`complete` — the artifact carries registration/cell/run/report identities; `unrecorded` — its rows have no shared run identity. `unrecorded` states an absence of recorded facts; it never means an identity with null values existed.",
+                "enum": ["complete", "unrecorded"]
+              },
+              "note": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "desktopContract": {
+          "type": "object",
+          "required": ["operations", "revision"],
+          "additionalProperties": false,
+          "properties": {
+            "operations": { "type": "integer", "minimum": 1 },
+            "revision": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "required": ["hostInputs", "runProducers", "runProducersRecordingIdentity", "reportArtifacts", "reportArtifactsWithIdentities"],
+          "additionalProperties": false,
+          "properties": {
+            "hostInputs": { "type": "integer", "minimum": 0 },
+            "runProducers": { "type": "integer", "minimum": 0 },
+            "runProducersRecordingIdentity": { "type": "integer", "minimum": 0 },
+            "reportArtifacts": { "type": "integer", "minimum": 0 },
+            "reportArtifactsWithIdentities": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/measuredCase" }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["cases", "byFamily", "byStatus"],
+      "additionalProperties": false,
+      "properties": {
+        "cases": { "type": "integer", "minimum": 1 },
+        "byFamily": {
+          "type": "object",
+          "required": ["equivalence", "sensitivity", "refusal", "legacy"],
+          "additionalProperties": false,
+          "properties": {
+            "equivalence": { "type": "integer", "minimum": 0 },
+            "sensitivity": { "type": "integer", "minimum": 0 },
+            "refusal": { "type": "integer", "minimum": 0 },
+            "legacy": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "byStatus": {
+          "type": "object",
+          "required": ["holds", "gap", "pending"],
+          "additionalProperties": false,
+          "properties": {
+            "holds": { "type": "integer", "minimum": 0 },
+            "gap": { "type": "integer", "minimum": 0 },
+            "pending": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "gate": {
+      "description": "A conformance run is keyless and offline by construction: the counters are literal zeros in the schema, so a report of a run that made a call cannot validate.",
+      "type": "object",
+      "required": ["schemaValid", "transportCalls", "probeCalls", "modelCalls"],
+      "additionalProperties": false,
+      "properties": {
+        "schemaValid": { "const": true },
+        "transportCalls": { "const": 0 },
+        "probeCalls": { "const": 0 },
+        "modelCalls": { "const": 0 }
+      }
+    },
+    "reportId": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "issueCode": { "type": "string", "pattern": "^TCFG1[0-9]{3}$" },
+    "siteCount": {
+      "type": "object",
+      "required": ["file", "count"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "editList": {
+      "description": "RFC 6902 operations against one of the fixture's shared base documents, or null when the case leaves that document untouched. A `replace` at path \"\" substitutes the whole document.",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["op", "path"],
+            "additionalProperties": false,
+            "properties": {
+              "op": { "enum": ["add", "remove", "replace"] },
+              "path": { "type": "string" },
+              "value": {}
+            }
+          }
+        }
+      ]
+    },
+    "expectation": {
+      "description": "The campaign-required relation or outcome. `same-identity`/`different-identity` are resolver relations over the case's inputs; `refusal` names its stable issue codes; `observation` states required host/store/report/surface behavior in prose.",
+      "type": "object",
+      "required": ["relation", "issueCodes", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "relation": { "enum": ["same-identity", "different-identity", "refusal", "observation"] },
+        "issueCodes": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/issueCode" } }
+          ]
+        },
+        "detail": { "type": "string", "minLength": 1 }
+      }
+    },
+    "registeredCase": {
+      "description": "A fixture case: implementation-neutral input plus the expected relation/outcome. Inputs are documents, RFC 6902 edits against the fixture's shared base documents, or a named current-behavior probe — never a resolver function name and never merge/URL/canonical logic.",
+      "type": "object",
+      "required": ["id", "family", "scope", "title", "input", "expect"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "family": { "enum": ["equivalence", "sensitivity", "refusal", "legacy"] },
+        "scope": {
+          "description": "Where the campaign closes this case: `resolver` (pure resolution, schemas and identity), `host` (adapter/normalization), `store` (run/chat persistence), `report` (benchmark envelopes), `surface` (contract/UI).",
+          "enum": ["resolver", "host", "store", "report", "surface"]
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "input": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["kind", "left", "right"],
+              "additionalProperties": false,
+              "properties": {
+                "kind": { "const": "documents" },
+                "left": { "type": "object" },
+                "right": { "oneOf": [{ "type": "object" }, { "type": "null" }] }
+              }
+            },
+            {
+              "type": "object",
+              "required": ["kind", "registry", "request", "host"],
+              "additionalProperties": false,
+              "properties": {
+                "kind": { "const": "edits" },
+                "registry": { "$ref": "#/$defs/editList" },
+                "request": { "$ref": "#/$defs/editList" },
+                "host": { "$ref": "#/$defs/editList" }
+              }
+            },
+            {
+              "type": "object",
+              "required": ["kind", "probe", "args"],
+              "additionalProperties": false,
+              "properties": {
+                "kind": { "const": "probe" },
+                "probe": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+                "args": { "type": "object" }
+              }
+            }
+          ]
+        },
+        "expect": { "$ref": "#/$defs/expectation" }
+      }
+    },
+    "measuredCase": {
+      "description": "A registered case as the report re-states it: no input (the fixture holds it), plus the measured status and a short observation.",
+      "type": "object",
+      "required": ["id", "family", "scope", "title", "expect", "status", "observed"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "family": { "enum": ["equivalence", "sensitivity", "refusal", "legacy"] },
+        "scope": { "enum": ["resolver", "host", "store", "report", "surface"] },
+        "title": { "type": "string", "minLength": 1 },
+        "expect": { "$ref": "#/$defs/expectation" },
+        "status": { "enum": ["holds", "gap", "pending"] },
+        "observed": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fixture": {
+      "description": "The registered-case fixture document (`test/fixtures/config-conformance.json`): the shared base documents the edit cases mutate, the redaction sentinel marker, and the cases. The in-memory probes use a real secret-shaped sentinel; the serialized fixture carries only this marker string, and the tests assert the real sentinel bytes appear in no serialized output.",
+      "type": "object",
+      "required": ["version", "secretSentinel", "base", "cases"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "const": 1 },
+        "secretSentinel": { "const": "[redacted sentinel]" },
+        "base": {
+          "type": "object",
+          "required": ["registry", "request", "host"],
+          "additionalProperties": false,
+          "properties": {
+            "registry": { "type": "object" },
+            "request": { "type": "object" },
+            "host": { "type": "object" }
+          }
+        },
+        "cases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/registeredCase" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,352 @@
+{
+  "benchmark": "config-queries",
+  "instrument": {
+    "entry": "benchmark/config-queries.ts",
+    "queries": [
+      "queries/config/identity-inventory.json",
+      "queries/config/profile-resolution.json",
+      "queries/config/temporal-stack.json"
+    ]
+  },
+  "queries": {
+    "identityInventory": {
+      "inventory": [
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "0e55887cabd800fe54ae6aee6fbc5fc7a605618dd8c546b4b2bf1f518a0b29e7",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "1941a2daa9ab13880abc43de577b5a49da776c6e4697f5aa780b7c4c79887ed1",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "2acb2630174a982547461249d5f575c2d9bceac8b5ed3f4a057ca1793414f77a",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "41e6b82926c66c61d20c3ee6c09fada9e80a64027118a33ea2aca004e2943ff1",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "4734b196031a16113d482171e0c56a41fba02ab253ea4661e185719235ebda56",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "483c97dd1646f9b0a90077c6a70cfd21131303a38fbbb76e6e35bf7864677615",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "488307f6c2a57dc1c1cd01ca9cbf66b65e55304de32217e37a0e9d6d7b75a21e",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "498704b5daba5c205f40006952cd08534497cfcb5ec67d64547bdd224f659f4d",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "4c4a4cfc042de21ce73698542048010aefc7cfeed2895292488159c581b0f5a4",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "4ddd77f42c0687fec90c82d7efc94b9c0ffd255b8e38243dd50dac228f9ccf66",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "55468051337f5d1a5fd1ea945b3c886f04468607cfd907efa5411bea40d89944",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "580b2f451649249b5dbcd69f1cdd2f362eec7066b000f66dfdd1f25cd347df3d",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "71bb2b0f8319adb3ad5075b1dab13816f511b9fb8a03763ebd0190bb09301d8c",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "73e89f5351959c6637ca1f475814675330e4a2457bd47f0303487ad629c5f011",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "7780719c12a96157052cedb23408a9d0aab02641d1cb922797e9e9eff3c55200",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "7b82781ae8b3dab9c979298a1af99253051b31a19d3a4de8678e6afe2626d3d7",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "7db7298e67c3211e12c2f860e3ac677352c0b8c7b74ef0f5a51e84d72b7b87c0",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "8c0ccd6289f8a5c850bce3f19686f1c5f931aec6af907b016a22141c97b30ea2",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "961d32e46bdfb5b8f1824ddf629bd2e4bfdbada166e16e534ce481fe6a6e3156",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "976ecc33eab81415e0f7aaae44f6d9c6a5e71b1fcd83c1aa9f8432ac1ebcac20",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "9b9e3000770c721ac348d5d04f456fae61b49268f947d6b86c1a1975a8ca31a8",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "b44e0b0e2dbcdf9b5e90ed393f79de7cbddf0cf893e88263257e5f3d050f1eb0",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "cfa4b7ccd2c3a3f3f04bdcf853f880f648934e435ab57fdb9cf6bb5c91eec535",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "d0d68ebfd5f8facf5f393b5f0f56089f1ca4340925166eea1cc33bc2f021c69d",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "long-context",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "long-horizon",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "near",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "near-raw",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "rag-observation",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "rowId": "rag-summary",
+          "identityStatus": "legacy-unrecorded"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "long-context",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "long-horizon",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "near",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "near-raw",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "rag-observation",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "rag-summary",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "near",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "near-raw",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "oracle",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "random",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "recency",
+          "identityStatus": "not-run"
+        }
+      ],
+      "byStatus": [
+        {
+          "identityStatus": "legacy-unrecorded",
+          "rows": 6
+        },
+        {
+          "identityStatus": "not-run",
+          "rows": 35
+        }
+      ],
+      "byArtifact": [
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "identityStatus": "not-run",
+          "rows": 24
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa-live.json",
+          "identityStatus": "legacy-unrecorded",
+          "rows": 6
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "identityStatus": "not-run",
+          "rows": 6
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "identityStatus": "not-run",
+          "rows": 5
+        }
+      ]
+    },
+    "profileResolution": {
+      "rows": [
+        {
+          "requestKind": "profile",
+          "profile": "base",
+          "host": "fixture-host-with-slot",
+          "hostManifestRevision": "893f87d8a60b262ae10c9627888a1caf402986e04bf46f491838c0da33de971e",
+          "identityId": "8f462f31695e75e672c542e01504c277d69bd63d818a74d1381b6d3cd7b9b263",
+          "embedding": {
+            "provider": "builtin",
+            "base": null,
+            "model": "hash-trigram-64",
+            "dims": 64,
+            "credentialSlot": null
+          }
+        },
+        {
+          "requestKind": "tag",
+          "tag": "fast",
+          "host": "fixture-host-with-slot",
+          "hostManifestRevision": "893f87d8a60b262ae10c9627888a1caf402986e04bf46f491838c0da33de971e",
+          "identityId": "3de4180fb39b82a6de66b99ea65a6a30d64df9279f7ff891180f4f239af5bb07",
+          "answerModel": "example/alpha",
+          "embedding": {
+            "provider": "builtin",
+            "base": null,
+            "model": "hash-trigram-64",
+            "dims": 64,
+            "credentialSlot": null
+          }
+        },
+        {
+          "requestKind": "tag",
+          "tag": "fast",
+          "host": "fixture-host-without-slot",
+          "hostManifestRevision": "3fba3f6a57c23a7a7aabca180d2944abaffb89669fc6b132d78215283b5f0b80",
+          "identityId": "2b8669f787654b78960d35584bae98c92b937de6a8e3a895a68c343495579526",
+          "answerModel": "example/beta",
+          "embedding": {
+            "provider": "builtin",
+            "base": null,
+            "model": "hash-trigram-64",
+            "dims": 64,
+            "credentialSlot": null
+          }
+        }
+      ],
+      "byRequest": [
+        {
+          "requestKind": "profile",
+          "profile": "base",
+          "hosts": 1,
+          "distinctIdentities": 1
+        },
+        {
+          "requestKind": "tag",
+          "tag": "fast",
+          "hosts": 2,
+          "distinctIdentities": 2
+        }
+      ]
+    },
+    "temporalStack": {
+      "question": "which exact effective stack produced and scored temporal (category 2) QA?",
+      "liveStacks": [
+        {
+          "identityStatus": "legacy-unrecorded",
+          "rows": [
+            "long-context",
+            "long-horizon",
+            "near",
+            "near-raw",
+            "rag-observation",
+            "rag-summary"
+          ],
+          "temporalQuestions": 83,
+          "temporalF1": 0.23887206223702928,
+          "temporalCeiling": 0.6145833333333334,
+          "tokens": 2263381,
+          "costState": "provider usage retained per row; no rate card is sourced, so cost is unknown",
+          "stack": {}
+        }
+      ],
+      "keylessAnalytic": {
+        "identityStatus": "not-run",
+        "detail": "the keyless answer instrument's model-free temporal ceiling; no provider stack ran",
+        "rows": [
+          "long-context",
+          "long-horizon",
+          "near",
+          "near-raw",
+          "rag-observation",
+          "rag-summary"
+        ],
+        "temporalCeiling": 0.4833333333333334
+      }
+    }
+  },
+  "reportId": "d3a06a5e22e3076ed81ad2ee63db65d0e7b4f238576fb33c9dac55ae955b9a18"
+}

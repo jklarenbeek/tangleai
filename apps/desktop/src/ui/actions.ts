@@ -54,6 +54,12 @@ export const INITIAL_STATE = {
     saved: false,
     probe: null as any,
     embedProbe: null as any,
+    /** Pending explicit secret clears — the only way a stored credential is removed. */
+    clear: { chatKey: false, embedKey: false, browserToken: false },
+    /** Bumped on every save so the write-only secret inputs re-mount blank. */
+    saveCount: 0,
+    /** The read-only config inspection: registry, request, resolution state, identity. */
+    inspect: null as any,
   },
 };
 
@@ -72,6 +78,7 @@ export const ACTIONS: Record<string, any> = {
       invoke('documents.list', {}, 'documents/done', 'noop'),
       invoke('browser.status', {}, 'browser/done', 'noop'),
       invoke('settings.get', {}, 'settings/done', 'noop'),
+      invoke('config.inspect', {}, 'config/done', 'noop'),
     ],
   },
   noop: {},
@@ -279,18 +286,25 @@ export const ACTIONS: Record<string, any> = {
   'settings/browser-unsafe': { patch: [{ op: 'replace', path: '/settings/draft/browser/allowUnsafeLocal', value: '$event.checked' }] },
   'settings/search-url': { patch: [{ op: 'replace', path: '/settings/draft/search/searxngUrl', value: '$event.value' }] },
   'settings/save': {
-    effects: [{ run: 'saveSettings', with: { settings: '$.settings.draft' } }],
+    effects: [{ run: 'saveSettings', with: { settings: '$.settings.draft', clear: '$.settings.clear' } }],
   },
+  'settings/clear-chat-key': { patch: [{ op: 'replace', path: '/settings/clear/chatKey', value: '$payload' }] },
+  'settings/clear-embed-key': { patch: [{ op: 'replace', path: '/settings/clear/embedKey', value: '$payload' }] },
+  'settings/clear-browser-token': { patch: [{ op: 'replace', path: '/settings/clear/browserToken', value: '$payload' }] },
+  'config/done': { patch: [{ op: 'replace', path: '/settings/inspect', value: '$payload' }] },
   'settings/saved': {
     patch: [
       { op: 'replace', path: '/settings/draft', value: '$payload' },
       { op: 'replace', path: '/settings/saved', value: true },
       { op: 'replace', path: '/settings/probe', value: null },
       { op: 'replace', path: '/settings/embedProbe', value: null },
+      { op: 'replace', path: '/settings/clear', value: { chatKey: false, embedKey: false, browserToken: false } },
+      { op: 'replace', path: '/settings/saveCount', value: { '$add': ['$.settings.saveCount', 1] } },
     ],
     effects: [
       invoke('status.get', {}, 'status/done', 'noop'),
       invoke('browser.status', {}, 'browser/done', 'noop'),
+      invoke('config.inspect', {}, 'config/done', 'noop'),
     ],
   },
   probe: {

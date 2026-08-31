@@ -102,7 +102,13 @@ export function createTangleUi(options: TangleUiOptions): any {
           overlapTokens: Number(props.settings.documents.overlapTokens),
         },
       };
-      void client.invoke('settings.set', { settings }).then((outcome: any) => {
+      const clear = props.clear ?? {};
+      void client.invoke('settings.set', {
+        settings,
+        ...(clear.chatKey === true ? { clearChatKey: true } : {}),
+        ...(clear.embedKey === true ? { clearEmbedKey: true } : {}),
+        ...(clear.browserToken === true ? { clearBrowserToken: true } : {}),
+      }).then((outcome: any) => {
         if (outcome.ok) dispatch('settings/saved', outcome.value);
       });
     },

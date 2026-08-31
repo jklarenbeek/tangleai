@@ -25,7 +25,15 @@ export interface RunRecord {
   finishedAt: string | null;
   status: 'running' | 'ok' | 'error';
   summary: any;
+  /** The content-addressed config identity that produced this run. Absent on rows written before identities were recorded. */
+  identityId?: string;
 }
+
+/** How a run relates to the identity table when read back. */
+export type RunIdentityStatus = 'run' | 'legacy-unrecorded';
+
+/** A run row as reads return it: the stored record plus its honest identity status. */
+export type RunView = RunRecord & { identityStatus: RunIdentityStatus };
 
 export interface RunEvent {
   id: string;
@@ -38,35 +46,57 @@ export interface RunEvent {
 }
 
 export interface RunLog {
-  startRun(kind: string): Promise<RunRecord>;
+  startRun(kind: string, options?: { identityId?: string }): Promise<RunRecord>;
   recordEvent(runId: string, record: { id: string, status: string, ms: number }): Promise<RunEvent>;
-  finishRun(runId: string, status: 'ok' | 'error', summary?: any): Promise<void>;
-  listRuns(limit?: number): Promise<RunRecord[]>;
-  getRun(id: string): Promise<{ run: RunRecord, events: RunEvent[] } | undefined>;
+  /** Attach the finalized identity to a running run — before any corpus write it authorizes. */
+  attachIdentity(runId: string, identityId: string): Promise<void>;
+  finishRun(runId: string, status: 'ok' | 'error', summary?: any): Promise<{ ok: true } | { ok: false, reason: string }>;
+  listRuns(limit?: number): Promise<RunView[]>;
+  getRun(id: string): Promise<{ run: RunView, events: RunEvent[] } | undefined>;
 }
 
 export interface RunLogOptions {
   now?: () => string;
+  /**
+   * Run kinds that must carry a config identity by the time they
+   * finish. A finish without one is refused as a value: the run is
+   * closed as an error naming the absence, never silently completed —
+   * a run that cannot say what stack produced it is not "ok".
+   */
+  configAwareKinds?: readonly string[];
 }
 
 const seqKey = (n: number): string => String(n).padStart(4, '0');
 
+const viewOf = (run: RunRecord): RunView => ({
+  ...run,
+  identityStatus: typeof run.identityId === 'string' ? 'run' : 'legacy-unrecorded',
+});
+
 export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog {
   const now = options.now ?? ((): string => new Date().toISOString());
+  const configAware = new Set(options.configAwareKinds ?? []);
   const runs = db.collection<RunRecord>('runs');
   const events = db.collection<RunEvent>('events');
   let sequence = 0;
   const eventSeq = new Map<string, number>();
 
   return {
-    async startRun(kind) {
+    async startRun(kind, startOptions = {}) {
       const startedAt = now();
       sequence += 1;
       const id = `r-${hashContent(`${startedAt}|${kind}|${sequence}`)}`;
       const run: RunRecord = { id, kind, startedAt, finishedAt: null, status: 'running', summary: null };
+      if (startOptions.identityId !== undefined) run.identityId = startOptions.identityId;
       await runs.put(run);
       eventSeq.set(id, 0);
       return run;
+    },
+
+    async attachIdentity(runId, identityId) {
+      const run = await runs.get(runId);
+      if (run === undefined) return;
+      await runs.put({ ...run, identityId });
     },
 
     async recordEvent(runId, record) {
@@ -87,15 +117,21 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
 
     async finishRun(runId, status, summary = null) {
       const run = await runs.get(runId);
-      if (run === undefined) return;
-      await runs.put({ ...run, finishedAt: now(), status, summary });
+      if (run === undefined) return { ok: false as const, reason: `run '${runId}' does not exist` };
       eventSeq.delete(runId);
+      if (status === 'ok' && configAware.has(run.kind) && run.identityId === undefined) {
+        const reason = 'the run carries no config identity; a config-aware run cannot complete without saying what stack produced it';
+        await runs.put({ ...run, finishedAt: now(), status: 'error', summary: { ...(summary ?? {}), refused: reason } });
+        return { ok: false as const, reason };
+      }
+      await runs.put({ ...run, finishedAt: now(), status, summary });
+      return { ok: true as const };
     },
 
     async listRuns(limit = 50) {
       const rows = asRows(await runs.execute<RunRecord>({ $for: { r: '$[*]' }, $return: '$r' }));
       rows.sort((a, b) => (a.startedAt < b.startedAt ? 1 : a.startedAt > b.startedAt ? -1 : 0));
-      return rows.slice(0, limit);
+      return rows.slice(0, limit).map(viewOf);
     },
 
     async getRun(id) {
@@ -107,7 +143,7 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
         $return: '$e',
       }));
       rows.sort((a, b) => a.seq - b.seq);
-      return { run, events: rows };
+      return { run: viewOf(run), events: rows };
     },
   };
 }

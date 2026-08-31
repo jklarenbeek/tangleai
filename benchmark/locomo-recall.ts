@@ -28,6 +28,7 @@ import { loadLocomo } from './lib/locomo.ts';
 import { renderMarkdown, runLocomoRecall, type RecallRunOptions } from './lib/locomo-recall.ts';
 import { createReportValidator, describeErrors } from './lib/validate.ts';
 import SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
+import RUN_IDENTITY_SCHEMA from '../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 
 const args = parseArgs(process.argv.slice(2), {
   flags: ['require'],
@@ -79,7 +80,7 @@ const report = await runLocomoRecall(dataset, {
 console.error(`  total ${(performance.now() - started).toFixed(0)} ms (diagnostic only; the report carries no timing)`);
 
 // the document is validated before anything is written or printed
-const outcome = createReportValidator(SCHEMA)(report);
+const outcome = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA])(report);
 if (!outcome.valid) {
   console.error('the report does not validate against benchmark/schemas/locomo-recall.schema.json:');
   for (const line of describeErrors(outcome)) console.error(`  ${line}`);

@@ -1,0 +1,924 @@
+{
+  "benchmark": "config-conformance",
+  "instrument": {
+    "entry": "benchmark/config-conformance.ts"
+  },
+  "source": {
+    "head": "cfc52394c9ce5963f5ed77c864f5eef05377a3c3",
+    "clean": false,
+    "files": [
+      {
+        "path": "apps/desktop/src/ai-host.ts",
+        "sha256": "d25c32a12f781e71efb3db146a5cec1c285aae079ecdcebaf57fd58f0f447d6f"
+      },
+      {
+        "path": "apps/desktop/src/chat.ts",
+        "sha256": "433cdd837740cc6dfc072ff3759dcbaa1b827d31496b61f06a4e839ba61a1612"
+      },
+      {
+        "path": "apps/desktop/src/contract.ts",
+        "sha256": "89c498f70530b8f6ef6c5538d6fe57d3465bba55c9c260719be2dc587a7b5f4f"
+      },
+      {
+        "path": "apps/desktop/src/handlers.ts",
+        "sha256": "60bc5d7684194cb7e8354bcbaefd6f238e4c8fb8286bb2b24219e30300ac3434"
+      },
+      {
+        "path": "apps/desktop/src/settings.ts",
+        "sha256": "7abe7503858ccd096505e7856132338c49e4654ecd08ff0b42e9d8c8d09e3ee6"
+      },
+      {
+        "path": "benchmark/config-conformance.ts",
+        "sha256": "8f58aaea6bced0ccee16674a98910cfc6cc762d95f01c0be2b193b6899f8385b"
+      },
+      {
+        "path": "benchmark/lib/ai-env.ts",
+        "sha256": "41a82ccdeccadca1d55f2866edd05843eb8177bb7fedabef9aa9ed209be50f76"
+      },
+      {
+        "path": "benchmark/lib/config-conformance.ts",
+        "sha256": "e2b06f3985e25925fa7fb8f4d62d97247bfc879582073833d6aba44a7c604724"
+      },
+      {
+        "path": "benchmark/lib/config-conformance.types.ts",
+        "sha256": "faa88833f6f877acd68059a0d6f6e0e91f6fa0ad523db28f1c5cc3e34b4d82f6"
+      },
+      {
+        "path": "benchmark/lib/report-envelope.ts",
+        "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/results/locomo-policy.json",
+        "sha256": "b1713843a55d86037dfab76be4baa3ca2da294c690de54a35c012116119ed563"
+      },
+      {
+        "path": "benchmark/results/locomo-qa-live.json",
+        "sha256": "3e24a49b91f36c0f9acf54c6e7814900f59b7e8928708e87c33103c297abcf82"
+      },
+      {
+        "path": "benchmark/results/locomo-qa.json",
+        "sha256": "fc7c28d7ad98ef1332c7bd33479bfed54d2aa023b918651ae684b90a05c04b90"
+      },
+      {
+        "path": "benchmark/results/locomo-recall.json",
+        "sha256": "af5f621eca074890785d1287cea2a9e39726199fd7755d265d3a4769f91bfd71"
+      },
+      {
+        "path": "benchmark/schemas/config-conformance.schema.json",
+        "sha256": "a986147b3d75126e012fd6a4f2566167bb4b583dfe24e8b65fce7945539583f0"
+      },
+      {
+        "path": "packages/config/schemas/profile-registry.schema.json",
+        "sha256": "2d4544ad999098a75e174aba1d935f4133cc61efe2333e215cf925e50613160d"
+      },
+      {
+        "path": "packages/config/schemas/run-identity.schema.json",
+        "sha256": "a7fd6ff1496d829364a65c286ee3343a25dabe5fc0cb14a76aa09898908ce89a"
+      },
+      {
+        "path": "packages/config/src/contracts.gen.ts",
+        "sha256": "10bddbd2c3e970db68aefb5d28af73091eebc83b707549c9821906419b728960"
+      },
+      {
+        "path": "packages/config/src/identity.ts",
+        "sha256": "a07469d5c408eb45376f734dab17b326592fdca3168733d6102d473d2a4bdff1"
+      },
+      {
+        "path": "packages/config/src/index.ts",
+        "sha256": "2f24a44c653e7877db48d0658feead43096a58d9c6b2abb61b82a66c9c5796bf"
+      },
+      {
+        "path": "packages/config/src/inheritance.ts",
+        "sha256": "e9a5b6f39c3792c2fd2a05b2346bc37687c0c4a13daedd2df5e95ea1f06965aa"
+      },
+      {
+        "path": "packages/config/src/resolve.ts",
+        "sha256": "b86a6e0ba5bf12849650665e16cd148446a72d5266778a74a3b461427fc73aff"
+      },
+      {
+        "path": "packages/config/src/schema.ts",
+        "sha256": "c623f6c202f21801d6d37ee170e4cd5c509ca32813003e5434562d9cf5fc6ba9"
+      },
+      {
+        "path": "packages/store/src/identities.ts",
+        "sha256": "ccaa309d775cbfbc94168f32e616353cec3743c7f5b3f7919e4f7af218da3fef"
+      },
+      {
+        "path": "packages/store/src/model.ts",
+        "sha256": "de5b83f92dafc11bdbd3ef6a6dca4637c60465cc5d8bdb92a2fe491453e57156"
+      },
+      {
+        "path": "packages/store/src/runs.ts",
+        "sha256": "6b45f4d25e791e618bedbd4f76f3f7be04421b130ca0e594679f5686347edc74"
+      },
+      {
+        "path": "test/fixtures/config-conformance.json",
+        "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
+      }
+    ],
+    "sha256": "4dcc2cfb54c7de08593475a00539cb5c4f61a01624b7d2396405f8a966da10c3"
+  },
+  "suite": {
+    "packages": [
+      {
+        "name": "@jarenjs/ai",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/app",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/charts",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/contract",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/core",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/db",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/emit",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/flow",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/json",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/md",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/mermaid",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/validate",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/view",
+        "version": "0.56.0"
+      }
+    ]
+  },
+  "census": {
+    "factories": {
+      "file": "apps/desktop/src/settings.ts",
+      "chatFactory": "chatClientFor",
+      "embedFactory": "embedderFor",
+      "chatConsumers": [
+        {
+          "file": "apps/desktop/src/ai-host.ts",
+          "count": 1
+        },
+        {
+          "file": "benchmark/locomo-policy.ts",
+          "count": 2
+        },
+        {
+          "file": "benchmark/locomo-qa.ts",
+          "count": 3
+        }
+      ],
+      "embedConsumers": [
+        {
+          "file": "apps/desktop/src/ai-host.ts",
+          "count": 2
+        },
+        {
+          "file": "apps/desktop/src/handlers.ts",
+          "count": 2
+        },
+        {
+          "file": "benchmark/locomo-policy.ts",
+          "count": 2
+        },
+        {
+          "file": "benchmark/locomo-qa.ts",
+          "count": 1
+        }
+      ],
+      "chatConsumerCalls": 6,
+      "embedConsumerCalls": 7
+    },
+    "hostInputs": [
+      {
+        "file": "apps/desktop/src/settings.ts",
+        "kind": "desktop-settings",
+        "names": [
+          "settings"
+        ]
+      },
+      {
+        "file": "benchmark/lib/ai-env.ts",
+        "kind": "environment",
+        "names": [
+          "OPENROUTER_AI_KEY",
+          "TANGLE_AI_PROVIDER",
+          "TANGLE_AI_BASE_URL",
+          "TANGLE_AI_MODEL",
+          "TANGLE_AI_MODEL_STRONG",
+          "TANGLE_AI_EMBEDDING_MODEL",
+          "TANGLE_AI_MAX_CALLS",
+          "TANGLE_AI_MAX_CONCURRENCY"
+        ]
+      }
+    ],
+    "runProducers": [
+      {
+        "file": "apps/desktop/src/handlers.ts",
+        "operation": "folder.sync",
+        "recordsIdentity": true
+      },
+      {
+        "file": "apps/desktop/src/handlers.ts",
+        "operation": "documents.ingest",
+        "recordsIdentity": true
+      },
+      {
+        "file": "apps/desktop/src/handlers.ts",
+        "operation": "documents.ingestbatch",
+        "recordsIdentity": true
+      }
+    ],
+    "reportArtifacts": [
+      {
+        "path": "benchmark/results/locomo-policy.json",
+        "identityDiscipline": "complete",
+        "note": "registration, cell, run and report identities over canonical JSON, plus the shared envelope stating its keyless screen rows analytic"
+      },
+      {
+        "path": "benchmark/results/locomo-qa.json",
+        "identityDiscipline": "complete",
+        "note": "the shared envelope states the keyless answer rows analytic; nothing here bought a provider answer"
+      },
+      {
+        "path": "benchmark/results/locomo-qa-live.json",
+        "identityDiscipline": "complete",
+        "note": "the shared envelope keeps the paid historic rows as stated legacy-unrecorded absences; no old row is backfilled and new live rows must carry full identities"
+      },
+      {
+        "path": "benchmark/results/locomo-recall.json",
+        "identityDiscipline": "complete",
+        "note": "the shared envelope states the analytic recall/ceiling rows not-run"
+      }
+    ],
+    "desktopContract": {
+      "operations": 21,
+      "revision": "ad443820adfa8476c6b77bb496351a81b62d7c7de78d0ac59acecb665adb43ad"
+    },
+    "summary": {
+      "hostInputs": 2,
+      "runProducers": 3,
+      "runProducersRecordingIdentity": 3,
+      "reportArtifacts": 4,
+      "reportArtifactsWithIdentities": 4
+    }
+  },
+  "cases": [
+    {
+      "id": "e-endpoint-default-base",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "Ollama with an omitted base equals the suite-default base",
+      "expect": {
+        "relation": "same-identity",
+        "issueCodes": null,
+        "detail": "the suite's resolveEndpoint is the only endpoint authority; an omitted base and its explicit default resolve to one normalized base and therefore one effective identity"
+      },
+      "status": "holds",
+      "observed": "both spellings normalize to http://localhost:11434/v1 and resolve to one effective identity"
+    },
+    {
+      "id": "e-endpoint-lmstudio-default",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "LM Studio with an omitted base equals the suite-default base",
+      "expect": {
+        "relation": "same-identity",
+        "issueCodes": null,
+        "detail": "same normalized base, same effective identity"
+      },
+      "status": "holds",
+      "observed": "both spellings normalize to http://localhost:1234/v1 and resolve to one effective identity"
+    },
+    {
+      "id": "e-endpoint-trailing-slash",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "A trailing slash does not change the normalized base",
+      "expect": {
+        "relation": "same-identity",
+        "issueCodes": null,
+        "detail": "suite normalization strips the trailing slash; both spellings are one base"
+      },
+      "status": "holds",
+      "observed": "both spellings normalize to https://example.com/v1 and resolve to one effective identity"
+    },
+    {
+      "id": "e-endpoint-chat-path",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "A pasted /chat/completions path does not change the normalized base",
+      "expect": {
+        "relation": "same-identity",
+        "issueCodes": null,
+        "detail": "suite normalization removes the pasted chat path; both spellings are one base"
+      },
+      "status": "holds",
+      "observed": "both spellings normalize to https://example.com/v1 and resolve to one effective identity"
+    },
+    {
+      "id": "e-reorder-members",
+      "family": "equivalence",
+      "scope": "resolver",
+      "title": "Reordered members of the same registry document hash equally",
+      "expect": {
+        "relation": "same-identity",
+        "issueCodes": null,
+        "detail": "canonical RFC 8785 hashing makes member order irrelevant: same registry revision, same profile identity"
+      },
+      "status": "holds",
+      "observed": "reordered members hash to one canonical revision"
+    },
+    {
+      "id": "s-model",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different chat model is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the selected model is part of the effective role identity"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-endpoint-base",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different normalized base is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "two hosts resolving the same model behind different bases cannot masquerade as one run"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-temperature",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different temperature is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "inference controls are identity fields, not incidental settings"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-reasoning",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different reasoning control is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "thinking controls change what the provider does and therefore the identity"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-response-schema",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different structured-output schema revision is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the response contract shapes every answer; its revision is identity"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-prompt-revision",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different prompt revision is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the versioned template is identity; user text and retrieved evidence are not"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-tool-manifest",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different tool input schema is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the effective tool manifest is taken from the compiled toolbox; a changed tool schema changes the identity"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-embedding-model",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different embedding model is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the singleton embedding identity is `{ model, dims }`; a model change is a different corpus space"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-embedding-dims",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different embedding width is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "width is identity; vectors of different widths never rank against each other"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-component-revision",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different policy component revision is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the selected policy/ranker component reference and revision are identity; the component's values stay owned by its package"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-budget-ceiling",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different effective budget ceiling is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "the effective ceiling changes what a run may do and is identity"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-rate-card",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "A different rate card is a different effective identity",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "cost provenance is identity: a stale price must not silently stand behind a fresh number"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "r-registry-duplicate-id",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A duplicate candidate id refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1004"
+        ],
+        "detail": "unique ids are asserted by the registry schema's $query at validation time"
+      },
+      "status": "holds",
+      "observed": "validation refuses with TCFG1004 /candidates"
+    },
+    {
+      "id": "r-registry-unknown-parent",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A child extending a missing parent refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1002"
+        ],
+        "detail": "reference integrity is a schema assertion, not a runtime surprise"
+      },
+      "status": "holds",
+      "observed": "validation refuses with TCFG1002 /profiles/1/extends"
+    },
+    {
+      "id": "r-registry-kind-mismatch",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile whose embedding references a chat candidate refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1006"
+        ],
+        "detail": "role/candidate kind agreement is asserted at validation time"
+      },
+      "status": "holds",
+      "observed": "validation refuses with TCFG1006 /profiles/0/embedding"
+    },
+    {
+      "id": "r-registry-secret-member",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A registry member named like a credential refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1014"
+        ],
+        "detail": "every object closes its properties; an undeclared member cannot be carried, so a credential value has no place to live"
+      },
+      "status": "holds",
+      "observed": "validation refuses with TCFG1007 /candidates; TCFG1014 /candidates/0/apiKey"
+    },
+    {
+      "id": "r-registry-secret-url",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A candidate base URL carrying userinfo refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1013"
+        ],
+        "detail": "a credential-bearing base can enter no registry, identity, report or cache key; the sentinel must appear in no serialized outcome"
+      },
+      "status": "holds",
+      "observed": "validation refuses with TCFG1007 /candidates; TCFG1007 /candidates/1; TCFG1007 /candidates/1/baseUrl; TCFG1007 /candidates/1/baseUrl; TCFG1013 /candidates/1/baseUrl"
+    },
+    {
+      "id": "r-dangling-identity-row",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A result row referencing an absent identity refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1018"
+        ],
+        "detail": "every `run` row must resolve to exactly one identity in the table; the envelope's $query refuses a dangling reference"
+      },
+      "status": "holds",
+      "observed": "the identity envelope refuses a dangling run-row reference as TCFG1018"
+    },
+    {
+      "id": "r-inheritance-cycle",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile inheritance cycle refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1003"
+        ],
+        "detail": "ancestry is resolved root-to-leaf; a cycle is a stable issue, never a stack overflow"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1003 /profiles/1"
+    },
+    {
+      "id": "r-request-unknown-tag",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A request for an undeclared capability tag refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1001"
+        ],
+        "detail": "a tag is a declared intent; an undeclared spelling resolves to nothing and falls through to nothing"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1001 /tag"
+    },
+    {
+      "id": "r-unavailable-slot",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required credential slot the host has not configured refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1008"
+        ],
+        "detail": "slot presence is a host fact; an unavailable slot refuses before any client exists, and no fallback candidate is substituted silently for a pinned candidate"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1008 /roles/answer/candidate"
+    },
+    {
+      "id": "r-model-unavailable",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A pinned model the host does not offer refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1009"
+        ],
+        "detail": "a pinned candidate the host cannot serve refuses; it never falls through to another candidate or tag"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1009 /roles/answer/candidate"
+    },
+    {
+      "id": "r-feature-mismatch",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required provider feature the host lacks refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1010"
+        ],
+        "detail": "a candidate's declared feature requirements are checked against the host manifest before a paid answer"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1010 /roles/answer/candidate"
+    },
+    {
+      "id": "r-missing-required-tool",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A required tool absent from the host allowlist refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1011"
+        ],
+        "detail": "a tool request is never permission; missing required tools refuse and extra host tools never silently enter"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1011 /roles/answer/tools"
+    },
+    {
+      "id": "r-dims-disagreement",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "Registry and host disagreeing on embedding dimensions refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1012"
+        ],
+        "detail": "registry dimensions must equal the host probe/reply under the suite's sameIdentity semantics; disagreement refuses before indexed work"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1012 /embedding"
+    },
+    {
+      "id": "r-no-candidate-for-tag",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A tag with no available candidate refuses instead of falling through",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1015"
+        ],
+        "detail": "no available candidate returns an issue; it never falls through to another tag, the legacy profile or the offline model"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1015 /roles/chat/capability"
+    },
+    {
+      "id": "r-budget-raise",
+      "family": "refusal",
+      "scope": "resolver",
+      "title": "A profile budget above a host hard ceiling refuses",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1016"
+        ],
+        "detail": "budgets remain host ceilings; a profile may lower one and can never raise one"
+      },
+      "status": "holds",
+      "observed": "refused as a value with TCFG1016 /budget/maxCalls"
+    },
+    {
+      "id": "l-unconfigured-offline",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A genuinely unconfigured legacy host stays grounded/offline",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "default settings produce the built-in embedder identity and no chat wire; that fallback is intentional product behavior and only the unconfigured legacy request keeps it"
+      },
+      "status": "holds",
+      "observed": "the unconfigured legacy request resolves to no chat wire and the built-in hash-trigram-64 identity at 64 dimensions (identity 55239dafdc13…)"
+    },
+    {
+      "id": "l-custom-no-base",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A custom provider without a base is a stated unavailable value",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "both the environment reader and the suite refuse a custom provider with no base before any client is created"
+      },
+      "status": "holds",
+      "observed": "readAiEnv states 'AI0001: provider 'custom' needs a baseUrl' and the suite refuses to resolve custom without a base"
+    },
+    {
+      "id": "l-missing-key-skip",
+      "family": "legacy",
+      "scope": "host",
+      "title": "A missing key is a stated live-tier skip, not a failure",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "the keyless tiers stay runnable; the reason names the variable, never a value"
+      },
+      "status": "holds",
+      "observed": "a missing key is a stated skip naming OPENROUTER_AI_KEY; keyless tiers stay runnable"
+    },
+    {
+      "id": "l-half-configured-embed",
+      "family": "legacy",
+      "scope": "host",
+      "title": "An explicit half-configured embed request must refuse, not silently become the built-in",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": [
+          "TCFG1021"
+        ],
+        "detail": "today a wire request with no model silently becomes hash-trigram-64, making a requested remote indistinguishable from requested offline; the campaign keeps fallback only for the explicit unconfigured legacy state"
+      },
+      "status": "holds",
+      "observed": "an explicit half-configured embed request refuses as TCFG1021 naming the missing fields; only the unconfigured legacy state keeps the built-in fallback"
+    },
+    {
+      "id": "l-loose-env-integers",
+      "family": "legacy",
+      "scope": "host",
+      "title": "Environment integers must be schema-normalized, never partially parsed",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today parseInt turns '4x' into 4 and '2.5' into 2, and zero/negatives silently become the default; the campaign records explicit, defaulted and rejected states"
+      },
+      "status": "holds",
+      "observed": "guards are schema-normalized with recorded states: '4x' -> rejected, '2.5' -> rejected, '0' -> rejected, '-1' -> rejected; '7' -> explicit 7; absent -> defaulted"
+    },
+    {
+      "id": "l-corrupt-settings",
+      "family": "legacy",
+      "scope": "host",
+      "title": "Corrupt persisted settings must be a typed migration/refusal value",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today the settings read structurally merges a corrupt row into typed runtime state; the campaign validates stored rows before treating them as Settings"
+      },
+      "status": "holds",
+      "observed": "a corrupt stored row is refused or normalized before it becomes typed settings"
+    },
+    {
+      "id": "l-settings-secret-reflection",
+      "family": "legacy",
+      "scope": "surface",
+      "title": "Settings reads must expose slot status, never credential values",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today settings.get returns stored API keys and the renderer token verbatim; the campaign makes credential values write-only host slots"
+      },
+      "status": "holds",
+      "observed": "the public settings read returns null for every credential value with slot statuses beside them, and the config inspection carries no secret byte"
+    },
+    {
+      "id": "l-endpoint-guard-disagreement",
+      "family": "legacy",
+      "scope": "host",
+      "title": "The local wire guard must not disagree with the suite's endpoint authority",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "chatWireConfigured says false for Ollama/LM Studio without a base while resolveEndpoint resolves their suite defaults; the campaign deletes the local endpoint decision"
+      },
+      "status": "holds",
+      "observed": "the local guard agrees with the suite endpoint authority for every provider"
+    },
+    {
+      "id": "l-endpoint-userinfo-passthrough",
+      "family": "legacy",
+      "scope": "host",
+      "title": "URL userinfo must be refused before suite resolution",
+      "expect": {
+        "relation": "refusal",
+        "issueCodes": [
+          "TCFG1013"
+        ],
+        "detail": "the suite preserves userinfo in the normalized base and the replay layer treats that base as credential-free; Tangle must refuse such a base as host policy before calling the suite"
+      },
+      "status": "holds",
+      "observed": "a credential-bearing base is refused as TCFG1013 before suite resolution on both host paths, and the sentinel appears in no issue"
+    },
+    {
+      "id": "l-run-identity-absence",
+      "family": "legacy",
+      "scope": "store",
+      "title": "New runs must carry a config identity reference",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today zero of the three desktop run-producing handlers stores a config/profile identity; old rows stay honestly legacy-unrecorded and are never backfilled"
+      },
+      "status": "holds",
+      "observed": "a run stores its identity reference before work, a row without one reads as legacy-unrecorded and is never backfilled, and a config-aware run cannot finish without saying what stack produced it"
+    },
+    {
+      "id": "l-chat-provider-label",
+      "family": "legacy",
+      "scope": "store",
+      "title": "Chat answers must reference an identity; a provider label is display metadata",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today a chat message stores only a 'provider/model' label; the campaign records the identity reference and provider-reported usage beside it"
+      },
+      "status": "holds",
+      "observed": "a chat answer stores its identity reference (55239dafdc13…) beside the display label, and the identity is retrievable from the repository"
+    },
+    {
+      "id": "l-report-identity-absence",
+      "family": "legacy",
+      "scope": "report",
+      "title": "Every applicable benchmark artifact must carry the shared identity envelope",
+      "expect": {
+        "relation": "observation",
+        "issueCodes": null,
+        "detail": "today only the policy report has registration/cell/run/report identities; recall, QA and QA-live rows have no shared run identity and must gain the envelope or an explicit not-run/legacy-unrecorded status"
+      },
+      "status": "holds",
+      "observed": "all 4 artifacts carry the shared identity envelope with validated run/not-run/legacy-unrecorded rows"
+    }
+  ],
+  "counts": {
+    "cases": 44,
+    "byFamily": {
+      "equivalence": 5,
+      "sensitivity": 12,
+      "refusal": 15,
+      "legacy": 12
+    },
+    "byStatus": {
+      "holds": 44,
+      "gap": 0,
+      "pending": 0
+    }
+  },
+  "gate": {
+    "schemaValid": true,
+    "transportCalls": 0,
+    "probeCalls": 0,
+    "modelCalls": 0
+  },
+  "reportId": "469886f120db314e7a4229af8025a3ab7ce5de127ac6b70297912e78e94e985c"
+}

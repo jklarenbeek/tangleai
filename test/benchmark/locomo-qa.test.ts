@@ -79,6 +79,7 @@ import { liveClients, scriptedEnv, scriptedFetch, scriptedProgram, completion, l
 import RECALL_SCHEMA from '../../benchmark/schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from '../../benchmark/schemas/locomo-qa.schema.json' with { type: 'json' };
 import LIVE_SCHEMA from '../../benchmark/schemas/locomo-qa-live.schema.json' with { type: 'json' };
+import RUN_IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 
 const REPORT_PATH = 'benchmark/results/locomo-qa.json';
 const LIVE_PATH = 'benchmark/results/locomo-qa-live.json';
@@ -92,10 +93,10 @@ if (missing) {
 }
 
 const validateKeyless = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' })
-  .addSchema(RECALL_SCHEMA as Record<string, unknown>)
+  .addSchema([RECALL_SCHEMA as Record<string, unknown>, RUN_IDENTITY_SCHEMA as Record<string, unknown>])
   .compile(QA_SCHEMA as Record<string, unknown>);
 const validateLive = new JarenValidator({ skipErrors: false, collectErrors: true, unknownFormats: 'ignore' })
-  .addSchema([RECALL_SCHEMA as Record<string, unknown>, QA_SCHEMA as Record<string, unknown>])
+  .addSchema([RECALL_SCHEMA as Record<string, unknown>, QA_SCHEMA as Record<string, unknown>, RUN_IDENTITY_SCHEMA as Record<string, unknown>])
   .compile(LIVE_SCHEMA as Record<string, unknown>);
 
 const ALL_ROWS = ROWS.map((row) => row.key);
@@ -118,7 +119,7 @@ describe('readAiEnv — the live tier is never a test dependency', () => {
     const ollama = readAiEnv({ TANGLE_AI_PROVIDER: 'ollama', TANGLE_AI_BASE_URL: 'http://localhost:11434', TANGLE_AI_MODEL: 'qwen' });
     assert.equal(ollama.live, true);
     assert.equal(ollama.reason, null);
-    assert.match(readAiEnv({ TANGLE_AI_PROVIDER: 'custom', OPENROUTER_AI_KEY: 'k', TANGLE_AI_MODEL: 'm' }).reason!, /TANGLE_AI_BASE_URL/);
+    assert.match(readAiEnv({ TANGLE_AI_PROVIDER: 'custom', OPENROUTER_AI_KEY: 'k', TANGLE_AI_MODEL: 'm' }).reason!, /needs a baseUrl/);
     assert.match(readAiEnv({ TANGLE_AI_PROVIDER: 'openai', OPENROUTER_AI_KEY: 'k', TANGLE_AI_MODEL: 'm' }).reason!, /unknown provider 'openai'/);
   });
 
@@ -334,6 +335,7 @@ function liveStub(overrides: Partial<LiveReport> & { rows?: string[] } = {}): Li
     dataset: { path: 'p', sha256: 'a'.repeat(64), bytes: 1, schemaValid: true, conversations: 1, restricted: ['conv-30'] },
     config: { embedder: { model: 'e', dims: 8 }, k: 10, ingest: 'per-session', clock: 'c', maxPairs: 20 },
     sample: { seed: 1, perCategory: 1, adversarial: 0, scorable: 1, byCategory: { 1: 0, 2: 0, 3: 0, 4: 1, 5: 0 }, ids: ['conv-30#1'] },
+    configIdentities: { identities: [], rows: rows.map((key) => ({ rowId: key, identityStatus: 'legacy-unrecorded' as const })) },
     runs: [{ at: '2026-08-27T12:00:00.000Z', rows, plan: { embedRequests: 0, chatCalls: 1, judgeCalls: 0, planned: 1, maxCalls: 10, skipped: null }, embedding: { requests: 0, texts: 0, cached: 0 }, spent: { turns: 1, tokens: 10, ms: 5 }, replayed: 0, errors: { count: 0, sample: [] } }],
     configurations: rows.map((key) => row(key)),
     ...rest,

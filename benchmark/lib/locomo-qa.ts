@@ -115,8 +115,11 @@ import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
 import { createOfflineEmbedder, DEFAULT_THRESHOLDS, OFFLINE_EMBEDDER_DIMS, type PipelineThresholds } from '@tangleai/pipeline';
 
+import type { IdentityEnvelope, RunIdentity } from '@tangleai/config';
+
 import type { ChatClient } from '../../apps/desktop/src/settings.ts';
 import type { AiEnv } from './ai-env.ts';
+import { analyticEnvelope, runEnvelope } from './report-envelope.ts';
 import { CATEGORY_NAMES, LOCOMO_DATASET, SCORABLE_CATEGORIES, type LocomoSample } from './locomo.ts';
 import {
   addAuxCensus,
@@ -562,6 +565,8 @@ export interface KeylessConfiguration {
 export interface QaReport {
   benchmark: 'locomo';
   instrument: 'locomo-qa';
+  /** The shared config-identity envelope: every keyless row is not-run analysis. */
+  configIdentities: IdentityEnvelope;
   dataset: DatasetBlock;
   config: {
     embedder: { model: string, dims: number };
@@ -804,6 +809,7 @@ export async function runLocomoQa(dataset: Dataset, options: QaRunOptions = {}):
   return {
     benchmark: 'locomo',
     instrument: 'locomo-qa',
+    configIdentities: analyticEnvelope(configurations.map((row) => row.key)),
     dataset: {
       path: LOCOMO_DATASET, sha256: dataset.sha256, bytes: dataset.bytes, schemaValid: dataset.valid,
       conversations: samples.length, restricted,
@@ -960,6 +966,8 @@ export interface LiveRun {
 export interface LiveReport {
   benchmark: 'locomo';
   instrument: 'locomo-qa-live';
+  /** The shared config-identity envelope: historic rows are stated legacy-unrecorded absences; new rows reference the identity that ran them. */
+  configIdentities: IdentityEnvelope;
   generated: {
     /** The latest run's instant. */
     at: string;
@@ -993,6 +1001,13 @@ export interface LiveRunOptions {
   horizonClient?: ChatClient;
   /** The wire cache: embeddings are inspected before the plan; the caller gives both wire clients `cache.adapter(...)`. */
   cache?: WireCache;
+  /**
+   * Resolves the run's config identity once the embedding identity is
+   * observed. REQUIRED before anything is spent: a live run that cannot
+   * say what stack produced it may not buy an answer, and a new live
+   * row never wears the legacy-unrecorded marker.
+   */
+  configIdentityFor?: (observed: { model: string, dims: number }) => Promise<RunIdentity>;
   /** Ignore what the cache remembers (it still remembers what this run buys). */
   fresh?: boolean;
   /**
@@ -1339,7 +1354,10 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
     replayed: 0,
     errors: { count: 0, sample: [] },
   };
-  if (skipped !== null) return { ...header, runs: [run], configurations: [] };
+  if (skipped !== null) return { ...header, configIdentities: { identities: [], rows: [] }, runs: [run], configurations: [] };
+  if (options.configIdentityFor === undefined) {
+    throw new Error('a live run resolves its config identity before it may spend; hand runLocomoQaLive a configIdentityFor');
+  }
 
   const shared: Account = { account: createBudgetAccount({ turns: env.maxCalls }, timer), timer };
   const errors: string[] = [];
@@ -1545,7 +1563,9 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
   run.spent = { turns: spent.turns, tokens: spent.tokens, ms: spent.ms };
   run.replayed = configurations.reduce((n, c) => n + c.cost.replayed + c.adversarial.cost.replayed, 0);
   run.errors = { count: errorCount, sample: errors };
-  return { ...header, runs: [run], configurations };
+  const configIdentity = await options.configIdentityFor({ model: embedder.model, dims: header.generated.embedder.dims });
+  const configIdentities = runEnvelope([configIdentity], configurations.map((row) => ({ rowId: row.key, identityId: configIdentity.identityId })));
+  return { ...header, configIdentities, runs: [run], configurations };
 }
 
 /** What the long-horizon row needs from the run around it. */
@@ -1745,10 +1765,22 @@ export function mergeLiveReports(existing: LiveReport | null, fresh: LiveReport)
   const replaced = new Set(freshRows.map((row) => row.key));
   const kept = existing.configurations.filter((row) => !replaced.has(row.key));
   const embedder = fresh.generated.embedder.dims === 0 ? existing.generated.embedder : fresh.generated.embedder;
+
+  // the envelope merges by the same rule the rows do: a replaced row's
+  // reference is the fresh one, a kept row keeps its recorded state, and
+  // the identity table holds exactly the identities still referenced
+  const keptRefs = existing.configIdentities.rows.filter((row) => !replaced.has(row.rowId));
+  const rows = [...keptRefs, ...fresh.configIdentities.rows];
+  const referenced = new Set(rows.flatMap((row) => (row.identityStatus === 'run' ? [row.identityId] : [])));
+  const identities = [...existing.configIdentities.identities, ...fresh.configIdentities.identities]
+    .filter((identity, index, all) => referenced.has(identity.identityId)
+      && all.findIndex((other) => other.identityId === identity.identityId) === index);
+
   return {
     ...existing,
     generated: { ...fresh.generated, embedder },
     config: { ...fresh.config, embedder },
+    configIdentities: { identities, rows },
     runs: [...existing.runs, ...fresh.runs],
     configurations: sortRows([...kept, ...freshRows]),
   };

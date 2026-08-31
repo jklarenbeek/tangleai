@@ -655,6 +655,10 @@ export interface LocomoPolicy {
    */
   gate: { passed: boolean; failures: Array<string>; };
   reportId: Sha256;
+  /**
+   * the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary
+   */
+  configIdentities: unknown;
 }
 
 

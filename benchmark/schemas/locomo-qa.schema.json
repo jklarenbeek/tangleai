@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://tangleai.dev/schemas/locomo-qa",
-  "title": "LoCoMo answer-path report, keyless tier \u2014 the committed document, with the baseline rows",
-  "description": "What `benchmark/locomo-qa.ts` writes without a key, validated before it is written. EXTENDS the recall document by `$ref` (dataset, corpus, questions, thresholds, ingest census, the unit types are the same definitions) rather than forking it. One row per entry of the table \u2014 the long-context baseline, the three retrieval corpora, the long-horizon agent, Tangle \u2014 with the ceiling and the verbatim floor where a model-free reading exists and `null` where it does not. No timing and no clock reading is allowed in here: the same dataset and options must produce byte-identical bytes.",
+  "title": "LoCoMo answer-path report, keyless tier — the committed document, with the baseline rows",
+  "description": "What `benchmark/locomo-qa.ts` writes without a key, validated before it is written. EXTENDS the recall document by `$ref` (dataset, corpus, questions, thresholds, ingest census, the unit types are the same definitions) rather than forking it. One row per entry of the table — the long-context baseline, the three retrieval corpora, the long-horizon agent, Tangle — with the ceiling and the verbatim floor where a model-free reading exists and `null` where it does not. No timing and no clock reading is allowed in here: the same dataset and options must produce byte-identical bytes.",
   "type": "object",
   "required": [
     "benchmark",
@@ -14,7 +14,8 @@
     "questions",
     "sample",
     "gate",
-    "configurations"
+    "configurations",
+    "configIdentities"
   ],
   "additionalProperties": false,
   "properties": {
@@ -90,6 +91,10 @@
       "items": {
         "$ref": "#/definitions/row"
       }
+    },
+    "configIdentities": {
+      "description": "the keyless answer rows carry the shared config-identity envelope; every row here is not-run analysis",
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
     }
   },
   "definitions": {

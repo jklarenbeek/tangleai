@@ -1,6 +1,31 @@
 {
   "benchmark": "locomo",
   "instrument": "locomo-recall",
+  "configIdentities": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "oracle",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "random",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "recency",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "near-raw",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "near",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
   "dataset": {
     "path": "benchmark/locomo/data/locomo10.json",
     "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",

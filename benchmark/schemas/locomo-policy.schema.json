@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://tangleai.dev/schemas/locomo-policy",
-  "title": "LoCoMo policy-matrix report \u2014 the measurement contract",
-  "description": "What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose \u2014 the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.",
+  "title": "LoCoMo policy-matrix report — the measurement contract",
+  "description": "What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose — the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.",
   "type": "object",
   "required": [
     "benchmark",
@@ -17,7 +17,8 @@
     "selection",
     "widthDecision",
     "gate",
-    "reportId"
+    "reportId",
+    "configIdentities"
   ],
   "additionalProperties": false,
   "$query": {
@@ -381,6 +382,10 @@
     },
     "reportId": {
       "$ref": "#/definitions/sha256"
+    },
+    "configIdentities": {
+      "description": "the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary",
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
     }
   },
   "definitions": {
@@ -645,7 +650,7 @@
       }
     },
     "cell": {
-      "description": "A treatment cell as effective VALUES \u2014 never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.",
+      "description": "A treatment cell as effective VALUES — never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.",
       "type": "object",
       "required": [
         "cellId",
@@ -930,7 +935,7 @@
       }
     },
     "run": {
-      "description": "Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares \u2014 never a hand-written subset. The key itself never appears; only the name of the variable it came from.",
+      "description": "Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares — never a hand-written subset. The key itself never appears; only the name of the variable it came from.",
       "type": "object",
       "required": [
         "tier",
@@ -1108,7 +1113,7 @@
           ]
         },
         "questionSet": {
-          "description": "The canonical digest of the sorted scored question ids \u2014 what a comparison compares instead of walking two lists.",
+          "description": "The canonical digest of the sorted scored question ids — what a comparison compares instead of walking two lists.",
           "$ref": "#/definitions/sha256"
         },
         "sampleIds": {
@@ -1164,11 +1169,11 @@
           ]
         },
         "ceiling": {
-          "description": "The evidence recall this row's own retrieval reached for this question \u2014 the model-free ceiling the score is read against. On a tier that scores recall itself, the two are the same number, and saying so is the point.",
+          "description": "The evidence recall this row's own retrieval reached for this question — the model-free ceiling the score is read against. On a tier that scores recall itself, the two are the same number, and saying so is the point.",
           "$ref": "#/definitions/unit"
         },
         "promptSha256": {
-          "description": "The digest of the serialized prompt this cell produced for this question. Two cells act on a question when their digests differ \u2014 the acting set is read from the prompt, never from the score.",
+          "description": "The digest of the serialized prompt this cell produced for this question. Two cells act on a question when their digests differ — the acting set is read from the prompt, never from the score.",
           "$ref": "#/definitions/sha256"
         },
         "tokens": {
@@ -1513,7 +1518,7 @@
           ]
         },
         "oracleCeiling": {
-          "description": "The best any top-k retrieval could have scored on these questions \u2014 analytic, not observed. Null where the phase does not compute it.",
+          "description": "The best any top-k retrieval could have scored on these questions — analytic, not observed. Null where the phase does not compute it.",
           "oneOf": [
             {
               "type": "null"
@@ -1524,7 +1529,7 @@
           ]
         },
         "verbatimFloor": {
-          "description": "The retrieved context quoted as the answer, scored by the official evaluator \u2014 the model-free floor at this cell's own k. null where quoting the context is not a floor.",
+          "description": "The retrieved context quoted as the answer, scored by the official evaluator — the model-free floor at this cell's own k. null where quoting the context is not a floor.",
           "oneOf": [
             {
               "type": "null"
@@ -1554,7 +1559,7 @@
               ]
             },
             "ceiling": {
-              "description": "The evidence recall the retrieval reached, averaged \u2014 what the F1 beside it is read against.",
+              "description": "The evidence recall the retrieval reached, averaged — what the F1 beside it is read against.",
               "oneOf": [
                 {
                   "type": "null"
@@ -2304,7 +2309,7 @@
       }
     },
     "prompts": {
-      "description": "What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters \u2014 the suite's one size rule \u2014 where none did.",
+      "description": "What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters — the suite's one size rule — where none did.",
       "type": "object",
       "required": [
         "unchanged",
@@ -2351,7 +2356,7 @@
           ]
         },
         "against": {
-          "description": "The cell whose prompts these were compared with \u2014 the inert reference, or the cell itself.",
+          "description": "The cell whose prompts these were compared with — the inert reference, or the cell itself.",
           "$ref": "#/definitions/sha256"
         }
       }
@@ -2459,7 +2464,7 @@
       }
     },
     "inference": {
-      "description": "The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be \u2014 only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.",
+      "description": "The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be — only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.",
       "type": "object",
       "required": [
         "authorized",
@@ -2517,7 +2522,7 @@
               "minimum": 0
             }
           },
-          "description": "The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it \u2014 a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed."
+          "description": "The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it — a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed."
         },
         "thinking": {
           "enum": [

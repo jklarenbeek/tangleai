@@ -70,6 +70,8 @@ import {
   type LocomoPolicy,
 } from './lib/locomo-policy.ts';
 import { createReportValidator, describeErrors } from './lib/validate.ts';
+import { analyticEnvelope } from './lib/report-envelope.ts';
+import RUN_IDENTITY_SCHEMA from '../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import { WIRE_CACHE_PATH, openWireCache } from './lib/wire-cache.ts';
 import SCHEMA from './schemas/locomo-policy.schema.json' with { type: 'json' };
 
@@ -141,7 +143,7 @@ const onProgress = (message: string): void => {
   last = now;
 };
 
-const validateReport = createReportValidator(SCHEMA);
+const validateReport = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA]);
 function mustValidate(report: LocomoPolicy): void {
   const outcome = validateReport(report);
   if (outcome.valid) return;
@@ -409,6 +411,7 @@ if (phase === 'census') {
   next = merged;
 }
 
+next = { ...next, configIdentities: analyticEnvelope(next.attempts.map((attempt) => attempt.runId)) };
 next = { ...next, reportId: await reportIdOf(next) };
 if (cache !== undefined) {
   const after = await cache.stats();

@@ -65,13 +65,14 @@ import { liveClients, scriptedEnv, scriptedFetch } from '../fixtures/scripted-wi
 import { normalQuantile } from '../../benchmark/lib/stats.ts';
 import { createReportValidator } from '../../benchmark/lib/validate.ts';
 import SCHEMA from '../../benchmark/schemas/locomo-policy.schema.json' with { type: 'json' };
+import RUN_IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 
 const LIVE_PATH = 'benchmark/results/locomo-qa-live.json';
 const TYPES_PATH = 'benchmark/lib/locomo-policy.types.ts';
 const POLICY_PATH = 'benchmark/results/locomo-policy.json';
 const POLICY_DOC = 'docs/LOCOMO_POLICY.md';
 
-const validate = createReportValidator(SCHEMA);
+const validate = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA]);
 const dataset = await loadLocomo();
 const missing = dataset.available ? false : `the LoCoMo submodule is absent: ${dataset.reason}`;
 const available = dataset.available ? dataset : null;
