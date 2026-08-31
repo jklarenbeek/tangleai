@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "cfc52394c9ce5963f5ed77c864f5eef05377a3c3",
+    "head": "39f6909235de6aae4de1ee6f2e24e652bc812f06",
     "clean": false,
     "files": [
       {
@@ -53,7 +53,7 @@
       },
       {
         "path": "benchmark/results/locomo-policy.json",
-        "sha256": "b1713843a55d86037dfab76be4baa3ca2da294c690de54a35c012116119ed563"
+        "sha256": "68a2c5bb650ceb9202c6c382f5d5e46bf52c691fc133eb32c147c661f24dea7d"
       },
       {
         "path": "benchmark/results/locomo-qa-live.json",
@@ -120,7 +120,7 @@
         "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
       }
     ],
-    "sha256": "4dcc2cfb54c7de08593475a00539cb5c4f61a01624b7d2396405f8a966da10c3"
+    "sha256": "4f9f5d51dccf0f07377380ef8bcbf6c278447fe3e42150459fe04ebc22af2358"
   },
   "suite": {
     "packages": [
@@ -920,5 +920,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "469886f120db314e7a4229af8025a3ab7ce5de127ac6b70297912e78e94e985c"
+  "reportId": "b3e222828e6d649d97c0ee1c7fbad46e0c4bfd5f9b8f79694b60cb601a969e3b"
 }

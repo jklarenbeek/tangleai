@@ -1726,15 +1726,24 @@ export function describePlan(plan: NonNullable<LocomoPolicy['plan']>, controls: 
 
 /**
  * The frozen shortlist under the real embedder, before an answer exists.
- * Reads operation counts and never a score: a cell whose live counts
- * equal the inert cell's does the same thing the inert cell does under
- * this embedder, and buying its answers would buy the inert cell twice.
+ * Reads operation counts and retrieved-context bytes, never a score. A
+ * cell is mechanically inert only when BOTH halves hold: its live counts
+ * equal the inert cell's AND every registered selection question
+ * retrieves byte-identical ordered context under the cell's own k and
+ * minScore — only then does it provably produce inert's prompts, so
+ * buying its answers would buy the inert cell twice. Equal counts alone
+ * prove nothing for a retrieval-axis cell, which acts after ingest on
+ * the ranking cutoff and can change every prompt while changing no
+ * count. The context lines are the live prompt's own (`contextLine`),
+ * and the question vectors are cell-independent, bought once per
+ * conversation — texts the plan already priced. A census handed no
+ * questions claims nothing and drops nothing.
  */
 export interface CensusInput {
   cells: readonly CellSpec[];
   inertCellId: string;
-  /** The corpora only: a census reads what the policies DID, never what a question scored. */
-  entries: ReadonlyArray<{ corpus: ConversationCorpus }>;
+  /** The corpora and the registered selection questions: a census reads what the policies DID and what retrieval WOULD hand the prompt, never what a question scored. */
+  entries: ReadonlyArray<{ corpus: ConversationCorpus, questions: readonly QaQuestion[] }>;
   embedder: Embedder & { dims: number };
   onProgress?: (message: string) => void;
 }
@@ -1742,25 +1751,42 @@ export interface CensusInput {
 export async function runLiveCensus(input: CensusInput): Promise<NonNullable<LocomoPolicy['census']>> {
   const progress = input.onProgress ?? ((): void => {});
   let embedRequests = 0;
+  const embedder: Embedder = {
+    model: input.embedder.model,
+    dims: input.embedder.dims,
+    embed: async (texts, hooks) => { embedRequests++; return input.embedder.embed(texts, hooks); },
+  };
+  const identity = { model: input.embedder.model, dims: input.embedder.dims };
+  const questionIds = input.entries.flatMap((entry) => entry.questions.map((q) => q.id));
+  const questionVectors: Array<Awaited<ReturnType<Embedder['embed']>>> = [];
+  for (const entry of input.entries) {
+    questionVectors.push(entry.questions.length === 0 ? [] : await embedder.embed(entry.questions.map((q) => q.text)));
+  }
   const counted = new Map<string, IngestCensus>();
+  const contexts = new Map<string, string[]>();
   for (const cell of input.cells) {
     const operations = emptyCensus();
-    for (const entry of input.entries) {
+    const retrieved: string[] = [];
+    for (let e = 0; e < input.entries.length; e++) {
+      const entry = input.entries[e];
       const before = embedRequests;
-      await ingestConversation(entry.corpus, {
-        embedder: {
-          model: input.embedder.model,
-          dims: input.embedder.dims,
-          embed: async (texts, hooks) => { embedRequests++; return input.embedder.embed(texts, hooks); },
-        },
+      const { units } = await ingestConversation(entry.corpus, {
+        embedder,
         thresholds: { novelty: cell.ingest.novelty, contradiction: cell.ingest.contradiction, crystallize: cell.ingest.crystallize },
         census: operations,
       });
+      const vectors = questionVectors[e];
+      for (let i = 0; i < entry.questions.length; i++) {
+        const { ranked } = recallByEmbedding(units, vectors[i] as never, { k: cell.retrieval.k, minScore: cell.retrieval.minScore, identity });
+        retrieved.push(ranked.map((r) => contextLine(r.unit)).join('\n'));
+      }
       progress(`census ${cell.key} ${entry.corpus.sampleId}: ${embedRequests - before} embed calls`);
     }
     counted.set(cell.cellId, operations);
+    contexts.set(cell.cellId, retrieved);
   }
   const inert = counted.get(input.inertCellId)!;
+  const inertContexts = contexts.get(input.inertCellId)!;
   const same = (a: IngestCensus, b: IngestCensus): boolean =>
     (Object.keys(a) as Array<keyof IngestCensus>).every((member) => a[member] === b[member]);
   return {
@@ -1768,8 +1794,13 @@ export async function runLiveCensus(input: CensusInput): Promise<NonNullable<Loc
     chatCalls: 0,
     rows: input.cells.map((cell) => {
       const operations = counted.get(cell.cellId)!;
-      const mechanicallyInert = cell.cellId !== input.inertCellId && same(operations, inert);
-      return { cellId: cell.cellId, operations, mechanicallyInert, dropped: mechanicallyInert };
+      const reference = cell.cellId === input.inertCellId;
+      const countsEqualInert = same(operations, inert);
+      const own = contexts.get(cell.cellId)!;
+      const changedIds = reference ? [] : questionIds.filter((_, i) => own[i] !== inertContexts[i]);
+      const prompts = reference ? null : { questions: questionIds.length, changed: changedIds.length, changedIds };
+      const mechanicallyInert = !reference && countsEqualInert && prompts !== null && prompts.questions > 0 && prompts.changed === 0;
+      return { cellId: cell.cellId, operations, countsEqualInert, prompts, mechanicallyInert, dropped: mechanicallyInert };
     }),
   };
 }

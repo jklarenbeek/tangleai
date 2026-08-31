@@ -58,7 +58,7 @@ import {
 } from '../../benchmark/lib/locomo-policy.ts';
 import { conversationCorpus } from '../../benchmark/lib/locomo-corpus.ts';
 import { emptyCensus } from '../../benchmark/lib/locomo-ingest.ts';
-import { questionsOf } from '../../benchmark/lib/locomo-qa.ts';
+import { questionsOf, sampleQuestions } from '../../benchmark/lib/locomo-qa.ts';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { Embedder } from '@jarenjs/ai/embed';
 import { liveClients, scriptedEnv, scriptedFetch } from '../fixtures/scripted-wire.ts';
@@ -801,38 +801,116 @@ describe('a plan is not permission', () => {
   });
 });
 
-describe('the live census reads operations, never a score', { skip: missing }, () => {
-  it('makes zero chat calls and drops only a cell that does what inert does', async () => {
+describe('the live census reads operations and retrieved context, never a score', { skip: missing }, () => {
+  const censusOf = async (
+    cells: readonly LocomoPolicy['registration']['cells'][number][],
+    inertCellId: string,
+    questions: readonly ReturnType<typeof questionsOf>[number][],
+  ) => {
     const env = scriptedEnv();
     const { fetch, calls } = scriptedFetch();
     const clients = liveClients(env, fetch);
     const embedder = clients.embedder as Embedder & { dims: number };
     const corpus = conversationCorpus(available!.samples.find((s) => s.sample_id === 'conv-30')!);
-    const cells = committed.registration.cells.filter((c) => ['inert', 'shipped', 'minScore-0.25'].includes(c.key));
-    const inertCellId = cells.find((c) => c.key === 'inert')!.cellId;
-
     const census = await runLiveCensus({
-      cells, inertCellId, entries: [{ corpus }],
+      cells, inertCellId, entries: [{ corpus, questions }],
       embedder: { model: embedder.model, dims: embedder.dims ?? 8, embed: (t, h) => embedder.embed(t, h) },
     });
+    return { census, calls };
+  };
+  const sampled = () => {
+    const sample = available!.samples.find((s) => s.sample_id === 'conv-30')!;
+    return sampleQuestions(questionsOf(sample, conversationCorpus(sample)), { seed: 17753, perCategory: 3, adversarial: 2 });
+  };
+
+  it('makes zero chat calls and no longer drops on counts alone', async () => {
+    const questions = sampled();
+    assert.ok(questions.length > 0, 'the comparison needs a registered sample');
+    const cells = committed.registration.cells.filter((c) => ['inert', 'shipped', 'minScore-0.25'].includes(c.key));
+    const inertCell = cells.find((c) => c.key === 'inert')!;
+    // two probes beside the frozen cells: a twin of inert (identical
+    // effective values under a distinct identity — the one thing the
+    // amended rule still drops) and a cutoff no scripted score survives
+    const twin = { ...inertCell, cellId: 'f'.repeat(64), key: 'inert-twin', label: 'inert twin' };
+    const biting = { ...inertCell, cellId: 'e'.repeat(64), key: 'minScore-0.99', label: 'cutoff bites', retrieval: { ...inertCell.retrieval, minScore: 0.99 } };
+    const { census, calls } = await censusOf([...cells, twin, biting], inertCell.cellId, questions);
+
     assert.equal(census.chatCalls, 0);
     assert.deepEqual({ chat: calls.chat, judge: calls.judge, author: calls.author }, { chat: 0, judge: 0, author: 0 },
       'a census that answered a question would be a selection');
     assert.ok(census.embedRequests > 0);
-    assert.equal(census.rows.length, 3);
+    assert.equal(census.rows.length, 5);
 
-    const inert = census.rows.find((r) => r.cellId === inertCellId)!;
+    const inert = census.rows.find((r) => r.cellId === inertCell.cellId)!;
     assert.equal(inert.mechanicallyInert, false, 'the reference is not inert against itself');
-    // a minScore cell touches no ingest policy at all, so its operation
-    // counts must equal inert's — it acts on the ranking, not the corpus
+    assert.equal(inert.prompts, null, 'the reference is not compared with itself');
+
+    // identical effective values: counts equal AND every context byte-identical — dropped
+    const twinRow = census.rows.find((r) => r.cellId === twin.cellId)!;
+    assert.equal(twinRow.countsEqualInert, true);
+    assert.deepEqual(twinRow.prompts, { questions: questions.length, changed: 0, changedIds: [] });
+    assert.equal(twinRow.mechanicallyInert, true);
+    assert.equal(twinRow.dropped, true);
+
+    // a retrieval-axis cell whose cutoff bites: counts equal, prompts NOT —
+    // the amended rule keeps it where the count-only rule wrongly dropped it
+    const bitingRow = census.rows.find((r) => r.cellId === biting.cellId)!;
+    assert.deepEqual(bitingRow.operations, inert.operations, 'a minScore cell acts after ingest and cannot move a count');
+    assert.equal(bitingRow.countsEqualInert, true);
+    assert.ok(bitingRow.prompts!.changed > 0, 'the cutoff changed retrieved context');
+    assert.equal(bitingRow.prompts!.changed, bitingRow.prompts!.changedIds.length);
+    assert.equal(bitingRow.mechanicallyInert, false);
+    assert.equal(bitingRow.dropped, false);
+
+    // the frozen minScore-0.25 challenger: judged on its context, not its counts
     const minScore = census.rows.find((r) => r.cellId === cells.find((c) => c.key === 'minScore-0.25')!.cellId)!;
     assert.deepEqual(minScore.operations, inert.operations);
-    assert.equal(minScore.mechanicallyInert, true);
-    assert.equal(minScore.dropped, true);
-    // the shipped cell does change the corpus, so it survives
+    assert.equal(minScore.countsEqualInert, true);
+    assert.ok(minScore.prompts !== null && minScore.prompts.questions === questions.length);
+    assert.equal(minScore.prompts.changed, minScore.prompts.changedIds.length);
+    assert.equal(minScore.dropped, minScore.countsEqualInert && minScore.prompts.changed === 0);
+    assert.equal(minScore.mechanicallyInert, minScore.dropped);
+
+    // the shipped cell does change the corpus, so it survives whatever its prompts do
     const shipped = census.rows.find((r) => r.cellId === cells.find((c) => c.key === 'shipped')!.cellId)!;
+    assert.equal(shipped.countsEqualInert, false);
+    assert.ok(shipped.prompts !== null);
     assert.equal(shipped.mechanicallyInert, false);
     assert.equal(shipped.dropped, false);
+  });
+
+  it('handed no questions, it claims nothing and drops nothing', async () => {
+    const cells = committed.registration.cells.filter((c) => c.key === 'inert');
+    const inertCell = cells[0];
+    const twin = { ...inertCell, cellId: 'f'.repeat(64), key: 'inert-twin', label: 'inert twin' };
+    const { census } = await censusOf([inertCell, twin], inertCell.cellId, []);
+    const twinRow = census.rows.find((r) => r.cellId === twin.cellId)!;
+    assert.equal(twinRow.countsEqualInert, true);
+    assert.deepEqual(twinRow.prompts, { questions: 0, changed: 0, changedIds: [] });
+    assert.equal(twinRow.mechanicallyInert, false, 'an unmeasured prompt set supports no drop');
+    assert.equal(twinRow.dropped, false);
+  });
+
+  it('the schema refuses a drop either half does not support', async () => {
+    const report = await fixture();
+    const operations = JSON.parse(JSON.stringify(report.attempts[0].operations)) as LocomoPolicy['attempts'][number]['operations'];
+    const row = (over: Partial<NonNullable<LocomoPolicy['census']>['rows'][number]>) => ({
+      cellId: 'a'.repeat(64),
+      operations,
+      countsEqualInert: true,
+      prompts: { questions: 3, changed: 0, changedIds: [] },
+      mechanicallyInert: true,
+      dropped: true,
+      ...over,
+    });
+    const withCensus = (r: NonNullable<LocomoPolicy['census']>['rows'][number]) =>
+      broken(report, (d) => { d.census = { embedRequests: 1, chatCalls: 0, rows: [r] }; });
+    assert.equal(validate(withCensus(row({}))).valid, true, 'a doubly-proven drop validates');
+    assert.equal(validate(withCensus(row({ countsEqualInert: false }))).valid, false, 'a drop without equal counts must not validate');
+    assert.equal(validate(withCensus(row({ prompts: { questions: 3, changed: 1, changedIds: ['conv-30#1'] } }))).valid, false, 'a drop with a changed prompt must not validate');
+    assert.equal(validate(withCensus(row({ prompts: { questions: 0, changed: 0, changedIds: [] } }))).valid, false, 'a vacuous prompt claim must not validate');
+    assert.equal(validate(withCensus(row({ mechanicallyInert: false }))).valid, false, 'a drop is exactly the registered rule');
+    assert.equal(validate(withCensus(row({ prompts: { questions: 3, changed: 0, changedIds: ['conv-30#1'] } }))).valid, false, 'changed must count changedIds');
   });
 });
 

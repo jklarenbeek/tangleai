@@ -2724,7 +2724,7 @@
       }
     },
     "census": {
-      "description": "The frozen shortlist re-measured under the real embedder before any answer exists. It reads OPERATION COUNTS and never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do, and buying its answers would buy the inert cell twice. It may drop such a cell by that registered rule and may never reorder, re-rank, add or substitute one.",
+      "description": "The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold — every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values — because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.",
       "type": "object",
       "required": [
         "embedRequests",
@@ -2754,19 +2754,54 @@
             "required": [
               "cellId",
               "operations",
+              "countsEqualInert",
+              "prompts",
               "mechanicallyInert",
               "dropped"
             ],
             "additionalProperties": false,
             "$query": {
-              "$or": [
+              "$and": [
                 {
-                  "$not": "$.dropped"
+                  "$or": [
+                    {
+                      "$not": "$.dropped"
+                    },
+                    {
+                      "$eq": [
+                        true,
+                        "$.mechanicallyInert"
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "$eq": [
-                    true,
-                    "$.mechanicallyInert"
+                  "$or": [
+                    {
+                      "$not": "$.mechanicallyInert"
+                    },
+                    {
+                      "$and": [
+                        {
+                          "$eq": [
+                            true,
+                            "$.countsEqualInert"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            0,
+                            "$.prompts.changed"
+                          ]
+                        },
+                        {
+                          "$gt": [
+                            "$.prompts.questions",
+                            0
+                          ]
+                        }
+                      ]
+                    }
                   ]
                 }
               ]
@@ -2778,8 +2813,54 @@
               "operations": {
                 "$ref": "#/definitions/operations"
               },
+              "countsEqualInert": {
+                "description": "Every operation count equals the inert cell's under this embedder. Necessary for a drop and not sufficient: a retrieval-axis cell holds this while changing every prompt.",
+                "type": "boolean"
+              },
+              "prompts": {
+                "description": "The retrieved-context comparison against the inert reference over the registered selection sample, computed from the census's own embeddings: a changed question is one whose ordered context lines differ from inert's under the cell's own k and minScore. Null on the inert reference, which is not compared with itself.",
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "questions",
+                      "changed",
+                      "changedIds"
+                    ],
+                    "additionalProperties": false,
+                    "$query": {
+                      "$eq": [
+                        "$.changed",
+                        {
+                          "$count": "$.changedIds[*]"
+                        }
+                      ]
+                    },
+                    "properties": {
+                      "questions": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "changed": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "changedIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
               "mechanicallyInert": {
-                "description": "Every operation count equals the inert cell's under this embedder.",
+                "description": "Both halves hold: the operation counts equal the inert cell's AND the registered sample's retrieved context is byte-identical under the cell's own retrieval values, so the cell provably produces inert's prompts under this embedder.",
                 "type": "boolean"
               },
               "dropped": {

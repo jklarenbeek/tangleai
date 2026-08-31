@@ -315,10 +315,24 @@ let next: LocomoPolicy = { ...stored, registration, plan };
 
 if (phase === 'census') {
   // embeddings only, and the schema asserts the zero: a census that
-  // answered a question would be a selection
-  const entries = dataset.samples
+  // answered a question would be a selection. The registered selection
+  // sample rides along so retrieval-axis cells are judged on the context
+  // they would actually hand the prompt, not on counts they cannot move.
+  const perSample = dataset.samples
     .filter((sample) => conversations.includes(sample.sample_id))
-    .map((sample) => ({ corpus: conversationCorpus(sample) }));
+    .map((sample) => {
+      const corpus = conversationCorpus(sample);
+      return { corpus, questions: questionsOf(sample, corpus) };
+    });
+  const sampled = sampleQuestions(perSample.flatMap((entry) => entry.questions), {
+    seed: seed ?? stored.registration.seed,
+    perCategory: split.perCategory['1'],
+    adversarial: split.adversarial,
+  });
+  const entries = perSample.map(({ corpus }) => ({
+    corpus,
+    questions: sampled.filter((q) => q.sampleId === corpus.sampleId),
+  }));
   const census = await runLiveCensus({
     cells,
     inertCellId,
@@ -337,7 +351,7 @@ if (phase === 'census') {
         excluded: [...next.selection.excluded, ...dropped.map((r) => ({
           cellId: r.cellId,
           code: 'ineligible' as const,
-          detail: 'mechanically-inert-under-embedder: every live operation count equals the inert cell\'s, so buying its answers would buy the inert cell twice',
+          detail: 'mechanically-inert-under-embedder: every live operation count equals the inert cell\'s and every registered selection question retrieves byte-identical context, so buying its answers would buy the inert cell twice',
         }))],
       },
     };

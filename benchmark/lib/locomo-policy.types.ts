@@ -615,7 +615,7 @@ export interface Plan {
 
 
 /**
- * The frozen shortlist re-measured under the real embedder before any answer exists. It reads OPERATION COUNTS and never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do, and buying its answers would buy the inert cell twice. It may drop such a cell by that registered rule and may never reorder, re-rank, add or substitute one.
+ * The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold — every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values — because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.
  * Schema constraints this type cannot express: $query={"$eq":[0,"$.chatCalls"]}
  */
 export interface Census {
@@ -627,7 +627,7 @@ export interface Census {
    * Zero, and asserted to be zero: a census that answered a question would be a selection.
    */
   chatCalls: 0;
-  rows: Array<{ cellId: Sha256; operations: Operations; mechanicallyInert: boolean; dropped: boolean; }>;
+  rows: Array<{ cellId: Sha256; operations: Operations; countsEqualInert: boolean; prompts: null | { questions: number; changed: number; changedIds: Array<string>; }; mechanicallyInert: boolean; dropped: boolean; }>;
 }
 
 
