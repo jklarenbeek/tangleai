@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Beacon protocol specification</title></head>
+<body>
+<main>
+<h1>Beacon protocol specification</h1>
+<p>Beacon is the fictional discovery protocol of this fixture corpus. The text is Tangle-authored for the grounding benchmark and specifies no real wire.</p>
+<p>A Beacon handshake proceeds in three stages: hello, verify, adopt. No stage may be skipped, and a peer that fails verify must restart from hello.</p>
+<p>Every Beacon datagram carries a CRC32C checksum computed over both the header and the payload.</p>
+<p>A connected Beacon peer emits a heartbeat every 20 seconds; three missed heartbeats retire the peer.</p>
+<p>Beacon traffic travels over UDP on port 7432, one datagram per frame.</p>
+</main>
+</body>
+</html>

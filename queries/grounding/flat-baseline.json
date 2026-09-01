@@ -1,0 +1,75 @@
+{
+  "$comment": "The flat-grounding handoff: one immutable, queryable projection of the validated paired baseline. Input: { live, web } — the validated grounding live attempt and the dated web diagnostic (which may be a stated not-run). Executed verbatim with @jarenjs/json's compileJsonQuery; no application grouping or custom wrapper replaces what this document says. Downstream consumers (retrieval campaigns extending this mechanism) cite these identities and beat this exact row; they may not re-render a friendlier baseline.",
+  "$let": {
+    "fixtureStratum": { "$head": { "$for": { "s": "$.live.strata[*]" }, "$where": { "$eq": ["$s.key", "fixture"] }, "$return": "$s" } },
+    "locomoStratum": { "$head": { "$for": { "s": "$.live.strata[*]" }, "$where": { "$eq": ["$s.key", "locomo"] }, "$return": "$s" } },
+    "runIdentityRow": { "$head": { "$for": { "r": "$.live.configIdentities.rows[*]" }, "$where": { "$eq": ["$r.identityStatus", "run"] }, "$return": "$r" } }
+  },
+  "$return": {
+    "identities": {
+      "reportId": "$.live.reportId",
+      "registrationId": "$.live.registration.registrationId",
+      "fixtureId": "$.live.registration.fixtureId",
+      "planId": "$.live.plan.planId",
+      "sourceSha256": "$.live.source.sha256",
+      "configIdentityId": "$runIdentityRow.identityId"
+    },
+    "flatRow": {
+      "retrieval": "$.live.registration.retrieval",
+      "promptRevision": "$.live.registration.promptRevision",
+      "answerSchemaRevision": "$.live.registration.answerSchemaRevision",
+      "maxRepairs": "$.live.registration.maxRepairs",
+      "seed": "$.live.registration.seed",
+      "questionIds": "$.live.registration.questionIds"
+    },
+    "rows": [{
+      "$for": { "row": "$fixtureStratum.rows[*]" },
+      "$orderby": ["$row.key"],
+      "$return": {
+        "key": "$row.key",
+        "questionSet": "$row.questionSet",
+        "planned": "$row.questions.planned",
+        "answered": "$row.questions.answered",
+        "invalid": "$row.questions.invalid",
+        "unanswered": "$row.questions.unanswered",
+        "claims": "$row.claims",
+        "answerF1": "$row.answerF1",
+        "abstention": "$row.abstention",
+        "citations": "$row.citations",
+        "citedRecall": "$row.citedRecall",
+        "retrievedRecall": "$row.retrievedRecall",
+        "suppliedRecall": "$row.suppliedRecall",
+        "supply": "$row.supply",
+        "cost": "$row.cost",
+        "latency": "$row.latency"
+      }
+    }],
+    "pairing": "$fixtureStratum.pairing",
+    "decision": "$.live.decision",
+    "diagnostics": {
+      "locomo": {
+        "registration": "$.live.locomoRegistration",
+        "skipped": "$.live.locomoSkipped",
+        "rows": [{
+          "$for": { "row": "$locomoStratum.rows[*]" },
+          "$orderby": ["$row.key"],
+          "$return": {
+            "key": "$row.key",
+            "questionSet": "$row.questionSet",
+            "answered": "$row.questions.answered",
+            "answerF1": "$row.answerF1",
+            "citedRecall": "$row.citedRecall",
+            "retrievedRecall": "$row.retrievedRecall",
+            "suppliedRecall": "$row.suppliedRecall"
+          }
+        }],
+        "pairing": "$locomoStratum.pairing"
+      },
+      "web": {
+        "reportId": "$.web.reportId",
+        "registrationId": "$.web.registration.registrationId",
+        "notRun": "$.web.notRun"
+      }
+    }
+  }
+}

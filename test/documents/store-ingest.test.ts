@@ -118,3 +118,82 @@ describe('versioned document ingestion and retrieval', () => {
     }
   });
 });
+
+describe('ingestMany over the suite mapper', () => {
+  function delayedIngester(db: Awaited<ReturnType<typeof openTangleDb>>, options: { delays: Record<string, number>, failures?: Set<string>, inFlight: { now: number, max: number } }) {
+    const fetchImpl = (async (input: RequestInfo | URL): Promise<Response> => {
+      const url = String(input);
+      options.inFlight.now++;
+      options.inFlight.max = Math.max(options.inFlight.max, options.inFlight.now);
+      const key = new URL(url).pathname;
+      await new Promise((resolve) => setTimeout(resolve, options.delays[key] ?? 0));
+      options.inFlight.now--;
+      if (options.failures?.has(key)) return new Response('boom', { status: 500 });
+      return new Response(`<!doctype html><html><body><main><h1>Doc ${key}</h1><p>The page at ${key} carries enough words to extract one useful paragraph of fixture text for the mapper test.</p></main></body></html>`, { headers: { 'content-type': 'text/html' } });
+    }) as typeof globalThis.fetch;
+    return createDocumentIngester({
+      store: createDocumentStore(db),
+      embedder: createOfflineEmbedder(),
+      fetcher: new SafeStaticFetcher({ fetch: fetchImpl, lookup, limits: { respectRobots: false, perHostDelayMs: 0 } }),
+    });
+  }
+
+  it('answers in input order under out-of-order completion, with per-input failure values and the in-flight bound held', async () => {
+    const db = await openTangleDb({ driver: nodeDriver() });
+    try {
+      const inFlight = { now: 0, max: 0 };
+      const ingester = delayedIngester(db, {
+        delays: { '/slow': 60, '/mid': 20, '/fast': 0, '/fail': 5, '/last': 0 },
+        failures: new Set(['/fail']),
+        inFlight,
+      });
+      const urls = ['https://docs.example/slow', 'https://docs.example/mid', 'https://docs.example/fail', 'https://docs.example/fast', 'https://docs.example/last'];
+      const results = await ingester.ingestMany(urls.map((url) => ({ url })), { concurrency: 2 });
+      assert.deepEqual(results.map((r) => r.url), urls, 'results stay in input order whatever order the workers finish in');
+      assert.equal(inFlight.max, 2, 'never more than the requested workers in flight');
+      assert.equal(results.filter((r) => r.outcome !== undefined).length, 4);
+      const failed = results[2];
+      assert.equal(failed.outcome, undefined);
+      assert.match(failed.error!.message, /500/);
+      assert.equal(failed.error!.code, 'fetch-failed');
+    } finally {
+      await db.close();
+    }
+  });
+
+  it('clamps a nonsense concurrency to sequential and answers an empty batch without a worker', async () => {
+    const db = await openTangleDb({ driver: nodeDriver() });
+    try {
+      const inFlight = { now: 0, max: 0 };
+      const ingester = delayedIngester(db, { delays: {}, inFlight });
+      assert.deepEqual(await ingester.ingestMany([]), []);
+      assert.equal(inFlight.max, 0);
+      const results = await ingester.ingestMany(
+        [{ url: 'https://docs.example/one' }, { url: 'https://docs.example/two' }],
+        { concurrency: 0 },
+      );
+      assert.equal(results.length, 2);
+      assert.equal(inFlight.max, 1, 'a caller concurrency below 1 clamps to sequential, as before');
+    } finally {
+      await db.close();
+    }
+  });
+
+  it('keeps an unexpectedly rejecting worker from abandoning settled slots (the batch still answers every input)', async () => {
+    const db = await openTangleDb({ driver: nodeDriver() });
+    try {
+      const inFlight = { now: 0, max: 0 };
+      const ingester = delayedIngester(db, { delays: {}, inFlight });
+      // an invalid URL throws inside ingest() before any fetch; the batch
+      // records it as this input's error value and continues
+      const results = await ingester.ingestMany([
+        { url: 'not a url at all' },
+        { url: 'https://docs.example/ok' },
+      ], { concurrency: 2 });
+      assert.equal(results[0].error?.code, 'invalid-url');
+      assert.ok(results[1].outcome !== undefined);
+    } finally {
+      await db.close();
+    }
+  });
+});

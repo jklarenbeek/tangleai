@@ -1,0 +1,2494 @@
+{
+  "document": "grounding-report",
+  "benchmark": "grounding",
+  "instrument": {
+    "entry": "benchmark/grounding.ts"
+  },
+  "configIdentities": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "oracle:q-relay-port",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-frame-size",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-retry-backoff",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-queue-engine",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-handshake",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-checksum",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-heartbeat",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-compaction",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-snapshot-restore",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-mooring-profile",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-mooring-rotate",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-relay-tls",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-beacon-transport",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-ledger-encoding",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-unanswerable-connections",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "oracle:q-unanswerable-registry",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:right-no-citation",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:unknown-id",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:not-supplied",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:inactive-version",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:future-evidence",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:wrong-passage",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:unsupported-extra",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:duplicate-citations",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:abstain-wrong",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:abstain-correct",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "bad:fabricated-on-unanswerable",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
+  "fixture": {
+    "id": "b3af26a423ff7f1210e4c03b119ffe295530c539930c60f68a64334c240f5285",
+    "path": "benchmark/fixtures/grounding/manifest.json",
+    "license": "MIT",
+    "census": {
+      "sources": 8,
+      "questions": 16,
+      "claims": 24,
+      "abstentions": 2,
+      "elements": 20,
+      "chunks": 18,
+      "scripted": 27
+    }
+  },
+  "registration": {
+    "registrationId": "a1c2cf60f4ef9afa07c448729e0a463ee9bb4d475a5203643831139b78ab9207",
+    "fixtureId": "b3af26a423ff7f1210e4c03b119ffe295530c539930c60f68a64334c240f5285",
+    "cutoff": "2026-07-01T00:00:00Z",
+    "questionIds": [
+      "q-relay-port",
+      "q-frame-size",
+      "q-retry-backoff",
+      "q-queue-engine",
+      "q-handshake",
+      "q-checksum",
+      "q-heartbeat",
+      "q-compaction",
+      "q-snapshot-restore",
+      "q-mooring-profile",
+      "q-mooring-rotate",
+      "q-relay-tls",
+      "q-beacon-transport",
+      "q-ledger-encoding",
+      "q-unanswerable-connections",
+      "q-unanswerable-registry"
+    ],
+    "claimKeys": [
+      "c-relay-port",
+      "c-frame-size",
+      "c-frame-reject",
+      "c-retry-base",
+      "c-retry-cap",
+      "c-queue-engine",
+      "c-hs-hello",
+      "c-hs-verify",
+      "c-hs-adopt",
+      "c-checksum",
+      "c-checksum-scope",
+      "c-heartbeat",
+      "c-compaction",
+      "c-compaction-startup",
+      "c-snapshot-format",
+      "c-restore-tool",
+      "c-mooring-profile",
+      "c-mooring-fallback",
+      "c-mooring-rotate",
+      "c-relay-tls",
+      "c-cert-rotate",
+      "c-beacon-transport",
+      "c-ledger-encoding",
+      "c-ledger-append"
+    ],
+    "scorer": {
+      "matching": "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold",
+      "normalizer": "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)",
+      "outcomes": [
+        "supporting",
+        "resolved-not-supporting",
+        "not-supplied",
+        "inactive-version",
+        "future-evidence",
+        "unknown-evidence"
+      ]
+    },
+    "answerSchemaRevision": "2b651fadfd44e57b15e12c65edbd10d48896a8e3aabe5360b27d39d807329a8e"
+  },
+  "source": {
+    "files": [
+      {
+        "path": "benchmark/fixtures/grounding/manifest.json",
+        "sha256": "724e27ee8c7e21fccfe93eee674414247cd5ef3f2fb2fa5f1a14828a054592e4"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/beacon-spec.html",
+        "sha256": "2b8af84f0e4125d6f0b5b1cabb39cbb76bf25febc9e9b09ad5cf8f65c17af653"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/future-changelog.md",
+        "sha256": "467e96005789e898bce7d168219725a20545d2ddf687bda34520cb3558790253"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/ledger-notes.md",
+        "sha256": "76e710caff79fdef77a84118845888a8e6519f65e1b0f45389108cb5ec770e42"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/mooring-howto.md",
+        "sha256": "5f7eac09f80e0d4366b2bc811900db847525690e8fdc4289f9a57d737ff35843"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/port-glossary.md",
+        "sha256": "a78e399d39d0a51206c141ab51f1335da1c5be746a3752761fadfedc57df70c2"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/quay-faq.html",
+        "sha256": "eee54911c25ae9064ce9cdd855e40f6c8c8755fc4e6c8ae8cf8a6532bbb4f6a6"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-guide.md",
+        "sha256": "1cc1d290e76152534e0df87524dd29634af43ba3c457e1618390bf675f86887a"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-history-v1.md",
+        "sha256": "35275f197ad3d932c39e12d4f4c353b7c89d340ee90023f4122c3faf24eecaa2"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-history-v2.md",
+        "sha256": "d46de143122fe476646b1bcd903e87e93c5b50f4c6123fdcf70d1af0d0775079"
+      }
+    ],
+    "sha256": "e451e19ee710da189fae43680e15718f95b8e11ca6e9b86bc31a81ef391fb6cc"
+  },
+  "gate": {
+    "oracle": {
+      "passed": true,
+      "failures": [],
+      "questions": 16,
+      "tp": 24,
+      "fp": 0,
+      "fn": 0,
+      "microPrecision": 1,
+      "microRecall": 1,
+      "microF1": 1,
+      "meanF1": 1,
+      "answerF1": 1,
+      "citationResolution": 1,
+      "citationSupport": 1,
+      "abstentionAccuracy": 1
+    }
+  },
+  "scenarios": [
+    {
+      "key": "oracle:q-relay-port",
+      "kind": "oracle",
+      "question": "q-relay-port",
+      "trace": {
+        "retrieved": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 3,
+          "supplied": 3
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The Harbor Relay listens on TCP port 7431 by default.",
+            "citations": [
+              "chk-rg-port"
+            ]
+          }
+        ]
+      },
+      "rendered": "The Harbor Relay listens on TCP port 7431 by default.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-rg-port",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 1,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-relay-port"
+        ],
+        "matches": [
+          {
+            "claim": "c-relay-port",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-frame-size",
+      "kind": "oracle",
+      "question": "q-frame-size",
+      "trace": {
+        "retrieved": [
+          "chk-rg-frame",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-frame",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "A frame carries at most 512 KiB of payload.",
+            "citations": [
+              "chk-rg-frame"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "An oversized frame is rejected, never truncated.",
+            "citations": [
+              "chk-rg-frame"
+            ]
+          }
+        ]
+      },
+      "rendered": "A frame carries at most 512 KiB of payload.; An oversized frame is rejected, never truncated.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-rg-frame",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-rg-frame",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-frame-size",
+          "c-frame-reject"
+        ],
+        "matches": [
+          {
+            "claim": "c-frame-size",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-frame-reject",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-retry-backoff",
+      "kind": "oracle",
+      "question": "q-retry-backoff",
+      "trace": {
+        "retrieved": [
+          "chk-rg-retry",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-retry",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Retries start at a 250 ms backoff.",
+            "citations": [
+              "chk-rg-retry"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The backoff doubles up to 8 seconds between attempts.",
+            "citations": [
+              "chk-rg-retry"
+            ]
+          }
+        ]
+      },
+      "rendered": "Retries start at a 250 ms backoff.; The backoff doubles up to 8 seconds between attempts.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-rg-retry",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-rg-retry",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-retry-base",
+          "c-retry-cap"
+        ],
+        "matches": [
+          {
+            "claim": "c-retry-base",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-retry-cap",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-queue-engine",
+      "kind": "oracle",
+      "question": "q-queue-engine",
+      "trace": {
+        "retrieved": [
+          "chk-h2-rowan",
+          "chk-h1-cedar"
+        ],
+        "supplied": [
+          "chk-h2-rowan",
+          "chk-h1-cedar"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Since release 0.9 the relay queues frames through the rowan engine.",
+            "citations": [
+              "chk-h2-rowan"
+            ]
+          }
+        ]
+      },
+      "rendered": "Since release 0.9 the relay queues frames through the rowan engine.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-h2-rowan",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 1,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-queue-engine"
+        ],
+        "matches": [
+          {
+            "claim": "c-queue-engine",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-handshake",
+      "kind": "oracle",
+      "question": "q-handshake",
+      "trace": {
+        "retrieved": [
+          "chk-bs-handshake",
+          "chk-fc-attach"
+        ],
+        "supplied": [
+          "chk-bs-handshake",
+          "chk-fc-attach"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The first stage is hello.",
+            "citations": [
+              "chk-bs-handshake"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The second stage is verify.",
+            "citations": [
+              "chk-bs-handshake"
+            ]
+          },
+          {
+            "id": "a3",
+            "text": "The third stage is adopt.",
+            "citations": [
+              "chk-bs-handshake"
+            ]
+          }
+        ]
+      },
+      "rendered": "The first stage is hello.; The second stage is verify.; The third stage is adopt.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-handshake",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-bs-handshake",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a3",
+          "citation": "chk-bs-handshake",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 3,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 3,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-hs-hello",
+          "c-hs-verify",
+          "c-hs-adopt"
+        ],
+        "matches": [
+          {
+            "claim": "c-hs-hello",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-hs-verify",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-hs-adopt",
+            "predictedId": "a3",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-checksum",
+      "kind": "oracle",
+      "question": "q-checksum",
+      "trace": {
+        "retrieved": [
+          "chk-bs-checksum"
+        ],
+        "supplied": [
+          "chk-bs-checksum"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Every datagram carries a CRC32C checksum.",
+            "citations": [
+              "chk-bs-checksum"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The checksum covers both the header and the payload.",
+            "citations": [
+              "chk-bs-checksum"
+            ]
+          }
+        ]
+      },
+      "rendered": "Every datagram carries a CRC32C checksum.; The checksum covers both the header and the payload.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-checksum",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-bs-checksum",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-checksum",
+          "c-checksum-scope"
+        ],
+        "matches": [
+          {
+            "claim": "c-checksum",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-checksum-scope",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-heartbeat",
+      "kind": "oracle",
+      "question": "q-heartbeat",
+      "trace": {
+        "retrieved": [
+          "chk-bs-heartbeat",
+          "chk-bs-transport"
+        ],
+        "supplied": [
+          "chk-bs-heartbeat"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "A peer emits a heartbeat every 20 seconds.",
+            "citations": [
+              "chk-bs-heartbeat"
+            ]
+          }
+        ]
+      },
+      "rendered": "A peer emits a heartbeat every 20 seconds.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-heartbeat",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 1,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-heartbeat"
+        ],
+        "matches": [
+          {
+            "claim": "c-heartbeat",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-compaction",
+      "kind": "oracle",
+      "question": "q-compaction",
+      "trace": {
+        "retrieved": [
+          "chk-ln-compaction"
+        ],
+        "supplied": [
+          "chk-ln-compaction"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The ledger compacts at 4096 entries.",
+            "citations": [
+              "chk-ln-compaction"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "A compaction pass also runs at every startup.",
+            "citations": [
+              "chk-ln-compaction"
+            ]
+          }
+        ]
+      },
+      "rendered": "The ledger compacts at 4096 entries.; A compaction pass also runs at every startup.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-ln-compaction",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-ln-compaction",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-compaction",
+          "c-compaction-startup"
+        ],
+        "matches": [
+          {
+            "claim": "c-compaction",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-compaction-startup",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-snapshot-restore",
+      "kind": "oracle",
+      "question": "q-snapshot-restore",
+      "trace": {
+        "retrieved": [
+          "chk-ln-snapshot",
+          "chk-qf-restore"
+        ],
+        "supplied": [
+          "chk-ln-snapshot",
+          "chk-qf-restore"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Snapshots are written in the alder/2 format.",
+            "citations": [
+              "chk-ln-snapshot"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "Snapshots are restored with the quay restore command.",
+            "citations": [
+              "chk-qf-restore"
+            ]
+          }
+        ]
+      },
+      "rendered": "Snapshots are written in the alder/2 format.; Snapshots are restored with the quay restore command.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-ln-snapshot",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-qf-restore",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 2,
+        "resolvedUnique": 2,
+        "supportingUnique": 2,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-snapshot-format",
+          "c-restore-tool"
+        ],
+        "matches": [
+          {
+            "claim": "c-snapshot-format",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-restore-tool",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-mooring-profile",
+      "kind": "oracle",
+      "question": "q-mooring-profile",
+      "trace": {
+        "retrieved": [
+          "chk-mh-profile"
+        ],
+        "supplied": [
+          "chk-mh-profile"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "New moorings use the granite profile by default.",
+            "citations": [
+              "chk-mh-profile"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The tool falls back to the shale profile when granite is missing.",
+            "citations": [
+              "chk-mh-profile"
+            ]
+          }
+        ]
+      },
+      "rendered": "New moorings use the granite profile by default.; The tool falls back to the shale profile when granite is missing.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-mh-profile",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-mh-profile",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-mooring-profile",
+          "c-mooring-fallback"
+        ],
+        "matches": [
+          {
+            "claim": "c-mooring-profile",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-mooring-fallback",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-mooring-rotate",
+      "kind": "oracle",
+      "question": "q-mooring-rotate",
+      "trace": {
+        "retrieved": [
+          "chk-mh-profile"
+        ],
+        "supplied": [
+          "chk-mh-profile"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Mooring credentials are rotated every 90 days.",
+            "citations": [
+              "chk-mh-profile"
+            ]
+          }
+        ]
+      },
+      "rendered": "Mooring credentials are rotated every 90 days.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-mh-profile",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 1,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-mooring-rotate"
+        ],
+        "matches": [
+          {
+            "claim": "c-mooring-rotate",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-relay-tls",
+      "kind": "oracle",
+      "question": "q-relay-tls",
+      "trace": {
+        "retrieved": [
+          "chk-rg-tls"
+        ],
+        "supplied": [
+          "chk-rg-tls"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The relay accepts TLS 1.3 only.",
+            "citations": [
+              "chk-rg-tls"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "Certificates are rotated with the quay tool's rotate-cert command.",
+            "citations": [
+              "chk-rg-tls"
+            ]
+          }
+        ]
+      },
+      "rendered": "The relay accepts TLS 1.3 only.; Certificates are rotated with the quay tool's rotate-cert command.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-rg-tls",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-rg-tls",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-relay-tls",
+          "c-cert-rotate"
+        ],
+        "matches": [
+          {
+            "claim": "c-relay-tls",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-cert-rotate",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-beacon-transport",
+      "kind": "oracle",
+      "question": "q-beacon-transport",
+      "trace": {
+        "retrieved": [
+          "chk-bs-transport"
+        ],
+        "supplied": [
+          "chk-bs-transport"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Beacon traffic travels over UDP on port 7432.",
+            "citations": [
+              "chk-bs-transport"
+            ]
+          }
+        ]
+      },
+      "rendered": "Beacon traffic travels over UDP on port 7432.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-transport",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 1,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-beacon-transport"
+        ],
+        "matches": [
+          {
+            "claim": "c-beacon-transport",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-ledger-encoding",
+      "kind": "oracle",
+      "question": "q-ledger-encoding",
+      "trace": {
+        "retrieved": [
+          "chk-ln-encoding"
+        ],
+        "supplied": [
+          "chk-ln-encoding"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Ledger records are encoded as CBOR.",
+            "citations": [
+              "chk-ln-encoding"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The ledger file is strictly append-only.",
+            "citations": [
+              "chk-ln-encoding"
+            ]
+          }
+        ]
+      },
+      "rendered": "Ledger records are encoded as CBOR.; The ledger file is strictly append-only.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-ln-encoding",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-ln-encoding",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-ledger-encoding",
+          "c-ledger-append"
+        ],
+        "matches": [
+          {
+            "claim": "c-ledger-encoding",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-ledger-append",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "f1": 1
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "oracle:q-unanswerable-connections",
+      "kind": "oracle",
+      "question": "q-unanswerable-connections",
+      "trace": {
+        "retrieved": [
+          "chk-rg-port",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-port",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "abstain",
+        "reason": "No supplied source states a maximum connection count.",
+        "claims": []
+      },
+      "rendered": "No supplied source states a maximum connection count.",
+      "citations": [],
+      "citationCounts": {
+        "raw": 0,
+        "unique": 0,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [],
+        "matches": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "f1": null
+      },
+      "abstention": {
+        "expected": true,
+        "given": true,
+        "correct": true
+      },
+      "answerF1": null
+    },
+    {
+      "key": "oracle:q-unanswerable-registry",
+      "kind": "oracle",
+      "question": "q-unanswerable-registry",
+      "trace": {
+        "retrieved": [],
+        "supplied": [],
+        "counts": {
+          "retrieved": 0,
+          "supplied": 0
+        }
+      },
+      "answer": {
+        "disposition": "abstain",
+        "reason": "No supplied source names a registry host.",
+        "claims": []
+      },
+      "rendered": "No supplied source names a registry host.",
+      "citations": [],
+      "citationCounts": {
+        "raw": 0,
+        "unique": 0,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [],
+        "matches": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "f1": null
+      },
+      "abstention": {
+        "expected": true,
+        "given": true,
+        "correct": true
+      },
+      "answerF1": null
+    },
+    {
+      "key": "bad:right-no-citation",
+      "kind": "right-no-citation",
+      "question": "q-relay-port",
+      "trace": {
+        "retrieved": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 3,
+          "supplied": 3
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The Harbor Relay listens on TCP port 7431 by default.",
+            "citations": []
+          }
+        ]
+      },
+      "rendered": "The Harbor Relay listens on TCP port 7431 by default.",
+      "citations": [],
+      "citationCounts": {
+        "raw": 0,
+        "unique": 0,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-relay-port"
+        ],
+        "matches": [
+          {
+            "claim": "c-relay-port",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "bad:unknown-id",
+      "kind": "unknown-id",
+      "question": "q-checksum",
+      "trace": {
+        "retrieved": [
+          "chk-bs-checksum"
+        ],
+        "supplied": [
+          "chk-bs-checksum"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "Every datagram carries a CRC32C checksum.",
+            "citations": [
+              "chk-does-not-exist"
+            ]
+          }
+        ]
+      },
+      "rendered": "Every datagram carries a CRC32C checksum.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-does-not-exist",
+          "outcome": "unknown-evidence"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 1
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-checksum",
+          "c-checksum-scope"
+        ],
+        "matches": [
+          {
+            "claim": "c-checksum",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": false
+          },
+          {
+            "claim": "c-checksum-scope",
+            "predictedId": null,
+            "matched": false,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 2,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 0.6666666666666666
+    },
+    {
+      "key": "bad:not-supplied",
+      "kind": "not-supplied",
+      "question": "q-heartbeat",
+      "trace": {
+        "retrieved": [
+          "chk-bs-heartbeat",
+          "chk-bs-transport"
+        ],
+        "supplied": [
+          "chk-bs-heartbeat"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "A peer emits a heartbeat every 20 seconds.",
+            "citations": [
+              "chk-bs-transport"
+            ]
+          }
+        ]
+      },
+      "rendered": "A peer emits a heartbeat every 20 seconds.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-transport",
+          "outcome": "not-supplied"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 1,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-heartbeat"
+        ],
+        "matches": [
+          {
+            "claim": "c-heartbeat",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "bad:inactive-version",
+      "kind": "inactive-version",
+      "question": "q-queue-engine",
+      "trace": {
+        "retrieved": [
+          "chk-h2-rowan",
+          "chk-h1-cedar"
+        ],
+        "supplied": [
+          "chk-h2-rowan",
+          "chk-h1-cedar"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The relay queues frames through the rowan engine.",
+            "citations": [
+              "chk-h1-cedar"
+            ]
+          }
+        ]
+      },
+      "rendered": "The relay queues frames through the rowan engine.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-h1-cedar",
+          "outcome": "inactive-version"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 1,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-queue-engine"
+        ],
+        "matches": [
+          {
+            "claim": "c-queue-engine",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 0.8
+    },
+    {
+      "key": "bad:future-evidence",
+      "kind": "future-evidence",
+      "question": "q-handshake",
+      "trace": {
+        "retrieved": [
+          "chk-bs-handshake",
+          "chk-fc-attach"
+        ],
+        "supplied": [
+          "chk-bs-handshake",
+          "chk-fc-attach"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The first stage is hello.",
+            "citations": [
+              "chk-bs-handshake"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "The second stage is verify.",
+            "citations": [
+              "chk-bs-handshake"
+            ]
+          },
+          {
+            "id": "a3",
+            "text": "The third stage is attach.",
+            "citations": [
+              "chk-fc-attach"
+            ]
+          }
+        ]
+      },
+      "rendered": "The first stage is hello.; The second stage is verify.; The third stage is attach.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-bs-handshake",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-bs-handshake",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a3",
+          "citation": "chk-fc-attach",
+          "outcome": "future-evidence"
+        }
+      ],
+      "citationCounts": {
+        "raw": 3,
+        "unique": 2,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 1,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-hs-hello",
+          "c-hs-verify",
+          "c-hs-adopt"
+        ],
+        "matches": [
+          {
+            "claim": "c-hs-hello",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-hs-verify",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-hs-adopt",
+            "predictedId": null,
+            "matched": false,
+            "supported": false
+          }
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 1,
+        "f1": 0.6666666666666666
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 0.9166666666666666
+    },
+    {
+      "key": "bad:wrong-passage",
+      "kind": "wrong-passage",
+      "question": "q-relay-port",
+      "trace": {
+        "retrieved": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-port",
+          "chk-pg-legacy",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 3,
+          "supplied": 3
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The Harbor Relay listens on TCP port 7431 by default.",
+            "citations": [
+              "chk-pg-legacy"
+            ]
+          }
+        ]
+      },
+      "rendered": "The Harbor Relay listens on TCP port 7431 by default.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-pg-legacy",
+          "outcome": "resolved-not-supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 1,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-relay-port"
+        ],
+        "matches": [
+          {
+            "claim": "c-relay-port",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 1
+    },
+    {
+      "key": "bad:unsupported-extra",
+      "kind": "unsupported-extra",
+      "question": "q-frame-size",
+      "trace": {
+        "retrieved": [
+          "chk-rg-frame",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-frame",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "A frame carries at most 512 KiB of payload.",
+            "citations": [
+              "chk-rg-frame"
+            ]
+          },
+          {
+            "id": "a2",
+            "text": "An oversized frame is rejected, never truncated.",
+            "citations": [
+              "chk-rg-frame"
+            ]
+          },
+          {
+            "id": "a3",
+            "text": "Frames are compressed with zstd before delivery.",
+            "citations": [
+              "chk-rg-frame"
+            ]
+          }
+        ]
+      },
+      "rendered": "A frame carries at most 512 KiB of payload.; An oversized frame is rejected, never truncated.; Frames are compressed with zstd before delivery.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-rg-frame",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a2",
+          "citation": "chk-rg-frame",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a3",
+          "citation": "chk-rg-frame",
+          "outcome": "resolved-not-supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 3,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 1,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-frame-size",
+          "c-frame-reject"
+        ],
+        "matches": [
+          {
+            "claim": "c-frame-size",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-frame-reject",
+            "predictedId": "a2",
+            "matched": true,
+            "supported": true
+          }
+        ],
+        "tp": 2,
+        "fp": 1,
+        "fn": 0,
+        "f1": 0.8
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 0.8
+    },
+    {
+      "key": "bad:duplicate-citations",
+      "kind": "duplicate-citations",
+      "question": "q-compaction",
+      "trace": {
+        "retrieved": [
+          "chk-ln-compaction"
+        ],
+        "supplied": [
+          "chk-ln-compaction"
+        ],
+        "counts": {
+          "retrieved": 1,
+          "supplied": 1
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The ledger compacts at 4096 entries.",
+            "citations": [
+              "chk-ln-compaction",
+              "chk-ln-compaction"
+            ]
+          }
+        ]
+      },
+      "rendered": "The ledger compacts at 4096 entries.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-ln-compaction",
+          "outcome": "supporting"
+        },
+        {
+          "claimId": "a1",
+          "citation": "chk-ln-compaction",
+          "outcome": "supporting"
+        }
+      ],
+      "citationCounts": {
+        "raw": 2,
+        "unique": 1,
+        "resolvedUnique": 1,
+        "supportingUnique": 1,
+        "byOutcome": {
+          "supporting": 2,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-compaction",
+          "c-compaction-startup"
+        ],
+        "matches": [
+          {
+            "claim": "c-compaction",
+            "predictedId": "a1",
+            "matched": true,
+            "supported": true
+          },
+          {
+            "claim": "c-compaction-startup",
+            "predictedId": null,
+            "matched": false,
+            "supported": false
+          }
+        ],
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "f1": 0.6666666666666666
+      },
+      "abstention": {
+        "expected": false,
+        "given": false,
+        "correct": true
+      },
+      "answerF1": 0.5882352941176471
+    },
+    {
+      "key": "bad:abstain-wrong",
+      "kind": "abstain-wrong",
+      "question": "q-retry-backoff",
+      "trace": {
+        "retrieved": [
+          "chk-rg-retry",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-retry",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "abstain",
+        "reason": "The supplied sources do not describe retry behavior.",
+        "claims": []
+      },
+      "rendered": "The supplied sources do not describe retry behavior.",
+      "citations": [],
+      "citationCounts": {
+        "raw": 0,
+        "unique": 0,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [
+          "c-retry-base",
+          "c-retry-cap"
+        ],
+        "matches": [
+          {
+            "claim": "c-retry-base",
+            "predictedId": null,
+            "matched": false,
+            "supported": false
+          },
+          {
+            "claim": "c-retry-cap",
+            "predictedId": null,
+            "matched": false,
+            "supported": false
+          }
+        ],
+        "tp": 0,
+        "fp": 0,
+        "fn": 2,
+        "f1": 0
+      },
+      "abstention": {
+        "expected": false,
+        "given": true,
+        "correct": false
+      },
+      "answerF1": 0.09523809523809523
+    },
+    {
+      "key": "bad:abstain-correct",
+      "kind": "abstain-correct",
+      "question": "q-unanswerable-connections",
+      "trace": {
+        "retrieved": [
+          "chk-rg-port",
+          "chk-pg-terms"
+        ],
+        "supplied": [
+          "chk-rg-port",
+          "chk-pg-terms"
+        ],
+        "counts": {
+          "retrieved": 2,
+          "supplied": 2
+        }
+      },
+      "answer": {
+        "disposition": "abstain",
+        "reason": "No supplied source states a maximum connection count.",
+        "claims": []
+      },
+      "rendered": "No supplied source states a maximum connection count.",
+      "citations": [],
+      "citationCounts": {
+        "raw": 0,
+        "unique": 0,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 0
+        }
+      },
+      "claims": {
+        "expected": [],
+        "matches": [],
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "f1": null
+      },
+      "abstention": {
+        "expected": true,
+        "given": true,
+        "correct": true
+      },
+      "answerF1": null
+    },
+    {
+      "key": "bad:fabricated-on-unanswerable",
+      "kind": "fabricated-on-unanswerable",
+      "question": "q-unanswerable-registry",
+      "trace": {
+        "retrieved": [],
+        "supplied": [],
+        "counts": {
+          "retrieved": 0,
+          "supplied": 0
+        }
+      },
+      "answer": {
+        "disposition": "answer",
+        "claims": [
+          {
+            "id": "a1",
+            "text": "The public Beacon registry is hosted on AWS.",
+            "citations": [
+              "chk-invented"
+            ]
+          }
+        ]
+      },
+      "rendered": "The public Beacon registry is hosted on AWS.",
+      "citations": [
+        {
+          "claimId": "a1",
+          "citation": "chk-invented",
+          "outcome": "unknown-evidence"
+        }
+      ],
+      "citationCounts": {
+        "raw": 1,
+        "unique": 1,
+        "resolvedUnique": 0,
+        "supportingUnique": 0,
+        "byOutcome": {
+          "supporting": 0,
+          "resolvedNotSupporting": 0,
+          "notSupplied": 0,
+          "inactiveVersion": 0,
+          "futureEvidence": 0,
+          "unknownEvidence": 1
+        }
+      },
+      "claims": {
+        "expected": [],
+        "matches": [],
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "f1": null
+      },
+      "abstention": {
+        "expected": true,
+        "given": false,
+        "correct": false
+      },
+      "answerF1": null
+    }
+  ],
+  "summary": {
+    "scenarios": 27,
+    "outcomes": {
+      "supporting": 30,
+      "resolvedNotSupporting": 2,
+      "notSupplied": 1,
+      "inactiveVersion": 1,
+      "futureEvidence": 1,
+      "unknownEvidence": 2
+    },
+    "wrongAbstentions": 2
+  },
+  "decision": {
+    "state": "not-evaluated",
+    "reason": "a keyless run scores scripted answers over the analytic trace; the current-path baseline is still unmeasured, and no product behavior may change from it"
+  },
+  "reportId": "f3659ee9906fce7b7417757b82c7281c8567aaafd37e9ee8753d83c866ff274e"
+}

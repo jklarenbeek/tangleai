@@ -1,0 +1,135 @@
+{
+  "document": "grounding-web",
+  "benchmark": "grounding",
+  "instrument": {
+    "entry": "benchmark/grounding.ts"
+  },
+  "configIdentities": {
+    "identities": [],
+    "rows": []
+  },
+  "generated": {
+    "at": "2026-09-01T03:28:20.791Z",
+    "tier": "scripted",
+    "provider": "none",
+    "model": "none",
+    "embedder": {
+      "model": "none",
+      "dims": 0
+    },
+    "keySource": null,
+    "thinking": "default"
+  },
+  "baseline": {
+    "reportId": null,
+    "registrationId": null
+  },
+  "registration": {
+    "registrationId": "bb40a960954ffed7fc44fe7e3aea0cd10c0ee014fe4adf15eba9d3264a7140d7",
+    "questions": [
+      {
+        "key": "rfc-405-code",
+        "text": "Which HTTP status code does RFC 9110 define for Method Not Allowed?",
+        "reference": "405"
+      },
+      {
+        "key": "rfc-405-allow",
+        "text": "What must a server generate in a 405 (Method Not Allowed) response, per RFC 9110?",
+        "reference": "an Allow header field containing the target resource's currently supported methods"
+      },
+      {
+        "key": "rfc-safe-methods",
+        "text": "Which request methods does RFC 9110 define as safe?",
+        "reference": "GET, HEAD, OPTIONS, and TRACE"
+      },
+      {
+        "key": "rfc-304-content",
+        "text": "What does RFC 9110 say a 304 (Not Modified) response cannot contain?",
+        "reference": "content; a 304 response is terminated by the end of the header section"
+      },
+      {
+        "key": "rfc-accept-header",
+        "text": "Which header field carries proactive content negotiation preferences for media types, per RFC 9110?",
+        "reference": "Accept"
+      },
+      {
+        "key": "rfc-delete-idempotent",
+        "text": "According to RFC 9110, is the DELETE method idempotent?",
+        "reference": "yes, DELETE is idempotent"
+      }
+    ],
+    "curatedUrl": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "searxBase": null,
+    "selection": {
+      "maxPerQuery": 3,
+      "policy": "the first distinct normalized HTTP(S) URLs in SearxNG result order after existing URL policy; no learned selector, no authority boost; snippets are never evidence"
+    },
+    "retrieval": {
+      "chunkerVersion": "heading-recursive/1",
+      "maxTokens": 450,
+      "overlapTokens": 48,
+      "k": 6,
+      "minScore": 0,
+      "maxPerSource": 2,
+      "neighbours": 1
+    },
+    "promptRevision": "357b25d553c62f28109410a99d18fec106c02cda487e6e89e84d068ce5dcc9ca",
+    "maxRepairs": 1,
+    "concurrency": 1
+  },
+  "source": {
+    "files": [
+      {
+        "path": "benchmark/fixtures/grounding/manifest.json",
+        "sha256": "724e27ee8c7e21fccfe93eee674414247cd5ef3f2fb2fa5f1a14828a054592e4"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/beacon-spec.html",
+        "sha256": "2b8af84f0e4125d6f0b5b1cabb39cbb76bf25febc9e9b09ad5cf8f65c17af653"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/future-changelog.md",
+        "sha256": "467e96005789e898bce7d168219725a20545d2ddf687bda34520cb3558790253"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/ledger-notes.md",
+        "sha256": "76e710caff79fdef77a84118845888a8e6519f65e1b0f45389108cb5ec770e42"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/mooring-howto.md",
+        "sha256": "5f7eac09f80e0d4366b2bc811900db847525690e8fdc4289f9a57d737ff35843"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/port-glossary.md",
+        "sha256": "a78e399d39d0a51206c141ab51f1335da1c5be746a3752761fadfedc57df70c2"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/quay-faq.html",
+        "sha256": "eee54911c25ae9064ce9cdd855e40f6c8c8755fc4e6c8ae8cf8a6532bbb4f6a6"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-guide.md",
+        "sha256": "1cc1d290e76152534e0df87524dd29634af43ba3c457e1618390bf675f86887a"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-history-v1.md",
+        "sha256": "35275f197ad3d932c39e12d4f4c353b7c89d340ee90023f4122c3faf24eecaa2"
+      },
+      {
+        "path": "benchmark/fixtures/grounding/sources/relay-history-v2.md",
+        "sha256": "d46de143122fe476646b1bcd903e87e93c5b50f4c6123fdcf70d1af0d0775079"
+      }
+    ],
+    "sha256": "e451e19ee710da189fae43680e15718f95b8e11ca6e9b86bc31a81ef391fb6cc"
+  },
+  "capture": {
+    "manifest": [],
+    "captures": 0,
+    "replayHits": 0,
+    "replayMisses": 0
+  },
+  "selection": [],
+  "rows": [],
+  "notRun": "no SearxNG endpoint was configured (--searx <base>)",
+  "reportId": "91b898aff77cab9637b1c30dc6b241f47b5657e3e55b4eccdd4848ce059f2f5b"
+}

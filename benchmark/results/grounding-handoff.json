@@ -1,0 +1,359 @@
+{
+  "document": "grounding-handoff",
+  "benchmark": "grounding",
+  "instrument": {
+    "entry": "benchmark/grounding-query.ts",
+    "query": "queries/grounding/flat-baseline.json"
+  },
+  "querySha256": "e89a9823fe03960063dfe4e4e7d7dc29c411ab25ccf0ae89452808feaf051752",
+  "handoff": {
+    "identities": {
+      "reportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727",
+      "registrationId": "a604b2d67d36e7f2f485935fe290866a1fdde485b9b02e5c70ebf4e416f42292",
+      "fixtureId": "b3af26a423ff7f1210e4c03b119ffe295530c539930c60f68a64334c240f5285",
+      "planId": "72e7efc85a521998f0cf60534d38332d763f07d5ea399023aa2218144bd80b57",
+      "sourceSha256": "e451e19ee710da189fae43680e15718f95b8e11ca6e9b86bc31a81ef391fb6cc",
+      "configIdentityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1"
+    },
+    "flatRow": {
+      "retrieval": {
+        "chunkerVersion": "heading-recursive/1",
+        "maxTokens": 450,
+        "overlapTokens": 48,
+        "k": 6,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 1
+      },
+      "promptRevision": "357b25d553c62f28109410a99d18fec106c02cda487e6e89e84d068ce5dcc9ca",
+      "answerSchemaRevision": "2b651fadfd44e57b15e12c65edbd10d48896a8e3aabe5360b27d39d807329a8e",
+      "maxRepairs": 1,
+      "seed": 17753,
+      "questionIds": [
+        "q-relay-port",
+        "q-frame-size",
+        "q-retry-backoff",
+        "q-queue-engine",
+        "q-handshake",
+        "q-checksum",
+        "q-heartbeat",
+        "q-compaction",
+        "q-snapshot-restore",
+        "q-mooring-profile",
+        "q-mooring-rotate",
+        "q-relay-tls",
+        "q-beacon-transport",
+        "q-ledger-encoding",
+        "q-unanswerable-connections",
+        "q-unanswerable-registry"
+      ]
+    },
+    "rows": [
+      {
+        "key": "documents-retrieved",
+        "questionSet": "b4dae8103bfedda3e36d67d37577d906827e30dc52a290606e86d34530e405a1",
+        "planned": 16,
+        "answered": 0,
+        "invalid": 0,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "claims": null,
+        "answerF1": null,
+        "abstention": null,
+        "citations": null,
+        "citedRecall": null,
+        "retrievedRecall": 1,
+        "suppliedRecall": 1,
+        "supply": {
+          "candidates": 96,
+          "blocks": 96,
+          "uniqueSupplied": 96,
+          "duplicateExpansions": 0,
+          "characters": 65718,
+          "estimatedTokens": 16437
+        },
+        "cost": null,
+        "latency": null
+      },
+      {
+        "key": "grounded-answer",
+        "questionSet": "b4dae8103bfedda3e36d67d37577d906827e30dc52a290606e86d34530e405a1",
+        "planned": 16,
+        "answered": 16,
+        "invalid": 0,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "claims": {
+          "tp": 19,
+          "fp": 4,
+          "fn": 5,
+          "microPrecision": 0.8260869565217391,
+          "microRecall": 0.7916666666666666,
+          "microF1": 0.8085106382978723,
+          "meanF1": 0.8380952380952381
+        },
+        "answerF1": 0.7601943776011153,
+        "abstention": {
+          "expected": 2,
+          "correct": 16,
+          "accuracy": 1
+        },
+        "citations": {
+          "raw": 23,
+          "unique": 15,
+          "resolvedUnique": 15,
+          "supportingUnique": 15,
+          "byOutcome": {
+            "supporting": 19,
+            "resolvedNotSupporting": 4,
+            "notSupplied": 0,
+            "inactiveVersion": 0,
+            "futureEvidence": 0,
+            "unknownEvidence": 0
+          }
+        },
+        "citedRecall": 1,
+        "retrievedRecall": 1,
+        "suppliedRecall": 1,
+        "supply": {
+          "candidates": 96,
+          "blocks": 96,
+          "uniqueSupplied": 96,
+          "duplicateExpansions": 0,
+          "characters": 65718,
+          "estimatedTokens": 16437
+        },
+        "cost": {
+          "turns": 16,
+          "tokens": 21506,
+          "promptTokens": 18368,
+          "completionTokens": 3138,
+          "ms": 67283.49781799997,
+          "replayed": 0
+        },
+        "latency": {
+          "count": 16,
+          "medianMs": 2403.2027180000005,
+          "p95Ms": 10933.396308999996
+        }
+      },
+      {
+        "key": "no-documents",
+        "questionSet": "b4dae8103bfedda3e36d67d37577d906827e30dc52a290606e86d34530e405a1",
+        "planned": 16,
+        "answered": 16,
+        "invalid": 0,
+        "unanswered": {
+          "wire": 0,
+          "budget": 0
+        },
+        "claims": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 24,
+          "microPrecision": 0,
+          "microRecall": 0,
+          "microF1": 0,
+          "meanF1": 0
+        },
+        "answerF1": 0.19451333430357742,
+        "abstention": {
+          "expected": 2,
+          "correct": 2,
+          "accuracy": 0.125
+        },
+        "citations": {
+          "raw": 0,
+          "unique": 0,
+          "resolvedUnique": 0,
+          "supportingUnique": 0,
+          "byOutcome": {
+            "supporting": 0,
+            "resolvedNotSupporting": 0,
+            "notSupplied": 0,
+            "inactiveVersion": 0,
+            "futureEvidence": 0,
+            "unknownEvidence": 0
+          }
+        },
+        "citedRecall": 0,
+        "retrievedRecall": null,
+        "suppliedRecall": null,
+        "supply": null,
+        "cost": {
+          "turns": 16,
+          "tokens": 3522,
+          "promptTokens": 2539,
+          "completionTokens": 983,
+          "ms": 39734.859414000006,
+          "replayed": 0
+        },
+        "latency": {
+          "count": 16,
+          "medianMs": 1573.3705960000007,
+          "p95Ms": 7122.340584999998
+        }
+      }
+    ],
+    "pairing": {
+      "eligible": true,
+      "reasons": [],
+      "comparisons": [
+        {
+          "metric": "supported-claim-f1",
+          "treatment": "grounded-answer",
+          "control": "no-documents",
+          "pairs": 14,
+          "mean": 0.8380952380952381,
+          "interval": {
+            "low": 0.7142857142857143,
+            "high": 0.9523809523809523
+          },
+          "oneSidedLowerBound": 0.7349814168919002,
+          "power": {
+            "pairedSd": 0.23455983249123247,
+            "standardError": 0.06268875213437702,
+            "minimumDetectableEffect": 0.12286769651819447,
+            "tiedPairs": 0
+          }
+        },
+        {
+          "metric": "answer-f1",
+          "treatment": "grounded-answer",
+          "control": "no-documents",
+          "pairs": 14,
+          "mean": 0.5656810432975379,
+          "interval": {
+            "low": 0.4737242630573242,
+            "high": 0.6529707728081738
+          },
+          "oneSidedLowerBound": 0.48832971947600434,
+          "power": {
+            "pairedSd": 0.17595617490283308,
+            "standardError": 0.04702626582669093,
+            "minimumDetectableEffect": 0.09216978742202905,
+            "tiedPairs": 0
+          }
+        }
+      ]
+    },
+    "decision": {
+      "state": "adopt-claim-citations",
+      "reason": "every registered clause of the validated primary live row passed; desktop citations may move from retrieved candidates to structured answer-used sources, and nothing else may change",
+      "clauses": [
+        {
+          "clause": "eligible-pair",
+          "passed": true,
+          "detail": "both generated fixture rows answered the complete identical question set with no hidden failure"
+        },
+        {
+          "clause": "citation-outcomes",
+          "passed": true,
+          "detail": "every visible citation resolves (15/15 unique) with zero not-supplied/inactive/future/unknown outcomes"
+        },
+        {
+          "clause": "claim-delta",
+          "passed": true,
+          "detail": "the 10,000-resample two-sided 95% interval is [0.7143, 0.9524]; the lower bound must exceed 0"
+        },
+        {
+          "clause": "answer-floor",
+          "passed": true,
+          "detail": "the one-sided 95% lower bound is 0.4883 against the −0.05 floor"
+        }
+      ],
+      "liveReportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727"
+    },
+    "diagnostics": {
+      "locomo": {
+        "registration": {
+          "seed": 17753,
+          "perCategory": 4,
+          "questionIds": [
+            "conv-26#39",
+            "conv-26#54",
+            "conv-26#64",
+            "conv-41#4",
+            "conv-41#80",
+            "conv-42#89",
+            "conv-43#3",
+            "conv-43#11",
+            "conv-43#27",
+            "conv-43#34",
+            "conv-43#43",
+            "conv-47#29",
+            "conv-47#134",
+            "conv-49#14",
+            "conv-50#12",
+            "conv-50#126"
+          ],
+          "datasetSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+        },
+        "skipped": null,
+        "rows": [
+          {
+            "key": "documents-retrieved",
+            "questionSet": "cc710bdfd9edc0884abd852db293c0ce95c3b8eaadce1c7fb8de0aa05bf1a1cc",
+            "answered": 0,
+            "answerF1": null,
+            "citedRecall": null,
+            "retrievedRecall": 0.5625,
+            "suppliedRecall": 0.7083333333333333
+          },
+          {
+            "key": "grounded-answer",
+            "questionSet": "cc710bdfd9edc0884abd852db293c0ce95c3b8eaadce1c7fb8de0aa05bf1a1cc",
+            "answered": 16,
+            "answerF1": 0.15466217206032387,
+            "citedRecall": 0.421875,
+            "retrievedRecall": 0.5625,
+            "suppliedRecall": 0.7083333333333333
+          },
+          {
+            "key": "no-documents",
+            "questionSet": "cc710bdfd9edc0884abd852db293c0ce95c3b8eaadce1c7fb8de0aa05bf1a1cc",
+            "answered": 16,
+            "answerF1": 0.027408426876906644,
+            "citedRecall": 0,
+            "retrievedRecall": null,
+            "suppliedRecall": null
+          }
+        ],
+        "pairing": {
+          "eligible": true,
+          "reasons": [],
+          "comparisons": [
+            {
+              "metric": "answer-f1",
+              "treatment": "grounded-answer",
+              "control": "no-documents",
+              "pairs": 16,
+              "mean": 0.12725374518341723,
+              "interval": {
+                "low": 0.050508796786463875,
+                "high": 0.21386146189671648
+              },
+              "oneSidedLowerBound": 0.056593842429394525,
+              "power": {
+                "pairedSd": 0.1718326826760144,
+                "standardError": 0.0429581706690036,
+                "minimumDetectableEffect": 0.08419646742085193,
+                "tiedPairs": 3
+              }
+            }
+          ]
+        }
+      },
+      "web": {
+        "reportId": "91b898aff77cab9637b1c30dc6b241f47b5657e3e55b4eccdd4848ce059f2f5b",
+        "registrationId": "bb40a960954ffed7fc44fe7e3aea0cd10c0ee014fe4adf15eba9d3264a7140d7",
+        "notRun": "no SearxNG endpoint was configured (--searx <base>)"
+      }
+    }
+  },
+  "reportId": "586c44d3b91a2d51dc3388a621c4ec59f6dcda5e7efa02bb5a40483c4499cb3e"
+}

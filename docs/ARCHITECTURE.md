@@ -126,9 +126,17 @@ Two packages and two apps sit on top of the loop, jarenjs-suite-only:
   document in the browser over the in-memory store.
 
 Chat grounding: question → embed → `recallByEmbedding` over live memories
-(only those embedded by the same identity as the question) → citations; the model (optional, `@jarenjs/ai` `createChatClient`) answers
-ONLY from those memories, and a missing or dead provider degrades to
-grounded recall — cited memories, never invention.
+(only those embedded by the same identity as the question) plus
+`collectDocumentEvidence` over the versioned document corpus → CANDIDATES.
+A configured model (`@jarenjs/ai` `createChatClient` under
+`createStructuredOutput`) answers ONLY from those candidates through the
+measured claims-with-citations contract; a supplied-reference gate hands a
+fabricated citation id back for the one bounded repair, and only the ids the
+answer named surface as citations — unused candidates stay trace-only. A
+missing or dead provider, or a reply still invalid after repair, degrades to
+grounded recall — the sources themselves, quoted and cited, never invention.
+The paired measurement behind this behavior lives in
+[`GROUNDING_BENCHMARK.md`](GROUNDING_BENCHMARK.md).
 
 ## Configuration identity (added 2026-08-31)
 

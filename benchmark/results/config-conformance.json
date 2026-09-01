@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "39f6909235de6aae4de1ee6f2e24e652bc812f06",
+    "head": "7684d36973573c2f73f5d0615912e20834d6ce15",
     "clean": false,
     "files": [
       {
@@ -13,11 +13,11 @@
       },
       {
         "path": "apps/desktop/src/chat.ts",
-        "sha256": "433cdd837740cc6dfc072ff3759dcbaa1b827d31496b61f06a4e839ba61a1612"
+        "sha256": "057845ae5b32675d76859366c36ce4de2e33fc574f48c1f346fc9ab23f8b3776"
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "89c498f70530b8f6ef6c5538d6fe57d3465bba55c9c260719be2dc587a7b5f4f"
+        "sha256": "b8e5ac39a9229485886875524c582df213c5a27a392ae8557909c1e0efd0acaa"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
@@ -120,7 +120,7 @@
         "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
       }
     ],
-    "sha256": "4f9f5d51dccf0f07377380ef8bcbf6c278447fe3e42150459fe04ebc22af2358"
+    "sha256": "a38565846f8e044fc828cb791f487d7b7dc6bf0867ab84c5c7369447bfd743bd"
   },
   "suite": {
     "packages": [
@@ -282,7 +282,7 @@
     ],
     "desktopContract": {
       "operations": 21,
-      "revision": "ad443820adfa8476c6b77bb496351a81b62d7c7de78d0ac59acecb665adb43ad"
+      "revision": "b55c9f596adc7d09d5661201df69729d533d3e9b9fd8d7efb0f0d7f52b186e11"
     },
     "summary": {
       "hostInputs": 2,
@@ -920,5 +920,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "b3e222828e6d649d97c0ee1c7fbad46e0c4bfd5f9b8f79694b60cb601a969e3b"
+  "reportId": "57e85e2deb9c0b8df97313f65671d8cf9ce33c4b5211b7644a8c88d7d37c96a9"
 }

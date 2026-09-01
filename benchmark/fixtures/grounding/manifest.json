@@ -1,0 +1,227 @@
+{
+  "document": "grounding-fixture",
+  "benchmark": "grounding",
+  "license": "MIT",
+  "authorship": "Tangle-authored for this repository's grounding benchmark; every source byte under sources/ is original fixture text describing a fictional system, and no third-party content is redistributed here.",
+  "cutoff": "2026-07-01T00:00:00Z",
+  "census": { "sources": 8, "questions": 16, "claims": 24, "abstentions": 2, "elements": 20, "chunks": 18, "scripted": 27 },
+  "sources": [
+    {
+      "key": "relay-guide",
+      "title": "Harbor Relay operations guide",
+      "url": "https://fixtures.tangleai.dev/grounding/relay-guide.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "relay-guide@1", "file": "sources/relay-guide.md", "sha256": "1cc1d290e76152534e0df87524dd29634af43ba3c457e1618390bf675f86887a", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "relay-history",
+      "title": "Harbor Relay engine history",
+      "url": "https://fixtures.tangleai.dev/grounding/relay-history.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "relay-history@1", "file": "sources/relay-history-v1.md", "sha256": "35275f197ad3d932c39e12d4f4c353b7c89d340ee90023f4122c3faf24eecaa2", "status": "superseded", "admittedAt": "2026-04-10T00:00:00Z", "supersededAt": "2026-05-20T00:00:00Z" },
+        { "key": "relay-history@2", "file": "sources/relay-history-v2.md", "sha256": "d46de143122fe476646b1bcd903e87e93c5b50f4c6123fdcf70d1af0d0775079", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "beacon-spec",
+      "title": "Beacon protocol specification",
+      "url": "https://fixtures.tangleai.dev/grounding/beacon-spec.html",
+      "mimeType": "text/html",
+      "versions": [
+        { "key": "beacon-spec@1", "file": "sources/beacon-spec.html", "sha256": "2b8af84f0e4125d6f0b5b1cabb39cbb76bf25febc9e9b09ad5cf8f65c17af653", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "ledger-notes",
+      "title": "Anchor ledger notes",
+      "url": "https://fixtures.tangleai.dev/grounding/ledger-notes.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "ledger-notes@1", "file": "sources/ledger-notes.md", "sha256": "76e710caff79fdef77a84118845888a8e6519f65e1b0f45389108cb5ec770e42", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "future-changelog",
+      "title": "Harbor 1.2 changelog",
+      "url": "https://fixtures.tangleai.dev/grounding/future-changelog.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "future-changelog@1", "file": "sources/future-changelog.md", "sha256": "467e96005789e898bce7d168219725a20545d2ddf687bda34520cb3558790253", "status": "active", "admittedAt": "2026-08-15T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "port-glossary",
+      "title": "Quay port glossary",
+      "url": "https://fixtures.tangleai.dev/grounding/port-glossary.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "port-glossary@1", "file": "sources/port-glossary.md", "sha256": "a78e399d39d0a51206c141ab51f1335da1c5be746a3752761fadfedc57df70c2", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "quay-faq",
+      "title": "Quay tool FAQ",
+      "url": "https://fixtures.tangleai.dev/grounding/quay-faq.html",
+      "mimeType": "text/html",
+      "versions": [
+        { "key": "quay-faq@1", "file": "sources/quay-faq.html", "sha256": "eee54911c25ae9064ce9cdd855e40f6c8c8755fc4e6c8ae8cf8a6532bbb4f6a6", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    },
+    {
+      "key": "mooring-howto",
+      "title": "Mooring how-to",
+      "url": "https://fixtures.tangleai.dev/grounding/mooring-howto.md",
+      "mimeType": "text/markdown",
+      "versions": [
+        { "key": "mooring-howto@1", "file": "sources/mooring-howto.md", "sha256": "5f7eac09f80e0d4366b2bc811900db847525690e8fdc4289f9a57d737ff35843", "status": "active", "admittedAt": "2026-05-20T00:00:00Z" }
+      ]
+    }
+  ],
+  "elements": [
+    { "key": "e-rg-port", "version": "relay-guide@1", "quote": "The Harbor Relay listens on TCP port 7431 by default; operators may move it, but every quay profile ships with 7431 preconfigured." },
+    { "key": "e-rg-frame", "version": "relay-guide@1", "quote": "A relay frame may carry at most 512 KiB of payload. An oversized frame is rejected with code FRAME_TOO_LARGE and is never truncated." },
+    { "key": "e-rg-retry", "version": "relay-guide@1", "quote": "Delivery retries start at a 250 ms backoff and double on every failed attempt, up to a hard cap of 8 seconds between attempts." },
+    { "key": "e-rg-tls", "version": "relay-guide@1", "quote": "The relay terminates TLS 1.3 only; earlier protocol versions are refused during the hello. Certificates are rotated with the quay tool's rotate-cert command." },
+    { "key": "e-h1-cedar", "version": "relay-history@1", "quote": "The Harbor Relay queues outbound frames through the cedar engine, a single-writer log borrowed from the original prototype." },
+    { "key": "e-h2-rowan", "version": "relay-history@2", "quote": "Since release 0.9 the Harbor Relay queues outbound frames through the rowan engine; rowan replaced the earlier cedar engine, which is no longer built." },
+    { "key": "e-bs-handshake", "version": "beacon-spec@1", "quote": "A Beacon handshake proceeds in three stages: hello, verify, adopt. No stage may be skipped, and a peer that fails verify must restart from hello." },
+    { "key": "e-bs-checksum", "version": "beacon-spec@1", "quote": "Every Beacon datagram carries a CRC32C checksum computed over both the header and the payload." },
+    { "key": "e-bs-heartbeat", "version": "beacon-spec@1", "quote": "A connected Beacon peer emits a heartbeat every 20 seconds; three missed heartbeats retire the peer." },
+    { "key": "e-bs-transport", "version": "beacon-spec@1", "quote": "Beacon traffic travels over UDP on port 7432, one datagram per frame." },
+    { "key": "e-ln-compaction", "version": "ledger-notes@1", "quote": "The Anchor ledger compacts once it holds 4096 entries, and it also runs one compaction pass at every startup." },
+    { "key": "e-ln-snapshot", "version": "ledger-notes@1", "quote": "Ledger snapshots are written in the alder/2 format." },
+    { "key": "e-ln-encoding", "version": "ledger-notes@1", "quote": "Ledger records are encoded as CBOR and the ledger file is strictly append-only." },
+    { "key": "e-fc-attach", "version": "future-changelog@1", "quote": "Release 1.2 renames the Beacon handshake's adopt stage to attach; the wire bytes are unchanged." },
+    { "key": "e-pg-legacy", "version": "port-glossary@1", "quote": "Before Harbor existed, the legacy relay listened on TCP port 7000 and framed payloads without any size limit." },
+    { "key": "e-pg-terms", "version": "port-glossary@1", "quote": "In quay terminology a frame is any length-prefixed payload, a port is a numbered endpoint, and a relay is any process that forwards frames." },
+    { "key": "e-pg-retry", "version": "port-glossary@1", "quote": "The legacy relay retried deliveries on a fixed one-second timer and never backed off." },
+    { "key": "e-qf-restore", "version": "quay-faq@1", "quote": "Snapshots are restored with the quay restore command, which verifies the snapshot format before touching the ledger." },
+    { "key": "e-mh-profile", "version": "mooring-howto@1", "quote": "New moorings use the granite profile by default; when the granite profile is missing the tool falls back to the shale profile." },
+    { "key": "e-mh-rotate", "version": "mooring-howto@1", "quote": "Mooring credentials are rotated every 90 days." }
+  ],
+  "chunks": [
+    { "key": "chk-rg-port", "version": "relay-guide@1", "elements": ["e-rg-port"] },
+    { "key": "chk-rg-frame", "version": "relay-guide@1", "elements": ["e-rg-frame"] },
+    { "key": "chk-rg-retry", "version": "relay-guide@1", "elements": ["e-rg-retry"] },
+    { "key": "chk-rg-tls", "version": "relay-guide@1", "elements": ["e-rg-tls"] },
+    { "key": "chk-h1-cedar", "version": "relay-history@1", "elements": ["e-h1-cedar"] },
+    { "key": "chk-h2-rowan", "version": "relay-history@2", "elements": ["e-h2-rowan"] },
+    { "key": "chk-bs-handshake", "version": "beacon-spec@1", "elements": ["e-bs-handshake"] },
+    { "key": "chk-bs-checksum", "version": "beacon-spec@1", "elements": ["e-bs-checksum"] },
+    { "key": "chk-bs-heartbeat", "version": "beacon-spec@1", "elements": ["e-bs-heartbeat"] },
+    { "key": "chk-bs-transport", "version": "beacon-spec@1", "elements": ["e-bs-transport"] },
+    { "key": "chk-ln-compaction", "version": "ledger-notes@1", "elements": ["e-ln-compaction"] },
+    { "key": "chk-ln-snapshot", "version": "ledger-notes@1", "elements": ["e-ln-snapshot"] },
+    { "key": "chk-ln-encoding", "version": "ledger-notes@1", "elements": ["e-ln-encoding"] },
+    { "key": "chk-fc-attach", "version": "future-changelog@1", "elements": ["e-fc-attach"] },
+    { "key": "chk-pg-legacy", "version": "port-glossary@1", "elements": ["e-pg-legacy"] },
+    { "key": "chk-pg-terms", "version": "port-glossary@1", "elements": ["e-pg-terms", "e-pg-retry"] },
+    { "key": "chk-mh-profile", "version": "mooring-howto@1", "elements": ["e-mh-profile", "e-mh-rotate"] },
+    { "key": "chk-qf-restore", "version": "quay-faq@1", "elements": ["e-qf-restore"] }
+  ],
+  "questions": [
+    { "key": "q-relay-port", "kind": "answerable", "text": "What TCP port does the Harbor Relay listen on by default?", "reference": "The Harbor Relay listens on TCP port 7431 by default.", "claims": ["c-relay-port"] },
+    { "key": "q-frame-size", "kind": "answerable", "text": "How large may a relay frame be, and what happens to an oversized frame?", "reference": "A frame carries at most 512 KiB of payload.; An oversized frame is rejected, never truncated.", "claims": ["c-frame-size", "c-frame-reject"] },
+    { "key": "q-retry-backoff", "kind": "answerable", "text": "How does the Harbor Relay back off between delivery retries?", "reference": "Retries start at a 250 ms backoff.; The backoff doubles up to 8 seconds between attempts.", "claims": ["c-retry-base", "c-retry-cap"] },
+    { "key": "q-queue-engine", "kind": "answerable", "text": "Which queue engine does the Harbor Relay use today?", "reference": "Since release 0.9 the relay queues frames through the rowan engine.", "claims": ["c-queue-engine"] },
+    { "key": "q-handshake", "kind": "answerable", "text": "What are the stages of the Beacon handshake, in order?", "reference": "The first stage is hello.; The second stage is verify.; The third stage is adopt.", "claims": ["c-hs-hello", "c-hs-verify", "c-hs-adopt"] },
+    { "key": "q-checksum", "kind": "answerable", "text": "Which checksum does a Beacon datagram carry, and over what?", "reference": "Every datagram carries a CRC32C checksum.; The checksum covers both the header and the payload.", "claims": ["c-checksum", "c-checksum-scope"] },
+    { "key": "q-heartbeat", "kind": "answerable", "text": "How often does a connected Beacon peer emit a heartbeat?", "reference": "A peer emits a heartbeat every 20 seconds.", "claims": ["c-heartbeat"] },
+    { "key": "q-compaction", "kind": "answerable", "text": "When does the Anchor ledger compact?", "reference": "The ledger compacts at 4096 entries.; A compaction pass also runs at every startup.", "claims": ["c-compaction", "c-compaction-startup"] },
+    { "key": "q-snapshot-restore", "kind": "answerable", "text": "Which format does an Anchor ledger snapshot use, and which command restores one?", "reference": "Snapshots are written in the alder/2 format.; Snapshots are restored with the quay restore command.", "claims": ["c-snapshot-format", "c-restore-tool"] },
+    { "key": "q-mooring-profile", "kind": "answerable", "text": "Which profile does a new mooring use, and what happens when it is missing?", "reference": "New moorings use the granite profile by default.; The tool falls back to the shale profile when granite is missing.", "claims": ["c-mooring-profile", "c-mooring-fallback"] },
+    { "key": "q-mooring-rotate", "kind": "answerable", "text": "How often are mooring credentials rotated?", "reference": "Mooring credentials are rotated every 90 days.", "claims": ["c-mooring-rotate"] },
+    { "key": "q-relay-tls", "kind": "answerable", "text": "Which TLS versions does the relay accept, and how are its certificates rotated?", "reference": "The relay accepts TLS 1.3 only.; Certificates are rotated with the quay tool's rotate-cert command.", "claims": ["c-relay-tls", "c-cert-rotate"] },
+    { "key": "q-beacon-transport", "kind": "answerable", "text": "Over which transport and port does Beacon traffic travel?", "reference": "Beacon traffic travels over UDP on port 7432.", "claims": ["c-beacon-transport"] },
+    { "key": "q-ledger-encoding", "kind": "answerable", "text": "How are Anchor ledger records encoded and written?", "reference": "Ledger records are encoded as CBOR.; The ledger file is strictly append-only.", "claims": ["c-ledger-encoding", "c-ledger-append"] },
+    { "key": "q-unanswerable-connections", "kind": "unanswerable", "text": "What is the Harbor Relay's maximum number of concurrent connections?", "reference": null, "claims": [] },
+    { "key": "q-unanswerable-registry", "kind": "unanswerable", "text": "Which cloud provider hosts the public Beacon registry?", "reference": null, "claims": [] }
+  ],
+  "claims": [
+    { "key": "c-relay-port", "question": "q-relay-port", "reference": "TCP port 7431", "predicates": { "required": [[" 7431"]], "forbidden": [" 7000"] }, "support": ["e-rg-port"] },
+    { "key": "c-frame-size", "question": "q-frame-size", "reference": "at most 512 KiB per frame", "predicates": { "required": [[" 512 "]], "forbidden": [] }, "support": ["e-rg-frame"] },
+    { "key": "c-frame-reject", "question": "q-frame-size", "reference": "an oversized frame is rejected, never truncated", "predicates": { "required": [["reject"]], "forbidden": [] }, "support": ["e-rg-frame"] },
+    { "key": "c-retry-base", "question": "q-retry-backoff", "reference": "retries start at a 250 ms backoff", "predicates": { "required": [[" 250 "]], "forbidden": [] }, "support": ["e-rg-retry"] },
+    { "key": "c-retry-cap", "question": "q-retry-backoff", "reference": "the backoff doubles up to 8 seconds", "predicates": { "required": [[" 8 second", " 8 s "], ["doubl"]], "forbidden": [] }, "support": ["e-rg-retry"] },
+    { "key": "c-queue-engine", "question": "q-queue-engine", "reference": "the rowan engine", "predicates": { "required": [["rowan"]], "forbidden": ["cedar"] }, "support": ["e-h2-rowan"] },
+    { "key": "c-hs-hello", "question": "q-handshake", "reference": "hello", "predicates": { "required": [["hello"]], "forbidden": [] }, "support": ["e-bs-handshake"] },
+    { "key": "c-hs-verify", "question": "q-handshake", "reference": "verify", "predicates": { "required": [["verify"]], "forbidden": [] }, "support": ["e-bs-handshake"] },
+    { "key": "c-hs-adopt", "question": "q-handshake", "reference": "adopt", "predicates": { "required": [["adopt"]], "forbidden": ["attach"] }, "support": ["e-bs-handshake"] },
+    { "key": "c-checksum", "question": "q-checksum", "reference": "a CRC32C checksum", "predicates": { "required": [["crc32c"]], "forbidden": [] }, "support": ["e-bs-checksum"] },
+    { "key": "c-checksum-scope", "question": "q-checksum", "reference": "computed over both the header and the payload", "predicates": { "required": [["header"], ["payload"]], "forbidden": [] }, "support": ["e-bs-checksum"] },
+    { "key": "c-heartbeat", "question": "q-heartbeat", "reference": "a heartbeat every 20 seconds", "predicates": { "required": [[" 20 "]], "forbidden": [] }, "support": ["e-bs-heartbeat"] },
+    { "key": "c-compaction", "question": "q-compaction", "reference": "compaction at 4096 entries", "predicates": { "required": [[" 4096 "]], "forbidden": [] }, "support": ["e-ln-compaction"] },
+    { "key": "c-compaction-startup", "question": "q-compaction", "reference": "a compaction pass also runs at startup", "predicates": { "required": [["startup"]], "forbidden": [] }, "support": ["e-ln-compaction"] },
+    { "key": "c-snapshot-format", "question": "q-snapshot-restore", "reference": "the alder/2 snapshot format", "predicates": { "required": [["alder"]], "forbidden": [] }, "support": ["e-ln-snapshot"] },
+    { "key": "c-restore-tool", "question": "q-snapshot-restore", "reference": "restored with the quay restore command", "predicates": { "required": [["quay restore"]], "forbidden": [] }, "support": ["e-qf-restore"] },
+    { "key": "c-mooring-profile", "question": "q-mooring-profile", "reference": "the granite profile by default", "predicates": { "required": [["granite"]], "forbidden": ["shale"] }, "support": ["e-mh-profile"] },
+    { "key": "c-mooring-fallback", "question": "q-mooring-profile", "reference": "falls back to the shale profile", "predicates": { "required": [["shale"]], "forbidden": [] }, "support": ["e-mh-profile"] },
+    { "key": "c-mooring-rotate", "question": "q-mooring-rotate", "reference": "rotated every 90 days", "predicates": { "required": [[" 90 "]], "forbidden": [] }, "support": ["e-mh-rotate"] },
+    { "key": "c-relay-tls", "question": "q-relay-tls", "reference": "TLS 1.3 only", "predicates": { "required": [["tls 13"]], "forbidden": [] }, "support": ["e-rg-tls"] },
+    { "key": "c-cert-rotate", "question": "q-relay-tls", "reference": "rotated with the quay tool's rotate-cert command", "predicates": { "required": [["quay"]], "forbidden": [] }, "support": ["e-rg-tls"] },
+    { "key": "c-beacon-transport", "question": "q-beacon-transport", "reference": "UDP on port 7432", "predicates": { "required": [["udp"], [" 7432"]], "forbidden": [] }, "support": ["e-bs-transport"] },
+    { "key": "c-ledger-encoding", "question": "q-ledger-encoding", "reference": "encoded as CBOR", "predicates": { "required": [["cbor"]], "forbidden": [] }, "support": ["e-ln-encoding"] },
+    { "key": "c-ledger-append", "question": "q-ledger-encoding", "reference": "strictly append-only", "predicates": { "required": [["append"]], "forbidden": [] }, "support": ["e-ln-encoding"] }
+  ],
+  "trace": [
+    { "question": "q-relay-port", "retrieved": ["chk-rg-port", "chk-pg-legacy", "chk-pg-terms"], "supplied": ["chk-rg-port", "chk-pg-legacy", "chk-pg-terms"] },
+    { "question": "q-frame-size", "retrieved": ["chk-rg-frame", "chk-pg-terms"], "supplied": ["chk-rg-frame", "chk-pg-terms"] },
+    { "question": "q-retry-backoff", "retrieved": ["chk-rg-retry", "chk-pg-terms"], "supplied": ["chk-rg-retry", "chk-pg-terms"] },
+    { "question": "q-queue-engine", "retrieved": ["chk-h2-rowan", "chk-h1-cedar"], "supplied": ["chk-h2-rowan", "chk-h1-cedar"] },
+    { "question": "q-handshake", "retrieved": ["chk-bs-handshake", "chk-fc-attach"], "supplied": ["chk-bs-handshake", "chk-fc-attach"] },
+    { "question": "q-checksum", "retrieved": ["chk-bs-checksum"], "supplied": ["chk-bs-checksum"] },
+    { "question": "q-heartbeat", "retrieved": ["chk-bs-heartbeat", "chk-bs-transport"], "supplied": ["chk-bs-heartbeat"] },
+    { "question": "q-compaction", "retrieved": ["chk-ln-compaction"], "supplied": ["chk-ln-compaction"] },
+    { "question": "q-snapshot-restore", "retrieved": ["chk-ln-snapshot", "chk-qf-restore"], "supplied": ["chk-ln-snapshot", "chk-qf-restore"] },
+    { "question": "q-mooring-profile", "retrieved": ["chk-mh-profile"], "supplied": ["chk-mh-profile"] },
+    { "question": "q-mooring-rotate", "retrieved": ["chk-mh-profile"], "supplied": ["chk-mh-profile"] },
+    { "question": "q-relay-tls", "retrieved": ["chk-rg-tls"], "supplied": ["chk-rg-tls"] },
+    { "question": "q-beacon-transport", "retrieved": ["chk-bs-transport"], "supplied": ["chk-bs-transport"] },
+    { "question": "q-ledger-encoding", "retrieved": ["chk-ln-encoding"], "supplied": ["chk-ln-encoding"] },
+    { "question": "q-unanswerable-connections", "retrieved": ["chk-rg-port", "chk-pg-terms"], "supplied": ["chk-rg-port", "chk-pg-terms"] },
+    { "question": "q-unanswerable-registry", "retrieved": [], "supplied": [] }
+  ],
+  "scripted": [
+    { "key": "oracle:q-relay-port", "kind": "oracle", "question": "q-relay-port", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The Harbor Relay listens on TCP port 7431 by default.", "citations": ["chk-rg-port"] }] } },
+    { "key": "oracle:q-frame-size", "kind": "oracle", "question": "q-frame-size", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "A frame carries at most 512 KiB of payload.", "citations": ["chk-rg-frame"] }, { "id": "a2", "text": "An oversized frame is rejected, never truncated.", "citations": ["chk-rg-frame"] }] } },
+    { "key": "oracle:q-retry-backoff", "kind": "oracle", "question": "q-retry-backoff", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Retries start at a 250 ms backoff.", "citations": ["chk-rg-retry"] }, { "id": "a2", "text": "The backoff doubles up to 8 seconds between attempts.", "citations": ["chk-rg-retry"] }] } },
+    { "key": "oracle:q-queue-engine", "kind": "oracle", "question": "q-queue-engine", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Since release 0.9 the relay queues frames through the rowan engine.", "citations": ["chk-h2-rowan"] }] } },
+    { "key": "oracle:q-handshake", "kind": "oracle", "question": "q-handshake", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The first stage is hello.", "citations": ["chk-bs-handshake"] }, { "id": "a2", "text": "The second stage is verify.", "citations": ["chk-bs-handshake"] }, { "id": "a3", "text": "The third stage is adopt.", "citations": ["chk-bs-handshake"] }] } },
+    { "key": "oracle:q-checksum", "kind": "oracle", "question": "q-checksum", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Every datagram carries a CRC32C checksum.", "citations": ["chk-bs-checksum"] }, { "id": "a2", "text": "The checksum covers both the header and the payload.", "citations": ["chk-bs-checksum"] }] } },
+    { "key": "oracle:q-heartbeat", "kind": "oracle", "question": "q-heartbeat", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "A peer emits a heartbeat every 20 seconds.", "citations": ["chk-bs-heartbeat"] }] } },
+    { "key": "oracle:q-compaction", "kind": "oracle", "question": "q-compaction", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The ledger compacts at 4096 entries.", "citations": ["chk-ln-compaction"] }, { "id": "a2", "text": "A compaction pass also runs at every startup.", "citations": ["chk-ln-compaction"] }] } },
+    { "key": "oracle:q-snapshot-restore", "kind": "oracle", "question": "q-snapshot-restore", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Snapshots are written in the alder/2 format.", "citations": ["chk-ln-snapshot"] }, { "id": "a2", "text": "Snapshots are restored with the quay restore command.", "citations": ["chk-qf-restore"] }] } },
+    { "key": "oracle:q-mooring-profile", "kind": "oracle", "question": "q-mooring-profile", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "New moorings use the granite profile by default.", "citations": ["chk-mh-profile"] }, { "id": "a2", "text": "The tool falls back to the shale profile when granite is missing.", "citations": ["chk-mh-profile"] }] } },
+    { "key": "oracle:q-mooring-rotate", "kind": "oracle", "question": "q-mooring-rotate", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Mooring credentials are rotated every 90 days.", "citations": ["chk-mh-profile"] }] } },
+    { "key": "oracle:q-relay-tls", "kind": "oracle", "question": "q-relay-tls", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The relay accepts TLS 1.3 only.", "citations": ["chk-rg-tls"] }, { "id": "a2", "text": "Certificates are rotated with the quay tool's rotate-cert command.", "citations": ["chk-rg-tls"] }] } },
+    { "key": "oracle:q-beacon-transport", "kind": "oracle", "question": "q-beacon-transport", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Beacon traffic travels over UDP on port 7432.", "citations": ["chk-bs-transport"] }] } },
+    { "key": "oracle:q-ledger-encoding", "kind": "oracle", "question": "q-ledger-encoding", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Ledger records are encoded as CBOR.", "citations": ["chk-ln-encoding"] }, { "id": "a2", "text": "The ledger file is strictly append-only.", "citations": ["chk-ln-encoding"] }] } },
+    { "key": "oracle:q-unanswerable-connections", "kind": "oracle", "question": "q-unanswerable-connections", "answer": { "disposition": "abstain", "reason": "No supplied source states a maximum connection count.", "claims": [] } },
+    { "key": "oracle:q-unanswerable-registry", "kind": "oracle", "question": "q-unanswerable-registry", "answer": { "disposition": "abstain", "reason": "No supplied source names a registry host.", "claims": [] } },
+    { "key": "bad:right-no-citation", "kind": "right-no-citation", "question": "q-relay-port", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The Harbor Relay listens on TCP port 7431 by default.", "citations": [] }] } },
+    { "key": "bad:unknown-id", "kind": "unknown-id", "question": "q-checksum", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "Every datagram carries a CRC32C checksum.", "citations": ["chk-does-not-exist"] }] } },
+    { "key": "bad:not-supplied", "kind": "not-supplied", "question": "q-heartbeat", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "A peer emits a heartbeat every 20 seconds.", "citations": ["chk-bs-transport"] }] } },
+    { "key": "bad:inactive-version", "kind": "inactive-version", "question": "q-queue-engine", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The relay queues frames through the rowan engine.", "citations": ["chk-h1-cedar"] }] } },
+    { "key": "bad:future-evidence", "kind": "future-evidence", "question": "q-handshake", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The first stage is hello.", "citations": ["chk-bs-handshake"] }, { "id": "a2", "text": "The second stage is verify.", "citations": ["chk-bs-handshake"] }, { "id": "a3", "text": "The third stage is attach.", "citations": ["chk-fc-attach"] }] } },
+    { "key": "bad:wrong-passage", "kind": "wrong-passage", "question": "q-relay-port", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The Harbor Relay listens on TCP port 7431 by default.", "citations": ["chk-pg-legacy"] }] } },
+    { "key": "bad:unsupported-extra", "kind": "unsupported-extra", "question": "q-frame-size", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "A frame carries at most 512 KiB of payload.", "citations": ["chk-rg-frame"] }, { "id": "a2", "text": "An oversized frame is rejected, never truncated.", "citations": ["chk-rg-frame"] }, { "id": "a3", "text": "Frames are compressed with zstd before delivery.", "citations": ["chk-rg-frame"] }] } },
+    { "key": "bad:duplicate-citations", "kind": "duplicate-citations", "question": "q-compaction", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The ledger compacts at 4096 entries.", "citations": ["chk-ln-compaction", "chk-ln-compaction"] }] } },
+    { "key": "bad:abstain-wrong", "kind": "abstain-wrong", "question": "q-retry-backoff", "answer": { "disposition": "abstain", "reason": "The supplied sources do not describe retry behavior.", "claims": [] } },
+    { "key": "bad:abstain-correct", "kind": "abstain-correct", "question": "q-unanswerable-connections", "answer": { "disposition": "abstain", "reason": "No supplied source states a maximum connection count.", "claims": [] } },
+    { "key": "bad:fabricated-on-unanswerable", "kind": "fabricated-on-unanswerable", "question": "q-unanswerable-registry", "answer": { "disposition": "answer", "claims": [{ "id": "a1", "text": "The public Beacon registry is hosted on AWS.", "citations": ["chk-invented"] }] } }
+  ],
+  "rfc9110": {
+    "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "questions": [
+      { "key": "rfc-405-code", "text": "Which HTTP status code does RFC 9110 define for Method Not Allowed?", "reference": "405" },
+      { "key": "rfc-405-allow", "text": "What must a server generate in a 405 (Method Not Allowed) response, per RFC 9110?", "reference": "an Allow header field containing the target resource's currently supported methods" },
+      { "key": "rfc-safe-methods", "text": "Which request methods does RFC 9110 define as safe?", "reference": "GET, HEAD, OPTIONS, and TRACE" },
+      { "key": "rfc-304-content", "text": "What does RFC 9110 say a 304 (Not Modified) response cannot contain?", "reference": "content; a 304 response is terminated by the end of the header section" },
+      { "key": "rfc-accept-header", "text": "Which header field carries proactive content negotiation preferences for media types, per RFC 9110?", "reference": "Accept" },
+      { "key": "rfc-delete-idempotent", "text": "According to RFC 9110, is the DELETE method idempotent?", "reference": "yes, DELETE is idempotent" }
+    ]
+  }
+}

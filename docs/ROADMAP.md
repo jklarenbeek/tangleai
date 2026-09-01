@@ -289,20 +289,19 @@ already has.
 
 ## Grounding and retrieval
 
-- [ ] **Search grounding, measured.** *Wanted:* to know whether grounding makes
-  answers better. *Stands on:* the document lane is delivered — fetch → extract →
-  chunk → embed → versioned corpus → cited recall in `@tangleai/documents`,
-  SearxNG result selection wired to bounded multi-document ingestion
-  (`compose/searxng/` carries the docker settings), and the desktop chatting over
-  document chunks and curated memories as two explicit lanes. Nobody has measured
-  it. *Constraint:* memflow's web search was Tavily and its search agent a stub
-  that never ran, so the fusion path was never measured anywhere; SearxNG
-  grounding is net-new. *Salvage:* `attic/memflow-modules/{retrieval,priha}.md`
-  carry the fusion starting points (vector / graph / keyword 0.5 / 0.3 / 0.2,
-  localWeight 0.6, authorityBoost 1.3) and the citation model;
-  `attic/memflow-modules/chunking.md` is the S2 spec the paper does not give.
-  *Closes on:* answer groundedness (citations resolve) on the LoCoMo sample, or a
-  fixed question set derived the same way.
+- [ ] **The web discovery row, run live.** *Wanted:* the one unmeasured member
+  of the grounding instrument — the dated SearxNG-discovered versus directly
+  curated comparison over the six registered RFC 9110 questions, run against a
+  real endpoint. Everything else shipped and is measured: the flat document
+  baseline is a validated paired result
+  (`docs/GROUNDING_BENCHMARK.md`, handoff
+  `benchmark/results/grounding-handoff.json`), and the web instrument itself is
+  proven — capture and replay are byte-identical with zero network calls, the
+  selection rule is registered, and the current record is a stated not-run.
+  *Constraint:* the row needs an operator-confirmed SearxNG endpoint
+  (`compose/searxng/`) and its own separate authorization; it is a dated
+  diagnostic and can never enter the flat gate's denominator. *Closes on:* one
+  authorized `--web-live` run whose report replays byte-identically.
 - [ ] **Dual retrieval for grounded assistants (PriHA / DRAG).** *Wanted:* a
   turn classified and either paused for bounded clarification or turned into a
   version-pinned, intent-oriented atomic query plan; every atomic query through
@@ -316,8 +315,12 @@ already has.
   prompt are not dual retrieval, a SearxNG screen is not a web-search agent, and an
   HTTP `Last-Modified` is not authority. The five files under `prompts/priha/` are
   seeds no source imports. Healthcare deployment is a separate gate this entry
-  never claims. *Closes on:* a deterministic benchmark with ablations, costs,
-  safety violations and losses under pinned identities.
+  never claims. The flat document-grounding baseline is now an immutable
+  measured handoff (`benchmark/results/grounding-handoff.json` names the
+  report/registration/source/config identities); a dual-retrieval treatment
+  registers its own identity and must beat that exact row — it may not
+  re-render a friendlier flat baseline. *Closes on:* a deterministic benchmark
+  with ablations, costs, safety violations and losses under pinned identities.
 - [ ] **The graph question, and LightRAG's answer to it.** *Wanted:* to decide
   graph indexing of `relations` only when a real query needs a traversal —
   document-shaped relations have no ceiling until then, and Memgraph / a neo4j
@@ -336,9 +339,12 @@ already has.
   graph layer looked like and cost — `attic/memflow-ARCHITECTURE.md` (the
   ~25-label data model) and `attic/memflow-modules/graph.md`; the two ideas worth
   keeping are query-before-dedup incremental indexing and LLM-summarized
-  community nodes as a high-level corpus. *Closes on:* flat, low-only, high-only,
-  no-original and full-hybrid rows under one instrument, including losses — a
-  recall-quality or latency number the document store cannot reach.
+  community nodes as a high-level corpus. The flat row to beat is the immutable
+  measured grounding handoff (`benchmark/results/grounding-handoff.json`); a
+  graph treatment registers its own identity against that exact row rather
+  than re-rendering a friendlier flat baseline. *Closes on:* flat, low-only,
+  high-only, no-original and full-hybrid rows under one instrument, including
+  losses — a recall-quality or latency number the document store cannot reach.
 
 ## Configuration and persistence
 

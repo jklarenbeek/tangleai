@@ -49,6 +49,90 @@ const RUN = {
   },
 } as const;
 
+/** The resolvable citation target of one document chunk — closed, so a fabricated member can never ride along. */
+const DOCUMENT_CITATION_TARGET = {
+  type: 'object',
+  required: ['chunkId', 'sourceId', 'url', 'title', 'headingPath', 'elementIds'],
+  additionalProperties: false,
+  properties: {
+    chunkId: { type: 'string' },
+    sourceId: { type: 'string' },
+    url: { type: 'string' },
+    title: { type: ['string', 'null'] },
+    page: { type: 'number' },
+    headingPath: { type: 'array', items: { type: 'string' } },
+    elementIds: { type: 'array', items: { type: 'string' } },
+  },
+} as const;
+
+/**
+ * One returned document citation: an answer-used ranked chunk (vector
+ * omitted), its source, its score and its resolvable citation target.
+ * Closed at every level — the measured contract, not a projection of
+ * whatever the store held.
+ */
+const DOCUMENT_CITATION = {
+  type: 'object',
+  required: ['chunk', 'source', 'score', 'citation'],
+  additionalProperties: false,
+  properties: {
+    chunk: {
+      type: 'object',
+      required: ['id', 'sourceId', 'versionId', 'elementIds', 'text', 'tokenCount', 'order', 'headingPath', 'embeddedBy'],
+      additionalProperties: false,
+      properties: {
+        id: { type: 'string' },
+        sourceId: { type: 'string' },
+        versionId: { type: 'string' },
+        elementIds: { type: 'array', items: { type: 'string' } },
+        text: { type: 'string' },
+        tokenCount: { type: 'number' },
+        order: { type: 'number' },
+        headingPath: { type: 'array', items: { type: 'string' } },
+        pageStart: { type: 'number' },
+        pageEnd: { type: 'number' },
+        bbox: {
+          type: 'object',
+          required: ['x', 'y', 'w', 'h'],
+          additionalProperties: false,
+          properties: { x: { type: 'number' }, y: { type: 'number' }, w: { type: 'number' }, h: { type: 'number' } },
+        },
+        parentId: { type: 'string' },
+        previousId: { type: 'string' },
+        nextId: { type: 'string' },
+        embeddedBy: {
+          type: 'object',
+          required: ['model', 'dims'],
+          additionalProperties: false,
+          properties: { model: { type: 'string' }, dims: { type: 'number' } },
+        },
+      },
+    },
+    source: {
+      type: 'object',
+      required: ['id', 'requestedUrl', 'finalUrl', 'canonicalUrl', 'title', 'mimeType', 'fetchMode', 'status', 'fetchedAt'],
+      additionalProperties: false,
+      properties: {
+        id: { type: 'string' },
+        requestedUrl: { type: 'string' },
+        finalUrl: { type: 'string' },
+        canonicalUrl: { type: 'string' },
+        title: { type: ['string', 'null'] },
+        mimeType: { type: 'string' },
+        fetchMode: { enum: ['static', 'bun-webview', 'remote-playwright'] },
+        status: { enum: ['ready', 'failed', 'blocked', 'dynamic-unavailable'] },
+        fetchedAt: { type: 'string' },
+        etag: { type: 'string' },
+        lastModified: { type: 'string' },
+        activeVersionId: { type: 'string' },
+        error: { type: 'string' },
+      },
+    },
+    score: { type: 'number' },
+    citation: DOCUMENT_CITATION_TARGET,
+  },
+} as const;
+
 const CHAT_MESSAGE = {
   type: 'object',
   required: ['id', 'role', 'text', 'at'],
@@ -504,7 +588,7 @@ export const DESKTOP_CONTRACT = {
         properties: {
           reply: CHAT_MESSAGE,
           citations: { type: 'array', items: MEMORY_SUMMARY },
-          documentCitations: { type: 'array', items: { type: 'object' } },
+          documentCitations: { type: 'array', items: DOCUMENT_CITATION },
           provider: { type: ['string', 'null'] },
         },
       },

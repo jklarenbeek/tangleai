@@ -20,10 +20,31 @@ import type { ReplayCache } from '../../benchmark/lib/wire-cache.ts';
 export interface ScriptOptions {
   /** What the chat wire answers, given the request body. */
   chat?: (body: any) => { content: string, usage?: unknown } | Response;
+  /**
+   * The grounding branch: called for `grounding_answer` requests with
+   * ONLY what the wire can see — the question and the evidence blocks'
+   * ids and texts parsed back out of the prompt. Returns the JSON value
+   * to answer with (an object is serialized), a raw `{ content }`, or a
+   * `Response` for a scripted wire failure.
+   */
+  grounding?: (input: { question: string, evidence: Array<{ id: string, text: string }> }) => unknown;
   /** Fail every chat call with this status. */
   fail?: number;
   /** Sees every chat request body as the wire would — what the thinking control looked like on the wire. */
   onRequest?: (body: any) => void;
+}
+
+/** The evidence ids and texts a grounding prompt listed, read back out of the request. */
+export function listedDocumentEvidence(body: any): Array<{ id: string, text: string }> {
+  const system: string = body.messages?.[0]?.content ?? '';
+  const marker = system.indexOf('DOCUMENT CHUNKS:');
+  if (marker === -1) return [];
+  const section = system.slice(marker + 'DOCUMENT CHUNKS:'.length);
+  const blocks = section.split(/\n(?=\[)/).filter((block) => block.trim().startsWith('['));
+  return blocks.map((block) => {
+    const match = /^\s*\[([^\]]+)\]\s+\([-\d.]+\)\s([\s\S]*)$/.exec(block);
+    return match === null ? null : { id: match[1], text: match[2] };
+  }).filter((entry): entry is { id: string, text: string } => entry !== null);
 }
 
 /** The program the scripted author writes: chunk by line, ask every piece about THIS question (as a real author would — a prompt that named no question would make every question's sub-call over a piece the same request), collect the values, answer. */
@@ -62,6 +83,14 @@ export function scriptedFetch(options: ScriptOptions = {}): { fetch: typeof glob
       else calls.chat++;
       options.onRequest?.(body);
       if (options.fail !== undefined) return new Response('nope', { status: options.fail });
+      if (name === 'grounding_answer' && options.grounding !== undefined) {
+        const asked = /Question: ([\s\S]*)$/.exec(String(body.messages.at(-1).content));
+        const scripted = options.grounding({ question: asked?.[1] ?? '', evidence: listedDocumentEvidence(body) });
+        if (scripted instanceof Response) return scripted;
+        const record = scripted as { content?: unknown };
+        if (typeof record?.content === 'string') return completion(record.content);
+        return completion(JSON.stringify(scripted));
+      }
       if (name === 'locomo_judge') {
         return completion(JSON.stringify({ correct: /not|did not|no such/i.test(body.messages.at(-1).content), reasoning: 'scripted' }));
       }

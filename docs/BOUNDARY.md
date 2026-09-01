@@ -92,6 +92,18 @@ spends an afternoon looking:
   squared distance itself).
 - **The LoCoMo loader, preprocessor, scorer and report.** Paper-specific, so
   Tangle's by the rule at the top of this file.
+- **The document-grounding claim/citation scorer.** The suite publishes no
+  generic claim/evidence envelope (re-audited at 0.56.0), so the material-claim
+  oracle, the closed matching predicates, the six-state terminal citation
+  classifier and the report shaping live in `benchmark/lib/grounding*.ts` and
+  never under `packages/`. Everything around them is consumed, not rebuilt:
+  `createStructuredOutput` (generation and the desktop's supplied-reference
+  gate), `JarenValidator`/`$query` through the one report-validator factory,
+  `jaren-emit` types, `canonicalSha256` identities, the client cache seam for
+  replay, `createBudgetAccount`, `mapConcurrent`, `mean`/`stddev`/`quantile`,
+  and `mulberry32`/`drawDistinct`. If a generic claim envelope ever ships in
+  the suite, the local scorer is re-audited against it rather than preserved
+  as a twin.
 
 **Copy the method, not the code.** jarenjs's benchmark scripts are not published
 packages, so nothing below is importable — but each is a decision this repo

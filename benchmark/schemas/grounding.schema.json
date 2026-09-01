@@ -1,0 +1,1615 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/grounding",
+  "title": "Document-grounding contract — fixture and report documents",
+  "description": "The closed tagged union `benchmark/grounding.ts` reads and writes: the Tangle-authored fixture (the analytic oracle — sources, versions, elements, chunks, questions, material claims with closed matching predicates, the scripted per-question supply trace, scripted predicted answers, and the six separately-held RFC 9110 questions) and the keyless grounding report (registration, source manifest, the scorer's oracle gate, one scored scenario per scripted answer with its complete evidence trace and one terminal outcome per visible citation, reconciled counts, and a decision that cannot claim product adoption from a keyless run). TypeScript is generated from this document by `@jarenjs/emit`; the arithmetic an honest report depends on binds here through `$query` at validation time. Every object closes its properties, so key material or an undeclared member cannot be carried.",
+  "oneOf": [
+    { "$ref": "#/$defs/groundingFixture" },
+    { "$ref": "#/$defs/groundingReport" },
+    { "$ref": "#/$defs/groundingLive" },
+    { "$ref": "#/$defs/groundingWeb" },
+    { "$ref": "#/$defs/groundingHandoff" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "fixtureKey": { "type": "string", "pattern": "^[a-z][a-z0-9@:_-]*$" },
+    "instant": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" },
+    "citationOutcome": {
+      "description": "The one ordered terminal outcome of a visible citation, walked in exactly this order against the attempt trace: unknown address first, then supply, then version status, then cutoff eligibility, then oracle support. A citation may not skip a state and may not carry two outcomes.",
+      "enum": ["supporting", "resolved-not-supporting", "not-supplied", "inactive-version", "future-evidence", "unknown-evidence"]
+    },
+    "predicates": {
+      "description": "Closed matching data, never executable text: each required group is satisfied when at least one of its members occurs inside the space-padded officially-normalized claim text, and no forbidden member may occur. Authored with the fixture, before any result exists.",
+      "type": "object",
+      "required": ["required", "forbidden"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "array", "minItems": 1, "items": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } } },
+        "forbidden": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "answerClaim": {
+      "type": "object",
+      "required": ["id", "text", "citations"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "citations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "answerValue": {
+      "description": "The one answer contract of both the scripted and live paths. There is no free-prose member a material claim can hide in: the visible answer is rendered from the claim texts in array order, or from the abstention reason.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["disposition", "claims"],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": { "const": "answer" },
+            "claims": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/answerClaim" } }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["disposition", "reason", "claims"],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": { "const": "abstain" },
+            "reason": { "type": "string", "minLength": 1 },
+            "claims": { "type": "array", "maxItems": 0 }
+          }
+        }
+      ]
+    },
+    "fixtureVersion": {
+      "type": "object",
+      "required": ["key", "file", "sha256", "status", "admittedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "file": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "status": { "enum": ["active", "superseded"] },
+        "admittedAt": { "$ref": "#/$defs/instant" },
+        "supersededAt": { "$ref": "#/$defs/instant" }
+      }
+    },
+    "fixtureSource": {
+      "type": "object",
+      "required": ["key", "title", "url", "mimeType", "versions"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "pattern": "^https://" },
+        "mimeType": { "enum": ["text/markdown", "text/html"] },
+        "versions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureVersion" } }
+      }
+    },
+    "fixtureElement": {
+      "type": "object",
+      "required": ["key", "version", "quote"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "version": { "$ref": "#/$defs/fixtureKey" },
+        "quote": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fixtureChunk": {
+      "type": "object",
+      "required": ["key", "version", "elements"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "version": { "$ref": "#/$defs/fixtureKey" },
+        "elements": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } }
+      }
+    },
+    "fixtureQuestion": {
+      "type": "object",
+      "required": ["key", "kind", "text", "reference", "claims"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "kind": { "enum": ["answerable", "unanswerable"] },
+        "text": { "type": "string", "minLength": 1 },
+        "reference": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "claims": { "type": "array", "items": { "$ref": "#/$defs/fixtureKey" } }
+      }
+    },
+    "fixtureClaim": {
+      "type": "object",
+      "required": ["key", "question", "reference", "predicates", "support"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "question": { "$ref": "#/$defs/fixtureKey" },
+        "reference": { "type": "string", "minLength": 1 },
+        "predicates": { "$ref": "#/$defs/predicates" },
+        "support": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } }
+      }
+    },
+    "fixtureTrace": {
+      "description": "The scripted per-question supply for the keyless tier: which chunk addresses were retrieved and which were serialized as evidence. A member that could not arise on the shipped path (a superseded chunk in `supplied`) is a deliberate forged-reference proof the scorer must refuse, never a claim about the product.",
+      "type": "object",
+      "required": ["question", "retrieved", "supplied"],
+      "additionalProperties": false,
+      "properties": {
+        "question": { "$ref": "#/$defs/fixtureKey" },
+        "retrieved": { "type": "array", "items": { "$ref": "#/$defs/fixtureKey" } },
+        "supplied": { "type": "array", "items": { "$ref": "#/$defs/fixtureKey" } }
+      }
+    },
+    "scriptedAnswer": {
+      "type": "object",
+      "required": ["key", "kind", "question", "answer"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "kind": {
+          "enum": ["oracle", "right-no-citation", "unknown-id", "not-supplied", "inactive-version", "future-evidence", "wrong-passage", "unsupported-extra", "duplicate-citations", "abstain-wrong", "abstain-correct", "fabricated-on-unanswerable"]
+        },
+        "question": { "$ref": "#/$defs/fixtureKey" },
+        "answer": { "$ref": "#/$defs/answerValue" }
+      }
+    },
+    "rfcQuestion": {
+      "type": "object",
+      "required": ["key", "text", "reference"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "text": { "type": "string", "minLength": 1 },
+        "reference": { "type": "string", "minLength": 1 }
+      }
+    },
+    "groundingFixture": {
+      "title": "Grounding fixture manifest",
+      "type": "object",
+      "required": ["document", "benchmark", "license", "authorship", "cutoff", "census", "sources", "elements", "chunks", "questions", "claims", "trace", "scripted", "rfc9110"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": ["$.census.sources", { "$count": "$.sources[*]" }] },
+          { "$eq": ["$.census.questions", { "$count": "$.questions[*]" }] },
+          { "$eq": ["$.census.claims", { "$count": "$.claims[*]" }] },
+          { "$eq": ["$.census.elements", { "$count": "$.elements[*]" }] },
+          { "$eq": ["$.census.chunks", { "$count": "$.chunks[*]" }] },
+          { "$eq": ["$.census.scripted", { "$count": "$.scripted[*]" }] },
+          { "$eq": ["$.census.abstentions", { "$count": "$.questions[?(@.kind=='unanswerable')]" }] },
+          { "$eq": [{ "$count": "$.questions[*].key" }, { "$count": { "$distinct": "$.questions[*].key" } }] },
+          { "$eq": [{ "$count": "$.claims[*].key" }, { "$count": { "$distinct": "$.claims[*].key" } }] },
+          { "$eq": [{ "$count": "$.chunks[*].key" }, { "$count": { "$distinct": "$.chunks[*].key" } }] },
+          { "$eq": [{ "$count": "$.elements[*].key" }, { "$count": { "$distinct": "$.elements[*].key" } }] },
+          { "$eq": [{ "$count": "$.scripted[*].key" }, { "$count": { "$distinct": "$.scripted[*].key" } }] },
+          { "$eq": [{ "$count": "$.trace[*]" }, { "$count": "$.questions[*]" }] },
+          {
+            "$every": { "c": "$.claims[*]" },
+            "$satisfies": { "$exists": { "$index-of": ["$.questions[*].key", "$c.question"] } }
+          },
+          {
+            "$every": { "t": "$.trace[*]" },
+            "$satisfies": { "$exists": { "$index-of": ["$.questions[*].key", "$t.question"] } }
+          },
+          {
+            "$every": { "s": "$.scripted[*]" },
+            "$satisfies": { "$exists": { "$index-of": ["$.questions[*].key", "$s.question"] } }
+          },
+          {
+            "$every": { "e": "$.elements[*]" },
+            "$satisfies": { "$exists": { "$index-of": ["$.sources[*].versions[*].key", "$e.version"] } }
+          },
+          {
+            "$every": { "k": "$.chunks[*]" },
+            "$satisfies": { "$exists": { "$index-of": ["$.sources[*].versions[*].key", "$k.version"] } }
+          },
+          { "$eq": [{ "$count": "$.rfc9110.questions[*]" }, 6] }
+        ]
+      },
+      "properties": {
+        "document": { "const": "grounding-fixture" },
+        "benchmark": { "const": "grounding" },
+        "license": { "const": "MIT" },
+        "authorship": { "type": "string", "minLength": 1 },
+        "cutoff": { "$ref": "#/$defs/instant" },
+        "census": {
+          "description": "The registered corpus size — fixed by the campaign's design, so a fixture that grew or shrank cannot validate.",
+          "type": "object",
+          "required": ["sources", "questions", "claims", "abstentions", "elements", "chunks", "scripted"],
+          "additionalProperties": false,
+          "properties": {
+            "sources": { "const": 8 },
+            "questions": { "const": 16 },
+            "claims": { "const": 24 },
+            "abstentions": { "type": "integer", "minimum": 2 },
+            "elements": { "type": "integer", "minimum": 1 },
+            "chunks": { "type": "integer", "minimum": 1 },
+            "scripted": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/fixtureSource" } },
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/fixtureElement" } },
+        "chunks": { "type": "array", "items": { "$ref": "#/$defs/fixtureChunk" } },
+        "questions": { "type": "array", "items": { "$ref": "#/$defs/fixtureQuestion" } },
+        "claims": { "type": "array", "items": { "$ref": "#/$defs/fixtureClaim" } },
+        "trace": { "type": "array", "items": { "$ref": "#/$defs/fixtureTrace" } },
+        "scripted": { "type": "array", "items": { "$ref": "#/$defs/scriptedAnswer" } },
+        "rfc9110": {
+          "description": "The optional web diagnostic's six fixed questions: reference answers and the directly curated URL, and never a captured third-party body. They enter no fixture question or claim denominator.",
+          "type": "object",
+          "required": ["url", "questions"],
+          "additionalProperties": false,
+          "properties": {
+            "url": { "const": "https://www.rfc-editor.org/rfc/rfc9110.html" },
+            "questions": { "type": "array", "items": { "$ref": "#/$defs/rfcQuestion" } }
+          }
+        }
+      }
+    },
+    "citationRecord": {
+      "description": "One visible citation occurrence, claim-scoped, in reply order. Raw: duplicates remain here and are deduplicated only for set metrics.",
+      "type": "object",
+      "required": ["claimId", "citation", "outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "claimId": { "type": "string", "minLength": 1 },
+        "citation": { "type": "string", "minLength": 1 },
+        "outcome": { "$ref": "#/$defs/citationOutcome" }
+      }
+    },
+    "outcomeCounts": {
+      "type": "object",
+      "required": ["supporting", "resolvedNotSupporting", "notSupplied", "inactiveVersion", "futureEvidence", "unknownEvidence"],
+      "additionalProperties": false,
+      "properties": {
+        "supporting": { "type": "integer", "minimum": 0 },
+        "resolvedNotSupporting": { "type": "integer", "minimum": 0 },
+        "notSupplied": { "type": "integer", "minimum": 0 },
+        "inactiveVersion": { "type": "integer", "minimum": 0 },
+        "futureEvidence": { "type": "integer", "minimum": 0 },
+        "unknownEvidence": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "claimMatch": {
+      "type": "object",
+      "required": ["claim", "predictedId", "matched", "supported"],
+      "additionalProperties": false,
+      "properties": {
+        "claim": { "$ref": "#/$defs/fixtureKey" },
+        "predictedId": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "matched": { "type": "boolean" },
+        "supported": { "type": "boolean" }
+      }
+    },
+    "claimScore": {
+      "description": "One-to-one predicate assignment and the supported-material-claim counts. A matched claim without a supporting terminal citation is one FP and one FN, never half credit. `f1` is null on a non-answerable question: it has no claim denominator.",
+      "type": "object",
+      "required": ["expected", "matches", "tp", "fp", "fn", "f1"],
+      "additionalProperties": false,
+      "properties": {
+        "expected": { "type": "array", "items": { "$ref": "#/$defs/fixtureKey" } },
+        "matches": { "type": "array", "items": { "$ref": "#/$defs/claimMatch" } },
+        "tp": { "type": "integer", "minimum": 0 },
+        "fp": { "type": "integer", "minimum": 0 },
+        "fn": { "type": "integer", "minimum": 0 },
+        "f1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] }
+      }
+    },
+    "scenarioTrace": {
+      "type": "object",
+      "required": ["retrieved", "supplied", "counts"],
+      "additionalProperties": false,
+      "properties": {
+        "retrieved": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "supplied": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "counts": {
+          "type": "object",
+          "required": ["retrieved", "supplied"],
+          "additionalProperties": false,
+          "properties": {
+            "retrieved": { "type": "integer", "minimum": 0 },
+            "supplied": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "citationCounts": {
+      "type": "object",
+      "required": ["raw", "unique", "resolvedUnique", "supportingUnique", "byOutcome"],
+      "additionalProperties": false,
+      "properties": {
+        "raw": { "type": "integer", "minimum": 0 },
+        "unique": { "type": "integer", "minimum": 0 },
+        "resolvedUnique": { "type": "integer", "minimum": 0 },
+        "supportingUnique": { "type": "integer", "minimum": 0 },
+        "byOutcome": { "$ref": "#/$defs/outcomeCounts" }
+      }
+    },
+    "abstentionScore": {
+      "type": "object",
+      "required": ["expected", "given", "correct"],
+      "additionalProperties": false,
+      "properties": {
+        "expected": { "type": "boolean" },
+        "given": { "type": "boolean" },
+        "correct": { "type": "boolean" }
+      }
+    },
+    "scenario": {
+      "title": "One scored scripted answer",
+      "type": "object",
+      "required": ["key", "kind", "question", "trace", "answer", "rendered", "citations", "citationCounts", "claims", "abstention", "answerF1"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "$ref": "#/$defs/fixtureKey" },
+        "kind": { "type": "string", "minLength": 1 },
+        "question": { "$ref": "#/$defs/fixtureKey" },
+        "trace": { "$ref": "#/$defs/scenarioTrace" },
+        "answer": { "$ref": "#/$defs/answerValue" },
+        "rendered": { "type": "string", "minLength": 1 },
+        "citations": { "type": "array", "items": { "$ref": "#/$defs/citationRecord" } },
+        "citationCounts": { "$ref": "#/$defs/citationCounts" },
+        "claims": { "$ref": "#/$defs/claimScore" },
+        "abstention": { "$ref": "#/$defs/abstentionScore" },
+        "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] }
+      }
+    },
+    "oracleGate": {
+      "description": "The scorer's own proof, computed over the oracle scenarios before any comparison may print: exact ceilings, or the run exits without a table.",
+      "type": "object",
+      "required": ["passed", "failures", "questions", "tp", "fp", "fn", "microPrecision", "microRecall", "microF1", "meanF1", "answerF1", "citationResolution", "citationSupport", "abstentionAccuracy"],
+      "additionalProperties": false,
+      "properties": {
+        "passed": { "type": "boolean" },
+        "failures": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "questions": { "type": "integer", "minimum": 0 },
+        "tp": { "type": "integer", "minimum": 0 },
+        "fp": { "type": "integer", "minimum": 0 },
+        "fn": { "type": "integer", "minimum": 0 },
+        "microPrecision": { "type": "number", "minimum": 0, "maximum": 1 },
+        "microRecall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "microF1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "meanF1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "answerF1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "citationResolution": { "type": "number", "minimum": 0, "maximum": 1 },
+        "citationSupport": { "type": "number", "minimum": 0, "maximum": 1 },
+        "abstentionAccuracy": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "sourceManifest": {
+      "type": "object",
+      "required": ["files", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "sha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "registration": {
+      "description": "Fixed before a score is read and hashed into `registrationId`: the fixture identity, the cutoff, the question and claim registers, the scorer's settled rules and the answer contract's revision. No observed result, clock, cost or key enters it.",
+      "type": "object",
+      "required": ["registrationId", "fixtureId", "cutoff", "questionIds", "claimKeys", "scorer", "answerSchemaRevision"],
+      "additionalProperties": false,
+      "properties": {
+        "registrationId": { "$ref": "#/$defs/sha256" },
+        "fixtureId": { "$ref": "#/$defs/sha256" },
+        "cutoff": { "$ref": "#/$defs/instant" },
+        "questionIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } },
+        "claimKeys": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } },
+        "scorer": {
+          "type": "object",
+          "required": ["matching", "normalizer", "outcomes"],
+          "additionalProperties": false,
+          "properties": {
+            "matching": { "const": "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold" },
+            "normalizer": { "const": "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)" },
+            "outcomes": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": { "$ref": "#/$defs/citationOutcome" }
+            }
+          }
+        },
+        "answerSchemaRevision": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "liveStatus": {
+      "description": "What happened to one question in one row. `analytic` belongs only to the no-generation row; a failure stays in the attempt and makes the paired comparison ineligible.",
+      "enum": ["answered", "invalid", "wire-failure", "budget-stop", "analytic"]
+    },
+    "liveTrace": {
+      "description": "The exact retrieval/supply trace of one question through the current path: ranked candidates, raw serialized blocks with duplicate neighbour expansion retained, unique supplied chunks, and the prompt bytes they cost.",
+      "type": "object",
+      "required": ["retrieved", "supplied", "blocks", "uniqueSupplied", "duplicateExpansions", "characters", "estimatedTokens"],
+      "additionalProperties": false,
+      "properties": {
+        "retrieved": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "supplied": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "blocks": { "type": "integer", "minimum": 0 },
+        "uniqueSupplied": { "type": "integer", "minimum": 0 },
+        "duplicateExpansions": { "type": "integer", "minimum": 0 },
+        "characters": { "type": "integer", "minimum": 0 },
+        "estimatedTokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "liveQuestionResult": {
+      "description": "One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.",
+      "type": "object",
+      "required": ["id", "category", "status", "trace", "answer", "rendered", "citations", "citationCounts", "claims", "abstention", "answerF1", "retrievedRecall", "suppliedRecall", "citedRecall", "tokens", "ms", "replayed", "attempts"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": { "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 4 }, { "type": "null" }] },
+        "status": { "$ref": "#/$defs/liveStatus" },
+        "trace": { "oneOf": [{ "$ref": "#/$defs/liveTrace" }, { "type": "null" }] },
+        "answer": { "oneOf": [{ "$ref": "#/$defs/answerValue" }, { "type": "null" }] },
+        "rendered": { "oneOf": [{ "type": "string" }, { "type": "null" }] },
+        "citations": { "type": "array", "items": { "$ref": "#/$defs/citationRecord" } },
+        "citationCounts": { "oneOf": [{ "$ref": "#/$defs/citationCounts" }, { "type": "null" }] },
+        "claims": { "oneOf": [{ "$ref": "#/$defs/claimScore" }, { "type": "null" }] },
+        "abstention": { "oneOf": [{ "$ref": "#/$defs/abstentionScore" }, { "type": "null" }] },
+        "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "retrievedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "suppliedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "citedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "tokens": { "type": "integer", "minimum": 0 },
+        "ms": { "type": "number", "minimum": 0 },
+        "replayed": { "type": "integer", "minimum": 0 },
+        "attempts": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "liveClaims": {
+      "type": "object",
+      "required": ["tp", "fp", "fn", "microPrecision", "microRecall", "microF1", "meanF1"],
+      "additionalProperties": false,
+      "properties": {
+        "tp": { "type": "integer", "minimum": 0 },
+        "fp": { "type": "integer", "minimum": 0 },
+        "fn": { "type": "integer", "minimum": 0 },
+        "microPrecision": { "type": "number", "minimum": 0, "maximum": 1 },
+        "microRecall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "microF1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "meanF1": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "liveCost": {
+      "type": "object",
+      "required": ["turns", "tokens", "promptTokens", "completionTokens", "ms", "replayed"],
+      "additionalProperties": false,
+      "properties": {
+        "turns": { "type": "integer", "minimum": 0 },
+        "tokens": { "type": "integer", "minimum": 0 },
+        "promptTokens": { "type": "integer", "minimum": 0 },
+        "completionTokens": { "type": "integer", "minimum": 0 },
+        "ms": { "type": "number", "minimum": 0 },
+        "replayed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "liveLatency": {
+      "type": "object",
+      "required": ["count", "medianMs", "p95Ms"],
+      "additionalProperties": false,
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "medianMs": { "oneOf": [{ "type": "number" }, { "type": "null" }] },
+        "p95Ms": { "oneOf": [{ "type": "number" }, { "type": "null" }] }
+      }
+    },
+    "liveRow": {
+      "description": "One of the three registered rows. `documents-retrieved` never generates: it is the retrieval/supply ceiling, its results are `analytic` and its config-identity row is `not-run`. The two generated rows share every control and are comparable only on complete identical question sets.",
+      "type": "object",
+      "required": ["key", "generates", "questionSet", "questions", "claims", "answerF1", "abstention", "citations", "citedRecall", "retrievedRecall", "suppliedRecall", "supply", "cost", "latency"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": ["$.questions.planned", { "$count": "$.questions.results[*]" }] },
+          { "$eq": ["$.questions.answered", { "$count": "$.questions.results[?(@.status=='answered')]" }] },
+          { "$eq": ["$.questions.invalid", { "$count": "$.questions.results[?(@.status=='invalid')]" }] },
+          { "$eq": ["$.questions.unanswered.wire", { "$count": "$.questions.results[?(@.status=='wire-failure')]" }] },
+          { "$eq": ["$.questions.unanswered.budget", { "$count": "$.questions.results[?(@.status=='budget-stop')]" }] },
+          {
+            "$or": [
+              { "$eq": ["$.generates", true] },
+              { "$and": [
+                { "$eq": [{ "$count": "$.questions.results[?(@.status=='analytic')]" }, "$.questions.planned"] },
+                { "$eq": ["$.cost", null] }
+              ] }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "key": { "enum": ["no-documents", "documents-retrieved", "grounded-answer"] },
+        "generates": { "type": "boolean" },
+        "questionSet": { "description": "Canonical SHA-256 of the row's sorted successfully-answered question ids — what eligibility compares instead of walking two lists.", "$ref": "#/$defs/sha256" },
+        "questions": {
+          "type": "object",
+          "required": ["planned", "answered", "unanswered", "invalid", "results"],
+          "additionalProperties": false,
+          "properties": {
+            "planned": { "type": "integer", "minimum": 0 },
+            "answered": { "type": "integer", "minimum": 0 },
+            "unanswered": {
+              "type": "object",
+              "required": ["wire", "budget"],
+              "additionalProperties": false,
+              "properties": {
+                "wire": { "type": "integer", "minimum": 0 },
+                "budget": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "invalid": { "type": "integer", "minimum": 0 },
+            "results": { "type": "array", "items": { "$ref": "#/$defs/liveQuestionResult" } }
+          }
+        },
+        "claims": { "oneOf": [{ "$ref": "#/$defs/liveClaims" }, { "type": "null" }] },
+        "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "abstention": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["expected", "correct", "accuracy"],
+              "additionalProperties": false,
+              "properties": {
+                "expected": { "type": "integer", "minimum": 0 },
+                "correct": { "type": "integer", "minimum": 0 },
+                "accuracy": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "citations": { "oneOf": [{ "$ref": "#/$defs/citationCounts" }, { "type": "null" }] },
+        "citedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "retrievedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "suppliedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "supply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["candidates", "blocks", "uniqueSupplied", "duplicateExpansions", "characters", "estimatedTokens"],
+              "additionalProperties": false,
+              "properties": {
+                "candidates": { "type": "integer", "minimum": 0 },
+                "blocks": { "type": "integer", "minimum": 0 },
+                "uniqueSupplied": { "type": "integer", "minimum": 0 },
+                "duplicateExpansions": { "type": "integer", "minimum": 0 },
+                "characters": { "type": "integer", "minimum": 0 },
+                "estimatedTokens": { "type": "integer", "minimum": 0 }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "cost": { "oneOf": [{ "$ref": "#/$defs/liveCost" }, { "type": "null" }] },
+        "latency": { "oneOf": [{ "$ref": "#/$defs/liveLatency" }, { "type": "null" }] }
+      }
+    },
+    "liveComparison": {
+      "description": "One paired treatment/control comparison over identical complete question sets: the seeded 10,000-resample paired bootstrap interval by nearest-rank quantiles, the one-sided lower bound, and the power that turns a null into a bounded null.",
+      "type": "object",
+      "required": ["metric", "treatment", "control", "pairs", "mean", "interval", "oneSidedLowerBound", "power"],
+      "additionalProperties": false,
+      "properties": {
+        "metric": { "enum": ["supported-claim-f1", "answer-f1"] },
+        "treatment": { "const": "grounded-answer" },
+        "control": { "const": "no-documents" },
+        "pairs": { "type": "integer", "minimum": 0 },
+        "mean": { "type": "number" },
+        "interval": {
+          "type": "object",
+          "required": ["low", "high"],
+          "additionalProperties": false,
+          "properties": { "low": { "type": "number" }, "high": { "type": "number" } }
+        },
+        "oneSidedLowerBound": { "type": "number" },
+        "power": {
+          "type": "object",
+          "required": ["pairedSd", "standardError", "minimumDetectableEffect", "tiedPairs"],
+          "additionalProperties": false,
+          "properties": {
+            "pairedSd": { "type": "number", "minimum": 0 },
+            "standardError": { "type": "number", "minimum": 0 },
+            "minimumDetectableEffect": { "type": "number", "minimum": 0 },
+            "tiedPairs": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "liveStratum": {
+      "description": "One corpus stratum with its own denominators. The fixture and LoCoMo strata are never pooled: no metric helper accepts rows from both, and only the fixture stratum carries material-claim scores.",
+      "type": "object",
+      "required": ["key", "corpus", "rows", "pairing"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": [{ "$count": "$.rows[*]" }, 3] },
+          { "$eq": [{ "$count": { "$distinct": "$.rows[*].key" } }, 3] },
+          { "$eq": [{ "$count": "$.rows[?(@.generates==true)]" }, 2] },
+          {
+            "$every": { "r": "$.rows[?(@.key=='documents-retrieved')]" },
+            "$satisfies": { "$eq": ["$r.generates", false] }
+          },
+          {
+            "$or": [
+              { "$eq": ["$.pairing.eligible", false] },
+              { "$and": [
+                {
+                  "$every": { "r": "$.rows[?(@.generates==true)]" },
+                  "$satisfies": {
+                    "$and": [
+                      { "$eq": ["$r.questions.answered", "$r.questions.planned"] },
+                      { "$eq": ["$r.questions.invalid", 0] }
+                    ]
+                  }
+                },
+                { "$eq": [{ "$count": { "$distinct": "$.rows[?(@.generates==true)].questionSet" } }, 1] }
+              ] }
+            ]
+          },
+          {
+            "$or": [
+              { "$ne": ["$.key", "locomo"] },
+              { "$every": { "r": "$.rows[*]" }, "$satisfies": { "$eq": ["$r.claims", null] } }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "key": { "enum": ["fixture", "locomo"] },
+        "corpus": {
+          "type": "object",
+          "required": ["sources", "versions", "chunks", "elements", "embeddingCalls"],
+          "additionalProperties": false,
+          "properties": {
+            "sources": { "type": "integer", "minimum": 0 },
+            "versions": { "type": "integer", "minimum": 0 },
+            "chunks": { "type": "integer", "minimum": 0 },
+            "elements": { "type": "integer", "minimum": 0 },
+            "embeddingCalls": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "rows": { "type": "array", "items": { "$ref": "#/$defs/liveRow" } },
+        "pairing": { "$ref": "#/$defs/pairingBlock" }
+      }
+    },
+    "livePlan": {
+      "description": "The frozen dry plan: everything the operator authorizes, credential-free. `planId` is the canonical SHA-256 of the plan's registered members; only a matching explicit authorization executes.",
+      "type": "object",
+      "required": ["planId", "authorized", "fresh", "embedding", "chat", "maxFreshTotal", "maxCalls", "concurrency", "skipped"],
+      "additionalProperties": false,
+      "properties": {
+        "planId": { "$ref": "#/$defs/sha256" },
+        "authorized": { "type": "boolean" },
+        "fresh": { "type": "boolean" },
+        "embedding": {
+          "type": "object",
+          "required": ["texts", "cacheHits", "cacheMisses", "maxFreshRequests"],
+          "additionalProperties": false,
+          "properties": {
+            "texts": { "type": "integer", "minimum": 0 },
+            "cacheHits": { "type": "integer", "minimum": 0 },
+            "cacheMisses": { "type": "integer", "minimum": 0 },
+            "maxFreshRequests": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "chat": {
+          "type": "object",
+          "required": ["planned", "maxRepairs", "maxFreshCalls"],
+          "additionalProperties": false,
+          "properties": {
+            "planned": { "type": "integer", "minimum": 0 },
+            "maxRepairs": { "type": "integer", "minimum": 0 },
+            "maxFreshCalls": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "maxFreshTotal": { "type": "integer", "minimum": 0 },
+        "maxCalls": { "type": "integer", "minimum": 1 },
+        "concurrency": { "type": "integer", "minimum": 1 },
+        "skipped": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] }
+      }
+    },
+    "groundingLive": {
+      "title": "Paired grounding attempt",
+      "type": "object",
+      "required": ["document", "benchmark", "instrument", "configIdentities", "generated", "fixture", "registration", "locomoRegistration", "locomoSkipped", "source", "plan", "strata", "spent", "embedding", "replayed", "errors", "decision", "reportId"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": [{ "$count": "$.strata[?(@.key=='fixture')]" }, 1] },
+          { "$eq": [{ "$count": { "$distinct": "$.strata[*].key" } }, { "$count": "$.strata[*]" }] },
+          {
+            "$or": [
+              { "$ne": ["$.locomoSkipped", null] },
+              { "$eq": [{ "$count": "$.strata[?(@.key=='locomo')]" }, 1] }
+            ]
+          },
+          {
+            "$every": { "s": "$.strata[?(@.key=='fixture')]" },
+            "$satisfies": {
+              "$every": { "r": "$s.rows[*]" },
+              "$satisfies": { "$eq": ["$r.questions.planned", { "$count": "$.registration.questionIds[*]" }] }
+            }
+          },
+          { "$eq": [{ "$count": "$.configIdentities.rows[*]" }, { "$mul": [3, { "$count": "$.strata[*]" }] }] },
+          {
+            "$or": [
+              { "$ne": ["$.decision.state", "adopt-claim-citations"] },
+              {
+                "$and": [
+                  { "$eq": ["$.decision.liveReportId", "$.reportId"] },
+                  {
+                    "$every": { "s": "$.strata[?(@.key=='fixture')]" },
+                    "$satisfies": {
+                      "$and": [
+                        { "$eq": ["$s.pairing.eligible", true] },
+                        {
+                          "$every": { "r": "$s.rows[?(@.key=='grounded-answer')]" },
+                          "$satisfies": {
+                            "$and": [
+                              { "$eq": ["$r.citations.byOutcome.notSupplied", 0] },
+                              { "$eq": ["$r.citations.byOutcome.inactiveVersion", 0] },
+                              { "$eq": ["$r.citations.byOutcome.futureEvidence", 0] },
+                              { "$eq": ["$r.citations.byOutcome.unknownEvidence", 0] },
+                              { "$eq": ["$r.citations.unique", "$r.citations.resolvedUnique"] }
+                            ]
+                          }
+                        },
+                        {
+                          "$some": { "c": "$s.pairing.comparisons[*]" },
+                          "$satisfies": { "$eq": ["$c.metric", "supported-claim-f1"] }
+                        },
+                        {
+                          "$every": { "c": "$s.pairing.comparisons[?(@.metric=='supported-claim-f1')]" },
+                          "$satisfies": { "$lt": [0, "$c.interval.low"] }
+                        },
+                        {
+                          "$every": { "c": "$s.pairing.comparisons[?(@.metric=='answer-f1')]" },
+                          "$satisfies": { "$not": { "$lt": ["$c.oneSidedLowerBound", -0.05] } }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "document": { "const": "grounding-live" },
+        "benchmark": { "const": "grounding" },
+        "instrument": {
+          "type": "object",
+          "required": ["entry"],
+          "additionalProperties": false,
+          "properties": { "entry": { "const": "benchmark/grounding.ts" } }
+        },
+        "configIdentities": {
+          "description": "The shared config-identity envelope: generated rows reference the one resolved run identity; the no-generation row is `not-run` analysis.",
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "generated": {
+          "type": "object",
+          "required": ["at", "tier", "provider", "model", "embedder", "keySource", "thinking"],
+          "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/instant" },
+            "tier": { "enum": ["scripted", "paid"] },
+            "provider": { "type": "string", "minLength": 1 },
+            "model": { "type": "string", "minLength": 1 },
+            "embedder": {
+              "type": "object",
+              "required": ["model", "dims"],
+              "additionalProperties": false,
+              "properties": {
+                "model": { "type": "string", "minLength": 1 },
+                "dims": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "keySource": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+            "thinking": { "enum": ["off", "default"] }
+          }
+        },
+        "fixture": {
+          "type": "object",
+          "required": ["id", "path", "license", "census"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/sha256" },
+            "path": { "const": "benchmark/fixtures/grounding/manifest.json" },
+            "license": { "const": "MIT" },
+            "census": {
+              "type": "object",
+              "required": ["sources", "questions", "claims", "abstentions", "elements", "chunks", "scripted"],
+              "additionalProperties": false,
+              "properties": {
+                "sources": { "const": 8 },
+                "questions": { "const": 16 },
+                "claims": { "const": 24 },
+                "abstentions": { "type": "integer", "minimum": 2 },
+                "elements": { "type": "integer", "minimum": 1 },
+                "chunks": { "type": "integer", "minimum": 1 },
+                "scripted": { "type": "integer", "minimum": 1 }
+              }
+            }
+          }
+        },
+        "registration": {
+          "description": "The keyless registration plus the frozen treatment: the exact current chunker/retrieval defaults, the shared prompt revision, the repair ceiling, concurrency and seed. Every value is effective, never a name.",
+          "type": "object",
+          "required": ["registrationId", "fixtureId", "cutoff", "questionIds", "claimKeys", "scorer", "answerSchemaRevision", "retrieval", "promptRevision", "maxRepairs", "concurrency", "seed"],
+          "additionalProperties": false,
+          "properties": {
+            "registrationId": { "$ref": "#/$defs/sha256" },
+            "fixtureId": { "$ref": "#/$defs/sha256" },
+            "cutoff": { "$ref": "#/$defs/instant" },
+            "questionIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } },
+            "claimKeys": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fixtureKey" } },
+            "scorer": {
+              "type": "object",
+              "required": ["matching", "normalizer", "outcomes"],
+              "additionalProperties": false,
+              "properties": {
+                "matching": { "const": "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold" },
+                "normalizer": { "const": "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)" },
+                "outcomes": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/$defs/citationOutcome" } }
+              }
+            },
+            "answerSchemaRevision": { "$ref": "#/$defs/sha256" },
+            "retrieval": {
+              "type": "object",
+              "required": ["chunkerVersion", "maxTokens", "overlapTokens", "k", "minScore", "maxPerSource", "neighbours"],
+              "additionalProperties": false,
+              "properties": {
+                "chunkerVersion": { "const": "heading-recursive/1" },
+                "maxTokens": { "const": 450 },
+                "overlapTokens": { "const": 48 },
+                "k": { "const": 6 },
+                "minScore": { "const": 0 },
+                "maxPerSource": { "const": 2 },
+                "neighbours": { "const": 1 }
+              }
+            },
+            "promptRevision": { "$ref": "#/$defs/sha256" },
+            "maxRepairs": { "const": 1 },
+            "concurrency": { "type": "integer", "minimum": 1 },
+            "seed": { "const": 17753 }
+          }
+        },
+        "locomoRegistration": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["seed", "perCategory", "questionIds", "datasetSha256"],
+              "additionalProperties": false,
+              "properties": {
+                "seed": { "const": 17753 },
+                "perCategory": { "const": 4 },
+                "questionIds": { "type": "array", "minItems": 16, "maxItems": 16, "items": { "type": "string", "minLength": 1 } },
+                "datasetSha256": { "$ref": "#/$defs/sha256" }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "locomoSkipped": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "source": { "$ref": "#/$defs/sourceManifest" },
+        "plan": { "$ref": "#/$defs/livePlan" },
+        "strata": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/liveStratum" } },
+        "spent": {
+          "type": "object",
+          "required": ["turns", "tokens", "ms"],
+          "additionalProperties": false,
+          "properties": {
+            "turns": { "type": "integer", "minimum": 0 },
+            "tokens": { "type": "integer", "minimum": 0 },
+            "ms": { "type": "number", "minimum": 0 }
+          }
+        },
+        "embedding": {
+          "type": "object",
+          "required": ["requests", "texts", "cached"],
+          "additionalProperties": false,
+          "properties": {
+            "requests": { "type": "integer", "minimum": 0 },
+            "texts": { "type": "integer", "minimum": 0 },
+            "cached": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "replayed": { "type": "integer", "minimum": 0 },
+        "errors": {
+          "type": "object",
+          "required": ["count", "sample"],
+          "additionalProperties": false,
+          "properties": {
+            "count": { "type": "integer", "minimum": 0 },
+            "sample": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "decision": { "$ref": "#/$defs/liveDecision" },
+        "reportId": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "pairingBlock": {
+      "type": "object",
+      "required": ["eligible", "reasons", "comparisons"],
+      "additionalProperties": false,
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "detail"],
+            "additionalProperties": false,
+            "properties": {
+              "code": { "type": "string", "minLength": 1 },
+              "detail": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "comparisons": { "type": "array", "items": { "$ref": "#/$defs/liveComparison" } }
+      }
+    },
+    "handoffRow": {
+      "type": "object",
+      "required": ["key", "questionSet", "planned", "answered", "invalid", "unanswered", "claims", "answerF1", "abstention", "citations", "citedRecall", "retrievedRecall", "suppliedRecall", "supply", "cost", "latency"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "enum": ["no-documents", "documents-retrieved", "grounded-answer"] },
+        "questionSet": { "$ref": "#/$defs/sha256" },
+        "planned": { "type": "integer", "minimum": 0 },
+        "answered": { "type": "integer", "minimum": 0 },
+        "invalid": { "type": "integer", "minimum": 0 },
+        "unanswered": {
+          "type": "object",
+          "required": ["wire", "budget"],
+          "additionalProperties": false,
+          "properties": {
+            "wire": { "type": "integer", "minimum": 0 },
+            "budget": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "claims": { "oneOf": [{ "$ref": "#/$defs/liveClaims" }, { "type": "null" }] },
+        "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "abstention": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["expected", "correct", "accuracy"],
+              "additionalProperties": false,
+              "properties": {
+                "expected": { "type": "integer", "minimum": 0 },
+                "correct": { "type": "integer", "minimum": 0 },
+                "accuracy": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "citations": { "oneOf": [{ "$ref": "#/$defs/citationCounts" }, { "type": "null" }] },
+        "citedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "retrievedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "suppliedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "supply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["candidates", "blocks", "uniqueSupplied", "duplicateExpansions", "characters", "estimatedTokens"],
+              "additionalProperties": false,
+              "properties": {
+                "candidates": { "type": "integer", "minimum": 0 },
+                "blocks": { "type": "integer", "minimum": 0 },
+                "uniqueSupplied": { "type": "integer", "minimum": 0 },
+                "duplicateExpansions": { "type": "integer", "minimum": 0 },
+                "characters": { "type": "integer", "minimum": 0 },
+                "estimatedTokens": { "type": "integer", "minimum": 0 }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "cost": { "oneOf": [{ "$ref": "#/$defs/liveCost" }, { "type": "null" }] },
+        "latency": { "oneOf": [{ "$ref": "#/$defs/liveLatency" }, { "type": "null" }] }
+      }
+    },
+    "groundingHandoff": {
+      "title": "Flat-baseline handoff",
+      "description": "The committed downstream handoff: the flat-baseline query document executed verbatim over the validated live and web reports. Clock-free and byte-reproducible; every identity here resolves to exactly one object in its source report, which the query test pins.",
+      "type": "object",
+      "required": ["document", "benchmark", "instrument", "querySha256", "handoff", "reportId"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": [{ "$count": "$.handoff.rows[*]" }, 3] },
+          { "$eq": [{ "$count": { "$distinct": "$.handoff.rows[*].key" } }, 3] },
+          { "$eq": ["$.handoff.decision.liveReportId", "$.handoff.identities.reportId"] }
+        ]
+      },
+      "properties": {
+        "document": { "const": "grounding-handoff" },
+        "benchmark": { "const": "grounding" },
+        "instrument": {
+          "type": "object",
+          "required": ["entry", "query"],
+          "additionalProperties": false,
+          "properties": {
+            "entry": { "const": "benchmark/grounding-query.ts" },
+            "query": { "const": "queries/grounding/flat-baseline.json" }
+          }
+        },
+        "querySha256": { "$ref": "#/$defs/sha256" },
+        "handoff": {
+          "type": "object",
+          "required": ["identities", "flatRow", "rows", "pairing", "decision", "diagnostics"],
+          "additionalProperties": false,
+          "properties": {
+            "identities": {
+              "type": "object",
+              "required": ["reportId", "registrationId", "fixtureId", "planId", "sourceSha256", "configIdentityId"],
+              "additionalProperties": false,
+              "properties": {
+                "reportId": { "$ref": "#/$defs/sha256" },
+                "registrationId": { "$ref": "#/$defs/sha256" },
+                "fixtureId": { "$ref": "#/$defs/sha256" },
+                "planId": { "$ref": "#/$defs/sha256" },
+                "sourceSha256": { "$ref": "#/$defs/sha256" },
+                "configIdentityId": { "type": "string", "minLength": 1 }
+              }
+            },
+            "flatRow": {
+              "type": "object",
+              "required": ["retrieval", "promptRevision", "answerSchemaRevision", "maxRepairs", "seed", "questionIds"],
+              "additionalProperties": false,
+              "properties": {
+                "retrieval": {
+                  "type": "object",
+                  "required": ["chunkerVersion", "maxTokens", "overlapTokens", "k", "minScore", "maxPerSource", "neighbours"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "chunkerVersion": { "const": "heading-recursive/1" },
+                    "maxTokens": { "const": 450 },
+                    "overlapTokens": { "const": 48 },
+                    "k": { "const": 6 },
+                    "minScore": { "const": 0 },
+                    "maxPerSource": { "const": 2 },
+                    "neighbours": { "const": 1 }
+                  }
+                },
+                "promptRevision": { "$ref": "#/$defs/sha256" },
+                "answerSchemaRevision": { "$ref": "#/$defs/sha256" },
+                "maxRepairs": { "const": 1 },
+                "seed": { "const": 17753 },
+                "questionIds": { "type": "array", "minItems": 16, "maxItems": 16, "items": { "$ref": "#/$defs/fixtureKey" } }
+              }
+            },
+            "rows": { "type": "array", "items": { "$ref": "#/$defs/handoffRow" } },
+            "pairing": { "$ref": "#/$defs/pairingBlock" },
+            "decision": { "$ref": "#/$defs/liveDecision" },
+            "diagnostics": {
+              "type": "object",
+              "required": ["locomo", "web"],
+              "additionalProperties": false,
+              "properties": {
+                "locomo": {
+                  "type": "object",
+                  "required": ["registration", "skipped", "rows", "pairing"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "registration": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "required": ["seed", "perCategory", "questionIds", "datasetSha256"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "seed": { "const": 17753 },
+                            "perCategory": { "const": 4 },
+                            "questionIds": { "type": "array", "minItems": 16, "maxItems": 16, "items": { "type": "string", "minLength": 1 } },
+                            "datasetSha256": { "$ref": "#/$defs/sha256" }
+                          }
+                        },
+                        { "type": "null" }
+                      ]
+                    },
+                    "skipped": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["key", "questionSet", "answered", "answerF1", "citedRecall", "retrievedRecall", "suppliedRecall"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "key": { "enum": ["no-documents", "documents-retrieved", "grounded-answer"] },
+                          "questionSet": { "$ref": "#/$defs/sha256" },
+                          "answered": { "type": "integer", "minimum": 0 },
+                          "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+                          "citedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+                          "retrievedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+                          "suppliedRecall": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] }
+                        }
+                      }
+                    },
+                    "pairing": { "oneOf": [{ "$ref": "#/$defs/pairingBlock" }, { "type": "null" }] }
+                  }
+                },
+                "web": {
+                  "type": "object",
+                  "required": ["reportId", "registrationId", "notRun"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "reportId": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+                    "registrationId": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+                    "notRun": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "reportId": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "decisionClause": {
+      "type": "object",
+      "required": ["clause", "passed", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "clause": { "enum": ["eligible-pair", "citation-outcomes", "claim-delta", "answer-floor"] },
+        "passed": { "type": "boolean" },
+        "detail": { "type": "string", "minLength": 1 }
+      }
+    },
+    "liveDecision": {
+      "description": "The mechanical product decision over a validated live attempt. `adopt-claim-citations` is legal only when the document's own rows recompute every registered clause — the `$query` on the live branch refuses a forged adoption — and a missing or ineligible row can never be read as a pass.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["state", "reason"],
+          "additionalProperties": false,
+          "properties": {
+            "state": { "const": "not-evaluated" },
+            "reason": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["state", "reason", "clauses", "liveReportId"],
+          "additionalProperties": false,
+          "properties": {
+            "state": { "enum": ["retain-current", "adopt-claim-citations"] },
+            "reason": { "type": "string", "minLength": 1 },
+            "clauses": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/decisionClause" } },
+            "liveReportId": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      ]
+    },
+    "captureManifestRow": {
+      "description": "One captured HTTP exchange as a report may carry it: url, status, byte hash and sizes — never a third-party body.",
+      "type": "object",
+      "required": ["kind", "method", "url", "status", "bodySha256", "responseBytes", "attempt", "failure"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["searxng", "document"] },
+        "method": { "const": "GET" },
+        "url": { "type": "string", "minLength": 1 },
+        "status": { "oneOf": [{ "type": "integer", "minimum": 100, "maximum": 599 }, { "type": "null" }] },
+        "bodySha256": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+        "responseBytes": { "oneOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "failure": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["code", "message"],
+              "additionalProperties": false,
+              "properties": { "code": { "type": "string", "minLength": 1 }, "message": { "type": "string", "minLength": 1 } }
+            },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "webSelection": {
+      "description": "One query's complete selection record: result order kept, at most the first three distinct normalized HTTP(S) URLs selected, every refusal named. Snippets appear only as counts — never as evidence.",
+      "type": "object",
+      "required": ["question", "query", "results", "resultsWithSnippets", "selected", "refused"],
+      "additionalProperties": false,
+      "properties": {
+        "question": { "$ref": "#/$defs/fixtureKey" },
+        "query": { "type": "string", "minLength": 1 },
+        "results": { "type": "integer", "minimum": 0 },
+        "resultsWithSnippets": { "type": "integer", "minimum": 0 },
+        "selected": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["rank", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "rank": { "type": "integer", "minimum": 0 },
+              "url": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "refused": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["rank", "url", "reason"],
+            "additionalProperties": false,
+            "properties": {
+              "rank": { "type": "integer", "minimum": 0 },
+              "url": { "type": "string" },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "webRow": {
+      "description": "One of the two web answer rows, over the same six questions, model, answer schema and budgets. No material-claim score exists on the open web: `claims` is structurally absent and support cannot be proven, only resolution.",
+      "type": "object",
+      "required": ["key", "questionSet", "questions", "answerF1", "citations", "supply", "corpus", "ingest", "cost", "latency"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": ["$.questions.planned", { "$count": "$.questions.results[*]" }] },
+          { "$eq": ["$.questions.answered", { "$count": "$.questions.results[?(@.status=='answered')]" }] },
+          {
+            "$every": { "r": "$.questions.results[*]" },
+            "$satisfies": { "$eq": ["$r.claims", null] }
+          }
+        ]
+      },
+      "properties": {
+        "key": { "enum": ["curated-rfc", "searx-discovered"] },
+        "questionSet": { "$ref": "#/$defs/sha256" },
+        "questions": {
+          "type": "object",
+          "required": ["planned", "answered", "unanswered", "invalid", "results"],
+          "additionalProperties": false,
+          "properties": {
+            "planned": { "type": "integer", "minimum": 0 },
+            "answered": { "type": "integer", "minimum": 0 },
+            "unanswered": {
+              "type": "object",
+              "required": ["wire", "budget"],
+              "additionalProperties": false,
+              "properties": {
+                "wire": { "type": "integer", "minimum": 0 },
+                "budget": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "invalid": { "type": "integer", "minimum": 0 },
+            "results": { "type": "array", "items": { "$ref": "#/$defs/liveQuestionResult" } }
+          }
+        },
+        "answerF1": { "oneOf": [{ "type": "number", "minimum": 0, "maximum": 1 }, { "type": "null" }] },
+        "citations": { "oneOf": [{ "$ref": "#/$defs/citationCounts" }, { "type": "null" }] },
+        "supply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["candidates", "blocks", "uniqueSupplied", "duplicateExpansions", "characters", "estimatedTokens"],
+              "additionalProperties": false,
+              "properties": {
+                "candidates": { "type": "integer", "minimum": 0 },
+                "blocks": { "type": "integer", "minimum": 0 },
+                "uniqueSupplied": { "type": "integer", "minimum": 0 },
+                "duplicateExpansions": { "type": "integer", "minimum": 0 },
+                "characters": { "type": "integer", "minimum": 0 },
+                "estimatedTokens": { "type": "integer", "minimum": 0 }
+              }
+            },
+            { "type": "null" }
+          ]
+        },
+        "corpus": {
+          "type": "object",
+          "required": ["sources", "versions", "chunks", "elements", "embeddingCalls"],
+          "additionalProperties": false,
+          "properties": {
+            "sources": { "type": "integer", "minimum": 0 },
+            "versions": { "type": "integer", "minimum": 0 },
+            "chunks": { "type": "integer", "minimum": 0 },
+            "elements": { "type": "integer", "minimum": 0 },
+            "embeddingCalls": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "ingest": {
+          "description": "The acquisition funnel of this row's corpus: every URL attempted with its outcome.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["url", "outcome", "error"],
+            "additionalProperties": false,
+            "properties": {
+              "url": { "type": "string", "minLength": 1 },
+              "outcome": { "enum": ["ingested", "unchanged", "failed"] },
+              "error": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": ["code", "message"],
+                    "additionalProperties": false,
+                    "properties": { "code": { "type": "string", "minLength": 1 }, "message": { "type": "string", "minLength": 1 } }
+                  },
+                  { "type": "null" }
+                ]
+              }
+            }
+          }
+        },
+        "cost": { "oneOf": [{ "$ref": "#/$defs/liveCost" }, { "type": "null" }] },
+        "latency": { "oneOf": [{ "$ref": "#/$defs/liveLatency" }, { "type": "null" }] }
+      }
+    },
+    "groundingWeb": {
+      "title": "Captured web-grounding diagnostic",
+      "type": "object",
+      "required": ["document", "benchmark", "instrument", "configIdentities", "generated", "baseline", "registration", "source", "capture", "selection", "rows", "notRun", "reportId"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$or": [
+              { "$ne": ["$.notRun", null] },
+              { "$eq": [{ "$count": "$.rows[*]" }, 2] }
+            ]
+          },
+          { "$eq": [{ "$count": { "$distinct": "$.rows[*].key" } }, { "$count": "$.rows[*]" }] },
+          {
+            "$every": { "s": "$.selection[*]" },
+            "$satisfies": { "$eq": [{ "$count": { "$distinct": "$s.selected[*].url" } }, { "$count": "$s.selected[*]" }] }
+          },
+          { "$eq": [{ "$count": "$.registration.questions[*]" }, 6] }
+        ]
+      },
+      "properties": {
+        "document": { "const": "grounding-web" },
+        "benchmark": { "const": "grounding" },
+        "instrument": {
+          "type": "object",
+          "required": ["entry"],
+          "additionalProperties": false,
+          "properties": { "entry": { "const": "benchmark/grounding.ts" } }
+        },
+        "configIdentities": { "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope" },
+        "generated": {
+          "type": "object",
+          "required": ["at", "tier", "provider", "model", "embedder", "keySource", "thinking"],
+          "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/instant" },
+            "tier": { "enum": ["scripted", "paid"] },
+            "provider": { "type": "string", "minLength": 1 },
+            "model": { "type": "string", "minLength": 1 },
+            "embedder": {
+              "type": "object",
+              "required": ["model", "dims"],
+              "additionalProperties": false,
+              "properties": {
+                "model": { "type": "string", "minLength": 1 },
+                "dims": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "keySource": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+            "thinking": { "enum": ["off", "default"] }
+          }
+        },
+        "baseline": {
+          "description": "The flat baseline this diagnostic is registered against — linked by identity, never merged into its denominator.",
+          "type": "object",
+          "required": ["reportId", "registrationId"],
+          "additionalProperties": false,
+          "properties": {
+            "reportId": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+            "registrationId": { "oneOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] }
+          }
+        },
+        "registration": {
+          "type": "object",
+          "required": ["registrationId", "questions", "curatedUrl", "searxBase", "selection", "retrieval", "promptRevision", "maxRepairs", "concurrency"],
+          "additionalProperties": false,
+          "properties": {
+            "registrationId": { "$ref": "#/$defs/sha256" },
+            "questions": { "type": "array", "items": { "$ref": "#/$defs/rfcQuestion" } },
+            "curatedUrl": { "const": "https://www.rfc-editor.org/rfc/rfc9110.html" },
+            "searxBase": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+            "selection": {
+              "type": "object",
+              "required": ["maxPerQuery", "policy"],
+              "additionalProperties": false,
+              "properties": {
+                "maxPerQuery": { "const": 3 },
+                "policy": { "const": "the first distinct normalized HTTP(S) URLs in SearxNG result order after existing URL policy; no learned selector, no authority boost; snippets are never evidence" }
+              }
+            },
+            "retrieval": {
+              "type": "object",
+              "required": ["chunkerVersion", "maxTokens", "overlapTokens", "k", "minScore", "maxPerSource", "neighbours"],
+              "additionalProperties": false,
+              "properties": {
+                "chunkerVersion": { "const": "heading-recursive/1" },
+                "maxTokens": { "const": 450 },
+                "overlapTokens": { "const": 48 },
+                "k": { "const": 6 },
+                "minScore": { "const": 0 },
+                "maxPerSource": { "const": 2 },
+                "neighbours": { "const": 1 }
+              }
+            },
+            "promptRevision": { "$ref": "#/$defs/sha256" },
+            "maxRepairs": { "const": 1 },
+            "concurrency": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "source": { "$ref": "#/$defs/sourceManifest" },
+        "capture": {
+          "type": "object",
+          "required": ["manifest", "captures", "replayHits", "replayMisses"],
+          "additionalProperties": false,
+          "properties": {
+            "manifest": { "type": "array", "items": { "$ref": "#/$defs/captureManifestRow" } },
+            "captures": { "type": "integer", "minimum": 0 },
+            "replayHits": { "type": "integer", "minimum": 0 },
+            "replayMisses": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "selection": { "type": "array", "items": { "$ref": "#/$defs/webSelection" } },
+        "rows": { "type": "array", "items": { "$ref": "#/$defs/webRow" } },
+        "notRun": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "reportId": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "decision": {
+      "description": "The product decision surface. A keyless report can never claim adoption: its state is `not-evaluated` by contract, and only a validated eligible paired live result may ever move it.",
+      "type": "object",
+      "required": ["state", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "state": { "const": "not-evaluated" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "groundingReport": {
+      "title": "Keyless grounding report",
+      "type": "object",
+      "required": ["document", "benchmark", "instrument", "configIdentities", "fixture", "registration", "source", "gate", "scenarios", "summary", "decision", "reportId"],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          { "$eq": [{ "$count": "$.registration.questionIds[*]" }, "$.fixture.census.questions"] },
+          { "$eq": [{ "$count": "$.registration.claimKeys[*]" }, "$.fixture.census.claims"] },
+          { "$eq": [{ "$count": { "$distinct": "$.registration.questionIds[*]" } }, { "$count": "$.registration.questionIds[*]" }] },
+          { "$eq": [{ "$count": "$.scenarios[*].key" }, { "$count": { "$distinct": "$.scenarios[*].key" } }] },
+          { "$eq": [{ "$count": "$.scenarios[*]" }, "$.fixture.census.scripted"] },
+          {
+            "$every": { "s": "$.scenarios[*]" },
+            "$satisfies": {
+              "$and": [
+                { "$eq": ["$s.citationCounts.raw", { "$count": "$s.citations[*]" }] },
+                { "$eq": ["$s.citationCounts.unique", { "$count": { "$distinct": "$s.citations[*].citation" } }] },
+                {
+                  "$eq": [
+                    "$s.citationCounts.raw",
+                    { "$add": [{ "$add": [{ "$add": ["$s.citationCounts.byOutcome.supporting", "$s.citationCounts.byOutcome.resolvedNotSupporting"] }, { "$add": ["$s.citationCounts.byOutcome.notSupplied", "$s.citationCounts.byOutcome.inactiveVersion"] }] }, { "$add": ["$s.citationCounts.byOutcome.futureEvidence", "$s.citationCounts.byOutcome.unknownEvidence"] }] }
+                  ]
+                },
+                { "$eq": [{ "$add": ["$s.claims.tp", "$s.claims.fn"] }, { "$count": "$s.claims.expected[*]" }] },
+                {
+                  "$or": [
+                    { "$eq": ["$s.answer.disposition", "abstain"] },
+                    { "$eq": [{ "$add": ["$s.claims.tp", "$s.claims.fp"] }, { "$count": "$s.answer.claims[*]" }] }
+                  ]
+                },
+                { "$eq": ["$s.trace.counts.retrieved", { "$count": "$s.trace.retrieved[*]" }] },
+                { "$eq": ["$s.trace.counts.supplied", { "$count": "$s.trace.supplied[*]" }] }
+              ]
+            }
+          },
+          { "$eq": ["$.summary.outcomes.supporting", { "$sum": "$.scenarios[*].citationCounts.byOutcome.supporting" }] },
+          { "$eq": ["$.summary.outcomes.resolvedNotSupporting", { "$sum": "$.scenarios[*].citationCounts.byOutcome.resolvedNotSupporting" }] },
+          { "$eq": ["$.summary.outcomes.notSupplied", { "$sum": "$.scenarios[*].citationCounts.byOutcome.notSupplied" }] },
+          { "$eq": ["$.summary.outcomes.inactiveVersion", { "$sum": "$.scenarios[*].citationCounts.byOutcome.inactiveVersion" }] },
+          { "$eq": ["$.summary.outcomes.futureEvidence", { "$sum": "$.scenarios[*].citationCounts.byOutcome.futureEvidence" }] },
+          { "$eq": ["$.summary.outcomes.unknownEvidence", { "$sum": "$.scenarios[*].citationCounts.byOutcome.unknownEvidence" }] },
+          { "$eq": ["$.summary.scenarios", { "$count": "$.scenarios[*]" }] },
+          { "$eq": ["$.summary.wrongAbstentions", { "$count": "$.scenarios[?(@.abstention.correct==false)]" }] },
+          { "$eq": ["$.gate.oracle.tp", { "$sum": "$.scenarios[?(@.kind=='oracle')].claims.tp" }] },
+          { "$eq": ["$.gate.oracle.fp", { "$sum": "$.scenarios[?(@.kind=='oracle')].claims.fp" }] },
+          { "$eq": ["$.gate.oracle.fn", { "$sum": "$.scenarios[?(@.kind=='oracle')].claims.fn" }] },
+          { "$eq": ["$.gate.oracle.questions", { "$count": "$.scenarios[?(@.kind=='oracle')]" }] },
+          { "$eq": [{ "$count": "$.configIdentities.rows[*]" }, { "$count": "$.scenarios[*]" }] },
+          {
+            "$every": { "r": "$.configIdentities.rows[*]" },
+            "$satisfies": {
+              "$and": [
+                { "$exists": { "$index-of": ["$.scenarios[*].key", "$r.rowId"] } },
+                { "$eq": ["$r.identityStatus", "not-run"] }
+              ]
+            }
+          }
+        ]
+      },
+      "properties": {
+        "document": { "const": "grounding-report" },
+        "benchmark": { "const": "grounding" },
+        "instrument": {
+          "type": "object",
+          "required": ["entry"],
+          "additionalProperties": false,
+          "properties": { "entry": { "const": "benchmark/grounding.ts" } }
+        },
+        "configIdentities": {
+          "description": "The shared config-identity envelope. Every keyless scenario is a not-run analytic row: nothing here ran a provider stack.",
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "fixture": {
+          "type": "object",
+          "required": ["id", "path", "license", "census"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/sha256" },
+            "path": { "const": "benchmark/fixtures/grounding/manifest.json" },
+            "license": { "const": "MIT" },
+            "census": {
+              "type": "object",
+              "required": ["sources", "questions", "claims", "abstentions", "elements", "chunks", "scripted"],
+              "additionalProperties": false,
+              "properties": {
+                "sources": { "const": 8 },
+                "questions": { "const": 16 },
+                "claims": { "const": 24 },
+                "abstentions": { "type": "integer", "minimum": 2 },
+                "elements": { "type": "integer", "minimum": 1 },
+                "chunks": { "type": "integer", "minimum": 1 },
+                "scripted": { "type": "integer", "minimum": 1 }
+              }
+            }
+          }
+        },
+        "registration": { "$ref": "#/$defs/registration" },
+        "source": { "$ref": "#/$defs/sourceManifest" },
+        "gate": {
+          "type": "object",
+          "required": ["oracle"],
+          "additionalProperties": false,
+          "properties": { "oracle": { "$ref": "#/$defs/oracleGate" } }
+        },
+        "scenarios": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/scenario" } },
+        "summary": {
+          "type": "object",
+          "required": ["scenarios", "outcomes", "wrongAbstentions"],
+          "additionalProperties": false,
+          "properties": {
+            "scenarios": { "type": "integer", "minimum": 1 },
+            "outcomes": { "$ref": "#/$defs/outcomeCounts" },
+            "wrongAbstentions": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "decision": { "$ref": "#/$defs/decision" },
+        "reportId": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

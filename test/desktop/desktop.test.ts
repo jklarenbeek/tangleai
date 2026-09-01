@@ -195,27 +195,119 @@ describe('tangle desktop API', () => {
     }
   });
 
-  it('chat uses a configured model through an injected fetch', async () => {
-    const scripted = async (): Promise<Response> => new Response(JSON.stringify({
-      choices: [{ message: { role: 'assistant', content: 'The limit is 500 rpm. [cited]' }, finish_reason: 'stop' }],
-      usage: {},
+  /** The memory ids and texts a grounded prompt listed, read back out of the wire request. */
+  function listedIds(body: any): string[] {
+    const system: string = body.messages.find((m: any) => m.role === 'system' && String(m.content).includes('MEMORIES:'))?.content ?? '';
+    return [...system.matchAll(/^\[([^\]]+)\] \([\d.]+\) /gm)].map((m) => m[1] as string);
+  }
+
+  function structuredCompletion(value: unknown): Response {
+    return new Response(JSON.stringify({
+      choices: [{ message: { role: 'assistant', content: JSON.stringify(value) }, finish_reason: 'stop' }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
       model: 'stub',
     }), { status: 200, headers: { 'content-type': 'application/json' } });
+  }
 
+  async function configuredDesktop(scripted: (body: any) => Response | Promise<Response>): Promise<Desktop> {
+    const impl = async (_url: any, init?: any): Promise<Response> => scripted(JSON.parse(String(init?.body ?? '{}')));
     const stubbed = await createDesktop({
       driver: nodeDriver(),
       now,
-      fetch: scripted as any,
+      fetch: impl as any,
       presetSettings: {
         folder,
         chat: { provider: 'ollama', baseUrl: 'http://stub.local:11434', model: 'stub-model', apiKey: null },
       },
     });
+    await call(stubbed, 'POST', '/api/folder/sync', {});
+    return stubbed;
+  }
+
+  it('a configured model answers under the measured claims contract, and only answer-named ids become citations', async () => {
+    let listed: string[] = [];
+    const stubbed = await configuredDesktop((body) => {
+      listed = listedIds(body);
+      return structuredCompletion({
+        disposition: 'answer',
+        claims: [{ id: 'a1', text: 'The API rate limit is 500 requests per minute.', citations: [listed[0]] }],
+      });
+    });
+    try {
+      const sent = await call(stubbed, 'POST', '/api/chat', { text: 'what is the rate limit?' });
+      assert.equal(sent.status, 200);
+      assert.equal(sent.json.provider, 'ollama/stub-model');
+      assert.equal(sent.json.reply.text, 'The API rate limit is 500 requests per minute.');
+      assert.ok(listed.length >= 2, 'more than one candidate was retrieved');
+      assert.deepEqual(sent.json.reply.citations, [listed[0]], 'the unused candidates never became citations');
+      assert.equal(sent.json.citations.length, 1);
+      assert.equal(sent.json.citations[0].id, listed[0]);
+      assert.deepEqual(sent.json.documentCitations, []);
+      // the persisted history carries the same answer-named citations
+      const history = await call(stubbed, 'GET', '/api/chat');
+      const persisted = history.json.at(-1);
+      assert.deepEqual(persisted.citations, [listed[0]]);
+    } finally {
+      await stubbed.close();
+    }
+  });
+
+  it('a fabricated citation id is repaired through the supplied-reference gate', async () => {
+    let asked = 0;
+    let listed: string[] = [];
+    const stubbed = await configuredDesktop((body) => {
+      asked++;
+      listed = listedIds(body);
+      if (asked === 1) {
+        return structuredCompletion({ disposition: 'answer', claims: [{ id: 'a1', text: 'The limit is 500 requests per minute.', citations: ['mem-fabricated'] }] });
+      }
+      return structuredCompletion({ disposition: 'answer', claims: [{ id: 'a1', text: 'The limit is 500 requests per minute.', citations: [listed[0]] }] });
+    });
+    try {
+      const sent = await call(stubbed, 'POST', '/api/chat', { text: 'limit?' });
+      assert.equal(asked, 2, 'the one bounded repair corrected the fabricated id');
+      assert.deepEqual(sent.json.reply.citations, [listed[0]]);
+      assert.equal(sent.json.provider, 'ollama/stub-model');
+    } finally {
+      await stubbed.close();
+    }
+  });
+
+  it('a permanently invalid reply degrades to visibly quoted grounded recall — the failure is a value', async () => {
+    let asked = 0;
+    const stubbed = await configuredDesktop(() => {
+      asked++;
+      return new Response(JSON.stringify({
+        choices: [{ message: { role: 'assistant', content: 'The limit is 500 rpm, no JSON here.' }, finish_reason: 'stop' }],
+        usage: {},
+        model: 'stub',
+      }), { status: 200, headers: { 'content-type': 'application/json' } });
+    });
     try {
       const sent = await call(stubbed, 'POST', '/api/chat', { text: 'limit?' });
       assert.equal(sent.status, 200);
-      assert.equal(sent.json.provider, 'ollama/stub-model');
-      assert.match(sent.json.reply.text, /500 rpm/);
+      assert.equal(asked, 2, 'one attempt plus one bounded repair, then the value degrades');
+      assert.equal(sent.json.provider, null, 'no model answer was accepted');
+      assert.match(sent.json.reply.text, /failed the grounded answer contract/);
+      assert.match(sent.json.reply.text, /Grounded recall:/, 'the degraded answer quotes its sources, so its citations are used');
+      assert.ok(sent.json.citations.length >= 1, 'the quoted sources stay cited');
+    } finally {
+      await stubbed.close();
+    }
+  });
+
+  it('an explicit abstention carries zero citations even though candidates were retrieved', async () => {
+    const stubbed = await configuredDesktop(() => structuredCompletion({
+      disposition: 'abstain',
+      reason: 'No source supports an answer.',
+      claims: [],
+    }));
+    try {
+      const sent = await call(stubbed, 'POST', '/api/chat', { text: 'what is the moon made of?' });
+      assert.equal(sent.json.reply.text, 'No source supports an answer.');
+      assert.deepEqual(sent.json.reply.citations, []);
+      assert.deepEqual(sent.json.citations, []);
+      assert.deepEqual(sent.json.documentCitations, []);
     } finally {
       await stubbed.close();
     }

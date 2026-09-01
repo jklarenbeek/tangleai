@@ -33,16 +33,34 @@ const get = (desktop: Desktop, url: string): Promise<{ status: number, body: str
     .then((res: { status: number, body: unknown }) => ({ status: res.status, body: String(res.body) }));
 
 describe('the public contract moved compatibly', () => {
-  it('classifies frozen -> final as non-breaking and compatible', async () => {
+  it('classifies frozen -> final: compatible, with exactly the one documented citation-contract closure', async () => {
     const frozen = JSON.parse(await readFile(FROZEN_PATH, 'utf8')) as Record<string, unknown>;
     const current = publicProjection(compileContract(DESKTOP_CONTRACT));
     const diff = diffContracts(frozen, current);
-    assert.deepEqual(diff.breaking, [], `breaking changes: ${JSON.stringify(diff.breaking.slice(0, 3))}`);
+    // the ONE sanctioned narrowing: `chat.send`'s returned document
+    // citations were an unconstrained `{ type: 'object' }`; the measured
+    // grounding contract closes them. The compiled diff classifies that
+    // closure R8 (output-narrowed) — documented here as the deliberate
+    // change, and nothing else may narrow.
+    assert.deepEqual(diff.breaking.map((change: { rule: string, docPath: string }) => ({ rule: change.rule, docPath: change.docPath })), [
+      { rule: 'R8', docPath: '/operations/chat.send/output/properties/documentCitations/items/additionalProperties' },
+    ], `unexpected narrowing: ${JSON.stringify(diff.breaking.slice(0, 3))}`);
     assert.equal(isCompatible(frozen, current), true);
-    assert.equal(diff.additive.length > 0, true, 'the campaign added operations, errors and members');
+    assert.equal(diff.additive.length > 0, true, 'the campaigns added operations, errors and members');
     const frozenRevision = await compileContract(frozen).revision();
     const finalRevision = await compileContract(DESKTOP_CONTRACT).revision();
-    assert.notEqual(finalRevision, frozenRevision, 'the surface moved — compatibly');
+    assert.notEqual(finalRevision, frozenRevision, 'the surface moved');
+  });
+
+  it('classifies the pre-grounding snapshot -> final identically: only the closure, plus its member declarations', async () => {
+    const preGrounding = JSON.parse(await readFile('test/fixtures/desktop-contract-pre-grounding.json', 'utf8')) as Record<string, unknown>;
+    const current = publicProjection(compileContract(DESKTOP_CONTRACT));
+    const diff = diffContracts(preGrounding, current);
+    assert.deepEqual(diff.breaking.map((change: { rule: string, op: string }) => ({ rule: change.rule, op: change.op })), [
+      { rule: 'R8', op: 'chat.send' },
+    ]);
+    assert.ok(diff.additive.every((change: { op: string }) => change.op === 'chat.send'), 'the grounding closure touches only chat.send');
+    assert.equal(isCompatible(preGrounding, current), true);
   });
 
   it('the gate would catch a breaking change: a removed output member fails', async () => {

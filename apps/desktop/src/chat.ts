@@ -1,16 +1,21 @@
 /**
- * Chat, grounded on the curated memory.
+ * Chat, grounded on the curated memory and the document corpus.
  *
- * Every question is embedded, ranked against the live memory
+ * Every question is embedded and ranked against both lanes
  * (`recallByEmbedding` — superseded records can't surface, and only
  * records embedded by the SAME identity as the question are ranked; a
- * folder synced under another embedder is skipped, never scored), and
- * the top hits become both the model's context and the visible
- * citations. The
- * model is @jarenjs/ai's `createChatClient` when the user configured
- * one; when none is configured OR the wire fails, the answer degrades
- * to grounded recall — the memories themselves, cited, with an honest
- * note. Errors are values here: a dead Ollama never breaks chat.
+ * folder synced under another embedder is skipped, never scored;
+ * `collectDocumentEvidence` — the one serializer the benchmark
+ * measures). The top hits are the model's CANDIDATES, not its
+ * citations: a configured model answers through the suite's structured
+ * output under the measured claims-with-citations contract, a
+ * supplied-reference gate repairs a fabricated id, and only the ids the
+ * answer actually named surface as citations — retrieved unused
+ * candidates stay inside the local trace. When no model is configured,
+ * the wire fails, or the reply stays invalid after repair, the answer
+ * degrades to grounded recall — the sources themselves, visibly quoted
+ * and therefore cited, with an honest note. Errors are values here: a
+ * dead Ollama never breaks chat.
  */
 
 import { hashContent } from '@jarenjs/core/string';
@@ -18,7 +23,15 @@ import { excerpt } from '@jarenjs/core/chunk';
 import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { IdentityRepository, TangleDb } from '@tangleai/store';
-import { recallDocumentChunks, type DocumentCorpusStore, type RankedDocumentChunk } from '@tangleai/documents';
+import type { DocumentCorpusStore, RankedDocumentChunk } from '@tangleai/documents';
+
+import {
+  collectDocumentEvidence,
+  generateGroundedAnswer,
+  renderGroundedAnswer,
+  serializeDocumentEvidence,
+  type DocumentEvidence,
+} from './grounding.ts';
 
 import type { Settings } from './settings.ts';
 import { asRows } from '@tangleai/store';
@@ -72,13 +85,9 @@ function memoryContext(ranked: Array<{ unit: MemoryUnit, score: number }>): stri
   return `MEMORIES:\n${lines.join('\n')}`;
 }
 
+/** The document evidence section — the ONE serializer in `grounding.ts`, so the benchmark measures the product's exact bytes. */
 function documentContext(ranked: RankedDocumentChunk[]): string {
-  if (ranked.length === 0) return 'DOCUMENT CHUNKS: (none recalled)';
-  const lines = ranked.map(({ chunk, context, source, score }) => {
-    const expanded = context.map((item) => item.text).join('\n\n');
-    return `[${chunk.id}] (${score.toFixed(3)}) ${expanded}\n    source: ${source.canonicalUrl}${chunk.pageStart === undefined ? '' : ` page ${chunk.pageStart}`}`;
-  });
-  return `DOCUMENT CHUNKS:\n${lines.join('\n')}`;
+  return serializeDocumentEvidence(ranked).context;
 }
 
 function offlineReply(ranked: Array<{ unit: MemoryUnit, score: number }>, note: string): string {
@@ -154,16 +163,23 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       const embedder = stack.embedder;
       let ranked: Array<{ unit: MemoryUnit, score: number }> = [];
       let documentRanked: RankedDocumentChunk[] = [];
+      let evidence: DocumentEvidence | null = null;
       try {
         const [vector] = await embedder.embed([text]);
         const identity = { model: embedder.model, dims: embedder.dims ?? vector.length };
         ranked = recallByEmbedding(await memoryStore.list(), vector, { k: recallK, identity }).ranked;
-        documentRanked = (await recallDocumentChunks(documentStore, vector, identity, { k: recallK, maxPerSource: 2 })).ranked;
+        const collected = await collectDocumentEvidence(documentStore, vector, identity, { k: recallK, maxPerSource: 2 });
+        // the helper reports a failure as a value; the chat surface keeps
+        // its measured degradation and projects it to empty evidence
+        if (!collected.ok) throw new Error(collected.error.message);
+        evidence = collected.evidence;
+        documentRanked = evidence.ranked;
       } catch {
         ranked = []; // a dead embedding wire degrades recall, never chat
         documentRanked = [];
+        evidence = null;
       }
-      const citations = ranked.map((r) => r.unit);
+      const recalled = ranked.map((r) => r.unit);
 
       const runIdentity = stack.state === 'ready' ? stack.identity : stack.embedder.finalIdentity();
       if (runIdentity !== null) await options.identities.put(runIdentity);
@@ -172,27 +188,71 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
       let replyText: string;
       let provider: string | null = null;
       let usage: unknown = null;
+      // the degraded paths visibly QUOTE every retrieved source, so their
+      // citations are used by construction; the structured path below
+      // narrows these to the ids the answer actually named
+      let citedMemories: MemoryUnit[] = recalled;
+      let citedDocuments: RankedDocumentChunk[] = documentRanked;
+      let visibleCitations: string[] = [...recalled.map((u) => u.id), ...documentRanked.map((item) => item.chunk.id)];
 
       if (stack.chat === null) {
         replyText = groundedOfflineReply(ranked, documentRanked, '_No chat model is configured (Settings → Chat provider)._');
       } else {
-        try {
-          const history = await this.history(12);
-          const outcome = await stack.chat.complete({
-            messages: [
-              { role: 'system', content: `${SYSTEM_PROMPT}\n\n${memoryContext(ranked)}\n\n${documentContext(documentRanked)}` },
-              ...history.slice(0, -1).map((m) => ({ role: m.role, content: m.text })),
-              { role: 'user', content: text },
-            ],
-            stream: false,
-          });
-          replyText = String(outcome.message?.content ?? '').trim()
-            || groundedOfflineReply(ranked, documentRanked, '_The model returned an empty reply._');
+        const history = await this.history(12);
+        // the ids this request actually serialized — the semantic gate's
+        // whole vocabulary. Expanded neighbour chunks are supplied too.
+        const listed = new Set<string>([
+          ...recalled.map((u) => u.id),
+          ...(evidence?.suppliedChunkIds ?? documentRanked.map((item) => item.chunk.id)),
+        ]);
+        const outcome = await generateGroundedAnswer(stack.chat, [
+          { role: 'system', content: `${SYSTEM_PROMPT}\n\n${memoryContext(ranked)}\n\n${documentContext(documentRanked)}` },
+          ...history.slice(0, -1).map((m) => ({ role: m.role, content: m.text })),
+          { role: 'user', content: text },
+        ], listed);
+        usage = outcome.usage;
+        if (outcome.answer !== null) {
           provider = `${chat.provider}/${chat.model}`;
-          usage = (outcome as { usage?: unknown }).usage ?? null;
-        } catch (error) {
-          const reason = error instanceof Error ? error.message : String(error);
-          replyText = groundedOfflineReply(ranked, documentRanked, `_The chat wire failed (${excerpt(reason, 120)}) — answering from retrieved sources._`);
+          replyText = renderGroundedAnswer(outcome.answer);
+          // only ids the answer named become citations, in first-visible
+          // order; retrieved unused candidates stay inside the local trace
+          const named: string[] = [];
+          const seen = new Set<string>();
+          if (outcome.answer.disposition === 'answer') {
+            for (const claim of outcome.answer.claims) {
+              for (const id of claim.citations) {
+                if (seen.has(id)) continue;
+                seen.add(id);
+                named.push(id);
+              }
+            }
+          }
+          const memoryOf = new Map(recalled.map((unit) => [unit.id, unit]));
+          citedMemories = [];
+          citedDocuments = [];
+          visibleCitations = [];
+          const citedDocumentIds = new Set<string>();
+          for (const id of named) {
+            const unit = memoryOf.get(id);
+            if (unit !== undefined) {
+              citedMemories.push(unit);
+              visibleCitations.push(id);
+              continue;
+            }
+            // a cited neighbour chunk resolves through the ranked candidate
+            // whose expanded context carried it into the prompt
+            const item = documentRanked.find((entry) => entry.chunk.id === id || entry.context.some((chunk) => chunk.id === id));
+            if (item !== undefined && !citedDocumentIds.has(item.chunk.id)) {
+              citedDocumentIds.add(item.chunk.id);
+              citedDocuments.push(item);
+              visibleCitations.push(item.chunk.id);
+            }
+          }
+        } else {
+          const note = outcome.failure!.kind === 'wire'
+            ? `_The chat wire failed (${excerpt(outcome.failure!.detail, 120)}) — answering from retrieved sources._`
+            : '_The model\'s reply failed the grounded answer contract after repair — answering from retrieved sources._';
+          replyText = groundedOfflineReply(ranked, documentRanked, note);
         }
       }
 
@@ -200,12 +260,12 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
         role: 'assistant',
         text: replyText,
         at: now(),
-        citations: [...citations.map((u) => u.id), ...documentRanked.map((item) => item.chunk.id)],
+        citations: visibleCitations,
         provider,
         identityId: runIdentity?.identityId ?? null,
         usage,
       });
-      return { reply, citations, documentCitations: documentRanked, provider };
+      return { reply, citations: citedMemories, documentCitations: citedDocuments, provider };
     },
   };
 }

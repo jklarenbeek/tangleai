@@ -63,4 +63,60 @@ describe('desktop document lane', () => {
       await desktop.close();
     }
   });
+
+  it('a configured model cites across both lanes, and each answer-named id lands in its own lane', async () => {
+    const { mkdtemp, writeFile, rm } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const folder = await mkdtemp(join(tmpdir(), 'tangle-mixed-'));
+    await writeFile(join(folder, 'notes.md'), 'The cobalt dashboard credentials rotate every 30 days');
+    const html = '<!doctype html><html><body><main><h1>Service handbook</h1><p>The cobalt service listens on port 7443 and requires mutual TLS for every client connection.</p></main></body></html>';
+    const fetchImpl = async (url: any, init?: any): Promise<Response> => {
+      if (String(url).endsWith('/chat/completions')) {
+        const body = JSON.parse(String(init?.body ?? '{}'));
+        const system: string = body.messages.find((m: any) => String(m.content).includes('MEMORIES:'))?.content ?? '';
+        const memoryId = /\[(m-[^\]]+)\]/.exec(system)?.[1];
+        const chunkId = /\[(chk-[^\]]+)\]/.exec(system)?.[1];
+        return new Response(JSON.stringify({
+          choices: [{ message: { role: 'assistant', content: JSON.stringify({
+            disposition: 'answer',
+            claims: [
+              { id: 'a1', text: 'The service listens on port 7443.', citations: chunkId === undefined ? [] : [chunkId] },
+              { id: 'a2', text: 'Credentials rotate every 30 days.', citations: memoryId === undefined ? [] : [memoryId] },
+            ],
+          }) }, finish_reason: 'stop' }],
+          usage: {},
+          model: 'stub',
+        }), { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return new Response(html, { headers: { 'content-type': 'text/html' } });
+    };
+    const desktop = await createDesktop({
+      driver: nodeDriver(),
+      fetch: fetchImpl as any,
+      documentFetch: {
+        lookup: async () => [{ address: '93.184.216.34', family: 4 }],
+        limits: { respectRobots: false, perHostDelayMs: 0 },
+      },
+      presetSettings: {
+        folder,
+        chat: { provider: 'ollama', baseUrl: 'http://stub.local:11434', model: 'stub-model', apiKey: null },
+      },
+    });
+    try {
+      await call(desktop, 'POST', '/api/folder/sync', {});
+      await call(desktop, 'POST', '/api/documents/ingest', { url: 'https://docs.example/service' });
+      const chat = await call(desktop, 'POST', '/api/chat', { text: 'port and rotation?' });
+      assert.equal(chat.status, 200);
+      assert.equal(chat.json.citations.length, 1, 'exactly the one answer-named memory');
+      assert.equal(chat.json.documentCitations.length, 1, 'exactly the one answer-named document chunk');
+      assert.match(chat.json.citations[0].text, /30 days/);
+      assert.match(chat.json.documentCitations[0].chunk.text, /7443/);
+      assert.equal(chat.json.reply.citations.length, 2, 'both lanes, first-visible order');
+      assert.equal(chat.json.reply.text, 'The service listens on port 7443.; Credentials rotate every 30 days.');
+    } finally {
+      await desktop.close();
+      await rm(folder, { recursive: true, force: true });
+    }
+  });
 });

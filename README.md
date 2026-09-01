@@ -165,6 +165,25 @@ apart and folded into nothing.
 report; the live JSON beside it is a dated record the tests validate but
 never regenerate.
 
+`npm run benchmark:grounding` measures the document lane the same way:
+a retrieved chunk is a candidate, and only a cited, resolvable, eligible
+passage supporting a material claim counts as grounding. The keyless
+tier proves the claim oracle to exact 1.000 ceilings and drives every
+named bad answer to its one terminal outcome
+(`supporting` … `unknown-evidence`); the authorized paired tier compares
+the same model over the same questions with and without the shipped
+retrieval's exact evidence bytes. The measured result (2026-09-01,
+`z-ai/glm-5.3-flash` over `baai/bge-m3`, 123 calls, zero errors):
+supported-claim F1 0.838 grounded against a structural 0.000 without
+documents (two-sided 95% delta [0.714, 0.952]), answer F1 0.760 against
+0.195, with zero forbidden citation outcomes — and the loss beside it:
+without evidence the model abstains on 14 of 16 answerable questions,
+and the separately labelled LoCoMo projection scores a poor absolute
+0.155. [docs/GROUNDING_BENCHMARK.md](docs/GROUNDING_BENCHMARK.md) is the
+rendered report;
+`npm run benchmark:grounding:handoff` regenerates the immutable
+downstream handoff every later retrieval treatment must beat.
+
 ## The apps
 
 The desktop keeps browser automation optional. Ordinary HTML, text, Markdown, and PDF
@@ -191,10 +210,14 @@ LangChain `Document`, no DOM type, and no `unpdf` type appears in
 sync it (content-hash incremental) through the pipeline, watch the DAG
 run LIVE over an SSE stream and browse every past run's per-node story,
 search the curated memory (superseded chains included), ingest/search versioned web and
-PDF sources on the Documents page, and chat over the two explicit retrieval lanes with
-citations. Chat degrades honestly: with no model
-configured (or a dead wire) you get grounded recall — the memories
-themselves, cited — never an invention. The whole API is one
+PDF sources on the Documents page, and chat over the two explicit retrieval lanes.
+A configured model answers under a measured claims-with-citations contract
+(`createStructuredOutput` plus a supplied-reference gate that repairs a
+fabricated id), so a citation is an id the answer actually used — retrieved
+unused candidates never surface. Chat degrades honestly: with no model
+configured, a dead wire, or a reply that stays invalid after its one repair,
+you get grounded recall — the sources themselves, quoted and
+cited — never an invention. The whole API is one
 `@jarenjs/contract` document served over `node:http`; the UI is a
 `@jarenjs/app` document rendered by `@jarenjs/view`; storage is SQLite
 through `@jarenjs/db`.

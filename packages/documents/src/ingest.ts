@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import type { Embedder } from '@jarenjs/ai/embed';
+import { mapConcurrent } from '@jarenjs/core/async';
 import { estimateTokens } from '@tangleai/core/tokens';
 
 import { likelyDynamicShell, type BrowserFetcher, UnavailableBrowserFetcher } from './browser.ts';
@@ -315,28 +316,22 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
     },
 
     async ingestMany(inputs, manyOptions = {}) {
-      const concurrency = Math.max(1, manyOptions.concurrency ?? 3);
-      const results: Array<{ url: string; outcome?: IngestUrlOutcome; error?: { code: string; message: string } }> = new Array(inputs.length);
-      let cursor = 0;
-      const workers = Array.from({ length: Math.min(concurrency, inputs.length) }, async () => {
-        while (cursor < inputs.length) {
-          const index = cursor++;
-          const input = inputs[index];
-          try {
-            results[index] = { url: input.url, outcome: await this.ingest(input) };
-          } catch (error) {
-            results[index] = {
-              url: input.url,
-              error: {
-                code: error instanceof DocumentError ? error.code : 'ingest-failed',
-                message: error instanceof Error ? error.message : String(error),
-              },
-            };
-          }
+      // an ordinary fetch/extraction failure is this input's VALUE, so the
+      // batch never rejects and every input keeps its slot in input order;
+      // bounded dispatch is the suite's, not a local pool
+      return mapConcurrent(inputs, Math.max(1, manyOptions.concurrency ?? 3), async (input) => {
+        try {
+          return { url: input.url, outcome: await this.ingest(input) };
+        } catch (error) {
+          return {
+            url: input.url,
+            error: {
+              code: error instanceof DocumentError ? error.code : 'ingest-failed',
+              message: error instanceof Error ? error.message : String(error),
+            },
+          };
         }
       });
-      await Promise.all(workers);
-      return results;
     },
   };
 }
