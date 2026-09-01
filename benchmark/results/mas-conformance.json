@@ -1,0 +1,1240 @@
+{
+  "benchmark": "mas-conformance",
+  "instrument": {
+    "entry": "benchmark/mas-conformance.ts"
+  },
+  "source": {
+    "head": "455bc71c1ba5f09148dccb8fa594225bcc7d814a",
+    "clean": false,
+    "files": [
+      {
+        "path": "benchmark/fixtures/mas/config-catalog.json",
+        "sha256": "77b1d61570052c39ff83f77e4557cb86e8fa947673816f42f832ec900ff6fb5c"
+      },
+      {
+        "path": "benchmark/fixtures/mas/manifest.json",
+        "sha256": "4d46826086dd0a5c8a3603d7b2d47886dfab1173c8148230bdd6b75f4c880d67"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/child-over-budget.json",
+        "sha256": "321ddde84d2e70bc8503be14f28f8bed6ade3817ddb3b2133a93c03892610833"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/incompatible-wire.json",
+        "sha256": "b2a2dbd2a6d9a1c383402be1879d517dec92a8b42547789c1847d96eed41db14"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/plain-cycle.json",
+        "sha256": "2049162229ec4d4107e09bce20ba4c712583387e56f8c059408c7e915cd39824"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/switch-no-default.json",
+        "sha256": "d2581e2ad8891852709f4dc7f6b295ba2e9c8e597d50cdfa5b89c0e4ac66ce88"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/unbounded-loop.json",
+        "sha256": "d9b127656a5a44b15c0d21f860809be8c0e1a14ab6cb7e8a7e6dcb26e34d898b"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/undeclared-tool.json",
+        "sha256": "1f9036c41dad1813d9bdba94ac952c0250f60e82d5049c636c6e558f0fbb80d6"
+      },
+      {
+        "path": "benchmark/fixtures/mas/negative/unknown-port.json",
+        "sha256": "a221574bfd0184f0779bac0898eb66336f8db5219a65d0e7a5ab4eb0507262e8"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/checkpoint.json",
+        "sha256": "c4e069b8de6132b95c9450dc669efb221ad2ba1b944cabf531e7ade38cfed7ce"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/failure-abort.json",
+        "sha256": "a2079838ee39d5daf068c19b7a7b9f32782380cd7c55613112530a7b4e12779a"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/fanout-fanin.json",
+        "sha256": "4c083be4bbfc35807c547f0de2533f5030ad03fb71d1aed20281d9626413082b"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/interaction.json",
+        "sha256": "b3a9e29ee62fefaaefa3a4bb4a0641a388bd48df0d0fbd361e0e129d705f8411"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/loop-three.json",
+        "sha256": "771ab34a294ad8401f76ffb3f970393d66a7b253e5fe98fb3419fbced6e7512d"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/message-order.json",
+        "sha256": "68a2749f1f1719b25240cd31aa83385ccf373819868efaec858211d019483c7d"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/nested-state.json",
+        "sha256": "1b0d39a9ceee3a4e5fcc3735b0b4ee772e7d701b1940b01212a63d355cebec00"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/sequential.json",
+        "sha256": "1f5e291a83be97325ea6b2670bff860cd360f2ac05d2815f25362504f98b8d87"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/switch-many.json",
+        "sha256": "f303e233edb5c0fd23f26eb98556ded2e9af6c59888eadd94374c334e685b828"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/switch-one.json",
+        "sha256": "d3d7fc4eb5eda32c7004daa4ae2fd772b77d77c6b6f939bcb5409e8ac41d4623"
+      },
+      {
+        "path": "benchmark/fixtures/mas/positive/weekly-report-manual.json",
+        "sha256": "7b586477063b7d3c6e4e35408aa5c4239f608769ab6adb0c68267d33fac482d9"
+      },
+      {
+        "path": "benchmark/fixtures/mas/registry.json",
+        "sha256": "60374977d93f3dd690ecbf18184c1909596c20f5cfcd77022863f815c4ef6476"
+      },
+      {
+        "path": "benchmark/lib/mas-conformance.ts",
+        "sha256": "69f36e5cef6144f1f5a54cb60f98368c42448c210f4ce622c9462b4f314da420"
+      },
+      {
+        "path": "benchmark/lib/mas-conformance.types.ts",
+        "sha256": "f913bdabbcfdd0f98fb18f6d3219d2752bc01ccdb318ad8a263401443636a8d5"
+      },
+      {
+        "path": "benchmark/lib/mas-runner.ts",
+        "sha256": "bab863eb4b4d3eaa4c66d213dd62968f124327326fde6b0fd6d0489ee575b505"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/mas-conformance.ts",
+        "sha256": "20bc195b8f20ed5df6d5eab4965d7ba7ff80cca50063f644c56f896e18a4b4d3"
+      },
+      {
+        "path": "benchmark/schemas/mas-conformance.schema.json",
+        "sha256": "426d9ee1dab167fa034374dddb7f2cc6ea893b8349966d316c3e4e9f6d6e714f"
+      },
+      {
+        "path": "benchmark/scripts/mas-fixtures.ts",
+        "sha256": "38cf62bef50bfba2e1962f2a0a63e036c08a47652ff81892c39b1f700b6987a8"
+      },
+      {
+        "path": "queries/mas/runtime-baseline.json",
+        "sha256": "3b05fd2e51a975a9b4bc25ab13813f6e887bf1fcbc1b48c37f6529b4c235f409"
+      }
+    ],
+    "sha256": "0ce4dc3ecc509205fb0071b84259117611d0b082fb1006d568860f20d7ad2cd8"
+  },
+  "suite": {
+    "packages": [
+      {
+        "name": "@jarenjs/ai",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/app",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/charts",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/contract",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/core",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/db",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/emit",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/flow",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/json",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/linq",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/md",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/mermaid",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/validate",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/view",
+        "version": "0.56.0"
+      }
+    ]
+  },
+  "registration": {
+    "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
+    "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+    "configCatalogRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+    "positive": 11,
+    "negative": 7,
+    "fixtures": [
+      {
+        "id": "sequential",
+        "family": "positive",
+        "title": "A then B; the typed value reaches the workflow output",
+        "revision": "6d9f226f157db6764e931c4e311faa61d0e38c23f2b64717c652dc0da335922d",
+        "workflowVersionId": "6c963ac5efeeeaaf62c0a123233b753c9e92af7adf278a165322b6cfd759860a",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "text": "hello",
+              "by": "second"
+            }
+          },
+          "failure": null,
+          "events": [
+            "first:completed",
+            "second:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "fanout-fanin",
+        "family": "positive",
+        "title": "Three branches overlap; the join receives them in edge order",
+        "revision": "6fa9697079dc637addb67670f0a513d1caf10950ac9374eb6ce5d71f0cf26ed9",
+        "workflowVersionId": "2b83d4eeebca28c90fd85667a951a1ce5d14ca0e6810d37279d863453a52e856",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": [
+              {
+                "from": "alpha",
+                "topic": "t"
+              },
+              {
+                "from": "beta",
+                "topic": "t"
+              },
+              {
+                "from": "gamma",
+                "topic": "t"
+              }
+            ]
+          },
+          "failure": null,
+          "events": [
+            "alpha:completed",
+            "beta:completed",
+            "gamma:completed",
+            "join:completed"
+          ],
+          "aggregations": [
+            {
+              "node": "join",
+              "port": "parts",
+              "sources": [
+                "alpha",
+                "beta",
+                "gamma"
+              ]
+            }
+          ],
+          "concurrency": {
+            "min": 3,
+            "max": 3
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "message-order",
+        "family": "positive",
+        "title": "Deliberately reversed completion; aggregation keeps declared order",
+        "revision": "801b8ad0bab7478705f758edb04680ef903afde55c78e58bc1294e5532ce107d",
+        "workflowVersionId": "c8a9efd06e90e794899424b94f6c68cc4bdc058523507958df4ec0d6e0deb27e",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": [
+              {
+                "from": "alpha",
+                "topic": "t"
+              },
+              {
+                "from": "beta",
+                "topic": "t"
+              },
+              {
+                "from": "gamma",
+                "topic": "t"
+              }
+            ]
+          },
+          "failure": null,
+          "events": [
+            "gamma:completed",
+            "beta:completed",
+            "alpha:completed",
+            "join:completed"
+          ],
+          "aggregations": [
+            {
+              "node": "join",
+              "port": "parts",
+              "sources": [
+                "alpha",
+                "beta",
+                "gamma"
+              ]
+            }
+          ],
+          "concurrency": {
+            "min": 3,
+            "max": 3
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "switch-one",
+        "family": "positive",
+        "title": "Exactly one selected branch, with a default available",
+        "revision": "462f64f769d928bd5b81b1c00e5bf83e63a0c0d6fa8bb299a79ebfbfb7578f92",
+        "workflowVersionId": "38e3553996de9c2ae7c5038b61a766f7d9b06ab92bca802ce0f2045e21b4b4ff",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "handled": "low",
+              "n": 4
+            }
+          },
+          "failure": null,
+          "events": [
+            "handle-low:completed",
+            "route:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "switch-many",
+        "family": "positive",
+        "title": "Two selected branches execute in declaration order; the third is untouched",
+        "revision": "3842a6168c1edd9e9dfd3c7c1b2b916086a15bbd8d58c41244b90ea6829772f7",
+        "workflowVersionId": "302680e43d029a6360bfe000ab1bc315bc1ee3639db7fa3da21d8f41102cf971",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": [
+              {
+                "branch": "alpha"
+              },
+              {
+                "branch": "beta"
+              }
+            ]
+          },
+          "failure": null,
+          "events": [
+            "do-beta:completed",
+            "do-alpha:completed",
+            "fan:completed"
+          ],
+          "aggregations": [
+            {
+              "node": "fan",
+              "port": "results",
+              "sources": [
+                "do-alpha",
+                "do-beta"
+              ]
+            }
+          ],
+          "concurrency": {
+            "min": 2,
+            "max": 2
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "loop-three",
+        "family": "positive",
+        "title": "The body executes exactly three iterations and terminates",
+        "revision": "4bd3f2d536e67e540d2fe185b931e7e1cbbcae0152d4e49bc31695104fbfcaee",
+        "workflowVersionId": "5815c9b9943c576afaba21f5b984dde2668c3cbe6f26f64d92198908f9779a85",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "count": 3
+            }
+          },
+          "failure": null,
+          "events": [
+            "refine/1/bump:completed",
+            "refine/2/bump:completed",
+            "refine/3/bump:completed",
+            "refine:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "nested-state",
+        "family": "positive",
+        "title": "The child pulls one member, pushes one member, and cannot address another",
+        "revision": "8ef018e3a3f7545d1017902dff0749021ad04a34000f02957682182e7296cbc3",
+        "workflowVersionId": "3db23ac13f12dc3e83f4f2ee39b11ffe3cfa2422d3b494adf767351d5709a71d",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "visible": 8
+            }
+          },
+          "failure": null,
+          "events": [
+            "sub/work:completed",
+            "sub:completed",
+            "read-out:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "interaction",
+        "family": "positive",
+        "title": "The run waits; one typed response resumes the same run",
+        "revision": "1a2beb13e7e2c790c936811dcbe811a574ddad557f2ccb1bf43883d4ee7cc3b7",
+        "workflowVersionId": "c4eb677f27e06f17fcd64a2330800a3abb2061bcf50c96387f136cfcebe1458a",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "decision": "accept",
+              "note": "ok"
+            }
+          },
+          "failure": null,
+          "events": [
+            "prepare:completed",
+            "approve:waiting",
+            "approve:completed",
+            "apply:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "checkpoint",
+        "family": "positive",
+        "title": "A completed paid node restores with zero duplicate provider calls",
+        "revision": "8ce3132c6ea37cd17290e60e904cb78e86806273ab16e1ebf5c96119df396169",
+        "workflowVersionId": "5ffb2979ab85fa2cee8e42c7c84bf8668d62bfaf68977d53dbd2fd7621a9db23",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "result": {
+              "answer": "the answer"
+            }
+          },
+          "failure": null,
+          "events": [
+            "paid:completed",
+            "paid:restored",
+            "wrap:completed"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 1,
+            "max": 1
+          },
+          "calls": 1,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 1
+        }
+      },
+      {
+        "id": "failure-abort",
+        "family": "positive",
+        "title": "The first failure is named; the concurrent sibling sees abort; no partial output",
+        "revision": "c551b336c647b1e57ddf9d9f007fee5a14501b5a491b701012b8477db1b9c616",
+        "workflowVersionId": "e0cb4b4a150c535d742696cd06b4f742cc53fe0daea786f09f9b4d4634460341",
+        "expect": {
+          "kind": "pass",
+          "outcome": "failed",
+          "output": null,
+          "failure": {
+            "node": "boom"
+          },
+          "events": [
+            "boom:failed",
+            "slow:aborted"
+          ],
+          "aggregations": [],
+          "concurrency": {
+            "min": 2,
+            "max": 2
+          },
+          "calls": 0,
+          "toolCalls": 0,
+          "contextReads": 0,
+          "restores": 0
+        }
+      },
+      {
+        "id": "weekly-report-manual",
+        "family": "positive",
+        "title": "START, three concurrent drafters, one ordered finalizer, END",
+        "revision": "6a42eb80132d1b160437597aa385c8895650f4ed72dea524d0f8bf5884f0bc8c",
+        "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
+        "expect": {
+          "kind": "pass",
+          "outcome": "completed",
+          "output": {
+            "report": {
+              "title": "Weekly report",
+              "sections": [
+                "research summary",
+                "data summary",
+                "market summary"
+              ]
+            }
+          },
+          "failure": null,
+          "events": [
+            "market-analyst:completed",
+            "data-analyst:completed",
+            "researcher:completed",
+            "writer:completed"
+          ],
+          "aggregations": [
+            {
+              "node": "writer",
+              "port": "drafts",
+              "sources": [
+                "researcher",
+                "data-analyst",
+                "market-analyst"
+              ]
+            }
+          ],
+          "concurrency": {
+            "min": 3,
+            "max": 3
+          },
+          "calls": 11,
+          "toolCalls": 3,
+          "contextReads": 1,
+          "restores": 0
+        }
+      },
+      {
+        "id": "plain-cycle",
+        "family": "negative",
+        "title": "A message cycle outside a declared loop refuses at the closing edge",
+        "revision": "4e0a3c18f6a8747bc515d6410219f4dce7b11891cc90dcd431d385f1c67f7329",
+        "workflowVersionId": "6877908cb21510003bebb0535154a898e939ee4686168e5d8e981edba112eb71",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1005",
+          "path": "/messages/2"
+        }
+      },
+      {
+        "id": "unknown-port",
+        "family": "negative",
+        "title": "A message edge naming an undeclared target port refuses at that member",
+        "revision": "7b0778c45690aca35e274a0a99da7fd6164f38301a2e50eb3b14f22a97b43af3",
+        "workflowVersionId": "97a0d0975da607ef11d302e7faa66363faec494707bb9772aedd536a0fffbbc2",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1004",
+          "path": "/messages/1/to/port"
+        }
+      },
+      {
+        "id": "switch-no-default",
+        "family": "negative",
+        "title": "A non-exhaustive switch without a default refuses at the default contract",
+        "revision": "7ad0d4dd22e153e9863147b81aeb7c8f3f851be5be1a2ac675d0862cc6df4944",
+        "workflowVersionId": "5d939cd34cbc56b06d448a03615eff142b03cb2cdf4c70a07918103864d3267d",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1006",
+          "path": "/nodes/0/default"
+        }
+      },
+      {
+        "id": "unbounded-loop",
+        "family": "negative",
+        "title": "A loop without a positive iteration cap refuses at maxIterations",
+        "revision": "d8884a8f90b596960ed92b85e3f82d2f3d5b4f6aa343299ec5832aee6a3ba3bd",
+        "workflowVersionId": "b03fc562680695ef664a6e326a3a45fbb0646102fdc7e3d5c355906c59506839",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1007",
+          "path": "/nodes/0/maxIterations"
+        }
+      },
+      {
+        "id": "undeclared-tool",
+        "family": "negative",
+        "title": "An agent requesting a tool the registry does not declare refuses at the reference",
+        "revision": "08438cef53a89bda9a27bcfdb33fe82143e5227c7ecbb06b92bd905525d33e4d",
+        "workflowVersionId": "9dccc44c0c07f893a0a0fe8b152d3ddb15f5ce4c48164fbf4ab6c3061ceae6ce",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1009",
+          "path": "/nodes/0/tools/0"
+        }
+      },
+      {
+        "id": "child-over-budget",
+        "family": "negative",
+        "title": "A node cap above its workflow cap refuses at the child limit",
+        "revision": "93baa5b0f6e0548441b414ab143ce1ba1811f7a6f2d6489ae4c532981d40f360",
+        "workflowVersionId": "6c43e5b47bf9d0075f94eaa17b4f155d558d9c6ff71622d598f79b7933509744",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1008",
+          "path": "/nodes/0/limits/calls"
+        }
+      },
+      {
+        "id": "incompatible-wire",
+        "family": "negative",
+        "title": "A message edge whose source cannot satisfy its target schema refuses at the mapping",
+        "revision": "9afee3908f193023f0edb09472d1304cf73bc3ab6bb60344652375377d86032d",
+        "workflowVersionId": "e3228332efce101ca6f545c903e845034581cd79d0f2796050eecdfc480c021d",
+        "expect": {
+          "kind": "refusal",
+          "code": "TMAS1004",
+          "path": "/messages/0/to"
+        }
+      }
+    ]
+  },
+  "suiteProbes": [
+    {
+      "id": "dag-fanout-concurrency",
+      "title": "compileDag runs independent branches concurrently",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "three gated handlers were in flight together (entry/exit counter reached exactly 3) before any settled",
+      "measured": {
+        "maxConcurrency": 3,
+        "portOrder": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "id": "dag-fanin-edge-order",
+      "title": "ported fan-in assembles members in edge document order",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "settling c, b, a still delivered the port object as a, b, c — completion order cannot change a value",
+      "measured": {
+        "settleOrder": [
+          "c",
+          "b",
+          "a"
+        ],
+        "portOrder": [
+          "a",
+          "b",
+          "c"
+        ],
+        "branches": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "id": "dag-abort-siblings",
+      "title": "the first failing node rejects the run and aborts concurrent siblings",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "the scripted failure rejected as JF2006 naming its node; the gated sibling observed the shared abort signal and recorded aborted",
+      "measured": {
+        "code": "JF2006",
+        "nodeId": "boom",
+        "siblingAborted": true,
+        "records": {
+          "seed": "ok",
+          "boom": "error",
+          "linger": "aborted"
+        }
+      }
+    },
+    {
+      "id": "dag-checkpoint-restore",
+      "title": "a declared checkpoint restores instead of re-running the paid node",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "the resumed run seeded the checkpointed value, fired a restored record and made zero duplicate handler calls",
+      "measured": {
+        "firstRunCalls": 1,
+        "totalCalls": 1,
+        "restored": [
+          "paid"
+        ],
+        "savedNodes": [
+          "paid"
+        ]
+      }
+    },
+    {
+      "id": "fsm-document-order-resume",
+      "title": "compileFsm selects by document order and resumes from a snapshot",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "two matching transitions resolved to the first in document order; the snapshot string resumed the session to its final state",
+      "measured": {
+        "selected": "first",
+        "snapshot": "first",
+        "resumedFinal": true
+      }
+    },
+    {
+      "id": "db-job-reclaim-checkpoints",
+      "title": "an expired lease reclaims the same job and reuses its checkpoint rows",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "idempotent enqueue kept one row; the injected clock expired the lease; the reclaim read the saved checkpoint and its completion atomically pruned the rows",
+      "measured": {
+        "idempotentEnqueue": true,
+        "reclaimedAttempts": 2,
+        "reusedValues": [
+          "n1"
+        ],
+        "finalState": "done",
+        "prunedAfterComplete": true
+      }
+    },
+    {
+      "id": "budget-concurrent-reserve",
+      "title": "one shared budget account reserves turns before concurrent calls launch",
+      "state": "substrate",
+      "outcome": "pass",
+      "observed": "three concurrent reservations consumed the cap synchronously and the fourth stopped as budget-turns before any call launched",
+      "measured": {
+        "reserved": 3,
+        "stopped": 1,
+        "spentTurns": 3
+      }
+    }
+  ],
+  "durability": [
+    {
+      "id": "atomic-node-completion",
+      "title": "terminal attempt, messages, state, budget and artifacts commit in one transaction",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "an injected failure after each of the five stages left no partial member; the successful commit wrote all five together",
+      "measured": {
+        "stages": 5,
+        "partialsAfterInjectedFailures": 0,
+        "committedMembers": 5
+      }
+    },
+    {
+      "id": "activation-cas",
+      "title": "twenty concurrent activations apply exactly once",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "one compare-and-swap transition applied; nineteen refused TMAS2001 against the moved head",
+      "measured": {
+        "attempts": 20,
+        "applied": 1,
+        "conflicts": 19
+      }
+    },
+    {
+      "id": "semantic-idempotency",
+      "title": "a committed idempotency key replays its stored completion and refuses a different payload",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "the replay returned the stored completion with zero new rows; a different payload under the key refused TMAS2001",
+      "measured": {
+        "attemptsAfterReplay": 1,
+        "replayKind": "completed"
+      }
+    },
+    {
+      "id": "segment-checkpoint-namespace",
+      "title": "two iterations of one node id never collide; terminal completion prunes atomically",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "each namespace saw only its own rows through the delegated suite store, and the terminal completion marked the job done and pruned the segment in one guarded statement",
+      "measured": {
+        "namespaces": 2,
+        "isolated": true,
+        "prunedAfterComplete": true,
+        "jobDone": true
+      }
+    },
+    {
+      "id": "crash-reclaim-closes",
+      "title": "a committed terminal outcome whose job completion was lost reclaims and closes without re-execution",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "the reclaimed handler read the committed segment outcome and closed the job without invoking the executor again",
+      "measured": {
+        "executorInvocations": 1,
+        "jobDone": true
+      }
+    },
+    {
+      "id": "uncertain-guard",
+      "title": "an external success with no durable outcome refuses automatic repetition",
+      "state": "durable-scripted",
+      "outcome": "pass",
+      "observed": "the reclaim answered TMAS2006 uncertain instead of silently buying or applying again; resolution is the operator's",
+      "measured": {
+        "reclaimKind": "uncertain"
+      }
+    }
+  ],
+  "integrated": [
+    {
+      "id": "sequential",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "6c963ac5efeeeaaf62c0a123233b753c9e92af7adf278a165322b6cfd759860a",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "d5d30a7a33adb2cb07fb3e9e5cd1137f1c2c444dbd98703a4e215bab55498452",
+      "attempts": 2,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "fanout-fanin",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "2b83d4eeebca28c90fd85667a951a1ce5d14ca0e6810d37279d863453a52e856",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "d672572f79319893721e9aea974a4b8ceaee4b478c28663ff65dce95d8a193ee",
+      "attempts": 4,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 3,
+      "refusal": null
+    },
+    {
+      "id": "message-order",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "c8a9efd06e90e794899424b94f6c68cc4bdc058523507958df4ec0d6e0deb27e",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "7c6d26a81956f9d6e5486edfd2e778b0d88e7bc30602214bb40df7224f613cda",
+      "attempts": 4,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 3,
+      "refusal": null
+    },
+    {
+      "id": "switch-one",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "38e3553996de9c2ae7c5038b61a766f7d9b06ab92bca802ce0f2045e21b4b4ff",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "b3f6edc92ab410b9efc842b9fb4c574d82a0f652c645ee1ec1f590036de5dbde",
+      "attempts": 2,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "switch-many",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "302680e43d029a6360bfe000ab1bc315bc1ee3639db7fa3da21d8f41102cf971",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "b6d694c4b935f313798ef31ff56ac0a8f36a6ba2e4e36975736e7eeff1318617",
+      "attempts": 3,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 2,
+      "refusal": null
+    },
+    {
+      "id": "loop-three",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "5815c9b9943c576afaba21f5b984dde2668c3cbe6f26f64d92198908f9779a85",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "5f8e8b07aaecc2b2ab99eccbe05789e84e343cc78d79f20dacd445b544031456",
+      "attempts": 4,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "nested-state",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "3db23ac13f12dc3e83f4f2ee39b11ffe3cfa2422d3b494adf767351d5709a71d",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "a325f00e0cb59ec1a901b33e3249f243848a79bb2b9373d79bfd7338f91ce8e3",
+      "attempts": 3,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "interaction",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "c4eb677f27e06f17fcd64a2330800a3abb2061bcf50c96387f136cfcebe1458a",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "5574f14a7f1e097b812a23c1aad560728dfd7c8b946146b02c05e26e33ac716e",
+      "attempts": 4,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "checkpoint",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "5ffb2979ab85fa2cee8e42c7c84bf8668d62bfaf68977d53dbd2fd7621a9db23",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "b99bd123fbf5cd9da910d0c0cbd2aa946f5e77700b8fbd9435706775c2b2338d",
+      "attempts": 3,
+      "calls": 1,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 1,
+      "maxObservedConcurrency": 1,
+      "refusal": null
+    },
+    {
+      "id": "failure-abort",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "e0cb4b4a150c535d742696cd06b4f742cc53fe0daea786f09f9b4d4634460341",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "dbd01ef0c5f64eceaa09a5257c960eb32cc4e8bcb50b055c4a568b88558a220f",
+      "attempts": 2,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": 2,
+      "refusal": null
+    },
+    {
+      "id": "weekly-report-manual",
+      "family": "positive",
+      "state": "runtime-pass",
+      "reason": null,
+      "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "executableRevision": "4413547e5a659bf9e5792784a27990bdcc816f0c48382843dcb9d5d3fb843d73",
+      "attempts": 4,
+      "calls": 11,
+      "toolCalls": 3,
+      "contextReads": 1,
+      "restores": 0,
+      "maxObservedConcurrency": 3,
+      "refusal": null
+    },
+    {
+      "id": "plain-cycle",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1005",
+        "path": "/messages/2"
+      }
+    },
+    {
+      "id": "unknown-port",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1004",
+        "path": "/messages/1/to/port"
+      }
+    },
+    {
+      "id": "switch-no-default",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1006",
+        "path": "/nodes/0/default"
+      }
+    },
+    {
+      "id": "unbounded-loop",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1007",
+        "path": "/nodes/0/maxIterations"
+      }
+    },
+    {
+      "id": "undeclared-tool",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1009",
+        "path": "/nodes/0/tools/0"
+      }
+    },
+    {
+      "id": "child-over-budget",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1008",
+        "path": "/nodes/0/limits/calls"
+      }
+    },
+    {
+      "id": "incompatible-wire",
+      "family": "negative",
+      "state": "refused-as-registered",
+      "reason": "the validator refuses at exactly the registered code and pointer",
+      "workflowVersionId": null,
+      "registryRevision": null,
+      "executableRevision": null,
+      "attempts": 0,
+      "calls": 0,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0,
+      "maxObservedConcurrency": null,
+      "refusal": {
+        "code": "TMAS1004",
+        "path": "/messages/0/to"
+      }
+    }
+  ],
+  "counts": {
+    "fixtures": 18,
+    "probes": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "durability": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "integrated": {
+      "notImplemented": 0,
+      "validated": 0,
+      "refusedAsRegistered": 7,
+      "runtimePass": 11
+    },
+    "calls": 12,
+    "toolCalls": 3,
+    "contextReads": 1,
+    "restores": 1
+  },
+  "gate": {
+    "schemaValid": true,
+    "transportCalls": 0,
+    "liveModelCalls": 0
+  },
+  "live": {
+    "state": "not-run",
+    "reason": "no authorized live plan"
+  },
+  "reportId": "8ca21b25f62d021b23857364c848358c6e0f30d1223c92404f86369cbb200dc8",
+  "decision": {
+    "outcome": "runtime-conformant",
+    "failedClauses": [],
+    "clauses": {
+      "registration": true,
+      "conformance": true,
+      "concurrencyOrder": true,
+      "durability": true,
+      "controlSafety": true,
+      "persistenceIdentity": true,
+      "hygiene": true
+    }
+  }
+}

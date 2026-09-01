@@ -1,0 +1,148 @@
+{
+  "id": "undeclared-tool",
+  "family": "negative",
+  "title": "An agent requesting a tool the registry does not declare refuses at the reference",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-neg-tool",
+    "versionId": "9dccc44c0c07f893a0a0fe8b152d3ddb15f5ce4c48164fbf4ab6c3061ceae6ce",
+    "parentVersionId": null,
+    "title": "Undeclared tool",
+    "description": "The requested tool subset names a capability no registry snapshot carries.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "question",
+        "to": {
+          "node": "paid",
+          "port": "question"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "paid",
+          "port": "answer"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "paid",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "question": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "answer": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "paid-agent",
+        "profile": "scripted",
+        "instructionsRevision": "b606791e348a956af7328f14ffa3e2c0aefd8ebe35c19bb8097ee69bcb0b99f5",
+        "tools": [
+          "ghost-tool"
+        ],
+        "context": [],
+        "messageAdapter": "plain"
+      }
+    ],
+    "control": [],
+    "messages": [],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "question": "q"
+    },
+    "handlers": {},
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "refusal",
+    "code": "TMAS1009",
+    "path": "/nodes/0/tools/0"
+  }
+}

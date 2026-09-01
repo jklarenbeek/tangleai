@@ -1,0 +1,204 @@
+{
+  "id": "unbounded-loop",
+  "family": "negative",
+  "title": "A loop without a positive iteration cap refuses at maxIterations",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-neg-loop",
+    "versionId": "b03fc562680695ef664a6e326a3a45fbb0646102fdc7e3d5c355906c59506839",
+    "parentVersionId": null,
+    "title": "Unbounded loop",
+    "description": "The declared cap is zero, which no model output may repair at runtime.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "seed"
+        ],
+        "properties": {
+          "seed": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "seed",
+        "to": {
+          "node": "refine",
+          "port": "seed"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "refine",
+          "port": "result"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "refine",
+        "kind": "loop",
+        "input": {
+          "ports": {
+            "seed": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "count"
+                ],
+                "properties": {
+                  "count": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "result": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "count"
+                ],
+                "properties": {
+                  "count": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "body": "loop-body",
+        "init": [
+          {
+            "port": "seed",
+            "to": ""
+          }
+        ],
+        "feedback": [
+          {
+            "from": "",
+            "to": ""
+          }
+        ],
+        "result": [
+          {
+            "port": "result",
+            "from": ""
+          }
+        ],
+        "maxIterations": 0,
+        "termination": {
+          "$ge": [
+            "$.output.count",
+            3
+          ]
+        }
+      }
+    ],
+    "control": [],
+    "messages": [],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "seed": {
+        "count": 0
+      }
+    },
+    "handlers": {},
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "refusal",
+    "code": "TMAS1007",
+    "path": "/nodes/0/maxIterations"
+  }
+}

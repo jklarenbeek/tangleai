@@ -92,6 +92,60 @@ Two ordering rules are load-bearing and test-pinned:
 - Every record is schema-validated at the store boundary; evidence is
   mandatory on memories AND on outcome reports.
 
+## The MAS runtime layer (added 2026-09-01)
+
+`@tangleai/mas` is shared orchestration infrastructure over the suite's
+flow, AI and DB seams; `@tangleai/store` hosts it. The layering, top to
+bottom, with the boundary each line keeps:
+
+- **One canonical IR.** `MasWorkflowVersion` is a strict, closed,
+  content-addressed document (six invocation kinds, typed ports, ordered
+  message edges with declared aggregation, hierarchical state pull/push,
+  nested caps, pinned registry/CONFIG references). The declarative loader
+  and the imperative pen emit the same canonical bytes; `versionId`
+  excludes provenance and compile metadata, so authorship can never move
+  a version.
+- **Pure validation and lowering.** Nine semantic gates return sorted
+  `TMAS1xxx` issues with exact JSON Pointers; the partitioner cuts the
+  graph into regions (D4) and lowers every acyclic region to a
+  `jaren-dag` document and every switch/loop/interaction to a
+  `jaren-fsm` document through `@jarenjs/linq/flow`, compile-proven
+  before any activation. Suite compile refusals surface as `TMAS1011`
+  with the Jaren cause retained as data.
+- **Durable semantics in the store.** Eleven MAS collections hold
+  workflow/template/registry versions (immutable, content-addressed),
+  runs (with a worker claim epoch and the trace sequence authority),
+  attempts, ordered messages, state revisions, interactions and bounded
+  trace artifacts. Node completion is ONE transaction (terminal attempt
+  + messages + state + budget + artifacts); activation is
+  compare-and-swap; a zombie worker's stale commit refuses `TMAS2005`.
+  Durable work rides `@jarenjs/db`'s own `_jaren_jobs` /
+  `_jaren_job_checkpoints` through derived idempotent segment ids and a
+  namespaced delegation over `checkpointsFor` — there is deliberately no
+  Tangle job, lease, retry or checkpoint table.
+- **Execution through the suite engines.** The node lifecycle
+  (begin-or-replay under a semantic idempotency key, aggregate in edge
+  order, bounded context, execute, validate/normalize, one atomic
+  commit, return for the flow checkpoint) runs inside `compileDag` task
+  handlers; agents are `createAgent` + `createToolbox` +
+  `createStructuredOutput` over ONE shared `createBudgetAccount` per
+  run; control regions run `compileFsm` sessions persisted through
+  `snapshotFsm`/`resumeFsmSession` on the run row. Interactions complete
+  their queue segment durably and resume through an idempotent outbox
+  reconciler over the published queue.
+- **Trace and message/state contracts.** Edge-document order is the one
+  aggregation order (independent of completion timing, proven under
+  scripted reverse settle); state crosses only declared pull/push
+  members between namespaces; every omitted payload carries an explicit
+  state (`retained`/`redacted`/`truncated`/`expired`/`not-configured`/
+  `not-run`). Downstream ownership is unchanged: GMPL owns collaboration
+  templates, HERA owns experience learning, CONFIG owns effective
+  identity, and the desktop surface work stays on the roadmap.
+
+The measured claim and its limits live in
+[MAS_RUNTIME_BENCHMARK.md](MAS_RUNTIME_BENCHMARK.md) and the handoff
+artifact (`benchmark/results/mas-runtime-handoff.json`).
+
 ## What is deliberately absent (see ROADMAP.md)
 
 The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)

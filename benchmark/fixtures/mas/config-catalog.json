@@ -1,0 +1,17 @@
+{
+  "$masConfigCatalog": "0.1",
+  "catalogId": "mas-conformance-fixtures",
+  "profiles": [
+    "scripted"
+  ],
+  "tools": [
+    "fetch-metrics"
+  ],
+  "contexts": [
+    "memory",
+    "documents",
+    "web",
+    "toolbox",
+    "mcp"
+  ]
+}

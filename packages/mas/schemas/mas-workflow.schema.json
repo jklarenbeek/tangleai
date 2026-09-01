@@ -1,0 +1,443 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/mas-workflow",
+  "title": "MasWorkflowVersion — the one closed canonical workflow IR",
+  "description": "The immutable, content-addressed intermediate representation every authoring path emits and the only shape the runtime executes. A version carries its stable workflow id, its canonical `versionId` (the SHA-256 of the document with `versionId`, `provenance` and `compile` excluded, so authorship and source provenance can never move a version), closed input/output/state schemas, named entry/exit ports, the closed six-kind invocation union, control dependencies, ordered typed message edges, workflow/node caps, pinned registry and CONFIG references and compile metadata. Secrets, clocks and observed results have no representable member. Unknown members refuse at every object.",
+  "type": "object",
+  "required": ["$mas", "workflowId", "versionId", "parentVersionId", "title", "description", "provenance", "input", "output", "entry", "exit", "state", "nodes", "control", "messages", "limits", "registry", "config", "compile"],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      { "$eq": [{ "$count": "$.nodes[*].id" }, { "$count": { "$distinct": "$.nodes[*].id" } }] },
+      { "$eq": [{ "$count": "$.messages[*].id" }, { "$count": { "$distinct": "$.messages[*].id" } }] },
+      { "$every": { "n": "$.nodes[?(@.kind=='switch')]" }, "$satisfies": { "$eq": [{ "$count": "$n.branches[*].id" }, { "$count": { "$distinct": "$n.branches[*].id" } }] } }
+    ]
+  },
+  "properties": {
+    "$mas": { "const": "0.1" },
+    "workflowId": { "$ref": "#/$defs/name" },
+    "versionId": { "$ref": "#/$defs/sha256" },
+    "parentVersionId": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "provenance": {
+      "type": "object",
+      "required": ["author"],
+      "additionalProperties": false,
+      "properties": {
+        "author": { "type": "string", "minLength": 1 }
+      }
+    },
+    "input": { "$ref": "#/$defs/schemaCarrier" },
+    "output": { "$ref": "#/$defs/schemaCarrier" },
+    "entry": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["port", "to"],
+        "additionalProperties": false,
+        "properties": {
+          "port": { "$ref": "#/$defs/name" },
+          "to": { "$ref": "#/$defs/portRef" }
+        }
+      }
+    },
+    "exit": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["port", "from"],
+        "additionalProperties": false,
+        "properties": {
+          "port": { "$ref": "#/$defs/name" },
+          "from": { "$ref": "#/$defs/portRef" }
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "required": ["schema", "init"],
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "$ref": "#/$defs/jsonSchema" },
+        "init": {}
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/invocation" }
+    },
+    "control": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "$ref": "#/$defs/name" },
+          "to": { "$ref": "#/$defs/name" }
+        }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/messageEdge" }
+    },
+    "limits": { "$ref": "#/$defs/workflowLimits" },
+    "registry": {
+      "description": "The pinned MAS registry snapshot revision. `null` is legal only for a subgraph-embedded child, which inherits the enclosing pin.",
+      "type": "object",
+      "required": ["revision"],
+      "additionalProperties": false,
+      "properties": {
+        "revision": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] }
+      }
+    },
+    "config": {
+      "type": "object",
+      "required": ["registryRevision", "profile"],
+      "additionalProperties": false,
+      "properties": {
+        "registryRevision": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] },
+        "profile": { "$ref": "#/$defs/name" }
+      }
+    },
+    "compile": {
+      "type": "object",
+      "required": ["schemaVersion", "sourceMode", "sourceDesignRevision", "executableRevision"],
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": { "const": "0.1" },
+        "sourceMode": { "enum": ["declarative", "imperative"] },
+        "sourceDesignRevision": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] },
+        "executableRevision": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/sha256" }] }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "jsonSchema": {
+      "description": "An embedded JSON Schema document. The semantic validator compiles it; a schema that does not compile refuses.",
+      "type": ["object", "boolean"]
+    },
+    "schemaCarrier": {
+      "type": "object",
+      "required": ["schema"],
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "$ref": "#/$defs/jsonSchema" }
+      }
+    },
+    "queryDocument": {
+      "description": "A Jaren JSON Query document — an operator object, a `$`-rooted path string, or a literal; never null, so a nullable member's oneOf stays decidable. Compilability is a semantic gate.",
+      "not": { "type": "null" }
+    },
+    "portRef": {
+      "type": "object",
+      "required": ["node", "port"],
+      "additionalProperties": false,
+      "properties": {
+        "node": { "$ref": "#/$defs/name" },
+        "port": { "$ref": "#/$defs/name" }
+      }
+    },
+    "ports": {
+      "type": "object",
+      "required": ["ports"],
+      "additionalProperties": false,
+      "properties": {
+        "ports": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-z][a-z0-9-]*$" },
+          "additionalProperties": {
+            "type": "object",
+            "required": ["schema"],
+            "additionalProperties": false,
+            "properties": {
+              "schema": { "$ref": "#/$defs/jsonSchema" }
+            }
+          }
+        }
+      }
+    },
+    "statePull": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["member", "as"],
+        "additionalProperties": false,
+        "properties": {
+          "member": { "type": "string", "pattern": "^/" },
+          "as": { "$ref": "#/$defs/name" }
+        }
+      }
+    },
+    "statePush": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "member"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "$ref": "#/$defs/name" },
+          "member": { "type": "string", "pattern": "^/" }
+        }
+      }
+    },
+    "nodeLimits": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "calls": { "type": "integer", "minimum": 0 },
+            "tokens": { "type": "integer", "minimum": 0 },
+            "ms": { "type": "integer", "minimum": 0 },
+            "toolRounds": { "type": "integer", "minimum": 0 },
+            "contextChars": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+    "workflowLimits": {
+      "type": "object",
+      "required": ["calls", "tokens", "ms", "toolRounds", "fanOut", "concurrency", "iterations", "contextChars", "traceBytes"],
+      "additionalProperties": false,
+      "properties": {
+        "calls": { "type": "integer", "minimum": 1 },
+        "tokens": { "type": "integer", "minimum": 1 },
+        "ms": { "type": "integer", "minimum": 1 },
+        "toolRounds": { "type": "integer", "minimum": 1 },
+        "fanOut": { "type": "integer", "minimum": 1 },
+        "concurrency": { "type": "integer", "minimum": 1 },
+        "iterations": { "type": "integer", "minimum": 1 },
+        "contextChars": { "type": "integer", "minimum": 1 },
+        "traceBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "messageEdge": {
+      "type": "object",
+      "required": ["id", "from", "to", "adapter", "select", "aggregation"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "from": { "$ref": "#/$defs/portRef" },
+        "to": { "$ref": "#/$defs/portRef" },
+        "adapter": { "$ref": "#/$defs/name" },
+        "select": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/queryDocument" }] },
+        "aggregation": { "enum": ["one", "ordered-list", "named-object"] }
+      }
+    },
+    "invocation": {
+      "oneOf": [
+        { "$ref": "#/$defs/agentNode" },
+        { "$ref": "#/$defs/taskNode" },
+        { "$ref": "#/$defs/graphNode" },
+        { "$ref": "#/$defs/loopNode" },
+        { "$ref": "#/$defs/switchNode" },
+        { "$ref": "#/$defs/interactionNode" }
+      ]
+    },
+    "agentNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "role", "profile", "instructionsRevision", "tools", "context", "messageAdapter"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "agent" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "role": { "$ref": "#/$defs/name" },
+        "profile": { "$ref": "#/$defs/name" },
+        "instructionsRevision": { "$ref": "#/$defs/sha256" },
+        "tools": { "type": "array", "items": { "$ref": "#/$defs/name" } },
+        "context": { "type": "array", "items": { "$ref": "#/$defs/name" } },
+        "messageAdapter": { "$ref": "#/$defs/name" }
+      }
+    },
+    "taskNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "handler", "effect"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "task" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "handler": { "$ref": "#/$defs/name" },
+        "effect": { "enum": ["pure", "read", "effectful"] }
+      }
+    },
+    "graphNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "subgraph", "pull", "push"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "graph" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "subgraph": { "$ref": "#/$defs/name" },
+        "pull": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["parent", "child"],
+            "additionalProperties": false,
+            "properties": {
+              "parent": { "type": "string", "pattern": "^/" },
+              "child": { "type": "string", "pattern": "^/" }
+            }
+          }
+        },
+        "push": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["child", "parent"],
+            "additionalProperties": false,
+            "properties": {
+              "child": { "type": "string", "pattern": "^/" },
+              "parent": { "type": "string", "pattern": "^/" }
+            }
+          }
+        }
+      }
+    },
+    "loopNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "body", "init", "feedback", "result", "maxIterations", "termination"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "loop" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "body": { "$ref": "#/$defs/name" },
+        "init": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["port", "to"],
+            "additionalProperties": false,
+            "properties": {
+              "port": { "$ref": "#/$defs/name" },
+              "to": { "type": "string" }
+            }
+          }
+        },
+        "feedback": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["from", "to"],
+            "additionalProperties": false,
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" }
+            }
+          }
+        },
+        "result": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["port", "from"],
+            "additionalProperties": false,
+            "properties": {
+              "port": { "$ref": "#/$defs/name" },
+              "from": { "type": "string" }
+            }
+          }
+        },
+        "maxIterations": {
+          "description": "The host-owned iteration cap. Positivity is the semantic gate, so an unbounded declaration refuses at its own pointer rather than as a shape error.",
+          "type": "integer"
+        },
+        "termination": { "$ref": "#/$defs/queryDocument" }
+      }
+    },
+    "switchNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "mode", "branches", "default"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "switch" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "mode": { "enum": ["one-of", "multi-select"] },
+        "branches": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "when", "nodes", "result"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "$ref": "#/$defs/name" },
+              "when": { "$ref": "#/$defs/queryDocument" },
+              "nodes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/name" } },
+              "result": { "$ref": "#/$defs/portRef" }
+            }
+          }
+        },
+        "default": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/name" }] }
+      }
+    },
+    "interactionNode": {
+      "type": "object",
+      "required": ["id", "kind", "input", "output", "statePull", "statePush", "limits", "prompt", "response", "expiry"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/name" },
+        "kind": { "const": "interaction" },
+        "input": { "$ref": "#/$defs/ports" },
+        "output": { "$ref": "#/$defs/ports" },
+        "statePull": { "$ref": "#/$defs/statePull" },
+        "statePush": { "$ref": "#/$defs/statePush" },
+        "limits": { "$ref": "#/$defs/nodeLimits" },
+        "prompt": { "$ref": "#/$defs/schemaCarrier" },
+        "response": { "$ref": "#/$defs/schemaCarrier" },
+        "expiry": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["afterMs"],
+              "additionalProperties": false,
+              "properties": {
+                "afterMs": { "type": "integer", "minimum": 1 }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,542 @@
+{
+  "id": "peer-review",
+  "family": "positive",
+  "title": "Peer review pauses for a typed decision and follows revise deterministically",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-peer-review",
+    "versionId": "ee716b27777dce570fcd52194f937d6a7b4ad0f52db9c1dbf71aa44de2326ef0",
+    "parentVersionId": null,
+    "title": "Peer review",
+    "description": "A draft pauses for one typed reviewer decision; the accept/revise gate is a one-of switch over the response.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "draft"
+        ],
+        "properties": {
+          "draft": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "text",
+              "disposition"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "disposition": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "draft",
+        "to": {
+          "node": "draft",
+          "port": "draft"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "gate",
+          "port": "routed"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "draft",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "draft": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "text": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "review",
+        "kind": "interaction",
+        "input": {
+          "ports": {
+            "text": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "decision": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "decision",
+                  "note"
+                ],
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "accept",
+                      "revise"
+                    ]
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "prompt": {
+          "schema": {
+            "type": "string"
+          }
+        },
+        "response": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "decision",
+              "note"
+            ],
+            "properties": {
+              "decision": {
+                "enum": [
+                  "accept",
+                  "revise"
+                ]
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "expiry": null
+      },
+      {
+        "id": "gate",
+        "kind": "switch",
+        "input": {
+          "ports": {
+            "decision": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "decision",
+                  "note"
+                ],
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "accept",
+                      "revise"
+                    ]
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "routed": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "disposition"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "disposition": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "mode": "one-of",
+        "branches": [
+          {
+            "id": "accept",
+            "when": {
+              "$eq": [
+                "$.decision.decision",
+                "accept"
+              ]
+            },
+            "nodes": [
+              "publish"
+            ],
+            "result": {
+              "node": "publish",
+              "port": "out"
+            }
+          },
+          {
+            "id": "revise",
+            "when": {
+              "$eq": [
+                "$.decision.decision",
+                "revise"
+              ]
+            },
+            "nodes": [
+              "revise"
+            ],
+            "result": {
+              "node": "revise",
+              "port": "out"
+            }
+          }
+        ],
+        "default": "accept"
+      },
+      {
+        "id": "publish",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "decision": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "decision",
+                  "note"
+                ],
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "accept",
+                      "revise"
+                    ]
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "disposition"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "disposition": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "revise",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "decision": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "decision",
+                  "note"
+                ],
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "accept",
+                      "revise"
+                    ]
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "disposition"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "disposition": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "draft-review",
+        "from": {
+          "node": "draft",
+          "port": "text"
+        },
+        "to": {
+          "node": "review",
+          "port": "text"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "review-gate",
+        "from": {
+          "node": "review",
+          "port": "decision"
+        },
+        "to": {
+          "node": "gate",
+          "port": "decision"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "gate-publish",
+        "from": {
+          "node": "gate",
+          "port": "decision"
+        },
+        "to": {
+          "node": "publish",
+          "port": "decision"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "gate-revise",
+        "from": {
+          "node": "gate",
+          "port": "decision"
+        },
+        "to": {
+          "node": "revise",
+          "port": "decision"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "a74b494e60c5ccedf6973042579853c1332d8912c8fa343c156d9c3ac4c6fd16"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "draft": "v1"
+    },
+    "handlers": {
+      "draft": {
+        "query": {
+          "text": {
+            "$concat": [
+              "drafted: ",
+              "$.draft"
+            ]
+          }
+        }
+      },
+      "publish": {
+        "query": {
+          "out": {
+            "text": "published",
+            "disposition": "accepted"
+          }
+        }
+      },
+      "revise": {
+        "query": {
+          "out": {
+            "text": {
+              "$concat": [
+                "revised per: ",
+                "$.decision.note"
+              ]
+            },
+            "disposition": "revised"
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": {
+      "node": "review",
+      "value": {
+        "decision": "revise",
+        "note": "tighten the intro"
+      }
+    },
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "text": "revised per: tighten the intro",
+        "disposition": "revised"
+      }
+    },
+    "failure": null,
+    "events": [
+      "draft:completed",
+      "review:waiting",
+      "review:completed",
+      "revise:completed",
+      "gate:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

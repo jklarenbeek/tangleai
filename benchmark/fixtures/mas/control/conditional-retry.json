@@ -1,0 +1,272 @@
+{
+  "id": "conditional-retry",
+  "family": "positive",
+  "title": "A conditional retry succeeds once and cannot retry after its cap",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-conditional-retry",
+    "versionId": "6eb5ee33d84feaf1764282e5be1d688abc25a1155d612971302901905b0ff262",
+    "parentVersionId": null,
+    "title": "Conditional retry",
+    "description": "The loop contract as declared recovery: a typed body failure feeds the next attempt; the cap can never be exceeded.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "start"
+        ],
+        "properties": {
+          "start": {
+            "type": "object",
+            "required": [
+              "n",
+              "goal"
+            ],
+            "properties": {
+              "n": {
+                "type": "number"
+              },
+              "goal": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "ok",
+              "n",
+              "goal"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "n": {
+                "type": "number"
+              },
+              "goal": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "start",
+        "to": {
+          "node": "attempt",
+          "port": "start"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "attempt",
+          "port": "result"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "attempt",
+        "kind": "loop",
+        "input": {
+          "ports": {
+            "start": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "n",
+                  "goal"
+                ],
+                "properties": {
+                  "n": {
+                    "type": "number"
+                  },
+                  "goal": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "result": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ok",
+                  "n",
+                  "goal"
+                ],
+                "properties": {
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "n": {
+                    "type": "number"
+                  },
+                  "goal": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "body": "retry-body",
+        "init": [
+          {
+            "port": "start",
+            "to": ""
+          }
+        ],
+        "feedback": [
+          {
+            "from": "/n",
+            "to": "/n"
+          },
+          {
+            "from": "/goal",
+            "to": "/goal"
+          }
+        ],
+        "result": [
+          {
+            "port": "result",
+            "from": ""
+          }
+        ],
+        "maxIterations": 3,
+        "termination": {
+          "$eq": [
+            "$.output.ok",
+            true
+          ]
+        }
+      }
+    ],
+    "control": [],
+    "messages": [],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "a74b494e60c5ccedf6973042579853c1332d8912c8fa343c156d9c3ac4c6fd16"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "start": {
+        "n": 1,
+        "goal": 2
+      }
+    },
+    "handlers": {
+      "attempt/try": {
+        "query": {
+          "ok": {
+            "$ge": [
+              "$.n",
+              "$.goal"
+            ]
+          },
+          "n": {
+            "$add": [
+              "$.n",
+              1
+            ]
+          },
+          "goal": "$.goal"
+        }
+      }
+    },
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "ok": true,
+        "n": 3,
+        "goal": 2
+      }
+    },
+    "failure": null,
+    "events": [
+      "attempt/1/try:completed",
+      "attempt/2/try:completed",
+      "attempt:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

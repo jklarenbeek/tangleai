@@ -1,0 +1,413 @@
+{
+  "$masRegistry": "0.1",
+  "registryId": "mas-conformance-fixtures",
+  "roles": [
+    {
+      "id": "drafter-data",
+      "title": "drafter-data",
+      "instructions": "Draft the data metrics section for the weekly report from the brief. Use the metrics tool for grounding and answer with the requested structure.",
+      "instructionsRevision": "f960cb7e63a7e902be9d4925dc633580d17c5a46393827f8d9b9e82b06d46f66",
+      "capabilities": []
+    },
+    {
+      "id": "drafter-market",
+      "title": "drafter-market",
+      "instructions": "Draft the market risks and opportunities section for the weekly report from the brief. Use the metrics tool for grounding and answer with the requested structure.",
+      "instructionsRevision": "3410ff46ff5e3551a57aaf5cc80cdb97b2e6210663ee4eacea1b87dd3d864aaf",
+      "capabilities": []
+    },
+    {
+      "id": "drafter-research",
+      "title": "drafter-research",
+      "instructions": "Draft the research findings section for the weekly report from the brief. Use the metrics tool for grounding and answer with the requested structure.",
+      "instructionsRevision": "0e5afde143c1b43b6c41e93a642cb49efd03a3b7d8118b885a4da7b426df8f27",
+      "capabilities": []
+    },
+    {
+      "id": "paid-agent",
+      "title": "paid-agent",
+      "instructions": "Answer the question in one short reply.",
+      "instructionsRevision": "b606791e348a956af7328f14ffa3e2c0aefd8ebe35c19bb8097ee69bcb0b99f5",
+      "capabilities": []
+    },
+    {
+      "id": "report-writer",
+      "title": "report-writer",
+      "instructions": "Assemble the final weekly report from the three drafted sections, in the order they arrive. Answer with the requested structure.",
+      "instructionsRevision": "453e068358da3538b12cf23dd942058d62b314d447f9b7f26284a3cd86ae58a2",
+      "capabilities": []
+    }
+  ],
+  "handlers": [
+    {
+      "id": "scripted",
+      "title": "Scripted pure step",
+      "effect": "pure",
+      "idempotency": "not-required"
+    },
+    {
+      "id": "scripted-effectful",
+      "title": "Scripted effectful step",
+      "effect": "effectful",
+      "idempotency": "honored"
+    },
+    {
+      "id": "scripted-read",
+      "title": "Scripted read step",
+      "effect": "read",
+      "idempotency": "not-required"
+    }
+  ],
+  "tools": [
+    {
+      "id": "fetch-metrics",
+      "title": "Fetch one named metric",
+      "effect": "read",
+      "input": {
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "properties": {
+          "metric": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "inputRevision": "6f3432d2e25a9d5f741a6622f9866936c1e90220efd2152f943b58ae871f73eb"
+    }
+  ],
+  "messageAdapters": [
+    {
+      "id": "json-schema",
+      "version": "0.1"
+    },
+    {
+      "id": "markdown-sections",
+      "version": "0.1"
+    },
+    {
+      "id": "plain",
+      "version": "0.1"
+    }
+  ],
+  "contextAdapters": [
+    {
+      "id": "documents",
+      "title": "Versioned document chunks",
+      "capabilities": [
+        "read"
+      ]
+    },
+    {
+      "id": "mcp",
+      "title": "Injected MCP-compatible seam",
+      "capabilities": [
+        "read"
+      ]
+    },
+    {
+      "id": "memory",
+      "title": "Curated memory recall",
+      "capabilities": [
+        "read"
+      ]
+    },
+    {
+      "id": "toolbox",
+      "title": "Effective toolbox manifest",
+      "capabilities": [
+        "read"
+      ]
+    },
+    {
+      "id": "web",
+      "title": "Read-only safe web",
+      "capabilities": [
+        "read"
+      ]
+    }
+  ],
+  "templates": [],
+  "subgraphs": [
+    {
+      "id": "child-state-body",
+      "versionId": "2f3d6f5e03ab97cf9bd70569dfc690c5fa89f5618bd26aa1b2275bc2c4e41b81",
+      "workflow": {
+        "$mas": "0.1",
+        "workflowId": "child-state-body",
+        "versionId": "2f3d6f5e03ab97cf9bd70569dfc690c5fa89f5618bd26aa1b2275bc2c4e41b81",
+        "parentVersionId": null,
+        "title": "Nested state body — work over pulled state",
+        "description": "Pulls one parent member into local state, produces one pushed member, and can address nothing else.",
+        "provenance": {
+          "author": "tangle-conformance"
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "go"
+            ],
+            "properties": {
+              "go": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "output": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "done"
+            ],
+            "properties": {
+              "done": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "entry": [
+          {
+            "port": "go",
+            "to": {
+              "node": "work",
+              "port": "go"
+            }
+          }
+        ],
+        "exit": [
+          {
+            "port": "done",
+            "from": {
+              "node": "work",
+              "port": "done"
+            }
+          }
+        ],
+        "state": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "inherited",
+              "produced"
+            ],
+            "properties": {
+              "inherited": {
+                "type": "number"
+              },
+              "produced": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          },
+          "init": {
+            "inherited": 0,
+            "produced": 0
+          }
+        },
+        "nodes": [
+          {
+            "id": "work",
+            "kind": "task",
+            "input": {
+              "ports": {
+                "go": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "output": {
+              "ports": {
+                "made": {
+                  "schema": {
+                    "type": "number"
+                  }
+                },
+                "done": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "statePull": [
+              {
+                "member": "/inherited",
+                "as": "inherited"
+              }
+            ],
+            "statePush": [
+              {
+                "from": "made",
+                "member": "/produced"
+              }
+            ],
+            "limits": null,
+            "handler": "scripted",
+            "effect": "pure"
+          }
+        ],
+        "control": [],
+        "messages": [],
+        "limits": {
+          "calls": 32,
+          "tokens": 200000,
+          "ms": 600000,
+          "toolRounds": 4,
+          "fanOut": 8,
+          "concurrency": 8,
+          "iterations": 8,
+          "contextChars": 40000,
+          "traceBytes": 1000000
+        },
+        "registry": {
+          "revision": null
+        },
+        "config": {
+          "registryRevision": null,
+          "profile": "scripted"
+        },
+        "compile": {
+          "schemaVersion": "0.1",
+          "sourceMode": "declarative",
+          "sourceDesignRevision": null,
+          "executableRevision": null
+        }
+      }
+    },
+    {
+      "id": "loop-body",
+      "versionId": "d5f64b8a0d6afa05d74ff058b06cd20f70d891bfb4b1d8400aac4528b9cc42a2",
+      "workflow": {
+        "$mas": "0.1",
+        "workflowId": "loop-body",
+        "versionId": "d5f64b8a0d6afa05d74ff058b06cd20f70d891bfb4b1d8400aac4528b9cc42a2",
+        "parentVersionId": null,
+        "title": "Loop body — bump the counter",
+        "description": "One scripted increment over the loop state; the loop host owns iteration and termination.",
+        "provenance": {
+          "author": "tangle-conformance"
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "output": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "entry": [
+          {
+            "port": "count",
+            "to": {
+              "node": "bump",
+              "port": "count"
+            }
+          }
+        ],
+        "exit": [
+          {
+            "port": "count",
+            "from": {
+              "node": "bump",
+              "port": "value"
+            }
+          }
+        ],
+        "state": {
+          "schema": {
+            "type": "object",
+            "required": [],
+            "properties": {},
+            "additionalProperties": false
+          },
+          "init": {}
+        },
+        "nodes": [
+          {
+            "id": "bump",
+            "kind": "task",
+            "input": {
+              "ports": {
+                "count": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "output": {
+              "ports": {
+                "value": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "statePull": [],
+            "statePush": [],
+            "limits": null,
+            "handler": "scripted",
+            "effect": "pure"
+          }
+        ],
+        "control": [],
+        "messages": [],
+        "limits": {
+          "calls": 32,
+          "tokens": 200000,
+          "ms": 600000,
+          "toolRounds": 4,
+          "fanOut": 8,
+          "concurrency": 8,
+          "iterations": 8,
+          "contextChars": 40000,
+          "traceBytes": 1000000
+        },
+        "registry": {
+          "revision": null
+        },
+        "config": {
+          "registryRevision": null,
+          "profile": "scripted"
+        },
+        "compile": {
+          "schemaVersion": "0.1",
+          "sourceMode": "declarative",
+          "sourceDesignRevision": null,
+          "executableRevision": null
+        }
+      }
+    }
+  ]
+}

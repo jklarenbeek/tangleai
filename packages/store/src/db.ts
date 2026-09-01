@@ -31,6 +31,15 @@ export interface OpenTangleDbOptions {
   path?: string;
   /** Driver override (tests inject `nodeDriver()` explicitly). */
   driver?: OpenStoreOptions['driver'];
+  /**
+   * The suite's durable job queue (JOBS-FORMAT), exposed rather than
+   * hidden behind an application boolean: pass `true` or the suite's own
+   * options object (injectable `now`/`random` for deterministic tests).
+   * Absent means off — ordinary callers keep their current defaults.
+   */
+  jobs?: OpenStoreOptions['jobs'];
+  /** Change capture (LIVE-FORMAT); absent means off. */
+  capture?: OpenStoreOptions['capture'];
 }
 
 export function pickDriver(): OpenStoreOptions['driver'] {
@@ -41,5 +50,10 @@ export function pickDriver(): OpenStoreOptions['driver'] {
 
 export function openTangleDb(options: OpenTangleDbOptions = {}): Promise<TangleDb> {
   const driver = options.driver ?? pickDriver();
-  return openStore(TANGLE_DB_MODEL, { driver, path: options.path ?? ':memory:' });
+  return openStore(TANGLE_DB_MODEL, {
+    driver,
+    path: options.path ?? ':memory:',
+    ...(options.jobs !== undefined ? { jobs: options.jobs } : {}),
+    ...(options.capture !== undefined ? { capture: options.capture } : {}),
+  });
 }

@@ -1,0 +1,463 @@
+{
+  "id": "parallel-analysis",
+  "title": "Parallel analysis template with two declared instances",
+  "template": {
+    "$masTemplate": "0.1",
+    "templateId": "parallel-analysis",
+    "versionId": "8edd06e1a4744847ffd291e5b83efa62070653be86e8ed6db46ea40558332beb",
+    "parentVersionId": null,
+    "title": "Parallel analysis (conformance)",
+    "description": "A Tangle-authored two-analyst fan-out for conformance measurement — deliberately not one of the six GMPL-owned production templates.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "fragment": {
+      "$mas": "0.1",
+      "workflowId": "wf-parallel-analysis",
+      "versionId": "485dc1d1cfc12fac945e77025fe34c5f6a7d44e20198fd72b3f259268fc85875",
+      "parentVersionId": null,
+      "title": "Parallel analysis",
+      "description": "Two analysts fan out over one brief and a merger combines their structured results in declared order.",
+      "provenance": {
+        "author": "tangle-conformance"
+      },
+      "input": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "brief"
+          ],
+          "properties": {
+            "brief": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "output": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "merged"
+          ],
+          "properties": {
+            "merged": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "points"
+                ],
+                "properties": {
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "entry": [
+        {
+          "port": "brief",
+          "to": {
+            "node": "analyst-one",
+            "port": "brief"
+          }
+        },
+        {
+          "port": "brief",
+          "to": {
+            "node": "analyst-two",
+            "port": "brief"
+          }
+        }
+      ],
+      "exit": [
+        {
+          "port": "merged",
+          "from": {
+            "node": "merge",
+            "port": "out"
+          }
+        }
+      ],
+      "state": {
+        "schema": {
+          "type": "object",
+          "required": [],
+          "properties": {},
+          "additionalProperties": false
+        },
+        "init": {}
+      },
+      "nodes": [
+        {
+          "id": "analyst-one",
+          "kind": "agent",
+          "input": {
+            "ports": {
+              "brief": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "output": {
+            "ports": {
+              "analysis": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "points"
+                  ],
+                  "properties": {
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "statePull": [],
+          "statePush": [],
+          "limits": {
+            "calls": 8
+          },
+          "role": "analyst-alpha",
+          "profile": "scripted",
+          "instructionsRevision": "0ad8a50b9d58bad73aa2c4f980e3a3080b3192524a9b169e85dbe808d366a066",
+          "tools": [],
+          "context": [],
+          "messageAdapter": "markdown-sections"
+        },
+        {
+          "id": "analyst-two",
+          "kind": "agent",
+          "input": {
+            "ports": {
+              "brief": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "output": {
+            "ports": {
+              "analysis": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "points"
+                  ],
+                  "properties": {
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "statePull": [],
+          "statePush": [],
+          "limits": null,
+          "role": "analyst-alpha",
+          "profile": "scripted",
+          "instructionsRevision": "0ad8a50b9d58bad73aa2c4f980e3a3080b3192524a9b169e85dbe808d366a066",
+          "tools": [],
+          "context": [],
+          "messageAdapter": "markdown-sections"
+        },
+        {
+          "id": "merge",
+          "kind": "task",
+          "input": {
+            "ports": {
+              "parts": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "points"
+                    ],
+                    "properties": {
+                      "points": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "output": {
+            "ports": {
+              "out": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "points"
+                    ],
+                    "properties": {
+                      "points": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "statePull": [],
+          "statePush": [],
+          "limits": null,
+          "handler": "scripted",
+          "effect": "pure"
+        }
+      ],
+      "control": [],
+      "messages": [
+        {
+          "id": "analyst-one-merge",
+          "from": {
+            "node": "analyst-one",
+            "port": "analysis"
+          },
+          "to": {
+            "node": "merge",
+            "port": "parts"
+          },
+          "adapter": "json-schema",
+          "select": null,
+          "aggregation": "ordered-list"
+        },
+        {
+          "id": "analyst-two-merge",
+          "from": {
+            "node": "analyst-two",
+            "port": "analysis"
+          },
+          "to": {
+            "node": "merge",
+            "port": "parts"
+          },
+          "adapter": "json-schema",
+          "select": null,
+          "aggregation": "ordered-list"
+        }
+      ],
+      "limits": {
+        "calls": 32,
+        "tokens": 200000,
+        "ms": 600000,
+        "toolRounds": 4,
+        "fanOut": 8,
+        "concurrency": 8,
+        "iterations": 8,
+        "contextChars": 40000,
+        "traceBytes": 1000000
+      },
+      "registry": {
+        "revision": "a74b494e60c5ccedf6973042579853c1332d8912c8fa343c156d9c3ac4c6fd16"
+      },
+      "config": {
+        "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+        "profile": "scripted"
+      },
+      "compile": {
+        "schemaVersion": "0.1",
+        "sourceMode": "declarative",
+        "sourceDesignRevision": null,
+        "executableRevision": null
+      }
+    },
+    "parameters": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "role",
+          "instructionsRevision",
+          "calls"
+        ],
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "instructionsRevision": {
+            "type": "string"
+          },
+          "calls": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bindings": [
+      {
+        "parameterPointer": "/role",
+        "targetPointer": "/nodes/0/role",
+        "mode": "role"
+      },
+      {
+        "parameterPointer": "/instructionsRevision",
+        "targetPointer": "/nodes/0/instructionsRevision",
+        "mode": "instructions-revision"
+      },
+      {
+        "parameterPointer": "/calls",
+        "targetPointer": "/nodes/0/limits/calls",
+        "mode": "caps"
+      }
+    ]
+  },
+  "instances": {
+    "a": {
+      "role": "analyst-alpha",
+      "instructionsRevision": "0ad8a50b9d58bad73aa2c4f980e3a3080b3192524a9b169e85dbe808d366a066",
+      "calls": 4
+    },
+    "b": {
+      "role": "analyst-beta",
+      "instructionsRevision": "01a5359cb6dc1894c46dcea776eac58d9b2a63d68fd45b3fafa1c09fd2c77b1e",
+      "calls": 6
+    }
+  },
+  "run": {
+    "script": {
+      "input": {
+        "brief": "compare the options"
+      },
+      "handlers": {
+        "merge": {
+          "query": {
+            "out": "$.parts"
+          }
+        }
+      },
+      "agents": {
+        "analyst-one": {
+          "turns": [
+            {
+              "content": "alpha analysis",
+              "usage": {
+                "prompt_tokens": 4,
+                "completion_tokens": 2
+              }
+            },
+            {
+              "content": "{\"points\":[\"alpha analysis\"]}",
+              "usage": {
+                "prompt_tokens": 3,
+                "completion_tokens": 2
+              }
+            }
+          ]
+        },
+        "analyst-two": {
+          "turns": [
+            {
+              "content": "second analysis",
+              "usage": {
+                "prompt_tokens": 4,
+                "completion_tokens": 2
+              }
+            },
+            {
+              "content": "{\"points\":[\"second analysis\"]}",
+              "usage": {
+                "prompt_tokens": 3,
+                "completion_tokens": 2
+              }
+            }
+          ]
+        }
+      },
+      "gate": {
+        "nodes": [
+          "analyst-one",
+          "analyst-two"
+        ],
+        "settleOrder": [
+          "analyst-two",
+          "analyst-one"
+        ]
+      },
+      "stopAfter": null,
+      "respond": null,
+      "failAt": null
+    },
+    "expect": {
+      "kind": "pass",
+      "outcome": "completed",
+      "output": {
+        "merged": [
+          {
+            "points": [
+              "alpha analysis"
+            ]
+          },
+          {
+            "points": [
+              "second analysis"
+            ]
+          }
+        ]
+      },
+      "failure": null,
+      "events": [
+        "analyst-two:completed",
+        "analyst-one:completed",
+        "merge:completed"
+      ],
+      "aggregations": [
+        {
+          "node": "merge",
+          "port": "parts",
+          "sources": [
+            "analyst-one",
+            "analyst-two"
+          ]
+        }
+      ],
+      "concurrency": {
+        "min": 2,
+        "max": 2
+      },
+      "calls": 4,
+      "toolCalls": 0,
+      "contextReads": 0,
+      "restores": 0
+    }
+  }
+}

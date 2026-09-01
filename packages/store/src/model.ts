@@ -2,7 +2,7 @@
  * The Tangle database model — a `jaren-model` 0.1 document for
  * @jarenjs/db `openStore`.
  *
- * Ten collections, one decision each:
+ * The core collections, one decision each:
  *
  *   memories  — the MemoryUnit records. The db-level schema is
  *               deliberately minimal: the REAL write gate is
@@ -189,6 +189,57 @@ export const TANGLE_DB_MODEL = {
           value: { type: 'object' },
         },
       },
+      key: '/id',
+    },
+    // The eleven MAS semantic collections. The db-level schemas are
+    // deliberately minimal (the same rule as `memories`): the REAL write
+    // gate is the generated mas-runtime/mas-workflow contracts, enforced by
+    // `createMasStore` at the MasStore boundary — validating twice with two
+    // schemas invites drift. There is deliberately no mas_jobs, lease,
+    // retry, dead-letter or generic checkpoint collection: durable work is
+    // the suite's own `_jaren_jobs` / `_jaren_job_checkpoints`.
+    mas_workflows: {
+      schema: { type: 'object', required: ['id'], properties: { id: ID } },
+      key: '/id',
+    },
+    mas_workflow_versions: {
+      schema: { type: 'object', required: ['versionId'], properties: { versionId: { type: 'string', pattern: '^[0-9a-f]{64}$' } } },
+      key: '/versionId',
+    },
+    mas_templates: {
+      schema: { type: 'object', required: ['id'], properties: { id: ID } },
+      key: '/id',
+    },
+    mas_template_versions: {
+      schema: { type: 'object', required: ['versionId'], properties: { versionId: { type: 'string', pattern: '^[0-9a-f]{64}$' } } },
+      key: '/versionId',
+    },
+    mas_registry_snapshots: {
+      schema: { type: 'object', required: ['revision'], properties: { revision: { type: 'string', pattern: '^[0-9a-f]{64}$' } } },
+      key: '/revision',
+    },
+    mas_runs: {
+      schema: { type: 'object', required: ['id'], properties: { id: ID } },
+      key: '/id',
+    },
+    mas_node_attempts: {
+      schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
+      key: '/id',
+    },
+    mas_messages: {
+      schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
+      key: '/id',
+    },
+    mas_state_revisions: {
+      schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
+      key: '/id',
+    },
+    mas_interactions: {
+      schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
+      key: '/id',
+    },
+    mas_trace_artifacts: {
+      schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
     },
   },

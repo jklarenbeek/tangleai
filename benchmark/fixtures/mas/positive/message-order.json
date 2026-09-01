@@ -1,0 +1,449 @@
+{
+  "id": "message-order",
+  "family": "positive",
+  "title": "Deliberately reversed completion; aggregation keeps declared order",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-message-order",
+    "versionId": "c8a9efd06e90e794899424b94f6c68cc4bdc058523507958df4ec0d6e0deb27e",
+    "parentVersionId": null,
+    "title": "Message order",
+    "description": "The fan-in aggregation order is the declared edge order, not the completion order.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "topic"
+        ],
+        "properties": {
+          "topic": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "topic"
+              ],
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "topic": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "topic",
+        "to": {
+          "node": "alpha",
+          "port": "topic"
+        }
+      },
+      {
+        "port": "topic",
+        "to": {
+          "node": "beta",
+          "port": "topic"
+        }
+      },
+      {
+        "port": "topic",
+        "to": {
+          "node": "gamma",
+          "port": "topic"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "join",
+          "port": "merged"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "alpha",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "topic": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "part": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "topic"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "beta",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "topic": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "part": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "topic"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "gamma",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "topic": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "part": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "topic"
+                ],
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "topic": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "join",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "parts": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "from",
+                    "topic"
+                  ],
+                  "properties": {
+                    "from": {
+                      "type": "string"
+                    },
+                    "topic": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "merged": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "from",
+                    "topic"
+                  ],
+                  "properties": {
+                    "from": {
+                      "type": "string"
+                    },
+                    "topic": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "alpha-join",
+        "from": {
+          "node": "alpha",
+          "port": "part"
+        },
+        "to": {
+          "node": "join",
+          "port": "parts"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "ordered-list"
+      },
+      {
+        "id": "beta-join",
+        "from": {
+          "node": "beta",
+          "port": "part"
+        },
+        "to": {
+          "node": "join",
+          "port": "parts"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "ordered-list"
+      },
+      {
+        "id": "gamma-join",
+        "from": {
+          "node": "gamma",
+          "port": "part"
+        },
+        "to": {
+          "node": "join",
+          "port": "parts"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "ordered-list"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "topic": "t"
+    },
+    "handlers": {
+      "alpha": {
+        "query": {
+          "part": {
+            "from": "alpha",
+            "topic": "$.topic"
+          }
+        }
+      },
+      "beta": {
+        "query": {
+          "part": {
+            "from": "beta",
+            "topic": "$.topic"
+          }
+        }
+      },
+      "gamma": {
+        "query": {
+          "part": {
+            "from": "gamma",
+            "topic": "$.topic"
+          }
+        }
+      },
+      "join": {
+        "query": {
+          "merged": "$.parts"
+        }
+      }
+    },
+    "agents": {},
+    "gate": {
+      "nodes": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "settleOrder": [
+        "gamma",
+        "beta",
+        "alpha"
+      ]
+    },
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": [
+        {
+          "from": "alpha",
+          "topic": "t"
+        },
+        {
+          "from": "beta",
+          "topic": "t"
+        },
+        {
+          "from": "gamma",
+          "topic": "t"
+        }
+      ]
+    },
+    "failure": null,
+    "events": [
+      "gamma:completed",
+      "beta:completed",
+      "alpha:completed",
+      "join:completed"
+    ],
+    "aggregations": [
+      {
+        "node": "join",
+        "port": "parts",
+        "sources": [
+          "alpha",
+          "beta",
+          "gamma"
+        ]
+      }
+    ],
+    "concurrency": {
+      "min": 3,
+      "max": 3
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

@@ -1,0 +1,385 @@
+{
+  "id": "switch-one",
+  "family": "positive",
+  "title": "Exactly one selected branch, with a default available",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-switch-one",
+    "versionId": "38e3553996de9c2ae7c5038b61a766f7d9b06ab92bca802ce0f2045e21b4b4ff",
+    "parentVersionId": null,
+    "title": "One-of switch",
+    "description": "Ordered query-guarded branches; only the selected branch region executes.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "object",
+            "required": [
+              "n"
+            ],
+            "properties": {
+              "n": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "handled",
+              "n"
+            ],
+            "properties": {
+              "handled": {
+                "type": "string"
+              },
+              "n": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "value",
+        "to": {
+          "node": "route",
+          "port": "value"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "route",
+          "port": "routed"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "route",
+        "kind": "switch",
+        "input": {
+          "ports": {
+            "value": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "n"
+                ],
+                "properties": {
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "routed": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "handled",
+                  "n"
+                ],
+                "properties": {
+                  "handled": {
+                    "type": "string"
+                  },
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "mode": "one-of",
+        "branches": [
+          {
+            "id": "high",
+            "when": {
+              "$ge": [
+                "$.value.n",
+                10
+              ]
+            },
+            "nodes": [
+              "handle-high"
+            ],
+            "result": {
+              "node": "handle-high",
+              "port": "out"
+            }
+          },
+          {
+            "id": "low",
+            "when": {
+              "$lt": [
+                "$.value.n",
+                10
+              ]
+            },
+            "nodes": [
+              "handle-low"
+            ],
+            "result": {
+              "node": "handle-low",
+              "port": "out"
+            }
+          }
+        ],
+        "default": "low"
+      },
+      {
+        "id": "handle-high",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "value": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "n"
+                ],
+                "properties": {
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "handled",
+                  "n"
+                ],
+                "properties": {
+                  "handled": {
+                    "type": "string"
+                  },
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "handle-low",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "value": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "n"
+                ],
+                "properties": {
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "handled",
+                  "n"
+                ],
+                "properties": {
+                  "handled": {
+                    "type": "string"
+                  },
+                  "n": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "route-handle-high",
+        "from": {
+          "node": "route",
+          "port": "value"
+        },
+        "to": {
+          "node": "handle-high",
+          "port": "value"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "route-handle-low",
+        "from": {
+          "node": "route",
+          "port": "value"
+        },
+        "to": {
+          "node": "handle-low",
+          "port": "value"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "value": {
+        "n": 4
+      }
+    },
+    "handlers": {
+      "handle-high": {
+        "query": {
+          "out": {
+            "handled": "high",
+            "n": "$.value.n"
+          }
+        }
+      },
+      "handle-low": {
+        "query": {
+          "out": {
+            "handled": "low",
+            "n": "$.value.n"
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "handled": "low",
+        "n": 4
+      }
+    },
+    "failure": null,
+    "events": [
+      "handle-low:completed",
+      "route:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

@@ -1,0 +1,576 @@
+{
+  "id": "weekly-report-manual",
+  "family": "positive",
+  "title": "START, three concurrent drafters, one ordered finalizer, END",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-weekly-report",
+    "versionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
+    "parentVersionId": null,
+    "title": "Weekly report",
+    "description": "Three drafting agents run concurrently over one brief; the writer receives their validated structured results in declared edge order and finalizes the report.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "brief"
+        ],
+        "properties": {
+          "brief": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "report"
+        ],
+        "properties": {
+          "report": {
+            "type": "object",
+            "required": [
+              "title",
+              "sections"
+            ],
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "sections": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "brief",
+        "to": {
+          "node": "researcher",
+          "port": "brief"
+        }
+      },
+      {
+        "port": "brief",
+        "to": {
+          "node": "data-analyst",
+          "port": "brief"
+        }
+      },
+      {
+        "port": "brief",
+        "to": {
+          "node": "market-analyst",
+          "port": "brief"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "report",
+        "from": {
+          "node": "writer",
+          "port": "report"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "researcher",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "brief": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "findings": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "findings"
+                ],
+                "properties": {
+                  "findings": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "drafter-research",
+        "profile": "scripted",
+        "instructionsRevision": "0e5afde143c1b43b6c41e93a642cb49efd03a3b7d8118b885a4da7b426df8f27",
+        "tools": [
+          "fetch-metrics"
+        ],
+        "context": [],
+        "messageAdapter": "markdown-sections"
+      },
+      {
+        "id": "data-analyst",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "brief": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "metrics": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "metrics"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "drafter-data",
+        "profile": "scripted",
+        "instructionsRevision": "f960cb7e63a7e902be9d4925dc633580d17c5a46393827f8d9b9e82b06d46f66",
+        "tools": [
+          "fetch-metrics"
+        ],
+        "context": [],
+        "messageAdapter": "markdown-sections"
+      },
+      {
+        "id": "market-analyst",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "brief": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "risks": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "risks"
+                ],
+                "properties": {
+                  "risks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "drafter-market",
+        "profile": "scripted",
+        "instructionsRevision": "3410ff46ff5e3551a57aaf5cc80cdb97b2e6210663ee4eacea1b87dd3d864aaf",
+        "tools": [
+          "fetch-metrics"
+        ],
+        "context": [],
+        "messageAdapter": "markdown-sections"
+      },
+      {
+        "id": "writer",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "drafts": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "findings"
+                      ],
+                      "properties": {
+                        "findings": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "metrics"
+                      ],
+                      "properties": {
+                        "metrics": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "risks"
+                      ],
+                      "properties": {
+                        "risks": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "report": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "sections"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "sections": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "report-writer",
+        "profile": "scripted",
+        "instructionsRevision": "453e068358da3538b12cf23dd942058d62b314d447f9b7f26284a3cd86ae58a2",
+        "tools": [],
+        "context": [
+          "memory"
+        ],
+        "messageAdapter": "markdown-sections"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "researcher-writer",
+        "from": {
+          "node": "researcher",
+          "port": "findings"
+        },
+        "to": {
+          "node": "writer",
+          "port": "drafts"
+        },
+        "adapter": "markdown-sections",
+        "select": null,
+        "aggregation": "ordered-list"
+      },
+      {
+        "id": "data-analyst-writer",
+        "from": {
+          "node": "data-analyst",
+          "port": "metrics"
+        },
+        "to": {
+          "node": "writer",
+          "port": "drafts"
+        },
+        "adapter": "markdown-sections",
+        "select": null,
+        "aggregation": "ordered-list"
+      },
+      {
+        "id": "market-analyst-writer",
+        "from": {
+          "node": "market-analyst",
+          "port": "risks"
+        },
+        "to": {
+          "node": "writer",
+          "port": "drafts"
+        },
+        "adapter": "markdown-sections",
+        "select": null,
+        "aggregation": "ordered-list"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "brief": "Q3 metrics"
+    },
+    "handlers": {},
+    "agents": {
+      "researcher": {
+        "turns": [
+          {
+            "toolCall": {
+              "name": "fetch-metrics",
+              "arguments": {
+                "metric": "research"
+              }
+            },
+            "usage": {
+              "prompt_tokens": 4,
+              "completion_tokens": 2
+            }
+          },
+          {
+            "content": "research summary",
+            "usage": {
+              "prompt_tokens": 6,
+              "completion_tokens": 3
+            }
+          },
+          {
+            "content": "{\"findings\":[\"research summary\"]}",
+            "usage": {
+              "prompt_tokens": 5,
+              "completion_tokens": 4
+            }
+          }
+        ]
+      },
+      "data-analyst": {
+        "turns": [
+          {
+            "toolCall": {
+              "name": "fetch-metrics",
+              "arguments": {
+                "metric": "data"
+              }
+            },
+            "usage": {
+              "prompt_tokens": 4,
+              "completion_tokens": 2
+            }
+          },
+          {
+            "content": "data summary",
+            "usage": {
+              "prompt_tokens": 6,
+              "completion_tokens": 3
+            }
+          },
+          {
+            "content": "{\"metrics\":[\"data summary\"]}",
+            "usage": {
+              "prompt_tokens": 5,
+              "completion_tokens": 4
+            }
+          }
+        ]
+      },
+      "market-analyst": {
+        "turns": [
+          {
+            "toolCall": {
+              "name": "fetch-metrics",
+              "arguments": {
+                "metric": "market"
+              }
+            },
+            "usage": {
+              "prompt_tokens": 4,
+              "completion_tokens": 2
+            }
+          },
+          {
+            "content": "market summary",
+            "usage": {
+              "prompt_tokens": 6,
+              "completion_tokens": 3
+            }
+          },
+          {
+            "content": "{\"risks\":[\"market summary\"]}",
+            "usage": {
+              "prompt_tokens": 5,
+              "completion_tokens": 4
+            }
+          }
+        ]
+      },
+      "writer": {
+        "turns": [
+          {
+            "content": "final report",
+            "usage": {
+              "prompt_tokens": 8,
+              "completion_tokens": 5
+            }
+          },
+          {
+            "content": "{\"title\":\"Weekly report\",\"sections\":[\"research summary\",\"data summary\",\"market summary\"]}",
+            "usage": {
+              "prompt_tokens": 7,
+              "completion_tokens": 6
+            }
+          }
+        ]
+      }
+    },
+    "gate": {
+      "nodes": [
+        "researcher",
+        "data-analyst",
+        "market-analyst"
+      ],
+      "settleOrder": [
+        "market-analyst",
+        "data-analyst",
+        "researcher"
+      ]
+    },
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "report": {
+        "title": "Weekly report",
+        "sections": [
+          "research summary",
+          "data summary",
+          "market summary"
+        ]
+      }
+    },
+    "failure": null,
+    "events": [
+      "market-analyst:completed",
+      "data-analyst:completed",
+      "researcher:completed",
+      "writer:completed"
+    ],
+    "aggregations": [
+      {
+        "node": "writer",
+        "port": "drafts",
+        "sources": [
+          "researcher",
+          "data-analyst",
+          "market-analyst"
+        ]
+      }
+    ],
+    "concurrency": {
+      "min": 3,
+      "max": 3
+    },
+    "calls": 11,
+    "toolCalls": 3,
+    "contextReads": 1,
+    "restores": 0
+  }
+}

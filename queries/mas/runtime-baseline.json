@@ -1,0 +1,25 @@
+{
+  "$comment": "The flat MAS runtime baseline: one row per registered fixture with its measured state, refusal code, scripted call count, restore count and observed concurrency — the committed shape every later runtime treatment replaces row by row. Executed verbatim with @jarenjs/json's compileJsonQuery; no application mapper replaces what this document says.",
+  "$let": {
+    "rows": [{
+      "$for": { "r": "$.integrated[*]" },
+      "$return": {
+        "fixture": "$r.id",
+        "state": "$r.state",
+        "code": { "$coalesce": ["$r.refusal.code", null] },
+        "calls": "$r.calls",
+        "restores": "$r.restores",
+        "maxConcurrency": "$r.maxObservedConcurrency"
+      }
+    }]
+  },
+  "$return": {
+    "rows": "$rows",
+    "byState": [{
+      "$for": { "row": "$rows[*]" },
+      "$groupby": { "state": "$row.state" },
+      "$orderby": ["$state"],
+      "$return": { "state": "$state", "fixtures": { "$count": "$row" } }
+    }]
+  }
+}

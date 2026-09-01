@@ -1,0 +1,165 @@
+{
+  "benchmark": "mas-runtime-baseline",
+  "query": "queries/mas/runtime-baseline.json",
+  "queryRevision": "4e68896842dc8d5eb886254bb19096c38924b36d50ba27b54cf4b1adf8eac52e",
+  "reportId": "8ca21b25f62d021b23857364c848358c6e0f30d1223c92404f86369cbb200dc8",
+  "rows": {
+    "rows": [
+      {
+        "fixture": "sequential",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "fanout-fanin",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 3
+      },
+      {
+        "fixture": "message-order",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 3
+      },
+      {
+        "fixture": "switch-one",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "switch-many",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 2
+      },
+      {
+        "fixture": "loop-three",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "nested-state",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "interaction",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "checkpoint",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 1,
+        "restores": 1,
+        "maxConcurrency": 1
+      },
+      {
+        "fixture": "failure-abort",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": 2
+      },
+      {
+        "fixture": "weekly-report-manual",
+        "state": "runtime-pass",
+        "code": null,
+        "calls": 11,
+        "restores": 0,
+        "maxConcurrency": 3
+      },
+      {
+        "fixture": "plain-cycle",
+        "state": "refused-as-registered",
+        "code": "TMAS1005",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "unknown-port",
+        "state": "refused-as-registered",
+        "code": "TMAS1004",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "switch-no-default",
+        "state": "refused-as-registered",
+        "code": "TMAS1006",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "unbounded-loop",
+        "state": "refused-as-registered",
+        "code": "TMAS1007",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "undeclared-tool",
+        "state": "refused-as-registered",
+        "code": "TMAS1009",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "child-over-budget",
+        "state": "refused-as-registered",
+        "code": "TMAS1008",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      },
+      {
+        "fixture": "incompatible-wire",
+        "state": "refused-as-registered",
+        "code": "TMAS1004",
+        "calls": 0,
+        "restores": 0,
+        "maxConcurrency": null
+      }
+    ],
+    "byState": [
+      {
+        "state": "refused-as-registered",
+        "fixtures": 7
+      },
+      {
+        "state": "runtime-pass",
+        "fixtures": 11
+      }
+    ]
+  },
+  "artifactId": "64d16499054d3bf5b1d06b9e99624bc3f139dafbe1225d7442acf960178ac1dc"
+}

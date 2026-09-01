@@ -1,0 +1,235 @@
+{
+  "id": "loop-three",
+  "family": "positive",
+  "title": "The body executes exactly three iterations and terminates",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-loop-three",
+    "versionId": "5815c9b9943c576afaba21f5b984dde2668c3cbe6f26f64d92198908f9779a85",
+    "parentVersionId": null,
+    "title": "Bounded loop",
+    "description": "An FSM cycle around one acyclic body; the termination query runs after each committed body and the host owns the cap.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "seed"
+        ],
+        "properties": {
+          "seed": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "count"
+            ],
+            "properties": {
+              "count": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "seed",
+        "to": {
+          "node": "refine",
+          "port": "seed"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "refine",
+          "port": "result"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "refine",
+        "kind": "loop",
+        "input": {
+          "ports": {
+            "seed": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "count"
+                ],
+                "properties": {
+                  "count": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "result": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "count"
+                ],
+                "properties": {
+                  "count": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "body": "loop-body",
+        "init": [
+          {
+            "port": "seed",
+            "to": ""
+          }
+        ],
+        "feedback": [
+          {
+            "from": "",
+            "to": ""
+          }
+        ],
+        "result": [
+          {
+            "port": "result",
+            "from": ""
+          }
+        ],
+        "maxIterations": 5,
+        "termination": {
+          "$ge": [
+            "$.output.count",
+            3
+          ]
+        }
+      }
+    ],
+    "control": [],
+    "messages": [],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "seed": {
+        "count": 0
+      }
+    },
+    "handlers": {
+      "refine/bump": {
+        "query": {
+          "value": {
+            "$add": [
+              "$.count",
+              1
+            ]
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "count": 3
+      }
+    },
+    "failure": null,
+    "events": [
+      "refine/1/bump:completed",
+      "refine/2/bump:completed",
+      "refine/3/bump:completed",
+      "refine:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

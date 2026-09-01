@@ -1,0 +1,244 @@
+{
+  "id": "plain-cycle",
+  "family": "negative",
+  "title": "A message cycle outside a declared loop refuses at the closing edge",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-neg-cycle",
+    "versionId": "6877908cb21510003bebb0535154a898e939ee4686168e5d8e981edba112eb71",
+    "parentVersionId": null,
+    "title": "Plain cycle",
+    "description": "Three tasks whose third message edge closes an undeclared cycle.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "seed"
+        ],
+        "properties": {
+          "seed": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "seed",
+        "to": {
+          "node": "a",
+          "port": "seed"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "c",
+          "port": "v"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "a",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "seed": {
+              "schema": {
+                "type": "string"
+              }
+            },
+            "back": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "b",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "c",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "a-b",
+        "from": {
+          "node": "a",
+          "port": "v"
+        },
+        "to": {
+          "node": "b",
+          "port": "v"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "b-c",
+        "from": {
+          "node": "b",
+          "port": "v"
+        },
+        "to": {
+          "node": "c",
+          "port": "v"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "c-a",
+        "from": {
+          "node": "c",
+          "port": "v"
+        },
+        "to": {
+          "node": "a",
+          "port": "back"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "seed": "s"
+    },
+    "handlers": {},
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "refusal",
+    "code": "TMAS1005",
+    "path": "/messages/2"
+  }
+}

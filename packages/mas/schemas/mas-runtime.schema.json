@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/mas-runtime",
+  "title": "MAS runtime value contracts — the shapes persistence stores, never invents",
+  "description": "Store-neutral runtime records: the run, the node attempt, the message, the state revision, the interaction and the bounded trace artifact. Persistence implements collections over exactly these shapes; the runtime constructs them; the conformance instrument reads them. Timestamps come from the injected host clock (deterministic ticks under conformance) and never enter a canonical identity. Credential values have no representable member, and every omitted payload is an explicit state — `retained`, `redacted`, `truncated`, `expired`, `not-configured` or `not-run` — never a silent absence.",
+  "oneOf": [
+    { "$ref": "#/$defs/masRun" },
+    { "$ref": "#/$defs/masNodeAttempt" },
+    { "$ref": "#/$defs/masMessage" },
+    { "$ref": "#/$defs/masStateRevision" },
+    { "$ref": "#/$defs/masInteraction" },
+    { "$ref": "#/$defs/masTraceArtifact" }
+  ],
+  "$defs": {
+    "runtimeSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "runtimeName": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "recordId": { "type": "string", "minLength": 1 },
+    "tick": {
+      "description": "An injected-clock reading, ISO-8601 shaped. Deterministic ticks under conformance; never part of a canonical identity.",
+      "type": "string",
+      "minLength": 1
+    },
+    "invocationPath": {
+      "description": "The hierarchical invocation address `<region>/<branch>/<iteration>/<node>` segments joined by `/`; iterations are 1-based decimals.",
+      "type": "string",
+      "minLength": 1
+    },
+    "runStatus": {
+      "enum": ["queued", "running", "waiting_for_input", "resume_pending", "completed", "failed", "cancelled"]
+    },
+    "attemptStatus": {
+      "enum": ["running", "completed", "failed", "aborted", "uncertain"]
+    },
+    "runtimeError": {
+      "type": "object",
+      "required": ["code", "detail", "cause"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string", "pattern": "^(TMAS[12][0-9]{3}|JF[0-9]{4}|JQ[0-9]{4}|JD[0-9]{4})$" },
+        "detail": { "type": "string", "minLength": 1 },
+        "cause": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["code", "docPath", "message"],
+              "additionalProperties": false,
+              "properties": {
+                "code": { "type": "string", "minLength": 1 },
+                "docPath": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "budgetSpend": {
+      "type": "object",
+      "required": ["turns", "tokens", "ms"],
+      "additionalProperties": false,
+      "properties": {
+        "turns": { "type": "integer", "minimum": 0 },
+        "tokens": { "type": "integer", "minimum": 0 },
+        "ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "usageCounts": {
+      "type": "object",
+      "required": ["calls", "toolCalls", "contextReads", "promptTokens", "completionTokens"],
+      "additionalProperties": false,
+      "properties": {
+        "calls": { "type": "integer", "minimum": 0 },
+        "toolCalls": { "type": "integer", "minimum": 0 },
+        "contextReads": { "type": "integer", "minimum": 0 },
+        "promptTokens": { "type": "integer", "minimum": 0 },
+        "completionTokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "boundedView": {
+      "description": "A bounded, redaction-safe view of a larger value. `state` says exactly why bytes may be absent; `text` is the retained bounded rendering.",
+      "type": "object",
+      "required": ["state", "text", "size", "artifact"],
+      "additionalProperties": false,
+      "properties": {
+        "state": { "enum": ["retained", "redacted", "truncated", "expired", "not-configured", "not-run"] },
+        "text": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+        "size": { "type": "integer", "minimum": 0 },
+        "artifact": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/recordId" }] }
+      }
+    },
+    "toolStep": {
+      "type": "object",
+      "required": ["name", "arguments", "result", "state"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "arguments": { "$ref": "#/$defs/boundedView" },
+        "result": { "$ref": "#/$defs/boundedView" },
+        "state": { "enum": ["ok", "invalid-input", "handler-error", "aborted", "uncertain"] }
+      }
+    },
+    "contextRead": {
+      "type": "object",
+      "required": ["adapter", "outcome", "units", "addresses", "chars"],
+      "additionalProperties": false,
+      "properties": {
+        "adapter": { "$ref": "#/$defs/runtimeName" },
+        "outcome": { "enum": ["ok", "unavailable", "failed"] },
+        "units": { "type": "integer", "minimum": 0 },
+        "addresses": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "chars": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "masRun": {
+      "type": "object",
+      "required": ["id", "workflowId", "workflowVersionId", "registryRevision", "executableRevision", "configRegistryRevision", "profile", "status", "revision", "segment", "claim", "traceSeq", "jobId", "input", "output", "failure", "fsm", "budget", "createdAt", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "workflowId": { "$ref": "#/$defs/runtimeName" },
+        "workflowVersionId": { "$ref": "#/$defs/runtimeSha256" },
+        "registryRevision": { "$ref": "#/$defs/runtimeSha256" },
+        "executableRevision": { "$ref": "#/$defs/runtimeSha256" },
+        "configRegistryRevision": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/runtimeSha256" }] },
+        "profile": { "$ref": "#/$defs/runtimeName" },
+        "status": { "$ref": "#/$defs/runStatus" },
+        "revision": { "type": "integer", "minimum": 0 },
+        "segment": { "type": "integer", "minimum": 0 },
+        "claim": {
+          "description": "The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.",
+          "type": "object",
+          "required": ["owner", "seq"],
+          "additionalProperties": false,
+          "properties": {
+            "owner": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+            "seq": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "traceSeq": {
+          "description": "The per-run trace sequence authority: record ids derive from it transactionally, so the trace order is committed state, never a process-local counter.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "jobId": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/recordId" }] },
+        "input": {},
+        "output": {},
+        "failure": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/runFailure" }] },
+        "fsm": {
+          "description": "Persisted suite FSM snapshots and host context per control descriptor id — the whole durable control state of the run.",
+          "type": "object"
+        },
+        "budget": {
+          "type": "object",
+          "required": ["limits", "spent"],
+          "additionalProperties": false,
+          "properties": {
+            "limits": { "type": "object" },
+            "spent": { "$ref": "#/$defs/budgetSpend" }
+          }
+        },
+        "createdAt": { "$ref": "#/$defs/tick" },
+        "updatedAt": { "$ref": "#/$defs/tick" }
+      }
+    },
+    "runFailure": {
+      "type": "object",
+      "required": ["node", "error"],
+      "additionalProperties": false,
+      "properties": {
+        "node": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/invocationPath" }] },
+        "error": { "$ref": "#/$defs/runtimeError" }
+      }
+    },
+    "masNodeAttempt": {
+      "type": "object",
+      "required": ["id", "runId", "seq", "path", "invocationId", "kind", "attempt", "status", "idempotencyKey", "output", "error", "usage", "spend", "stopReason", "transcript", "toolSteps", "contextReads", "restored", "startedAt", "finishedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "runId": { "$ref": "#/$defs/recordId" },
+        "seq": { "type": "integer", "minimum": 1 },
+        "path": { "$ref": "#/$defs/invocationPath" },
+        "invocationId": { "$ref": "#/$defs/runtimeName" },
+        "kind": { "enum": ["agent", "task", "graph", "loop", "switch", "interaction"] },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "status": { "$ref": "#/$defs/attemptStatus" },
+        "idempotencyKey": { "type": "string", "minLength": 1 },
+        "output": {},
+        "error": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/runtimeError" }] },
+        "usage": { "$ref": "#/$defs/usageCounts" },
+        "spend": { "$ref": "#/$defs/budgetSpend" },
+        "stopReason": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "transcript": { "$ref": "#/$defs/boundedView" },
+        "toolSteps": { "type": "array", "items": { "$ref": "#/$defs/toolStep" } },
+        "contextReads": { "type": "array", "items": { "$ref": "#/$defs/contextRead" } },
+        "restored": { "type": "boolean" },
+        "startedAt": { "$ref": "#/$defs/tick" },
+        "finishedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/tick" }] }
+      }
+    },
+    "masMessage": {
+      "type": "object",
+      "required": ["id", "runId", "seq", "edgeId", "from", "to", "adapter", "aggregation", "index", "payload", "payloadState", "artifact", "at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "runId": { "$ref": "#/$defs/recordId" },
+        "seq": { "type": "integer", "minimum": 1 },
+        "edgeId": { "$ref": "#/$defs/runtimeName" },
+        "from": { "$ref": "#/$defs/messageEnd" },
+        "to": { "$ref": "#/$defs/messageEnd" },
+        "adapter": { "$ref": "#/$defs/runtimeName" },
+        "aggregation": { "enum": ["one", "ordered-list", "named-object"] },
+        "index": {
+          "description": "The edge-document-order position among the target port's inbound edges — the aggregation order, independent of completion timing.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "payload": {},
+        "payloadState": { "enum": ["retained", "redacted", "truncated", "expired"] },
+        "artifact": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/recordId" }] },
+        "at": { "$ref": "#/$defs/tick" }
+      }
+    },
+    "messageEnd": {
+      "type": "object",
+      "required": ["path", "port"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "$ref": "#/$defs/invocationPath" },
+        "port": { "$ref": "#/$defs/runtimeName" }
+      }
+    },
+    "masStateRevision": {
+      "type": "object",
+      "required": ["id", "runId", "seq", "namespace", "parent", "value", "provenance", "at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "runId": { "$ref": "#/$defs/recordId" },
+        "seq": { "type": "integer", "minimum": 1 },
+        "namespace": {
+          "description": "The state owner: '' for the workflow root, or the graph invocation path for an isolated child namespace.",
+          "type": "string"
+        },
+        "parent": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/recordId" }] },
+        "value": {},
+        "provenance": {
+          "type": "object",
+          "required": ["path", "members"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "$ref": "#/$defs/invocationPath" },
+            "members": { "type": "array", "items": { "type": "string", "pattern": "^/" } }
+          }
+        },
+        "at": { "$ref": "#/$defs/tick" }
+      }
+    },
+    "masInteraction": {
+      "type": "object",
+      "required": ["id", "runId", "node", "path", "status", "revision", "prompt", "responseSchema", "expiry", "response", "responseKey", "segment", "resumeSegment", "requestedAt", "resolvedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "runId": { "$ref": "#/$defs/recordId" },
+        "node": { "$ref": "#/$defs/runtimeName" },
+        "path": { "$ref": "#/$defs/invocationPath" },
+        "status": { "enum": ["waiting", "responded", "cancelled", "expired"] },
+        "revision": { "type": "integer", "minimum": 0 },
+        "prompt": {},
+        "responseSchema": { "type": ["object", "boolean"] },
+        "expiry": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["afterMs", "deadline"],
+              "additionalProperties": false,
+              "properties": {
+                "afterMs": { "type": "integer", "minimum": 1 },
+                "deadline": { "$ref": "#/$defs/tick" }
+              }
+            }
+          ]
+        },
+        "response": {},
+        "responseKey": { "oneOf": [{ "type": "null" }, { "type": "string", "minLength": 1 }] },
+        "segment": { "type": "integer", "minimum": 0 },
+        "resumeSegment": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1 }] },
+        "requestedAt": { "$ref": "#/$defs/tick" },
+        "resolvedAt": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/tick" }] }
+      }
+    },
+    "masTraceArtifact": {
+      "type": "object",
+      "required": ["id", "runId", "kind", "state", "size", "bytes", "at"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/recordId" },
+        "runId": { "$ref": "#/$defs/recordId" },
+        "kind": { "enum": ["transcript", "tool-arguments", "tool-result", "message-payload", "context-unit", "normalization"] },
+        "state": { "enum": ["retained", "redacted", "truncated", "expired"] },
+        "size": { "type": "integer", "minimum": 0 },
+        "bytes": { "oneOf": [{ "type": "null" }, { "type": "string" }] },
+        "at": { "$ref": "#/$defs/tick" }
+      }
+    }
+  }
+}

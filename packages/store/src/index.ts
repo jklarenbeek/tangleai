@@ -10,3 +10,22 @@ export type { RunLog, RunRecord, RunEvent, RunLogOptions, RunIdentityStatus, Run
 export { createIdentityRepository } from './identities.ts';
 export type { IdentityRepository } from './identities.ts';
 export { createDocumentStore } from './document-store.ts';
+export { createMasStore } from './mas-store.ts';
+export type { MasStoreOptions } from './mas-store.ts';
+export {
+  enqueueMasSegment,
+  ensurePendingMasSegments,
+  createMasSegmentWorker,
+  createMasSegmentHandlers,
+  namespacedRegionCheckpoints,
+  MasSegmentRefusal,
+} from './mas-jobs.ts';
+export type {
+  MasSegmentPayload,
+  EnqueueMasSegmentPlan,
+  MasSegmentContext,
+  MasSegmentExecutor,
+  MasWorkerOptions,
+  MasWorker,
+  RegionCheckpointStore,
+} from './mas-jobs.ts';

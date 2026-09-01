@@ -1,0 +1,2052 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/mas-conformance",
+  "title": "MAS runtime conformance report — the instrument registered before the runtime",
+  "description": "What `benchmark/mas-conformance.ts` writes: the source and suite census, the registered positive/negative workflow fixtures with their oracles, the suite substrate probes executed against the published JarenJS primitives, and one integrated row per registration stating honestly how far the MAS runtime has come. Registration is immutable input — fixture ids, canonical revisions, expected outputs, ordered event/aggregation oracles, concurrency bounds, call/tool/context/restore counts, or one expected `{ code, path }` refusal — and its identity excludes every observation. Suite probes prove the substrate exists (`state: 'substrate'`); they never pass a MAS fixture. Integrated rows are replaced by id as the runtime lands; they never change the registration or its denominators. The counts reconcile by `$query` at validation time, the gate's live-call counters are literal zeros (a conformance run is keyless and clock-free by construction), and `reportId` is the canonical SHA-256 of the document with that field excluded.",
+  "type": "object",
+  "required": [
+    "benchmark",
+    "instrument",
+    "source",
+    "suite",
+    "registration",
+    "suiteProbes",
+    "durability",
+    "integrated",
+    "counts",
+    "gate",
+    "reportId",
+    "live",
+    "decision"
+  ],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.fixtures[*].id"
+          },
+          {
+            "$count": {
+              "$distinct": "$.registration.fixtures[*].id"
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.fixtures[?(@.family=='positive')]"
+          },
+          "$.registration.positive"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.fixtures[?(@.family=='negative')]"
+          },
+          "$.registration.negative"
+        ]
+      },
+      {
+        "$eq": [
+          [
+            {
+              "$for": {
+                "f": "$.registration.fixtures[*]"
+              },
+              "$return": "$f.id"
+            }
+          ],
+          [
+            {
+              "$for": {
+                "r": "$.integrated[*]"
+              },
+              "$return": "$r.id"
+            }
+          ]
+        ]
+      },
+      {
+        "$every": {
+          "f": "$.registration.fixtures[?(@.family=='positive')]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$f.expect.kind",
+            "pass"
+          ]
+        }
+      },
+      {
+        "$every": {
+          "f": "$.registration.fixtures[?(@.family=='negative')]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$f.expect.kind",
+            "refusal"
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.state=='not-implemented' || @.state=='validated' || @.state=='refused-as-registered')]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$r.attempts",
+                0
+              ]
+            },
+            {
+              "$eq": [
+                "$r.calls",
+                0
+              ]
+            },
+            {
+              "$eq": [
+                "$r.toolCalls",
+                0
+              ]
+            },
+            {
+              "$eq": [
+                "$r.contextReads",
+                0
+              ]
+            },
+            {
+              "$eq": [
+                "$r.restores",
+                0
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.state=='validated')]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$ne": [
+                "$r.workflowVersionId",
+                null
+              ]
+            },
+            {
+              "$ne": [
+                "$r.registryRevision",
+                null
+              ]
+            },
+            {
+              "$ne": [
+                "$r.executableRevision",
+                null
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.family=='positive')]"
+        },
+        "$satisfies": {
+          "$or": [
+            {
+              "$eq": [
+                "$r.state",
+                "not-implemented"
+              ]
+            },
+            {
+              "$eq": [
+                "$r.state",
+                "validated"
+              ]
+            },
+            {
+              "$eq": [
+                "$r.state",
+                "runtime-pass"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.family=='negative')]"
+        },
+        "$satisfies": {
+          "$or": [
+            {
+              "$eq": [
+                "$r.state",
+                "not-implemented"
+              ]
+            },
+            {
+              "$eq": [
+                "$r.state",
+                "refused-as-registered"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[*]"
+        },
+        "$satisfies": {
+          "$or": [
+            {
+              "$and": [
+                {
+                  "$eq": [
+                    "$r.state",
+                    "refused-as-registered"
+                  ]
+                },
+                {
+                  "$ne": [
+                    "$r.refusal",
+                    null
+                  ]
+                }
+              ]
+            },
+            {
+              "$and": [
+                {
+                  "$ne": [
+                    "$r.state",
+                    "refused-as-registered"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.refusal",
+                    null
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.state=='refused-as-registered')]"
+        },
+        "$satisfies": {
+          "$let": {
+            "reg": {
+              "$head": {
+                "$for": {
+                  "f": "$.registration.fixtures[*]"
+                },
+                "$where": {
+                  "$eq": [
+                    "$f.id",
+                    "$r.id"
+                  ]
+                },
+                "$return": "$f"
+              }
+            }
+          },
+          "$return": {
+            "$and": [
+              {
+                "$eq": [
+                  "$r.refusal.code",
+                  "$reg.expect.code"
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.refusal.path",
+                  "$reg.expect.path"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[?(@.state=='runtime-pass')]"
+        },
+        "$satisfies": {
+          "$let": {
+            "regp": {
+              "$head": {
+                "$for": {
+                  "f": "$.registration.fixtures[*]"
+                },
+                "$where": {
+                  "$eq": [
+                    "$f.id",
+                    "$r.id"
+                  ]
+                },
+                "$return": "$f"
+              }
+            }
+          },
+          "$return": {
+            "$and": [
+              {
+                "$ne": [
+                  "$r.workflowVersionId",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$r.registryRevision",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$r.executableRevision",
+                  null
+                ]
+              },
+              {
+                "$ge": [
+                  "$r.attempts",
+                  1
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.calls",
+                  "$regp.expect.calls"
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.toolCalls",
+                  "$regp.expect.toolCalls"
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.contextReads",
+                  "$regp.expect.contextReads"
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.restores",
+                  "$regp.expect.restores"
+                ]
+              },
+              {
+                "$ne": [
+                  "$r.maxObservedConcurrency",
+                  null
+                ]
+              },
+              {
+                "$ge": [
+                  "$r.maxObservedConcurrency",
+                  "$regp.expect.concurrency.min"
+                ]
+              },
+              {
+                "$le": [
+                  "$r.maxObservedConcurrency",
+                  "$regp.expect.concurrency.max"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "$every": {
+          "r": "$.integrated[*]"
+        },
+        "$satisfies": {
+          "$let": {
+            "reg": {
+              "$head": {
+                "$for": {
+                  "f": "$.registration.fixtures[*]"
+                },
+                "$where": {
+                  "$eq": [
+                    "$f.id",
+                    "$r.id"
+                  ]
+                },
+                "$return": "$f"
+              }
+            }
+          },
+          "$return": {
+            "$or": [
+              {
+                "$eq": [
+                  "$r.workflowVersionId",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$r.workflowVersionId",
+                  "$reg.workflowVersionId"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "$eq": [
+          "$.counts.fixtures",
+          {
+            "$count": "$.integrated[*]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.integrated.notImplemented",
+          {
+            "$count": "$.integrated[?(@.state=='not-implemented')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.integrated.validated",
+          {
+            "$count": "$.integrated[?(@.state=='validated')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.integrated.refusedAsRegistered",
+          {
+            "$count": "$.integrated[?(@.state=='refused-as-registered')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.integrated.runtimePass",
+          {
+            "$count": "$.integrated[?(@.state=='runtime-pass')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.fixtures",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.counts.integrated.notImplemented",
+                  "$.counts.integrated.validated"
+                ]
+              },
+              {
+                "$add": [
+                  "$.counts.integrated.refusedAsRegistered",
+                  "$.counts.integrated.runtimePass"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.probes.total",
+          {
+            "$count": "$.suiteProbes[*]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.probes.passed",
+          {
+            "$count": "$.suiteProbes[?(@.outcome=='pass')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.probes.failed",
+          {
+            "$count": "$.suiteProbes[?(@.outcome=='fail')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.calls",
+          {
+            "$sum": "$.integrated[*].calls"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.toolCalls",
+          {
+            "$sum": "$.integrated[*].toolCalls"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.contextReads",
+          {
+            "$sum": "$.integrated[*].contextReads"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.restores",
+          {
+            "$sum": "$.integrated[*].restores"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.durability.total",
+          {
+            "$count": "$.durability[*]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.durability.passed",
+          {
+            "$count": "$.durability[?(@.outcome=='pass')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.durability.failed",
+          {
+            "$count": "$.durability[?(@.outcome=='fail')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.registration",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  {
+                    "$count": "$.registration.fixtures[*]"
+                  },
+                  18
+                ]
+              },
+              {
+                "$every": {
+                  "r": "$.integrated[*]"
+                },
+                "$satisfies": {
+                  "$or": [
+                    {
+                      "$eq": [
+                        "$r.family",
+                        "negative"
+                      ]
+                    },
+                    {
+                      "$and": [
+                        {
+                          "$ne": [
+                            "$r.workflowVersionId",
+                            null
+                          ]
+                        },
+                        {
+                          "$ne": [
+                            "$r.registryRevision",
+                            null
+                          ]
+                        },
+                        {
+                          "$ne": [
+                            "$r.executableRevision",
+                            null
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.conformance",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.counts.integrated.runtimePass",
+                  11
+                ]
+              },
+              {
+                "$eq": [
+                  "$.counts.integrated.refusedAsRegistered",
+                  7
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.concurrencyOrder",
+          {
+            "$let": {
+              "wr": {
+                "$head": {
+                  "$for": {
+                    "r": "$.integrated[*]"
+                  },
+                  "$where": {
+                    "$eq": [
+                      "$r.id",
+                      "weekly-report-manual"
+                    ]
+                  },
+                  "$return": "$r"
+                }
+              }
+            },
+            "$return": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$wr.state",
+                    "runtime-pass"
+                  ]
+                },
+                {
+                  "$ge": [
+                    "$wr.maxObservedConcurrency",
+                    3
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.durability",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.counts.durability.passed",
+                  6
+                ]
+              },
+              {
+                "$eq": [
+                  "$.counts.durability.failed",
+                  0
+                ]
+              },
+              {
+                "$let": {
+                  "row": {
+                    "$head": {
+                      "$for": {
+                        "r": "$.integrated[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.id",
+                          "checkpoint"
+                        ]
+                      },
+                      "$return": "$r"
+                    }
+                  }
+                },
+                "$return": {
+                  "$eq": [
+                    "$row.state",
+                    "runtime-pass"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.controlSafety",
+          {
+            "$and": [
+              {
+                "$let": {
+                  "row": {
+                    "$head": {
+                      "$for": {
+                        "r": "$.integrated[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.id",
+                          "loop-three"
+                        ]
+                      },
+                      "$return": "$r"
+                    }
+                  }
+                },
+                "$return": {
+                  "$eq": [
+                    "$row.state",
+                    "runtime-pass"
+                  ]
+                }
+              },
+              {
+                "$let": {
+                  "row": {
+                    "$head": {
+                      "$for": {
+                        "r": "$.integrated[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.id",
+                          "switch-many"
+                        ]
+                      },
+                      "$return": "$r"
+                    }
+                  }
+                },
+                "$return": {
+                  "$eq": [
+                    "$row.state",
+                    "runtime-pass"
+                  ]
+                }
+              },
+              {
+                "$let": {
+                  "row": {
+                    "$head": {
+                      "$for": {
+                        "r": "$.integrated[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.id",
+                          "interaction"
+                        ]
+                      },
+                      "$return": "$r"
+                    }
+                  }
+                },
+                "$return": {
+                  "$eq": [
+                    "$row.state",
+                    "runtime-pass"
+                  ]
+                }
+              },
+              {
+                "$let": {
+                  "row": {
+                    "$head": {
+                      "$for": {
+                        "r": "$.integrated[*]"
+                      },
+                      "$where": {
+                        "$eq": [
+                          "$r.id",
+                          "switch-one"
+                        ]
+                      },
+                      "$return": "$r"
+                    }
+                  }
+                },
+                "$return": {
+                  "$eq": [
+                    "$row.state",
+                    "runtime-pass"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.persistenceIdentity",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.counts.probes.failed",
+                  0
+                ]
+              },
+              {
+                "$every": {
+                  "d": "$.durability[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$d.outcome",
+                    "pass"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.decision.clauses.hygiene",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.counts.probes.failed",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.counts.durability.failed",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.integrated[?(@.state=='not-implemented')]"
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$eq": [
+              "$.decision.outcome",
+              "runtime-conformant"
+            ]
+          },
+          {
+            "$and": [
+              "$.decision.clauses.registration",
+              "$.decision.clauses.conformance",
+              "$.decision.clauses.concurrencyOrder",
+              "$.decision.clauses.durability",
+              "$.decision.clauses.controlSafety",
+              "$.decision.clauses.persistenceIdentity",
+              "$.decision.clauses.hygiene"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$eq": [
+              {
+                "$count": "$.decision.failedClauses[*]"
+              },
+              0
+            ]
+          },
+          {
+            "$eq": [
+              "$.decision.outcome",
+              "runtime-conformant"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "benchmark": {
+      "const": "mas-conformance"
+    },
+    "instrument": {
+      "type": "object",
+      "required": [
+        "entry"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "entry": {
+          "const": "benchmark/mas-conformance.ts"
+        }
+      }
+    },
+    "source": {
+      "description": "HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock, no hostname, no absolute path.",
+      "type": "object",
+      "required": [
+        "head",
+        "clean",
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "suite": {
+      "type": "object",
+      "required": [
+        "packages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "packages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "version"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^@jarenjs/[a-z0-9-]+$"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "registration": {
+      "description": "The immutable input layer: what the runtime will be judged against. Later orders replace integrated rows by id; they never change this block or its denominators.",
+      "type": "object",
+      "required": [
+        "manifestRevision",
+        "registryRevision",
+        "configCatalogRevision",
+        "positive",
+        "negative",
+        "fixtures"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "manifestRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "registryRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "configCatalogRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "positive": {
+          "const": 11
+        },
+        "negative": {
+          "const": 7
+        },
+        "fixtures": {
+          "type": "array",
+          "minItems": 18,
+          "maxItems": 18,
+          "items": {
+            "$ref": "#/$defs/registeredFixture"
+          }
+        }
+      }
+    },
+    "suiteProbes": {
+      "description": "Direct executions of published JarenJS primitives with controlled promises and injected clocks. A probe passing says the substrate exists; it does not pass a MAS fixture and its state is never 'integrated'.",
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "$ref": "#/$defs/suiteProbe"
+      }
+    },
+    "durability": {
+      "description": "Measurements over the real MAS store adapter and suite queue with injected clocks: transactional five-member node completion, activation compare-and-swap, semantic idempotency replay, namespaced segment checkpoints with atomic terminal prune, reclaim-closes-without-execution, and the uncertain-attempt guard. Durable-scripted persistence evidence — never a runtime fixture pass.",
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/durabilityProbe"
+      }
+    },
+    "integrated": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "items": {
+        "$ref": "#/$defs/integratedRow"
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "fixtures",
+        "probes",
+        "durability",
+        "integrated",
+        "calls",
+        "toolCalls",
+        "contextReads",
+        "restores"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "fixtures": {
+          "const": 18
+        },
+        "probes": {
+          "type": "object",
+          "required": [
+            "total",
+            "passed",
+            "failed"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "integrated": {
+          "type": "object",
+          "required": [
+            "notImplemented",
+            "validated",
+            "refusedAsRegistered",
+            "runtimePass"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "notImplemented": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "validated": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refusedAsRegistered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "runtimePass": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "durability": {
+          "type": "object",
+          "required": [
+            "total",
+            "passed",
+            "failed"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "gate": {
+      "description": "A conformance run is keyless and offline by construction: the counters are literal zeros in the schema, so a report of a run that bought a live completion or reached a network cannot validate at all. Scripted calls are counted per integrated row; they are not live calls.",
+      "type": "object",
+      "required": [
+        "schemaValid",
+        "transportCalls",
+        "liveModelCalls"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schemaValid": {
+          "const": true
+        },
+        "transportCalls": {
+          "const": 0
+        },
+        "liveModelCalls": {
+          "const": 0
+        }
+      }
+    },
+    "reportId": {
+      "$ref": "#/$defs/sha256"
+    },
+    "live": {
+      "description": "The optional live weekly-report row. Runtime conformance never depends on it — the claims are scheduler/contract/durability semantics and the scripted clients exercise the exact AI/tool/context seams — so without a separately planned and authorized spend it is the explicit value not-run with its reason, never an omission.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "state",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "not-run"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "state",
+            "identity",
+            "calls",
+            "failures"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "run"
+            },
+            "identity": {
+              "type": "object"
+            },
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failures": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
+    },
+    "decision": {
+      "description": "The mechanical claim decision, computed AFTER the report identity so stating it cannot move its evidence address. `runtime-conformant` holds only when all seven clauses hold; the `$query` recomputation makes a forged outcome or a hidden failure schema-invalid.",
+      "type": "object",
+      "required": [
+        "outcome",
+        "failedClauses",
+        "clauses"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "enum": [
+            "runtime-conformant",
+            "not-conformant"
+          ]
+        },
+        "failedClauses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "clauses": {
+          "type": "object",
+          "required": [
+            "registration",
+            "conformance",
+            "concurrencyOrder",
+            "durability",
+            "controlSafety",
+            "persistenceIdentity",
+            "hygiene"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "registration": {
+              "type": "boolean"
+            },
+            "conformance": {
+              "type": "boolean"
+            },
+            "concurrencyOrder": {
+              "type": "boolean"
+            },
+            "durability": {
+              "type": "boolean"
+            },
+            "controlSafety": {
+              "type": "boolean"
+            },
+            "persistenceIdentity": {
+              "type": "boolean"
+            },
+            "hygiene": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fixtureName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "validationCode": {
+      "description": "A reserved MAS validation refusal code. The validator that honors these arrives in a later order; the registration pins them first.",
+      "type": "string",
+      "pattern": "^TMAS1[0-9]{3}$"
+    },
+    "eventOracle": {
+      "description": "One expected durable lifecycle record, `<invocation path>:<status>` in expected commit order. Iterated or nested invocations carry their path segments (`refine/1/bump`).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9/-]*:(completed|failed|aborted|waiting|restored)$"
+    },
+    "aggregationOracle": {
+      "description": "The declared-order fan-in oracle for one target port: the ordered source invocation ids the aggregated message value must reflect, independent of completion timing.",
+      "type": "object",
+      "required": [
+        "node",
+        "port",
+        "sources"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "port": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fixtureName"
+          }
+        }
+      }
+    },
+    "positiveExpectation": {
+      "type": "object",
+      "required": [
+        "kind",
+        "outcome",
+        "output",
+        "failure",
+        "events",
+        "aggregations",
+        "concurrency",
+        "calls",
+        "toolCalls",
+        "contextReads",
+        "restores"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "pass"
+        },
+        "outcome": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        },
+        "output": {},
+        "failure": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "node"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "node": {
+                  "$ref": "#/$defs/fixtureName"
+                }
+              }
+            }
+          ]
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/eventOracle"
+          }
+        },
+        "aggregations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/aggregationOracle"
+          }
+        },
+        "concurrency": {
+          "description": "Expected bounds on maximumObservedConcurrency, measured by a counter incremented on handler entry and decremented in `finally` — never inferred from durations.",
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "negativeExpectation": {
+      "type": "object",
+      "required": [
+        "kind",
+        "code",
+        "path"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "refusal"
+        },
+        "code": {
+          "$ref": "#/$defs/validationCode"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    },
+    "expectation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/positiveExpectation"
+        },
+        {
+          "$ref": "#/$defs/negativeExpectation"
+        }
+      ]
+    },
+    "registeredFixture": {
+      "description": "One registered fixture as the report re-states it: identity, canonical source revision, the declared workflow version and the full oracle. The fixture file holds the workflow bytes and script; the registration identity excludes observations.",
+      "type": "object",
+      "required": [
+        "id",
+        "family",
+        "title",
+        "revision",
+        "workflowVersionId",
+        "expect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "family": {
+          "enum": [
+            "positive",
+            "negative"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "workflowVersionId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "expect": {
+          "$ref": "#/$defs/expectation"
+        }
+      }
+    },
+    "suiteProbe": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "state",
+        "outcome",
+        "observed",
+        "measured"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "const": "substrate"
+        },
+        "outcome": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "observed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measured": {
+          "type": "object"
+        }
+      }
+    },
+    "integratedRow": {
+      "description": "One row per registration, in registration order. `not-implemented` states the honest absence of a runtime with zero attempts and calls; `validated` says the workflow validated and planned without executing; `refused-as-registered` says a negative fixture refused at its exact registered code and pointer; `runtime-pass` says the full registered oracle held and requires workflow, registry and executable revisions.",
+      "type": "object",
+      "required": [
+        "id",
+        "family",
+        "state",
+        "reason",
+        "workflowVersionId",
+        "registryRevision",
+        "executableRevision",
+        "attempts",
+        "calls",
+        "toolCalls",
+        "contextReads",
+        "restores",
+        "maxObservedConcurrency",
+        "refusal"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "family": {
+          "enum": [
+            "positive",
+            "negative"
+          ]
+        },
+        "state": {
+          "enum": [
+            "not-implemented",
+            "validated",
+            "refused-as-registered",
+            "runtime-pass"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "workflowVersionId": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        },
+        "registryRevision": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        },
+        "executableRevision": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxObservedConcurrency": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ]
+        },
+        "refusal": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "code",
+                "path"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "$ref": "#/$defs/validationCode"
+                },
+                "path": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "agentTurn": {
+      "description": "One scripted provider reply for an agent node, in call order. A `toolCall` turn asks the runtime to execute the named tool; a `content` turn ends the loop or answers a normalization request. Usage is scripted so budget accounting is deterministic.",
+      "type": "object",
+      "required": [
+        "usage"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "toolCall": {
+          "type": "object",
+          "required": [
+            "name",
+            "arguments"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "arguments": {
+              "type": "object"
+            }
+          }
+        },
+        "usage": {
+          "type": "object",
+          "required": [
+            "prompt_tokens",
+            "completion_tokens"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "prompt_tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "completion_tokens": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "fixtureScript": {
+      "description": "The deterministic host plan the future runner binds: scripted pure task queries by invocation id, scripted agent reply sequences by invocation id, a concurrency gate driven by deferred promises (never wall-clock sleeps), one optional stop/reclaim point, one optional typed interaction response and one optional scripted failure site.",
+      "type": "object",
+      "required": [
+        "input",
+        "handlers",
+        "agents",
+        "gate",
+        "stopAfter",
+        "respond",
+        "failAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "input": {},
+        "handlers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "query"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "query": {}
+            }
+          }
+        },
+        "agents": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "turns"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "turns": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/agentTurn"
+                }
+              }
+            }
+          }
+        },
+        "gate": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "nodes",
+                "settleOrder"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "minItems": 2,
+                  "items": {
+                    "$ref": "#/$defs/fixtureName"
+                  }
+                },
+                "settleOrder": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/fixtureName"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "stopAfter": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/fixtureName"
+            }
+          ]
+        },
+        "respond": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "node",
+                "value"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "node": {
+                  "$ref": "#/$defs/fixtureName"
+                },
+                "value": {}
+              }
+            }
+          ]
+        },
+        "failAt": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/fixtureName"
+            }
+          ]
+        }
+      }
+    },
+    "fixtureDocument": {
+      "description": "One committed fixture file: the proposed high-level workflow bytes (treated as data until the MAS package supplies its validator), the deterministic script and the exact oracle.",
+      "type": "object",
+      "required": [
+        "id",
+        "family",
+        "title",
+        "workflow",
+        "script",
+        "expect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "family": {
+          "enum": [
+            "positive",
+            "negative"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow": {
+          "type": "object"
+        },
+        "script": {
+          "$ref": "#/$defs/fixtureScript"
+        },
+        "expect": {
+          "$ref": "#/$defs/expectation"
+        }
+      }
+    },
+    "manifest": {
+      "description": "The ordered fixture manifest (`benchmark/fixtures/mas/manifest.json`): the shared registry and CONFIG catalog references and the 11 positive plus 7 negative registrations with their canonical source revisions, in registration order.",
+      "type": "object",
+      "required": [
+        "manifest",
+        "version",
+        "registry",
+        "configCatalog",
+        "positive",
+        "negative"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": "$.positive[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.positive[*].id"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.negative[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.negative[*].id"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "manifest": {
+          "const": "mas-conformance-fixtures"
+        },
+        "version": {
+          "const": 1
+        },
+        "registry": {
+          "$ref": "#/$defs/manifestEntry"
+        },
+        "configCatalog": {
+          "$ref": "#/$defs/manifestEntry"
+        },
+        "positive": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "items": {
+            "$ref": "#/$defs/manifestFixtureEntry"
+          }
+        },
+        "negative": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "$ref": "#/$defs/manifestFixtureEntry"
+          }
+        }
+      }
+    },
+    "manifestEntry": {
+      "type": "object",
+      "required": [
+        "path",
+        "revision"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "manifestFixtureEntry": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "revision"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "durabilityProbe": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "state",
+        "outcome",
+        "observed",
+        "measured"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/fixtureName"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "const": "durable-scripted"
+        },
+        "outcome": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "observed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measured": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

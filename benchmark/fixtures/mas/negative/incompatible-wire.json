@@ -1,0 +1,184 @@
+{
+  "id": "incompatible-wire",
+  "family": "negative",
+  "title": "A message edge whose source cannot satisfy its target schema refuses at the mapping",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-neg-wire",
+    "versionId": "e3228332efce101ca6f545c903e845034581cd79d0f2796050eecdfc480c021d",
+    "parentVersionId": null,
+    "title": "Incompatible wire",
+    "description": "A string output feeding a number input can never validate; the wire refuses at compile time.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "seed"
+        ],
+        "properties": {
+          "seed": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "seed",
+        "to": {
+          "node": "a",
+          "port": "seed"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "b",
+          "port": "v"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "a",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "seed": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "b",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "v": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "a-b",
+        "from": {
+          "node": "a",
+          "port": "v"
+        },
+        "to": {
+          "node": "b",
+          "port": "v"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "seed": "s"
+    },
+    "handlers": {},
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "refusal",
+    "code": "TMAS1004",
+    "path": "/messages/0/to"
+  }
+}

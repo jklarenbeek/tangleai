@@ -54,8 +54,13 @@ implementing any single one.
   reward-guided topology + prompt evolution. Experience-guided orchestration.
   - 📄 [`refs/2604.00901v2.pdf`](refs/2604.00901v2.pdf)
 - **MASFactory** (arXiv:2603.06007v1, Zhou et al., Mar 2026) — intent-to-workflow
-  compilation; Tangle's version targets @jarenjs/flow documents. A graph-centric
-  multi-agent framework.
+  compilation; Tangle's version targets @jarenjs/flow documents. The runtime
+  mechanism tier is implemented and measured (2026-09-01): one canonical
+  workflow IR with agent/task/graph/loop/switch/interaction nodes lowered to
+  jaren-dag/jaren-fsm, durable resumable runs, and 11/11 positive plus 7/7
+  negative conformance oracles (`MAS_RUNTIME_BENCHMARK.md`). The
+  natural-language authoring tier ("vibe graphing") and any paper
+  benchmark/cost/LOC reproduction remain open roadmap work.
   - 📄 [`refs/2603.06007v1.pdf`](refs/2603.06007v1.pdf)
 
 ## Reference-only

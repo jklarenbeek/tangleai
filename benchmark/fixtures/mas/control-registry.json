@@ -1,0 +1,457 @@
+{
+  "$masRegistry": "0.1",
+  "registryId": "mas-control-fixtures",
+  "roles": [
+    {
+      "id": "analyst-alpha",
+      "title": "analyst-alpha",
+      "instructions": "Analyze the brief with a conservative lens and answer with the requested structure.",
+      "instructionsRevision": "0ad8a50b9d58bad73aa2c4f980e3a3080b3192524a9b169e85dbe808d366a066",
+      "capabilities": []
+    },
+    {
+      "id": "analyst-beta",
+      "title": "analyst-beta",
+      "instructions": "Analyze the brief with an aggressive lens and answer with the requested structure.",
+      "instructionsRevision": "01a5359cb6dc1894c46dcea776eac58d9b2a63d68fd45b3fafa1c09fd2c77b1e",
+      "capabilities": []
+    }
+  ],
+  "handlers": [
+    {
+      "id": "scripted",
+      "title": "Scripted pure step",
+      "effect": "pure",
+      "idempotency": "not-required"
+    },
+    {
+      "id": "scripted-effectful",
+      "title": "Scripted effectful step",
+      "effect": "effectful",
+      "idempotency": "honored"
+    },
+    {
+      "id": "scripted-read",
+      "title": "Scripted read step",
+      "effect": "read",
+      "idempotency": "not-required"
+    }
+  ],
+  "tools": [],
+  "messageAdapters": [
+    {
+      "id": "json-schema",
+      "version": "0.1"
+    },
+    {
+      "id": "markdown-sections",
+      "version": "0.1"
+    },
+    {
+      "id": "plain",
+      "version": "0.1"
+    }
+  ],
+  "contextAdapters": [],
+  "templates": [],
+  "subgraphs": [
+    {
+      "id": "reflection-body",
+      "versionId": "a00b90c2d823830a06514547e5ba40b6f1b899a2b2123bf38a17c91aa4651b46",
+      "workflow": {
+        "$mas": "0.1",
+        "workflowId": "reflection-body",
+        "versionId": "a00b90c2d823830a06514547e5ba40b6f1b899a2b2123bf38a17c91aa4651b46",
+        "parentVersionId": null,
+        "title": "Reflection body — critique then revise",
+        "description": "One reflection round: critique the draft, revise it, raise its quality by one.",
+        "provenance": {
+          "author": "tangle-conformance"
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "text",
+              "quality"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "output": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "text",
+              "quality"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "entry": [
+          {
+            "port": "text",
+            "to": {
+              "node": "reflect",
+              "port": "text"
+            }
+          },
+          {
+            "port": "quality",
+            "to": {
+              "node": "reflect",
+              "port": "quality"
+            }
+          }
+        ],
+        "exit": [
+          {
+            "port": "text",
+            "from": {
+              "node": "revise",
+              "port": "text"
+            }
+          },
+          {
+            "port": "quality",
+            "from": {
+              "node": "revise",
+              "port": "quality"
+            }
+          }
+        ],
+        "state": {
+          "schema": {
+            "type": "object",
+            "required": [],
+            "properties": {},
+            "additionalProperties": false
+          },
+          "init": {}
+        },
+        "nodes": [
+          {
+            "id": "reflect",
+            "kind": "task",
+            "input": {
+              "ports": {
+                "text": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "quality": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "output": {
+              "ports": {
+                "critique": {
+                  "schema": {
+                    "type": "object",
+                    "required": [
+                      "text",
+                      "quality"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "quality": {
+                        "type": "number"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "statePull": [],
+            "statePush": [],
+            "limits": null,
+            "handler": "scripted",
+            "effect": "pure"
+          },
+          {
+            "id": "revise",
+            "kind": "task",
+            "input": {
+              "ports": {
+                "critique": {
+                  "schema": {
+                    "type": "object",
+                    "required": [
+                      "text",
+                      "quality"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "quality": {
+                        "type": "number"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "output": {
+              "ports": {
+                "text": {
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                "quality": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "statePull": [],
+            "statePush": [],
+            "limits": null,
+            "handler": "scripted",
+            "effect": "pure"
+          }
+        ],
+        "control": [],
+        "messages": [
+          {
+            "id": "reflect-revise",
+            "from": {
+              "node": "reflect",
+              "port": "critique"
+            },
+            "to": {
+              "node": "revise",
+              "port": "critique"
+            },
+            "adapter": "json-schema",
+            "select": null,
+            "aggregation": "one"
+          }
+        ],
+        "limits": {
+          "calls": 32,
+          "tokens": 200000,
+          "ms": 600000,
+          "toolRounds": 4,
+          "fanOut": 8,
+          "concurrency": 8,
+          "iterations": 8,
+          "contextChars": 40000,
+          "traceBytes": 1000000
+        },
+        "registry": {
+          "revision": null
+        },
+        "config": {
+          "registryRevision": null,
+          "profile": "scripted"
+        },
+        "compile": {
+          "schemaVersion": "0.1",
+          "sourceMode": "declarative",
+          "sourceDesignRevision": null,
+          "executableRevision": null
+        }
+      }
+    },
+    {
+      "id": "retry-body",
+      "versionId": "6caf0047798b5d4877d6c692ceed8258c137dae8cdb01f49e7982efecdaa969a",
+      "workflow": {
+        "$mas": "0.1",
+        "workflowId": "retry-body",
+        "versionId": "6caf0047798b5d4877d6c692ceed8258c137dae8cdb01f49e7982efecdaa969a",
+        "parentVersionId": null,
+        "title": "Retry body — one bounded recovery attempt",
+        "description": "One declared recovery attempt whose failure is a typed value, never a thrown region failure.",
+        "provenance": {
+          "author": "tangle-conformance"
+        },
+        "input": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "n",
+              "goal"
+            ],
+            "properties": {
+              "n": {
+                "type": "number"
+              },
+              "goal": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "output": {
+          "schema": {
+            "type": "object",
+            "required": [
+              "ok",
+              "n",
+              "goal"
+            ],
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "n": {
+                "type": "number"
+              },
+              "goal": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "entry": [
+          {
+            "port": "n",
+            "to": {
+              "node": "try",
+              "port": "n"
+            }
+          },
+          {
+            "port": "goal",
+            "to": {
+              "node": "try",
+              "port": "goal"
+            }
+          }
+        ],
+        "exit": [
+          {
+            "port": "ok",
+            "from": {
+              "node": "try",
+              "port": "ok"
+            }
+          },
+          {
+            "port": "n",
+            "from": {
+              "node": "try",
+              "port": "n"
+            }
+          },
+          {
+            "port": "goal",
+            "from": {
+              "node": "try",
+              "port": "goal"
+            }
+          }
+        ],
+        "state": {
+          "schema": {
+            "type": "object",
+            "required": [],
+            "properties": {},
+            "additionalProperties": false
+          },
+          "init": {}
+        },
+        "nodes": [
+          {
+            "id": "try",
+            "kind": "task",
+            "input": {
+              "ports": {
+                "n": {
+                  "schema": {
+                    "type": "number"
+                  }
+                },
+                "goal": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "output": {
+              "ports": {
+                "ok": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                },
+                "n": {
+                  "schema": {
+                    "type": "number"
+                  }
+                },
+                "goal": {
+                  "schema": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "statePull": [],
+            "statePush": [],
+            "limits": null,
+            "handler": "scripted",
+            "effect": "pure"
+          }
+        ],
+        "control": [],
+        "messages": [],
+        "limits": {
+          "calls": 32,
+          "tokens": 200000,
+          "ms": 600000,
+          "toolRounds": 4,
+          "fanOut": 8,
+          "concurrency": 8,
+          "iterations": 8,
+          "contextChars": 40000,
+          "traceBytes": 1000000
+        },
+        "registry": {
+          "revision": null
+        },
+        "config": {
+          "registryRevision": null,
+          "profile": "scripted"
+        },
+        "compile": {
+          "schemaVersion": "0.1",
+          "sourceMode": "declarative",
+          "sourceDesignRevision": null,
+          "executableRevision": null
+        }
+      }
+    }
+  ]
+}

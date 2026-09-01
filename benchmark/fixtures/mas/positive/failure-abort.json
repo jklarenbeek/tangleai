@@ -1,0 +1,306 @@
+{
+  "id": "failure-abort",
+  "family": "positive",
+  "title": "The first failure is named; the concurrent sibling sees abort; no partial output",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-failure-abort",
+    "versionId": "e0cb4b4a150c535d742696cd06b4f742cc53fe0daea786f09f9b4d4634460341",
+    "parentVersionId": null,
+    "title": "Failure and abort",
+    "description": "One scripted failure aborts its concurrent sibling and the run has no partial workflow output.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "x"
+        ],
+        "properties": {
+          "x": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "a",
+              "b"
+            ],
+            "properties": {
+              "a": {
+                "type": "number"
+              },
+              "b": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "x",
+        "to": {
+          "node": "boom",
+          "port": "x"
+        }
+      },
+      {
+        "port": "x",
+        "to": {
+          "node": "slow",
+          "port": "x"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "merge",
+          "port": "out"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "boom",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "x": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "slow",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "x": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "merge",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "a": {
+              "schema": {
+                "type": "number"
+              }
+            },
+            "b": {
+              "schema": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "a",
+                  "b"
+                ],
+                "properties": {
+                  "a": {
+                    "type": "number"
+                  },
+                  "b": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "boom-merge",
+        "from": {
+          "node": "boom",
+          "port": "out"
+        },
+        "to": {
+          "node": "merge",
+          "port": "a"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "slow-merge",
+        "from": {
+          "node": "slow",
+          "port": "out"
+        },
+        "to": {
+          "node": "merge",
+          "port": "b"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "x": 1
+    },
+    "handlers": {
+      "boom": {
+        "query": {
+          "out": "$.x"
+        }
+      },
+      "slow": {
+        "query": {
+          "out": "$.x"
+        }
+      },
+      "merge": {
+        "query": {
+          "out": {
+            "a": "$.a",
+            "b": "$.b"
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": {
+      "nodes": [
+        "boom",
+        "slow"
+      ],
+      "settleOrder": [
+        "boom"
+      ]
+    },
+    "stopAfter": null,
+    "respond": null,
+    "failAt": "boom"
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "failed",
+    "output": null,
+    "failure": {
+      "node": "boom"
+    },
+    "events": [
+      "boom:failed",
+      "slow:aborted"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 2,
+      "max": 2
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

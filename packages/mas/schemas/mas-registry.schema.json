@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/mas-registry",
+  "title": "MAS registry snapshot — immutable capability data, never functions",
+  "description": "The validated capability snapshot a workflow pins by revision: role identities with content-addressed instructions, named task handler contracts, schema-checked tool declarations, message and context adapter identities, immutable template versions and embedded subgraph workflow versions. Entries are data descriptions only — a function, credential, URL or mutable reference has no representable member; host registries bind functions to these ids only after the snapshot validates. The snapshot revision is the canonical SHA-256 of this whole document.",
+  "type": "object",
+  "required": ["$masRegistry", "registryId", "roles", "handlers", "tools", "messageAdapters", "contextAdapters", "templates", "subgraphs"],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      { "$eq": [{ "$count": "$.roles[*].id" }, { "$count": { "$distinct": "$.roles[*].id" } }] },
+      { "$eq": [{ "$count": "$.handlers[*].id" }, { "$count": { "$distinct": "$.handlers[*].id" } }] },
+      { "$eq": [{ "$count": "$.tools[*].id" }, { "$count": { "$distinct": "$.tools[*].id" } }] },
+      { "$eq": [{ "$count": "$.messageAdapters[*].id" }, { "$count": { "$distinct": "$.messageAdapters[*].id" } }] },
+      { "$eq": [{ "$count": "$.contextAdapters[*].id" }, { "$count": { "$distinct": "$.contextAdapters[*].id" } }] },
+      { "$eq": [{ "$count": "$.templates[*].id" }, { "$count": { "$distinct": "$.templates[*].id" } }] },
+      { "$eq": [{ "$count": "$.subgraphs[*].id" }, { "$count": { "$distinct": "$.subgraphs[*].id" } }] }
+    ]
+  },
+  "properties": {
+    "$masRegistry": { "const": "0.1" },
+    "registryId": { "$ref": "#/$defs/registryName" },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "instructions", "instructionsRevision", "capabilities"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "title": { "type": "string", "minLength": 1 },
+          "instructions": { "type": "string", "minLength": 1 },
+          "instructionsRevision": { "$ref": "#/$defs/registrySha256" },
+          "capabilities": { "type": "array", "items": { "$ref": "#/$defs/registryName" } }
+        }
+      }
+    },
+    "handlers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "effect", "idempotency"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "title": { "type": "string", "minLength": 1 },
+          "effect": { "enum": ["pure", "read", "effectful"] },
+          "idempotency": {
+            "description": "`honored` — the bound host handler accepts and honors an out-of-band idempotency key; required before an effectful handler may bind.",
+            "enum": ["not-required", "honored"]
+          }
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "effect", "input", "inputRevision"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "title": { "type": "string", "minLength": 1 },
+          "effect": { "enum": ["pure", "read", "effectful"] },
+          "input": { "type": ["object", "boolean"] },
+          "inputRevision": { "$ref": "#/$defs/registrySha256" }
+        }
+      }
+    },
+    "messageAdapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "version"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "version": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "contextAdapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "capabilities"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "title": { "type": "string", "minLength": 1 },
+          "capabilities": { "type": "array", "items": { "$ref": "#/$defs/registryName" } }
+        }
+      }
+    },
+    "templates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "versionId", "template"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "versionId": { "$ref": "#/$defs/registrySha256" },
+          "template": {
+            "description": "The embedded MasTemplateVersion document, validated against its own schema by the snapshot constructor.",
+            "type": "object"
+          }
+        }
+      }
+    },
+    "subgraphs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "versionId", "workflow"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "versionId": { "$ref": "#/$defs/registrySha256" },
+          "workflow": {
+            "description": "The embedded MasWorkflowVersion document, validated against the workflow schema by the snapshot constructor; its versionId must recompute.",
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "registrySha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "registryName": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+  }
+}

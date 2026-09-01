@@ -1,0 +1,66 @@
+{
+  "$comment": "The immutable downstream handoff: one projection of the final MAS conformance report that GMPL, HERA and the later authoring campaign cite and must beat or extend — report/registration/fixture identities and the mechanical decision, the exact conformance/concurrency/restore numbers, the public capability surface, and the non-claims and deployment limits stated beside the wins. Executed verbatim with @jarenjs/json's compileJsonQuery; no application mapper replaces what this document says.",
+  "$let": {
+    "weekly": { "$head": { "$for": { "r": "$.integrated[*]" }, "$where": { "$eq": ["$r.id", "weekly-report-manual"] }, "$return": "$r" } },
+    "loop": { "$head": { "$for": { "r": "$.integrated[*]" }, "$where": { "$eq": ["$r.id", "loop-three"] }, "$return": "$r" } },
+    "fan": { "$head": { "$for": { "r": "$.integrated[*]" }, "$where": { "$eq": ["$r.id", "switch-many"] }, "$return": "$r" } },
+    "checkpoint": { "$head": { "$for": { "r": "$.integrated[*]" }, "$where": { "$eq": ["$r.id", "checkpoint"] }, "$return": "$r" } },
+    "wait": { "$head": { "$for": { "r": "$.integrated[*]" }, "$where": { "$eq": ["$r.id", "interaction"] }, "$return": "$r" } }
+  },
+  "$return": {
+    "decision": "$.decision.outcome",
+    "clauses": "$.decision.clauses",
+    "reportId": "$.reportId",
+    "registration": {
+      "manifestRevision": "$.registration.manifestRevision",
+      "registryRevision": "$.registration.registryRevision",
+      "configCatalogRevision": "$.registration.configCatalogRevision",
+      "positive": "$.registration.positive",
+      "negative": "$.registration.negative"
+    },
+    "conformance": {
+      "runtimePass": "$.counts.integrated.runtimePass",
+      "exactRefusals": "$.counts.integrated.refusedAsRegistered",
+      "scriptedCalls": "$.counts.calls",
+      "toolCalls": "$.counts.toolCalls",
+      "contextReads": "$.counts.contextReads",
+      "restores": "$.counts.restores"
+    },
+    "weeklyReport": {
+      "workflowVersionId": "$weekly.workflowVersionId",
+      "executableRevision": "$weekly.executableRevision",
+      "maxObservedConcurrency": "$weekly.maxObservedConcurrency",
+      "calls": "$weekly.calls",
+      "state": "$weekly.state"
+    },
+    "controlEvidence": {
+      "loopThree": "$loop.state",
+      "multiSelect": "$fan.state",
+      "interaction": "$wait.state",
+      "checkpointRestores": "$checkpoint.restores"
+    },
+    "durability": "$.counts.durability",
+    "suiteProbes": "$.counts.probes",
+    "live": "$.live",
+    "capabilities": {
+      "nodeKinds": ["agent", "task", "graph", "loop", "switch", "interaction"],
+      "messageAdapters": ["plain", "markdown-sections", "json-schema"],
+      "contextAdapters": ["memory", "documents", "web", "toolbox", "mcp"],
+      "runStates": ["queued", "running", "waiting_for_input", "resume_pending", "completed", "failed", "cancelled"],
+      "attemptStates": ["running", "completed", "failed", "aborted", "uncertain"]
+    },
+    "publicImports": ["@tangleai/mas", "@tangleai/store"],
+    "nonClaims": [
+      "no natural-language workflow authoring: Role Assignment, Topology Design and Semantic Completion remain open roadmap work",
+      "no desktop authoring or run-trace surface; the desktop live hub remains a single global latest-run slot",
+      "no GMPL production collaboration templates and no HERA experience learning",
+      "no paper benchmark parity, cost or LOC reproduction from the MASFactory basis"
+    ],
+    "deploymentLimits": [
+      "durable queue and checkpoints are same-machine SQLite through the suite jobs tables; not a cross-machine coordination substrate",
+      "external effects are at-least-once with idempotency-key guards and an explicit uncertain state; exactly-once is never claimed",
+      "shared budget token overshoot under concurrency is bounded only by the other in-flight calls' usage, exactly the suite's stated bound",
+      "interactions inside loop bodies or nested graphs refuse as a stated runtime limitation"
+    ]
+  }
+}

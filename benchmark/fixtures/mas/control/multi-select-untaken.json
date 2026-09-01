@@ -1,0 +1,505 @@
+{
+  "id": "multi-select-untaken",
+  "family": "positive",
+  "title": "The untaken effectful branch records zero attempts, calls and spend",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-multi-untaken",
+    "versionId": "fd5189b64cdff80a15d3a6768b8b17f10b5191c95e48e14a465b938936131205",
+    "parentVersionId": null,
+    "title": "Multi-select with an untaken effectful branch",
+    "description": "Two true guards run concurrently; the effectful third branch is never lowered into the dispatched work.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "flags"
+        ],
+        "properties": {
+          "flags": {
+            "type": "object",
+            "required": [
+              "alpha",
+              "beta",
+              "gamma"
+            ],
+            "properties": {
+              "alpha": {
+                "type": "boolean"
+              },
+              "beta": {
+                "type": "boolean"
+              },
+              "gamma": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "branch"
+              ],
+              "properties": {
+                "branch": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "flags",
+        "to": {
+          "node": "fan",
+          "port": "flags"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "fan",
+          "port": "results"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "fan",
+        "kind": "switch",
+        "input": {
+          "ports": {
+            "flags": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ],
+                "properties": {
+                  "alpha": {
+                    "type": "boolean"
+                  },
+                  "beta": {
+                    "type": "boolean"
+                  },
+                  "gamma": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "results": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "branch"
+                  ],
+                  "properties": {
+                    "branch": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "mode": "multi-select",
+        "branches": [
+          {
+            "id": "alpha",
+            "when": "$.flags.alpha",
+            "nodes": [
+              "do-alpha"
+            ],
+            "result": {
+              "node": "do-alpha",
+              "port": "out"
+            }
+          },
+          {
+            "id": "beta",
+            "when": "$.flags.beta",
+            "nodes": [
+              "do-beta"
+            ],
+            "result": {
+              "node": "do-beta",
+              "port": "out"
+            }
+          },
+          {
+            "id": "gamma",
+            "when": "$.flags.gamma",
+            "nodes": [
+              "do-gamma"
+            ],
+            "result": {
+              "node": "do-gamma",
+              "port": "out"
+            }
+          }
+        ],
+        "default": "alpha"
+      },
+      {
+        "id": "do-alpha",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "flags": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ],
+                "properties": {
+                  "alpha": {
+                    "type": "boolean"
+                  },
+                  "beta": {
+                    "type": "boolean"
+                  },
+                  "gamma": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "branch"
+                ],
+                "properties": {
+                  "branch": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "do-beta",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "flags": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ],
+                "properties": {
+                  "alpha": {
+                    "type": "boolean"
+                  },
+                  "beta": {
+                    "type": "boolean"
+                  },
+                  "gamma": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "branch"
+                ],
+                "properties": {
+                  "branch": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      },
+      {
+        "id": "do-gamma",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "flags": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ],
+                "properties": {
+                  "alpha": {
+                    "type": "boolean"
+                  },
+                  "beta": {
+                    "type": "boolean"
+                  },
+                  "gamma": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "branch"
+                ],
+                "properties": {
+                  "branch": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted-effectful",
+        "effect": "effectful"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "fan-do-alpha",
+        "from": {
+          "node": "fan",
+          "port": "flags"
+        },
+        "to": {
+          "node": "do-alpha",
+          "port": "flags"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "fan-do-beta",
+        "from": {
+          "node": "fan",
+          "port": "flags"
+        },
+        "to": {
+          "node": "do-beta",
+          "port": "flags"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      },
+      {
+        "id": "fan-do-gamma",
+        "from": {
+          "node": "fan",
+          "port": "flags"
+        },
+        "to": {
+          "node": "do-gamma",
+          "port": "flags"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "a74b494e60c5ccedf6973042579853c1332d8912c8fa343c156d9c3ac4c6fd16"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "flags": {
+        "alpha": true,
+        "beta": true,
+        "gamma": false
+      }
+    },
+    "handlers": {
+      "do-alpha": {
+        "query": {
+          "out": {
+            "branch": "alpha"
+          }
+        }
+      },
+      "do-beta": {
+        "query": {
+          "out": {
+            "branch": "beta"
+          }
+        }
+      },
+      "do-gamma": {
+        "query": {
+          "out": {
+            "branch": "gamma"
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": {
+      "nodes": [
+        "do-alpha",
+        "do-beta"
+      ],
+      "settleOrder": [
+        "do-beta",
+        "do-alpha"
+      ]
+    },
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": [
+        {
+          "branch": "alpha"
+        },
+        {
+          "branch": "beta"
+        }
+      ]
+    },
+    "failure": null,
+    "events": [
+      "do-beta:completed",
+      "do-alpha:completed",
+      "fan:completed"
+    ],
+    "aggregations": [
+      {
+        "node": "fan",
+        "port": "results",
+        "sources": [
+          "do-alpha",
+          "do-beta"
+        ]
+      }
+    ],
+    "concurrency": {
+      "min": 2,
+      "max": 2
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

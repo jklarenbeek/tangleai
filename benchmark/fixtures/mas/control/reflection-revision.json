@@ -1,0 +1,270 @@
+{
+  "id": "reflection-revision",
+  "family": "positive",
+  "title": "Reflection, critique and revision terminate on the third oracle result",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-reflection",
+    "versionId": "0f5133f016873a16479a5b04c72a3f3c85a3254cb5dbfa35a12096f48bdc48d9",
+    "parentVersionId": null,
+    "title": "Reflection loop",
+    "description": "A bounded critique/revise cycle whose termination query fires on the third committed body.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "seed"
+        ],
+        "properties": {
+          "seed": {
+            "type": "object",
+            "required": [
+              "text",
+              "quality"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "text",
+              "quality"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "seed",
+        "to": {
+          "node": "polish",
+          "port": "seed"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "polish",
+          "port": "result"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "polish",
+        "kind": "loop",
+        "input": {
+          "ports": {
+            "seed": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "quality"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "quality": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "result": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "quality"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "quality": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "body": "reflection-body",
+        "init": [
+          {
+            "port": "seed",
+            "to": ""
+          }
+        ],
+        "feedback": [
+          {
+            "from": "",
+            "to": ""
+          }
+        ],
+        "result": [
+          {
+            "port": "result",
+            "from": ""
+          }
+        ],
+        "maxIterations": 5,
+        "termination": {
+          "$ge": [
+            "$.output.quality",
+            3
+          ]
+        }
+      }
+    ],
+    "control": [],
+    "messages": [],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "a74b494e60c5ccedf6973042579853c1332d8912c8fa343c156d9c3ac4c6fd16"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "seed": {
+        "text": "draft zero",
+        "quality": 0
+      }
+    },
+    "handlers": {
+      "polish/reflect": {
+        "query": {
+          "critique": {
+            "text": "$.text",
+            "quality": "$.quality"
+          }
+        }
+      },
+      "polish/revise": {
+        "query": {
+          "text": {
+            "$concat": [
+              "$.critique.text",
+              "+"
+            ]
+          },
+          "quality": {
+            "$add": [
+              "$.critique.quality",
+              1
+            ]
+          }
+        }
+      }
+    },
+    "agents": {},
+    "gate": null,
+    "stopAfter": null,
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "text": "draft zero+++",
+        "quality": 3
+      }
+    },
+    "failure": null,
+    "events": [
+      "polish/1/reflect:completed",
+      "polish/1/revise:completed",
+      "polish/2/reflect:completed",
+      "polish/2/revise:completed",
+      "polish/3/reflect:completed",
+      "polish/3/revise:completed",
+      "polish:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 0,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 0
+  }
+}

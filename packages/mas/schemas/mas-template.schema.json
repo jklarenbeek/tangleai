@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/mas-template",
+  "title": "MasTemplateVersion — an immutable parameterized workflow fragment",
+  "description": "An immutable workflow fragment plus the closed parameter schema and the ordered binding declarations that alone may specialize it. Instantiation validates parameters with the suite validator, applies a compiled RFC 6902 patch whose operations target only declared pointers, validates the result as a normal MasWorkflowVersion, and records template version and parameter revision as provenance. A parameter cannot change a node kind, add a node/edge/tool, target an undeclared pointer, or raise a cap. The template `versionId` is the canonical SHA-256 of the document with `versionId` and `provenance` excluded.",
+  "type": "object",
+  "required": ["$masTemplate", "templateId", "versionId", "parentVersionId", "title", "description", "provenance", "fragment", "parameters", "bindings"],
+  "additionalProperties": false,
+  "properties": {
+    "$masTemplate": { "const": "0.1" },
+    "templateId": { "$ref": "#/$defs/templateName" },
+    "versionId": { "$ref": "#/$defs/templateSha256" },
+    "parentVersionId": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/templateSha256" }] },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "provenance": {
+      "type": "object",
+      "required": ["author"],
+      "additionalProperties": false,
+      "properties": {
+        "author": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fragment": {
+      "description": "A complete MasWorkflowVersion document (validated against the workflow schema by the template validator) that instantiation specializes copy-on-write.",
+      "type": "object"
+    },
+    "parameters": {
+      "type": "object",
+      "required": ["schema"],
+      "additionalProperties": false,
+      "properties": {
+        "schema": { "type": ["object", "boolean"] }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["parameterPointer", "targetPointer", "mode"],
+        "additionalProperties": false,
+        "properties": {
+          "parameterPointer": { "type": "string", "pattern": "^/" },
+          "targetPointer": { "type": "string", "pattern": "^/" },
+          "mode": {
+            "description": "What the binding may change: role instructions or profile references, a requested tool subset, a message/context adapter choice, node/workflow caps (never above a parent), or the enablement value of a declared switch branch guard.",
+            "enum": ["instructions-revision", "role", "profile", "tools", "message-adapter", "context-adapter", "caps", "branch-enablement"]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "templateSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "templateName": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+  }
+}

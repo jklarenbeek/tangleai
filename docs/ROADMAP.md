@@ -269,23 +269,28 @@ already has.
   hard-gated on an instrument and a published fixed-topology baseline that must
   exist first. *Closes on:* the controlled ablation, topology metrics and costs
   published, including a loss if the mechanism does not beat its scaffold.
-- [ ] **A graph-centric multi-agent framework (MASFactory).** *Wanted:* a
-  canonical workflow IR with typed agent / task / graph / loop / switch /
-  interaction nodes, message / control / state semantics, templates and composed
-  graphs; every authoring path — hand-written, intent-compiled through staged,
-  human-reviewed "vibe graphing", or edited in the desktop — emitting the same IR
-  and lowering through the same validated DAG/FSM runtime; paid and effectful work
-  budgeted, checkpointed, idempotent and resumable; the desktop previewing and
-  editing IR and tracing nodes, messages, state and spend. *Stands on:*
-  `@jarenjs/flow` (concurrent acyclic dataflow, cyclic FSM control, opt-in node
-  checkpointing and durable sessions — stronger than the paper's own system,
-  which names checkpoint/resume as a limitation) and `@jarenjs/ai` (bounded tool
-  agents, structured output, budgets, guarded repair). *Constraint:* the only
-  Tangle flow today is the fixed memory-policy DAG and the Loom is a read-only
-  view of it; the GMPL patterns and a HERA executor must reuse this framework
-  rather than grow parallel topology engines. *Closes on:* conformance and
-  authoring reports with failures, costs, human edits and capability differences
-  published beside successes.
+- [ ] **Staged workflow authoring and its operator surface (the open half of
+  MASFactory).** *Wanted:* natural-language workflow authoring as three
+  durable, human-reviewed stages — a `RolePlan`, a `TopologyPlan` and a
+  `SemanticPlan` — generated through `createStructuredOutput` with
+  `composeChecks` compile gates, revised by text feedback or RFC 6902 direct
+  edits over immutable design revisions, and emitting only the shipped
+  canonical `MasWorkflowVersion`; plus the desktop surface the runtime
+  deliberately did not touch — schema-aware IR forms, run-addressed trace
+  subscriptions (the global `createLiveHub` latest-run slot is not run-safe;
+  a surface must subscribe by run id over the store's committed records),
+  Mermaid preview from the executable plan, and an interaction inbox for
+  typed pause/resume. *Stands on:* the shipped `@tangleai/mas` runtime —
+  its IR, validator, registries, lowering, durable store host, interactions
+  and the weekly-report conformance fixture
+  (`benchmark/results/mas-runtime-handoff.json` is the baseline every
+  authoring treatment must consume and beat, not re-derive). *Constraint:*
+  a model may propose executable policy only through the closed IR and its
+  conformance instrument; capability catalogs stay CONFIG-resolved; nothing
+  here re-opens the runtime's own claims. *Closes on:* a representative
+  authoring-effectiveness measurement over registered intents — including
+  the manual weekly-report baseline as the comparison floor — with
+  failures, human-edit counts and costs published beside successes.
 
 ## Grounding and retrieval
 

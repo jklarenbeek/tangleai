@@ -60,8 +60,26 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
 | `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
-| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus transactional source/version/element/chunk activation and the run/event log |
+| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
 | `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@jarenjs/ai`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
+| `@tangleai/mas` | the durable typed multi-agent runtime: one closed content-addressed workflow IR (`agent`/`task`/`graph`/`loop`/`switch`/`interaction`), a pure nine-gate validator with stable `TMAS1xxx` refusals, LINQ-pen lowering to compile-proven `jaren-dag`/`jaren-fsm` documents, and the transactional node lifecycle over `createAgent`/`createToolbox`/`createStructuredOutput`/`createBudgetAccount` ([packages/mas/README.md](packages/mas/README.md)) |
+
+The MAS runtime is measured before it is claimed: the registered
+conformance instrument (`npm run benchmark:mas`,
+[docs/MAS_RUNTIME_BENCHMARK.md](docs/MAS_RUNTIME_BENCHMARK.md)) holds
+**11/11 positive runtime oracles and 7/7 exact negative refusals** with a
+mechanical `runtime-conformant` decision recomputed by the report schema:
+the weekly-report fixture runs three drafting agents at measured
+concurrency 3 with declared-edge-order fan-in under reverse completion,
+loops execute exactly their bounded iterations, untaken branches record
+zero attempts and spend, typed interactions pause and resume the same
+durable run, and every registered crash boundary reclaims with zero
+duplicate scripted provider calls. Its stated limits travel with the
+claim: same-machine SQLite job durability, at-least-once external
+effects behind idempotency keys with an explicit `uncertain` state, the
+suite's token-overshoot bound under concurrency, and no
+natural-language workflow authoring or desktop runtime surface
+([docs/ROADMAP.md](docs/ROADMAP.md) keeps those open).
 
 Embeddings are not a Tangle package any more: the wire client
 (`createEmbeddingClient`, the same OpenAI-compatible provider family the

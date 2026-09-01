@@ -1,0 +1,116 @@
+{
+  "benchmark": "mas-runtime-handoff",
+  "query": "queries/mas/runtime-handoff.json",
+  "queryRevision": "1b0864c641b058425fbba0774c94f34c6bc8962e6b67214d419b1cb9c4df5faa",
+  "reportId": "8ca21b25f62d021b23857364c848358c6e0f30d1223c92404f86369cbb200dc8",
+  "handoff": {
+    "decision": "runtime-conformant",
+    "clauses": {
+      "registration": true,
+      "conformance": true,
+      "concurrencyOrder": true,
+      "durability": true,
+      "controlSafety": true,
+      "persistenceIdentity": true,
+      "hygiene": true
+    },
+    "reportId": "8ca21b25f62d021b23857364c848358c6e0f30d1223c92404f86369cbb200dc8",
+    "registration": {
+      "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
+      "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
+      "configCatalogRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "positive": 11,
+      "negative": 7
+    },
+    "conformance": {
+      "runtimePass": 11,
+      "exactRefusals": 7,
+      "scriptedCalls": 12,
+      "toolCalls": 3,
+      "contextReads": 1,
+      "restores": 1
+    },
+    "weeklyReport": {
+      "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
+      "executableRevision": "4413547e5a659bf9e5792784a27990bdcc816f0c48382843dcb9d5d3fb843d73",
+      "maxObservedConcurrency": 3,
+      "calls": 11,
+      "state": "runtime-pass"
+    },
+    "controlEvidence": {
+      "loopThree": "runtime-pass",
+      "multiSelect": "runtime-pass",
+      "interaction": "runtime-pass",
+      "checkpointRestores": 1
+    },
+    "durability": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "suiteProbes": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "live": {
+      "state": "not-run",
+      "reason": "no authorized live plan"
+    },
+    "capabilities": {
+      "nodeKinds": [
+        "agent",
+        "task",
+        "graph",
+        "loop",
+        "switch",
+        "interaction"
+      ],
+      "messageAdapters": [
+        "plain",
+        "markdown-sections",
+        "json-schema"
+      ],
+      "contextAdapters": [
+        "memory",
+        "documents",
+        "web",
+        "toolbox",
+        "mcp"
+      ],
+      "runStates": [
+        "queued",
+        "running",
+        "waiting_for_input",
+        "resume_pending",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "attemptStates": [
+        "running",
+        "completed",
+        "failed",
+        "aborted",
+        "uncertain"
+      ]
+    },
+    "publicImports": [
+      "@tangleai/mas",
+      "@tangleai/store"
+    ],
+    "nonClaims": [
+      "no natural-language workflow authoring: Role Assignment, Topology Design and Semantic Completion remain open roadmap work",
+      "no desktop authoring or run-trace surface; the desktop live hub remains a single global latest-run slot",
+      "no GMPL production collaboration templates and no HERA experience learning",
+      "no paper benchmark parity, cost or LOC reproduction from the MASFactory basis"
+    ],
+    "deploymentLimits": [
+      "durable queue and checkpoints are same-machine SQLite through the suite jobs tables; not a cross-machine coordination substrate",
+      "external effects are at-least-once with idempotency-key guards and an explicit uncertain state; exactly-once is never claimed",
+      "shared budget token overshoot under concurrency is bounded only by the other in-flight calls' usage, exactly the suite's stated bound",
+      "interactions inside loop bodies or nested graphs refuse as a stated runtime limitation"
+    ]
+  },
+  "artifactId": "00fd144efec3616c14f7950381c86db7afc2a079c51513c23b4071367a253c87"
+}

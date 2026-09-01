@@ -11,7 +11,9 @@
     "./db": "./src/db.ts",
     "./memory-store": "./src/memory-store.ts",
     "./runs": "./src/runs.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./mas-store": "./src/mas-store.ts",
+    "./mas-jobs": "./src/mas-jobs.ts"
   },
   "engines": {
     "node": ">=24"
@@ -22,6 +24,7 @@
     "@tangleai/core": "^0.1.0",
     "@tangleai/config": "^0.1.0",
     "@jarenjs/db": "^0.56.0",
-    "@jarenjs/validate": "^0.56.0"
+    "@jarenjs/validate": "^0.56.0",
+    "@tangleai/mas": "^0.1.0"
   }
 }

@@ -1,0 +1,245 @@
+{
+  "id": "checkpoint",
+  "family": "positive",
+  "title": "A completed paid node restores with zero duplicate provider calls",
+  "workflow": {
+    "$mas": "0.1",
+    "workflowId": "wf-checkpoint",
+    "versionId": "5ffb2979ab85fa2cee8e42c7c84bf8668d62bfaf68977d53dbd2fd7621a9db23",
+    "parentVersionId": null,
+    "title": "Checkpoint restore",
+    "description": "One paid agent node completes, the process stops, and recovery restores the value instead of buying it again.",
+    "provenance": {
+      "author": "tangle-conformance"
+    },
+    "input": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "properties": {
+          "question": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "output": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "type": "object",
+            "required": [
+              "answer"
+            ],
+            "properties": {
+              "answer": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entry": [
+      {
+        "port": "question",
+        "to": {
+          "node": "paid",
+          "port": "question"
+        }
+      }
+    ],
+    "exit": [
+      {
+        "port": "result",
+        "from": {
+          "node": "wrap",
+          "port": "out"
+        }
+      }
+    ],
+    "state": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "init": {}
+    },
+    "nodes": [
+      {
+        "id": "paid",
+        "kind": "agent",
+        "input": {
+          "ports": {
+            "question": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "answer": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "role": "paid-agent",
+        "profile": "scripted",
+        "instructionsRevision": "b606791e348a956af7328f14ffa3e2c0aefd8ebe35c19bb8097ee69bcb0b99f5",
+        "tools": [],
+        "context": [],
+        "messageAdapter": "plain"
+      },
+      {
+        "id": "wrap",
+        "kind": "task",
+        "input": {
+          "ports": {
+            "answer": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "output": {
+          "ports": {
+            "out": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "answer"
+                ],
+                "properties": {
+                  "answer": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "statePull": [],
+        "statePush": [],
+        "limits": null,
+        "handler": "scripted",
+        "effect": "pure"
+      }
+    ],
+    "control": [],
+    "messages": [
+      {
+        "id": "paid-wrap",
+        "from": {
+          "node": "paid",
+          "port": "answer"
+        },
+        "to": {
+          "node": "wrap",
+          "port": "answer"
+        },
+        "adapter": "json-schema",
+        "select": null,
+        "aggregation": "one"
+      }
+    ],
+    "limits": {
+      "calls": 32,
+      "tokens": 200000,
+      "ms": 600000,
+      "toolRounds": 4,
+      "fanOut": 8,
+      "concurrency": 8,
+      "iterations": 8,
+      "contextChars": 40000,
+      "traceBytes": 1000000
+    },
+    "registry": {
+      "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+    },
+    "config": {
+      "registryRevision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2",
+      "profile": "scripted"
+    },
+    "compile": {
+      "schemaVersion": "0.1",
+      "sourceMode": "declarative",
+      "sourceDesignRevision": null,
+      "executableRevision": null
+    }
+  },
+  "script": {
+    "input": {
+      "question": "q"
+    },
+    "handlers": {
+      "wrap": {
+        "query": {
+          "out": {
+            "answer": "$.answer"
+          }
+        }
+      }
+    },
+    "agents": {
+      "paid": {
+        "turns": [
+          {
+            "content": "the answer",
+            "usage": {
+              "prompt_tokens": 5,
+              "completion_tokens": 3
+            }
+          }
+        ]
+      }
+    },
+    "gate": null,
+    "stopAfter": "paid",
+    "respond": null,
+    "failAt": null
+  },
+  "expect": {
+    "kind": "pass",
+    "outcome": "completed",
+    "output": {
+      "result": {
+        "answer": "the answer"
+      }
+    },
+    "failure": null,
+    "events": [
+      "paid:completed",
+      "paid:restored",
+      "wrap:completed"
+    ],
+    "aggregations": [],
+    "concurrency": {
+      "min": 1,
+      "max": 1
+    },
+    "calls": 1,
+    "toolCalls": 0,
+    "contextReads": 0,
+    "restores": 1
+  }
+}

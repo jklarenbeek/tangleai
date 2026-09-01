@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "7684d36973573c2f73f5d0615912e20834d6ce15",
+    "head": "455bc71c1ba5f09148dccb8fa594225bcc7d814a",
     "clean": false,
     "files": [
       {
@@ -109,7 +109,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "de5b83f92dafc11bdbd3ef6a6dca4637c60465cc5d8bdb92a2fe491453e57156"
+        "sha256": "de3e5211a8724e75b9aec70e141f641c97c84ba72fb41029f0819b1f94a570e1"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -120,7 +120,7 @@
         "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
       }
     ],
-    "sha256": "a38565846f8e044fc828cb791f487d7b7dc6bf0867ab84c5c7369447bfd743bd"
+    "sha256": "74663cc446559764de85356c44ca9d248f06de14b8db765b6413ea3801b7bbe5"
   },
   "suite": {
     "packages": [
@@ -158,6 +158,10 @@
       },
       {
         "name": "@jarenjs/json",
+        "version": "0.56.0"
+      },
+      {
+        "name": "@jarenjs/linq",
         "version": "0.56.0"
       },
       {
@@ -920,5 +924,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "57e85e2deb9c0b8df97313f65671d8cf9ce33c4b5211b7644a8c88d7d37c96a9"
+  "reportId": "673993d3ec13f199f3d6d4fdff66c2b0d2d3878bb8293360593461081df65b7f"
 }

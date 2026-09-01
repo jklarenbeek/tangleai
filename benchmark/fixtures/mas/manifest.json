@@ -1,0 +1,106 @@
+{
+  "manifest": "mas-conformance-fixtures",
+  "version": 1,
+  "registry": {
+    "path": "benchmark/fixtures/mas/registry.json",
+    "revision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735"
+  },
+  "configCatalog": {
+    "path": "benchmark/fixtures/mas/config-catalog.json",
+    "revision": "4e2f445ea6041e481c3bbe6aab6985c1ca6443b5b7cad9981c8b1f2c4f9240e2"
+  },
+  "positive": [
+    {
+      "id": "sequential",
+      "path": "benchmark/fixtures/mas/positive/sequential.json",
+      "revision": "6d9f226f157db6764e931c4e311faa61d0e38c23f2b64717c652dc0da335922d"
+    },
+    {
+      "id": "fanout-fanin",
+      "path": "benchmark/fixtures/mas/positive/fanout-fanin.json",
+      "revision": "6fa9697079dc637addb67670f0a513d1caf10950ac9374eb6ce5d71f0cf26ed9"
+    },
+    {
+      "id": "message-order",
+      "path": "benchmark/fixtures/mas/positive/message-order.json",
+      "revision": "801b8ad0bab7478705f758edb04680ef903afde55c78e58bc1294e5532ce107d"
+    },
+    {
+      "id": "switch-one",
+      "path": "benchmark/fixtures/mas/positive/switch-one.json",
+      "revision": "462f64f769d928bd5b81b1c00e5bf83e63a0c0d6fa8bb299a79ebfbfb7578f92"
+    },
+    {
+      "id": "switch-many",
+      "path": "benchmark/fixtures/mas/positive/switch-many.json",
+      "revision": "3842a6168c1edd9e9dfd3c7c1b2b916086a15bbd8d58c41244b90ea6829772f7"
+    },
+    {
+      "id": "loop-three",
+      "path": "benchmark/fixtures/mas/positive/loop-three.json",
+      "revision": "4bd3f2d536e67e540d2fe185b931e7e1cbbcae0152d4e49bc31695104fbfcaee"
+    },
+    {
+      "id": "nested-state",
+      "path": "benchmark/fixtures/mas/positive/nested-state.json",
+      "revision": "8ef018e3a3f7545d1017902dff0749021ad04a34000f02957682182e7296cbc3"
+    },
+    {
+      "id": "interaction",
+      "path": "benchmark/fixtures/mas/positive/interaction.json",
+      "revision": "1a2beb13e7e2c790c936811dcbe811a574ddad557f2ccb1bf43883d4ee7cc3b7"
+    },
+    {
+      "id": "checkpoint",
+      "path": "benchmark/fixtures/mas/positive/checkpoint.json",
+      "revision": "8ce3132c6ea37cd17290e60e904cb78e86806273ab16e1ebf5c96119df396169"
+    },
+    {
+      "id": "failure-abort",
+      "path": "benchmark/fixtures/mas/positive/failure-abort.json",
+      "revision": "c551b336c647b1e57ddf9d9f007fee5a14501b5a491b701012b8477db1b9c616"
+    },
+    {
+      "id": "weekly-report-manual",
+      "path": "benchmark/fixtures/mas/positive/weekly-report-manual.json",
+      "revision": "6a42eb80132d1b160437597aa385c8895650f4ed72dea524d0f8bf5884f0bc8c"
+    }
+  ],
+  "negative": [
+    {
+      "id": "plain-cycle",
+      "path": "benchmark/fixtures/mas/negative/plain-cycle.json",
+      "revision": "4e0a3c18f6a8747bc515d6410219f4dce7b11891cc90dcd431d385f1c67f7329"
+    },
+    {
+      "id": "unknown-port",
+      "path": "benchmark/fixtures/mas/negative/unknown-port.json",
+      "revision": "7b0778c45690aca35e274a0a99da7fd6164f38301a2e50eb3b14f22a97b43af3"
+    },
+    {
+      "id": "switch-no-default",
+      "path": "benchmark/fixtures/mas/negative/switch-no-default.json",
+      "revision": "7ad0d4dd22e153e9863147b81aeb7c8f3f851be5be1a2ac675d0862cc6df4944"
+    },
+    {
+      "id": "unbounded-loop",
+      "path": "benchmark/fixtures/mas/negative/unbounded-loop.json",
+      "revision": "d8884a8f90b596960ed92b85e3f82d2f3d5b4f6aa343299ec5832aee6a3ba3bd"
+    },
+    {
+      "id": "undeclared-tool",
+      "path": "benchmark/fixtures/mas/negative/undeclared-tool.json",
+      "revision": "08438cef53a89bda9a27bcfdb33fe82143e5227c7ecbb06b92bd905525d33e4d"
+    },
+    {
+      "id": "child-over-budget",
+      "path": "benchmark/fixtures/mas/negative/child-over-budget.json",
+      "revision": "93baa5b0f6e0548441b414ab143ce1ba1811f7a6f2d6489ae4c532981d40f360"
+    },
+    {
+      "id": "incompatible-wire",
+      "path": "benchmark/fixtures/mas/negative/incompatible-wire.json",
+      "revision": "9afee3908f193023f0edb09472d1304cf73bc3ab6bb60344652375377d86032d"
+    }
+  ]
+}

@@ -33,7 +33,7 @@ adapters, host databases, schedulers, paper-specific pipelines, servers and UI
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
 | LLM judgment | `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
 | self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
-| orchestration | `@jarenjs/flow` FSM/DAG compile + durable sessions | future: GMPL patterns as flow documents (roadmap: patterns as flow documents) |
+| orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@jarenjs/ai` agent/toolbox/structured-output/budget/ledger/environment | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
 | scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 | configuration identity | `PROVIDERS`/`resolveEndpoint` (the only endpoint authority), probes, clients, budget/structured-output/toolbox, the replay cache keyed by the effective request; `applyMergePatch`, `canonicalSha256`, `compileJsonQuery`, `$query` validation, `jaren-emit` types, `deepFreeze`/`cloneJson`, `sameIdentity`, `diffContracts` | `@tangleai/config`: the profile registry, pure resolution, TCFG refusal vocabulary and the run-identity envelope; the host adapter binding write-only secret slots; the identity repository beside runs/chats — a run identity is never a replay key (see CONFIGURATION.md) |
@@ -72,6 +72,23 @@ otherwise write.
 | Excerpting, truncating, sizing text | `excerpt`, `truncate`, `sizeOf`, `chunkText` in `@jarenjs/core/chunk` | Everywhere. Note the standing exception: this is NOT the document chunker — it has no element or heading model, which the document lane needs. |
 | Time as an answerable structure | `@jarenjs/core/series` | The temporal lane. |
 | Geography | `@jarenjs/core/geo`, `@jarenjs/ai/spatial` (the gates), `@jarenjs/ai/geo-tools` | The place lane. |
+
+Consumed by the MAS runtime at 0.56.0 (audited again at close-out): the
+flow pen (`defineDag`/`defineFsm`, captured guards/selectors,
+`.checkpoint()`), `compileDag`'s concurrent readiness with edge-order
+ports and shared abort, `compileFsm`'s document-order selection with
+`snapshotFsm`/`resumeFsmSession` (the async Tangle host deliberately
+does not use `createDurableFsmSession`'s synchronous store), the DB
+durable jobs composition (idempotent caller-supplied ids, guarded
+leases, `checkpointsFor` with atomic complete-and-prune), the whole
+agent seam (`createAgent`, `createToolbox`, `createStructuredOutput`,
+`createBudgetAccount`, `createLedger`, `createEnvironment`), RFC 6902
+compile/diff (`compileJSONPatch`/`createJSONPatch`) for template
+instantiation, and the Mermaid stylesheets (`dag-to-flowchart`,
+`workflow-to-state`) for projection. None of these were built locally;
+what Tangle owns above them is policy: the IR, the refusal vocabulary,
+the semantic gates, the partition rules, the transactional completion
+contract and the trace retention states.
 
 **Build it here — the suite genuinely does not have it.** Written down so nobody
 spends an afternoon looking:
