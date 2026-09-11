@@ -134,7 +134,8 @@ describe('the policy matrix\'s identities', () => {
   });
 
   it('the report identity covers the observation and excludes its own field', async () => {
-    const report = await fixture();
+    // Identity checks need report bytes, not the optional upstream corpus.
+    const report = committed;
     const { reportId, ...rest } = report;
     assert.equal(await reportIdOf(rest), reportId, 'the hash is over the document without the hash');
     assert.equal(await reportIdOf(report), reportId, 'and passing the document WITH it changes nothing');
@@ -794,7 +795,7 @@ describe('a plan is not permission', () => {
     const described = describePlan(
       planOf({ phase: 'census', cells: [], scorable: 0, adversarial: 0, embedFresh: 0, embedCached: 0, controls: CONTROLS, inference: base }),
       CONTROLS,
-      (await fixture()).registration,
+      committed.registration,
     ).join('\n');
     assert.match(described, /read from OPENROUTER_AI_KEY \(never printed, never hashed\)/);
     assert.equal(described.includes('sk-'), false);
