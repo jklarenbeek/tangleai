@@ -1,6 +1,7 @@
 /** Opt-in real-network document + OpenRouter embedding/chat smoke. */
 
 import { nodeDriver } from '@jarenjs/db/node';
+import jaren from '@jarenjs/db/package.json' with { type: 'json' };
 
 import { createDesktop, type Desktop } from '../apps/desktop/src/server.ts';
 
@@ -49,6 +50,8 @@ try {
   }
   console.log(JSON.stringify({
     ok: true,
+    measuredAt: new Date().toISOString(),
+    jaren: jaren.version,
     source: ingested.value.source.canonicalUrl,
     elements: ingested.value.version.metrics.elements,
     chunks: ingested.value.version.metrics.chunks,

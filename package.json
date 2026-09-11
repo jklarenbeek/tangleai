@@ -49,6 +49,7 @@
     "benchmark:mas": "node benchmark/mas-conformance.ts",
     "benchmark:mas:handoff": "node benchmark/mas-query.ts",
     "mas:smoke": "node scripts/mas-consumer-smoke.ts",
+    "mas:live-smoke": "node --env-file-if-exists=.env scripts/mas-consumer-smoke.ts --live",
     "test:config": "node --test \"test/config/*.test.ts\" \"test/benchmark/config-conformance.test.ts\"",
     "test:mas": "node --test \"test/mas/*.test.ts\" \"test/benchmark/mas-conformance.test.ts\"",
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",

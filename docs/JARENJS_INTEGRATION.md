@@ -112,9 +112,19 @@ three-argument `task` overload that the 0.83.2 JavaScript runtime implements
 but its published handwritten declaration omits. It changes no runtime code.
 The upstream fix belongs in `packages/linq/types/flow.d.ts`.
 
+Program failures retain completed map steps but omit aggregate sub-call
+counts in `packages/ai/src/program.js`. The long-horizon benchmark reads the
+step counts as well as the aggregate, without double-counting successful runs,
+and publishes program failure reasons. Paid responses are replayed to verify
+this accounting; a failed reduction must not erase work already performed.
+
 Regression checks exercise checkpoint identity refusal, crash/reclaim without
 duplicate calls, concurrent ledger counters, transaction rollback and SQLite
 reopening, scheduling/abort/drain, both token-limit fields and run identity,
 contract narrowing, all existing policy oracles and the keyless instruments.
+The [paid refresh](PAID_REFRESH.md) exercises the configured OpenRouter chat,
+judge and embedding models through all six answer strategies, the registered
+grounding comparison, the durable MAS review/resume workflow and the desktop's
+live document path. Failures and unequal coverage remain in the reports.
 Historical paid reports retain their original identities and results. Browser,
 compiled-binary and deployed-site checks validate the actual packaged surfaces.

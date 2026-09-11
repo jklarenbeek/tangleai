@@ -1584,6 +1584,19 @@ interface HorizonContext {
   progress: (message: string) => void;
 }
 
+/** Completed maps retain their counts even when a later reducer fails. */
+export function horizonProgramCounts(step: {
+  subcalls?: number, failed?: number,
+  steps?: Array<{ subcalls?: number, failed?: number, skipped?: number }>,
+}): { made: number, failed: number, unvisited: number } {
+  const maps = step.steps ?? [];
+  return {
+    made: Math.max(step.subcalls ?? 0, maps.reduce((sum, map) => sum + (map.subcalls ?? 0), 0)),
+    failed: Math.max(step.failed ?? 0, maps.reduce((sum, map) => sum + (map.failed ?? 0), 0)),
+    unvisited: maps.reduce((sum, map) => sum + (map.skipped ?? 0), 0),
+  };
+}
+
 /**
  * The suite's own answer to a corpus that will not fit, over the
  * conversation as an environment: one fresh in-memory environment per
@@ -1629,6 +1642,7 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
 
     for (const q of own) {
       if (shared.account.stop() !== null) { unanswered.budget++; continue; }
+      ctx.progress(`${row.key} ${q.id}: authoring and running the bounded program`);
       const mine = emptyCost();
       let seen = '';
       let wireFailures = 0;
@@ -1665,6 +1679,7 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       } catch (error) {
         if (error instanceof BudgetStop) unanswered.budget++;
         else { unanswered.wire++; ctx.noteError(`${q.id}: ${error instanceof Error ? error.message : String(error)}`); }
+        ctx.progress(`${row.key} ${q.id}: no answer (${error instanceof BudgetStop ? 'budget stop' : 'wire failure'})`);
         continue;
       }
 
@@ -1679,15 +1694,18 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
         }
         if (step.kind === 'program') {
           if (step.ok === true) block.programs.ok++; else block.programs.failed++;
-          subcalls += typeof step.subcalls === 'number' ? step.subcalls : 0;
-          failed += typeof step.failed === 'number' ? step.failed : 0;
-          for (const s2 of step.steps ?? []) unvisited += typeof s2.skipped === 'number' ? s2.skipped : 0;
+          const counts = horizonProgramCounts(step);
+          subcalls += counts.made;
+          failed += counts.failed;
+          unvisited += counts.unvisited;
         }
       }
       block.subcalls.made += subcalls;
       block.subcalls.failed += failed;
       block.subcalls.unvisited += unvisited;
-      const stopped: string | null = typeof result.stopReason === 'string' ? result.stopReason : null;
+      const stopped: string | null = typeof result.stopReason === 'string' ? result.stopReason
+        : wireFailures > 0 && result.ok === false ? 'wire-failure'
+        : result.ok === false ? `program: ${typeof result.error === 'string' ? excerpt(result.error, 160) : 'authoring or execution failed'}` : null;
       if (stopped !== null) block.stops[stopped] = (block.stops[stopped] ?? 0) + 1;
 
       const answerText = typeof result.answer?.text === 'string' ? result.answer.text : null;
@@ -1695,6 +1713,7 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       // without an answer is still unanswered, never a fabricated zero score.
       if (answerText === null && wireFailures > 0) {
         unanswered.wire++;
+        ctx.progress(`${row.key} ${q.id}: no answer after ${wireFailures} wire failure(s)`);
         continue;
       }
       if (answerText === null) invalid++;

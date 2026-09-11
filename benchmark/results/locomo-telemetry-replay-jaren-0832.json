@@ -1,0 +1,106 @@
+{
+  "measuredAt": "2026-09-11T09:40:59.354Z",
+  "modelNetworkRequests": 0,
+  "cacheMisses": 1,
+  "completionReplays": 156,
+  "scoresCoverageUsageUnchanged": true,
+  "originalSha256": "94b0f56f1f3d5171a8ad35f63676f3be41be4be6cbafb41876d61d685c0a7927",
+  "correctedSha256": "ac284f1e64f5e9df9f6f1842215671e54dc4c6a90d54dea2d7d0c93a50dd4827",
+  "countsBefore": {
+    "made": 12,
+    "failed": 0,
+    "unvisited": 495
+  },
+  "stopsBefore": {},
+  "questionTelemetryBefore": [
+    {
+      "id": "conv-26#67",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 31,
+      "stopped": null
+    },
+    {
+      "id": "conv-41#50",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 51,
+      "stopped": null
+    },
+    {
+      "id": "conv-42#39",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 41,
+      "stopped": null
+    },
+    {
+      "id": "conv-42#127",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 41,
+      "stopped": null
+    },
+    {
+      "id": "conv-42#159",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 41,
+      "stopped": null
+    },
+    {
+      "id": "conv-43#1",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 52,
+      "stopped": null
+    },
+    {
+      "id": "conv-43#11",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 52,
+      "stopped": null
+    },
+    {
+      "id": "conv-44#122",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 48,
+      "stopped": null
+    },
+    {
+      "id": "conv-47#51",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 46,
+      "stopped": null
+    },
+    {
+      "id": "conv-47#58",
+      "subcalls": 0,
+      "failed": 0,
+      "unvisited": 46,
+      "stopped": null
+    },
+    {
+      "id": "conv-50#4",
+      "subcalls": 12,
+      "failed": 0,
+      "unvisited": 46,
+      "stopped": null
+    }
+  ],
+  "countsAfter": {
+    "made": 132,
+    "failed": 0,
+    "unvisited": 495
+  },
+  "stops": {
+    "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got an object": 3,
+    "program: the query failed: member 'value' evaluated to 12 items; an object member takes exactly one": 3,
+    "wire-failure": 1,
+    "program: reduce summary violates its output shape before storage": 3,
+    "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got null": 1
+  }
+}

@@ -26,7 +26,7 @@ longer matches the code is a bug in this file — delete it or fix it.
 tiers, once by the suite's recursive agent): **no self-evolving capability ships
 before the instrument that can call it an improvement.** The instrument exists.
 [`LOCOMO_RECALL.md`](LOCOMO_RECALL.md) is the keyless evidence-recall ceiling and
-[`LOCOMO_BENCHMARK.md`](LOCOMO_BENCHMARK.md) the F1 beside it, for Tangle and for
+[`LOCOMO_REFRESH.md`](LOCOMO_REFRESH.md) the refreshed paid F1 beside it, for Tangle and for
 every rival over one corpus, one scorer and one sample — and Tangle loses to every
 rival that answered the whole sample, which is the number most of this file exists
 to move. Before authoring anything below, read [`BOUNDARY.md`](BOUNDARY.md)
@@ -47,7 +47,7 @@ already has.
   culprits — the gate's filtered turns, the judge's numeric-contrast
   supersessions, the crystallizer's merges — and in the live table the policies
   leave most prompts byte-identical to the inert pipeline's and score lower on the
-  ones they change, at the same ceiling ([`LOCOMO_BENCHMARK.md`](LOCOMO_BENCHMARK.md)).
+  ones they change, at the same ceiling ([`LOCOMO_REFRESH.md`](LOCOMO_REFRESH.md)).
   The instrument's knobs are `--novelty`, `--contradiction`, `--crystallize` and
   `--dims`; a real embedder behind them is the one thing it lacks. The offline
   width was measured for threshold margin over the skeleton corpus, not for

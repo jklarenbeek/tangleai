@@ -25,6 +25,8 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
 import { JarenValidator } from '@jarenjs/validate';
+import { createEnvironment, createProgramRunner } from '@jarenjs/ai';
+import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 import { createHashEmbedder } from '@jarenjs/ai/embed';
 import { nodeDriver } from '@jarenjs/db/node';
 
@@ -58,6 +60,7 @@ import {
   horizonAnswer,
   horizonCorpusText,
   horizonQuestion,
+  horizonProgramCounts,
   horizonSubset,
   judgeMessages,
   liveMismatch,
@@ -100,6 +103,33 @@ const validateLive = new JarenValidator({ skipErrors: false, collectErrors: true
   .compile(LIVE_SCHEMA as Record<string, unknown>);
 
 const ALL_ROWS = ROWS.map((row) => row.key);
+
+it('preserves completed map counts after a reducer fails without double-counting successful programs', async () => {
+  const environment = createEnvironment({ compileQuery: compileJsonQuery });
+  await environment.put('corpus', ['a', 'b', 'c'].map((v) => v.repeat(200)).join('\n'), { kind: 'text' });
+  let calls = 0;
+  const runner = createProgramRunner({
+    environment, recursive: true, compileQuery: compileJsonQuery, analyzeQuery, annotateTypes, maxSubcalls: 2,
+    client: { complete: async () => { calls++; return { message: { content: '{"value":1}' } }; } },
+  });
+  const outputSchema = { type: 'object', properties: { slot: { type: 'string' }, value: { type: 'string' } }, required: ['slot', 'value'] };
+  const program = { steps: [
+    { op: 'chunk', from: 'corpus', as: 'pieces', strategy: 'line', size: 200 },
+    { op: 'map', from: 'pieces', as: 'found', prompt: 'Return a value.' },
+    { op: 'reduce', from: 'found', as: 'summary', query: { $const: { slot: 'summary', value: 7 } }, outputSchema },
+    { op: 'answer', from: 'summary' },
+  ] };
+  const failed = await runner.run(program);
+  assert.equal(failed.ok, false);
+  assert.match(failed.error, /output shape/);
+  assert.equal(calls, 2);
+  const expected = { made: 2, failed: 0, unvisited: 1 };
+  assert.deepEqual(horizonProgramCounts(failed), expected, 'the failed reducer retains paid work');
+  outputSchema.properties.value.type = 'number';
+  const succeeded = await runner.run(program);
+  assert.equal(succeeded.ok, true);
+  assert.deepEqual(horizonProgramCounts(succeeded), expected, 'aggregate and step counters describe the same work');
+});
 
 // ---------------------------------------------------------------------------
 // the environment reader

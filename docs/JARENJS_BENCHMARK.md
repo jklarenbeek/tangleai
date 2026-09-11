@@ -30,8 +30,9 @@ oracles, 7/7 registered refusals,
 CONFIG records 44/44 holding cases.
 See [MAS](MAS_RUNTIME_BENCHMARK.md), [grounding](GROUNDING_BENCHMARK.md),
 [document chunking](DOCUMENT_BENCHMARK.md) and [LoCoMo](LOCOMO_BENCHMARK.md)
-for their own definitions and denominators. Historical paid runs are preserved;
-this upgrade did not buy fresh model answers.
+for their own definitions and denominators. The separately dated
+[paid refresh](PAID_REFRESH.md) exercises the configured OpenRouter models;
+historical paid runs retain their original identities and results.
 
 The [integration audit](JARENJS_INTEGRATION.md) explains why the upstream
 labelled retrieval measurements keep exact search and recursive chunking as

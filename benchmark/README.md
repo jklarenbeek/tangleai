@@ -24,6 +24,13 @@ The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
 Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
 explains choices against the pinned upstream benchmarks. Reproduce it with
 `npm run benchmark:jaren` (keyless).
+The [paid integration refresh](../docs/PAID_REFRESH.md) links separately dated
+answer and grounding attempts, their exact reproduction commands and a live
+desktop smoke. The earlier paid reports remain historical evidence. CI validates
+the refreshed reports and their renderings without making model requests.
+[`locomo-telemetry.ts`](locomo-telemetry.ts) recovers failed-program counters
+from cached responses with the network disabled. It refuses score, coverage
+or usage changes and emits a receipt that reconstructs the original report.
 
 ## Contents
 

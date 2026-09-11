@@ -35,6 +35,11 @@ const OBSERVATIONS = [
 
 let store: MemoryStore = createMemoryUnitStore();
 const embedder = createOfflineEmbedder();
+const strategyLabels: Record<string, string> = {
+  'long-context': 'Full conversation', 'near-raw': 'Raw dialogue',
+  'rag-observation': 'Observations', 'rag-summary': 'Session summaries',
+  'long-horizon': 'Bounded agent', near: 'Tangle',
+};
 
 // ---------------------------------------------------------------------------
 // vnode helpers
@@ -120,20 +125,30 @@ function view(state: any): any {
     ['section', { class: 'panel integration', 'data-jaren-version': integration.jaren },
       ['h2', {}, `Integrated with JarenJS ${integration.jaren}`],
       ['p', {}, 'Verified workflow checkpoints, lease-aware jobs, atomic agent memory and scheduled document fetching run on the suite. Provider token limits are part of each run’s configuration identity.'],
-      ['p', { class: 'note' }, `Keyless checks refreshed ${integration.measuredAt}. Paid model results keep their original dates and identities.`],
+      ['p', { class: 'note' }, `Keyless checks refreshed ${integration.measuredAt}. Fresh paid answers are dated ${integration.paid.qa.at.slice(0, 10)}; earlier attempts remain available.`],
       ['div', { class: 'report' },
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.integrated.runtimePass}/11`], ' workflow oracles'],
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.durability.passed}/${integration.mas.durability.total}`], ' durability checks'],
         ['div', { class: 'stat' }, ['b', {}, `${integration.config.byStatus.holds}/${integration.config.cases}`], ' configuration cases']],
       ['h3', {}, 'Less history loaded, same results'],
       ['p', {}, 'An ordered database cursor returns the same 50 runs while loading 50 records into the host instead of 5,000. These are warm, synthetic SQLite measurements; the database may still scan and sort the history.'],
-      ['div', { class: 'benchmark-table' }, ['table', {},
+      ['div', { class: 'benchmark-table history-table' }, ['table', {},
         ['thead', {}, ['tr', {}, ['th', {}, 'Runtime'], ['th', {}, 'Previous p95'], ['th', {}, 'Cursor p95'], ['th', {}, 'Speedup']]],
         ['tbody', {}, integration.history.map((row) => ['tr', { key: row.runtime },
           ['td', {}, `${row.runtime} ${row.version}`], ['td', {}, `${row.previousP95Ms.toFixed(2)} ms`],
           ['td', {}, `${row.boundedP95Ms.toFixed(2)} ms`], ['td', {}, `${row.p95Speedup.toFixed(2)}×`]])]]],
       ['p', {}, 'Exact vector search remains the default: upstream’s labelled BGE-M3 comparison did not find a projection strategy that met both recall and speed requirements. The keyless LoCoMo recall loss remains published; this upgrade is not a claim of better model answers.'],
+      ['h3', {}, 'Fresh answer measurements'],
+      ['p', {}, `${integration.paid.model} with ${integration.paid.embedder.model}. Each direct-answer row uses the same 64 questions; the bounded agent uses 12. F1 measures answer overlap and recall measures how much gold evidence reached the model.`],
+      ['div', { class: 'benchmark-table paid-table' }, ['table', {},
+        ['thead', {}, ['tr', {}, ['th', {}, 'Strategy'], ['th', {}, 'Valid replies'], ['th', {}, 'F1'], ['th', {}, 'Recall']]],
+        ['tbody', {}, integration.paid.qa.rows.map((row) => ['tr', { key: row.key },
+          ['td', {}, strategyLabels[row.key] ?? row.key], ['td', {}, `${row.answered - row.invalid}/${row.planned}`],
+          ['td', {}, row.f1 === null ? '—' : row.f1.toFixed(3)],
+          ['td', {}, row.ceiling === null ? '—' : row.ceiling.toFixed(3)]])]]],
+      ['p', { class: 'note' }, 'These are current-stack measurements, with different coverage for the agent. They do not isolate an upgrade effect. Full reports include failures, adversarial judgments, grounding, citation outcomes and cost.'],
       ['nav', { class: 'links' },
+        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/PAID_REFRESH.md' }, 'Paid checks and limitations'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_INTEGRATION.md' }, 'Integration audit'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_BENCHMARK.md' }, 'Methods and raw results'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/LOCOMO_RECALL.md' }, 'Retrieval wins and losses']]],

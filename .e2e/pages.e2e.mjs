@@ -18,8 +18,10 @@ await page.waitForSelector('.hero h1', { timeout: 8000 }).catch(() => fail('hero
 await page.waitForSelector('.dag svg', { timeout: 8000 }).catch(() => fail('dag svg missing'));
 
 await page.waitForSelector('[data-jaren-version="0.83.2"]');
-const measuredRows = await page.locator('.benchmark-table tbody tr').count();
+const measuredRows = await page.locator('.history-table tbody tr').count();
 if (measuredRows !== 2) await fail(`expected Node and Bun measurements, got ${measuredRows}`);
+const paidRows = await page.locator('.paid-table tbody tr').count();
+if (paidRows !== 6) await fail(`expected six paid answer strategies, got ${paidRows}`);
 await page.click('button:has-text("run the loop")');
 await page.waitForSelector('.node.ok', { timeout: 8000 }).catch(() => fail('no ok node'));
 const okNodes = await page.locator('.node.ok').count();

@@ -277,6 +277,10 @@ All JarenJS dependencies are pinned to **0.83.2**. The source submodule at
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
+The [paid refresh](docs/PAID_REFRESH.md) records fresh OpenRouter answer,
+grounding and desktop checks, with their losses, coverage and request counts.
+`npm run mas:live-smoke` opts into the configured model for the durable
+draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Where things stand
 

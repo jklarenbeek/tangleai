@@ -57,5 +57,421 @@
       "gap": 0,
       "pending": 0
     }
+  },
+  "paid": {
+    "model": "z-ai/glm-5.3-flash",
+    "judge": "qwen/qwen3.8-27b",
+    "embedder": {
+      "model": "baai/bge-m3",
+      "dims": 1024
+    },
+    "qa": {
+      "at": "2026-09-11T09:18:14.907Z",
+      "runs": 4,
+      "calls": 513,
+      "tokens": 2539115,
+      "wireErrors": 1,
+      "rows": [
+        {
+          "key": "long-context",
+          "label": "long context (the whole conversation in the request)",
+          "planned": 64,
+          "answered": 64,
+          "invalid": 0,
+          "unanswered": {
+            "wire": 0,
+            "budget": 0
+          },
+          "f1": 0.31807104121147256,
+          "ceiling": 0.9977678571428572,
+          "cost": {
+            "turns": 64,
+            "tokens": 1828172,
+            "promptTokens": 1803569,
+            "completionTokens": 24603,
+            "ms": 247630.082189,
+            "replayed": 0
+          },
+          "latency": {
+            "count": 64,
+            "medianMs": 2599.2017230000056,
+            "p95Ms": 10361.521349000002
+          },
+          "horizon": null,
+          "adversarial": {
+            "planned": 6,
+            "judged": 6,
+            "accuracy": 0.8333333333333334
+          }
+        },
+        {
+          "key": "near-raw",
+          "label": "RAG over dialog turns (the pipeline, policies off)",
+          "planned": 64,
+          "answered": 64,
+          "invalid": 0,
+          "unanswered": {
+            "wire": 0,
+            "budget": 0
+          },
+          "f1": 0.1205905976163785,
+          "ceiling": 0.20182291666666669,
+          "cost": {
+            "turns": 64,
+            "tokens": 52077,
+            "promptTokens": 37582,
+            "completionTokens": 14495,
+            "ms": 147159.62667999996,
+            "replayed": 0
+          },
+          "latency": {
+            "count": 64,
+            "medianMs": 1873.201019,
+            "p95Ms": 4085.972907999996
+          },
+          "horizon": null,
+          "adversarial": {
+            "planned": 6,
+            "judged": 6,
+            "accuracy": 1
+          }
+        },
+        {
+          "key": "rag-observation",
+          "label": "RAG over the release's observations",
+          "planned": 64,
+          "answered": 64,
+          "invalid": 0,
+          "unanswered": {
+            "wire": 0,
+            "budget": 0
+          },
+          "f1": 0.28038271169749135,
+          "ceiling": 0.5725446428571428,
+          "cost": {
+            "turns": 64,
+            "tokens": 48096,
+            "promptTokens": 32008,
+            "completionTokens": 16088,
+            "ms": 159514.98818899982,
+            "replayed": 0
+          },
+          "latency": {
+            "count": 64,
+            "medianMs": 1588.3462049999798,
+            "p95Ms": 7267.846672
+          },
+          "horizon": null,
+          "adversarial": {
+            "planned": 6,
+            "judged": 6,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        {
+          "key": "rag-summary",
+          "label": "RAG over the release's session summaries",
+          "planned": 64,
+          "answered": 64,
+          "invalid": 0,
+          "unanswered": {
+            "wire": 0,
+            "budget": 0
+          },
+          "f1": 0.14948041403613177,
+          "ceiling": 0.8035714285714286,
+          "cost": {
+            "turns": 64,
+            "tokens": 124573,
+            "promptTokens": 103221,
+            "completionTokens": 21352,
+            "ms": 202569.4805220001,
+            "replayed": 0
+          },
+          "latency": {
+            "count": 64,
+            "medianMs": 2347.489193000016,
+            "p95Ms": 8144.498569999996
+          },
+          "horizon": null,
+          "adversarial": {
+            "planned": 6,
+            "judged": 6,
+            "accuracy": 0.6666666666666666
+          }
+        },
+        {
+          "key": "long-horizon",
+          "label": "long-horizon agent (createLongHorizonAgent over createEnvironment)",
+          "planned": 12,
+          "answered": 11,
+          "invalid": 10,
+          "unanswered": {
+            "wire": 1,
+            "budget": 0
+          },
+          "f1": 0,
+          "ceiling": 0.3106060606060606,
+          "cost": {
+            "turns": 156,
+            "tokens": 253604,
+            "promptTokens": 115600,
+            "completionTokens": 138004,
+            "ms": 1201567.2559570002,
+            "replayed": 0
+          },
+          "latency": {
+            "count": 156,
+            "medianMs": 1684.2859419999877,
+            "p95Ms": 41763.272009
+          },
+          "horizon": {
+            "perCategory": 3,
+            "depth": 0,
+            "turnsPerQuestion": 16,
+            "maxSubcalls": 12,
+            "callTimeoutMs": 300000,
+            "thinking": {
+              "author": "default",
+              "subcall": "default"
+            },
+            "ids": [
+              "conv-26#67",
+              "conv-41#50",
+              "conv-42#4",
+              "conv-42#39",
+              "conv-42#127",
+              "conv-42#159",
+              "conv-43#1",
+              "conv-43#11",
+              "conv-44#122",
+              "conv-47#51",
+              "conv-47#58",
+              "conv-50#4"
+            ],
+            "authored": {
+              "ok": 11,
+              "failed": 1,
+              "attempts": 23
+            },
+            "programs": {
+              "ok": 1,
+              "failed": 10
+            },
+            "subcalls": {
+              "made": 132,
+              "failed": 0,
+              "unvisited": 495
+            },
+            "stops": {
+              "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got an object": 3,
+              "program: the query failed: member 'value' evaluated to 12 items; an object member takes exactly one": 3,
+              "wire-failure": 1,
+              "program: reduce summary violates its output shape before storage": 3,
+              "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got null": 1
+            }
+          },
+          "adversarial": {
+            "planned": 0,
+            "judged": 0,
+            "accuracy": null
+          }
+        },
+        {
+          "key": "near",
+          "label": "Tangle (the pipeline, shipped defaults)",
+          "planned": 64,
+          "answered": 64,
+          "invalid": 0,
+          "unanswered": {
+            "wire": 0,
+            "budget": 0
+          },
+          "f1": 0.11547019718347806,
+          "ceiling": 0.20182291666666669,
+          "cost": {
+            "turns": 64,
+            "tokens": 52268,
+            "promptTokens": 37796,
+            "completionTokens": 14472,
+            "ms": 168971.32954899996,
+            "replayed": 47
+          },
+          "latency": {
+            "count": 64,
+            "medianMs": 1951.6406460000435,
+            "p95Ms": 9144.79426699999
+          },
+          "horizon": null,
+          "adversarial": {
+            "planned": 6,
+            "judged": 6,
+            "accuracy": 1
+          }
+        }
+      ]
+    },
+    "grounding": {
+      "at": "2026-09-11T09:02:29.801Z",
+      "reportId": "56e660f853ad37cc7492a818e5989f2323cb61a51c80bc8fec4c1a43bbfb6f32",
+      "calls": 123,
+      "tokens": 84864,
+      "wireErrors": 0,
+      "decision": "adopt-claim-citations",
+      "strata": [
+        {
+          "key": "fixture",
+          "eligible": true,
+          "rows": [
+            {
+              "key": "no-documents",
+              "planned": 16,
+              "answered": 16,
+              "invalid": 0,
+              "unanswered": {
+                "wire": 0,
+                "budget": 0
+              },
+              "answerF1": 0.19832943071190248,
+              "claimMicroF1": 0,
+              "citations": {
+                "raw": 0,
+                "unique": 0,
+                "resolvedUnique": 0,
+                "supportingUnique": 0,
+                "byOutcome": {
+                  "supporting": 0,
+                  "resolvedNotSupporting": 0,
+                  "notSupplied": 0,
+                  "inactiveVersion": 0,
+                  "futureEvidence": 0,
+                  "unknownEvidence": 0
+                }
+              }
+            },
+            {
+              "key": "grounded-answer",
+              "planned": 16,
+              "answered": 16,
+              "invalid": 0,
+              "unanswered": {
+                "wire": 0,
+                "budget": 0
+              },
+              "answerF1": 0.7382481610295064,
+              "claimMicroF1": 0.8979591836734694,
+              "citations": {
+                "raw": 25,
+                "unique": 16,
+                "resolvedUnique": 16,
+                "supportingUnique": 15,
+                "byOutcome": {
+                  "supporting": 22,
+                  "resolvedNotSupporting": 3,
+                  "notSupplied": 0,
+                  "inactiveVersion": 0,
+                  "futureEvidence": 0,
+                  "unknownEvidence": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "key": "locomo",
+          "eligible": true,
+          "rows": [
+            {
+              "key": "no-documents",
+              "planned": 16,
+              "answered": 16,
+              "invalid": 0,
+              "unanswered": {
+                "wire": 0,
+                "budget": 0
+              },
+              "answerF1": 0.02692949160340465,
+              "claimMicroF1": null,
+              "citations": {
+                "raw": 0,
+                "unique": 0,
+                "resolvedUnique": 0,
+                "supportingUnique": 0,
+                "byOutcome": {
+                  "supporting": 0,
+                  "resolvedNotSupporting": 0,
+                  "notSupplied": 0,
+                  "inactiveVersion": 0,
+                  "futureEvidence": 0,
+                  "unknownEvidence": 0
+                }
+              }
+            },
+            {
+              "key": "grounded-answer",
+              "planned": 16,
+              "answered": 16,
+              "invalid": 0,
+              "unanswered": {
+                "wire": 0,
+                "budget": 0
+              },
+              "answerF1": 0.12335632041531788,
+              "claimMicroF1": null,
+              "citations": {
+                "raw": 46,
+                "unique": 18,
+                "resolvedUnique": 18,
+                "supportingUnique": 12,
+                "byOutcome": {
+                  "supporting": 33,
+                  "resolvedNotSupporting": 13,
+                  "notSupplied": 0,
+                  "inactiveVersion": 0,
+                  "futureEvidence": 0,
+                  "unknownEvidence": 0
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "smoke": {
+    "ok": true,
+    "measuredAt": "2026-09-11T09:06:19.765Z",
+    "jaren": "0.83.2",
+    "source": "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "elements": 1840,
+    "chunks": 319,
+    "embeddingCalls": 10,
+    "embedder": "baai/bge-m3/1024",
+    "chatProvider": "openrouter/z-ai/glm-5.3-flash",
+    "citations": 1
+  },
+  "masSmoke": {
+    "ok": true,
+    "measuredAt": "2026-09-11T09:11:47.131Z",
+    "jaren": "0.83.2",
+    "provider": "openrouter",
+    "model": "z-ai/glm-5.3-flash",
+    "calls": 1,
+    "workflowVersion": "899c98a11cccbb65cb6ff17e462ee9feb9a045ce5060889be39ca80911427b44",
+    "executableRevision": "804830161584c8cd7c7f8a99b3e1684831a43821b2f60ee337cfa8a25275e098",
+    "spent": {
+      "turns": 1,
+      "tokens": 227,
+      "ms": 0
+    },
+    "completedSegments": 2,
+    "status": "completed",
+    "completedInvocations": [
+      "drafter",
+      "review",
+      "apply"
+    ],
+    "typedPauseResume": true,
+    "projectedTopology": true
   }
 }
