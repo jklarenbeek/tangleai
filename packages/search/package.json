@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/search",
-  "version": "0.1.0",
+  "version": "0.20.0",
   "description": "Tangle AI search — a zero-dependency SearxNG client.",
   "license": "MIT",
   "type": "module",
@@ -15,6 +15,29 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/core": "^0.1.0"
+    "@tangleai/core": "^0.20.0"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/search"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
   }
 }

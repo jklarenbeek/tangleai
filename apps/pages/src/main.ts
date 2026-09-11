@@ -8,6 +8,7 @@
  */
 
 import integration from '../../../benchmark/results/jaren-integration.json' with { type: 'json' };
+import manifest from '../package.json' with { type: 'json' };
 
 import { createApp } from '@jarenjs/app';
 import { renderMermaid } from '@jarenjs/mermaid';
@@ -91,7 +92,7 @@ function view(state: any): any {
       ['h1', {}, 'Memory that earns its keep.'],
       ['p', { class: 'tag' },
         'Self-improving memory and retrieval for agents — novelty gating, contradiction resolution, crystallization and outcome learning, built entirely on the ',
-        ['a', { href: 'https://jklarenbeek.github.io/jarenjs/' }, `jarenjs ${integration.jaren}`],
+        ['a', { href: 'https://jklarenbeek.github.io/jarenjs/' }, `jarenjs ${manifest.dependencies['@jarenjs/app']}`],
         '. Documents run; policies are measured before they are believed.'],
       ['nav', { class: 'links' },
         ['a', { class: 'button', href: 'https://github.com/jklarenbeek/tangleai' }, 'GitHub'],
@@ -122,10 +123,11 @@ function view(state: any): any {
               : null]
         : null],
 
-    ['section', { class: 'panel integration', 'data-jaren-version': integration.jaren },
-      ['h2', {}, `Integrated with JarenJS ${integration.jaren}`],
+    ['section', { class: 'panel integration', 'data-jaren-version': manifest.dependencies['@jarenjs/app'], 'data-tangle-version': manifest.version },
+      ['h2', {}, `Tangle ${manifest.version} · JarenJS ${manifest.dependencies['@jarenjs/app']}`],
+      ['p', {}, 'Eight coordinated npm packages with JavaScript and TypeScript declarations. ', ['a', { href: `https://github.com/jklarenbeek/tangleai/releases/tag/v${manifest.version}` }, 'Release notes']],
       ['p', {}, 'Verified workflow checkpoints, lease-aware jobs, atomic agent memory and scheduled document fetching run on the suite. Provider token limits are part of each run’s configuration identity.'],
-      ['p', { class: 'note' }, `Keyless checks refreshed ${integration.measuredAt}. Fresh paid answers are dated ${integration.paid.qa.at.slice(0, 10)}; earlier attempts remain available.`],
+      ['p', { class: 'note' }, `Measurements below were collected on JarenJS ${integration.jaren}. Keyless checks refreshed ${integration.measuredAt}; paid answers are dated ${integration.paid.qa.at.slice(0, 10)}. Earlier attempts remain available.`],
       ['div', { class: 'report' },
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.integrated.runtimePass}/11`], ' workflow oracles'],
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.durability.passed}/${integration.mas.durability.total}`], ' durability checks'],

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "initialVersion": "0.20.0",
+  "initialBase": "c0037af1baa33707cdbb0436f11ac0909d92622a",
+  "major": 0,
+  "registry": "https://registry.npmjs.org/",
+  "repository": "jklarenbeek/tangleai",
+  "bun": "1.4.0",
+  "packages": ["packages/core", "packages/config", "packages/mas", "packages/documents", "packages/memory", "packages/search", "packages/pipeline", "packages/store"],
+  "privateWorkspaces": ["apps/desktop", "apps/pages", "apps/scraper", "benchmark"]
+}

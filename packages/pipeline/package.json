@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/pipeline",
-  "version": "0.1.0",
+  "version": "0.20.0",
   "description": "Tangle AI pipeline — the memory loop as a jaren-dag document, executed by @jarenjs/flow, projected to mermaid for display",
   "license": "MIT",
   "type": "module",
@@ -18,11 +18,34 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/core": "^0.1.0",
-    "@tangleai/memory": "^0.1.0",
-    "@jarenjs/ai": "0.83.2",
-    "@jarenjs/flow": "0.83.2",
-    "@jarenjs/json": "0.83.2",
-    "@jarenjs/mermaid": "0.83.2"
+    "@tangleai/core": "^0.20.0",
+    "@tangleai/memory": "^0.20.0",
+    "@jarenjs/ai": "0.83.3",
+    "@jarenjs/flow": "0.83.3",
+    "@jarenjs/json": "0.83.3",
+    "@jarenjs/mermaid": "0.83.3"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/pipeline"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
   }
 }

@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+    with:
+      base: ${{ github.event.before || '' }}
+
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: npm
+    permissions:
+      contents: write
+      id-token: write
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          submodules: true
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: npm run release:check
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: npm-release-verified
+          path: dist/release
+      - run: npm run desktop:compile
+      - run: node scripts/release/binary.ts
+      - name: Identify and tag the tested commit
+        id: identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/release/tag.ts
+          node --input-type=module - <<'JS'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const { version } = JSON.parse(readFileSync('package.json'));
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          JS
+          gh auth setup-git
+          RELEASE_VERSION=$(node -p "require('./package.json').version")
+          git push origin "refs/tags/v$RELEASE_VERSION"
+      - run: npm run release:publish -- --execute
+      - run: npm run release:verify-registry
+      - name: Retain publication receipts and tested tarballs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: npm-release
+          path: dist/release/
+          if-no-files-found: error
+          retention-days: 90
+
+  pages:
+    needs: publish
+    uses: ./.github/workflows/pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    with:
+      commit: ${{ github.sha }}
+      version: ${{ needs.publish.outputs.version }}
+
+  finish:
+    needs: [publish, pages]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: npm-release
+          path: dist/release
+      - name: Complete the release after npm and Pages verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.publish.outputs.version }}
+        run: |
+          node -e 'const fs = require("node:fs"); const r = JSON.parse(fs.readFileSync(`releases/${process.env.RELEASE_VERSION}.json`)); fs.writeFileSync("dist/release/notes.md", r.changesets.map(c => c.summary).join("\n\n") + "\n\nAll eight npm packages and the website passed release verification.\n")'
+          if gh release view "v$RELEASE_VERSION" >/dev/null 2>&1; then
+            gh release edit "v$RELEASE_VERSION" --draft=false --notes-file dist/release/notes.md
+          else
+            gh release create "v$RELEASE_VERSION" --verify-tag --title "Tangle $RELEASE_VERSION" --notes-file dist/release/notes.md
+          fi
+          gh release upload "v$RELEASE_VERSION" dist/release/*.tgz dist/release/tangle-linux-x64 dist/release/artifacts.json dist/release/registry-verification.json --clobber

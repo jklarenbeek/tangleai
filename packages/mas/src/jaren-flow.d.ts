@@ -1,6 +1,6 @@
 import '@jarenjs/linq/flow';
 
-// JarenJS 0.83.2 implements and requires this third argument for durable
+// Published JarenJS implements and requires this third argument for durable
 // tasks, but its hand-authored flow declarations omit it. Keep this additive
 // overload aligned with vendor/jarenjs/packages/linq/src/flow/dag.js.
 declare module '@jarenjs/linq/flow' {

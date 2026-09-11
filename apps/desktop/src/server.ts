@@ -11,6 +11,7 @@
  */
 
 import { readFile } from 'node:fs/promises';
+import manifest from '../package.json' with { type: 'json' };
 import { createRuntime } from '@jarenjs/core/runtime';
 
 import { compileContract } from '@jarenjs/contract';
@@ -30,7 +31,7 @@ import { settingsStack } from './ai-host.ts';
 /** The run kinds that must say what stack produced them. */
 export const CONFIG_AWARE_RUN_KINDS = ['sync', 'document', 'documents'] as const;
 
-export const DESKTOP_VERSION = '0.1.0';
+export const DESKTOP_VERSION = manifest.version;
 
 export interface DesktopOptions {
   dbPath?: string;

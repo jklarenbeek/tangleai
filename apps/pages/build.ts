@@ -9,6 +9,7 @@
 import { cp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 // the one Bun API this script uses, declared locally instead of pulling
 // in @types/bun for a single call
@@ -46,5 +47,18 @@ for (const path of vendor) css += await readFile(join(repo, path), 'utf8');
 await writeFile(join(dist, 'vendor.css'), css);
 
 await writeFile(join(dist, '.nojekyll'), '');
+
+const manifest = JSON.parse(await readFile(join(repo, 'package.json'), 'utf8'));
+const release = JSON.parse(await readFile(join(repo, 'release.config.json'), 'utf8'));
+const packages: Record<string, string> = {};
+for (const path of release.packages) {
+  const pkg = JSON.parse(await readFile(join(repo, path, 'package.json'), 'utf8'));
+  packages[pkg.name] = pkg.version;
+}
+await writeFile(join(dist, 'build.json'), JSON.stringify({
+  version: manifest.version,
+  commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
+  packages,
+}, null, 2) + '\n');
 
 console.log(`pages built → ${dist}`);

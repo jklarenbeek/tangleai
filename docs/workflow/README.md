@@ -29,7 +29,7 @@ Read in this order:
 | [`CAMPAIGN.md`](CAMPAIGN.md) | **Build** — authoring a multi-order campaign from a `docs/ROADMAP.md` entry: measure first, settle decisions once in a router, write self-contained orders; an order is closed by its measurement, not by its merge. |
 | [`templates/`](templates/) | The work-order and session-record shapes — each the template followed by a filled-in one against this repository. The router's shape is specified in `CAMPAIGN.md` §"The router". |
 | [`HEALTH.md`](HEALTH.md) | **Tidy & hunt** — the idempotent duplicate/drift/quirk pass. |
-| [`RELEASE.md`](RELEASE.md) | **Ship** — tags, the compiled binary, the pages deploy; no npm yet. |
+| [`RELEASE.md`](RELEASE.md) | **Ship** — Changesets preparation, checked npm tarballs, trusted publication, recovery and verified Pages deployment. |
 | [`EVOLVE.md`](EVOLVE.md) | The experiment — workflows as executable, measurable, evolvable DAGs. Design, explicitly gated. |
 
 Campaign files are gitignored scratch — `TODO.md` (the local index),

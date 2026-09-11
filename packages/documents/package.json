@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/documents",
-  "version": "0.1.0",
+  "version": "0.20.0",
   "description": "Safe, versioned document ingestion and retrieval for TangleAI",
   "license": "MIT",
   "type": "module",
@@ -23,10 +23,33 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/ai": "0.83.2",
-    "@jarenjs/core": "0.83.2",
-    "@tangleai/core": "^0.1.0",
+    "@jarenjs/ai": "0.83.3",
+    "@jarenjs/core": "0.83.3",
+    "@tangleai/core": "^0.20.0",
     "linkedom": "0.18.12",
     "unpdf": "1.6.2"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/documents"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
   }
 }

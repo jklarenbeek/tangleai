@@ -49,7 +49,8 @@ describe('the public contract moved compatibly', () => {
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/chat/properties/maxTokensField' },
       { rule: 'R8', docPath: '/operations/chat.send/output/properties/documentCitations/items/additionalProperties' },
     ], `unexpected narrowing: ${JSON.stringify(diff.breaking.slice(0, 3))}`);
-    assert.equal(isCompatible(frozen, current), true);
+    assert.equal(isCompatible(frozen, current), false, 'clients must negotiate the new release version');
+    assert.equal(isCompatible({ ...frozen, version: DESKTOP_CONTRACT.version }, current), true, 'same-version negotiation is separate from the schema diff');
     assert.equal(diff.additive.length > 0, true, 'the campaigns added operations, errors and members');
     const frozenRevision = await compileContract(frozen).revision();
     const finalRevision = await compileContract(DESKTOP_CONTRACT).revision();
@@ -66,7 +67,8 @@ describe('the public contract moved compatibly', () => {
       { rule: 'R8', op: 'chat.send' },
     ]);
     assert.ok(diff.additive.every((change: { op: string }) => change.op === 'chat.send' || change.op === 'settings.get' || change.op === 'settings.set'), 'only citation and optional public setting members are added');
-    assert.equal(isCompatible(preGrounding, current), true);
+    assert.equal(isCompatible(preGrounding, current), false, 'the frozen client identifies an older release');
+    assert.equal(isCompatible({ ...preGrounding, version: DESKTOP_CONTRACT.version }, current), true);
   });
 
   it('the gate would catch a breaking change: a removed output member fails', async () => {

@@ -4,10 +4,16 @@ Every other workflow file points here instead of restating these.
 
 ## 1. Repo model (invariants every change preserves)
 
-- **TypeScript-only, no build step.** Node ≥ 24 runs `.ts` directly
-  (type stripping); package `exports` point at `./src/*.ts`. Erasable
-  syntax only, `verbatimModuleSyntax`, strict. There is no `dist/` for
-  packages — the source is the artifact.
+- **Strict TypeScript source, JavaScript npm distributions.** Node ≥ 24 runs
+  workspace `.ts` source and tests directly. Public package exports are compiled
+  to ESM JavaScript and `.d.ts` declarations in an ignored staging directory for
+  npm publication; JSON schema paths are preserved. The packed consumer gate
+  verifies installed artifacts on Node, Bun and supported browser surfaces.
+  Erasable syntax, `verbatimModuleSyntax` and strict typing remain mandatory.
+- **One development version.** All workspaces share the public fixed group's
+  version, starting at `0.20.0`. Major versions remain zero. Changesets records
+  patch or minor intent; preparation updates the full suite before a release
+  commit is pushed. Private workspaces remain private regardless of version.
 - **jarenjs-only dependencies.** Runtime dependencies are `@jarenjs/*`
   and `@tangleai/*`, nothing else. Bun and Node are runtimes/toolchains,
   not dependencies. Dev-only tooling that never ships (typescript,
@@ -35,6 +41,7 @@ Every other workflow file points here instead of restating these.
 | Gate | Command | When |
 |---|---|---|
 | The gate | `npm run check` (strict tsc + all `node --test` suites) | every change, before every commit |
+| Release | `npm run release:verify` (full gate, version record, JavaScript tarballs, external consumers and Pages build) | before release closeout |
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |
 | Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`) | when apps/pages or the pipeline document changed |
@@ -104,21 +111,30 @@ before it is believed.
 
 ## 5. Close-out & commit protocol
 
-Work lands on `master` uncommitted, for review; this protocol runs only
-when the operator explicitly asks, and what happens to a landed order —
-commit, re-scope, park, abandon — is the operator's decision. Then, in
-order, aborting at the first failure:
+The executable protocol is `npm run release:closeout`; [RELEASE.md](RELEASE.md)
+describes it. It runs when the operator requests closeout. Prepare a reviewable
+change, record its Changesets impact and update stale documentation first.
 
-1. Run the gate (§2) — exit code 0, on the full suite, not a subset.
-2. Re-read the diff (`git diff` / `git status`) — nothing generated,
-   nothing populated-stub, nothing accidental.
-3. Update what the change made stale: the router's status ledger
-   (scratch), the `docs/ROADMAP.md` entry the change closes or narrows,
-   README counts, `docs/` claims, the regenerated benchmark documents.
-4. Commit as Joham. **One short message, present tense, no attribution
-   footer, no tool names, no version numbers in the message.** Tags
-   carry versions when releasing (RELEASE.md).
-5. Push only when asked.
+1. Run `npm run release:prepare` before committing. The command updates every
+   workspace version and internal reference, the lockfile, changelogs and release
+   record. Major release intent is refused. If fixes follow preparation, review
+   them and run `npm run release:prepare -- --refresh` before closeout.
+2. Run `npm run release:closeout -- --message "Short present-tense message"`.
+   It verifies the release, runs the complete gate and packed consumer checks,
+   reviews whitespace/stub invariants, and commits as Joham. Starting on `main`
+   creates a release branch for the checked pull request.
+3. Use one short present-tense commit message, with no attribution footer, tool
+   names or version numbers. Annotated tags carry versions.
+4. Add `--push` when pushing is authorized. The pre-push hook checks the actual
+   refs and version advancement; the required CI check enforces the same rule
+   before merging into `main`.
+5. After merge, the release workflow tags the accepted commit, verifies npm
+   publication and installs, then deploys and verifies Pages. Completion requires
+   all these checks. Never report a site deployment as proof of npm publication.
+
+Abort at the first failure. A failed preparation restores its version, lockfile,
+changeset and changelog writes. An interrupted npm publication resumes against
+immutable artifact identities; it cannot be rolled back as one transaction.
 
 ## 6. Decisions and authority
 

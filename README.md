@@ -4,12 +4,12 @@ Self-improving memory and retrieval for agents, built on the
 [jarenjs](https://github.com/jklarenbeek/jarenjs) suite as the foundational
 layer.
 
-The codebase is **TypeScript-only with no build step**: Node 24's native
-type stripping runs `.ts` directly (tests and workspace packages included),
-and `tsc --noEmit` under `strict` is the type gate. That inversion of the
-jarenjs house style is deliberate — this repo doubles as the standing test
-of jarenjs's published types under a strict TS consumer, with `npm run check`
-as the compatibility gate.
+The codebase is authored in **strict TypeScript**. Node 24 runs workspace source
+and tests directly; public npm packages are built as ESM JavaScript with TypeScript
+declarations and their JSON schemas. The eight public packages share one version,
+starting at **0.20.0**. The major version remains zero during development.
+`npm run check` validates source; `npm run release:verify` also installs and tests
+the actual publication tarballs outside this checkout.
 
 ## What runs today
 
@@ -268,21 +268,18 @@ Cross-compile with Bun's targets, e.g.
 (run `bun scripts/embed-assets.ts` first so the UI travels inside).
 
 **`apps/pages`** — the GitHub Pages site (`bun apps/pages/build.ts` →
-`apps/pages/dist`, deployed by `.github/workflows/pages.yml`). Its demo
+`apps/pages/dist`, deployed by the release workflow after npm verification). Its demo
 is not a mock: the real pipeline document executes in your browser over
 the in-memory store, and the recall you ask for afterwards is real
 ranked retrieval — the superseded record provably cannot surface.
 
 ## JarenJS release integration
 
-All JarenJS dependencies are pinned to **0.83.2**. A reviewed
-[AI program patch](patches/README.md) is applied to the installed AI package by
-`postinstall` until an upstream release includes it; installations using
-`--ignore-scripts` must run `npm run jaren:patch`. The source submodule at
-`vendor/jarenjs` pins `v0.83.2`; initialize it with
-`git submodule update --init vendor/jarenjs` for source and benchmark review.
-`npm run jaren:check` verifies the package, lockfile, installation and source pins,
-plus the patch and installed-file hashes.
+All JarenJS dependencies are pinned to **0.83.3**, including the published
+recursive-program fixes. The source submodule at `vendor/jarenjs` pins `v0.83.3`;
+initialize it with `git submodule update --init vendor/jarenjs` for source and
+benchmark review. `npm run jaren:check` verifies the package, lockfile,
+installation and source pins. Consumers do not need an installation patch.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
@@ -293,6 +290,35 @@ coverage, checked evidence and cited synthesis under the original call cap,
 with the earlier empty-answer result retained beside the new measurement.
 `npm run mas:live-smoke` opts into the configured model for the durable
 draft/review/resume workflow; `npm run mas:smoke` remains keyless.
+
+## Package releases
+
+Changesets records patch or minor intent for one fixed group of eight public
+packages. `npm run release:prepare` updates their versions, all private workspace
+versions and references, the lockfile, changelogs, and a checked release record
+**before** the release commit is pushed. Major release intent is refused while
+the project remains at major zero. The root, applications and benchmark stay
+private. Public libraries use compatible internal ranges; private consumers pin
+the suite exactly.
+
+```sh
+npm run release:install-hook
+npm run changeset
+npm run release:prepare
+npm run release:verify
+npm run release:closeout -- --message "Fix the affected behavior" --push
+```
+
+Closeout creates a release branch when starting on `main`. Merge its checked pull
+request to run the publication workflow. GitHub Actions tags the accepted commit,
+publishes verified tarballs with npm trusted publishing, tests fresh registry
+installations, and then deploys and verifies the website. A failed or incomplete
+publication cannot finish the release. See the [release protocol](docs/workflow/RELEASE.md)
+for first-time npm setup, recovery and the full closeout sequence.
+
+Changesets and its configuration/package-discovery APIs are development-only
+release tooling. They are exempt from the JarenJS runtime dependency policy and
+are excluded from every public distribution.
 
 ## Where things stand
 

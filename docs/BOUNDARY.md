@@ -40,7 +40,7 @@ adapters, host databases, schedulers, paper-specific pipelines, servers and UI
 
 ## What the suite already has — read before building
 
-Current audit: [JarenJS 0.83.2 integration](JARENJS_INTEGRATION.md), 2026-09-11.
+Current audit: [JarenJS 0.83.3 integration](JARENJS_INTEGRATION.md), 2026-09-11.
 The following baseline records the 0.56.0 adoption; the current audit supersedes
 its availability claims and documents the newer runtime seams.
 

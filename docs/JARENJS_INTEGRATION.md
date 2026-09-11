@@ -1,11 +1,14 @@
 # JarenJS integration
 
-Audited 2026-09-11 against **0.83.2**, source tag `v0.83.2`, commit
-`f21b18fa123a6c72a0ca31dbad374ec5a8bf78ff`. All 14 installed JarenJS packages
-resolve to this exact base release. The installed AI package additionally carries
-the reviewed [program patch](../patches/README.md), applied and hash-checked by
-`npm run jaren:patch` during installation. Runtime code uses these npm packages;
-[`vendor/jarenjs`](../vendor/jarenjs) is the source and benchmark reference.
+The current dependency and source baseline is **0.83.3**, source tag `v0.83.3`,
+commit `3491513e164dc30e429c84e709bd738841f4df16`. The published AI package includes
+recursive child failure envelopes, complete answer reads and runner result types;
+no local installation patch is required. Runtime code uses npm packages and
+[`vendor/jarenjs`](../vendor/jarenjs) supplies the auditable source reference.
+
+The adoption and strategy audit below was originally measured against **0.83.2**
+on 2026-09-11. Historical benchmark identities and numbers retain that baseline;
+they are not relabelled as new measurements when dependencies advance.
 
 ```sh
 npm ci

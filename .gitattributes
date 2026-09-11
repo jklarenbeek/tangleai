@@ -1,2 +1,5 @@
-# Unified patches require a single space on blank context lines.
-patches/*.patch whitespace=-blank-at-eol
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.tgz binary

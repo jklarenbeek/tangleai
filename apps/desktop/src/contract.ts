@@ -14,6 +14,8 @@
  * single-user surface.
  */
 
+import manifest from '../package.json' with { type: 'json' };
+
 const MEMORY_SUMMARY = {
   type: 'object',
   required: ['id', 'text', 'evidence', 'tags', 'at', 'kind'],
@@ -283,7 +285,7 @@ const DOCUMENT_VERSION = {
 export const DESKTOP_CONTRACT = {
   $contract: '0.1',
   id: 'tangle-desktop',
-  version: '0.1.0',
+  version: manifest.version,
   operations: {
     'status.get': {
       kind: 'read',

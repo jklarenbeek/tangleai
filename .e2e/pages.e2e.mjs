@@ -18,7 +18,8 @@ await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
 await page.waitForSelector('.hero h1', { timeout: 8000 }).catch(() => fail('hero missing'));
 await page.waitForSelector('.dag svg', { timeout: 8000 }).catch(() => fail('dag svg missing'));
 
-await page.waitForSelector('[data-jaren-version="0.83.2"]');
+const manifest = JSON.parse(await readFile(new URL('../apps/pages/package.json', import.meta.url), 'utf8'));
+await page.waitForSelector(`[data-jaren-version="${manifest.dependencies['@jarenjs/app']}"][data-tangle-version="${manifest.version}"]`);
 const measuredRows = await page.locator('.history-table tbody tr').count();
 if (measuredRows !== 2) await fail(`expected Node and Bun measurements, got ${measuredRows}`);
 const paidRows = await page.locator('.paid-table tbody tr').count();

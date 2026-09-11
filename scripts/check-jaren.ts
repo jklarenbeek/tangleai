@@ -3,11 +3,10 @@ import assert from 'node:assert/strict';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { patchJarenAi } from './patch-jaren-ai.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const version = '0.83.2';
-const commit = 'f21b18fa123a6c72a0ca31dbad374ec5a8bf78ff';
+const version = '0.83.3';
+const commit = '3491513e164dc30e429c84e709bd738841f4df16';
 const read = async (path: string) => JSON.parse(await readFile(root + path, 'utf8'));
 const manifests = ['package.json', 'benchmark/package.json'];
 for (const parent of ['packages', 'apps']) {
@@ -49,5 +48,4 @@ if (await stat(root + 'vendor/jarenjs/package.json').then(() => true, () => fals
   assert.equal(git('-C', 'vendor/jarenjs', 'rev-parse', 'HEAD'), commit);
   assert.equal((await read('vendor/jarenjs/package.json')).version, version);
 }
-const patch = await patchJarenAi({ check: true });
-console.log(`JarenJS ${version}: ${references} exact references, ${installed} installed packages, source ${commit.slice(0, 12)}, AI patch ${patch.sha256}`);
+console.log(`JarenJS ${version}: ${references} exact references, ${installed} installed packages, source ${commit.slice(0, 12)}`);

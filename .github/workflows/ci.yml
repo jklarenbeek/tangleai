@@ -1,29 +1,91 @@
 name: CI
 
 on:
-  push:
   pull_request:
+  push:
+    branches-ignore: [main]
+    tags-ignore: ['**']
+  workflow_call:
+    inputs:
+      base:
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
 
 jobs:
-  check:
+  release-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          # benchmark/locomo is the LoCoMo dataset (CC BY-NC 4.0, never vendored).
-          # Every instrument degrades to a stated skip without it; fetching it here
-          # is what keeps the dataset-contract suite honest about upstream drift.
+          fetch-depth: 0
           submodules: true
-      - uses: actions/setup-node@v4
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Require the prepared version before main
+        shell: bash
+        env:
+          BASE_SHA: ${{ inputs.base || github.event.pull_request.base.sha || '' }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [[ "$BASE_SHA" =~ ^0+$ ]]; then
+            BASE_SHA=$(git rev-parse origin/main)
+            if [ "$BASE_SHA" = "$(git rev-parse HEAD)" ]; then BASE_SHA=$(git rev-parse HEAD^); fi
+          fi
+          npm run release:check -- --base "$BASE_SHA"
+
+  check:
+    name: packages (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          node-version: '24'
-          cache: npm
-      - uses: oven-sh/setup-bun@v2
+          fetch-depth: 0
+          submodules: true
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: npm run release:verify
+      - name: Retain the exact Linux artifacts for publication
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          bun-version: '1.4.0'
-      - run: npm ci --ignore-scripts
-      - run: npm run jaren:patch
-      - run: npm run check
+          name: npm-release-verified
+          path: dist/release/
+          if-no-files-found: error
+          retention-days: 7
+
+  minimum-node:
+    name: consumers (Node 24.0.0)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          submodules: true
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          node-version: '24.0.0'
+      - run: npm run release:build
+      - run: npm run release:test -- --runtime-only
+
+  instruments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: true
+          persist-credentials: false
+      - uses: ./.github/actions/setup
       - run: npm run documents:benchmark
       - run: npm run benchmark:locomo:census
       - run: npm run benchmark:locomo:recall
@@ -32,3 +94,15 @@ jobs:
         run: |
           bun build --compile --minify scripts/document-compile-smoke.ts --outfile /tmp/tangle-document-smoke
           TANGLE_EXPECT_STANDALONE=1 /tmp/tangle-document-smoke
+
+  release-ready:
+    name: release-ready
+    if: ${{ always() }}
+    needs: [release-version, check, minimum-node, instruments]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every release check
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          node -e 'const jobs = JSON.parse(process.env.RESULTS); if (Object.values(jobs).some(job => job.result !== "success")) process.exit(1)'
