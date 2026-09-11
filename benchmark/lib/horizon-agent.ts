@@ -1,6 +1,6 @@
 /** QA policy over JarenJS programs: bounded coverage, checked evidence and cited synthesis. */
 import { createBudgetAccount, createEnvironment, createLongHorizonAgent, createProgramAuthor,
-  createProgramRunner, createStructuredOutput } from '@jarenjs/ai';
+  createProgramRunner, createStructuredOutput, readProgramAnswer, type ProgramRunResult } from '@jarenjs/ai';
 import { chunkText } from '@jarenjs/core/chunk';
 import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
@@ -279,7 +279,7 @@ export async function runBoundedQa(options: BoundedQaOptions) {
         }),
         createProgramRunner: (config: any) => {
           const runner = createProgramRunner({ ...config, subcallChars: MAX_PIECE_CHARS, maxReduceChars: MAX_EVIDENCE_CHARS });
-          return { run: async (doc: any, hooks: any) => {
+          return { run: async (doc: any, hooks: any): Promise<ProgramRunResult> => {
             authored = true;
             firstProgram ??= structuredClone(doc);
             metrics.programAttempts++;
@@ -304,8 +304,9 @@ export async function runBoundedQa(options: BoundedQaOptions) {
     if (!result?.ok) return finish('failed');
     // The program's answer preview is capped. Read its checked, size-bounded slot before parsing JSON.
     if (result.answer.size > MAX_EVIDENCE_CHARS) { lastError = 'evidence-size-limit'; return finish('failed'); }
-    const raw = await environment.ledger.readSlot(result.answer.slot);
-    const collected = JSON.parse(String(raw));
+    const complete = await readProgramAnswer(environment, result.answer, { maxChars: MAX_EVIDENCE_CHARS });
+    if (!complete.ok) { lastError = complete.error; return finish('failed'); }
+    const collected = JSON.parse(complete.answer.text);
     if (!validateEnvelope(collected).valid) { lastError = 'invalid evidence envelope'; return finish('invalid'); }
     const records: HorizonEvidence[] = collected.value.flatMap((item: any) => item?.value?.records ?? []);
     metrics.evidenceRecords = records.length;

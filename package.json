@@ -16,6 +16,8 @@
     "benchmark"
   ],
   "scripts": {
+    "postinstall": "npm run jaren:patch",
+    "jaren:patch": "node scripts/patch-jaren-ai.ts",
     "test": "node --test \"test/**/*.test.ts\"",
     "test:core": "node --test \"test/core/*.test.ts\"",
     "test:memory": "node --test \"test/memory/*.test.ts\"",

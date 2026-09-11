@@ -275,10 +275,14 @@ ranked retrieval — the superseded record provably cannot surface.
 
 ## JarenJS release integration
 
-All JarenJS dependencies are pinned to **0.83.2**. The source submodule at
+All JarenJS dependencies are pinned to **0.83.2**. A reviewed
+[AI program patch](patches/README.md) is applied to the installed AI package by
+`postinstall` until an upstream release includes it; installations using
+`--ignore-scripts` must run `npm run jaren:patch`. The source submodule at
 `vendor/jarenjs` pins `v0.83.2`; initialize it with
 `git submodule update --init vendor/jarenjs` for source and benchmark review.
-`npm run jaren:check` verifies the package, lockfile, installation and source pins.
+`npm run jaren:check` verifies the package, lockfile, installation and source pins,
+plus the patch and installed-file hashes.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { patchJarenAi } from './patch-jaren-ai.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const version = '0.83.2';
@@ -48,4 +49,5 @@ if (await stat(root + 'vendor/jarenjs/package.json').then(() => true, () => fals
   assert.equal(git('-C', 'vendor/jarenjs', 'rev-parse', 'HEAD'), commit);
   assert.equal((await read('vendor/jarenjs/package.json')).version, version);
 }
-console.log(`JarenJS ${version}: ${references} exact references, ${installed} installed packages, source ${commit.slice(0, 12)}`);
+const patch = await patchJarenAi({ check: true });
+console.log(`JarenJS ${version}: ${references} exact references, ${installed} installed packages, source ${commit.slice(0, 12)}, AI patch ${patch.sha256}`);

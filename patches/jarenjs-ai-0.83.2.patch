@@ -1,0 +1,428 @@
+diff --git a/src/program.js b/src/program.js
+--- a/src/program.js
++++ b/src/program.js
+@@ -61,6 +61,9 @@
+ import { unfence } from './structured.js';
+ import { recursiveShape, recursiveSchema, recursiveItems } from './program-shape.js';
+ import { createRoutedClient } from './routing.js';
++
++export { readProgramAnswer } from './program-result.js';
++/** @typedef {import('./program-result.js').ProgramRunResult} ProgramRunResult */
+ 
+ /** How much of one piece a sub-call is shown. The sub-call is the only
+  * place content reaches a model at all, and it sees ONE piece — a cap
+@@ -401,7 +404,7 @@
+  *   - `account` is a budget shared with everything else in the run,
+  *     including other depths. Checked before each sub-call and charged
+  *     by it, so a tree cannot outspend the sum of its branches.
+- * @returns {{ run: (doc: any, hooks?: { signal?: AbortSignal }) => Promise<any> }}
++ * @returns {{ run: (doc: any, hooks?: { signal?: AbortSignal }) => Promise<ProgramRunResult> }}
+  */
+ export function createProgramRunner(options) {
+   const { environment } = options;
+@@ -547,6 +550,7 @@
+    * Execute a compiled program.
+    * @param {any} doc
+    * @param {{ signal?: AbortSignal }} [hooks]
++   * @returns {Promise<ProgramRunResult>}
+    */
+   async function run(doc, hooks = {}) {
+     const signal = hooks.signal;
+@@ -560,7 +564,9 @@
+     catch (err) {
+       // NOTHING has run: the compile reads no slot and writes none, so a
+       // rejected program leaves the environment exactly as it was
+-      return { ok: false, ran: 0, error: 'the program does not compile', errors: [errorRecord(err)] };
++      return { ok: false, ran: 0, steps: [], subcalls: 0, failed: 0, concurrency,
++        answer: null, ms: Date.now() - started,
++        error: 'the program does not compile', errors: [errorRecord(err)] };
+     }
+ 
+     /** binding → `{ slot }` or `{ family, count }` */
+@@ -720,6 +726,10 @@
+         subcalls += budgeted.length;
+         for (let i = 0; i < results.length; i++) {
+           if (results[i].error !== undefined) failed++;
++          // Recursive failures remain distinguishable from an ordinary null
++          // reply while satisfying the same envelope as successful leaves.
++          if (options.recursive && results[i].error !== undefined && !Object.hasOwn(results[i], 'value'))
++            results[i] = { ...results[i], value: null };
+           await environment.put(`${mapFamily(step.as)}${i}`, JSON.stringify(results[i]),
+             { kind: 'selection' });
+         }
+@@ -774,12 +784,17 @@
+       }
+     }
+ 
+-    /** @param {any} step @param {any} result */
++    /** @param {any} step @param {any} result @returns {ProgramRunResult} */
+     function failure(step, result) {
+       return {
+         ok: false,
++        answer: null,
+         ran: report.length,
+         steps: report,
++        subcalls,
++        failed,
++        concurrency,
++        ...(stopped === null ? {} : { stopped }),
+         error: result.error,
+         errors: [{ code: result.code ?? 'AI0200', docPath: `/steps/${step.index}`, message: result.error }],
+         ms: Date.now() - started,
+@@ -790,21 +805,24 @@
+       ? await environment.read(addressOf(plan.answer.from), { chars: plan.answer.chars })
+       : { error: `the run was ${stopped}` };
+ 
+-    return {
+-      ok: stopped === null && answered.error === undefined,
+-      ...(stopped === null ? {} : { stopped }),
++    const metrics = {
+       steps: report,
+       ran: report.length,
+       subcalls,
+       failed,
+       concurrency,
++      ms: Date.now() - started,
++    };
++    if (answered.error !== undefined) return {
++      ...metrics, ok: false, answer: null, error: answered.error,
++      ...(stopped === null ? {} : { stopped }),
++    };
++    return {
++      ...metrics, ok: true,
+       // the one place content comes back, and it is the step the program
+       // asked for by name
+-      answer: answered.error === undefined
+-        ? { slot: answered.name, size: answered.size, text: answered.text }
+-        : null,
+-      ...(answered.error === undefined ? {} : { error: answered.error }),
+-      ms: Date.now() - started,
++      answer: { slot: answered.name, size: answered.size, text: answered.text,
++        truncated: answered.text.length < answered.size },
+     };
+   }
+ 
+@@ -893,10 +911,17 @@
+           + ' Use map to ask a question of every piece — it is the only step that reads text —'
+           + ' and reduce to combine what the map found. Here is a program in the right shape:\n'
+           + JSON.stringify(options.recursive ? { steps: EXAMPLE.steps.map((step) => step.op === 'reduce'
+-            ? { ...step, query: { slot: 'corpus', value: { value: { $max: '$[*].value.value' } } },
+-              outputSchema: { type: 'object', properties: { slot: { type: 'string' }, value: {} }, required: ['slot', 'value'] } }
++            ? { ...step, query: ['$[*]'],
++              outputSchema: { type: 'array', items: { type: 'object',
++                properties: { slot: { type: 'string' }, value: {} }, required: ['slot', 'value'] } } }
+             : step) } : EXAMPLE)
+-          + (options.recursive ? '\nRecursive reduce MUST return {slot:string,value:any}, with value matching the leaf reply, or a sequence of these envelopes. Declare outputSchema on reduce when inference is unavailable.' : ''),
++          + (options.recursive ? '\nEach map result wraps the parsed leaf reply in {slot:string,value:any}. '
++            + 'Failed map entries have value:null and an error diagnostic; preserve both, and distinguish them from a successful null reply. '
++            + 'The worked reducer preserves every envelope, including null leaf values. An array constructor [expr] collects a sequence into one array; '
++            + 'a bare wildcard in an object member fails when it produces multiple items. '
++            + 'Recursive reduce MUST return {slot:string,value:any}, with value matching the leaf reply, or a sequence of these envelopes. '
++            + 'Use min/max only for a sequence of numbers or strings, never to combine general facts. '
++            + 'Declare outputSchema on reduce when inference is unavailable. A final answer preview may be truncated; inspect its truncated flag.' : ''),
+       },
+       {
+         role: 'user',
+diff --git a/src/recursive.js b/src/recursive.js
+--- a/src/recursive.js
++++ b/src/recursive.js
+@@ -47,6 +47,7 @@
+ import { excerpt } from '@jarenjs/core/chunk';
+ import { recursiveItems } from './program-shape.js';
+ import { createProgramSession } from './program-session.js';
++import { readProgramAnswer } from './program-result.js';
+ 
+ /** The deepest a tree may go, whatever it asks for. */
+ export const MAX_DEPTH = 3;
+@@ -216,7 +217,7 @@
+  *   createEnvironment: (options: any) => any,
+  *   querySchema?: any, budget?: any, depth?: number,
+  *   maxConcurrentSubcalls?: number, maxSubcalls?: number,
+- *   subcallChars?: number, clock?: () => number }} options
++ *   subcallChars?: number, maxAnswerChars?: number, clock?: () => number }} options
+  *   The three factories and `createEnvironment` are injected for the
+  *   same reason everything heavy in this package is: it keeps this
+  *   module free of a cycle with `program.js` and lets a probe wrap any
+@@ -232,6 +233,9 @@
+   let account = createBudgetAccount(options.budget ?? {}, options.clock);
+   let trajectory = createTrajectory();
+   const subcallChars = options.subcallChars ?? 8000;
++  const maxAnswerChars = options.maxAnswerChars ?? 200000;
++  if (!Number.isSafeInteger(maxAnswerChars) || maxAnswerChars < 1)
++    throw new RangeError('maxAnswerChars must be a positive safe integer');
+ 
+ 
+   /**
+@@ -331,12 +335,13 @@
+     }
+     // only the child's ANSWER crosses the boundary — never its corpus,
+     // never its slots (D2, at every level and not just the root)
+-    const text = result.answer?.text ?? 'null';
++    const complete = await readProgramAnswer(env, result.answer, { maxChars: maxAnswerChars });
++    if (!complete.ok) return { slot: name, depth, address: scope, error: complete.error };
+     try {
+-      const items = recursiveItems(JSON.parse(text));
++      const items = recursiveItems(JSON.parse(complete.answer.text));
+       if (items === null) return { slot: name, depth, error: 'AI0209: child answer violates recursive shape' };
+       return items.length === 1
+-        ? { slot: name, depth, address: scope, value: items[0].value }
++        ? { ...items[0], slot: name, depth, address: scope }
+         : { slot: name, depth, address: scope, items };
+     }
+     catch {
+diff --git a/src/program-result.js b/src/program-result.js
+new file mode 100644
+--- /dev/null
++++ b/src/program-result.js
+@@ -0,0 +1,48 @@
++//@ts-check
++/** Public program results and bounded access to their stored answers. */
++
++/** @typedef {{ slot: string, size: number, text: string, truncated: boolean }} ProgramAnswer */
++/** @typedef {{ code: string, docPath: string, message: string }} ProgramDiagnostic */
++/** @typedef {(
++ * { op: 'chunk', as: string, count: number, family: string } |
++ * { op: 'grep', as: string, total: number, slots: number, size: number } |
++ * { op: 'select', as: string, size: number, count?: number } |
++ * { op: 'stat' | 'peek', as: string, size: number } |
++ * { op: 'map', as: string, subcalls: number, failed: number, concurrency: number,
++ *   skipped?: number, note?: string, stopped?: string } |
++ * { op: 'reduce', as: string, over: number, size: number }
++ * )} ProgramStepReport */
++/** @typedef {{ ran: number, steps: ProgramStepReport[], subcalls: number,
++ * failed: number, concurrency: number, ms: number }} ProgramRunMetrics */
++/** @typedef {ProgramRunMetrics & (
++ * { ok: true, answer: ProgramAnswer, error?: never, errors?: never, stopped?: never } |
++ * { ok: false, answer: null, error: string, errors?: ProgramDiagnostic[], stopped?: string }
++ * )} ProgramRunResult */
++
++/**
++ * Read a complete answer through the owning environment's scoped ledger.
++ * Check metadata before loading content, then check its actual length as well.
++ * A missing, resized or oversized slot is a refusal, never a parsed preview.
++ * @param {{ ledger: { getSlot: (name: string) => Promise<{ size: number } | null>,
++ *   readSlot: (name: string) => Promise<unknown> } }} environment
++ * @param {ProgramAnswer} answer
++ * @param {{ maxChars: number }} options
++ * @returns {Promise<{ ok: true, answer: ProgramAnswer } | { ok: false, error: string }>}
++ */
++export async function readProgramAnswer(environment, answer, options) {
++  const maxChars = options.maxChars;
++  if (!Number.isSafeInteger(maxChars) || maxChars < 1)
++    throw new RangeError('maxChars must be a positive safe integer');
++  if (!answer || typeof answer.slot !== 'string' || !Number.isSafeInteger(answer.size) || answer.size < 0)
++    return { ok: false, error: 'the program answer has invalid slot metadata' };
++  if (answer.size > maxChars)
++    return { ok: false, error: `the program answer exceeds the ${maxChars} character limit` };
++  const slot = await environment.ledger.getSlot(answer.slot);
++  if (slot === null) return { ok: false, error: `no answer slot '${answer.slot}'` };
++  if (slot.size !== answer.size)
++    return { ok: false, error: `answer slot '${answer.slot}' changed size since the program ran` };
++  const raw = await environment.ledger.readSlot(answer.slot);
++  if (typeof raw !== 'string' || raw.length !== answer.size || raw.length > maxChars)
++    return { ok: false, error: `answer slot '${answer.slot}' no longer matches its bounded size` };
++  return { ok: true, answer: { slot: answer.slot, size: raw.length, text: raw, truncated: false } };
++}
+diff --git a/src/index.js b/src/index.js
+--- a/src/index.js
++++ b/src/index.js
+@@ -31,8 +31,12 @@
+ } from './environment.js';
+ export {
+   compileProgram, programGate, createProgramRunner, createProgramAuthor, ProgramError,
+-  PROGRAM_EXAMPLE,
++  PROGRAM_EXAMPLE, readProgramAnswer,
+ } from './program.js';
++/** @typedef {import('./program-result.js').ProgramRunResult} ProgramRunResult */
++/** @typedef {import('./program-result.js').ProgramAnswer} ProgramAnswer */
++/** @typedef {import('./program-result.js').ProgramStepReport} ProgramStepReport */
++/** @typedef {import('./program-result.js').ProgramDiagnostic} ProgramDiagnostic */
+ export {
+   createLongHorizonAgent, createBudgetAccount, createTrajectory, resolveDepth, childScope,
+   MAX_DEPTH, DEFAULT_DEPTH,
+diff --git a/dist/types/program.d.ts b/dist/types/program.d.ts
+--- a/dist/types/program.d.ts
++++ b/dist/types/program.d.ts
+@@ -50,6 +50,8 @@
+  * the only one.
+  */
+ import { CodedError } from '@jarenjs/core/errors';
++export { readProgramAnswer } from './program-result.js';
++export type ProgramRunResult = import('./program-result.js').ProgramRunResult;
+ /**
+  * A program that will not compile.
+  *
+@@ -174,7 +176,7 @@
+  *   - `account` is a budget shared with everything else in the run,
+  *     including other depths. Checked before each sub-call and charged
+  *     by it, so a tree cannot outspend the sum of its branches.
+- * @returns {{ run: (doc: any, hooks?: { signal?: AbortSignal }) => Promise<any> }}
++ * @returns {{ run: (doc: any, hooks?: { signal?: AbortSignal }) => Promise<ProgramRunResult> }}
+  */
+ export declare function createProgramRunner(options: {
+     environment: any;
+@@ -204,7 +206,7 @@
+ }): {
+     run: (doc: any, hooks?: {
+         signal?: AbortSignal;
+-    }) => Promise<any>;
++    }) => Promise<ProgramRunResult>;
+ };
+ /** The example, so a test can compile it. Exported for exactly that:
+  * the prompt's correctness is a property worth a gate. */
+diff --git a/dist/types/recursive.d.ts b/dist/types/recursive.d.ts
+--- a/dist/types/recursive.d.ts
++++ b/dist/types/recursive.d.ts
+@@ -153,7 +153,7 @@
+  *   createEnvironment: (options: any) => any,
+  *   querySchema?: any, budget?: any, depth?: number,
+  *   maxConcurrentSubcalls?: number, maxSubcalls?: number,
+- *   subcallChars?: number, clock?: () => number }} options
++ *   subcallChars?: number, maxAnswerChars?: number, clock?: () => number }} options
+  *   The three factories and `createEnvironment` are injected for the
+  *   same reason everything heavy in this package is: it keeps this
+  *   module free of a cycle with `program.js` and lets a probe wrap any
+@@ -186,6 +186,7 @@
+     maxConcurrentSubcalls?: number;
+     maxSubcalls?: number;
+     subcallChars?: number;
++    maxAnswerChars?: number;
+     clock?: () => number;
+ }): {
+     run: (question: string, hooks?: {
+diff --git a/dist/types/program-result.d.ts b/dist/types/program-result.d.ts
+new file mode 100644
+--- /dev/null
++++ b/dist/types/program-result.d.ts
+@@ -0,0 +1,111 @@
++/** Public program results and bounded access to their stored answers. */
++export type ProgramAnswer = {
++    slot: string;
++    size: number;
++    text: string;
++    truncated: boolean;
++};
++export type ProgramDiagnostic = {
++    code: string;
++    docPath: string;
++    message: string;
++};
++export type ProgramStepReport = ({
++    op: 'chunk';
++    as: string;
++    count: number;
++    family: string;
++} | {
++    op: 'grep';
++    as: string;
++    total: number;
++    slots: number;
++    size: number;
++} | {
++    op: 'select';
++    as: string;
++    size: number;
++    count?: number;
++} | {
++    op: 'stat' | 'peek';
++    as: string;
++    size: number;
++} | {
++    op: 'map';
++    as: string;
++    subcalls: number;
++    failed: number;
++    concurrency: number;
++    skipped?: number;
++    note?: string;
++    stopped?: string;
++} | {
++    op: 'reduce';
++    as: string;
++    over: number;
++    size: number;
++});
++export type ProgramRunMetrics = {
++    ran: number;
++    steps: ProgramStepReport[];
++    subcalls: number;
++    failed: number;
++    concurrency: number;
++    ms: number;
++};
++export type ProgramRunResult = ProgramRunMetrics & ({
++    ok: true;
++    answer: ProgramAnswer;
++    error?: never;
++    errors?: never;
++    stopped?: never;
++} | {
++    ok: false;
++    answer: null;
++    error: string;
++    errors?: ProgramDiagnostic[];
++    stopped?: string;
++});
++/** @typedef {{ slot: string, size: number, text: string, truncated: boolean }} ProgramAnswer */
++/** @typedef {{ code: string, docPath: string, message: string }} ProgramDiagnostic */
++/** @typedef {(
++ * { op: 'chunk', as: string, count: number, family: string } |
++ * { op: 'grep', as: string, total: number, slots: number, size: number } |
++ * { op: 'select', as: string, size: number, count?: number } |
++ * { op: 'stat' | 'peek', as: string, size: number } |
++ * { op: 'map', as: string, subcalls: number, failed: number, concurrency: number,
++ *   skipped?: number, note?: string, stopped?: string } |
++ * { op: 'reduce', as: string, over: number, size: number }
++ * )} ProgramStepReport */
++/** @typedef {{ ran: number, steps: ProgramStepReport[], subcalls: number,
++ * failed: number, concurrency: number, ms: number }} ProgramRunMetrics */
++/** @typedef {ProgramRunMetrics & (
++ * { ok: true, answer: ProgramAnswer, error?: never, errors?: never, stopped?: never } |
++ * { ok: false, answer: null, error: string, errors?: ProgramDiagnostic[], stopped?: string }
++ * )} ProgramRunResult */
++/**
++ * Read a complete answer through the owning environment's scoped ledger.
++ * Check metadata before loading content, then check its actual length as well.
++ * A missing, resized or oversized slot is a refusal, never a parsed preview.
++ * @param {{ ledger: { getSlot: (name: string) => Promise<{ size: number } | null>,
++ *   readSlot: (name: string) => Promise<unknown> } }} environment
++ * @param {ProgramAnswer} answer
++ * @param {{ maxChars: number }} options
++ * @returns {Promise<{ ok: true, answer: ProgramAnswer } | { ok: false, error: string }>}
++ */
++export declare function readProgramAnswer(environment: {
++    ledger: {
++        getSlot: (name: string) => Promise<{
++            size: number;
++        } | null>;
++        readSlot: (name: string) => Promise<unknown>;
++    };
++}, answer: ProgramAnswer, options: {
++    maxChars: number;
++}): Promise<{
++    ok: true;
++    answer: ProgramAnswer;
++} | {
++    ok: false;
++    error: string;
++}>;
+diff --git a/dist/types/index.d.ts b/dist/types/index.d.ts
+--- a/dist/types/index.d.ts
++++ b/dist/types/index.d.ts
+@@ -22,7 +22,15 @@
+ export { RECALL_TOOL_NAME, createRecallTool, roundSlotName, indexSlotName, slotRef, slotAddress, slotAddressesIn, } from './recall.js';
+ export { createLedger, sameIdentity, describeIdentity } from './ledger.js';
+ export { createEnvironment, environmentTools, chunkSlotName, chunkFamily, CHUNK_KIND, } from './environment.js';
+-export { compileProgram, programGate, createProgramRunner, createProgramAuthor, ProgramError, PROGRAM_EXAMPLE, } from './program.js';
++export { compileProgram, programGate, createProgramRunner, createProgramAuthor, ProgramError, PROGRAM_EXAMPLE, readProgramAnswer, } from './program.js';
++export type ProgramRunResult = import('./program-result.js').ProgramRunResult;
++export type ProgramAnswer = import('./program-result.js').ProgramAnswer;
++export type ProgramStepReport = import('./program-result.js').ProgramStepReport;
++export type ProgramDiagnostic = import('./program-result.js').ProgramDiagnostic;
++/** @typedef {import('./program-result.js').ProgramRunResult} ProgramRunResult */
++/** @typedef {import('./program-result.js').ProgramAnswer} ProgramAnswer */
++/** @typedef {import('./program-result.js').ProgramStepReport} ProgramStepReport */
++/** @typedef {import('./program-result.js').ProgramDiagnostic} ProgramDiagnostic */
+ export { createLongHorizonAgent, createBudgetAccount, createTrajectory, resolveDepth, childScope, MAX_DEPTH, DEFAULT_DEPTH, } from './recursive.js';
+ export { createStylesheetAuthor, stylesheetSystemMessage, stylesheetGates, compileGate, literalBodyGate, nonEmptyGate, runGate, unknownOperatorGate, grammarKeywords, operatorArities, operatorNames, operatorCrib, describePaths, STYLESHEET_EXAMPLE, } from './stylesheet.js';
+ export { createSpatialAuthor, spatialGates, prefixProximityGate, planarArithmeticGate, spatialOperatorGate, spatialCrib, spatialIntent, spatialSystemMessage, describeSpatialPaths, coordinateMembers, SPATIAL_OPERATORS, SPATIAL_EXAMPLE, } from './spatial.js';

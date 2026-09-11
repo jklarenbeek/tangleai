@@ -1601,7 +1601,7 @@ interface HorizonContext {
 /** Completed maps retain their counts even when a later reducer fails. */
 export function horizonProgramCounts(step: {
   subcalls?: number, failed?: number,
-  steps?: Array<{ subcalls?: number, failed?: number, skipped?: number }>,
+  steps?: Array<{ op?: string, subcalls?: number, failed?: number, skipped?: number }>,
 }): { made: number, failed: number, unvisited: number } {
   const maps = step.steps ?? [];
   return {

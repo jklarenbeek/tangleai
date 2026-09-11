@@ -2,7 +2,9 @@
 
 Audited 2026-09-11 against **0.83.2**, source tag `v0.83.2`, commit
 `f21b18fa123a6c72a0ca31dbad374ec5a8bf78ff`. All 14 installed JarenJS packages
-resolve to this exact release. Runtime code uses published npm packages;
+resolve to this exact base release. The installed AI package additionally carries
+the reviewed [program patch](../patches/README.md), applied and hash-checked by
+`npm run jaren:patch` during installation. Runtime code uses these npm packages;
 [`vendor/jarenjs`](../vendor/jarenjs) is the source and benchmark reference.
 
 ```sh
@@ -112,21 +114,23 @@ three-argument `task` overload that the 0.83.2 JavaScript runtime implements
 but its published handwritten declaration omits. It changes no runtime code.
 The upstream fix belongs in `packages/linq/types/flow.d.ts`.
 
-Program failures retain completed map steps but omit aggregate sub-call
-counts in `packages/ai/src/program.js`. The long-horizon benchmark reads the
-step counts as well as the aggregate, without double-counting successful runs,
-and publishes program failure reasons. Paid responses are replayed to verify
-this accounting; a failed reduction must not erase work already performed.
+The AI patch makes runner results a typed success/failure union with complete
+accounting, including zero counts on compile refusal. The long-horizon benchmark
+still reads historical step counts alongside aggregates without double-counting.
+Recursive failure envelopes retain `value: null` and their error metadata, so a
+failed leaf does not invalidate otherwise usable collected evidence.
 
-The [bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) uses the published release
-without editing installed packages or the source submodule. QA-specific prompt,
+The [bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) was measured using the
+unmodified published release. The current installation applies
+the explicit AI patch while preserving the source submodule. QA-specific prompt,
 coverage, evidence, repair and synthesis policies live in
 [`horizon-agent.ts`](../benchmark/lib/horizon-agent.ts). Its single host budget
 includes all authoring, leaf and synthesis attempts. Full checked result slots
-are size-bounded and read through the suite ledger, because the runner's answer
-field is a preview. The local upstream working change separately fixes the
-generic recursive example, failure totals and explicit preview-truncation flag;
-these application fixes do not depend on an unpublished package.
+are now read through the suite's `readProgramAnswer` with Tangle's 64,000-character
+bound, because the runner's answer field is a preview. JarenJS uses the same
+reader for complete child results at recursive depth. Installed-consumer tests
+exercise the actual default author example with a failed leaf and a child answer
+beyond the preview, and typecheck the generated public result declarations.
 
 Regression checks exercise checkpoint identity refusal, crash/reclaim without
 duplicate calls, concurrent ledger counters, transaction rollback and SQLite
