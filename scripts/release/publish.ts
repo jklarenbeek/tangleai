@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { ROOT, config, readJson, writeJson, sha256, npm, assertClean, assertReleaseTag, git, compareVersions, isMain } from './common.ts';
 import { checkRelease } from './check.ts';
 import { readArtifacts } from './consumers.ts';
-import { publicationDecision, registryVersion, waitForVersion, type RegistryVersion } from './registry.ts';
+import { publicationDecision, registryVersion, type RegistryVersion } from './registry.ts';
 import type { Artifact, Artifacts } from './build.ts';
 import { assertVerifiedGate } from './verify.ts';
 
@@ -79,7 +79,12 @@ export async function publish(root = ROOT, options: { execute?: boolean; bootstr
       // Scope lifecycle hooks and registry settings cannot change this artifact.
       npm(['publish', resolve(root, 'dist/release', pkg.filename), '--ignore-scripts', '--access=public', '--tag=latest', '--registry', cfg.registry], { root, authenticated: true });
     },
-    verify: pkg => waitForVersion(cfg.registry, pkg),
+    // Upload the complete suite before waiting for scans, which may take minutes.
+    // The subsequent registry gate verifies visibility, bytes and installed consumers.
+    verify: async pkg => {
+      const accepted = await registryVersion(cfg.registry, pkg.name, pkg.version);
+      if (accepted) publicationDecision(pkg, accepted);
+    },
     save: receipt => writeJson(resolve(root, 'dist/release/publish-receipt.json'), receipt),
   });
 }

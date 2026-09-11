@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/config",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "Tangle AI configuration — the schema-owned capability-profile registry and effective-run-identity contract every host resolves through",
   "license": "MIT",
   "type": "module",

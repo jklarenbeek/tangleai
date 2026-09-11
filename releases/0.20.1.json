@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "version": "0.20.1",
+  "baseVersion": "0.20.0",
+  "baseCommit": "5513c33594a8342d060060386d1012fb542d1ba1",
+  "preparationCommit": "5513c33594a8342d060060386d1012fb542d1ba1",
+  "initial": false,
+  "inputHash": "0f48c37dab4f652dd1634835cfbe4e347ec93f387c8444baf9b3c0b3ffd06c46",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Wait for npm publish-time scanning before verifying fresh installations. Upload the complete suite, then poll full and install package indexes for up to 20 minutes, requiring matching versions, integrity and latest tags. Keep mismatched artifacts fatal and report packages that remain unavailable, so direct main releases can finish without manually retrying normal scan delays. Complete each release from the successful publication attempt's exact artifact ID, preserving earlier failed receipts without selecting them.",
+      "id": "npm-scan-availability"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/core",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.20.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.20.1"
+    }
+  ]
+}

@@ -93,7 +93,20 @@ It never publishes private workspaces. A complete gate receipt binds the source
 checks, packed consumers and artifact identities; closeout reuses it only while
 those inputs and artifacts are unchanged.
 
-`release:verify-registry` checks each package's version, exports, integrity and
+An accepted npm upload can remain unavailable while npm scans it. The publisher
+uploads the suite in dependency order, recording accepted uploads, then
+`release:verify-registry` polls both full and install package indexes together for
+up to 20 minutes. It checks versions, tarball integrity and `latest` in both formats
+before attempting an install. Missing versions or stale indexes remain pending;
+different bytes fail immediately. The publication job allows 40 minutes for
+uploads, scan availability and consumer verification. A longer npm hold fails
+with the unavailable package names and can be retried at the same commit.
+
+This accommodates npm's [publish-time scanning](https://github.blog/changelog/2026-07-28-npm-publish-time-malware-scanning-and-dual-use-metadata/),
+which commonly delays installation for several minutes. Accepted upload receipts
+alone do not establish an installable release.
+
+`release:verify-registry` then checks each package's version, exports, integrity and
 `latest` tag, then installs the published versions in another fresh project and
 runs the consumer gate. Pages runs independently after the source CI gate: it
 builds Tangle's local workspace TypeScript and installs JarenJS from npm. The
@@ -162,7 +175,10 @@ a new patch version; never retag or overwrite a released artifact. Moving `lates
 backwards is refused.
 
 Artifacts and partial receipts are retained by Actions even when publication
-fails. An incomplete publication cannot finish the GitHub package release, but
+fails. Each publication attempt retains a separately named artifact; release
+completion downloads the successful job's exact artifact ID, so an older failed
+attempt cannot replace its registry verification receipt. An incomplete
+publication cannot finish the GitHub package release, but
 does not block Pages. A failed Pages deployment can be retried using the same
 checked source identity. Normal workflow retries do not advance package versions.
 

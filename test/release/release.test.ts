@@ -8,7 +8,7 @@ import { ROOT, config, manifestPaths, readJson, writeJson, validateManifests, in
 import { prepare, synchronizeVersions } from '../../scripts/release/prepare.ts';
 import { checkRelease } from '../../scripts/release/check.ts';
 import { distributionManifest } from '../../scripts/release/build.ts';
-import { publicationDecision, type RegistryVersion } from '../../scripts/release/registry.ts';
+import { publicationDecision, waitForInstallable, type RegistryVersion } from '../../scripts/release/registry.ts';
 import { publishSequence, type PublishReceipt } from '../../scripts/release/publish.ts';
 import { verifyBuildIdentity } from '../../scripts/release/verify-site.ts';
 import type { Artifacts, Artifact } from '../../scripts/release/build.ts';
@@ -199,6 +199,33 @@ function artifacts(): Artifacts {
   })) };
 }
 const metadata = (pkg: Artifact): RegistryVersion => ({ name: pkg.name, version: pkg.version, exports: pkg.exports, dist: { integrity: pkg.integrity } });
+it('waits through npm scanning and cached indexes before permitting installed consumers', async () => {
+  const packages = artifacts().packages;
+  let now = 0;
+  const checks: string[] = [];
+  await waitForInstallable('https://registry.npmjs.org/', packages, { timeoutMs: 900_000, intervalMs: 60_000 }, {
+    now: () => now, sleep: async ms => { now += ms; }, report: () => {},
+    read: async (pkg, abbreviated) => {
+      checks.push(`${pkg.name}:${abbreviated}:${now}`);
+      if (pkg.name.endsWith('memory') && now < 360_000) return null;
+      return { name: pkg.name, versions: { [pkg.version]: metadata(pkg) },
+        'dist-tags': { latest: abbreviated && now < 420_000 ? '0.19.0' : pkg.version } };
+    },
+  });
+  assert.equal(now, 420_000);
+  assert.ok(checks.some(call => call === '@tangleai/memory:true:420000'));
+});
+it('bounds an unavailable npm index and refuses changed bytes immediately', async () => {
+  const packages = artifacts().packages;
+  let now = 0;
+  const io = { now: () => now, sleep: async (ms: number) => { now += ms; }, report: () => {}, read: async () => null };
+  await assert.rejects(waitForInstallable('https://registry.npmjs.org/', packages, { timeoutMs: 100, intervalMs: 60 }, io), /still unavailable.*@tangleai\/core, @tangleai\/memory/);
+  assert.equal(now, 100);
+  await assert.rejects(waitForInstallable('https://registry.npmjs.org/', packages, {}, { ...io,
+    read: async pkg => ({ name: pkg.name, versions: { [pkg.version]: { ...metadata(pkg), dist: { integrity: 'wrong' } } } }),
+  }), /different bytes/);
+  assert.equal(now, 100);
+});
 it('preflights every package and refuses an existing version with different bytes before publishing anything', async () => {
   const built = artifacts();
   let writes = 0;

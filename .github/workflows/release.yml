@@ -21,13 +21,14 @@ jobs:
   publish:
     needs: checks
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     environment: npm
     permissions:
       contents: write
       id-token: write
     outputs:
       version: ${{ steps.identity.outputs.version }}
+      artifact: ${{ steps.archive.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -59,10 +60,11 @@ jobs:
       - run: npm run release:publish -- --execute
       - run: npm run release:verify-registry
       - name: Retain publication receipts and tested tarballs
+        id: archive
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: npm-release
+          name: npm-release-${{ github.run_attempt }}
           path: dist/release/
           if-no-files-found: error
           retention-days: 90
@@ -88,7 +90,8 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: npm-release
+          artifact-ids: ${{ needs.publish.outputs.artifact }}
+          merge-multiple: true
           path: dist/release
       - name: Complete the release after npm and Pages verification
         env:

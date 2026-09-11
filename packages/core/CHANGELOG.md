@@ -1,5 +1,11 @@
 # @tangleai/core
 
+## 0.20.1
+
+### Patch Changes
+
+- Wait for npm publish-time scanning before verifying fresh installations. Upload the complete suite, then poll full and install package indexes for up to 20 minutes, requiring matching versions, integrity and latest tags. Keep mismatched artifacts fatal and report packages that remain unavailable, so direct main releases can finish without manually retrying normal scan delays. Complete each release from the successful publication attempt's exact artifact ID, preserving earlier failed receipts without selecting them.
+
 ## 0.20.0
 
 ### Minor Changes

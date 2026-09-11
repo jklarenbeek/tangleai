@@ -1,5 +1,12 @@
 # @tangleai/documents
 
+## 0.20.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/core@0.20.1
+
 ## 0.20.0
 
 ### Minor Changes
