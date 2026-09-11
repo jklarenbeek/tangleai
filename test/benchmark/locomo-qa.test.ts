@@ -569,7 +569,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     let tick = 0;
     const live = await runLocomoQaLive(available!, {
       env, ...liveClients(env, fetch), thinking: 'off',
-      rows: ALL_ROWS, horizon: { perCategory: 1, callTimeoutMs: 0 },
+      rows: ALL_ROWS, horizon: { strategy: 'legacy', perCategory: 1, callTimeoutMs: 0 },
       samples: ['conv-30'], perCategory: 2, adversarial: 1,
       clock: () => new Date('2026-08-27T12:00:00.000Z'),
       timer: () => (tick += 5),
@@ -701,7 +701,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
   it('behind the wire cache a second run buys nothing — every answer replayed, every text cached, the plan counting no embedding request — and --fresh buys again', async () => {
     const env = scriptedEnv({ TANGLE_AI_MAX_CONCURRENCY: '1' });
     const cache = await openWireCache({ path: ':memory:', driver: nodeDriver() });
-    const options = { rows: ['near-raw', 'long-horizon'], horizon: { perCategory: 1, callTimeoutMs: 0 }, samples: ['conv-30'], perCategory: 2, adversarial: 1, cache };
+    const options = { rows: ['near-raw', 'long-horizon'], horizon: { strategy: 'legacy' as const, perCategory: 1, callTimeoutMs: 0 }, samples: ['conv-30'], perCategory: 2, adversarial: 1, cache };
     const remembered = (fetch: typeof globalThis.fetch, fresh = false) => {
       const replay = cache.adapter({ fresh });
       return {
@@ -758,7 +758,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
       const seen: Array<{ kind: string, reasoning: unknown }> = [];
       const { fetch } = scriptedFetch({ onRequest: (body) => seen.push({ kind: kinds(body), reasoning: body.reasoning }) });
       const live = await runLocomoQaLive(available!, {
-        env, ...liveClients(env, fetch), thinking, rows: ['long-horizon'], horizon: { perCategory: 1, callTimeoutMs: 0 },
+        env, ...liveClients(env, fetch), thinking, rows: ['long-horizon'], horizon: { strategy: 'legacy', perCategory: 1, callTimeoutMs: 0 },
         samples: ['conv-30'], perCategory: 2, adversarial: 1,
       });
       assert.equal(live.generated.thinking, thinking);
@@ -786,11 +786,36 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     assert.match(renderMarkdown(await runLocomoQa(available!, { samples: ['conv-30'], perCategory: 2, adversarial: 1 }), live), /\*\*Skipped up front\*\*/);
   });
 
+  it('records the covered agent policy, full coverage, cited synthesis and every paid phase', async () => {
+    const env = scriptedEnv();
+    const { fetch, calls } = scriptedFetch();
+    const live = await runLocomoQaLive(available!, {
+      env, ...liveClients(env, fetch), thinking: 'default', rows: ['long-horizon'],
+      horizon: { perCategory: 1, callTimeoutMs: 0 }, samples: ['conv-30'], perCategory: 2, adversarial: 0,
+    });
+    assert.equal(validateLive(live).valid, true, JSON.stringify(validateLive(live).errors));
+    const row = rowOf(live, 'long-horizon');
+    assert.equal(row.horizon!.strategy, 'covered-evidence-v1');
+    assert.equal(row.questions.invalid, 0);
+    assert.equal(row.questions.abstained, 0);
+    assert.equal(row.questions.answered, row.questions.planned);
+    assert.equal(row.horizon!.subcalls.unvisited, 0);
+    for (const diagnostic of row.horizon!.diagnostics!) {
+      assert.equal(diagnostic.visitedChars, diagnostic.corpusChars);
+      assert.equal(diagnostic.visitedPieces, diagnostic.totalPieces);
+      assert.equal(diagnostic.status, 'answered');
+      assert.equal(diagnostic.synthesisAttempts, 1);
+      assert.ok(diagnostic.calls <= HORIZON_DEFAULTS.turnsPerQuestion);
+    }
+    assert.equal(row.cost.turns, calls.author + calls.subcall + calls.chat);
+    assert.equal(row.cost.turns, row.horizon!.diagnostics!.reduce((sum, entry) => sum + entry.calls, 0));
+  });
+
   it('a wire failure is an unanswered question, counted and named, never a score — for the agent too', async () => {
     const env = scriptedEnv();
     const { fetch } = scriptedFetch({ fail: 500 });
     const live = await runLocomoQaLive(available!, {
-      env, ...liveClients(env, fetch), rows: ['near-raw', 'long-horizon'], horizon: { perCategory: 1, callTimeoutMs: 0 },
+      env, ...liveClients(env, fetch), rows: ['near-raw', 'long-horizon'], horizon: { strategy: 'legacy', perCategory: 1, callTimeoutMs: 0 },
       samples: ['conv-30'], perCategory: 1, adversarial: 1,
     });
     for (const c of live.configurations) {

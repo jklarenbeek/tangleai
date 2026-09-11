@@ -1,5 +1,6 @@
 // tangle pages e2e — the in-browser pipeline demo, for real.
 import { createRequire } from 'node:module';
+import { readFile } from 'node:fs/promises';
 const jarenRequire = createRequire(process.env.PLAYWRIGHT_PACKAGE ?? new URL('../../jarenjs/package.json', import.meta.url));
 const { chromium } = jarenRequire('playwright-core');
 
@@ -22,6 +23,14 @@ const measuredRows = await page.locator('.history-table tbody tr').count();
 if (measuredRows !== 2) await fail(`expected Node and Bun measurements, got ${measuredRows}`);
 const paidRows = await page.locator('.paid-table tbody tr').count();
 if (paidRows !== 6) await fail(`expected six paid answer strategies, got ${paidRows}`);
+const { bounded } = JSON.parse(await readFile(new URL('../benchmark/results/jaren-integration.json', import.meta.url), 'utf8'));
+await page.waitForSelector(`[data-bounded-policy="${bounded.policy}"]`);
+const boundedRow = page.locator('.paid-table tbody tr').filter({ hasText: 'Bounded agent' });
+const cells = await boundedRow.locator('td').allTextContents();
+if (cells[1] !== `${bounded.current.valid}/${bounded.current.planned}` || cells[2] !== bounded.current.f1.toFixed(3))
+  await fail(`bounded measurements are stale: ${JSON.stringify(cells)}`);
+const reportLink = page.locator('a[href$="/docs/BOUNDED_AGENT_BENCHMARK.md"]');
+if (await reportLink.count() !== 1) await fail('bounded comparison report link missing');
 await page.click('button:has-text("run the loop")');
 await page.waitForSelector('.node.ok', { timeout: 8000 }).catch(() => fail('no ok node'));
 const okNodes = await page.locator('.node.ok').count();

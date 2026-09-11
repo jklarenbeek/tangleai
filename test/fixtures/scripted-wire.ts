@@ -12,6 +12,7 @@
  */
 
 import { createHashEmbedder } from '@jarenjs/ai/embed';
+import { addressedLines, evidenceProgram } from '../../benchmark/lib/horizon-agent.ts';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../../apps/desktop/src/settings.ts';
 import { chatSettingsOf, embedSettingsOf, envConfigIdentity, readAiEnv } from '../../benchmark/lib/ai-env.ts';
@@ -95,8 +96,23 @@ export function scriptedFetch(options: ScriptOptions = {}): { fetch: typeof glob
         return completion(JSON.stringify({ correct: /not|did not|no such/i.test(body.messages.at(-1).content), reasoning: 'scripted' }));
       }
       if (name === 'jaren_program') {
+        const coverage = /Use line chunk size (\d+)/.exec(system);
+        if (coverage !== null) return completion(JSON.stringify(evidenceProgram(Number(coverage[1]), 'Extract relevant facts.')));
         const asked = /Question: ([^\n]*)/.exec(String(body.messages.at(-1).content));
         return completion(JSON.stringify(scriptedProgram(asked?.[1] ?? 'the question')));
+      }
+      if (name === 'horizon_evidence') {
+        const content = String(body.messages.at(-1).content);
+        const lines = addressedLines(content.slice(content.indexOf('--- piece')));
+        const first = [...lines][0];
+        return completion(JSON.stringify({ records: first ? [{ text: first[1], ids: [first[0]] }] : [] }));
+      }
+      if (name === 'horizon_answer') {
+        const content = String(body.messages[1].content);
+        const evidence = JSON.parse(content.slice(content.indexOf('\nEvidence: ') + '\nEvidence: '.length));
+        const first = evidence.records[0];
+        return completion(JSON.stringify(first ? { status: 'answered', answer: first.text, citations: first.ids }
+          : { status: 'abstained', answer: '', citations: [] }));
       }
       if (isSubcall) {
         // the first turn of the piece, quoted with its id, in the shape the program's reduce reads (`$r.value`) — a JSON value, as a sub-call must answer

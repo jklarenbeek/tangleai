@@ -28,7 +28,7 @@ the committed gitlink is always checked.
 | Agent memory | `createMasAgentContext` composes the suite ledger, environment and JSON query engine. `createDbLedgerStorage` supplies atomic scoped mutations over the existing settings collection, so independent ledger instances share counters and publish complete changes in one transaction. Embedder, goal limits and archive retention limits pass directly to the suite. No second ledger, compactor or retention algorithm is introduced. |
 | Grounded answers | `createStructuredOutput` owns generation and repair. `validateClaimEvidence` now owns generic claim identity and supplied-reference integrity through an envelope built from the evidence actually serialized into the prompt. The measured answer contract still allows uncited claims; Tangle's fixture oracle alone judges semantic support, source freshness and the six terminal citation states. |
 | Memory policy | Ledger projection uses the published `LedgerMemory` type. Tangle's stored policy records specialize evidence to a nonempty source string, while the suite ledger also accepts structured claim evidence. Novelty, contradiction, crystallization, policy learning and benchmark-specific scoring remain application policies. |
-| Recursive QA | `createLongHorizonAgent` receives the query analyzer and type annotator required by the program session. Scripted reducers declare and preserve `{ slot, value }` provenance. Provider failures returned as values count as unanswered wire failures, never successful empty answers. |
+| Bounded corpus QA | `createLongHorizonAgent` receives the query analyzer and type annotator. Tangle's `covered-evidence-v1` policy sizes line chunks for complete coverage within the call cap, validates leaf references, checks reducers on empty/single/multiple inputs, and synthesizes a nonempty cited answer. Runtime reducer repairs reuse identical validated leaf requests. Explicit abstentions and invalid answers remain separate. The legacy strategy is retained for historical replay. |
 | Provider configuration | The suite owns endpoint resolution, completion/embedding transport, retries, replay keys, structured output and budgets. Optional `maxTokens` and `maxTokensField` settings reach the chat client and the effective run identity. Both `max_tokens` and `max_completion_tokens` are selectable. Historical identities remain readable. |
 | Document transport | `@jarenjs/core/schedule` replaces the custom semaphore and host timers. Each robots, document and redirect request is scheduled by its actual host, through body consumption, with bounded queue/scope state, a suite LRU robots cache, cancellation and drained shutdown. URL/DNS/robots/terms/byte policies remain Tangle's. Clock and sleep are injectable. |
 | Desktop host | One `createRuntime` record reaches the database and HTTP dispatcher; its clock supplies default application timestamps and request scheduling. Explicit host overrides retain precedence. Desktop shutdown drains document requests before closing the database. The UI uses bounded suite reconnects and reconciles completed syncs through the same contract snapshot read; late stream frames cannot replace newer state. |
@@ -117,6 +117,16 @@ counts in `packages/ai/src/program.js`. The long-horizon benchmark reads the
 step counts as well as the aggregate, without double-counting successful runs,
 and publishes program failure reasons. Paid responses are replayed to verify
 this accounting; a failed reduction must not erase work already performed.
+
+The [bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) uses the published release
+without editing installed packages or the source submodule. QA-specific prompt,
+coverage, evidence, repair and synthesis policies live in
+[`horizon-agent.ts`](../benchmark/lib/horizon-agent.ts). Its single host budget
+includes all authoring, leaf and synthesis attempts. Full checked result slots
+are size-bounded and read through the suite ledger, because the runner's answer
+field is a preview. The local upstream working change separately fixes the
+generic recursive example, failure totals and explicit preview-truncation flag;
+these application fixes do not depend on an unpublished package.
 
 Regression checks exercise checkpoint identity refusal, crash/reclaim without
 duplicate calls, concurrent ledger counters, transaction rollback and SQLite

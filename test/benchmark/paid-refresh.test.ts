@@ -6,6 +6,7 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { createGroundingValidator, renderGroundingMarkdown } from '../../benchmark/lib/grounding.ts';
 import { renderMarkdown, type LiveReport } from '../../benchmark/lib/locomo-qa.ts';
 import { summarizePaidRefresh } from '../../benchmark/lib/paid-refresh.ts';
+import { summarizeHorizonFix, renderHorizonFix } from '../../benchmark/lib/horizon-summary.ts';
 import { createReportValidator } from '../../benchmark/lib/validate.ts';
 import RECALL_SCHEMA from '../../benchmark/schemas/locomo-recall.schema.json' with { type: 'json' };
 import QA_SCHEMA from '../../benchmark/schemas/locomo-qa.schema.json' with { type: 'json' };
@@ -15,6 +16,25 @@ import IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.schema.j
 const read = async (name: string) => JSON.parse(await readFile(`benchmark/results/${name}.json`, 'utf8'));
 
 describe('the dated paid refresh', () => {
+  it('keeps the previous attempt immutable and derives the repaired agent comparison', async () => {
+    const before = await read('locomo-qa-live-jaren-0832');
+    const after = await read('locomo-qa-live-horizon-fixed');
+    const audit = await read('horizon-answer-audit');
+    assert.equal(audit.sourceSha256, await canonicalSha256(before));
+    assert.equal(audit.modelNetworkRequests, 0);
+    assert.equal(audit.nonemptyCitedAnswers, audit.questions.filter((row: any) => row.programCompleted && row.extractedAnswerChars > 0 && row.citations.length > 0).length);
+    assert.equal(createReportValidator(LIVE_SCHEMA, [RECALL_SCHEMA, QA_SCHEMA, IDENTITY_SCHEMA])(after).valid, true);
+    const bounded = summarizeHorizonFix(before, after, audit);
+    assert.deepEqual((await read('jaren-integration')).bounded, bounded);
+    assert.equal(await readFile('docs/BOUNDED_AGENT_BENCHMARK.md', 'utf8'), renderHorizonFix(bounded));
+    const row = after.configurations.find((entry: any) => entry.kind === 'long-horizon');
+    for (const entry of row.horizon.diagnostics) {
+      assert.ok(entry.calls <= row.horizon.turnsPerQuestion);
+      assert.ok(entry.visitedPieces <= row.horizon.maxSubcalls);
+      assert.ok(entry.visitedChars <= entry.corpusChars);
+    }
+    assert.equal(row.questions.results.filter((entry: any) => entry.outcome === 'answered').length, bounded.current.valid);
+  });
   it('validates both reports and renders their complete published tables without model calls', async () => {
     const qa: LiveReport = await read('locomo-qa-live-jaren-0832');
     const grounding = await read('grounding-live-jaren-0832');

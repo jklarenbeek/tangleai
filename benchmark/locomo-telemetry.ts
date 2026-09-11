@@ -63,7 +63,7 @@ try {
     embedder: embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }, offlineFetch, replay),
     k: original.config.k, seed: original.sample.seed,
     perCategory: original.sample.perCategory, adversarial: original.sample.adversarial,
-    horizon: { ...horizon, authorThinking: horizon.thinking.author },
+    horizon: { ...horizon, strategy: 'legacy', authorThinking: horizon.thinking.author },
     configIdentityFor: (observed) => envConfigIdentity(env, observed),
     onProgress: (message) => console.error(message),
   });

@@ -3,6 +3,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import jaren from '@jarenjs/db/package.json' with { type: 'json' };
 import { summarizePaidRefresh } from './lib/paid-refresh.ts';
+import { summarizeHorizonFix, renderHorizonFix } from './lib/horizon-summary.ts';
+import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { createGroundingValidator } from './lib/grounding.ts';
 import { createReportValidator } from './lib/validate.ts';
 import RECALL_SCHEMA from './schemas/locomo-recall.schema.json' with { type: 'json' };
@@ -27,6 +29,13 @@ const paid = summarizePaidRefresh(qa, grounding);
 const smoke = await read('documents-live-jaren-0832');
 const masSmoke = await read('mas-live-jaren-0832');
 const telemetry = await read('locomo-telemetry-replay-jaren-0832');
+const repaired = await read('locomo-qa-live-horizon-fixed');
+const repairedValidation = createReportValidator(LIVE_SCHEMA, [RECALL_SCHEMA, QA_SCHEMA, IDENTITY_SCHEMA])(repaired);
+assert.ok(repairedValidation.valid, JSON.stringify(repairedValidation.errors));
+const audit = await read('horizon-answer-audit');
+assert.equal(audit.sourceSha256, await canonicalSha256(qa));
+const bounded = summarizeHorizonFix(qa, repaired, audit);
+await writeFile('docs/BOUNDED_AGENT_BENCHMARK.md', renderHorizonFix(bounded));
 assert.equal(node.jaren, jaren.version);
 assert.equal(bun.jaren, jaren.version);
 const summary = {
@@ -35,7 +44,7 @@ const summary = {
     runtime: row.runtime, version: row.runtimeVersion, rows: row.corpus.rows, limit: row.corpus.requested,
     previousP95Ms: row.previous.p95Ms, boundedP95Ms: row.bounded.p95Ms, p95Speedup: row.p95Speedup,
   })),
-  mas: mas.counts, config: config.counts, paid, smoke, masSmoke,
+  mas: mas.counts, config: config.counts, paid, bounded, smoke, masSmoke,
 };
 await writeFile('benchmark/results/jaren-integration.json', JSON.stringify(summary, null, 2) + '\n');
 const table = summary.history.map((row) => `| ${row.runtime} ${row.version} | ${row.previousP95Ms.toFixed(3)} | ${row.boundedP95Ms.toFixed(3)} | ${row.p95Speedup.toFixed(2)}× | ${row.rows} → ${row.limit} |`).join('\n');
@@ -97,7 +106,13 @@ completion replays are recorded separately in each raw run.
 
 ## Answer comparisons
 
-Latest run: ${paid.qa.at}. ${paid.qa.runs} runs,
+This table retains the original integration attempt. The later
+[bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) reports the fresh twelve-question
+run separately, including its costs and remaining answer-quality failures. The
+original agent's one completed answer was empty, so it yielded zero nonempty cited
+answers despite the historical valid-reply label below.
+
+Original run: ${paid.qa.at}. ${paid.qa.runs} runs,
 ${paid.qa.calls} charged logical requests, ${paid.qa.tokens} provider-reported tokens,
 ${paid.qa.wireErrors} wire errors. The five direct-answer rows use the same
 seeded 64-question sample plus six separately judged adversarial questions;
@@ -181,6 +196,8 @@ Use a new output filename and empty cache directory to retain these attempts
 and buy fresh answers. Run the four answer invocations sequentially, changing
 \`--rows\` through \`near-raw,near\`, \`long-context,rag-summary\`,
 \`rag-observation\`, and \`long-horizon\`:
+For the original long-horizon request policy, also pass \`--horizon-strategy legacy\`;
+the default now runs the repaired coverage and synthesis policy.
 
 \`\`\`sh
 node --env-file=.env benchmark/locomo-qa.ts --live --thinking default --rows near-raw,near --live-json /tmp/locomo-refresh.json --cache /tmp/locomo-refresh.sqlite --md /tmp/locomo-refresh.md

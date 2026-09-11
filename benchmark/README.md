@@ -24,6 +24,13 @@ The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
 Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
 explains choices against the pinned upstream benchmarks. Reproduce it with
 `npm run benchmark:jaren` (keyless).
+The [bounded-agent repair](../docs/BOUNDED_AGENT_BENCHMARK.md) measures full-corpus
+coverage and cited synthesis against the original twelve-question attempt. The
+default `--rows long-horizon` uses `covered-evidence-v1`; pass
+`--horizon-strategy legacy` only to reproduce the earlier policy. The repaired
+agent keeps the original call cap and records abstentions, execution repairs,
+validated leaf reuse and a policy fingerprint separately.
+
 The [paid integration refresh](../docs/PAID_REFRESH.md) links separately dated
 answer and grounding attempts, their exact reproduction commands and a live
 desktop smoke. The earlier paid reports remain historical evidence. CI validates

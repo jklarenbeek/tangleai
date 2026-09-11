@@ -77,7 +77,7 @@ const args = parseArgs(process.argv.slice(2), {
   flags: ['require', 'live', 'fresh'],
   values: [
     'k', 'seed', 'questions', 'adversarial', 'samples', 'dims', 'json', 'live-json', 'md', 'rows',
-    'thinking', 'horizon-questions', 'horizon-depth', 'horizon-turns', 'horizon-subcalls', 'call-timeout', 'author-thinking', 'cache',
+    'thinking', 'horizon-questions', 'horizon-depth', 'horizon-turns', 'horizon-subcalls', 'call-timeout', 'author-thinking', 'cache', 'horizon-strategy',
   ],
 });
 
@@ -109,6 +109,11 @@ if (thinking !== 'default' && thinking !== 'off') throw new Error(`--thinking is
 const authorThinking = args.values.get('author-thinking') ?? HORIZON_DEFAULTS.authorThinking;
 if (authorThinking !== 'default' && authorThinking !== 'off') throw new Error(`--author-thinking is default or off, got '${authorThinking}'`);
 const horizon: Partial<HorizonOptions> = {
+  strategy: (() => {
+    const strategy = args.values.get('horizon-strategy') ?? HORIZON_DEFAULTS.strategy;
+    if (strategy !== 'legacy' && strategy !== 'covered-evidence-v1') throw new Error('unknown --horizon-strategy');
+    return strategy;
+  })(),
   ...(number('horizon-questions') === undefined ? {} : { perCategory: number('horizon-questions') }),
   ...(number('horizon-depth') === undefined ? {} : { depth: number('horizon-depth') }),
   ...(number('horizon-turns') === undefined ? {} : { turnsPerQuestion: number('horizon-turns') }),

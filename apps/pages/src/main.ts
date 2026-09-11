@@ -143,11 +143,19 @@ function view(state: any): any {
       ['div', { class: 'benchmark-table paid-table' }, ['table', {},
         ['thead', {}, ['tr', {}, ['th', {}, 'Strategy'], ['th', {}, 'Valid replies'], ['th', {}, 'F1'], ['th', {}, 'Recall']]],
         ['tbody', {}, integration.paid.qa.rows.map((row) => ['tr', { key: row.key },
-          ['td', {}, strategyLabels[row.key] ?? row.key], ['td', {}, `${row.answered - row.invalid}/${row.planned}`],
-          ['td', {}, row.f1 === null ? '—' : row.f1.toFixed(3)],
-          ['td', {}, row.ceiling === null ? '—' : row.ceiling.toFixed(3)]])]]],
+          ['td', {}, strategyLabels[row.key] ?? row.key],
+          ['td', {}, row.key === 'long-horizon' ? `${integration.bounded.current.valid}/${integration.bounded.current.planned}` : `${row.answered - row.invalid}/${row.planned}`],
+          ['td', {}, (row.key === 'long-horizon' ? integration.bounded.current.f1 : row.f1)?.toFixed(3) ?? '—'],
+          ['td', {}, (row.key === 'long-horizon' ? integration.bounded.current.recall : row.ceiling)?.toFixed(3) ?? '—']])]]],
+      ['p', { class: 'note', 'data-bounded-policy': integration.bounded.policy },
+        `Bounded agent remeasured ${integration.bounded.at.slice(0, 10)}: ${integration.bounded.current.valid} nonempty cited answers, `
+        + `${integration.bounded.current.abstained} abstentions and ${integration.bounded.current.invalid} invalid results. `
+        + `The earlier attempt produced ${integration.bounded.baseline.valid} usable answers; its one completed program returned empty text. `
+        + `The repair covers the corpus within the same call cap; ${integration.bounded.current.subcalls.failed} chunk request failed. `
+        + 'Valid citations do not guarantee a correct answer.'],
       ['p', { class: 'note' }, 'These are current-stack measurements, with different coverage for the agent. They do not isolate an upgrade effect. Full reports include failures, adversarial judgments, grounding, citation outcomes and cost.'],
       ['nav', { class: 'links' },
+        ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/BOUNDED_AGENT_BENCHMARK.md' }, 'Bounded-agent repair and comparison'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/PAID_REFRESH.md' }, 'Paid checks and limitations'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_INTEGRATION.md' }, 'Integration audit'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/JARENJS_BENCHMARK.md' }, 'Methods and raw results'],

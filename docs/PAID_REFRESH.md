@@ -13,7 +13,13 @@ completion replays are recorded separately in each raw run.
 
 ## Answer comparisons
 
-Latest run: 2026-09-11T09:18:14.907Z. 4 runs,
+This table retains the original integration attempt. The later
+[bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) reports the fresh twelve-question
+run separately, including its costs and remaining answer-quality failures. The
+original agent's one completed answer was empty, so it yielded zero nonempty cited
+answers despite the historical valid-reply label below.
+
+Original run: 2026-09-11T09:18:14.907Z. 4 runs,
 513 charged logical requests, 2539115 provider-reported tokens,
 1 wire errors. The five direct-answer rows use the same
 seeded 64-question sample plus six separately judged adversarial questions;
@@ -105,6 +111,8 @@ Use a new output filename and empty cache directory to retain these attempts
 and buy fresh answers. Run the four answer invocations sequentially, changing
 `--rows` through `near-raw,near`, `long-context,rag-summary`,
 `rag-observation`, and `long-horizon`:
+For the original long-horizon request policy, also pass `--horizon-strategy legacy`;
+the default now runs the repaired coverage and synthesis policy.
 
 ```sh
 node --env-file=.env benchmark/locomo-qa.ts --live --thinking default --rows near-raw,near --live-json /tmp/locomo-refresh.json --cache /tmp/locomo-refresh.sqlite --md /tmp/locomo-refresh.md

@@ -34,6 +34,12 @@ to move. Before authoring anything below, read [`BOUNDARY.md`](BOUNDARY.md)
 capability on the wrong side of the boundary, it is building one the boundary
 already has.
 
+The [bounded-agent instrument](BOUNDED_AGENT_BENCHMARK.md) now separates full
+input coverage, program execution and nonempty cited answers. Remaining work is
+answer quality and corpus-scale retrieval under budgets that cannot scan the
+whole input; it must be measured against this recorded policy and its same-question
+direct-answer comparisons rather than against the earlier empty-answer count.
+
 ## Memory policies
 
 - [ ] **Memory policies, measured.** *Wanted:* the LoCoMo matrix over the policy

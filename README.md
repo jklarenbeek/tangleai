@@ -183,6 +183,11 @@ apart and folded into nothing.
 report; the live JSON beside it is a dated record the tests validate but
 never regenerate.
 
+Those are historical answer policies. The current bounded-agent default uses
+whole-corpus coverage, checked evidence collection and a separate cited synthesis.
+The [September repair comparison](docs/BOUNDED_AGENT_BENCHMARK.md) records its
+fresh results, every question's score, remaining errors and increased token cost.
+
 `npm run benchmark:grounding` measures the document lane the same way:
 a retrieved chunk is a candidate, and only a cited, resolvable, eligible
 passage supporting a material claim counts as grounding. The keyless
@@ -279,6 +284,9 @@ compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
 The [paid refresh](docs/PAID_REFRESH.md) records fresh OpenRouter answer,
 grounding and desktop checks, with their losses, coverage and request counts.
+The [bounded-agent repair](docs/BOUNDED_AGENT_BENCHMARK.md) measures whole-corpus
+coverage, checked evidence and cited synthesis under the original call cap,
+with the earlier empty-answer result retained beside the new measurement.
 `npm run mas:live-smoke` opts into the configured model for the durable
 draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 

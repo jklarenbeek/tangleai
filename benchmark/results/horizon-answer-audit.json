@@ -1,0 +1,257 @@
+{
+  "instrument": "horizon-answer-audit",
+  "sourceReport": "locomo-qa-live-jaren-0832.json",
+  "sourceSha256": "ac284f1e64f5e9df9f6f1842215671e54dc4c6a90d54dea2d7d0c93a50dd4827",
+  "modelNetworkRequests": 0,
+  "completionReplays": 156,
+  "localCacheMisses": 1,
+  "programCompletions": 1,
+  "nonemptyCitedAnswers": 0,
+  "questions": [
+    {
+      "id": "conv-26#67",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got an object",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "value": {
+                "$max": "$[*].value"
+              }
+            }
+          },
+          "error": {
+            "message": "JQ2001: '$min'/'$max' items must be all numbers or all strings, got an object at /value/value/$max",
+            "code": "JQ2001",
+            "reason": "'$min'/'$max' items must be all numbers or all strings, got an object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-41#50",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: member 'value' evaluated to 12 items; an object member takes exactly one",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": "$[*].value.value"
+          },
+          "error": {
+            "message": "JQ2001: member 'value' evaluated to 12 items; an object member takes exactly one at /value",
+            "code": "JQ2001",
+            "reason": "member 'value' evaluated to 12 items; an object member takes exactly one"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-42#4",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "wire-failure",
+      "queries": []
+    },
+    {
+      "id": "conv-42#39",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got an object",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$max": "$[*].value.value"
+            }
+          },
+          "error": {
+            "message": "JQ2001: '$min'/'$max' items must be all numbers or all strings, got an object at /value/$max",
+            "code": "JQ2001",
+            "reason": "'$min'/'$max' items must be all numbers or all strings, got an object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-42#127",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: reduce summary violates its output shape before storage",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$max": "$[*].value.value"
+            }
+          },
+          "output": {
+            "slot": "corpus"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-42#159",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got an object",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$max": "$[*].value"
+            }
+          },
+          "error": {
+            "message": "JQ2001: '$min'/'$max' items must be all numbers or all strings, got an object at /value/$max",
+            "code": "JQ2001",
+            "reason": "'$min'/'$max' items must be all numbers or all strings, got an object"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-43#1",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: reduce summary violates its output shape before storage",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$distinct": "$[*].value.value"
+            }
+          },
+          "output": {
+            "slot": "corpus"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-43#11",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: member 'value' evaluated to 12 items; an object member takes exactly one",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "value": "$[*]"
+            }
+          },
+          "error": {
+            "message": "JQ2001: member 'value' evaluated to 12 items; an object member takes exactly one at /value/value",
+            "code": "JQ2001",
+            "reason": "member 'value' evaluated to 12 items; an object member takes exactly one"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-44#122",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: '$min'/'$max' items must be all numbers or all strings, got null",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$max": "$[*].value"
+            }
+          },
+          "error": {
+            "message": "JQ2001: '$min'/'$max' items must be all numbers or all strings, got null at /value/$max",
+            "code": "JQ2001",
+            "reason": "'$min'/'$max' items must be all numbers or all strings, got null"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-47#51",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: the query failed: member 'value' evaluated to 12 items; an object member takes exactly one",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": "$[*].value"
+          },
+          "error": {
+            "message": "JQ2001: member 'value' evaluated to 12 items; an object member takes exactly one at /value",
+            "code": "JQ2001",
+            "reason": "member 'value' evaluated to 12 items; an object member takes exactly one"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-47#58",
+      "programCompleted": false,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": "program: reduce summary violates its output shape before storage",
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "$head": "$[?(@.value.found==true)].value.answer"
+            }
+          },
+          "output": {
+            "slot": "corpus"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conv-50#4",
+      "programCompleted": true,
+      "extractedAnswerChars": 0,
+      "citations": [],
+      "stopped": null,
+      "queries": [
+        {
+          "query": {
+            "slot": "corpus",
+            "value": {
+              "value": {
+                "$max": "$[*].value.value"
+              }
+            }
+          },
+          "output": {
+            "slot": "corpus",
+            "value": {
+              "value": ""
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

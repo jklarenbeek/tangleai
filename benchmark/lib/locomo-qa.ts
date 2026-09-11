@@ -112,6 +112,7 @@ import { normalizeSeries } from '@jarenjs/core/series';
 import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 import QUERY_SCHEMA from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
+import { runBoundedQa, HORIZON_POLICY, type HorizonMetrics } from './horizon-agent.ts';
 import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
 import { createOfflineEmbedder, DEFAULT_THRESHOLDS, OFFLINE_EMBEDDER_DIMS, type PipelineThresholds } from '@tangleai/pipeline';
 
@@ -202,6 +203,8 @@ export function rowsOf(keys: readonly string[]): QaRow[] {
 
 /** How the long-horizon row is bounded — every one a published column. */
 export interface HorizonOptions {
+  /** Legacy is retained solely to reproduce historical requests and measurements. */
+  strategy: 'covered-evidence-v1' | 'legacy';
   /** Questions per scorable category the row answers, drawn from the sample with its seed. */
   perCategory: number;
   /** Recursion depth; 0 is the program path (one authoring call, one call per piece), the one jarenjs measured working on the cheap tier. */
@@ -217,6 +220,7 @@ export interface HorizonOptions {
 }
 
 export const HORIZON_DEFAULTS: HorizonOptions = {
+  strategy: HORIZON_POLICY,
   perCategory: 3,
   depth: 0,
   turnsPerQuestion: 16,
@@ -849,6 +853,7 @@ export interface Cost {
 
 /** One answered question, so rows can be compared over the questions they all answered. Numbers only — never the answer text. */
 export interface QuestionResult {
+  outcome?: 'answered' | 'abstained' | 'invalid';
   id: string;
   category: 1 | 2 | 3 | 4;
   f1: number;
@@ -874,6 +879,8 @@ export interface QuestionResult {
 
 /** What the long-horizon row did, beyond its scores — its bounds, then its census. */
 export interface HorizonBlock {
+  strategy?: HorizonOptions['strategy'];
+  diagnostics?: Array<HorizonMetrics & { id: string, status: string, error: string | null }>;
   perCategory: number;
   depth: number;
   turnsPerQuestion: number;
@@ -906,6 +913,8 @@ export interface LiveConfiguration {
     unanswered: { wire: number, budget: number };
     /** Answered, but the structured reply failed after repair (or the program produced no answer); scored as raw text, cited nothing. */
     invalid: number;
+    /** Explicit evidence-based abstentions, scored zero but never presented as valid answers. */
+    abstained?: number;
     results: QuestionResult[];
   };
   /** The official F1 over the answered questions. */
@@ -1130,8 +1139,10 @@ function horizonClient(
   return {
     endpoint: client.endpoint,
     async complete(request: any) {
-      const isAuthor = request.responseFormat !== undefined;
-      if (!isAuthor) hooks.onSubcall(transcriptText(request.messages ?? []));
+      const format = request.responseFormat?.name;
+      const isLeaf = (request.messages ?? []).some((message: any) => String(message.content).startsWith('You are given ONE piece'));
+      const isSynthesis = (request.messages ?? []).some((message: any) => String(message.content).startsWith('Answer the question using the supplied evidence'));
+      const isAuthor = !isLeaf && !isSynthesis && (format === 'jaren_program' || (format === undefined && request.responseFormat !== undefined));
       const thinkingOff = isAuthor ? hooks.authorThinkingOff : hooks.subcallThinkingOff;
       const deadline = hooks.timeoutMs > 0 ? AbortSignal.timeout(hooks.timeoutMs) : undefined;
       const signal = request.signal === undefined ? deadline : deadline === undefined ? request.signal : AbortSignal.any([request.signal, deadline]);
@@ -1145,6 +1156,7 @@ function horizonClient(
       const started = shared.timer();
       let result: any;
       try {
+        if (!isAuthor) hooks.onSubcall(transcriptText(request.messages ?? []));
         result = await client.complete(sent);
       } catch (error) {
         // the runner turns a failed sub-call into a recorded `{ error }` and moves on — right for the
@@ -1268,6 +1280,8 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
   const isWire = env.embedModel !== '';
   const rows = options.rowSpecs ?? rowsOf(options.rows ?? DEFAULT_LIVE_ROWS);
   const horizon: HorizonOptions = { ...HORIZON_DEFAULTS, ...options.horizon };
+  if (rows.some((row) => row.kind === 'long-horizon') && horizon.strategy !== 'legacy' && horizon.depth !== 0)
+    throw new Error('covered-evidence-v1 uses depth 0; use legacy explicitly to measure recursive depth');
 
   // --- the corpus, the questions, the sample: exactly as the keyless tier draws them
   const all: QaQuestion[] = [];
@@ -1609,16 +1623,20 @@ export function horizonProgramCounts(step: {
  */
 async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfiguration> {
   const { horizon, shared } = ctx;
+  const covered = horizon.strategy !== 'legacy';
+  if (covered && horizon.depth !== 0) throw new Error('covered-evidence-v1 uses depth 0; use legacy explicitly to measure recursive depth');
   const f1 = f1Means();
   const ceiling = recallMeans();
   const citedRecall = recallMeans();
   const citations = { cited: 0, uncited: 0, total: 0, unresolved: 0, answersWithUnresolved: 0 };
   const unanswered = { wire: 0, budget: 0 };
   let invalid = 0;
+  let abstained = 0;
   const cost = emptyCost();
   const latencies: number[] = [];
   const results: QuestionResult[] = [];
   const block: HorizonBlock = {
+    ...(covered ? { strategy: horizon.strategy, diagnostics: [] } : {}),
     perCategory: horizon.perCategory,
     depth: horizon.depth,
     turnsPerQuestion: horizon.turnsPerQuestion,
@@ -1675,7 +1693,12 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
 
       let result: any;
       try {
-        result = await agent.run(horizonQuestion(q.text));
+        result = covered ? await runBoundedQa({ client, corpus: text, question: q.text,
+          turns: horizon.turnsPerQuestion, maxSubcalls: horizon.maxSubcalls,
+          concurrency: ctx.env.maxConcurrency, clock: ctx.timer,
+          onProgress: (message) => ctx.progress(`${row.key} ${q.id}: ${message}`),
+        }) : await agent.run(horizonQuestion(q.text));
+        if (covered) block.diagnostics!.push({ id: q.id, status: result.status, error: result.error, ...result.metrics });
       } catch (error) {
         if (error instanceof BudgetStop) unanswered.budget++;
         else { unanswered.wire++; ctx.noteError(`${q.id}: ${error instanceof Error ? error.message : String(error)}`); }
@@ -1690,7 +1713,7 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       for (const step of result.trajectory ?? []) {
         if (step.kind === 'author') {
           if (step.ok === true) { block.authored.ok++; block.authored.attempts += typeof step.attempts === 'number' ? step.attempts : 1; authoredOk = true; }
-          else block.authored.failed++;
+          else { block.authored.failed++; if (covered) block.authored.attempts += step.attempts ?? 0; }
         }
         if (step.kind === 'program') {
           if (step.ok === true) block.programs.ok++; else block.programs.failed++;
@@ -1704,11 +1727,13 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       block.subcalls.failed += failed;
       block.subcalls.unvisited += unvisited;
       const stopped: string | null = typeof result.stopReason === 'string' ? result.stopReason
+        : result.status === 'abstained' ? 'abstained'
         : wireFailures > 0 && result.ok === false ? 'wire-failure'
         : result.ok === false ? `program: ${typeof result.error === 'string' ? excerpt(result.error, 160) : 'authoring or execution failed'}` : null;
       if (stopped !== null) block.stops[stopped] = (block.stops[stopped] ?? 0) + 1;
 
       const answerText = typeof result.answer?.text === 'string' ? result.answer.text : null;
+      if (result.status === 'budget') { unanswered.budget++; continue; }
       // The suite returns author/route failures as values. A failed wire
       // without an answer is still unanswered, never a fabricated zero score.
       if (answerText === null && wireFailures > 0) {
@@ -1716,9 +1741,13 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
         ctx.progress(`${row.key} ${q.id}: no answer after ${wireFailures} wire failure(s)`);
         continue;
       }
-      if (answerText === null) invalid++;
       const { answer, citations: cited } = answerText === null ? { answer: '', citations: [] } : horizonAnswer(answerText);
       const check = checkCitations(cited, listed);
+      const didAbstain = result.status === 'abstained';
+      const isInvalid = covered ? !didAbstain && (answer.trim() === '' || check.resolved.length === 0 || check.unresolved.length > 0)
+        : answerText === null;
+      if (didAbstain) abstained++;
+      if (isInvalid) invalid++;
       citations.total += cited.length;
       citations.unresolved += check.unresolved.length;
       if (check.unresolved.length > 0) citations.answersWithUnresolved++;
@@ -1733,7 +1762,8 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       citedRecall.add(q.category, citedR);
       results.push({
         id: q.id, category: q.category as 1 | 2 | 3 | 4, f1: own1, ceiling: ceil, citedRecall: citedR,
-        cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: answerText === null, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed,
+        cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: isInvalid, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed,
+        ...(covered ? { outcome: didAbstain ? 'abstained' as const : isInvalid ? 'invalid' as const : 'answered' as const } : {}),
         calls: mine.turns, subcalls, failed, unvisited, authored: authoredOk, stopped,
       });
       ctx.progress(`${row.key} ${q.id}: ${mine.turns} calls, ${subcalls} sub-calls (${failed} failed, ${unvisited} pieces unvisited)${stopped === null ? '' : `, stopped: ${stopped}`}`);
@@ -1745,7 +1775,7 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
     label: row.label,
     kind: row.kind,
     run: 0,
-    questions: { planned: ctx.questions.length, answered: f1.size, unanswered, invalid, results },
+    questions: { planned: ctx.questions.length, answered: f1.size, unanswered, invalid, ...(covered ? { abstained } : {}), results },
     f1: f1.summary(),
     ceiling: ceiling.summary(),
     citedRecall: citedRecall.summary(),
@@ -2072,7 +2102,12 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
         ]),
       }));
       out.push('');
-      out.push('`ceiling` and `cited recall` are evidence recall over the same answered questions — the memories the prompt held, and the memories the answer cited. `uncited` answers cited no listed memory; `unresolved` citations name an id the prompt never listed, a counted failure of the evidence rule. `invalid` replies failed the answer schema after one repair and were scored as raw text (for the long-horizon row: the program produced no answer slot, scored as empty). `tokens` are the provider\'s own `usage`; p50/p95 are the chat call\'s wall time as the benchmark waited for it — a rate-limited call\'s retries and backoff included, so under a 429-ing provider they measure the queue more than the model. The long-horizon row\'s calls are one authoring call (with up to two repairs) plus one sub-call per piece visited, per question.');
+      const coveredHorizon = live.configurations.some((row) => row.horizon?.strategy === 'covered-evidence-v1');
+      if (coveredHorizon) {
+        out.push('`ceiling` records evidence in model requests; a failed chunk request can still contribute to this exposure measure. `cited recall` records gold evidence cited in the answer. Invalid direct replies retain their raw-text score. For covered-evidence-v1, invalid programs, empty answers and invalid citations score zero; explicit abstentions also score zero and are counted separately. Calls include authoring, evidence extraction and final synthesis, with bounded repairs sharing one account. Tokens count provider-reported usage from successful calls; the diagnostic attempt count includes failed calls. Provider-internal HTTP retries are not counted separately. Latency includes client retries and backoff.');
+      } else {
+        out.push('`ceiling` and `cited recall` are evidence recall over the same answered questions — the memories the prompt held, and the memories the answer cited. `uncited` answers cited no listed memory; `unresolved` citations name an id the prompt never listed, a counted failure of the evidence rule. `invalid` replies failed the answer schema after one repair and were scored as raw text (for the long-horizon row: the program produced no answer slot, scored as empty). `tokens` are the provider\'s own `usage`; p50/p95 are the chat call\'s wall time as the benchmark waited for it — a rate-limited call\'s retries and backoff included, so under a 429-ing provider they measure the queue more than the model. The long-horizon row\'s calls are one authoring call (with up to two repairs) plus one sub-call per piece visited, per question.');
+      }
       out.push('');
       out.push(table({
         head: ['row', 'ceiling', ...CATEGORY_HEAD, 'cited recall', ...CATEGORY_HEAD],
@@ -2102,6 +2137,10 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
         out.push('');
         out.push(`The agent multiplies calls per question by construction, so it answers a seeded subset — ${h.perCategory} per category, ${h.ids.length} questions (${h.ids.map((id) => `\`${id}\``).join(', ')}) — under ${h.turnsPerQuestion} turns and ${h.maxSubcalls} sub-calls per question, depth ${h.depth}, a ${duration(h.callTimeoutMs)} deadline per call, thinking ${h.thinking.author} for the authoring call and ${h.thinking.subcall} for sub-calls. It answered ${horizonRow.questions.answered} of ${horizonRow.questions.planned}: ${h.authored.ok} programs compiled (${h.authored.failed} did not, ${h.authored.attempts} authoring attempts in all), ${h.programs.ok} ran to an answer (${h.programs.failed} did not), ${count(h.subcalls.made)} sub-calls made (${h.subcalls.failed} failed, ${h.subcalls.unvisited} pieces left unvisited by the cap)${Object.keys(h.stops).length === 0 ? '' : `, stopped: ${Object.entries(h.stops).map(([why, n]) => `${why} × ${n}`).join(', ')}`}.`);
         out.push('');
+        if (h.strategy === 'covered-evidence-v1') {
+          out.push(`Policy ${h.strategy}: ${horizonRow.questions.results.filter((entry) => entry.outcome === 'answered').length} nonempty cited answers, ${horizonRow.questions.abstained ?? 0} explicit abstentions and ${horizonRow.questions.invalid} invalid results. A completed evidence program alone does not count as a valid answer. Whole-corpus line coverage, checked evidence collection and a separate cited synthesis share the stated turn bound.`);
+          out.push('');
+        }
         const ids = new Set(horizonRow.questions.results.map((r) => r.id));
         if (ids.size > 0) {
           out.push(`Every row over those ${ids.size} questions:`);
