@@ -567,6 +567,9 @@
                   "type": "null"
                 }
               ]
+            },
+            "inference": {
+              "$ref": "#/$defs/inferenceControls"
             }
           }
         },
@@ -908,6 +911,12 @@
                 }
               }
             }
+          ]
+        },
+        "maxTokensField": {
+          "enum": [
+            "max_tokens",
+            "max_completion_tokens"
           ]
         }
       }

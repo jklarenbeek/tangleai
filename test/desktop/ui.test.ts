@@ -76,6 +76,24 @@ describe('tangle desktop UI (headless)', () => {
     await rm(folder, { recursive: true, force: true });
   });
 
+  it('ignores delayed stream frames after a newer snapshot', async () => {
+    const handler = toFetchHandler(desktop.dispatcher);
+    const wire = openHttpClient(compileContract(DESKTOP_CONTRACT), {
+      baseUrl: 'http://tangle.test', fetch: (url: any, init: any) => handler(new Request(url, init)),
+    });
+    const isolated = createTangleUi({ client: { invoke: wire.invoke } });
+    try {
+      isolated.dispatch('loom/live', { run: null, nodes: {}, seq: 5 });
+      isolated.dispatch('loom/live', { run: null, nodes: { stale: {} }, seq: 4 });
+      assert.equal(isolated.getState().loom.live.seq, 5);
+      assert.deepEqual(isolated.getState().loom.live.nodes, {});
+      isolated.dispatch('loom/live', { run: null, nodes: {}, seq: 0 });
+      assert.equal(isolated.getState().loom.live.seq, 5);
+      isolated.dispatch('loom/snapshot', { run: null, nodes: {}, seq: 0 });
+      assert.equal(isolated.getState().loom.live.seq, 0, 'a fresh subscription may reflect a restarted server');
+    } finally { isolated.destroy(); wire.close(); }
+  });
+
   it('boots: loads status, dag, settings through the wire', async () => {
     await settle(); // boot dispatches inside the factory
 
@@ -94,8 +112,25 @@ describe('tangle desktop UI (headless)', () => {
     assert.equal(state.loom.syncError, null);
     assert.equal(state.loom.runs.length, 1);
     assert.equal(state.loom.runs[0].status, 'ok');
+    await settle(() => app.getState().loom.live.run?.status === 'ok');
+    assert.equal(app.getState().loom.live.run.status, 'ok');
     assert.equal(state.memory.items.length, 2);
     assert.ok(state.status.counts.live >= 2);
+  });
+
+  it('reads the completed DAG through the suite when no stream is available', async () => {
+    const localDesktop = await createDesktop({ driver: nodeDriver(), presetSettings: { folder } });
+    const handler = toFetchHandler(localDesktop.dispatcher);
+    const wire = openHttpClient(compileContract(DESKTOP_CONTRACT), {
+      baseUrl: 'http://tangle.test', fetch: (url: any, init: any) => handler(new Request(url, init)),
+    });
+    const isolated = createTangleUi({ client: { invoke: wire.invoke } });
+    try {
+      isolated.dispatch('sync');
+      await settle(() => isolated.getState().loom.live.run?.status === 'ok');
+      assert.equal(isolated.getState().loom.live.run?.status, 'ok');
+      assert.equal(Object.keys(isolated.getState().loom.live.nodes).length, 6);
+    } finally { isolated.destroy(); wire.close(); await localDesktop.close(); }
   });
 
   it('chat send flows through: optimistic user message, grounded reply, citations', async () => {

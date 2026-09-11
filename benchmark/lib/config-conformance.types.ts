@@ -24,20 +24,40 @@ export interface SiteCount {
 
 
 /**
+ * Schema constraints this type cannot express: minItems=1
+ */
+export type EditListOneOf2 = Array<{ op: "add" | "remove" | "replace"; path: string; value?: unknown; }>;
+
+/**
  * RFC 6902 operations against one of the fixture's shared base documents, or null when the case leaves that document untouched. A `replace` at path "" substitutes the whole document.
  */
-export type EditList = null | Array<{ op: "add" | "remove" | "replace"; path: string; value?: unknown; }>;
+export type EditList = null | EditListOneOf2;
+
+/**
+ * Schema constraints this type cannot express: minItems=1
+ */
+export type ExpectationIssueCodesOneOf2 = Array<IssueCode>;
 
 /**
  * The campaign-required relation or outcome. `same-identity`/`different-identity` are resolver relations over the case's inputs; `refusal` names its stable issue codes; `observation` states required host/store/report/surface behavior in prose.
  */
 export interface Expectation {
   relation: "same-identity" | "different-identity" | "refusal" | "observation";
-  issueCodes: null | Array<IssueCode>;
+  issueCodes: null | ExpectationIssueCodesOneOf2;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
   detail: string;
+}
+
+
+export interface RegisteredCaseInputOneOf3 {
+  kind: "probe";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  probe: string;
+  args: { [key: string]: unknown; };
 }
 
 
@@ -58,7 +78,7 @@ export interface RegisteredCase {
    * Schema constraints this type cannot express: minLength=1
    */
   title: string;
-  input: { kind: "documents"; left: { [key: string]: unknown; }; right: { [key: string]: unknown; } | null; } | { kind: "edits"; registry: EditList; request: EditList; host: EditList; } | { kind: "probe"; probe: string; args: { [key: string]: unknown; }; };
+  input: { kind: "documents"; left: { [key: string]: unknown; }; right: { [key: string]: unknown; } | null; } | { kind: "edits"; registry: EditList; request: EditList; host: EditList; } | RegisteredCaseInputOneOf3;
   expect: Expectation;
 }
 
@@ -100,6 +120,204 @@ export interface Fixture {
 }
 
 
+export interface ConfigConformanceSourceFilesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+/**
+ * HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock.
+ */
+export interface ConfigConformanceSource {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{40}$"
+   */
+  head: string;
+  clean: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  files: Array<ConfigConformanceSourceFilesItem>;
+  sha256: Sha256;
+}
+
+
+export interface ConfigConformanceSuitePackagesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^@jarenjs/[a-z0-9-]+$"
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface ConfigConformanceSuite {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  packages: Array<ConfigConformanceSuitePackagesItem>;
+}
+
+
+export interface ConfigConformanceCensusFactories {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  file: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  chatFactory: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  embedFactory: string;
+  chatConsumers: Array<SiteCount>;
+  embedConsumers: Array<SiteCount>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chatConsumerCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embedConsumerCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ConfigConformanceCensusHostInputsItemNamesItem = string;
+
+export interface ConfigConformanceCensusHostInputsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  file: string;
+  kind: "desktop-settings" | "environment";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  names: Array<ConfigConformanceCensusHostInputsItemNamesItem>;
+}
+
+
+export interface ConfigConformanceCensusRunProducersItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  file: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  operation: string;
+  recordsIdentity: boolean;
+}
+
+
+export interface ConfigConformanceCensusReportArtifactsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  /**
+   * `complete` — the artifact carries registration/cell/run/report identities; `unrecorded` — its rows have no shared run identity. `unrecorded` states an absence of recorded facts; it never means an identity with null values existed.
+   */
+  identityDiscipline: "complete" | "unrecorded";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  note: string;
+}
+
+
+export interface ConfigConformanceCensusDesktopContract {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  operations: number;
+  revision: Sha256;
+}
+
+
+export interface ConfigConformanceCensusSummary {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  hostInputs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  runProducers: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  runProducersRecordingIdentity: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reportArtifacts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reportArtifactsWithIdentities: number;
+}
+
+
+export interface ConfigConformanceCountsByFamily {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  equivalence: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  sensitivity: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusal: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  legacy: number;
+}
+
+
+export interface ConfigConformanceCountsByStatus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  holds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  gap: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  pending: number;
+}
+
+
+export interface ConfigConformanceCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  cases: number;
+  byFamily: ConfigConformanceCountsByFamily;
+  byStatus: ConfigConformanceCountsByStatus;
+}
+
+
 /**
  * What `benchmark/config-conformance.ts` writes: the source and suite census, the construction-path inventory, the registered equivalence/sensitivity/refusal/legacy cases with their measured status, and the reconciled counts. The registered cases live in `test/fixtures/config-conformance.json` (the `fixture` definition here); the report re-states each case without its input and adds what was measured. A case's `expect` describes the CAMPAIGN-required end state; `status` says what the tree does today — `holds` (current behavior already satisfies it), `gap` (current behavior contradicts it; a defect is published as a gap, never encoded as expected), or `pending` (no instrument can measure it yet). The counts reconcile by `$query` at validation time, the gate's call counters are literal zeros (a conformance run is keyless and clock-free by construction), and `reportId` is the canonical SHA-256 of the document with that field excluded.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.cases[*].id"},{"$count":{"$distinct":"$.cases[*].id"}}]},{"$eq":["$.counts.cases",{"$count":"$.cases[*]"}]},{"$eq":["$.counts.byFamily.equivalence",{"$count":"$.cases[?(@.family=='equivalence')]"}]},{"$eq":["$.counts.byFamily.sensitivity",{"$count":"$.cases[?(@.family=='sensitivity')]"}]},{"$eq":["$.counts.byFamily.refusal",{"$count":"$.cases[?(@.family=='refusal')]"}]},{"$eq":["$.counts.byFamily.legacy",{"$count":"$.cases[?(@.family=='legacy')]"}]},{"$eq":["$.counts.byStatus.holds",{"$count":"$.cases[?(@.status=='holds')]"}]},{"$eq":["$.counts.byStatus.gap",{"$count":"$.cases[?(@.status=='gap')]"}]},{"$eq":["$.counts.byStatus.pending",{"$count":"$.cases[?(@.status=='pending')]"}]},{"$eq":["$.counts.cases",{"$add":[{"$add":["$.counts.byStatus.holds","$.counts.byStatus.gap"]},"$.counts.byStatus.pending"]}]},{"$eq":["$.counts.cases",{"$add":[{"$add":["$.counts.byFamily.equivalence","$.counts.byFamily.sensitivity"]},{"$add":["$.counts.byFamily.refusal","$.counts.byFamily.legacy"]}]}]},{"$eq":["$.census.factories.chatConsumerCalls",{"$sum":"$.census.factories.chatConsumers[*].count"}]},{"$eq":["$.census.factories.embedConsumerCalls",{"$sum":"$.census.factories.embedConsumers[*].count"}]},{"$eq":["$.census.summary.reportArtifacts",{"$count":"$.census.reportArtifacts[*]"}]},{"$eq":["$.census.summary.reportArtifactsWithIdentities",{"$count":"$.census.reportArtifacts[?(@.identityDiscipline=='complete')]"}]},{"$eq":["$.census.summary.runProducers",{"$count":"$.census.runProducers[*]"}]},{"$eq":["$.census.summary.runProducersRecordingIdentity",{"$count":"$.census.runProducers[?(@.recordsIdentity==true)]"}]},{"$eq":["$.census.summary.hostInputs",{"$count":"$.census.hostInputs[*]"}]}]}
@@ -110,17 +328,17 @@ export interface ConfigConformance {
   /**
    * HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock.
    */
-  source: { head: string; clean: boolean; files: Array<{ path: string; sha256: Sha256; }>; sha256: Sha256; };
-  suite: { packages: Array<{ name: string; version: string; }>; };
+  source: ConfigConformanceSource;
+  suite: ConfigConformanceSuite;
   /**
    * The explicit construction-path inventory. The site counts are re-derived by the test suite from the named files, so a factory or host input added without registering here fails the gate.
    */
-  census: { factories: { file: string; chatFactory: string; embedFactory: string; chatConsumers: Array<SiteCount>; embedConsumers: Array<SiteCount>; chatConsumerCalls: number; embedConsumerCalls: number; }; hostInputs: Array<{ file: string; kind: "desktop-settings" | "environment"; names: Array<string>; }>; runProducers: Array<{ file: string; operation: string; recordsIdentity: boolean; }>; reportArtifacts: Array<{ path: string; identityDiscipline: "complete" | "unrecorded"; note: string; }>; desktopContract: { operations: number; revision: Sha256; }; summary: { hostInputs: number; runProducers: number; runProducersRecordingIdentity: number; reportArtifacts: number; reportArtifactsWithIdentities: number; }; };
+  census: { factories: ConfigConformanceCensusFactories; hostInputs: Array<ConfigConformanceCensusHostInputsItem>; runProducers: Array<ConfigConformanceCensusRunProducersItem>; reportArtifacts: Array<ConfigConformanceCensusReportArtifactsItem>; desktopContract: ConfigConformanceCensusDesktopContract; summary: ConfigConformanceCensusSummary; };
   /**
    * Schema constraints this type cannot express: minItems=1
    */
   cases: Array<MeasuredCase>;
-  counts: { cases: number; byFamily: { equivalence: number; sensitivity: number; refusal: number; legacy: number; }; byStatus: { holds: number; gap: number; pending: number; }; };
+  counts: ConfigConformanceCounts;
   /**
    * A conformance run is keyless and offline by construction: the counters are literal zeros in the schema, so a report of a run that made a call cannot validate.
    */

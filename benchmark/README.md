@@ -20,6 +20,11 @@ entering the packages a user installs. jarenjs does exactly this: turf,
 sqlite-vec, ajv, XState and a dozen others live in its benchmark workspace and
 nowhere else.
 
+The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
+Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
+explains choices against the pinned upstream benchmarks. Reproduce it with
+`npm run benchmark:jaren` (keyless).
+
 ## Contents
 
 | Instrument | What it answers | Command |
@@ -52,7 +57,7 @@ nowhere else.
 | [`lib/grounding-run.ts`](./lib/grounding-run.ts) | The paired baseline: fixture and seeded LoCoMo corpora built through the shipped ingester/chunker/store/retriever at the current defaults, the three registered rows (`no-documents`, `documents-retrieved`, `grounded-answer`) sharing every control but the evidence, the frozen credential-free dry plan whose exact `planId` an explicit `--authorize` must match, one budget account, the suite's structured output and bounded mapper, and the clock/cost-free live report identity a zero-spend replay reproduces. |
 | [`lib/grounding-web.ts`](./lib/grounding-web.ts) | The optional captured web diagnostic: six fixed RFC 9110 questions, the registered first-3-distinct-normalized-URLs SearxNG selection (order kept, refusals named, snippets counted and never evidence), acquisition through `ingestMany` into a real store, the two answer rows, and the schema-valid `notRun` state a missing SearxNG or declined authorization records instead of failing CI. |
 | [`lib/http-capture.ts`](./lib/http-capture.ts) | The benchmark-owned SQLite HTTP capture (`benchmark/cache/grounding-http.sqlite`, gitignored): exact response bytes/status/headers per credential-free request, byte SHA-256s, replay serving stored bytes with zero network calls, missing/malformed captures as named failures, and the body-free manifest reports carry. It never touches the JarenJS model replay key. |
-| [`lib/grounding.ts`](./lib/grounding.ts) | The grounding fixture loader (hash-verified, schema-validated, quotes pinned to exactly one occurrence), the answer renderer that derives visible text from the claim ledger, the predicate matcher, the terminal citation classifier, the oracle gate and the keyless report/Markdown. Types are generated from `schemas/grounding.schema.json` by `jaren-emit`; identities are `canonicalSha256` over explicit payloads; the answer-F1 diagnostic reuses the official LoCoMo normalizer and token F1. The claim/evidence shapes stay here because the installed suite publishes no generic claim envelope. |
+| [`lib/grounding.ts`](./lib/grounding.ts) | The grounding fixture loader (hash-verified, schema-validated, quotes pinned to exactly one occurrence), the answer renderer that derives visible text from the claim ledger, the predicate matcher, the terminal citation classifier, the oracle gate and the keyless report/Markdown. Types are generated from `schemas/grounding.schema.json` by `jaren-emit`; identities are `canonicalSha256` over explicit payloads; the answer-F1 diagnostic reuses the official LoCoMo normalizer and token F1. The suite claim envelope owns generic reference integrity in the desktop gate; the fixture matching predicates and terminal support scorer remain Tangle-specific. |
 | [`lib/locomo-parity.ts`](./lib/locomo-parity.ts) | `normalize_answer`, `f1_score`, the multi-hop `f1` and the category routing of `task_eval/evaluation.py`, to the letter — including the punctuation-before-articles order, `and` as an article, Python's `\b` and whitespace, and NumPy's pairwise mean. Category 5 answers a reason, never a number. |
 
 `cache/` (gitignored, absent in a fresh clone) is the wire cache above — a pure

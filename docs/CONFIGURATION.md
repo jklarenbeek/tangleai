@@ -134,3 +134,17 @@ The pinned outputs live in `benchmark/results/config-queries.json`; the
 conformance instrument (`npm run benchmark:config`) measures the 44
 registered equivalence/sensitivity/refusal/legacy cases and publishes the
 census beside them.
+
+## Completion token limits
+
+Chat settings and inference presets accept optional `maxTokensField` values
+`max_tokens` or `max_completion_tokens`; chat settings also accept an optional
+positive `maxTokens` limit. The suite client sends the selected provider field,
+and the resolved run identity records the choice. Omitted settings preserve
+the existing provider default. No secret is part of the identity.
+
+The public contract classifies the two new input property constraints as R6,
+because those extra members were previously untyped. Settings reads and writes
+add the corresponding optional output members (R9). The contract tests pin the
+exact changes beside the existing citation closure; supported older settings
+remain readable and editable.

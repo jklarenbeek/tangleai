@@ -16,5 +16,8 @@
   "engines": {
     "node": ">=24"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/ai": "0.83.2"
+  }
 }

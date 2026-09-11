@@ -11,6 +11,7 @@
  */
 
 import { readFile } from 'node:fs/promises';
+import { createRuntime } from '@jarenjs/core/runtime';
 
 import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
@@ -36,6 +37,7 @@ export interface DesktopOptions {
   driver?: any;
   fetch?: typeof globalThis.fetch;
   now?: () => string;
+  runtime?: ReturnType<typeof createRuntime>;
   presetSettings?: Partial<Settings>;
   documentFetch?: Omit<StaticFetchOptions, 'fetch' | 'now'>;
 }
@@ -54,15 +56,18 @@ export interface Desktop {
 }
 
 export async function createDesktop(options: DesktopOptions = {}): Promise<Desktop> {
-  const db = await openTangleDb({ path: options.dbPath, driver: options.driver });
+  const runtime = options.runtime ?? createRuntime();
+  const now = options.now ?? (() => new Date(runtime.now()).toISOString());
+  const db = await openTangleDb({ path: options.dbPath, driver: options.driver, runtime });
   const memoryStore = createDbMemoryStore(db.collection('memories'));
-  const runLog = createRunLog(db, { now: options.now, configAwareKinds: CONFIG_AWARE_RUN_KINDS });
+  const runLog = createRunLog(db, { now, configAwareKinds: CONFIG_AWARE_RUN_KINDS });
   const identities = createIdentityRepository(db);
   const documentStore = createDocumentStore(db);
   const documentFetcher = new SafeStaticFetcher({
     ...options.documentFetch,
     fetch: options.fetch,
-    now: options.now,
+    now,
+    schedule: { now: runtime.now, ...options.documentFetch?.schedule },
   });
   const settings = createSettingsStore(db);
   if (options.presetSettings !== undefined) await settings.write(options.presetSettings);
@@ -75,7 +80,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
     stackFor: settingsStack,
     identities,
     fetch: options.fetch,
-    now: options.now,
+    now,
   });
 
   const contract = compileContract(DESKTOP_CONTRACT);
@@ -83,9 +88,9 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
     db, memoryStore, runLog, settings, identities, stackFor: settingsStack, live, chat, documentStore, documentFetcher,
     version: DESKTOP_VERSION,
     fetch: options.fetch,
-    now: options.now,
+    now,
   });
-  const dispatcher = serveHttp(contract, handlers, { validateOutput: 'always' });
+  const dispatcher = serveHttp(contract, handlers, { validateOutput: 'always', runtime });
 
   return {
     db,
@@ -93,6 +98,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
     nodeHandler: toNodeHandler(dispatcher),
     async close() {
       await dispatcher.close();
+      await documentFetcher.close();
       await db.close();
     },
   };

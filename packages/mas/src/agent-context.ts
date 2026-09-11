@@ -17,17 +17,16 @@
 import { createEnvironment, createLedger } from '@jarenjs/ai';
 import { compileJsonQuery } from '@jarenjs/json/query';
 
-export interface MasLedgerStorage {
-  get(key: string): Promise<unknown>;
-  set(key: string, value: unknown): Promise<void>;
-  delete(key: string): Promise<void>;
-  keys(prefix?: string): Promise<string[]>;
-}
+type LedgerOptions = NonNullable<Parameters<typeof createLedger>[0]>;
+export type MasLedgerStorage = NonNullable<LedgerOptions['storage']>;
 
 export interface MasAgentContextOptions {
   /** Injected durable storage; absent means in-memory (per run). */
   storage?: MasLedgerStorage;
   now?: () => string;
+  embedder?: LedgerOptions['embedder'];
+  goalLimits?: LedgerOptions['goalLimits'];
+  archiveLimits?: LedgerOptions['archiveLimits'];
 }
 
 export interface MasAgentContext {
@@ -42,6 +41,9 @@ export function createMasAgentContext(options: MasAgentContextOptions = {}): Mas
     ...(options.storage !== undefined ? { storage: options.storage } : {}),
     compileQuery: compileJsonQuery,
     ...(options.now !== undefined ? { now: options.now } : {}),
+    ...(options.embedder !== undefined ? { embedder: options.embedder } : {}),
+    ...(options.goalLimits !== undefined ? { goalLimits: options.goalLimits } : {}),
+    ...(options.archiveLimits !== undefined ? { archiveLimits: options.archiveLimits } : {}),
   });
   const environment = createEnvironment({ ledger, compileQuery: compileJsonQuery });
   return {

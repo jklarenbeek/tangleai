@@ -54,13 +54,29 @@
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
-    "check": "npm run emit:check && npm run typecheck && npm test"
+    "check": "npm run jaren:check && npm run emit:check && npm run typecheck && npm test",
+    "jaren:check": "node scripts/check-jaren.ts",
+    "benchmark:jaren": "node benchmark/jaren-strategies.ts && bun benchmark/jaren-strategies.ts && node benchmark/jaren-summary.ts"
   },
   "devDependencies": {
-    "@jarenjs/ai": "^0.56.0",
-    "@jarenjs/emit": "^0.56.0",
-    "@jarenjs/linq": "^0.56.0",
+    "@jarenjs/ai": "0.83.2",
+    "@jarenjs/emit": "0.83.2",
+    "@jarenjs/linq": "0.83.2",
     "@types/node": "^24.3.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@jarenjs/contract": "0.83.2",
+    "@jarenjs/core": "0.83.2",
+    "@jarenjs/db": "0.83.2",
+    "@jarenjs/flow": "0.83.2",
+    "@jarenjs/json": "0.83.2",
+    "@jarenjs/validate": "0.83.2",
+    "@tangleai/config": "0.1.0",
+    "@tangleai/core": "0.1.0",
+    "@tangleai/documents": "0.1.0",
+    "@tangleai/mas": "0.1.0",
+    "@tangleai/memory": "0.1.0",
+    "@tangleai/pipeline": "0.1.0",
+    "@tangleai/search": "0.1.0",
+    "@tangleai/store": "0.1.0"
   }
 }

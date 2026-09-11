@@ -1,5 +1,10 @@
 # 📅 Tangle Roadmap
 
+The current substrate is [JarenJS 0.83.2](JARENJS_INTEGRATION.md): atomic
+ledger storage, retention options, verified DAG checkpoints, bounded history
+reads and scheduled document transport are available. The open policies below
+still require their own corpus and quality measurements.
+
 This is the single roadmap for the repository: what Tangle wants to have and
 does not yet.
 

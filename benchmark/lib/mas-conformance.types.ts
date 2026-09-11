@@ -36,6 +36,21 @@ export interface AggregationOracle {
 }
 
 
+/**
+ * Expected bounds on maximumObservedConcurrency, measured by a counter incremented on handler entry and decremented in `finally` — never inferred from durations.
+ */
+export interface PositiveExpectationConcurrency {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  min: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  max: number;
+}
+
+
 export interface PositiveExpectation {
   kind: "pass";
   outcome: "completed" | "failed";
@@ -49,7 +64,7 @@ export interface PositiveExpectation {
   /**
    * Expected bounds on maximumObservedConcurrency, measured by a counter incremented on handler entry and decremented in `finally` — never inferred from durations.
    */
-  concurrency: { min: number; max: number; };
+  concurrency: PositiveExpectationConcurrency;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -111,13 +126,23 @@ export interface SuiteProbe {
 
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type IntegratedRowReasonOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type IntegratedRowMaxObservedConcurrencyOneOf2 = number;
+
+/**
  * One row per registration, in registration order. `not-implemented` states the honest absence of a runtime with zero attempts and calls; `validated` says the workflow validated and planned without executing; `refused-as-registered` says a negative fixture refused at its exact registered code and pointer; `runtime-pass` says the full registered oracle held and requires workflow, registry and executable revisions.
  */
 export interface IntegratedRow {
   id: FixtureName;
   family: "positive" | "negative";
   state: "not-implemented" | "validated" | "refused-as-registered" | "runtime-pass";
-  reason: null | string;
+  reason: null | IntegratedRowReasonOneOf2;
   workflowVersionId: null | Sha256;
   registryRevision: null | Sha256;
   executableRevision: null | Sha256;
@@ -141,8 +166,29 @@ export interface IntegratedRow {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   restores: number;
-  maxObservedConcurrency: null | number;
+  maxObservedConcurrency: null | IntegratedRowMaxObservedConcurrencyOneOf2;
   refusal: null | { code: ValidationCode; path: string; };
+}
+
+
+export interface AgentTurnToolCall {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  arguments: { [key: string]: unknown; };
+}
+
+
+export interface AgentTurnUsage {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  prompt_tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completion_tokens: number;
 }
 
 
@@ -151,8 +197,28 @@ export interface IntegratedRow {
  */
 export interface AgentTurn {
   content?: string;
-  toolCall?: { name: string; arguments: { [key: string]: unknown; }; };
-  usage: { prompt_tokens: number; completion_tokens: number; };
+  toolCall?: AgentTurnToolCall;
+  usage: AgentTurnUsage;
+}
+
+
+export interface FixtureScriptAgentsAdditional {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  turns: Array<AgentTurn>;
+}
+
+
+export interface FixtureScriptGateOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minItems=2
+   */
+  nodes: Array<FixtureName>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  settleOrder: Array<FixtureName>;
 }
 
 
@@ -162,8 +228,8 @@ export interface AgentTurn {
 export interface FixtureScript {
   input: unknown;
   handlers: { [key: string]: { query: unknown; }; };
-  agents: { [key: string]: { turns: Array<AgentTurn>; }; };
-  gate: null | { nodes: Array<FixtureName>; settleOrder: Array<FixtureName>; };
+  agents: { [key: string]: FixtureScriptAgentsAdditional; };
+  gate: null | FixtureScriptGateOneOf2;
   stopAfter: null | FixtureName;
   respond: null | { node: FixtureName; value: unknown; };
   failAt: null | FixtureName;
@@ -241,6 +307,172 @@ export interface DurabilityProbe {
 }
 
 
+export interface MasConformanceSourceFilesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+/**
+ * HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock, no hostname, no absolute path.
+ */
+export interface MasConformanceSource {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{40}$"
+   */
+  head: string;
+  clean: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  files: Array<MasConformanceSourceFilesItem>;
+  sha256: Sha256;
+}
+
+
+export interface MasConformanceSuitePackagesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^@jarenjs/[a-z0-9-]+$"
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface MasConformanceSuite {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  packages: Array<MasConformanceSuitePackagesItem>;
+}
+
+
+/**
+ * The immutable input layer: what the runtime will be judged against. Later orders replace integrated rows by id; they never change this block or its denominators.
+ */
+export interface MasConformanceRegistration {
+  manifestRevision: Sha256;
+  registryRevision: Sha256;
+  configCatalogRevision: Sha256;
+  positive: 11;
+  negative: 7;
+  /**
+   * Schema constraints this type cannot express: minItems=18, maxItems=18
+   */
+  fixtures: Array<RegisteredFixture>;
+}
+
+
+export interface MasConformanceCountsProbes {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  passed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+}
+
+
+export interface MasConformanceCountsIntegrated {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  notImplemented: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  validated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedAsRegistered: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  runtimePass: number;
+}
+
+
+export interface MasConformanceCountsDurability {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  passed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+}
+
+
+export interface MasConformanceCounts {
+  fixtures: 18;
+  probes: MasConformanceCountsProbes;
+  integrated: MasConformanceCountsIntegrated;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextReads: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  durability: MasConformanceCountsDurability;
+}
+
+
+export interface MasConformanceLiveOneOf1 {
+  state: "not-run";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface MasConformanceLiveOneOf2 {
+  state: "run";
+  identity: { [key: string]: unknown; };
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failures: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasConformanceDecisionFailedClausesItem = string;
+
 /**
  * What `benchmark/mas-conformance.ts` writes: the source and suite census, the registered positive/negative workflow fixtures with their oracles, the suite substrate probes executed against the published JarenJS primitives, and one integrated row per registration stating honestly how far the MAS runtime has come. Registration is immutable input — fixture ids, canonical revisions, expected outputs, ordered event/aggregation oracles, concurrency bounds, call/tool/context/restore counts, or one expected `{ code, path }` refusal — and its identity excludes every observation. Suite probes prove the substrate exists (`state: 'substrate'`); they never pass a MAS fixture. Integrated rows are replaced by id as the runtime lands; they never change the registration or its denominators. The counts reconcile by `$query` at validation time, the gate's live-call counters are literal zeros (a conformance run is keyless and clock-free by construction), and `reportId` is the canonical SHA-256 of the document with that field excluded.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.fixtures[*].id"},{"$count":{"$distinct":"$.registration.fixtures[*].id"}}]},{"$eq":[{"$count":"$.registration.fixtures[?(@.family=='positive')]"},"$.registration.positive"]},{"$eq":[{"$count":"$.registration.fixtures[?(@.family=='negative')]"},"$.registration.negative"]},{"$eq":[[{"$for":{"f":"$.registration.fixtures[*]"},"$return":"$f.id"}],[{"$for":{"r":"$.integrated[*]"},"$return":"$r.id"}]]},{"$every":{"f":"$.registration.fixtures[?(@.family=='positive')]"},"$satisfies":{"$eq":["$f.expect.kind","pass"]}},{"$every":{"f":"$.registration.fixtures[?(@.family=='negative')]"},"$satisfies":{"$eq":["$f.expect.kind","refusal"]}},{"$every":{"r":"$.integrated[?(@.state=='not-implemented' || @.state=='validated' || @.state=='refused-as-registered')]"},"$satisfies":{"$and":[{"$eq":["$r.attempts",0]},{"$eq":["$r.calls",0]},{"$eq":["$r.toolCalls",0]},{"$eq":["$r.contextReads",0]},{"$eq":["$r.restores",0]}]}},{"$every":{"r":"$.integrated[?(@.state=='validated')]"},"$satisfies":{"$and":[{"$ne":["$r.workflowVersionId",null]},{"$ne":["$r.registryRevision",null]},{"$ne":["$r.executableRevision",null]}]}},{"$every":{"r":"$.integrated[?(@.family=='positive')]"},"$satisfies":{"$or":[{"$eq":["$r.state","not-implemented"]},{"$eq":["$r.state","validated"]},{"$eq":["$r.state","runtime-pass"]}]}},{"$every":{"r":"$.integrated[?(@.family=='negative')]"},"$satisfies":{"$or":[{"$eq":["$r.state","not-implemented"]},{"$eq":["$r.state","refused-as-registered"]}]}},{"$every":{"r":"$.integrated[*]"},"$satisfies":{"$or":[{"$and":[{"$eq":["$r.state","refused-as-registered"]},{"$ne":["$r.refusal",null]}]},{"$and":[{"$ne":["$r.state","refused-as-registered"]},{"$eq":["$r.refusal",null]}]}]}},{"$every":{"r":"$.integrated[?(@.state=='refused-as-registered')]"},"$satisfies":{"$let":{"reg":{"$head":{"$for":{"f":"$.registration.fixtures[*]"},"$where":{"$eq":["$f.id","$r.id"]},"$return":"$f"}}},"$return":{"$and":[{"$eq":["$r.refusal.code","$reg.expect.code"]},{"$eq":["$r.refusal.path","$reg.expect.path"]}]}}},{"$every":{"r":"$.integrated[?(@.state=='runtime-pass')]"},"$satisfies":{"$let":{"regp":{"$head":{"$for":{"f":"$.registration.fixtures[*]"},"$where":{"$eq":["$f.id","$r.id"]},"$return":"$f"}}},"$return":{"$and":[{"$ne":["$r.workflowVersionId",null]},{"$ne":["$r.registryRevision",null]},{"$ne":["$r.executableRevision",null]},{"$ge":["$r.attempts",1]},{"$eq":["$r.calls","$regp.expect.calls"]},{"$eq":["$r.toolCalls","$regp.expect.toolCalls"]},{"$eq":["$r.contextReads","$regp.expect.contextReads"]},{"$eq":["$r.restores","$regp.expect.restores"]},{"$ne":["$r.maxObservedConcurrency",null]},{"$ge":["$r.maxObservedConcurrency","$regp.expect.concurrency.min"]},{"$le":["$r.maxObservedConcurrency","$regp.expect.concurrency.max"]}]}}},{"$every":{"r":"$.integrated[*]"},"$satisfies":{"$let":{"reg":{"$head":{"$for":{"f":"$.registration.fixtures[*]"},"$where":{"$eq":["$f.id","$r.id"]},"$return":"$f"}}},"$return":{"$or":[{"$eq":["$r.workflowVersionId",null]},{"$eq":["$r.workflowVersionId","$reg.workflowVersionId"]}]}}},{"$eq":["$.counts.fixtures",{"$count":"$.integrated[*]"}]},{"$eq":["$.counts.integrated.notImplemented",{"$count":"$.integrated[?(@.state=='not-implemented')]"}]},{"$eq":["$.counts.integrated.validated",{"$count":"$.integrated[?(@.state=='validated')]"}]},{"$eq":["$.counts.integrated.refusedAsRegistered",{"$count":"$.integrated[?(@.state=='refused-as-registered')]"}]},{"$eq":["$.counts.integrated.runtimePass",{"$count":"$.integrated[?(@.state=='runtime-pass')]"}]},{"$eq":["$.counts.fixtures",{"$add":[{"$add":["$.counts.integrated.notImplemented","$.counts.integrated.validated"]},{"$add":["$.counts.integrated.refusedAsRegistered","$.counts.integrated.runtimePass"]}]}]},{"$eq":["$.counts.probes.total",{"$count":"$.suiteProbes[*]"}]},{"$eq":["$.counts.probes.passed",{"$count":"$.suiteProbes[?(@.outcome=='pass')]"}]},{"$eq":["$.counts.probes.failed",{"$count":"$.suiteProbes[?(@.outcome=='fail')]"}]},{"$eq":["$.counts.calls",{"$sum":"$.integrated[*].calls"}]},{"$eq":["$.counts.toolCalls",{"$sum":"$.integrated[*].toolCalls"}]},{"$eq":["$.counts.contextReads",{"$sum":"$.integrated[*].contextReads"}]},{"$eq":["$.counts.restores",{"$sum":"$.integrated[*].restores"}]},{"$eq":["$.counts.durability.total",{"$count":"$.durability[*]"}]},{"$eq":["$.counts.durability.passed",{"$count":"$.durability[?(@.outcome=='pass')]"}]},{"$eq":["$.counts.durability.failed",{"$count":"$.durability[?(@.outcome=='fail')]"}]},{"$eq":["$.decision.clauses.registration",{"$and":[{"$eq":[{"$count":"$.registration.fixtures[*]"},18]},{"$every":{"r":"$.integrated[*]"},"$satisfies":{"$or":[{"$eq":["$r.family","negative"]},{"$and":[{"$ne":["$r.workflowVersionId",null]},{"$ne":["$r.registryRevision",null]},{"$ne":["$r.executableRevision",null]}]}]}}]}]},{"$eq":["$.decision.clauses.conformance",{"$and":[{"$eq":["$.counts.integrated.runtimePass",11]},{"$eq":["$.counts.integrated.refusedAsRegistered",7]}]}]},{"$eq":["$.decision.clauses.concurrencyOrder",{"$let":{"wr":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","weekly-report-manual"]},"$return":"$r"}}},"$return":{"$and":[{"$eq":["$wr.state","runtime-pass"]},{"$ge":["$wr.maxObservedConcurrency",3]}]}}]},{"$eq":["$.decision.clauses.durability",{"$and":[{"$eq":["$.counts.durability.passed",6]},{"$eq":["$.counts.durability.failed",0]},{"$let":{"row":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","checkpoint"]},"$return":"$r"}}},"$return":{"$eq":["$row.state","runtime-pass"]}}]}]},{"$eq":["$.decision.clauses.controlSafety",{"$and":[{"$let":{"row":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","loop-three"]},"$return":"$r"}}},"$return":{"$eq":["$row.state","runtime-pass"]}},{"$let":{"row":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","switch-many"]},"$return":"$r"}}},"$return":{"$eq":["$row.state","runtime-pass"]}},{"$let":{"row":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","interaction"]},"$return":"$r"}}},"$return":{"$eq":["$row.state","runtime-pass"]}},{"$let":{"row":{"$head":{"$for":{"r":"$.integrated[*]"},"$where":{"$eq":["$r.id","switch-one"]},"$return":"$r"}}},"$return":{"$eq":["$row.state","runtime-pass"]}}]}]},{"$eq":["$.decision.clauses.persistenceIdentity",{"$and":[{"$eq":["$.counts.probes.failed",0]},{"$every":{"d":"$.durability[*]"},"$satisfies":{"$eq":["$d.outcome","pass"]}}]}]},{"$eq":["$.decision.clauses.hygiene",{"$and":[{"$eq":["$.counts.probes.failed",0]},{"$eq":["$.counts.durability.failed",0]},{"$eq":[{"$count":"$.integrated[?(@.state=='not-implemented')]"},0]}]}]},{"$eq":[{"$eq":["$.decision.outcome","runtime-conformant"]},{"$and":["$.decision.clauses.registration","$.decision.clauses.conformance","$.decision.clauses.concurrencyOrder","$.decision.clauses.durability","$.decision.clauses.controlSafety","$.decision.clauses.persistenceIdentity","$.decision.clauses.hygiene"]}]},{"$eq":[{"$eq":[{"$count":"$.decision.failedClauses[*]"},0]},{"$eq":["$.decision.outcome","runtime-conformant"]}]}]}
@@ -251,12 +483,12 @@ export interface MasConformance {
   /**
    * HEAD, tree cleanliness and the ordered path/digest manifest of everything this instrument's behavior reads. Deterministic: no clock, no hostname, no absolute path.
    */
-  source: { head: string; clean: boolean; files: Array<{ path: string; sha256: Sha256; }>; sha256: Sha256; };
-  suite: { packages: Array<{ name: string; version: string; }>; };
+  source: MasConformanceSource;
+  suite: MasConformanceSuite;
   /**
    * The immutable input layer: what the runtime will be judged against. Later orders replace integrated rows by id; they never change this block or its denominators.
    */
-  registration: { manifestRevision: Sha256; registryRevision: Sha256; configCatalogRevision: Sha256; positive: 11; negative: 7; fixtures: Array<RegisteredFixture>; };
+  registration: MasConformanceRegistration;
   /**
    * Direct executions of published JarenJS primitives with controlled promises and injected clocks. A probe passing says the substrate exists; it does not pass a MAS fixture and its state is never 'integrated'.
    * Schema constraints this type cannot express: minItems=7, maxItems=7
@@ -271,7 +503,7 @@ export interface MasConformance {
    * Schema constraints this type cannot express: minItems=18, maxItems=18
    */
   integrated: Array<IntegratedRow>;
-  counts: { fixtures: 18; probes: { total: number; passed: number; failed: number; }; integrated: { notImplemented: number; validated: number; refusedAsRegistered: number; runtimePass: number; }; calls: number; toolCalls: number; contextReads: number; restores: number; durability: { total: number; passed: number; failed: number; }; };
+  counts: MasConformanceCounts;
   /**
    * A conformance run is keyless and offline by construction: the counters are literal zeros in the schema, so a report of a run that bought a live completion or reached a network cannot validate at all. Scripted calls are counted per integrated row; they are not live calls.
    */
@@ -280,11 +512,11 @@ export interface MasConformance {
   /**
    * The optional live weekly-report row. Runtime conformance never depends on it — the claims are scheduler/contract/durability semantics and the scripted clients exercise the exact AI/tool/context seams — so without a separately planned and authorized spend it is the explicit value not-run with its reason, never an omission.
    */
-  live: { state: "not-run"; reason: string; } | { state: "run"; identity: { [key: string]: unknown; }; calls: number; failures: number; };
+  live: MasConformanceLiveOneOf1 | MasConformanceLiveOneOf2;
   /**
    * The mechanical claim decision, computed AFTER the report identity so stating it cannot move its evidence address. `runtime-conformant` holds only when all seven clauses hold; the `$query` recomputation makes a forged outcome or a hidden failure schema-invalid.
    */
-  decision: { outcome: "runtime-conformant" | "not-conformant"; failedClauses: Array<string>; clauses: { registration: boolean; conformance: boolean; concurrencyOrder: boolean; durability: boolean; controlSafety: boolean; persistenceIdentity: boolean; hygiene: boolean; }; };
+  decision: { outcome: "runtime-conformant" | "not-conformant"; failedClauses: Array<MasConformanceDecisionFailedClausesItem>; clauses: { registration: boolean; conformance: boolean; concurrencyOrder: boolean; durability: boolean; controlSafety: boolean; persistenceIdentity: boolean; hygiene: boolean; }; };
 }
 
 

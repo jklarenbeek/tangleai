@@ -22,16 +22,36 @@ export type Instant = string;
 export type CitationOutcome = "supporting" | "resolved-not-supporting" | "not-supplied" | "inactive-version" | "future-evidence" | "unknown-evidence";
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PredicatesRequiredItemItem = string;
+
+/**
+ * Schema constraints this type cannot express: minItems=1
+ */
+export type PredicatesRequiredItem = Array<PredicatesRequiredItemItem>;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PredicatesForbiddenItem = string;
+
+/**
  * Closed matching data, never executable text: each required group is satisfied when at least one of its members occurs inside the space-padded officially-normalized claim text, and no forbidden member may occur. Authored with the fixture, before any result exists.
  */
 export interface Predicates {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  required: Array<Array<string>>;
-  forbidden: Array<string>;
+  required: Array<PredicatesRequiredItem>;
+  forbidden: Array<PredicatesForbiddenItem>;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type AnswerClaimCitationsItem = string;
 
 export interface AnswerClaim {
   /**
@@ -42,14 +62,36 @@ export interface AnswerClaim {
    * Schema constraints this type cannot express: minLength=1
    */
   text: string;
-  citations: Array<string>;
+  citations: Array<AnswerClaimCitationsItem>;
+}
+
+
+export interface AnswerValueOneOf1 {
+  disposition: "answer";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claims: Array<AnswerClaim>;
+}
+
+
+export interface AnswerValueOneOf2 {
+  disposition: "abstain";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=0
+   */
+  claims: Array<unknown>;
 }
 
 
 /**
  * The one answer contract of both the scripted and live paths. There is no free-prose member a material claim can hide in: the visible answer is rendered from the claim texts in array order, or from the abstention reason.
  */
-export type AnswerValue = { disposition: "answer"; claims: Array<AnswerClaim>; } | { disposition: "abstain"; reason: string; claims: Array<unknown>; };
+export type AnswerValue = AnswerValueOneOf1 | AnswerValueOneOf2;
 
 export interface FixtureVersion {
   key: FixtureKey;
@@ -102,6 +144,11 @@ export interface FixtureChunk {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type FixtureQuestionReferenceOneOf1 = string;
+
 export interface FixtureQuestion {
   key: FixtureKey;
   kind: "answerable" | "unanswerable";
@@ -109,7 +156,7 @@ export interface FixtureQuestion {
    * Schema constraints this type cannot express: minLength=1
    */
   text: string;
-  reference: string | null;
+  reference: FixtureQuestionReferenceOneOf1 | null;
   claims: Array<FixtureKey>;
 }
 
@@ -161,6 +208,32 @@ export interface RfcQuestion {
 
 
 /**
+ * The registered corpus size — fixed by the campaign's design, so a fixture that grew or shrank cannot validate.
+ */
+export interface GroundingFixtureCensus {
+  sources: 8;
+  questions: 16;
+  claims: 24;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2
+   */
+  abstentions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  elements: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  scripted: number;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.census.sources",{"$count":"$.sources[*]"}]},{"$eq":["$.census.questions",{"$count":"$.questions[*]"}]},{"$eq":["$.census.claims",{"$count":"$.claims[*]"}]},{"$eq":["$.census.elements",{"$count":"$.elements[*]"}]},{"$eq":["$.census.chunks",{"$count":"$.chunks[*]"}]},{"$eq":["$.census.scripted",{"$count":"$.scripted[*]"}]},{"$eq":["$.census.abstentions",{"$count":"$.questions[?(@.kind=='unanswerable')]"}]},{"$eq":[{"$count":"$.questions[*].key"},{"$count":{"$distinct":"$.questions[*].key"}}]},{"$eq":[{"$count":"$.claims[*].key"},{"$count":{"$distinct":"$.claims[*].key"}}]},{"$eq":[{"$count":"$.chunks[*].key"},{"$count":{"$distinct":"$.chunks[*].key"}}]},{"$eq":[{"$count":"$.elements[*].key"},{"$count":{"$distinct":"$.elements[*].key"}}]},{"$eq":[{"$count":"$.scripted[*].key"},{"$count":{"$distinct":"$.scripted[*].key"}}]},{"$eq":[{"$count":"$.trace[*]"},{"$count":"$.questions[*]"}]},{"$every":{"c":"$.claims[*]"},"$satisfies":{"$exists":{"$index-of":["$.questions[*].key","$c.question"]}}},{"$every":{"t":"$.trace[*]"},"$satisfies":{"$exists":{"$index-of":["$.questions[*].key","$t.question"]}}},{"$every":{"s":"$.scripted[*]"},"$satisfies":{"$exists":{"$index-of":["$.questions[*].key","$s.question"]}}},{"$every":{"e":"$.elements[*]"},"$satisfies":{"$exists":{"$index-of":["$.sources[*].versions[*].key","$e.version"]}}},{"$every":{"k":"$.chunks[*]"},"$satisfies":{"$exists":{"$index-of":["$.sources[*].versions[*].key","$k.version"]}}},{"$eq":[{"$count":"$.rfc9110.questions[*]"},6]}]}
  */
 export interface GroundingFixture {
@@ -175,7 +248,7 @@ export interface GroundingFixture {
   /**
    * The registered corpus size — fixed by the campaign's design, so a fixture that grew or shrank cannot validate.
    */
-  census: { sources: 8; questions: 16; claims: 24; abstentions: number; elements: number; chunks: number; scripted: number; };
+  census: GroundingFixtureCensus;
   sources: Array<FixtureSource>;
   elements: Array<FixtureElement>;
   chunks: Array<FixtureChunk>;
@@ -234,13 +307,23 @@ export interface OutcomeCounts {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ClaimMatchPredictedIdOneOf1 = string;
+
 export interface ClaimMatch {
   claim: FixtureKey;
-  predictedId: string | null;
+  predictedId: ClaimMatchPredictedIdOneOf1 | null;
   matched: boolean;
   supported: boolean;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type ClaimScoreF1OneOf1 = number;
 
 /**
  * One-to-one predicate assignment and the supported-material-claim counts. A matched claim without a supporting terminal citation is one FP and one FN, never half credit. `f1` is null on a non-answerable question: it has no claim denominator.
@@ -260,14 +343,36 @@ export interface ClaimScore {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   fn: number;
-  f1: number | null;
+  f1: ClaimScoreF1OneOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScenarioTraceRetrievedItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScenarioTraceSuppliedItem = string;
+
+export interface ScenarioTraceCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retrieved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  supplied: number;
 }
 
 
 export interface ScenarioTrace {
-  retrieved: Array<string>;
-  supplied: Array<string>;
-  counts: { retrieved: number; supplied: number; };
+  retrieved: Array<ScenarioTraceRetrievedItem>;
+  supplied: Array<ScenarioTraceSuppliedItem>;
+  counts: ScenarioTraceCounts;
 }
 
 
@@ -299,6 +404,11 @@ export interface AbstentionScore {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type ScenarioAnswerF1OneOf1 = number;
+
 export interface Scenario {
   key: FixtureKey;
   /**
@@ -316,16 +426,21 @@ export interface Scenario {
   citationCounts: CitationCounts;
   claims: ClaimScore;
   abstention: AbstentionScore;
-  answerF1: number | null;
+  answerF1: ScenarioAnswerF1OneOf1 | null;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type OracleGateFailuresItem = string;
 
 /**
  * The scorer's own proof, computed over the oracle scenarios before any comparison may print: exact ceilings, or the run exits without a table.
  */
 export interface OracleGate {
   passed: boolean;
-  failures: Array<string>;
+  failures: Array<OracleGateFailuresItem>;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -377,12 +492,31 @@ export interface OracleGate {
 }
 
 
+export interface SourceManifestFilesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
 export interface SourceManifest {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  files: Array<{ path: string; sha256: Sha256; }>;
+  files: Array<SourceManifestFilesItem>;
   sha256: Sha256;
+}
+
+
+export interface RegistrationScorer {
+  matching: "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold";
+  normalizer: "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)";
+  /**
+   * Schema constraints this type cannot express: minItems=6, maxItems=6
+   */
+  outcomes: Array<CitationOutcome>;
 }
 
 
@@ -401,7 +535,7 @@ export interface Registration {
    * Schema constraints this type cannot express: minItems=1
    */
   claimKeys: Array<FixtureKey>;
-  scorer: { matching: "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold"; normalizer: "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)"; outcomes: Array<CitationOutcome>; };
+  scorer: RegistrationScorer;
   answerSchemaRevision: Sha256;
 }
 
@@ -412,11 +546,21 @@ export interface Registration {
 export type LiveStatus = "answered" | "invalid" | "wire-failure" | "budget-stop" | "analytic";
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LiveTraceRetrievedItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LiveTraceSuppliedItem = string;
+
+/**
  * The exact retrieval/supply trace of one question through the current path: ranked candidates, raw serialized blocks with duplicate neighbour expansion retained, unique supplied chunks, and the prompt bytes they cost.
  */
 export interface LiveTrace {
-  retrieved: Array<string>;
-  supplied: Array<string>;
+  retrieved: Array<LiveTraceRetrievedItem>;
+  supplied: Array<LiveTraceSuppliedItem>;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -441,6 +585,31 @@ export interface LiveTrace {
 
 
 /**
+ * Schema constraints this type cannot express: type="integer", minimum=1, maximum=4
+ */
+export type LiveQuestionResultCategoryOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveQuestionResultAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveQuestionResultRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveQuestionResultSuppliedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveQuestionResultCitedRecallOneOf1 = number;
+
+/**
  * One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.
  */
 export interface LiveQuestionResult {
@@ -448,7 +617,7 @@ export interface LiveQuestionResult {
    * Schema constraints this type cannot express: minLength=1
    */
   id: string;
-  category: number | null;
+  category: LiveQuestionResultCategoryOneOf1 | null;
   status: LiveStatus;
   trace: LiveTrace | null;
   answer: AnswerValue | null;
@@ -457,10 +626,10 @@ export interface LiveQuestionResult {
   citationCounts: CitationCounts | null;
   claims: ClaimScore | null;
   abstention: AbstentionScore | null;
-  answerF1: number | null;
-  retrievedRecall: number | null;
-  suppliedRecall: number | null;
-  citedRecall: number | null;
+  answerF1: LiveQuestionResultAnswerF1OneOf1 | null;
+  retrievedRecall: LiveQuestionResultRetrievedRecallOneOf1 | null;
+  suppliedRecall: LiveQuestionResultSuppliedRecallOneOf1 | null;
+  citedRecall: LiveQuestionResultCitedRecallOneOf1 | null;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -550,6 +719,102 @@ export interface LiveLatency {
 }
 
 
+export interface LiveRowQuestionsUnanswered {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wire: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budget: number;
+}
+
+
+export interface LiveRowQuestions {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planned: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answered: number;
+  unanswered: LiveRowQuestionsUnanswered;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  invalid: number;
+  results: Array<LiveQuestionResult>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveRowAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveRowAbstentionOneOf1AccuracyOneOf1 = number;
+
+export interface LiveRowAbstentionOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  correct: number;
+  accuracy: LiveRowAbstentionOneOf1AccuracyOneOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveRowCitedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveRowRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LiveRowSuppliedRecallOneOf1 = number;
+
+export interface LiveRowSupplyOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  candidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  blocks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uniqueSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateExpansions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  characters: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
+}
+
+
 /**
  * One of the three registered rows. `documents-retrieved` never generates: it is the retrieval/supply ceiling, its results are `analytic` and its config-identity row is `not-run`. The two generated rows share every control and are comparable only on complete identical question sets.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.questions.planned",{"$count":"$.questions.results[*]"}]},{"$eq":["$.questions.answered",{"$count":"$.questions.results[?(@.status=='answered')]"}]},{"$eq":["$.questions.invalid",{"$count":"$.questions.results[?(@.status=='invalid')]"}]},{"$eq":["$.questions.unanswered.wire",{"$count":"$.questions.results[?(@.status=='wire-failure')]"}]},{"$eq":["$.questions.unanswered.budget",{"$count":"$.questions.results[?(@.status=='budget-stop')]"}]},{"$or":[{"$eq":["$.generates",true]},{"$and":[{"$eq":[{"$count":"$.questions.results[?(@.status=='analytic')]"},"$.questions.planned"]},{"$eq":["$.cost",null]}]}]}]}
@@ -561,17 +826,37 @@ export interface LiveRow {
    * Canonical SHA-256 of the row's sorted successfully-answered question ids — what eligibility compares instead of walking two lists.
    */
   questionSet: Sha256;
-  questions: { planned: number; answered: number; unanswered: { wire: number; budget: number; }; invalid: number; results: Array<LiveQuestionResult>; };
+  questions: LiveRowQuestions;
   claims: LiveClaims | null;
-  answerF1: number | null;
-  abstention: { expected: number; correct: number; accuracy: number | null; } | null;
+  answerF1: LiveRowAnswerF1OneOf1 | null;
+  abstention: LiveRowAbstentionOneOf1 | null;
   citations: CitationCounts | null;
-  citedRecall: number | null;
-  retrievedRecall: number | null;
-  suppliedRecall: number | null;
-  supply: { candidates: number; blocks: number; uniqueSupplied: number; duplicateExpansions: number; characters: number; estimatedTokens: number; } | null;
+  citedRecall: LiveRowCitedRecallOneOf1 | null;
+  retrievedRecall: LiveRowRetrievedRecallOneOf1 | null;
+  suppliedRecall: LiveRowSuppliedRecallOneOf1 | null;
+  supply: LiveRowSupplyOneOf1 | null;
   cost: LiveCost | null;
   latency: LiveLatency | null;
+}
+
+
+export interface LiveComparisonPower {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  pairedSd: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  standardError: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  minimumDetectableEffect: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tiedPairs: number;
 }
 
 
@@ -589,13 +874,49 @@ export interface LiveComparison {
   mean: number;
   interval: { low: number; high: number; };
   oneSidedLowerBound: number;
-  power: { pairedSd: number; standardError: number; minimumDetectableEffect: number; tiedPairs: number; };
+  power: LiveComparisonPower;
+}
+
+
+export interface LiveStratumCorpus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  sources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  versions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  elements: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+}
+
+
+export interface PairingBlockReasonsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
 }
 
 
 export interface PairingBlock {
   eligible: boolean;
-  reasons: Array<{ code: string; detail: string; }>;
+  reasons: Array<PairingBlockReasonsItem>;
   comparisons: Array<LiveComparison>;
 }
 
@@ -606,11 +927,52 @@ export interface PairingBlock {
  */
 export interface LiveStratum {
   key: "fixture" | "locomo";
-  corpus: { sources: number; versions: number; chunks: number; elements: number; embeddingCalls: number; };
+  corpus: LiveStratumCorpus;
   rows: Array<LiveRow>;
   pairing: PairingBlock;
 }
 
+
+export interface LivePlanEmbedding {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  texts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cacheHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cacheMisses: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxFreshRequests: number;
+}
+
+
+export interface LivePlanChat {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planned: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxRepairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxFreshCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LivePlanSkippedOneOf1 = string;
 
 /**
  * The frozen dry plan: everything the operator authorizes, credential-free. `planId` is the canonical SHA-256 of the plan's registered members; only a matching explicit authorization executes.
@@ -619,8 +981,8 @@ export interface LivePlan {
   planId: Sha256;
   authorized: boolean;
   fresh: boolean;
-  embedding: { texts: number; cacheHits: number; cacheMisses: number; maxFreshRequests: number; };
-  chat: { planned: number; maxRepairs: number; maxFreshCalls: number; };
+  embedding: LivePlanEmbedding;
+  chat: LivePlanChat;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -633,7 +995,173 @@ export interface LivePlan {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   concurrency: number;
-  skipped: string | null;
+  skipped: LivePlanSkippedOneOf1 | null;
+}
+
+
+export interface GroundingLiveGeneratedEmbedder {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  dims: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingLiveGeneratedKeySourceOneOf1 = string;
+
+export interface GroundingLiveGenerated {
+  at: Instant;
+  tier: "scripted" | "paid";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  provider: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  embedder: GroundingLiveGeneratedEmbedder;
+  keySource: GroundingLiveGeneratedKeySourceOneOf1 | null;
+  thinking: "off" | "default";
+}
+
+
+export interface GroundingLiveFixtureCensus {
+  sources: 8;
+  questions: 16;
+  claims: 24;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2
+   */
+  abstentions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  elements: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  scripted: number;
+}
+
+
+export interface GroundingLiveRegistrationScorer {
+  matching: "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold";
+  normalizer: "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)";
+  /**
+   * Schema constraints this type cannot express: minItems=6, maxItems=6
+   */
+  outcomes: Array<CitationOutcome>;
+}
+
+
+/**
+ * The keyless registration plus the frozen treatment: the exact current chunker/retrieval defaults, the shared prompt revision, the repair ceiling, concurrency and seed. Every value is effective, never a name.
+ */
+export interface GroundingLiveRegistration {
+  registrationId: Sha256;
+  fixtureId: Sha256;
+  cutoff: Instant;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  questionIds: Array<FixtureKey>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claimKeys: Array<FixtureKey>;
+  scorer: GroundingLiveRegistrationScorer;
+  answerSchemaRevision: Sha256;
+  retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; };
+  promptRevision: Sha256;
+  maxRepairs: 1;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  concurrency: number;
+  seed: 17753;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingLiveLocomoRegistrationOneOf1QuestionIdsItem = string;
+
+export interface GroundingLiveLocomoRegistrationOneOf1 {
+  seed: 17753;
+  perCategory: 4;
+  /**
+   * Schema constraints this type cannot express: minItems=16, maxItems=16
+   */
+  questionIds: Array<GroundingLiveLocomoRegistrationOneOf1QuestionIdsItem>;
+  datasetSha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingLiveLocomoSkippedOneOf1 = string;
+
+export interface GroundingLiveSpent {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+}
+
+
+export interface GroundingLiveEmbedding {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  texts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cached: number;
+}
+
+
+export interface GroundingLiveErrors {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  count: number;
+  sample: Array<string>;
+}
+
+
+export interface LiveDecisionOneOf1 {
+  state: "not-evaluated";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
 }
 
 
@@ -647,10 +1175,24 @@ export interface DecisionClause {
 }
 
 
+export interface LiveDecisionOneOf2 {
+  state: "retain-current" | "adopt-claim-citations";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: minItems=4, maxItems=4
+   */
+  clauses: Array<DecisionClause>;
+  liveReportId: Sha256;
+}
+
+
 /**
  * The mechanical product decision over a validated live attempt. `adopt-claim-citations` is legal only when the document's own rows recompute every registered clause — the `$query` on the live branch refuses a forged adoption — and a missing or ineligible row can never be read as a pass.
  */
-export type LiveDecision = { state: "not-evaluated"; reason: string; } | { state: "retain-current" | "adopt-claim-citations"; reason: string; clauses: Array<DecisionClause>; liveReportId: Sha256; };
+export type LiveDecision = LiveDecisionOneOf1 | LiveDecisionOneOf2;
 
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.strata[?(@.key=='fixture')]"},1]},{"$eq":[{"$count":{"$distinct":"$.strata[*].key"}},{"$count":"$.strata[*]"}]},{"$or":[{"$ne":["$.locomoSkipped",null]},{"$eq":[{"$count":"$.strata[?(@.key=='locomo')]"},1]}]},{"$every":{"s":"$.strata[?(@.key=='fixture')]"},"$satisfies":{"$every":{"r":"$s.rows[*]"},"$satisfies":{"$eq":["$r.questions.planned",{"$count":"$.registration.questionIds[*]"}]}}},{"$eq":[{"$count":"$.configIdentities.rows[*]"},{"$mul":[3,{"$count":"$.strata[*]"}]}]},{"$or":[{"$ne":["$.decision.state","adopt-claim-citations"]},{"$and":[{"$eq":["$.decision.liveReportId","$.reportId"]},{"$every":{"s":"$.strata[?(@.key=='fixture')]"},"$satisfies":{"$and":[{"$eq":["$s.pairing.eligible",true]},{"$every":{"r":"$s.rows[?(@.key=='grounded-answer')]"},"$satisfies":{"$and":[{"$eq":["$r.citations.byOutcome.notSupplied",0]},{"$eq":["$r.citations.byOutcome.inactiveVersion",0]},{"$eq":["$r.citations.byOutcome.futureEvidence",0]},{"$eq":["$r.citations.byOutcome.unknownEvidence",0]},{"$eq":["$r.citations.unique","$r.citations.resolvedUnique"]}]}},{"$some":{"c":"$s.pairing.comparisons[*]"},"$satisfies":{"$eq":["$c.metric","supported-claim-f1"]}},{"$every":{"c":"$s.pairing.comparisons[?(@.metric=='supported-claim-f1')]"},"$satisfies":{"$lt":[0,"$c.interval.low"]}},{"$every":{"c":"$s.pairing.comparisons[?(@.metric=='answer-f1')]"},"$satisfies":{"$not":{"$lt":["$c.oneSidedLowerBound",-0.05]}}}]}}]}]}]}
@@ -663,29 +1205,107 @@ export interface GroundingLive {
    * The shared config-identity envelope: generated rows reference the one resolved run identity; the no-generation row is `not-run` analysis.
    */
   configIdentities: unknown;
-  generated: { at: Instant; tier: "scripted" | "paid"; provider: string; model: string; embedder: { model: string; dims: number; }; keySource: string | null; thinking: "off" | "default"; };
-  fixture: { id: Sha256; path: "benchmark/fixtures/grounding/manifest.json"; license: "MIT"; census: { sources: 8; questions: 16; claims: 24; abstentions: number; elements: number; chunks: number; scripted: number; }; };
+  generated: GroundingLiveGenerated;
+  fixture: { id: Sha256; path: "benchmark/fixtures/grounding/manifest.json"; license: "MIT"; census: GroundingLiveFixtureCensus; };
   /**
    * The keyless registration plus the frozen treatment: the exact current chunker/retrieval defaults, the shared prompt revision, the repair ceiling, concurrency and seed. Every value is effective, never a name.
    */
-  registration: { registrationId: Sha256; fixtureId: Sha256; cutoff: Instant; questionIds: Array<FixtureKey>; claimKeys: Array<FixtureKey>; scorer: { matching: "expected claims in manifest order take the earliest unmatched predicted claim satisfying the fixture predicates; one-to-one; no similarity threshold"; normalizer: "the official LoCoMo normalizer (benchmark/lib/locomo-parity.ts normalizeAnswer)"; outcomes: Array<CitationOutcome>; }; answerSchemaRevision: Sha256; retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; }; promptRevision: Sha256; maxRepairs: 1; concurrency: number; seed: 17753; };
-  locomoRegistration: { seed: 17753; perCategory: 4; questionIds: Array<string>; datasetSha256: Sha256; } | null;
-  locomoSkipped: string | null;
+  registration: GroundingLiveRegistration;
+  locomoRegistration: GroundingLiveLocomoRegistrationOneOf1 | null;
+  locomoSkipped: GroundingLiveLocomoSkippedOneOf1 | null;
   source: SourceManifest;
   plan: LivePlan;
   /**
    * Schema constraints this type cannot express: minItems=1
    */
   strata: Array<LiveStratum>;
-  spent: { turns: number; tokens: number; ms: number; };
-  embedding: { requests: number; texts: number; cached: number; };
+  spent: GroundingLiveSpent;
+  embedding: GroundingLiveEmbedding;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   replayed: number;
-  errors: { count: number; sample: Array<string>; };
+  errors: GroundingLiveErrors;
   decision: LiveDecision;
   reportId: Sha256;
+}
+
+
+export interface HandoffRowUnanswered {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wire: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budget: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HandoffRowAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HandoffRowAbstentionOneOf1AccuracyOneOf1 = number;
+
+export interface HandoffRowAbstentionOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  correct: number;
+  accuracy: HandoffRowAbstentionOneOf1AccuracyOneOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HandoffRowCitedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HandoffRowRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HandoffRowSuppliedRecallOneOf1 = number;
+
+export interface HandoffRowSupplyOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  candidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  blocks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uniqueSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateExpansions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  characters: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
 }
 
 
@@ -704,19 +1324,105 @@ export interface HandoffRow {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   invalid: number;
-  unanswered: { wire: number; budget: number; };
+  unanswered: HandoffRowUnanswered;
   claims: LiveClaims | null;
-  answerF1: number | null;
-  abstention: { expected: number; correct: number; accuracy: number | null; } | null;
+  answerF1: HandoffRowAnswerF1OneOf1 | null;
+  abstention: HandoffRowAbstentionOneOf1 | null;
   citations: CitationCounts | null;
-  citedRecall: number | null;
-  retrievedRecall: number | null;
-  suppliedRecall: number | null;
-  supply: { candidates: number; blocks: number; uniqueSupplied: number; duplicateExpansions: number; characters: number; estimatedTokens: number; } | null;
+  citedRecall: HandoffRowCitedRecallOneOf1 | null;
+  retrievedRecall: HandoffRowRetrievedRecallOneOf1 | null;
+  suppliedRecall: HandoffRowSuppliedRecallOneOf1 | null;
+  supply: HandoffRowSupplyOneOf1 | null;
   cost: LiveCost | null;
   latency: LiveLatency | null;
 }
 
+
+export interface GroundingHandoffHandoffIdentities {
+  reportId: Sha256;
+  registrationId: Sha256;
+  fixtureId: Sha256;
+  planId: Sha256;
+  sourceSha256: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  configIdentityId: string;
+}
+
+
+export interface GroundingHandoffHandoffFlatRow {
+  retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; };
+  promptRevision: Sha256;
+  answerSchemaRevision: Sha256;
+  maxRepairs: 1;
+  seed: 17753;
+  /**
+   * Schema constraints this type cannot express: minItems=16, maxItems=16
+   */
+  questionIds: Array<FixtureKey>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoRegistrationOneOf1QuestionIdsItem = string;
+
+export interface GroundingHandoffHandoffDiagnosticsLocomoRegistrationOneOf1 {
+  seed: 17753;
+  perCategory: 4;
+  /**
+   * Schema constraints this type cannot express: minItems=16, maxItems=16
+   */
+  questionIds: Array<GroundingHandoffHandoffDiagnosticsLocomoRegistrationOneOf1QuestionIdsItem>;
+  datasetSha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoSkippedOneOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoRowsItemAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoRowsItemCitedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoRowsItemRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundingHandoffHandoffDiagnosticsLocomoRowsItemSuppliedRecallOneOf1 = number;
+
+export interface GroundingHandoffHandoffDiagnosticsLocomoRowsItem {
+  key: "no-documents" | "documents-retrieved" | "grounded-answer";
+  questionSet: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answered: number;
+  answerF1: GroundingHandoffHandoffDiagnosticsLocomoRowsItemAnswerF1OneOf1 | null;
+  citedRecall: GroundingHandoffHandoffDiagnosticsLocomoRowsItemCitedRecallOneOf1 | null;
+  retrievedRecall: GroundingHandoffHandoffDiagnosticsLocomoRowsItemRetrievedRecallOneOf1 | null;
+  suppliedRecall: GroundingHandoffHandoffDiagnosticsLocomoRowsItemSuppliedRecallOneOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingHandoffHandoffDiagnosticsWebNotRunOneOf1 = string;
 
 /**
  * The committed downstream handoff: the flat-baseline query document executed verbatim over the validated live and web reports. Clock-free and byte-reproducible; every identity here resolves to exactly one object in its source report, which the query test pins.
@@ -727,8 +1433,30 @@ export interface GroundingHandoff {
   benchmark: "grounding";
   instrument: { entry: "benchmark/grounding-query.ts"; query: "queries/grounding/flat-baseline.json"; };
   querySha256: Sha256;
-  handoff: { identities: { reportId: Sha256; registrationId: Sha256; fixtureId: Sha256; planId: Sha256; sourceSha256: Sha256; configIdentityId: string; }; flatRow: { retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; }; promptRevision: Sha256; answerSchemaRevision: Sha256; maxRepairs: 1; seed: 17753; questionIds: Array<FixtureKey>; }; rows: Array<HandoffRow>; pairing: PairingBlock; decision: LiveDecision; diagnostics: { locomo: { registration: { seed: 17753; perCategory: 4; questionIds: Array<string>; datasetSha256: Sha256; } | null; skipped: string | null; rows: Array<{ key: "no-documents" | "documents-retrieved" | "grounded-answer"; questionSet: Sha256; answered: number; answerF1: number | null; citedRecall: number | null; retrievedRecall: number | null; suppliedRecall: number | null; }>; pairing: PairingBlock | null; }; web: { reportId: Sha256 | null; registrationId: Sha256 | null; notRun: string | null; }; }; };
+  handoff: { identities: GroundingHandoffHandoffIdentities; flatRow: GroundingHandoffHandoffFlatRow; rows: Array<HandoffRow>; pairing: PairingBlock; decision: LiveDecision; diagnostics: { locomo: { registration: GroundingHandoffHandoffDiagnosticsLocomoRegistrationOneOf1 | null; skipped: GroundingHandoffHandoffDiagnosticsLocomoSkippedOneOf1 | null; rows: Array<GroundingHandoffHandoffDiagnosticsLocomoRowsItem>; pairing: PairingBlock | null; }; web: { reportId: Sha256 | null; registrationId: Sha256 | null; notRun: GroundingHandoffHandoffDiagnosticsWebNotRunOneOf1 | null; }; }; };
   reportId: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=100, maximum=599
+ */
+export type CaptureManifestRowStatusOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type CaptureManifestRowResponseBytesOneOf1 = number;
+
+export interface CaptureManifestRowFailureOneOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  message: string;
 }
 
 
@@ -742,14 +1470,39 @@ export interface CaptureManifestRow {
    * Schema constraints this type cannot express: minLength=1
    */
   url: string;
-  status: number | null;
+  status: CaptureManifestRowStatusOneOf1 | null;
   bodySha256: Sha256 | null;
-  responseBytes: number | null;
+  responseBytes: CaptureManifestRowResponseBytesOneOf1 | null;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   attempt: number;
-  failure: { code: string; message: string; } | null;
+  failure: CaptureManifestRowFailureOneOf1 | null;
+}
+
+
+export interface WebSelectionSelectedItem {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rank: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  url: string;
+}
+
+
+export interface WebSelectionRefusedItem {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rank: number;
+  url: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
 }
 
 
@@ -773,8 +1526,117 @@ export interface WebSelection {
   /**
    * Schema constraints this type cannot express: maxItems=3
    */
-  selected: Array<{ rank: number; url: string; }>;
-  refused: Array<{ rank: number; url: string; reason: string; }>;
+  selected: Array<WebSelectionSelectedItem>;
+  refused: Array<WebSelectionRefusedItem>;
+}
+
+
+export interface WebRowQuestionsUnanswered {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wire: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budget: number;
+}
+
+
+export interface WebRowQuestions {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planned: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answered: number;
+  unanswered: WebRowQuestionsUnanswered;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  invalid: number;
+  results: Array<LiveQuestionResult>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type WebRowAnswerF1OneOf1 = number;
+
+export interface WebRowSupplyOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  candidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  blocks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uniqueSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateExpansions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  characters: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
+}
+
+
+export interface WebRowCorpus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  sources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  versions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  elements: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+}
+
+
+export interface WebRowIngestItemErrorOneOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  message: string;
+}
+
+
+export interface WebRowIngestItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  url: string;
+  outcome: "ingested" | "unchanged" | "failed";
+  error: WebRowIngestItemErrorOneOf1 | null;
 }
 
 
@@ -785,19 +1647,96 @@ export interface WebSelection {
 export interface WebRow {
   key: "curated-rfc" | "searx-discovered";
   questionSet: Sha256;
-  questions: { planned: number; answered: number; unanswered: { wire: number; budget: number; }; invalid: number; results: Array<LiveQuestionResult>; };
-  answerF1: number | null;
+  questions: WebRowQuestions;
+  answerF1: WebRowAnswerF1OneOf1 | null;
   citations: CitationCounts | null;
-  supply: { candidates: number; blocks: number; uniqueSupplied: number; duplicateExpansions: number; characters: number; estimatedTokens: number; } | null;
-  corpus: { sources: number; versions: number; chunks: number; elements: number; embeddingCalls: number; };
+  supply: WebRowSupplyOneOf1 | null;
+  corpus: WebRowCorpus;
   /**
    * The acquisition funnel of this row's corpus: every URL attempted with its outcome.
    */
-  ingest: Array<{ url: string; outcome: "ingested" | "unchanged" | "failed"; error: { code: string; message: string; } | null; }>;
+  ingest: Array<WebRowIngestItem>;
   cost: LiveCost | null;
   latency: LiveLatency | null;
 }
 
+
+export interface GroundingWebGeneratedEmbedder {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  dims: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingWebGeneratedKeySourceOneOf1 = string;
+
+export interface GroundingWebGenerated {
+  at: Instant;
+  tier: "scripted" | "paid";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  provider: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  embedder: GroundingWebGeneratedEmbedder;
+  keySource: GroundingWebGeneratedKeySourceOneOf1 | null;
+  thinking: "off" | "default";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingWebRegistrationSearxBaseOneOf1 = string;
+
+export interface GroundingWebRegistration {
+  registrationId: Sha256;
+  questions: Array<RfcQuestion>;
+  curatedUrl: "https://www.rfc-editor.org/rfc/rfc9110.html";
+  searxBase: GroundingWebRegistrationSearxBaseOneOf1 | null;
+  selection: { maxPerQuery: 3; policy: "the first distinct normalized HTTP(S) URLs in SearxNG result order after existing URL policy; no learned selector, no authority boost; snippets are never evidence"; };
+  retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; };
+  promptRevision: Sha256;
+  maxRepairs: 1;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  concurrency: number;
+}
+
+
+export interface GroundingWebCapture {
+  manifest: Array<CaptureManifestRow>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  captures: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayMisses: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingWebNotRunOneOf1 = string;
 
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$or":[{"$ne":["$.notRun",null]},{"$eq":[{"$count":"$.rows[*]"},2]}]},{"$eq":[{"$count":{"$distinct":"$.rows[*].key"}},{"$count":"$.rows[*]"}]},{"$every":{"s":"$.selection[*]"},"$satisfies":{"$eq":[{"$count":{"$distinct":"$s.selected[*].url"}},{"$count":"$s.selected[*]"}]}},{"$eq":[{"$count":"$.registration.questions[*]"},6]}]}
@@ -807,17 +1746,17 @@ export interface GroundingWeb {
   benchmark: "grounding";
   instrument: { entry: "benchmark/grounding.ts"; };
   configIdentities: unknown;
-  generated: { at: Instant; tier: "scripted" | "paid"; provider: string; model: string; embedder: { model: string; dims: number; }; keySource: string | null; thinking: "off" | "default"; };
+  generated: GroundingWebGenerated;
   /**
    * The flat baseline this diagnostic is registered against — linked by identity, never merged into its denominator.
    */
   baseline: { reportId: Sha256 | null; registrationId: Sha256 | null; };
-  registration: { registrationId: Sha256; questions: Array<RfcQuestion>; curatedUrl: "https://www.rfc-editor.org/rfc/rfc9110.html"; searxBase: string | null; selection: { maxPerQuery: 3; policy: "the first distinct normalized HTTP(S) URLs in SearxNG result order after existing URL policy; no learned selector, no authority boost; snippets are never evidence"; }; retrieval: { chunkerVersion: "heading-recursive/1"; maxTokens: 450; overlapTokens: 48; k: 6; minScore: 0; maxPerSource: 2; neighbours: 1; }; promptRevision: Sha256; maxRepairs: 1; concurrency: number; };
+  registration: GroundingWebRegistration;
   source: SourceManifest;
-  capture: { manifest: Array<CaptureManifestRow>; captures: number; replayHits: number; replayMisses: number; };
+  capture: GroundingWebCapture;
   selection: Array<WebSelection>;
   rows: Array<WebRow>;
-  notRun: string | null;
+  notRun: GroundingWebNotRunOneOf1 | null;
   reportId: Sha256;
 }
 
@@ -834,6 +1773,42 @@ export interface Decision {
 }
 
 
+export interface GroundingReportFixtureCensus {
+  sources: 8;
+  questions: 16;
+  claims: 24;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2
+   */
+  abstentions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  elements: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  scripted: number;
+}
+
+
+export interface GroundingReportSummary {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  scenarios: number;
+  outcomes: OutcomeCounts;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wrongAbstentions: number;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.questionIds[*]"},"$.fixture.census.questions"]},{"$eq":[{"$count":"$.registration.claimKeys[*]"},"$.fixture.census.claims"]},{"$eq":[{"$count":{"$distinct":"$.registration.questionIds[*]"}},{"$count":"$.registration.questionIds[*]"}]},{"$eq":[{"$count":"$.scenarios[*].key"},{"$count":{"$distinct":"$.scenarios[*].key"}}]},{"$eq":[{"$count":"$.scenarios[*]"},"$.fixture.census.scripted"]},{"$every":{"s":"$.scenarios[*]"},"$satisfies":{"$and":[{"$eq":["$s.citationCounts.raw",{"$count":"$s.citations[*]"}]},{"$eq":["$s.citationCounts.unique",{"$count":{"$distinct":"$s.citations[*].citation"}}]},{"$eq":["$s.citationCounts.raw",{"$add":[{"$add":[{"$add":["$s.citationCounts.byOutcome.supporting","$s.citationCounts.byOutcome.resolvedNotSupporting"]},{"$add":["$s.citationCounts.byOutcome.notSupplied","$s.citationCounts.byOutcome.inactiveVersion"]}]},{"$add":["$s.citationCounts.byOutcome.futureEvidence","$s.citationCounts.byOutcome.unknownEvidence"]}]}]},{"$eq":[{"$add":["$s.claims.tp","$s.claims.fn"]},{"$count":"$s.claims.expected[*]"}]},{"$or":[{"$eq":["$s.answer.disposition","abstain"]},{"$eq":[{"$add":["$s.claims.tp","$s.claims.fp"]},{"$count":"$s.answer.claims[*]"}]}]},{"$eq":["$s.trace.counts.retrieved",{"$count":"$s.trace.retrieved[*]"}]},{"$eq":["$s.trace.counts.supplied",{"$count":"$s.trace.supplied[*]"}]}]}},{"$eq":["$.summary.outcomes.supporting",{"$sum":"$.scenarios[*].citationCounts.byOutcome.supporting"}]},{"$eq":["$.summary.outcomes.resolvedNotSupporting",{"$sum":"$.scenarios[*].citationCounts.byOutcome.resolvedNotSupporting"}]},{"$eq":["$.summary.outcomes.notSupplied",{"$sum":"$.scenarios[*].citationCounts.byOutcome.notSupplied"}]},{"$eq":["$.summary.outcomes.inactiveVersion",{"$sum":"$.scenarios[*].citationCounts.byOutcome.inactiveVersion"}]},{"$eq":["$.summary.outcomes.futureEvidence",{"$sum":"$.scenarios[*].citationCounts.byOutcome.futureEvidence"}]},{"$eq":["$.summary.outcomes.unknownEvidence",{"$sum":"$.scenarios[*].citationCounts.byOutcome.unknownEvidence"}]},{"$eq":["$.summary.scenarios",{"$count":"$.scenarios[*]"}]},{"$eq":["$.summary.wrongAbstentions",{"$count":"$.scenarios[?(@.abstention.correct==false)]"}]},{"$eq":["$.gate.oracle.tp",{"$sum":"$.scenarios[?(@.kind=='oracle')].claims.tp"}]},{"$eq":["$.gate.oracle.fp",{"$sum":"$.scenarios[?(@.kind=='oracle')].claims.fp"}]},{"$eq":["$.gate.oracle.fn",{"$sum":"$.scenarios[?(@.kind=='oracle')].claims.fn"}]},{"$eq":["$.gate.oracle.questions",{"$count":"$.scenarios[?(@.kind=='oracle')]"}]},{"$eq":[{"$count":"$.configIdentities.rows[*]"},{"$count":"$.scenarios[*]"}]},{"$every":{"r":"$.configIdentities.rows[*]"},"$satisfies":{"$and":[{"$exists":{"$index-of":["$.scenarios[*].key","$r.rowId"]}},{"$eq":["$r.identityStatus","not-run"]}]}}]}
  */
@@ -845,7 +1820,7 @@ export interface GroundingReport {
    * The shared config-identity envelope. Every keyless scenario is a not-run analytic row: nothing here ran a provider stack.
    */
   configIdentities: unknown;
-  fixture: { id: Sha256; path: "benchmark/fixtures/grounding/manifest.json"; license: "MIT"; census: { sources: 8; questions: 16; claims: 24; abstentions: number; elements: number; chunks: number; scripted: number; }; };
+  fixture: { id: Sha256; path: "benchmark/fixtures/grounding/manifest.json"; license: "MIT"; census: GroundingReportFixtureCensus; };
   registration: Registration;
   source: SourceManifest;
   gate: { oracle: OracleGate; };
@@ -853,7 +1828,7 @@ export interface GroundingReport {
    * Schema constraints this type cannot express: minItems=1
    */
   scenarios: Array<Scenario>;
-  summary: { scenarios: number; outcomes: OutcomeCounts; wrongAbstentions: number; };
+  summary: GroundingReportSummary;
   decision: Decision;
   reportId: Sha256;
 }

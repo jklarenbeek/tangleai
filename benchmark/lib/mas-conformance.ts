@@ -425,8 +425,8 @@ async function probeDagCheckpointRestore(): Promise<SuiteProbe> {
   const graph = defineDag({
     nodes: {
       seed: input(),
-      paid: task('paid').checkpoint(),
-      wrap: task('wrap'),
+      paid: task('paid', undefined, { version: 'probe/1' }).checkpoint(),
+      wrap: task('wrap', undefined, { version: 'probe/1' }),
       out: output(),
     },
     edges: [
@@ -448,13 +448,13 @@ async function probeDagCheckpointRestore(): Promise<SuiteProbe> {
     complete: (runId: string, result: unknown) => { completes.push({ runId, result }); },
   };
   const compiled = compileDag(graph, {
-    tasks: typedTasks(graph, {
-      paid: () => {
+    tasks: {
+      paid: { version: 'probe/1', run: () => {
         paidCalls += 1;
         return { bought: true };
-      },
-      wrap: ({ input: value }) => ({ wrapped: value }),
-    }),
+      } },
+      wrap: { version: 'probe/1', run: ({ input: value }: { input: unknown }) => ({ wrapped: value }) },
+    },
     checkpoint: store,
   });
   const first = await compiled.run('s', { runId: 'probe-run' });
@@ -837,13 +837,13 @@ export async function runDurabilityProbes(workflow: MasWorkflow): Promise<Durabi
       const kind = `mas:${'e'.repeat(64)}`;
       const firstJob = await jobs.claim({ kinds: [kind], owner: 'w1', leaseMs: 60_000 });
       if (firstJob === undefined) throw new Error('no first claim');
-      const failed = await handlers[kind](firstJob.payload, { job: firstJob, checkpointsFor: (bound: unknown) => jobs.checkpointsFor(bound as never), signal: new AbortController().signal } as never).then(() => false, () => true);
-      await jobs.fail(firstJob.id, 'w1', new Error('crash'));
+      const failed = await handlers[kind](firstJob.payload, { job: firstJob, checkpoints: jobs.checkpointsFor(firstJob), signal: new AbortController().signal } as never).then(() => false, () => true);
+      await jobs.fail(firstJob.lease, new Error('crash'));
       clock.value += 300_000;
       const secondJob = await jobs.claim({ kinds: [kind], owner: 'w2', leaseMs: 60_000 });
       if (secondJob === undefined) throw new Error('no reclaim');
-      await handlers[kind](secondJob.payload, { job: secondJob, checkpointsFor: (bound: unknown) => jobs.checkpointsFor(bound as never), signal: new AbortController().signal } as never);
-      await jobs.complete(secondJob.id, 'w2', null);
+      await handlers[kind](secondJob.payload, { job: secondJob, checkpoints: jobs.checkpointsFor(secondJob), signal: new AbortController().signal } as never);
+      await jobs.complete(secondJob.lease, null);
       const jobDone = (await jobs.get('dur-reclaim:0000'))?.state === 'done';
       const pass = failed && executions === 1 && jobDone && (await store.getRun('dur-reclaim'))?.status === 'completed';
       probes.push({

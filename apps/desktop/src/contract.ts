@@ -157,6 +157,8 @@ export const SETTINGS_SCHEMA = {
         baseUrl: { type: ['string', 'null'] },
         model: { type: ['string', 'null'] },
         apiKey: { type: ['string', 'null'] },
+        maxTokens: { type: ['integer', 'null'], minimum: 1 },
+        maxTokensField: { enum: ['max_tokens', 'max_completion_tokens'] },
       },
     },
     embed: {

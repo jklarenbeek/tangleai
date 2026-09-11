@@ -5,11 +5,11 @@
 //   distrobox enter ubuntu-playwright -- bash -c 'export PATH=$HOME/.nvm/versions/node/v24.19.0/bin:$PATH; cd ~/projects/jp/tangleai && node .e2e/desktop.e2e.mjs'
 // Playwright is borrowed from the jarenjs repo via createRequire.
 import { createRequire } from 'node:module';
-const jarenRequire = createRequire('/home/joham/projects/jp/jarenjs/package.json');
+const jarenRequire = createRequire(process.env.PLAYWRIGHT_PACKAGE ?? new URL('../../jarenjs/package.json', import.meta.url));
 const { chromium, webkit } = jarenRequire('playwright-core');
 
 const base = process.env.TANGLE_URL ?? 'http://127.0.0.1:4714';
-const shots = process.env.TANGLE_SHOTS ?? '/home/joham/projects/jp/tangleai/.e2e';
+const shots = process.env.TANGLE_SHOTS ?? new URL('.', import.meta.url).pathname;
 const engine = process.env.TANGLE_ENGINE === 'webkit' ? webkit : chromium;
 
 const browser = await engine.launch();
@@ -29,6 +29,13 @@ await page.click('.tabs button:has-text("Settings")');
 const folderValue = await page.inputValue('.group input[placeholder="/path/to/your/notes"]');
 if (!folderValue.includes('tangle-e2e')) await fail(`folder draft wrong: '${folderValue}'`);
 
+await page.fill('input[placeholder="provider default"]', '256');
+await page.locator('select').filter({ has: page.locator('option[value="max_completion_tokens"]') }).selectOption('max_completion_tokens');
+await page.click('button.send:has-text("save")');
+await page.waitForSelector('span.saved:has-text("saved ✓")');
+const persisted = await page.evaluate(async () => (await fetch('/api/settings')).json());
+if (persisted.chat.maxTokens !== 256 || persisted.chat.maxTokensField !== 'max_completion_tokens') await fail('token controls did not persist');
+// The settings contract is exercised without enabling a paid provider.
 // loom: sync, watch the DAG light up, run history appears
 await page.click('.tabs button:has-text("Loom")');
 await page.waitForSelector('.dag-svg svg', { timeout: 8000 }).catch(() => fail('mermaid svg missing'));

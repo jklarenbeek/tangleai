@@ -303,12 +303,12 @@ export async function driveAcyclicFixture(
       try {
         const result = await handlers[kind](job.payload, {
           job,
-          checkpointsFor: (bound: unknown) => jobs.checkpointsFor(bound as never),
+          checkpoints: jobs.checkpointsFor(job),
           signal: new AbortController().signal,
         } as never);
-        await jobs.complete(job.id, `fixture-${round}`, result ?? null);
+        await jobs.complete(job.lease, result ?? null);
       } catch (error) {
-        await jobs.fail(job.id, `fixture-${round}`, error);
+        await jobs.fail(job.lease, error);
         clock.value += 300_000;
       }
     }

@@ -13,7 +13,8 @@
  * the queue retries it.
  */
 
-import { compileDag } from '@jarenjs/flow';
+import { compileDag, FlowRuntimeError } from '@jarenjs/flow';
+import { equalsJson } from '@jarenjs/core/object';
 
 import { MasInfrastructureCrash, MasNodeFailure, type MasRuntimeObserver } from './node-lifecycle.ts';
 import { invocationPathOf } from './runtime-state.ts';
@@ -27,6 +28,8 @@ export interface RegionCheckpoints {
 
 export interface DagRegionRun {
   document: unknown;
+  taskVersion: string;
+  executableRevision: string;
   handlers: Record<string, (props: { with: unknown, input: unknown }, signal: AbortSignal) => Promise<unknown>>;
   scope: { input: unknown, nodes: Record<string, unknown> };
   segmentJobId: string;
@@ -41,21 +44,40 @@ export type DagRegionOutcome =
   | { ok: false, failure: { node: string, error: RuntimeError } };
 
 export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutcome> {
-  const pending = new Set<Promise<unknown>>();
-  const tracked: typeof run.handlers = {};
-  for (const [name, handler] of Object.entries(run.handlers)) {
-    tracked[name] = (props, signal) => {
-      const promise = handler(props, signal);
-      pending.add(promise);
-      promise.catch(() => undefined).finally(() => pending.delete(promise));
-      return promise;
-    };
-  }
-  const compiled = compileDag(run.document, { tasks: tracked, checkpoint: run.checkpoints });
+  const tasks = Object.fromEntries(Object.entries(run.handlers).map(([name, handler]) =>
+    [name, { run: handler, version: run.taskVersion }]));
+  // Store the suite's provenance beside each value in the existing namespaced
+  // checkpoint rows. A crash cannot publish a value without its identity.
+  const checkpoint = {
+    async load(id: string) {
+      const loaded = await run.checkpoints.load(id) as { values: Record<string, unknown> } | null;
+      if (loaded == null) return null;
+      let identity: unknown;
+      const values: Record<string, unknown> = {};
+      for (const [node, raw] of Object.entries(loaded.values)) {
+        const record = raw as { format?: string, identity?: unknown, value?: unknown } | null;
+        if (record?.format !== 'tangle-mas-checkpoint/1' || !Object.hasOwn(record, 'value')) {
+          throw new FlowRuntimeError('JF2013', 'the region checkpoint has no verified provenance');
+        }
+        if (identity !== undefined && !equalsJson(identity, record.identity)) {
+          throw new FlowRuntimeError('JF2013', 'the region checkpoint mixes execution identities');
+        }
+        identity = record.identity;
+        values[node] = record.value;
+      }
+      return { identity, values };
+    },
+    save: (id: string, node: string, value: unknown, identity: unknown) =>
+      run.checkpoints.save(id, node, { format: 'tangle-mas-checkpoint/1', identity, value }),
+    complete: (id: string, value: unknown, identity: unknown) =>
+      run.checkpoints.complete(id, { format: 'tangle-mas-checkpoint/1', identity, value }),
+  };
+  const compiled = compileDag(run.document, { tasks, checkpoint, revision: run.executableRevision });
   try {
     const exposed = await compiled.run(run.scope, {
       runId: run.segmentJobId,
       signal: run.signal,
+      drainOnAbort: true,
       onNode: (record) => {
         if (record.status === 'restored' && record.id.startsWith('t:')) {
           run.observer?.onNodeRestored?.(invocationPathOf({
@@ -69,12 +91,12 @@ export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutc
     }) as Record<string, Record<string, unknown>>;
     return { ok: true, exposed };
   } catch (error) {
-    // Every started lifecycle settles its own attempt before the region reports.
-    await Promise.allSettled([...pending]);
+    // drainOnAbort ensures every started lifecycle settles before this branch.
     const flowError = error as { code?: string, nodeId?: string, cause?: unknown };
     const cause = flowError.cause;
     if (cause instanceof MasInfrastructureCrash) throw cause;
     if (error instanceof MasInfrastructureCrash) throw error;
+    if (flowError.code === 'JF2009') throw new MasInfrastructureCrash((error as Error).message);
     if (cause instanceof MasNodeFailure) {
       return {
         ok: false,
@@ -93,7 +115,7 @@ export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutc
       failure: {
         node: String(node),
         error: {
-          code: 'TMAS2004',
+          code: flowError.code === 'JF2013' ? 'TMAS2002' : 'TMAS2004',
           detail: (error as Error).message ?? String(error),
           cause: flowError.code === undefined ? null : { code: flowError.code, docPath: '', message: (error as Error).message ?? '' },
         },

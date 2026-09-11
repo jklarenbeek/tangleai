@@ -1,6 +1,6 @@
 /**
  * The Tangle memory record, as plain JSON Schema — memflow's `MemoryUnit`
- * re-modelled to be a strict SUPERSET of the @jarenjs/ai ledger memory.
+ * aligned with the text-evidence specialization of the @jarenjs/ai ledger memory.
  *
  * The alignment is the design decision that matters. A jarenjs ledger
  * memory is `{ id, text, evidence, tags, at }` with evidence REQUIRED —
@@ -39,7 +39,7 @@
  * one, and the schema tests are what keep them honest with each other.
  */
 
-/** A JSON Schema document as a plain map: this package is dependency-free
+/** A JSON Schema document as a plain map: this module has no runtime imports
  * and does not name `@jarenjs/validate`'s `JSONSchema` type. The
  * validator's boundary methods take `JSONSchemaLike` (`JSONSchema |
  * Record<string, unknown>`), so a plain map crosses without a cast. */
@@ -147,7 +147,7 @@ export interface LedgerMemoryFields {
  * `@jarenjs/ai/schemas/ledger` — restated because this package is
  * dependency-free; `test/memory/ledger-mirror.test.ts` pins the two
  * against each other at compile time, in both directions. */
-export type LedgerMemory = LedgerMemoryFields & EmbeddingPair;
+export type LedgerMemory = import('@jarenjs/ai/schemas/ledger').LedgerMemory;
 
 export const MEMORY_RELATION_SCHEMA: JsonSchema = {
   $id: 'https://tangleai.dev/schemas/memory-relation.json',

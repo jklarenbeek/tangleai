@@ -53,28 +53,36 @@ export interface RateCard {
 
 
 /**
+ * Schema constraints this type cannot express: if={"properties":{"kind":{"const":"embedding"}}}, then={"required":["dims"]}
+ */
+export type CandidatePart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"kind":{"const":"chat"}}}, then={"not":{"required":["dims"]}}
+ */
+export type CandidatePart2 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"provider":{"const":"builtin"}}}, then={"properties":{"kind":{"const":"embedding"},"baseUrl":{"type":"null"},"credentialSlot":{"type":"null"}}}
+ */
+export type CandidatePart3 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"provider":{"const":"custom"}}}, then={"properties":{"baseUrl":{"$ref":"#/$defs/safeBaseUrl"}}}
+ */
+export type CandidatePart4 = unknown;
+
+/**
  * A credential-free model candidate. `credentialSlot` names a slot; the value never appears. `builtin` is only an embedding provider (the offline reference embedder), and a `custom` provider must declare its base because no default exists for it.
  */
-export interface Candidate {
-  id: Name;
-  kind: "chat" | "embedding";
-  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  model: string;
-  baseUrl: SafeBaseUrl | null;
-  credentialSlot: SlotName | null;
-  features: Array<Name>;
+export type Candidate = CandidatePart1 & CandidatePart2 & CandidatePart3 & CandidatePart4 & { id: Name; kind: "chat" | "embedding"; provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin"; model: string; baseUrl: SafeBaseUrl | null; credentialSlot: SlotName | null; features: Array<Name>; dims?: number; rateCard: RateCard | null; limitations?: string; };
+
+export interface CapabilityCandidatesItem {
+  candidate: Name;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
-  dims?: number;
-  rateCard: RateCard | null;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  limitations?: string;
+  priority: number;
 }
 
 
@@ -87,7 +95,7 @@ export interface Capability {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  candidates: Array<{ candidate: Name; priority: number; }>;
+  candidates: Array<CapabilityCandidatesItem>;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -130,6 +138,33 @@ export interface ComponentRef {
 }
 
 
+export interface InferencePresetRetryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baseMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxMs: number;
+}
+
+
+export interface InferencePresetReasoningOneOf2 {
+  effort?: "none" | "minimal" | "low" | "medium" | "high";
+  enabled?: boolean;
+  exclude?: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxTokens?: number;
+}
+
+
 export interface InferencePreset {
   id: Name;
   /**
@@ -140,8 +175,9 @@ export interface InferencePreset {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   maxTokens: number | null;
-  retry: null | { attempts: number; baseMs: number; maxMs: number; };
-  reasoning: null | { effort?: "none" | "minimal" | "low" | "medium" | "high"; enabled?: boolean; exclude?: boolean; maxTokens?: number; };
+  maxTokensField?: "max_tokens" | "max_completion_tokens";
+  retry: null | InferencePresetRetryOneOf2;
+  reasoning: null | InferencePresetReasoningOneOf2;
 }
 
 
@@ -312,6 +348,25 @@ export interface CredentialSlotStatus {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HostManifestProvidersItemModelsOneOf1Item = string;
+
+export interface HostManifestEmbeddingItem {
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin";
+  base: SafeBaseUrl2 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number | null;
+}
+
+
 export interface BudgetCeilings {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
@@ -332,21 +387,38 @@ export interface BudgetCeilings {
 }
 
 
+export interface HostManifestObservationOneOf2 {
+  kind: "declared" | "probed";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  at: string | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failures: number;
+}
+
+
 /**
  * The credential-free host facts pure resolution consumes. Endpoints are suite-normalized bases; models/features are declared or probed; `observation` dates a LIVE refresh and stays null for synthetic/keyless manifests, which must be clock-free.
  */
 export interface HostManifest {
   sourceClass: "desktop-settings" | "environment" | "synthetic" | "scripted";
   credentialSlots: Array<CredentialSlotStatus>;
-  providers: Array<{ provider: "openrouter" | "ollama" | "lmstudio" | "custom"; base: SafeBaseUrl2; models: Array<string> | null; features: Array<Name2>; }>;
-  embedding: Array<{ provider: "openrouter" | "ollama" | "lmstudio" | "custom" | "builtin"; base: SafeBaseUrl2 | null; model: string; dims: number | null; }>;
+  providers: Array<{ provider: "openrouter" | "ollama" | "lmstudio" | "custom"; base: SafeBaseUrl2; models: Array<HostManifestProvidersItemModelsOneOf1Item> | null; features: Array<Name2>; }>;
+  embedding: Array<HostManifestEmbeddingItem>;
   /**
    * The compiled toolbox manifest — `createToolbox().list()` with each input schema's canonical revision.
    */
   tools: Array<{ name: ToolName2; description: string; inputSchemaRevision: Sha2562; }>;
   components: Array<{ id: Name2; revision: Sha2562; }>;
   budget: BudgetCeilings;
-  observation: null | { kind: "declared" | "probed"; at: string | null; calls: number; failures: number; };
+  observation: null | HostManifestObservationOneOf2;
 }
 
 
@@ -365,30 +437,30 @@ export interface RoleOverride {
 }
 
 
-/**
- * The generated projection of pre-profile desktop/environment settings for ONE wire. `unconfigured` is the only state eligible for built-in/grounded fallback; `incomplete` names what was requested and resolves to an issue, never to a silent substitute. `configured-unproven` records a wire that was configured but whose width no work of this run ever observed: the stack claims NO embedding identity rather than guessing one.
- */
-export type LegacyWireState = { state: "unconfigured"; } | { state: "configured"; provider: "openrouter" | "ollama" | "lmstudio" | "custom"; baseUrl: SafeBaseUrl2 | null; model: string; credentialSlot: Name2 | null; } | { state: "incomplete"; requested: { provider?: string | null; baseUrl?: string | null; model?: string | null; }; missing: Array<string>; } | { state: "configured-unproven"; provider: "openrouter" | "ollama" | "lmstudio" | "custom"; baseUrl: SafeBaseUrl2 | null; model: string; credentialSlot: Name2 | null; };
-
-export type ComponentRevision = null | { id: Name2; revision: Sha2562; };
-
-export interface ContentRevision {
-  id: Name2;
-  revision: Sha2562;
+export interface InferenceControlsRetryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baseMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxMs: number;
 }
 
 
-/**
- * Exactly what was asked for: a named profile, a capability tag, or the generated legacy projection of pre-profile settings.
- */
-export type ProfileRequest = { kind: "profile"; profile: Name2; overrides: null | { [key: string]: RoleOverride; }; } | { kind: "tag"; tag: Name2; overrides: null | { [key: string]: RoleOverride; }; } | { kind: "legacy"; chat: LegacyWireState; embed: LegacyWireState; components: { policy: ComponentRevision; ranker: ComponentRevision; }; chatPrompt: ContentRevision | null; };
-
-/**
- * Requested set and the effective intersection with the host allowlist. A missing required tool refuses before an identity exists, so an identity's manifest never carries one.
- */
-export interface ToolManifest {
-  requested: Array<ToolName2>;
-  effective: Array<{ name: ToolName2; inputSchemaRevision: Sha2562; }>;
+export interface InferenceControlsReasoningOneOf2 {
+  effort?: "none" | "minimal" | "low" | "medium" | "high";
+  enabled?: boolean;
+  exclude?: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxTokens?: number;
 }
 
 
@@ -401,8 +473,107 @@ export interface InferenceControls {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   maxTokens: number | null;
-  retry: null | { attempts: number; baseMs: number; maxMs: number; };
-  reasoning: null | { effort?: "none" | "minimal" | "low" | "medium" | "high"; enabled?: boolean; exclude?: boolean; maxTokens?: number; };
+  retry: null | InferenceControlsRetryOneOf2;
+  reasoning: null | InferenceControlsReasoningOneOf2;
+  maxTokensField?: "max_tokens" | "max_completion_tokens";
+}
+
+
+export interface LegacyWireStateOneOf2 {
+  state: "configured";
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
+  baseUrl: SafeBaseUrl2 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  credentialSlot: Name2 | null;
+  inference?: InferenceControls;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LegacyWireStateOneOf3MissingItem = string;
+
+export interface LegacyWireStateOneOf3 {
+  state: "incomplete";
+  requested: { provider?: string | null; baseUrl?: string | null; model?: string | null; };
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  missing: Array<LegacyWireStateOneOf3MissingItem>;
+}
+
+
+export interface LegacyWireStateOneOf4 {
+  state: "configured-unproven";
+  provider: "openrouter" | "ollama" | "lmstudio" | "custom";
+  baseUrl: SafeBaseUrl2 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  credentialSlot: Name2 | null;
+}
+
+
+/**
+ * The generated projection of pre-profile desktop/environment settings for ONE wire. `unconfigured` is the only state eligible for built-in/grounded fallback; `incomplete` names what was requested and resolves to an issue, never to a silent substitute. `configured-unproven` records a wire that was configured but whose width no work of this run ever observed: the stack claims NO embedding identity rather than guessing one.
+ */
+export type LegacyWireState = { state: "unconfigured"; } | LegacyWireStateOneOf2 | LegacyWireStateOneOf3 | LegacyWireStateOneOf4;
+
+/**
+ * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
+ */
+export interface ProfileRequestOneOf1OverridesOneOf2 {
+  [key: string]: RoleOverride;
+}
+
+
+/**
+ * Schema constraints this type cannot express: propertyNames={"pattern":"^[a-z0-9]+(-[a-z0-9]+)*$"}
+ */
+export interface ProfileRequestOneOf2OverridesOneOf2 {
+  [key: string]: RoleOverride;
+}
+
+
+export type ComponentRevision = null | { id: Name2; revision: Sha2562; };
+
+export interface ContentRevision {
+  id: Name2;
+  revision: Sha2562;
+}
+
+
+export interface ProfileRequestOneOf3 {
+  kind: "legacy";
+  chat: LegacyWireState;
+  embed: LegacyWireState;
+  /**
+   * The component references the host product genuinely runs for a legacy request — the shipped policy pipeline and ranker — recorded by the adapter that generated the projection, never guessed.
+   */
+  components: { policy: ComponentRevision; ranker: ComponentRevision; };
+  /**
+   * The versioned chat template the legacy host actually uses, as a content revision; null when no chat surface exists.
+   */
+  chatPrompt: ContentRevision | null;
+}
+
+
+/**
+ * Exactly what was asked for: a named profile, a capability tag, or the generated legacy projection of pre-profile settings.
+ */
+export type ProfileRequest = { kind: "profile"; profile: Name2; overrides: null | ProfileRequestOneOf1OverridesOneOf2; } | { kind: "tag"; tag: Name2; overrides: null | ProfileRequestOneOf2OverridesOneOf2; } | ProfileRequestOneOf3;
+
+/**
+ * Requested set and the effective intersection with the host allowlist. A missing required tool refuses before an identity exists, so an identity's manifest never carries one.
+ */
+export interface ToolManifest {
+  requested: Array<ToolName2>;
+  effective: Array<{ name: ToolName2; inputSchemaRevision: Sha2562; }>;
 }
 
 
@@ -464,10 +635,29 @@ export interface RunIdentity {
 }
 
 
+export interface RowIdentityRefOneOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rowId: string;
+  identityStatus: "run";
+  identityId: Sha2562;
+}
+
+
+export interface RowIdentityRefOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rowId: string;
+  identityStatus: "not-run" | "legacy-unrecorded";
+}
+
+
 /**
  * How a result row refers to the identity table. `run` rows name an identity that exists; `not-run` rows are analytic (a ceiling, a census) and cannot pretend to a provider; `legacy-unrecorded` rows keep historic results whose stack was never captured — honest absence, never a backfilled guess.
  */
-export type RowIdentityRef = { rowId: string; identityStatus: "run"; identityId: Sha2562; } | { rowId: string; identityStatus: "not-run" | "legacy-unrecorded"; };
+export type RowIdentityRef = RowIdentityRefOneOf1 | RowIdentityRefOneOf2;
 
 /**
  * The identity table plus the rows that refer to it — the shape every identity-bearing report and store carries. The `$query` assertions bind at validation time: identity ids are unique, row ids are unique, and every `run` row resolves to exactly one identity in the table.
@@ -479,8 +669,17 @@ export interface IdentityEnvelope {
 }
 
 
+export interface ResolutionOneOf2 {
+  ok: false;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<Issue>;
+}
+
+
 /**
  * The pure resolver's only two outcomes. Refusal is a value: sorted stable issues with document paths, no secret in any detail.
  */
-export type Resolution = { ok: true; identity: RunIdentity; } | { ok: false; issues: Array<Issue>; };
+export type Resolution = { ok: true; identity: RunIdentity; } | ResolutionOneOf2;
 

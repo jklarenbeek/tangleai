@@ -13,7 +13,7 @@ jobs:
           # benchmark/locomo is the LoCoMo dataset (CC BY-NC 4.0, never vendored).
           # Every instrument degrades to a stated skip without it; fetching it here
           # is what keeps the dataset-contract suite honest about upstream drift.
-          submodules: recursive
+          submodules: true
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

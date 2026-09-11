@@ -40,7 +40,6 @@ await cp(join(here, 'static'), dist, { recursive: true });
 
 const vendor = [
   'node_modules/@jarenjs/mermaid/styles/mermaid.css',
-  'node_modules/@jarenjs/charts/styles/charts.css',
 ];
 let css = '';
 for (const path of vendor) css += await readFile(join(repo, path), 'utf8');

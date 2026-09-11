@@ -129,9 +129,17 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
     },
 
     async listRuns(limit = 50) {
-      const rows = asRows(await runs.execute<RunRecord>({ $for: { r: '$[*]' }, $return: '$r' }));
-      rows.sort((a, b) => (a.startedAt < b.startedAt ? 1 : a.startedAt > b.startedAt ? -1 : 0));
-      return rows.slice(0, limit).map(viewOf);
+      if (!Number.isSafeInteger(limit) || limit < 0) throw new TypeError('run limit must be a non-negative integer');
+      if (limit === 0) return [];
+      const rows: RunView[] = [];
+      const cursor = runs.query<RunRecord>({
+        $for: { r: '$[*]' }, $orderby: { $key: '$r.startedAt', $dir: 'desc' }, $return: '$r',
+      });
+      for await (const row of cursor) {
+        rows.push(viewOf(row));
+        if (rows.length === limit) break;
+      }
+      return rows;
     },
 
     async getRun(id) {
@@ -139,10 +147,10 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
       if (run === undefined) return undefined;
       const rows = asRows(await events.execute<RunEvent>({
         $for: { e: '$[*]' },
-        $where: { $eq: ['$e.runId', id] },
+        $where: { $eq: ['$e.runId', { $const: id }] },
+        $orderby: '$e.seq',
         $return: '$e',
       }));
-      rows.sort((a, b) => a.seq - b.seq);
       return { run: viewOf(run), events: rows };
     },
   };

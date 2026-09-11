@@ -110,8 +110,8 @@ describe('a guard evaluation error is a control failure with its Jaren code', ()
       const kind = Object.keys(handlers)[0];
       const job = await jobs.claim({ kinds: [kind], owner: 'w', leaseMs: 60_000 });
       assert.ok(job !== undefined);
-      await handlers[kind](job.payload, { job, checkpointsFor: (bound: unknown) => jobs.checkpointsFor(bound as never), signal: new AbortController().signal } as never);
-      await jobs.complete(job.id, 'w', null);
+      await handlers[kind](job.payload, { job, checkpoints: jobs.checkpointsFor(job), signal: new AbortController().signal } as never);
+      await jobs.complete(job.lease, null);
 
       const run = await store.getRun('guard-error');
       assert.equal(run?.status, 'failed');

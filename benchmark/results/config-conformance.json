@@ -4,12 +4,12 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "455bc71c1ba5f09148dccb8fa594225bcc7d814a",
+    "head": "534657a166b2ba4c560abc42c1ae7fbc8f9aef20",
     "clean": false,
     "files": [
       {
         "path": "apps/desktop/src/ai-host.ts",
-        "sha256": "d25c32a12f781e71efb3db146a5cec1c285aae079ecdcebaf57fd58f0f447d6f"
+        "sha256": "42c90f8b53e18390998b2f2eb04d90db9f911aa4953d41452a353f15ee50edb4"
       },
       {
         "path": "apps/desktop/src/chat.ts",
@@ -17,7 +17,7 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "b8e5ac39a9229485886875524c582df213c5a27a392ae8557909c1e0efd0acaa"
+        "sha256": "b38dbe741b89f26290ef57e9d859a4a999d9654a29b0a01f14058061251c8079"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
@@ -25,7 +25,7 @@
       },
       {
         "path": "apps/desktop/src/settings.ts",
-        "sha256": "7abe7503858ccd096505e7856132338c49e4654ecd08ff0b42e9d8c8d09e3ee6"
+        "sha256": "5b72a7b73397dee64d3ada8afc4646a7ecf3f78fa63f9d07b366660231f56673"
       },
       {
         "path": "benchmark/config-conformance.ts",
@@ -41,7 +41,7 @@
       },
       {
         "path": "benchmark/lib/config-conformance.types.ts",
-        "sha256": "faa88833f6f877acd68059a0d6f6e0e91f6fa0ad523db28f1c5cc3e34b4d82f6"
+        "sha256": "5199a6a3e25430daa73acfb3188dd3c43c4881ea4ced9c88d1becde478642b5c"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -53,7 +53,7 @@
       },
       {
         "path": "benchmark/results/locomo-policy.json",
-        "sha256": "68a2c5bb650ceb9202c6c382f5d5e46bf52c691fc133eb32c147c661f24dea7d"
+        "sha256": "0b334de16e01acd74b351dbafbe8f3f2c6fc3c49c40d96a9f9b039f59e5df261"
       },
       {
         "path": "benchmark/results/locomo-qa-live.json",
@@ -73,15 +73,15 @@
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
-        "sha256": "2d4544ad999098a75e174aba1d935f4133cc61efe2333e215cf925e50613160d"
+        "sha256": "abda220642d3bc4395e941719620fbc0fc6b7552d5beef8e4e52059ba7662ab3"
       },
       {
         "path": "packages/config/schemas/run-identity.schema.json",
-        "sha256": "a7fd6ff1496d829364a65c286ee3343a25dabe5fc0cb14a76aa09898908ce89a"
+        "sha256": "aa4523da61b3f88f03b4c9d204292aae2698f3dbbaf4fe98e1303f20fb2c3f56"
       },
       {
         "path": "packages/config/src/contracts.gen.ts",
-        "sha256": "10bddbd2c3e970db68aefb5d28af73091eebc83b707549c9821906419b728960"
+        "sha256": "711abfd3e117bd9c55842fc9e78cb9b20cd7846548d7c99b8285e24cf0f63063"
       },
       {
         "path": "packages/config/src/identity.ts",
@@ -97,7 +97,7 @@
       },
       {
         "path": "packages/config/src/resolve.ts",
-        "sha256": "b86a6e0ba5bf12849650665e16cd148446a72d5266778a74a3b461427fc73aff"
+        "sha256": "c015aba2120284396c55f1fe2fcb970d933ff38e9021c2671f45a40862440b73"
       },
       {
         "path": "packages/config/src/schema.ts",
@@ -113,72 +113,72 @@
       },
       {
         "path": "packages/store/src/runs.ts",
-        "sha256": "6b45f4d25e791e618bedbd4f76f3f7be04421b130ca0e594679f5686347edc74"
+        "sha256": "e82f9952a8d438f07369d56d5c3934ddd13ef1d1a9ff4c17d53a6699b41368c4"
       },
       {
         "path": "test/fixtures/config-conformance.json",
         "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
       }
     ],
-    "sha256": "74663cc446559764de85356c44ca9d248f06de14b8db765b6413ea3801b7bbe5"
+    "sha256": "b9acf570056c238b264458fca5144ef3d0effee89d0677186232df351c26a1e4"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/ai",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/app",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.56.0"
+        "version": "0.83.2"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.56.0"
+        "version": "0.83.2"
       }
     ]
   },
@@ -286,7 +286,7 @@
     ],
     "desktopContract": {
       "operations": 21,
-      "revision": "b55c9f596adc7d09d5661201df69729d533d3e9b9fd8d7efb0f0d7f52b186e11"
+      "revision": "a8549ef0e08a251c23a0cbfe0927b7de3c76fc52ce99f57a58970c2b7fb28495"
     },
     "summary": {
       "hostInputs": 2,
@@ -924,5 +924,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "673993d3ec13f199f3d6d4fdff66c2b0d2d3878bb8293360593461081df65b7f"
+  "reportId": "1e0c736ae07a88a2ed6303beb4fc70d527aca3549c127757b6f753f418cd0e37"
 }

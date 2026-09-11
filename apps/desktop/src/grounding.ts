@@ -20,7 +20,7 @@
  * one.
  */
 
-import { createStructuredOutput } from '@jarenjs/ai';
+import { createStructuredOutput, validateClaimEvidence } from '@jarenjs/ai';
 import type { Vector } from '@jarenjs/core/vector';
 import { estimateTokens } from '@tangleai/core/tokens';
 import {
@@ -104,25 +104,31 @@ export function renderGroundedAnswer(answer: GroundedAnswer): string {
  * a domain oracle the runtime does not have, and no claim of it is made.
  */
 export function suppliedReferenceGate(listed: ReadonlySet<string>): (value: unknown) => true | { valid: false, errors: Array<{ instancePath: string, keyword: string, message: string }> } {
+  const artifacts = [...listed].map((id) => ({ id, kind: 'prompt-evidence' }));
+  const evidence = [...listed].map((id) => ({ id, artifact: id }));
   return (value) => {
     const answer = value as GroundedAnswer;
     if (answer.disposition !== 'answer') return true;
-    const errors: Array<{ instancePath: string, keyword: string, message: string }> = [];
-    const ids = new Set<string>();
-    answer.claims.forEach((claim, claimIndex) => {
-      if (ids.has(claim.id)) {
-        errors.push({ instancePath: `/claims/${claimIndex}/id`, keyword: 'duplicate-claim-id', message: `the claim id "${claim.id}" repeats; every claim carries its own id` });
+    // Keep the measured answer schema and its allowance for uncited claims.
+    // Jaren owns referential integrity; Tangle's scorer owns semantic support.
+    const outcome = validateClaimEvidence({
+      version: 1, artifacts, evidence, visibleEvidence: [...listed],
+      claims: answer.claims.map((claim) => ({
+        id: claim.id, text: claim.text, critical: false,
+        status: claim.citations.length === 0 ? 'unresolved' : 'supported',
+        evidence: [...new Set(claim.citations)],
+      })),
+    }, { artifacts });
+    const errors = outcome.errors.map((error: { instancePath?: string, code?: string, message: string }) => {
+      const path = error.instancePath ?? '';
+      const reference = /^\/claims\/(\d+)\/evidence\/(\d+)$/.exec(path);
+      let instancePath = path;
+      if (reference !== null) {
+        const claim = answer.claims[Number(reference[1])];
+        const id = [...new Set(claim.citations)][Number(reference[2])];
+        instancePath = `/claims/${reference[1]}/citations/${claim.citations.indexOf(id)}`;
       }
-      ids.add(claim.id);
-      claim.citations.forEach((citation, citationIndex) => {
-        if (!listed.has(citation)) {
-          errors.push({
-            instancePath: `/claims/${claimIndex}/citations/${citationIndex}`,
-            keyword: 'unknown-citation',
-            message: `"${citation}" is not an id listed in this request's evidence; cite only listed ids, or drop the citation`,
-          });
-        }
-      });
+      return { instancePath, keyword: error.code === 'EVIDENCE_DUPLICATE' ? 'duplicate-claim-id' : 'unknown-citation', message: error.message };
     });
     return errors.length === 0 ? true : { valid: false, errors };
   };

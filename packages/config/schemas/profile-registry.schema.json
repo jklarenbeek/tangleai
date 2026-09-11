@@ -167,6 +167,7 @@
         "id": { "$ref": "#/$defs/name" },
         "temperature": { "type": ["number", "null"], "minimum": 0, "maximum": 2 },
         "maxTokens": { "type": ["integer", "null"], "minimum": 1 },
+        "maxTokensField": { "enum": ["max_tokens", "max_completion_tokens"] },
         "retry": {
           "oneOf": [
             { "type": "null" },

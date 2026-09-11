@@ -8,7 +8,7 @@
  * worker that does not register it. The worker is
  * `store.jobs.createWorker`; the checkpoint store every region hands
  * `compileDag` is a thin NAMESPACE adaptation over the suite's
- * `context.checkpointsFor(context.job)` — load filters by
+ * `context.checkpoints` — load filters by
  * `<region>/<branch>/<iteration>/`, save prefixes the lowered node id
  * and delegates (keeping the suite's lease guard and JSON validation),
  * a region result is a prefixed delegated save, and only a terminal
@@ -34,6 +34,7 @@ import {
 } from '@tangleai/mas';
 
 import type { TangleDb } from './db.ts';
+import type { JobWorker, JobWorkerOptions } from '@jarenjs/db';
 
 export interface MasSegmentPayload {
   runId: string;
@@ -137,24 +138,13 @@ export interface MasSegmentContext {
 
 export type MasSegmentExecutor = (context: MasSegmentContext) => Promise<void>;
 
-export interface MasWorkerOptions {
+export interface MasWorkerOptions extends Omit<JobWorkerOptions, 'handlers'> {
   /** The executable revisions this worker can run — its registered kinds. */
   executableRevisions: string[];
   execute: MasSegmentExecutor;
-  concurrency?: number;
-  pollInterval?: number;
-  leaseMs?: number;
-  owner?: string;
-  backoffBase?: number;
-  backoffCap?: number;
-  stopGraceMs?: number;
 }
 
-export interface MasWorker {
-  start(): MasWorker;
-  stop(options?: { graceMs?: number }): Promise<{ drained: boolean, inFlight: number }>;
-  stats(): { claims: number, completions: number, failures: number, polls: number, wakes: number, claimErrors: number, inFlight: number };
-}
+export type MasWorker = JobWorker;
 
 /** A refusal the queue records as the job's failure value. */
 export class MasSegmentRefusal extends Error {
@@ -209,11 +199,7 @@ export async function ensurePendingMasSegments(db: TangleDb, masStore: MasStore)
   return counts;
 }
 
-export interface MasHandlerContext {
-  job: { id: string };
-  checkpointsFor: (job: unknown) => SuiteCheckpoints;
-  signal: AbortSignal;
-}
+export type MasHandlerContext = Pick<Parameters<JobWorkerOptions['handlers'][string]>[1], 'job' | 'checkpoints' | 'signal'>;
 
 export type MasSegmentHandlers = Record<string, (payload: unknown, context: MasHandlerContext) => Promise<unknown>>;
 
@@ -244,7 +230,7 @@ export function createMasSegmentHandlers(masStore: MasStore, options: Pick<MasWo
         || run.executableRevision !== executableRevision) {
         throw new MasSegmentRefusal(masIssue('TMAS2002', '/executableRevision', 'the run identities do not agree with the queued segment; resuming under different document bytes is undefined and refused before any checkpoint loads'));
       }
-      const suite = context.checkpointsFor(context.job);
+      const suite = context.checkpoints;
 
       // A committed terminal outcome whose job completion was lost: close
       // the segment without executing a region.
@@ -284,14 +270,6 @@ export function createMasSegmentWorker(db: TangleDb, masStore: MasStore, options
   const owner = options.owner ?? 'mas-worker';
   const handlers = createMasSegmentHandlers(masStore, { executableRevisions: options.executableRevisions, execute: options.execute, owner });
 
-  return jobs.createWorker({
-    handlers: handlers as never,
-    ...(options.concurrency !== undefined ? { concurrency: options.concurrency } : {}),
-    ...(options.pollInterval !== undefined ? { pollInterval: options.pollInterval } : {}),
-    ...(options.leaseMs !== undefined ? { leaseMs: options.leaseMs } : {}),
-    owner,
-    ...(options.backoffBase !== undefined ? { backoffBase: options.backoffBase } : {}),
-    ...(options.backoffCap !== undefined ? { backoffCap: options.backoffCap } : {}),
-    ...(options.stopGraceMs !== undefined ? { stopGraceMs: options.stopGraceMs } : {}),
-  }) as MasWorker;
+  const { executableRevisions: _revisions, execute: _execute, ...workerOptions } = options;
+  return jobs.createWorker({ ...workerOptions, handlers, owner });
 }

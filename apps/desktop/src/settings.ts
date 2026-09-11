@@ -42,6 +42,8 @@ export interface ChatSettings {
   baseUrl: string | null;
   model: string | null;
   apiKey: string | null;
+  maxTokens?: number | null;
+  maxTokensField?: 'max_tokens' | 'max_completion_tokens';
 }
 
 export interface EmbedSettings {
@@ -330,5 +332,7 @@ export function chatClientFor(
     retry: options.retry,
     reasoning: options.reasoning,
     cache: options.cache,
+    maxTokens: chat.maxTokens ?? undefined,
+    maxTokensField: chat.maxTokensField,
   });
 }

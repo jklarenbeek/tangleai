@@ -88,3 +88,16 @@ code { font-family: var(--mono); font-size: .9em; background: var(--panel-2); pa
 
 .footer { text-align: center; color: var(--dim); font-size: .85rem; margin-top: 2rem; }
 @media (max-width: 640px) { .hero h1 { font-size: 1.7rem; } .panel { padding: 1.2rem; } }
+
+.benchmark-table { overflow-x: auto; margin: 1rem 0; }
+.benchmark-table table { border-collapse: collapse; width: 100%; text-align: left; }
+.benchmark-table th, .benchmark-table td { padding: .65rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.integration h3 { margin-top: 1.4rem; }
+.integration .links { gap: 1rem; flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .ask-input { min-width: 0; width: 0; }
+  .hit { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+  .hit-text { min-width: 0; overflow-wrap: anywhere; }
+  .hit-evidence { grid-column: 2; white-space: normal; overflow-wrap: anywhere; }
+  .columns { grid-template-columns: minmax(0, 1fr); }
+}

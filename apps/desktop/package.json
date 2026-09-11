@@ -17,13 +17,16 @@
     "@tangleai/pipeline": "^0.1.0",
     "@tangleai/search": "^0.1.0",
     "@tangleai/store": "^0.1.0",
-    "@jarenjs/ai": "^0.56.0",
-    "@jarenjs/app": "^0.56.0",
-    "@jarenjs/charts": "^0.56.0",
-    "@jarenjs/contract": "^0.56.0",
-    "@jarenjs/json": "^0.56.0",
-    "@jarenjs/md": "^0.56.0",
-    "@jarenjs/mermaid": "^0.56.0",
-    "@jarenjs/view": "^0.56.0"
+    "@jarenjs/ai": "0.83.2",
+    "@jarenjs/app": "0.83.2",
+    "@jarenjs/charts": "0.83.2",
+    "@jarenjs/contract": "0.83.2",
+    "@jarenjs/json": "0.83.2",
+    "@jarenjs/md": "0.83.2",
+    "@jarenjs/mermaid": "0.83.2",
+    "@jarenjs/view": "0.83.2",
+    "@jarenjs/core": "0.83.2",
+    "@jarenjs/validate": "0.83.2",
+    "@tangleai/config": "0.1.0"
   }
 }

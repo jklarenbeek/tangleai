@@ -1,8 +1,7 @@
 /**
  * The app document's state and actions — pure JSON, no host code.
  *
- * Actions stay simple on purpose: every transition is an unconditional
- * patch; branching on server outcomes happens in the effects (host JS),
+ * Transitions use the suite query language and JSON patches; branching on server outcomes happens in the effects (host JS),
  * which dispatch a different action for ok and for error. The document
  * never needs to express a conditional it cannot see.
  */
@@ -123,7 +122,13 @@ export const ACTIONS: Record<string, any> = {
   },
 
   // -- loom (DAG, runs, sync) ----------------------------------------------
-  'loom/live': { patch: [{ op: 'replace', path: '/loom/live', value: '$payload' }] },
+  // A delayed stream frame must not replace a newer snapshot read after sync.
+  'loom/live': { $if: [
+    { $ge: ['$payload.seq', '$.loom.live.seq'] },
+    { patch: [{ op: 'replace', path: '/loom/live', value: '$payload' }] },
+  ] },
+  'loom/snapshot': { patch: [{ op: 'replace', path: '/loom/live', value: '$payload' }] },
+  'loom/refresh': { effects: [invoke('dag.live', {}, 'loom/live', 'noop')] },
   'runs/refresh': {
     effects: [
       invoke('runs.list', {}, 'runs/done', 'noop'),
@@ -148,6 +153,7 @@ export const ACTIONS: Record<string, any> = {
   'sync/done': {
     patch: [{ op: 'replace', path: '/loom/syncing', value: false }],
     effects: [
+      invoke('dag.live', {}, 'loom/live', 'noop'),
       invoke('runs.list', {}, 'runs/done', 'noop'),
       invoke('status.get', {}, 'status/done', 'noop'),
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
@@ -272,6 +278,8 @@ export const ACTIONS: Record<string, any> = {
   'settings/chat-provider': { patch: [{ op: 'replace', path: '/settings/draft/chat/provider', value: '$event.value' }] },
   'settings/chat-baseurl': { patch: [{ op: 'replace', path: '/settings/draft/chat/baseUrl', value: '$event.value' }] },
   'settings/chat-model': { patch: [{ op: 'replace', path: '/settings/draft/chat/model', value: '$event.value' }] },
+  'settings/chat-max-tokens': { patch: [{ op: 'add', path: '/settings/draft/chat/maxTokens', value: '$event.value' }] },
+  'settings/chat-max-field': { patch: [{ op: 'add', path: '/settings/draft/chat/maxTokensField', value: '$event.value' }] },
   'settings/chat-apikey': { patch: [{ op: 'replace', path: '/settings/draft/chat/apiKey', value: '$event.value' }] },
   'settings/embed-provider': { patch: [{ op: 'replace', path: '/settings/draft/embed/provider', value: '$event.value' }] },
   'settings/embed-baseurl': { patch: [{ op: 'replace', path: '/settings/draft/embed/baseUrl', value: '$event.value' }] },

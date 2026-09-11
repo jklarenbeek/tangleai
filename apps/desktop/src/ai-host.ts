@@ -77,7 +77,7 @@ export async function chatPromptContentRevision(): Promise<ContentRevision> {
 
 type LegacyState =
   | { state: 'unconfigured' }
-  | { state: 'configured', provider: 'openrouter' | 'ollama' | 'lmstudio' | 'custom', baseUrl: string | null, model: string, credentialSlot: string | null }
+  | { state: 'configured', provider: 'openrouter' | 'ollama' | 'lmstudio' | 'custom', baseUrl: string | null, model: string, credentialSlot: string | null, inference?: RunIdentity['roles'][string]['inference'] }
   | { state: 'incomplete', requested: { provider?: string | null, baseUrl?: string | null, model?: string | null }, missing: string[] };
 
 /**
@@ -117,6 +117,12 @@ function legacyChatOf(settings: Settings): LegacyState {
     baseUrl: normalizedWireBase(chat.provider as string, chat.baseUrl),
     model: chat.model as string,
     credentialSlot: chat.apiKey !== null ? SLOT_NAMES.chat : null,
+    ...(chat.maxTokens == null && chat.maxTokensField === undefined ? {} : {
+      inference: {
+        temperature: null, maxTokens: chat.maxTokens ?? null,
+        maxTokensField: chat.maxTokensField ?? 'max_tokens', retry: null, reasoning: null,
+      },
+    }),
   };
 }
 

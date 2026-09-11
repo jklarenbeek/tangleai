@@ -11,6 +11,7 @@ export { createIdentityRepository } from './identities.ts';
 export type { IdentityRepository } from './identities.ts';
 export { createDocumentStore } from './document-store.ts';
 export { createMasStore } from './mas-store.ts';
+export { createDbLedgerStorage } from './ledger-storage.ts';
 export type { MasStoreOptions } from './mas-store.ts';
 export {
   enqueueMasSegment,

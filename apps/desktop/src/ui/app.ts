@@ -96,6 +96,13 @@ export function createTangleUi(options: TangleUiOptions): any {
     saveSettings: (props: any, dispatch: Dispatch): void => {
       const settings = {
         ...props.settings,
+        chat: {
+          ...props.settings.chat,
+          ...(props.settings.chat.maxTokens === undefined ? {} : {
+            maxTokens: props.settings.chat.maxTokens === '' || props.settings.chat.maxTokens === null
+              ? null : Number(props.settings.chat.maxTokens),
+          }),
+        },
         documents: {
           ...props.settings.documents,
           maxTokens: Number(props.settings.documents.maxTokens),
@@ -120,8 +127,8 @@ export function createTangleUi(options: TangleUiOptions): any {
     live: (_props: any, dispatch: Dispatch): (() => void) => {
       if (client.subscribe === undefined) return () => {};
       let lastStatus: string | null = null;
-      const push = (value: any): void => {
-        dispatch('loom/live', value);
+      const push = (value: any, snapshot = false): void => {
+        dispatch(snapshot ? 'loom/snapshot' : 'loom/live', value);
         const status = value?.run?.status ?? null;
         if (lastStatus === 'running' && (status === 'ok' || status === 'error')) {
           dispatch('runs/refresh');
@@ -129,7 +136,9 @@ export function createTangleUi(options: TangleUiOptions): any {
         lastStatus = status;
       };
       const subscription = client.subscribe('dag.live', {}, {
-        onSnapshot: (value: any) => push(value),
+        reconnect: { max: 3 },
+        onError: () => dispatch('loom/refresh'),
+        onSnapshot: (value: any) => push(value, true),
         onPatch: ({ patch }: any) => {
           const root = patch.find((op: any) => op.path === '');
           if (root !== undefined) push(root.value);

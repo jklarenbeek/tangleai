@@ -1,0 +1,61 @@
+{
+  "jaren": "0.83.2",
+  "measuredAt": "2026-09-11",
+  "history": [
+    {
+      "runtime": "node",
+      "version": "24.19.0",
+      "rows": 5000,
+      "limit": 50,
+      "previousP95Ms": 13.490498000000002,
+      "boundedP95Ms": 8.322200000000066,
+      "p95Speedup": 1.621025450001189
+    },
+    {
+      "runtime": "bun",
+      "version": "1.4.0",
+      "rows": 5000,
+      "limit": 50,
+      "previousP95Ms": 11.320639999999969,
+      "boundedP95Ms": 8.566778999999997,
+      "p95Speedup": 1.321458158311306
+    }
+  ],
+  "mas": {
+    "fixtures": 18,
+    "probes": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "durability": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "integrated": {
+      "notImplemented": 0,
+      "validated": 0,
+      "refusedAsRegistered": 7,
+      "runtimePass": 11
+    },
+    "calls": 12,
+    "toolCalls": 3,
+    "contextReads": 1,
+    "restores": 1
+  },
+  "config": {
+    "cases": 44,
+    "byFamily": {
+      "equivalence": 5,
+      "sensitivity": 12,
+      "refusal": 15,
+      "legacy": 12
+    },
+    "byStatus": {
+      "holds": 44,
+      "gap": 0,
+      "pending": 0
+    }
+  }
+}

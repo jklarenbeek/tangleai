@@ -30,7 +30,7 @@ import { compileJsonQuery } from '@jarenjs/json/query';
 
 import { compileEmbeddedSchema } from './schema.ts';
 import { interactionIdOf, invocationPathOf, semanticKeyOf } from './runtime-state.ts';
-import { nodeFeeds } from './lower.ts';
+import { nodeFeeds, masTaskVersionOf } from './lower.ts';
 import { createNodeLifecycle, MasInfrastructureCrash, type MasRuntimeObserver, type MasTaskHandlerBinding } from './node-lifecycle.ts';
 import { type MasToolBinding } from './tools.ts';
 import { executeDagRegion } from './dag-runtime.ts';
@@ -335,8 +335,12 @@ async function runDagRegion(
   const namespace = `${frame.keyPrefix}${region.id}//${frame.iteration}`;
   const outcome = await executeDagRegion({
     document: target.plan.documents[region.documentKey],
+    taskVersion: masTaskVersionOf(target.validated.registryRevision),
+    executableRevision: target.plan.executableRevision,
     handlers,
-    scope: { input: frame.input, nodes: frame.nodes },
+    // A resumed frame also holds this region's committed results. They are
+    // checkpoint outputs, not input to the region's original computation.
+    scope: { input: frame.input, nodes: Object.fromEntries(Object.entries(frame.nodes).filter(([id]) => !memberIds.has(id))) },
     segmentJobId: ctx.segmentJobId,
     checkpoints: ctx.checkpointsFor(namespace),
     signal: ctx.signal,

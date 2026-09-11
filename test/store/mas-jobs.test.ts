@@ -88,8 +88,8 @@ function scriptedExecutor(context: Rig) {
     const checkpoints = segment.checkpointsFor(namespace);
     const nodes: Record<string, AnyNode> = {
       scope: input(),
-      't:pay': task('pay').checkpoint(),
-      't:wrap': task('wrap').checkpoint(),
+      't:pay': task('pay', undefined, { version: 'probe/1' }).checkpoint(),
+      't:wrap': task('wrap', undefined, { version: 'probe/1' }).checkpoint(),
       expose: output(),
     };
     const edges: Array<EdgeDeclaration<string, string>> = [
@@ -138,8 +138,8 @@ function scriptedExecutor(context: Rig) {
 
     const compiled = compileDag(graph, {
       tasks: {
-        pay: lifecycle('pay', true, () => ({ bought: true })),
-        wrap: lifecycle('wrap', false, (value) => ({ wrapped: value })),
+        pay: { version: 'probe/1', run: lifecycle('pay', true, () => ({ bought: true })) },
+        wrap: { version: 'probe/1', run: lifecycle('wrap', false, (value) => ({ wrapped: value })) },
       },
       checkpoint: checkpoints,
     });
@@ -186,11 +186,11 @@ async function drive(context: Rig, handlers: Record<string, (payload: unknown, c
       };
     };
     try {
-      const result = await handlers[job.kind](job.payload, { job, checkpointsFor: countingCheckpoints, signal: new AbortController().signal } as never);
-      await jobs.complete(job.id, owner, result ?? null);
+      const result = await handlers[job.kind](job.payload, { job, checkpoints: countingCheckpoints(job), signal: new AbortController().signal } as never);
+      await jobs.complete(job.lease, result ?? null);
       outcomes.push('done');
     } catch (error) {
-      await jobs.fail(job.id, owner, error);
+      await jobs.fail(job.lease, error);
       context.clock.value += 300_000; // pass every backoff deterministically
       outcomes.push('failed');
     }

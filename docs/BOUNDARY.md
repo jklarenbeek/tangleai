@@ -34,11 +34,15 @@ adapters, host databases, schedulers, paper-specific pipelines, servers and UI
 | LLM judgment | `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
 | self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
 | orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@jarenjs/ai` agent/toolbox/structured-output/budget/ledger/environment | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
-| scheduling | declared "the host's" by jarenjs | Tangle IS the host — consolidation cadence is Tangle's (roadmap: consolidation tiers) |
+| scheduling | `@jarenjs/core/schedule` bounded, fair, per-scope admission and drain | Document HTTP admission uses the suite scheduler; consolidation cadence remains a Tangle policy (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 | configuration identity | `PROVIDERS`/`resolveEndpoint` (the only endpoint authority), probes, clients, budget/structured-output/toolbox, the replay cache keyed by the effective request; `applyMergePatch`, `canonicalSha256`, `compileJsonQuery`, `$query` validation, `jaren-emit` types, `deepFreeze`/`cloneJson`, `sameIdentity`, `diffContracts` | `@tangleai/config`: the profile registry, pure resolution, TCFG refusal vocabulary and the run-identity envelope; the host adapter binding write-only secret slots; the identity repository beside runs/chats — a run identity is never a replay key (see CONFIGURATION.md) |
 
-## What the suite already has — read before building (audited 2026-08-30, v0.56.0)
+## What the suite already has — read before building
+
+Current audit: [JarenJS 0.83.2 integration](JARENJS_INTEGRATION.md), 2026-09-11.
+The following baseline records the 0.56.0 adoption; the current audit supersedes
+its availability claims and documents the newer runtime seams.
 
 The rule above decides where a NEW capability goes. This section answers the
 prior question — *does it already exist below?* — because the expensive mistake
@@ -109,8 +113,8 @@ spends an afternoon looking:
   squared distance itself).
 - **The LoCoMo loader, preprocessor, scorer and report.** Paper-specific, so
   Tangle's by the rule at the top of this file.
-- **The document-grounding claim/citation scorer.** The suite publishes no
-  generic claim/evidence envelope (re-audited at 0.56.0), so the material-claim
+- **The document-grounding claim/citation scorer.** The suite now publishes a
+  generic claim/evidence envelope, consumed by the desktop reference gate. The material-claim
   oracle, the closed matching predicates, the six-state terminal citation
   classifier and the report shaping live in `benchmark/lib/grounding*.ts` and
   never under `packages/`. Everything around them is consumed, not rebuilt:
@@ -118,9 +122,9 @@ spends an afternoon looking:
   gate), `JarenValidator`/`$query` through the one report-validator factory,
   `jaren-emit` types, `canonicalSha256` identities, the client cache seam for
   replay, `createBudgetAccount`, `mapConcurrent`, `mean`/`stddev`/`quantile`,
-  and `mulberry32`/`drawDistinct`. If a generic claim envelope ever ships in
-  the suite, the local scorer is re-audited against it rather than preserved
-  as a twin.
+  and `mulberry32`/`drawDistinct`. The generic reference checks use
+  `validateClaimEvidence`; semantic support remains specific to the registered
+  Tangle fixture and does not follow from a well-formed envelope.
 
 **Copy the method, not the code.** jarenjs's benchmark scripts are not published
 packages, so nothing below is importable — but each is a decision this repo

@@ -45,6 +45,7 @@ import {
   type TraceView,
 } from '@tangleai/mas';
 
+import type { TransactionStore } from '@jarenjs/db';
 import type { TangleDb } from './db.ts';
 import { asRows } from './memory-store.ts';
 
@@ -65,7 +66,12 @@ interface HeadRow {
   revision: number;
 }
 
-const ALL_ROWS = { $for: { r: '$[*]' }, $return: '$r' };
+/** Predicates and ordering reach the suite planner before rows cross the host boundary. */
+const matching = (fields: Record<string, unknown>, order = 'id') => ({
+  $for: { r: '$[*]' },
+  $where: { $and: Object.entries(fields).map(([field, value]) => ({ $eq: [`$r.${field}`, { $const: value }] })) },
+  $orderby: `$r.${order}`, $return: '$r',
+});
 
 /** A refusal raised after a write inside a transaction: rolls everything back, then answers as a value. */
 class MasRollback extends Error {
@@ -84,7 +90,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     ({ ok: false, issue: masIssue(code, path, detail) });
 
   /** Run one transaction; a MasRollback aborts every write and returns its outcome. */
-  async function atomically<T>(fn: (txn: TangleDb) => Promise<T>): Promise<T> {
+  async function atomically<T>(fn: (txn: TransactionStore) => Promise<T>): Promise<T> {
     try {
       return await db.transaction(fn);
     } catch (error) {
@@ -136,11 +142,11 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
   const runs = () => db.collection<MasRun>('mas_runs');
   const attempts = () => db.collection<MasNodeAttempt>('mas_node_attempts');
 
-  async function readRun(txn: TangleDb, runId: string): Promise<MasRun | undefined> {
+  async function readRun(txn: TransactionStore, runId: string): Promise<MasRun | undefined> {
     return txn.collection<MasRun>('mas_runs').get(runId);
   }
 
-  async function writeRun(txn: TangleDb, run: MasRun): Promise<StoreOutcome<MasRun>> {
+  async function writeRun(txn: TransactionStore, run: MasRun): Promise<StoreOutcome<MasRun>> {
     const next = { ...run, revision: run.revision + 1, updatedAt: now() };
     const outcome = validateRuntimeRecord('masRun', next);
     if (!outcome.valid) {
@@ -305,14 +311,10 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
           return { kind: 'refused' as const, issue: masIssue('TMAS2005', '/claim', `the claim epoch moved (held ${plan.claimSeq}, current ${run.claim.seq}); the lease was lost`) };
         }
         const handle = txn.collection<MasNodeAttempt>('mas_node_attempts');
-        const rows = asRows(await handle.execute<MasNodeAttempt>(ALL_ROWS))
-          .filter((row) => row.runId === plan.runId && row.idempotencyKey === plan.idempotencyKey)
-          .sort((a, b) => (a.id < b.id ? -1 : 1));
+        const rows = asRows(await handle.execute<MasNodeAttempt>(matching({ runId: plan.runId, idempotencyKey: plan.idempotencyKey })));
         const latest = rows.at(-1);
         if (latest !== undefined && latest.status === 'completed') {
-          const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(ALL_ROWS))
-            .filter((row) => row.runId === plan.runId && row.from.path === latest.path)
-            .sort((a, b) => a.seq - b.seq);
+          const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId: plan.runId, 'from.path': latest.path }, 'seq')));
           return { kind: 'completed' as const, attempt: structuredClone(latest), messages: structuredClone(messages) };
         }
         if (latest !== undefined && latest.status === 'uncertain') {
@@ -373,16 +375,12 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         if (current === undefined) return refuse<never>('TMAS2003', '/attemptId', `attempt '${plan.attemptId}' does not exist`);
         if (current.status === 'completed') {
           if (equalsJson(current.output, plan.output)) {
-            const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(ALL_ROWS))
-              .filter((row) => row.runId === plan.runId && row.from.path === current.path)
-              .sort((a, b) => a.seq - b.seq);
+            const messages = asRows(await txn.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId: plan.runId, 'from.path': current.path }, 'seq')));
             return { ok: true as const, value: { attempt: structuredClone(current), messages: structuredClone(messages), stateRevision: null } };
           }
           return refuse<never>('TMAS2001', '/output', 'a different payload cannot re-commit under an already committed idempotency key');
         }
-        const stateRows = plan.state === null ? [] : asRows(await txn.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(ALL_ROWS))
-          .filter((row) => row.runId === plan.runId && row.namespace === plan.state?.namespace)
-          .sort((a, b) => a.seq - b.seq);
+        const stateRows = plan.state === null ? [] : asRows(await txn.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId: plan.runId, namespace: plan.state.namespace }, 'seq')));
         const planned = planNodeCompletion(current, plan, {
           nextSeq: run.traceSeq + 1,
           now: now(),
@@ -555,16 +553,12 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     },
 
     async listResumePendingRuns() {
-      const rows = asRows(await db.collection<MasRun>('mas_runs').execute<MasRun>(ALL_ROWS))
-        .filter((row) => row.status === 'resume_pending')
-        .sort((a, b) => (a.id < b.id ? -1 : 1));
+      const rows = asRows(await db.collection<MasRun>('mas_runs').execute<MasRun>(matching({ status: 'resume_pending' })));
       return rows.map((row) => structuredClone(row));
     },
 
     async latestState(runId, namespace) {
-      const rows = asRows(await db.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(ALL_ROWS))
-        .filter((row) => row.runId === runId && row.namespace === namespace)
-        .sort((a, b) => (a.id < b.id ? -1 : 1));
+      const rows = asRows(await db.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId, namespace })));
       const latest = rows.at(-1);
       return latest === undefined ? undefined : { id: latest.id, value: structuredClone(latest.value) };
     },
@@ -572,14 +566,13 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     async readTrace(runId) {
       const run = await runs().get(runId);
       if (run === undefined) return undefined;
-      const bySeq = <T extends { id: string }>(rows: T[]): T[] => rows.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
       const view: TraceView = {
         run: structuredClone(run),
-        attempts: bySeq(asRows(await attempts().execute<MasNodeAttempt>(ALL_ROWS)).filter((row) => row.runId === runId).map((row) => structuredClone(row))),
-        messages: bySeq(asRows(await db.collection<MasMessage>('mas_messages').execute<MasMessage>(ALL_ROWS)).filter((row) => row.runId === runId).map((row) => structuredClone(row))),
-        stateRevisions: bySeq(asRows(await db.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(ALL_ROWS)).filter((row) => row.runId === runId).map((row) => structuredClone(row))),
-        interactions: bySeq(asRows(await db.collection<MasInteraction>('mas_interactions').execute<MasInteraction>(ALL_ROWS)).filter((row) => row.runId === runId).map((row) => structuredClone(row))),
-        artifacts: bySeq(asRows(await db.collection<MasTraceArtifact>('mas_trace_artifacts').execute<MasTraceArtifact>(ALL_ROWS)).filter((row) => row.runId === runId).map((row) => structuredClone(row))),
+        attempts: asRows(await attempts().execute<MasNodeAttempt>(matching({ runId }))).map((row) => structuredClone(row)),
+        messages: asRows(await db.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId }))).map((row) => structuredClone(row)),
+        stateRevisions: asRows(await db.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId }))).map((row) => structuredClone(row)),
+        interactions: asRows(await db.collection<MasInteraction>('mas_interactions').execute<MasInteraction>(matching({ runId }))).map((row) => structuredClone(row)),
+        artifacts: asRows(await db.collection<MasTraceArtifact>('mas_trace_artifacts').execute<MasTraceArtifact>(matching({ runId }))).map((row) => structuredClone(row)),
       };
       return view;
     },

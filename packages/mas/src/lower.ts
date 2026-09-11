@@ -22,6 +22,9 @@
 import { compileDag, compileFsm } from '@jarenjs/flow';
 import { defineDag, defineFsm, edge, effect, input, on, output, state, task, type AnyNode, type EdgeDeclaration } from '@jarenjs/linq/flow';
 import { deepFreeze } from '@jarenjs/core/object';
+import flowPackage from '@jarenjs/flow/package.json' with { type: 'json' };
+import aiPackage from '@jarenjs/ai/package.json' with { type: 'json' };
+import type {} from './jaren-flow.d.ts';
 
 import { masIssue, refuse, type MasValidated } from './errors.ts';
 import { masRevisionOf } from './identity.ts';
@@ -87,6 +90,8 @@ export type MasRegionDescriptor =
 
 export interface MasWorkflowPlan {
   workflowVersionId: string;
+  registryRevision: string;
+  configCatalogRevision: string;
   executableRevision: string;
   regions: MasRegionDescriptor[];
   /** Lowered jaren-dag / jaren-fsm documents by key. */
@@ -98,6 +103,12 @@ export interface MasWorkflowPlan {
 /** JSONPath member access in bracket form, safe for hyphenated names. */
 const member = (root: string, ...names: string[]): string =>
   `${root}${names.map((name) => `['${name}']`).join('')}`;
+
+/** Bump the host ABI when lifecycle semantics change. Suite and registry
+ * upgrades also change the declared handler identity and executable revision. */
+export function masTaskVersionOf(registryRevision: string): string {
+  return `tangle-mas/2:flow/${flowPackage.version}:ai/${aiPackage.version}:${registryRevision}`;
+}
 
 export interface Feed {
   port: string;
@@ -139,7 +150,7 @@ export function nodeFeeds(workflow: MasWorkflow, invocation: Invocation, regionM
 }
 
 /** One dag region document, authored through the pen. */
-function lowerDagRegion(workflow: MasWorkflow, members: Invocation[]): unknown {
+function lowerDagRegion(workflow: MasWorkflow, members: Invocation[], version: string): unknown {
   const memberIds = new Set(members.map((invocation) => invocation.id));
   // Lowered node keys carry a prefix so an invocation named 'scope' or
   // 'expose' can never collide with the region's input/output nodes; the
@@ -148,7 +159,7 @@ function lowerDagRegion(workflow: MasWorkflow, members: Invocation[]): unknown {
   const nodes: Record<string, AnyNode> = { scope: input() };
   const edges: Array<EdgeDeclaration<string, string>> = [];
   for (const invocation of members) {
-    nodes[key(invocation.id)] = task(invocation.id).checkpoint();
+    nodes[key(invocation.id)] = task(invocation.id, undefined, { version }).checkpoint();
   }
   for (const invocation of members) {
     for (const feed of nodeFeeds(workflow, invocation, memberIds)) {
@@ -231,14 +242,14 @@ function lowerInteractionFsm(): unknown {
 }
 
 /** Compile-only placeholder registry for a lowered dag document — never exported as runnable. */
-function placeholderTasks(document: unknown): Record<string, () => never> {
-  const tasks: Record<string, () => never> = {};
-  const nodes = (document as { nodes: Record<string, { kind: string, run?: string }> }).nodes;
+function placeholderTasks(document: unknown): Record<string, { run: () => never, version: string }> {
+  const tasks: Record<string, { run: () => never, version: string }> = {};
+  const nodes = (document as { nodes: Record<string, { kind: string, run?: string, version: string }> }).nodes;
   for (const declaration of Object.values(nodes)) {
     if (declaration.kind === 'task' && declaration.run !== undefined) {
-      tasks[declaration.run] = () => {
+      tasks[declaration.run] = { version: declaration.version, run: () => {
         throw new Error('a placeholder handler is a compile-only seam and can never run');
-      };
+      } };
     }
   }
   return tasks;
@@ -246,6 +257,7 @@ function placeholderTasks(document: unknown): Record<string, () => never> {
 
 export async function planMasWorkflow(validated: ValidatedMasWorkflow): Promise<MasValidated<MasWorkflowPlan>> {
   const { workflow } = validated;
+  const taskVersion = masTaskVersionOf(validated.registryRevision);
   const regions = partitionMasWorkflow(workflow);
   const documents: Record<string, unknown> = {};
   const descriptors: MasRegionDescriptor[] = [];
@@ -285,7 +297,7 @@ export async function planMasWorkflow(validated: ValidatedMasWorkflow): Promise<
     if (region.kind === 'dag') {
       const members = region.members.map((entry) => entry.invocation);
       const documentKey = region.id;
-      documents[documentKey] = lowerDagRegion(workflow, members);
+      documents[documentKey] = lowerDagRegion(workflow, members, taskVersion);
       const nested = await nestedOf(members);
       if (!nested.valid) return nested;
       descriptors.push({
@@ -303,7 +315,7 @@ export async function planMasWorkflow(validated: ValidatedMasWorkflow): Promise<
       for (const [branchIndex, branch] of region.branches.entries()) {
         const members = branch.members.map((entry) => entry.invocation);
         const branchKey = `${region.id}/branch:${branch.id}`;
-        documents[branchKey] = lowerDagRegion(workflow, members);
+        documents[branchKey] = lowerDagRegion(workflow, members, taskVersion);
         const nested = await nestedOf(members);
         if (!nested.valid) return nested;
         branches.push({
@@ -392,6 +404,8 @@ export async function planMasWorkflow(validated: ValidatedMasWorkflow): Promise<
   }
   const executableRevision = await masRevisionOf({
     workflowVersionId: validated.versionId,
+    taskVersion,
+    configCatalogRevision: validated.configCatalogRevision,
     regions: descriptors,
     documents,
     subplans: subplanRevisions,
@@ -401,6 +415,8 @@ export async function planMasWorkflow(validated: ValidatedMasWorkflow): Promise<
     valid: true,
     value: deepFreeze({
       workflowVersionId: validated.versionId,
+      registryRevision: validated.registryRevision,
+      configCatalogRevision: validated.configCatalogRevision,
       executableRevision,
       regions: descriptors,
       documents,

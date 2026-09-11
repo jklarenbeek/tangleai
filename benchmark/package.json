@@ -7,5 +7,23 @@
   "type": "module",
   "engines": {
     "node": ">=24"
+  },
+  "dependencies": {
+    "@jarenjs/ai": "0.83.2",
+    "@jarenjs/contract": "0.83.2",
+    "@jarenjs/core": "0.83.2",
+    "@jarenjs/db": "0.83.2",
+    "@jarenjs/flow": "0.83.2",
+    "@jarenjs/json": "0.83.2",
+    "@jarenjs/linq": "0.83.2",
+    "@jarenjs/validate": "0.83.2",
+    "@tangleai/config": "0.1.0",
+    "@tangleai/core": "0.1.0",
+    "@tangleai/documents": "0.1.0",
+    "@tangleai/mas": "0.1.0",
+    "@tangleai/memory": "0.1.0",
+    "@tangleai/pipeline": "0.1.0",
+    "@tangleai/search": "0.1.0",
+    "@tangleai/store": "0.1.0"
   }
 }

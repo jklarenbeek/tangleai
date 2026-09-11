@@ -268,6 +268,16 @@ is not a mock: the real pipeline document executes in your browser over
 the in-memory store, and the recall you ask for afterwards is real
 ranked retrieval — the superseded record provably cannot surface.
 
+## JarenJS release integration
+
+All JarenJS dependencies are pinned to **0.83.2**. The source submodule at
+`vendor/jarenjs` pins `v0.83.2`; initialize it with
+`git submodule update --init vendor/jarenjs` for source and benchmark review.
+`npm run jaren:check` verifies the package, lockfile, installation and source pins.
+See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
+compatibility details and benchmark-based strategy choices, and
+[the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
+
 ## Where things stand
 
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what Tangle wants to have and does

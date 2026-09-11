@@ -1,29 +1,23 @@
 # Document ingestion benchmark
 
-Generated 2026-08-26 with Bun 1.4.0, `linkedom` 0.18.12, `unpdf` 1.6.2,
-Playwright Core 1.62.1, and the built-in `hash-trigram-64` embedder.
-Reproduce with `npm run documents:benchmark`.
+Generated 2026-09-11T08:35:06.148Z with Bun 1.4.0; embedder hash-trigram-64/64.
 
-The fixed corpus has five documents, 25 typed elements, and three labelled questions.
-It covers static/noisy HTML, Markdown, a two-column PDF, and a table/figure PDF. Dynamic,
-malformed, and oversized fixtures are exercised by the test suite rather than retrieval
-scoring.
+Fixed corpus: 5 documents, 25 typed elements, 3 labelled questions.
 
-Extraction took 89.5 ms in the recorded run. None of four labelled Wikipedia
-boilerplate strings survived. The synthetic PDF reading order was:
+Extraction: 129.8 ms; known Wikipedia boilerplate hits: 0/4; multi-column order: Left heading → Left first → Left second → Right heading → Right first → Right second.
 
-`Left heading → Left first → Left second → Right heading → Right first → Right second`
-
-**Budget: 64 tokens per chunk, 8-token overlap** — far below the desktop's 450-token
-default, and stated here because the numbers do not describe the default. At 450 tokens
-every document in this corpus collapses into one or two chunks, which no chunker can be
-told apart by.
+Budget: 64 tokens per chunk, 8-token overlap.
 
 | Strategy | Chunks | Recall@5 | MRR | over-budget chunks | Resolvable provenance | ms | heap delta MiB | embed calls | embedded texts | est. tokens |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| heading-recursive | 6 | 100.0% | 1.000 | 0 | 100% | 1.7 | 0.00 | 6 | 9 | 210 |
-| semantic-boundary | 15 | 100.0% | 0.833 | 0 | 100% | 1.1 | 0.00 | 11 | 43 | 378 |
-| corrected-s2 | 6 | 100.0% | 1.000 | 0 | 100% | 2.1 | 0.00 | 11 | 34 | 386 |
+| heading-recursive | 6 | 100.0% | 1.000 | 0 | 100% | 3.1 | 0.00 | 6 | 9 | 210 |
+| semantic-boundary | 15 | 100.0% | 0.833 | 0 | 100% | 1.5 | 0.00 | 11 | 43 | 378 |
+| corrected-s2 | 6 | 100.0% | 1.000 | 0 | 100% | 3.3 | 0.00 | 11 | 34 | 386 |
+
+This fixture benchmark is a regression gate, not evidence that the tiny offline hash embedder predicts production semantic quality. Keep recursive chunking as the default until a representative corpus shows a repeatable S2 retrieval gain worth its extra element-embedding work.
+
+Reproduce with `npm run documents:benchmark`. These keyless measurements use
+JarenJS 0.83.2. The dated live and bundle measurements below are historical.
 
 ## What this table cannot decide
 

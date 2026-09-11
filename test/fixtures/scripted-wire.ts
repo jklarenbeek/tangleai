@@ -53,7 +53,7 @@ export function scriptedProgram(question: string): { steps: Array<Record<string,
     steps: [
       { op: 'chunk', from: 'corpus', as: 'pieces', strategy: 'line', size: 2000 },
       { op: 'map', from: 'pieces', as: 'found', prompt: `Quote the turn that answers "${question.slice(0, 120)}", with its [id]; null if none.` },
-      { op: 'reduce', from: 'found', as: 'summary', query: { $for: { r: '$[*].value' }, $return: '$r.value' } },
+      { op: 'reduce', from: 'found', as: 'summary', outputSchema: { anyOf: [ { type: 'object', required: ['slot', 'value'], properties: { slot: { type: 'string' }, value: {} } }, { type: 'array', items: { type: 'object', required: ['slot', 'value'], properties: { slot: { type: 'string' }, value: {} } } } ] }, query: { $for: { r: '$[*]' }, $return: { slot: { $string: '$r.slot' }, value: '$r.value' } } },
       { op: 'answer', from: 'summary' },
     ],
   };

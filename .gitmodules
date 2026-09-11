@@ -1,3 +1,6 @@
 [submodule "benchmark/locomo"]
 	path = benchmark/locomo
 	url = https://github.com/snap-research/locomo.git
+[submodule "vendor/jarenjs"]
+	path = vendor/jarenjs
+	url = https://github.com/jklarenbeek/jarenjs.git

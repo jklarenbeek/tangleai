@@ -17,8 +17,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/json": "^0.56.0",
-    "@jarenjs/core": "^0.56.0",
-    "@jarenjs/validate": "^0.56.0"
+    "@jarenjs/json": "0.83.2",
+    "@jarenjs/core": "0.83.2",
+    "@jarenjs/validate": "0.83.2",
+    "@jarenjs/ai": "0.83.2"
   }
 }

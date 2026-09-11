@@ -109,7 +109,7 @@ import { mapConcurrent } from '@jarenjs/core/async';
 import { excerpt } from '@jarenjs/core/chunk';
 import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { normalizeSeries } from '@jarenjs/core/series';
-import { compileJsonQuery } from '@jarenjs/json/query';
+import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 import QUERY_SCHEMA from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
@@ -1631,9 +1631,10 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       if (shared.account.stop() !== null) { unanswered.budget++; continue; }
       const mine = emptyCost();
       let seen = '';
+      let wireFailures = 0;
       const client = horizonClient(ctx.client, shared, [cost, mine], latencies, {
         onSubcall: (t) => { seen += `\n${t}`; },
-        onFailure: (message) => ctx.noteError(`${q.id} ${message}`),
+        onFailure: (message) => { wireFailures++; ctx.noteError(`${q.id} ${message}`); },
         timeoutMs: horizon.callTimeoutMs,
         authorThinkingOff: horizon.authorThinking === 'off',
         subcallThinkingOff: ctx.thinking === 'off',
@@ -1649,6 +1650,8 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
         createProgramRunner,
         createEnvironment,
         querySchema: QUERY_SCHEMA,
+        analyzeQuery,
+        annotateTypes,
         depth: horizon.depth,
         maxSubcalls: horizon.maxSubcalls,
         maxConcurrentSubcalls: ctx.env.maxConcurrency,
@@ -1688,6 +1691,12 @@ async function runHorizonRow(row: QaRow, ctx: HorizonContext): Promise<LiveConfi
       if (stopped !== null) block.stops[stopped] = (block.stops[stopped] ?? 0) + 1;
 
       const answerText = typeof result.answer?.text === 'string' ? result.answer.text : null;
+      // The suite returns author/route failures as values. A failed wire
+      // without an answer is still unanswered, never a fabricated zero score.
+      if (answerText === null && wireFailures > 0) {
+        unanswered.wire++;
+        continue;
+      }
       if (answerText === null) invalid++;
       const { answer, citations: cited } = answerText === null ? { answer: '', citations: [] } : horizonAnswer(answerText);
       const check = checkCitations(cited, listed);

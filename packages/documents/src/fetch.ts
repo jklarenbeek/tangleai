@@ -1,3 +1,5 @@
+import { createBoundedCache } from '@jarenjs/core/cache';
+import { createScheduler } from '@jarenjs/core/schedule';
 import { DocumentError } from './contracts.ts';
 import { assertPublicUrl, normalizeUrl, type UrlPolicyOptions } from './url-policy.ts';
 
@@ -30,6 +32,8 @@ export interface FetchValidators {
 
 export interface StaticFetchOptions extends UrlPolicyOptions {
   fetch?: typeof globalThis.fetch;
+  /** Admission clock and sleep, injectable for deterministic hosts. */
+  schedule?: Pick<NonNullable<Parameters<typeof createScheduler>[0]>, 'now' | 'sleep' | 'maxQueue' | 'maxScopes'>;
   limits?: Partial<StaticFetchLimits>;
   now?: () => string;
   /** Optional host policy for sites whose terms have been reviewed out of band. */
@@ -46,27 +50,6 @@ export interface StaticFetchResult {
   etag?: string;
   lastModified?: string;
   responseStatus: number;
-}
-
-class Semaphore {
-  private active = 0;
-  private readonly waiting: Array<() => void> = [];
-  private readonly maximum: number;
-
-  constructor(maximum: number) {
-    this.maximum = maximum;
-  }
-
-  async use<T>(run: () => Promise<T>): Promise<T> {
-    if (this.active >= this.maximum) await new Promise<void>((resolve) => this.waiting.push(resolve));
-    this.active++;
-    try {
-      return await run();
-    } finally {
-      this.active--;
-      this.waiting.shift()?.();
-    }
-  }
 }
 
 function contentType(value: string | null): string | undefined {
@@ -123,7 +106,8 @@ async function readBounded(response: Response, maxBytes: number): Promise<Uint8A
 function abortContext(signal: AbortSignal | undefined, timeoutMs: number): { signal: AbortSignal; close(): void } {
   const controller = new AbortController();
   const onAbort = (): void => controller.abort(signal?.reason);
-  signal?.addEventListener('abort', onAbort, { once: true });
+  if (signal?.aborted) onAbort();
+  else signal?.addEventListener('abort', onAbort, { once: true });
   const timeout = setTimeout(() => controller.abort(new DocumentError('fetch-timeout', `Fetch timed out after ${timeoutMs}ms`)), timeoutMs);
   return {
     signal: controller.signal,
@@ -169,9 +153,8 @@ export class SafeStaticFetcher {
   private readonly fetchImpl: typeof globalThis.fetch;
   private readonly limits: StaticFetchLimits;
   private readonly policy: UrlPolicyOptions;
-  private readonly semaphore: Semaphore;
-  private readonly lastRequest = new Map<string, number>();
-  private readonly robots = new Map<string, Promise<string | undefined>>();
+  private readonly scheduler: ReturnType<typeof createScheduler>;
+  private readonly robots = createBoundedCache<string, Promise<string | undefined>>(256);
   private readonly now: () => string;
   private readonly termsPolicy?: StaticFetchOptions['termsPolicy'];
 
@@ -179,17 +162,28 @@ export class SafeStaticFetcher {
     this.fetchImpl = options.fetch ?? globalThis.fetch;
     this.limits = { ...DEFAULT_FETCH_LIMITS, ...options.limits };
     this.policy = { allowPrivate: options.allowPrivate, lookup: options.lookup };
-    this.semaphore = new Semaphore(Math.max(1, this.limits.concurrency));
+    this.scheduler = createScheduler({ ...options.schedule, concurrency: this.limits.concurrency, spacingMs: this.limits.perHostDelayMs });
     this.now = options.now ?? ((): string => new Date().toISOString());
     this.termsPolicy = options.termsPolicy;
   }
 
-  private async pace(host: string): Promise<void> {
-    const current = Date.now();
-    const readyAt = Math.max(current, this.lastRequest.get(host) ?? current);
-    this.lastRequest.set(host, readyAt + this.limits.perHostDelayMs);
-    const wait = readyAt - current;
-    if (wait > 0) await new Promise<void>((resolve) => setTimeout(resolve, wait));
+  /** Stop queued requests and drain admitted bodies before releasing host resources. */
+  async close(): Promise<void> { await this.scheduler.close(); this.robots.clear(); }
+
+  private request(url: string, init: RequestInit, maxBytes: number): Promise<{ response: Response; bytes?: Uint8Array }> {
+    return this.scheduler.run(async () => {
+      const response = await this.fetchImpl(url, init);
+      if (!response.ok || response.status === 304) {
+        await response.body?.cancel();
+        return { response };
+      }
+      const compressed = Number(response.headers.get('content-length'));
+      if (Number.isFinite(compressed) && compressed > this.limits.maxCompressedBytes) {
+        await response.body?.cancel();
+        throw new DocumentError('response-too-large', `Document exceeds the ${this.limits.maxCompressedBytes}-byte transfer limit`);
+      }
+      return { response, bytes: await readBounded(response, maxBytes) };
+    }, { scope: new URL(url).host, signal: init.signal ?? undefined });
   }
 
   private async robotsText(url: URL, signal: AbortSignal): Promise<string | undefined> {
@@ -199,13 +193,12 @@ export class SafeStaticFetcher {
       pending = (async () => {
         const robotsUrl = await assertPublicUrl(new URL('/robots.txt', origin).toString(), this.policy);
         try {
-          const response = await this.fetchImpl(robotsUrl, {
+          const { response, bytes } = await this.request(robotsUrl, {
             headers: { 'user-agent': this.limits.userAgent, accept: 'text/plain' },
             redirect: 'manual',
             signal,
-          });
+          }, 128 * 1024);
           if (!response.ok) return undefined;
-          const bytes = await readBounded(response, 128 * 1024);
           return new TextDecoder().decode(bytes);
         } catch (error) {
           if (signal.aborted) throw error;
@@ -213,73 +206,66 @@ export class SafeStaticFetcher {
         }
       })();
       this.robots.set(origin, pending);
+      void pending.catch(() => { if (this.robots.get(origin) === pending) this.robots.delete(origin); });
     }
     return pending;
   }
 
   async fetch(urlInput: string, validators: FetchValidators = {}, signal?: AbortSignal): Promise<StaticFetchResult> {
-    return this.semaphore.use(async () => {
-      const requestedUrl = normalizeUrl(urlInput);
-      const abort = abortContext(signal, this.limits.timeoutMs);
-      try {
-        let current = requestedUrl;
-        for (let redirects = 0; redirects <= this.limits.maxRedirects; redirects++) {
-          current = await assertPublicUrl(current, this.policy);
-          if (this.termsPolicy !== undefined && !await this.termsPolicy(current)) {
-            throw new DocumentError('terms-denied', `Document fetch is not permitted by the configured terms policy for ${new URL(current).origin}`);
+    const requestedUrl = normalizeUrl(urlInput);
+    const abort = abortContext(signal, this.limits.timeoutMs);
+    try {
+      let current = requestedUrl;
+      for (let redirects = 0; redirects <= this.limits.maxRedirects; redirects++) {
+        current = await assertPublicUrl(current, this.policy);
+        if (this.termsPolicy !== undefined && !await this.termsPolicy(current)) {
+          throw new DocumentError('terms-denied', `Document fetch is not permitted by the configured terms policy for ${new URL(current).origin}`);
+        }
+        const parsed = new URL(current);
+        if (this.limits.respectRobots) {
+          const robots = await this.robotsText(parsed, abort.signal);
+          if (robots !== undefined && !robotsAllows(robots, `${parsed.pathname}${parsed.search}`, this.limits.userAgent)) {
+            throw new DocumentError('robots-denied', `robots.txt disallows ${parsed.pathname}`);
           }
-          const parsed = new URL(current);
-          if (this.limits.respectRobots) {
-            await this.pace(parsed.host);
-            const robots = await this.robotsText(parsed, abort.signal);
-            if (robots !== undefined && !robotsAllows(robots, `${parsed.pathname}${parsed.search}`, this.limits.userAgent)) {
-              throw new DocumentError('robots-denied', `robots.txt disallows ${parsed.pathname}`);
-            }
-          }
-          await this.pace(parsed.host);
-          const headers: Record<string, string> = {
-            'user-agent': this.limits.userAgent,
-            accept: 'text/html,application/xhtml+xml,application/pdf,text/markdown,text/plain;q=0.9,*/*;q=0.1',
-          };
-          if (validators.etag !== undefined) headers['if-none-match'] = validators.etag;
-          if (validators.lastModified !== undefined) headers['if-modified-since'] = validators.lastModified;
-          const response = await this.fetchImpl(current, { headers, redirect: 'manual', signal: abort.signal });
-          if (response.status === 304) {
-            return {
-              status: 'not-modified', requestedUrl, finalUrl: current, fetchedAt: this.now(),
-              responseStatus: response.status, etag: response.headers.get('etag') ?? validators.etag,
-              lastModified: response.headers.get('last-modified') ?? validators.lastModified,
-            };
-          }
-          if (response.status >= 300 && response.status < 400) {
-            const location = response.headers.get('location');
-            if (location === null) throw new DocumentError('bad-redirect', `Redirect ${response.status} has no Location header`);
-            if (redirects === this.limits.maxRedirects) throw new DocumentError('too-many-redirects', 'Document exceeded the redirect limit');
-            current = normalizeUrl(new URL(location, current).toString());
-            continue;
-          }
-          if (!response.ok) throw new DocumentError('fetch-failed', `Document fetch returned HTTP ${response.status}`, { status: response.status });
-          const compressed = Number(response.headers.get('content-length'));
-          if (Number.isFinite(compressed) && compressed > this.limits.maxCompressedBytes) {
-            throw new DocumentError('response-too-large', `Document exceeds the ${this.limits.maxCompressedBytes}-byte transfer limit`);
-          }
-          const bytes = await readBounded(response, this.limits.maxBytes);
-          const mimeType = sniffMime(bytes, contentType(response.headers.get('content-type')));
+        }
+        const headers: Record<string, string> = {
+          'user-agent': this.limits.userAgent,
+          accept: 'text/html,application/xhtml+xml,application/pdf,text/markdown,text/plain;q=0.9,*/*;q=0.1',
+        };
+        if (validators.etag !== undefined) headers['if-none-match'] = validators.etag;
+        if (validators.lastModified !== undefined) headers['if-modified-since'] = validators.lastModified;
+        const { response, bytes } = await this.request(current, { headers, redirect: 'manual', signal: abort.signal }, this.limits.maxBytes);
+        if (response.status === 304) {
           return {
-            status: 'ok', requestedUrl, finalUrl: current, mimeType, bytes, fetchedAt: this.now(),
-            responseStatus: response.status, etag: response.headers.get('etag') ?? undefined,
-            lastModified: response.headers.get('last-modified') ?? undefined,
+            status: 'not-modified', requestedUrl, finalUrl: current, fetchedAt: this.now(),
+            responseStatus: response.status, etag: response.headers.get('etag') ?? validators.etag,
+            lastModified: response.headers.get('last-modified') ?? validators.lastModified,
           };
         }
-        throw new DocumentError('too-many-redirects', 'Document exceeded the redirect limit');
-      } catch (error) {
-        if (abort.signal.aborted && !(error instanceof DocumentError)) {
-          throw new DocumentError('fetch-aborted', 'Document fetch was aborted');
+        if (response.status >= 300 && response.status < 400) {
+          const location = response.headers.get('location');
+          if (location === null) throw new DocumentError('bad-redirect', `Redirect ${response.status} has no Location header`);
+          if (redirects === this.limits.maxRedirects) throw new DocumentError('too-many-redirects', 'Document exceeded the redirect limit');
+          current = normalizeUrl(new URL(location, current).toString());
+          continue;
         }
-        throw error;
-      } finally {
-        abort.close();
+        if (!response.ok) throw new DocumentError('fetch-failed', `Document fetch returned HTTP ${response.status}`, { status: response.status });
+        const mimeType = sniffMime(bytes!, contentType(response.headers.get('content-type')));
+        return {
+          status: 'ok', requestedUrl, finalUrl: current, mimeType, bytes, fetchedAt: this.now(),
+          responseStatus: response.status, etag: response.headers.get('etag') ?? undefined,
+          lastModified: response.headers.get('last-modified') ?? undefined,
+        };
       }
-    });
+      throw new DocumentError('too-many-redirects', 'Document exceeded the redirect limit');
+    } catch (error) {
+      if (abort.signal.aborted && !(error instanceof DocumentError)) {
+        throw abort.signal.reason instanceof DocumentError
+          ? abort.signal.reason : new DocumentError('fetch-aborted', 'Document fetch was aborted');
+      }
+      throw error;
+    } finally {
+      abort.close();
+    }
   }
 }

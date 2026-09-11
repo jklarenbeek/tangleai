@@ -85,6 +85,10 @@ export function compileMasRuntime(
 ): MasValidated<MasRuntime> {
   const workflow = validated.workflow;
   const issues: MasIssue[] = [];
+  if (plan.workflowVersionId !== validated.versionId || plan.registryRevision !== validated.registryRevision
+    || snapshot.revision !== validated.registryRevision || plan.configCatalogRevision !== validated.configCatalogRevision) {
+    return refuse([masIssue('TMAS1009', '/plan', 'the executable plan, validated workflow and registry must share the same pinned identities')]);
+  }
 
   const walkNodes = (nodes: readonly Invocation[]): void => {
     for (const [index, node] of nodes.entries()) {

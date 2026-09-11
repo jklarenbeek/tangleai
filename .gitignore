@@ -25,3 +25,7 @@ JAREN*.md
 
 # the live tiers' wire cache (embeddings and completions already paid for) — delete to start fresh
 benchmark/cache/
+
+# Committed release integration evidence (JAREN*.md elsewhere remains scratch).
+!docs/JARENJS_INTEGRATION.md
+!docs/JARENJS_BENCHMARK.md

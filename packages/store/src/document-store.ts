@@ -11,11 +11,16 @@ import {
   type StoredDocumentBundle,
 } from '@tangleai/documents/contracts';
 
+import type { TransactionStore } from '@jarenjs/db';
 import type { TangleDb } from './db.ts';
 import { asRows } from './memory-store.ts';
 
-async function rows<T>(db: TangleDb, collection: string): Promise<T[]> {
-  return asRows(await db.collection<T>(collection).execute<T>({ $for: { row: '$[*]' }, $return: '$row' }));
+async function rows<T>(db: Pick<TransactionStore, 'collection'>, collection: string, fields: Record<string, unknown> = {}): Promise<T[]> {
+  return asRows(await db.collection<T>(collection).execute<T>({
+    $for: { row: '$[*]' },
+    $where: Object.keys(fields).length === 0 ? true : { $and: Object.entries(fields).map(([field, value]) => ({ $eq: [`$row.${field}`, { $const: value }] })) },
+    $return: '$row',
+  }));
 }
 
 export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
@@ -38,11 +43,11 @@ export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
     }
   }
 
-  async function cleanupVersion(scope: TangleDb, versionId: string): Promise<void> {
+  async function cleanupVersion(scope: TransactionStore, versionId: string): Promise<void> {
     const scopedElements = scope.collection<DocumentElement>('document_elements');
     const scopedChunks = scope.collection<DocumentChunk>('document_chunks');
-    const oldElements = (await rows<DocumentElement>(scope, 'document_elements')).filter((element) => element.versionId === versionId);
-    const oldChunks = (await rows<DocumentChunk>(scope, 'document_chunks')).filter((chunk) => chunk.versionId === versionId);
+    const oldElements = await rows<DocumentElement>(scope, 'document_elements', { versionId });
+    const oldChunks = await rows<DocumentChunk>(scope, 'document_chunks', { versionId });
     for (const chunk of oldChunks) await scopedChunks.delete(chunk.id);
     for (const element of oldElements) await scopedElements.delete(element.id);
   }
@@ -56,18 +61,16 @@ export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
     },
     getVersion: (id) => versions.get(id),
     async listVersions(sourceId) {
-      const result = await rows<DocumentVersion>(db, 'document_versions');
-      return result.filter((version) => sourceId === undefined || version.sourceId === sourceId)
+      const result = await rows<DocumentVersion>(db, 'document_versions', sourceId === undefined ? {} : { sourceId });
+      return result
         .sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
     },
     async listElements(versionId) {
-      return (await rows<DocumentElement>(db, 'document_elements'))
-        .filter((element) => element.versionId === versionId)
+      return (await rows<DocumentElement>(db, 'document_elements', { versionId }))
         .sort((a, b) => a.order - b.order);
     },
     async listChunks(versionId) {
-      return (await rows<DocumentChunk>(db, 'document_chunks'))
-        .filter((chunk) => versionId === undefined || chunk.versionId === versionId)
+      return (await rows<DocumentChunk>(db, 'document_chunks', versionId === undefined ? {} : { versionId }))
         .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.order - b.order);
     },
     async putSource(source) {

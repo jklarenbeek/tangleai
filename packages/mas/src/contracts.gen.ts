@@ -11,6 +11,86 @@ export type RegistrySha256 = string;
  */
 export type RegistryName = string;
 
+export interface MasRegistryRolesItem {
+  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  instructions: string;
+  instructionsRevision: RegistrySha256;
+  capabilities: Array<RegistryName>;
+}
+
+
+export interface MasRegistryHandlersItem {
+  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  /**
+   * `honored` — the bound host handler accepts and honors an out-of-band idempotency key; required before an effectful handler may bind.
+   */
+  idempotency: "not-required" | "honored";
+}
+
+
+export interface MasRegistryToolsItem {
+  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  effect: "pure" | "read" | "effectful";
+  input: { [key: string]: unknown; } | boolean;
+  inputRevision: RegistrySha256;
+}
+
+
+export interface MasRegistryMessageAdaptersItem {
+  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+}
+
+
+export interface MasRegistryContextAdaptersItem {
+  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  title: string;
+  capabilities: Array<RegistryName>;
+}
+
+
+export interface MasRegistryTemplatesItem {
+  id: RegistryName;
+  versionId: RegistrySha256;
+  /**
+   * The embedded MasTemplateVersion document, validated against its own schema by the snapshot constructor.
+   */
+  template: { [key: string]: unknown; };
+}
+
+
+export interface MasRegistrySubgraphsItem {
+  id: RegistryName;
+  versionId: RegistrySha256;
+  /**
+   * The embedded MasWorkflowVersion document, validated against the workflow schema by the snapshot constructor; its versionId must recompute.
+   */
+  workflow: { [key: string]: unknown; };
+}
+
+
 /**
  * The validated capability snapshot a workflow pins by revision: role identities with content-addressed instructions, named task handler contracts, schema-checked tool declarations, message and context adapter identities, immutable template versions and embedded subgraph workflow versions. Entries are data descriptions only — a function, credential, URL or mutable reference has no representable member; host registries bind functions to these ids only after the snapshot validates. The snapshot revision is the canonical SHA-256 of this whole document.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.roles[*].id"},{"$count":{"$distinct":"$.roles[*].id"}}]},{"$eq":[{"$count":"$.handlers[*].id"},{"$count":{"$distinct":"$.handlers[*].id"}}]},{"$eq":[{"$count":"$.tools[*].id"},{"$count":{"$distinct":"$.tools[*].id"}}]},{"$eq":[{"$count":"$.messageAdapters[*].id"},{"$count":{"$distinct":"$.messageAdapters[*].id"}}]},{"$eq":[{"$count":"$.contextAdapters[*].id"},{"$count":{"$distinct":"$.contextAdapters[*].id"}}]},{"$eq":[{"$count":"$.templates[*].id"},{"$count":{"$distinct":"$.templates[*].id"}}]},{"$eq":[{"$count":"$.subgraphs[*].id"},{"$count":{"$distinct":"$.subgraphs[*].id"}}]}]}
@@ -18,13 +98,13 @@ export type RegistryName = string;
 export interface MasRegistry {
   $masRegistry: "0.1";
   registryId: RegistryName;
-  roles: Array<{ id: RegistryName; title: string; instructions: string; instructionsRevision: RegistrySha256; capabilities: Array<RegistryName>; }>;
-  handlers: Array<{ id: RegistryName; title: string; effect: "pure" | "read" | "effectful"; idempotency: "not-required" | "honored"; }>;
-  tools: Array<{ id: RegistryName; title: string; effect: "pure" | "read" | "effectful"; input: { [key: string]: unknown; } | boolean; inputRevision: RegistrySha256; }>;
-  messageAdapters: Array<{ id: RegistryName; version: string; }>;
-  contextAdapters: Array<{ id: RegistryName; title: string; capabilities: Array<RegistryName>; }>;
-  templates: Array<{ id: RegistryName; versionId: RegistrySha256; template: { [key: string]: unknown; }; }>;
-  subgraphs: Array<{ id: RegistryName; versionId: RegistrySha256; workflow: { [key: string]: unknown; }; }>;
+  roles: Array<MasRegistryRolesItem>;
+  handlers: Array<MasRegistryHandlersItem>;
+  tools: Array<MasRegistryToolsItem>;
+  messageAdapters: Array<MasRegistryMessageAdaptersItem>;
+  contextAdapters: Array<MasRegistryContextAdaptersItem>;
+  templates: Array<MasRegistryTemplatesItem>;
+  subgraphs: Array<MasRegistrySubgraphsItem>;
 }
 
 
@@ -59,6 +139,16 @@ export type RunStatus = "queued" | "running" | "waiting_for_input" | "resume_pen
 
 export type AttemptStatus = "running" | "completed" | "failed" | "aborted" | "uncertain";
 
+export interface RuntimeErrorCauseOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  docPath: string;
+  message: string;
+}
+
+
 export interface RuntimeError {
   /**
    * Schema constraints this type cannot express: pattern="^(TMAS[12][0-9]{3}|JF[0-9]{4}|JQ[0-9]{4}|JD[0-9]{4})$"
@@ -68,7 +158,7 @@ export interface RuntimeError {
    * Schema constraints this type cannot express: minLength=1
    */
   detail: string;
-  cause: null | { code: string; docPath: string; message: string; };
+  cause: null | RuntimeErrorCauseOneOf2;
 }
 
 
@@ -137,6 +227,11 @@ export interface ToolStep {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ContextReadAddressesItem = string;
+
 export interface ContextRead {
   adapter: RuntimeName;
   outcome: "ok" | "unavailable" | "failed";
@@ -144,11 +239,28 @@ export interface ContextRead {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   units: number;
-  addresses: Array<string>;
+  addresses: Array<ContextReadAddressesItem>;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   chars: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasRunClaimOwnerOneOf2 = string;
+
+/**
+ * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
+ */
+export interface MasRunClaim {
+  owner: null | MasRunClaimOwnerOneOf2;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  seq: number;
 }
 
 
@@ -178,7 +290,7 @@ export interface MasRun {
   /**
    * The worker claim epoch: bumped on every segment claim/reclaim, never by ordinary record writes. A semantic commit carrying a stale claim seq refuses TMAS2005 — a zombie worker whose lease expired cannot write a completion.
    */
-  claim: { owner: null | string; seq: number; };
+  claim: MasRunClaim;
   /**
    * The per-run trace sequence authority: record ids derive from it transactionally, so the trace order is committed state, never a process-local counter.
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -197,6 +309,11 @@ export interface MasRun {
   updatedAt: Tick;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasNodeAttemptStopReasonOneOf2 = string;
 
 export interface MasNodeAttempt {
   id: RecordId;
@@ -221,7 +338,7 @@ export interface MasNodeAttempt {
   error: null | RuntimeError;
   usage: UsageCounts;
   spend: BudgetSpend;
-  stopReason: null | string;
+  stopReason: null | MasNodeAttemptStopReasonOneOf2;
   transcript: BoundedView;
   toolSteps: Array<ToolStep>;
   contextReads: Array<ContextRead>;
@@ -261,6 +378,11 @@ export interface MasMessage {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^/"
+ */
+export type MasStateRevisionProvenanceMembersItem = string;
+
 export interface MasStateRevision {
   id: RecordId;
   runId: RecordId;
@@ -274,10 +396,29 @@ export interface MasStateRevision {
   namespace: string;
   parent: null | RecordId;
   value: unknown;
-  provenance: { path: InvocationPath; members: Array<string>; };
+  provenance: { path: InvocationPath; members: Array<MasStateRevisionProvenanceMembersItem>; };
   at: Tick;
 }
 
+
+export interface MasInteractionExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
+  deadline: Tick;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type MasInteractionResponseKeyOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type MasInteractionResumeSegmentOneOf2 = number;
 
 export interface MasInteraction {
   id: RecordId;
@@ -291,14 +432,14 @@ export interface MasInteraction {
   revision: number;
   prompt: unknown;
   responseSchema: { [key: string]: unknown; } | boolean;
-  expiry: null | { afterMs: number; deadline: Tick; };
+  expiry: null | MasInteractionExpiryOneOf2;
   response: unknown;
-  responseKey: null | string;
+  responseKey: null | MasInteractionResponseKeyOneOf2;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   segment: number;
-  resumeSegment: null | number;
+  resumeSegment: null | MasInteractionResumeSegmentOneOf2;
   requestedAt: Tick;
   resolvedAt: null | Tick;
 }
@@ -333,6 +474,30 @@ export type TemplateSha256 = string;
  */
 export type TemplateName = string;
 
+export interface MasTemplateProvenance {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  author: string;
+}
+
+
+export interface MasTemplateBindingsItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parameterPointer: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  targetPointer: string;
+  /**
+   * What the binding may change: role instructions or profile references, a requested tool subset, a message/context adapter choice, node/workflow caps (never above a parent), or the enablement value of a declared switch branch guard.
+   */
+  mode: "instructions-revision" | "role" | "profile" | "tools" | "message-adapter" | "context-adapter" | "caps" | "branch-enablement";
+}
+
+
 /**
  * An immutable workflow fragment plus the closed parameter schema and the ordered binding declarations that alone may specialize it. Instantiation validates parameters with the suite validator, applies a compiled RFC 6902 patch whose operations target only declared pointers, validates the result as a normal MasWorkflowVersion, and records template version and parameter revision as provenance. A parameter cannot change a node kind, add a node/edge/tool, target an undeclared pointer, or raise a cap. The template `versionId` is the canonical SHA-256 of the document with `versionId` and `provenance` excluded.
  */
@@ -349,7 +514,7 @@ export interface MasTemplate {
    * Schema constraints this type cannot express: minLength=1
    */
   description: string;
-  provenance: { author: string; };
+  provenance: MasTemplateProvenance;
   /**
    * A complete MasWorkflowVersion document (validated against the workflow schema by the template validator) that instantiation specializes copy-on-write.
    */
@@ -358,7 +523,7 @@ export interface MasTemplate {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  bindings: Array<{ parameterPointer: string; targetPointer: string; mode: "instructions-revision" | "role" | "profile" | "tools" | "message-adapter" | "context-adapter" | "caps" | "branch-enablement"; }>;
+  bindings: Array<MasTemplateBindingsItem>;
 }
 
 
@@ -402,11 +567,56 @@ export interface Ports {
 }
 
 
-export type StatePull = Array<{ member: string; as: Name; }>;
+export interface StatePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+  as: Name;
+}
 
-export type StatePush = Array<{ from: Name; member: string; }>;
 
-export type NodeLimits = null | { calls?: number; tokens?: number; ms?: number; toolRounds?: number; contextChars?: number; };
+export type StatePull = Array<StatePullItem>;
+
+export interface StatePushItem {
+  from: Name;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  member: string;
+}
+
+
+export type StatePush = Array<StatePushItem>;
+
+/**
+ * Schema constraints this type cannot express: minProperties=1
+ */
+export interface NodeLimitsOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars?: number;
+}
+
+
+export type NodeLimits = null | NodeLimitsOneOf2;
 
 export interface WorkflowLimits {
   /**
@@ -488,6 +698,30 @@ export interface TaskNode {
 }
 
 
+export interface GraphNodePullItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+}
+
+
+export interface GraphNodePushItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  child: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^/"
+   */
+  parent: string;
+}
+
+
 export interface GraphNode {
   id: Name;
   kind: "graph";
@@ -497,8 +731,8 @@ export interface GraphNode {
   statePush: StatePush;
   limits: NodeLimits;
   subgraph: Name;
-  pull: Array<{ parent: string; child: string; }>;
-  push: Array<{ child: string; parent: string; }>;
+  pull: Array<GraphNodePullItem>;
+  push: Array<GraphNodePushItem>;
 }
 
 
@@ -532,6 +766,17 @@ export interface LoopNode {
 }
 
 
+export interface SwitchNodeBranchesItem {
+  id: Name;
+  when: QueryDocument;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  nodes: Array<Name>;
+  result: PortRef;
+}
+
+
 export interface SwitchNode {
   id: Name;
   kind: "switch";
@@ -544,8 +789,16 @@ export interface SwitchNode {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  branches: Array<{ id: Name; when: QueryDocument; nodes: Array<Name>; result: PortRef; }>;
+  branches: Array<SwitchNodeBranchesItem>;
   default: null | Name;
+}
+
+
+export interface InteractionNodeExpiryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  afterMs: number;
 }
 
 
@@ -559,11 +812,19 @@ export interface InteractionNode {
   limits: NodeLimits;
   prompt: SchemaCarrier;
   response: SchemaCarrier;
-  expiry: null | { afterMs: number; };
+  expiry: null | InteractionNodeExpiryOneOf2;
 }
 
 
 export type Invocation = AgentNode | TaskNode | GraphNode | LoopNode | SwitchNode | InteractionNode;
+
+export interface MasWorkflowProvenance {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  author: string;
+}
+
 
 /**
  * The immutable, content-addressed intermediate representation every authoring path emits and the only shape the runtime executes. A version carries its stable workflow id, its canonical `versionId` (the SHA-256 of the document with `versionId`, `provenance` and `compile` excluded, so authorship and source provenance can never move a version), closed input/output/state schemas, named entry/exit ports, the closed six-kind invocation union, control dependencies, ordered typed message edges, workflow/node caps, pinned registry and CONFIG references and compile metadata. Secrets, clocks and observed results have no representable member. Unknown members refuse at every object.
@@ -582,7 +843,7 @@ export interface MasWorkflow {
    * Schema constraints this type cannot express: minLength=1
    */
   description: string;
-  provenance: { author: string; };
+  provenance: MasWorkflowProvenance;
   input: SchemaCarrier;
   output: SchemaCarrier;
   /**

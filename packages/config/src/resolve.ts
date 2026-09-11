@@ -140,6 +140,7 @@ function inferenceOf(registry: ProfileRegistry, id: string | null): InferenceCon
   return {
     temperature: preset?.temperature ?? null,
     maxTokens: preset?.maxTokens ?? null,
+    ...(preset?.maxTokensField === undefined ? {} : { maxTokensField: preset.maxTokensField }),
     retry: preset?.retry === undefined || preset.retry === null ? null : { ...preset.retry },
     reasoning: preset?.reasoning === undefined || preset.reasoning === null ? null : { ...preset.reasoning },
   };
@@ -331,7 +332,7 @@ export async function resolveProfile(input: ResolveInput): Promise<Resolution> {
           base: request.chat.baseUrl ?? entry.base,
           model: request.chat.model,
           credentialSlot: request.chat.credentialSlot,
-          inference: inferenceOf(registry, null),
+          inference: request.chat.inference ?? inferenceOf(registry, null),
           prompt: request.chatPrompt,
           responseSchema: null,
           tools: { requested: [], effective: [] },

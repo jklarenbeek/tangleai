@@ -40,14 +40,39 @@ export interface Reason {
 
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type SplitConversationsItem = string;
+
+export interface SplitPerCategory {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  "1": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  "2": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  "3": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  "4": number;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$eq":["$.scorable",{"$sum":"$.perCategory[*]"}]}
  */
 export interface Split {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  conversations: Array<string>;
-  perCategory: { "1": number; "2": number; "3": number; "4": number; };
+  conversations: Array<SplitConversationsItem>;
+  perCategory: SplitPerCategory;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -113,6 +138,53 @@ export interface Axis {
 }
 
 
+export interface CellIngest {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  novelty: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  contradiction: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  crystallize: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxPairs: number;
+}
+
+
+export interface CellRetrieval {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  k: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  minScore: number;
+}
+
+
+/**
+ * The registered built-in width a cell may move. The identity a live run actually resolves is a tier of the run, not a treatment, and lives in the attempt.
+ */
+export interface CellEmbedding {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+}
+
+
 /**
  * A treatment cell as effective VALUES — never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.
  */
@@ -131,14 +203,55 @@ export interface Cell {
    * The one axis an isolated cell moves; null for the inert reference, the shipped cell and every combination.
    */
   axis: null | "novelty" | "contradiction" | "crystallize" | "k" | "minScore" | "offlineWidth";
-  ingest: { novelty: number; contradiction: number; crystallize: number; maxPairs: number; };
-  retrieval: { k: number; minScore: number; };
+  ingest: CellIngest;
+  retrieval: CellRetrieval;
   /**
    * The registered built-in width a cell may move. The identity a live run actually resolves is a tier of the run, not a treatment, and lives in the attempt.
    */
-  embedding: { model: string; dims: number; };
+  embedding: CellEmbedding;
 }
 
+
+/**
+ * The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it — a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed.
+ */
+export interface InferenceEmbedder {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  dims: number;
+}
+
+
+export interface InferenceRetry {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baseMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxMs: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type InferenceDeadlineMsOneOf2 = number;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type InferenceKeySourceOneOf2 = string;
 
 /**
  * The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be — only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.
@@ -167,14 +280,14 @@ export interface Inference {
   /**
    * The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it — a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed.
    */
-  embedder: { model: string; dims: number; };
+  embedder: InferenceEmbedder;
   thinking: "off" | "default";
   /**
    * Schema constraints this type cannot express: minLength=1
    */
   responseSchema: string;
-  retry: { attempts: number; baseMs: number; maxMs: number; };
-  deadlineMs: null | number;
+  retry: InferenceRetry;
+  deadlineMs: null | InferenceDeadlineMsOneOf2;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
@@ -187,7 +300,7 @@ export interface Inference {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   campaignCeiling: number;
-  keySource: null | string;
+  keySource: null | InferenceKeySourceOneOf2;
   identity: Sha256;
 }
 
@@ -295,6 +408,74 @@ export interface Operations {
 
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunEndpointOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunAnswerModelOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunJudgeModelOneOf2 = string;
+
+export interface RunEmbedder {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunResponseSchemaOneOf2 = string;
+
+export interface RunRetryOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baseMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxMs: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type RunDeadlineMsOneOf2 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type RunBudgetCeilingOneOf2 = number;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunKeySourceOneOf2 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RunSampleIdsItem = string;
+
+/**
  * Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares — never a hand-written subset. The key itself never appears; only the name of the variable it came from.
  */
 export interface Run {
@@ -306,31 +487,31 @@ export interface Run {
   /**
    * The normalized, credential-free base URL the requests went to; null on the keyless tier.
    */
-  endpoint: null | string;
-  answerModel: null | string;
-  judgeModel: null | string;
-  embedder: { model: string; dims: number; };
+  endpoint: null | RunEndpointOneOf2;
+  answerModel: null | RunAnswerModelOneOf2;
+  judgeModel: null | RunJudgeModelOneOf2;
+  embedder: RunEmbedder;
   thinking: null | "off" | "default";
   /**
    * The answer contract the replies were decoded against, by id and revision.
    */
-  responseSchema: null | string;
-  retry: null | { attempts: number; baseMs: number; maxMs: number; };
-  deadlineMs: null | number;
+  responseSchema: null | RunResponseSchemaOneOf2;
+  retry: null | RunRetryOneOf2;
+  deadlineMs: null | RunDeadlineMsOneOf2;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   concurrency: number;
-  budgetCeiling: null | number;
+  budgetCeiling: null | RunBudgetCeilingOneOf2;
   /**
    * The NAME of the environment variable the key was read from, never the key.
    */
-  keySource: null | string;
+  keySource: null | RunKeySourceOneOf2;
   /**
    * The canonical digest of the sorted scored question ids — what a comparison compares instead of walking two lists.
    */
   questionSet: Sha256;
-  sampleIds: Array<string>;
+  sampleIds: Array<RunSampleIdsItem>;
   source: Sha256;
 }
 
@@ -365,6 +546,15 @@ export interface QuestionResult {
 }
 
 
+export interface CauseAtKPartitionItem {
+  cause: "source-unresolved" | "content-collapsed" | "novelty-filtered" | "contradiction-superseded" | "crystallized-not-carried" | "identity-unranked" | "below-min-score" | "outside-k" | "retrieved";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  count: number;
+}
+
+
 /**
  * Every gold address of every scored question lands in exactly one bucket at this k. The buckets are ordered from what the release lost before any policy ran to what the prompt actually carried, so the row says WHERE a fact was lost rather than only that it was.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.denominator",{"$sum":"$.partition[*].count"}]},{"$eq":[{"$count":"$.partition[*].cause"},{"$count":{"$distinct":"$.partition[*].cause"}}]}]}
@@ -377,7 +567,7 @@ export interface CauseAtK {
   /**
    * Schema constraints this type cannot express: minItems=9, maxItems=9
    */
-  partition: Array<{ cause: "source-unresolved" | "content-collapsed" | "novelty-filtered" | "contradiction-superseded" | "crystallized-not-carried" | "identity-unranked" | "below-min-score" | "outside-k" | "retrieved"; count: number; }>;
+  partition: Array<CauseAtKPartitionItem>;
 }
 
 
@@ -396,6 +586,42 @@ export interface Causes {
 }
 
 
+export interface AttemptDenominatorsUnanswered {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wire: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budget: number;
+}
+
+
+export interface AttemptDenominators {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planned: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answered: number;
+  unanswered: AttemptDenominatorsUnanswered;
+  /**
+   * Replies that failed their contract after repair; they are not scored and they are not answers.
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  invalid: number;
+  questionSet: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PromptsChangedIdsItem = string;
+
 /**
  * What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters — the suite's one size rule — where none did.
  * Schema constraints this type cannot express: $query={"$eq":[{"$count":"$.changedIds[*]"},"$.changed"]}
@@ -409,7 +635,7 @@ export interface Prompts {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   changed: number;
-  changedIds: Array<string>;
+  changedIds: Array<PromptsChangedIdsItem>;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -425,6 +651,48 @@ export interface Prompts {
 }
 
 
+export interface AttemptQuality {
+  f1: null | ByCategory;
+  /**
+   * The evidence recall the retrieval reached, averaged — what the F1 beside it is read against.
+   */
+  ceiling: null | ByCategory;
+  citedRecall: null | ByCategory;
+}
+
+
+export interface AttemptCostOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  tokensPerAnswer: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  callsPerAnswer: number;
+}
+
+
 /**
  * One cell measured once, in one phase, under one run identity. Failures stay in the row and make it ineligible; they are never dropped so a mean can look complete.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.denominators.planned",{"$add":[{"$add":["$.denominators.answered","$.denominators.invalid"]},{"$add":["$.denominators.unanswered.wire","$.denominators.unanswered.budget"]}]}]},{"$eq":["$.denominators.answered",{"$count":"$.results[*]"}]},{"$eq":["$.operations.observations",{"$add":["$.operations.admitted","$.operations.filtered"]}]},{"$eq":["$.operations.judgeAttempts",{"$add":["$.operations.judged","$.operations.judgeFailures"]}]},{"$eq":["$.operations.confirmed",{"$add":["$.operations.contradictions","$.operations.contradictionSkips"]}]},{"$eq":["$.operations.crystallizePlanned",{"$add":["$.operations.merged","$.operations.mergeSkips"]}]},{"$eq":["$.operations.total",{"$add":["$.operations.live","$.operations.superseded"]}]},{"$eq":["$.denominators.questionSet","$.run.questionSet"]},{"$or":[{"$not":"$.eligibility.eligible"},{"$and":[{"$eq":["$.denominators.planned","$.denominators.answered"]},{"$eq":[0,"$.denominators.invalid"]},{"$eq":[0,"$.denominators.unanswered.wire"]},{"$eq":[0,"$.denominators.unanswered.budget"]},{"$eq":[0,"$.operations.judgeFailures"]},{"$eq":[0,"$.operations.contradictionSkips"]},{"$eq":[0,"$.operations.mergeSkips"]},{"$empty":"$.eligibility.reasons[*]"}]}]},{"$or":[{"$eq":["$.run.tier","keyless"]},{"$exists":"$.run.answerModel"}]},{"$eq":["$.denominators.answered",{"$add":["$.prompts.unchanged","$.prompts.changed"]}]}]}
@@ -434,7 +702,7 @@ export interface Attempt {
   runId: Sha256;
   phase: "screen" | "selection" | "confirmation";
   run: Run;
-  denominators: { planned: number; answered: number; unanswered: { wire: number; budget: number; }; invalid: number; questionSet: Sha256; };
+  denominators: AttemptDenominators;
   eligibility: { eligible: boolean; reasons: Array<Reason>; };
   operations: Operations;
   /**
@@ -454,11 +722,11 @@ export interface Attempt {
    * The retrieved context quoted as the answer, scored by the official evaluator — the model-free floor at this cell's own k. null where quoting the context is not a floor.
    */
   verbatimFloor: null | ByCategory;
-  quality: { f1: null | ByCategory; ceiling: null | ByCategory; citedRecall: null | ByCategory; };
+  quality: AttemptQuality;
   /**
    * null on a tier that buys nothing. Per-answer figures are what the objective's ratios are read from, so they are published rather than recomputed by a reader.
    */
-  cost: null | { calls: number; replayed: number; tokens: number; promptTokens: number; completionTokens: number; tokensPerAnswer: number; callsPerAnswer: number; };
+  cost: null | AttemptCostOneOf2;
   results: Array<QuestionResult>;
 }
 
@@ -496,6 +764,54 @@ export interface Interval {
 }
 
 
+export interface ComparisonByCategoryItem {
+  category: 1 | 2 | 3 | 4;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  pairs: number;
+  mean: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sd: number;
+  /**
+   * The one-sided lower bound at the registered level; the floor it is read against is the objective's.
+   */
+  lowerBound: number;
+}
+
+
+export interface ComparisonActingSet {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  size: number;
+  mean: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  sd: number;
+  interval: Interval;
+  /**
+   * True when the acting-set upper bound is below zero: harmful exactly where it acts, whatever the diluted overall interval says.
+   */
+  blocks: boolean;
+}
+
+
+export interface ComparisonCostOneOf2 {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  tokenRatio: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  callRatio: number;
+}
+
+
 export interface Clause {
   clause: "eligible" | "primary-objective" | "held-out-split" | "overall-interval" | "category-floor" | "token-ratio" | "call-ratio" | "acting-set";
   passed: boolean;
@@ -529,9 +845,9 @@ export interface Comparison {
   mean: number;
   interval: Interval;
   power: Power;
-  byCategory: Array<{ category: 1 | 2 | 3 | 4; pairs: number; mean: number; sd: number; lowerBound: number; }>;
-  actingSet: { size: number; mean: number; sd: number; interval: Interval; blocks: boolean; };
-  cost: null | { tokenRatio: number; callRatio: number; };
+  byCategory: Array<ComparisonByCategoryItem>;
+  actingSet: ComparisonActingSet;
+  cost: null | ComparisonCostOneOf2;
   /**
    * What this comparison could have seen, in words, so a null is never read as 'no effect'.
    * Schema constraints this type cannot express: minLength=1
@@ -551,6 +867,53 @@ export interface Exclusion {
 }
 
 
+export interface SelectionFrozenOneOf2 {
+  cells: Array<Sha256>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  algorithm: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  revision: string;
+  identity: Sha256;
+}
+
+
+export interface SelectionTransitionOneOf2 {
+  challenger: Sha256;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rule: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  calculation: string;
+  identity: Sha256;
+}
+
+
+export interface SelectionDecisionOneOf2 {
+  default: Sha256;
+  /**
+   * Whether a challenger passed every registered clause. False is a real outcome: the inert cell becomes the default and the null is published as a bounded null.
+   */
+  qualifiesAsDefault: boolean;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rule: string;
+  /**
+   * The decision in words, including what the design could have detected when nothing qualified.
+   * Schema constraints this type cannot express: minLength=1
+   */
+  statement: string;
+  reasons: Array<Reason>;
+}
+
+
 /**
  * The state that keeps a held-out result from reaching cell design. Confirmation cannot be attempted while the shortlist is open, and a decision exists only once confirmation is in.
  */
@@ -565,13 +928,32 @@ export interface Selection {
   /**
    * What order the shortlist was frozen in, by which algorithm at which revision, and the canonical identity of that decision. Null until a screen has frozen one; a confirmation cannot be attempted before it exists.
    */
-  frozen: null | { cells: Array<Sha256>; algorithm: string; revision: string; identity: Sha256; };
+  frozen: null | SelectionFrozenOneOf2;
   /**
    * The challenger, the calculation that chose it and the canonical identity of that choice. Confirmation is gated on this identity, so no cell, prompt or inference control can move after it exists.
    */
-  transition: null | { challenger: Sha256; rule: string; calculation: string; identity: Sha256; };
+  transition: null | SelectionTransitionOneOf2;
   finalist: null | Sha256;
-  decision: null | { default: Sha256; qualifiesAsDefault: boolean; rule: string; statement: string; reasons: Array<Reason>; };
+  decision: null | SelectionDecisionOneOf2;
+}
+
+
+export interface WidthDecisionRowsItem {
+  cellId: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+  recall: number;
+  verbatimFloor: null | number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokenProxy: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  operations: number;
 }
 
 
@@ -591,11 +973,59 @@ export interface WidthDecision {
   /**
    * Schema constraints this type cannot express: minItems=1
    */
-  rows: Array<{ cellId: Sha256; dims: number; recall: number; verbatimFloor: null | number; tokenProxy: number; operations: number; }>;
+  rows: Array<WidthDecisionRowsItem>;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
   caveat: string;
+}
+
+
+export interface PlanQuestions {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scorable: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  adversarial: number;
+}
+
+
+export interface PlanRequests {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embedFresh: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embedCached: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chat: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  judge: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+}
+
+
+export interface PlanCeilings {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  perRun: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  campaign: number;
 }
 
 
@@ -606,11 +1036,54 @@ export interface WidthDecision {
 export interface Plan {
   phase: "census" | "selection" | "confirmation";
   cells: Array<Sha256>;
-  questions: { scorable: number; adversarial: number; };
-  requests: { embedFresh: number; embedCached: number; chat: number; judge: number; total: number; };
-  ceilings: { perRun: number; campaign: number; };
+  questions: PlanQuestions;
+  requests: PlanRequests;
+  ceilings: PlanCeilings;
   withinCeilings: boolean;
   inference: null | Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type CensusRowsItemPromptsOneOf2ChangedIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.changed",{"$count":"$.changedIds[*]"}]}
+ */
+export interface CensusRowsItemPromptsOneOf2 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  questions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  changed: number;
+  changedIds: Array<CensusRowsItemPromptsOneOf2ChangedIdsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$or":[{"$not":"$.dropped"},{"$eq":[true,"$.mechanicallyInert"]}]},{"$or":[{"$not":"$.mechanicallyInert"},{"$and":[{"$eq":[true,"$.countsEqualInert"]},{"$eq":[0,"$.prompts.changed"]},{"$gt":["$.prompts.questions",0]}]}]}]}
+ */
+export interface CensusRowsItem {
+  cellId: Sha256;
+  operations: Operations;
+  /**
+   * Every operation count equals the inert cell's under this embedder. Necessary for a drop and not sufficient: a retrieval-axis cell holds this while changing every prompt.
+   */
+  countsEqualInert: boolean;
+  /**
+   * The retrieved-context comparison against the inert reference over the registered selection sample, computed from the census's own embeddings: a changed question is one whose ordered context lines differ from inert's under the cell's own k and minScore. Null on the inert reference, which is not compared with itself.
+   */
+  prompts: null | CensusRowsItemPromptsOneOf2;
+  /**
+   * Both halves hold: the operation counts equal the inert cell's AND the registered sample's retrieved context is byte-identical under the cell's own retrieval values, so the cell provably produces inert's prompts under this embedder.
+   */
+  mechanicallyInert: boolean;
+  dropped: boolean;
 }
 
 
@@ -627,9 +1100,67 @@ export interface Census {
    * Zero, and asserted to be zero: a census that answered a question would be a selection.
    */
   chatCalls: 0;
-  rows: Array<{ cellId: Sha256; operations: Operations; countsEqualInert: boolean; prompts: null | { questions: number; changed: number; changedIds: Array<string>; }; mechanicallyInert: boolean; dropped: boolean; }>;
+  rows: Array<CensusRowsItem>;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LocomoPolicyDatasetRestrictedOneOf2Item = string;
+
+export interface LocomoPolicyDataset {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  bytes: number;
+  schemaValid: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  conversations: number;
+  /**
+   * The sample ids the run was restricted to, or null for the whole release.
+   */
+  restricted: null | Array<LocomoPolicyDatasetRestrictedOneOf2Item>;
+}
+
+
+export interface LocomoPolicySourceFilesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  sha256: Sha256;
+}
+
+
+/**
+ * What was actually running. HEAD alone is not enough while reviewed work is uncommitted, so the revision is HEAD plus an ordered path/digest manifest of the instrument, policy, pipeline and schema files a cell's behaviour depends on.
+ */
+export interface LocomoPolicySource {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{40}$"
+   */
+  head: string;
+  clean: boolean;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  files: Array<LocomoPolicySourceFilesItem>;
+  sha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LocomoPolicyGateFailuresItem = string;
 
 /**
  * What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose — the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.
@@ -638,11 +1169,11 @@ export interface Census {
 export interface LocomoPolicy {
   benchmark: "locomo";
   instrument: "locomo-policy";
-  dataset: { path: string; sha256: Sha256; bytes: number; schemaValid: boolean; conversations: number; restricted: null | Array<string>; };
+  dataset: LocomoPolicyDataset;
   /**
    * What was actually running. HEAD alone is not enough while reviewed work is uncommitted, so the revision is HEAD plus an ordered path/digest manifest of the instrument, policy, pipeline and schema files a cell's behaviour depends on.
    */
-  source: { head: string; clean: boolean; files: Array<{ path: string; sha256: Sha256; }>; sha256: Sha256; };
+  source: LocomoPolicySource;
   registration: Registration;
   plan: null | Plan;
   census: null | Census;
@@ -653,7 +1184,7 @@ export interface LocomoPolicy {
   /**
    * The instrument proven before any result is read: the oracle equals its analytic ceiling, the seeded random row sits in its band, the inert cell reproduces the published baseline.
    */
-  gate: { passed: boolean; failures: Array<string>; };
+  gate: { passed: boolean; failures: Array<LocomoPolicyGateFailuresItem>; };
   reportId: Sha256;
   /**
    * the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary
