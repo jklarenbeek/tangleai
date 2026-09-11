@@ -128,9 +128,11 @@ change, record its Changesets impact and update stale documentation first.
 4. Add `--push` when pushing is authorized. The pre-push hook checks the actual
    refs and version advancement; the required CI check enforces the same rule
    before merging into `main`.
-5. After merge, the release workflow tags the accepted commit, verifies npm
-   publication and installs, then deploys and verifies Pages. Completion requires
-   all these checks. Never report a site deployment as proof of npm publication.
+5. After merge, the release workflow publishes and verifies npm packages and
+   independently deploys Pages after CI. The website builds local Tangle source
+   with JarenJS installed from npm; Tangle publication cannot block deployment.
+   Package release completion requires all checks. Never report a site deployment
+   as proof of npm publication.
 
 Abort at the first failure. A failed preparation restores its version, lockfile,
 changeset and changelog writes. An interrupted npm publication resumes against

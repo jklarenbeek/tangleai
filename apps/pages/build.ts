@@ -10,6 +10,7 @@ import { cp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { verifyPageSources } from './source.ts';
 
 // the one Bun API this script uses, declared locally instead of pulling
 // in @types/bun for a single call
@@ -22,6 +23,7 @@ declare const Bun: {
 const here = dirname(fileURLToPath(import.meta.url));
 const dist = join(here, 'dist');
 const repo = join(here, '..', '..');
+const dependencySources = await verifyPageSources(repo);
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
@@ -59,6 +61,7 @@ await writeFile(join(dist, 'build.json'), JSON.stringify({
   version: manifest.version,
   commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(),
   packages,
+  dependencySources,
 }, null, 2) + '\n');
 
 console.log(`pages built → ${dist}`);

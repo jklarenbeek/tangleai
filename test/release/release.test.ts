@@ -12,6 +12,7 @@ import { publicationDecision, type RegistryVersion } from '../../scripts/release
 import { publishSequence, type PublishReceipt } from '../../scripts/release/publish.ts';
 import { verifyBuildIdentity } from '../../scripts/release/verify-site.ts';
 import type { Artifacts, Artifact } from '../../scripts/release/build.ts';
+import { verifyPageSources } from '../../apps/pages/source.ts';
 
 function commit(root: string) {
   git(root, 'add', '--all');
@@ -230,8 +231,13 @@ it('resumes a partial publication without republishing the accepted package', as
   assert.equal(done.packages[0].status, 'present');
 });
 it('a website with the right version but wrong commit or incomplete package set is refused', () => {
-  const expected = { version: '0.20.0', commit: 'a'.repeat(40), packages: { '@tangleai/core': '0.20.0' } };
+  const expected = { version: '0.20.0', commit: 'a'.repeat(40), packages: { '@tangleai/core': '0.20.0' }, dependencySources: { tangle: 'workspace', jarenjs: 'npm' } };
   verifyBuildIdentity(structuredClone(expected), expected);
   assert.throws(() => verifyBuildIdentity({ ...expected, commit: 'b'.repeat(40) }, expected), /Live website/);
   assert.throws(() => verifyBuildIdentity({ ...expected, packages: {} }, expected), /Live website/);
+});
+it('the website resolves Tangle source locally and JarenJS from npm, refusing either fallback', async () => {
+  assert.deepEqual(await verifyPageSources(ROOT), { tangle: 'workspace', jarenjs: 'npm' });
+  await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@tangleai/core' ? '@jarenjs/core' : name)), /local Tangle source/);
+  await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@jarenjs/app' ? '@tangleai/core' : name)), /npm installation/);
 });

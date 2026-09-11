@@ -91,9 +91,12 @@ those inputs and artifacts are unchanged.
 
 `release:verify-registry` checks each package's version, exports, integrity and
 `latest` tag, then installs the published versions in another fresh project and
-runs the consumer gate. Only a complete verification allows the reusable Pages
-workflow to build and deploy the same commit. The live `build.json` must identify
-the expected version, commit and complete package set. The GitHub release is
+runs the consumer gate. Pages runs independently after the source CI gate: it
+builds Tangle's local workspace TypeScript and installs JarenJS from npm. The
+build refuses published Tangle dependencies or JarenJS source links. Website
+deployment requires no Tangle npm publication or npm publishing authentication.
+The live `build.json` must identify the expected version, commit, complete package
+set and dependency sources (`tangle: workspace`, `jarenjs: npm`). The GitHub release is
 finalized only after publication and deployment verification succeed. The Linux
 x64 desktop binary is compiled and smoke-tested from a foreign directory before
 publication, then attached to the release beside its npm tarballs.
@@ -155,9 +158,9 @@ a new patch version; never retag or overwrite a released artifact. Moving `lates
 backwards is refused.
 
 Artifacts and partial receipts are retained by Actions even when publication
-fails. An incomplete publication cannot deploy Pages or finish the GitHub release.
-A failed Pages deployment can be retried after registry verification, using the
-same source identity. Normal workflow retries do not advance package versions.
+fails. An incomplete publication cannot finish the GitHub package release, but
+does not block Pages. A failed Pages deployment can be retried using the same
+checked source identity. Normal workflow retries do not advance package versions.
 
 This policy currently accepts numeric development releases on `latest`. A separate
 prerelease channel or a future major release requires an explicit policy change;

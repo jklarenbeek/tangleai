@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { setTimeout as delay } from 'node:timers/promises';
 import { ROOT, git, validateManifests, isMain } from './common.ts';
 
-export function verifyBuildIdentity(actual: unknown, expected: { version: string; commit: string; packages: Record<string, string> }) {
+export function verifyBuildIdentity(actual: unknown, expected: { version: string; commit: string; packages: Record<string, string>; dependencySources: { tangle: string; jarenjs: string } }) {
   assert.deepEqual(actual, expected, 'Live website does not identify the complete expected release');
 }
 export async function verifySite(url: string, root = ROOT) {
   const { main, names } = validateManifests(root);
-  const expected = { version: main.version, commit: git(root, 'rev-parse', 'HEAD'), packages: Object.fromEntries(names.map(name => [name, main.version])) };
+  const expected = { version: main.version, commit: git(root, 'rev-parse', 'HEAD'), packages: Object.fromEntries(names.map(name => [name, main.version])), dependencySources: { tangle: 'workspace', jarenjs: 'npm' } };
   const base = new URL(url.endsWith('/') ? url : url + '/');
   assert.ok(['https:', 'http:'].includes(base.protocol));
   let failure: unknown;

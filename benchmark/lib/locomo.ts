@@ -36,8 +36,8 @@ import SCHEMA from '../schemas/locomo10.schema.json' with { type: 'json' };
 
 /** Where the submodule sits, relative to the repository root. */
 export const LOCOMO_DIR = 'benchmark/locomo';
-/** The released dataset inside it. */
-export const LOCOMO_DATASET = join(LOCOMO_DIR, 'data/locomo10.json');
+/** A repository path in reports; native separators are applied only when reading. */
+export const LOCOMO_DATASET = `${LOCOMO_DIR}/data/locomo10.json`;
 
 /** The command that fixes an absent submodule. Printed, never run for the caller. */
 export const INIT_COMMAND = 'git submodule update --init benchmark/locomo';

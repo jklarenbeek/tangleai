@@ -68,7 +68,7 @@ jobs:
           retention-days: 90
 
   pages:
-    needs: publish
+    needs: checks
     uses: ./.github/workflows/pages.yml
     permissions:
       contents: read
@@ -76,7 +76,6 @@ jobs:
       id-token: write
     with:
       commit: ${{ github.sha }}
-      version: ${{ needs.publish.outputs.version }}
 
   finish:
     needs: [publish, pages]

@@ -1,13 +1,10 @@
 name: pages
 
-# The release publisher is the only caller. A main push cannot bypass npm checks.
+# The source checks gate deployment; Tangle npm publication is independent.
 on:
   workflow_call:
     inputs:
       commit:
-        type: string
-        required: true
-      version:
         type: string
         required: true
 
@@ -34,10 +31,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - name: Verify the release identity
-        env:
-          RELEASE_VERSION: ${{ inputs.version }}
-        run: node -e 'if (require("./package.json").version !== process.env.RELEASE_VERSION) process.exit(1)'
       - run: npm run pages:build
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3

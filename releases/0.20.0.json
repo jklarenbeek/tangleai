@@ -4,7 +4,7 @@
   "baseVersion": "0.1.0",
   "baseCommit": "c0037af1baa33707cdbb0436f11ac0909d92622a",
   "initial": true,
-  "inputHash": "7baea16bf16a19f1f2abb3e4bf56d2b5fa46cec0f126b060328c5f93b7530a04",
+  "inputHash": "0020c4078bb1f83e13751d18aa7d0509b0cc333b82b8435ce78f079b61308740",
   "changesets": [
     {
       "releases": [
@@ -41,7 +41,7 @@
           "type": "minor"
         }
       ],
-      "summary": "Establish the coordinated 0.20.0 release with JavaScript and TypeScript declaration distributions, preserved public subpaths and JSON schemas, and verified Node and Bun consumers. Use published JarenJS 0.83.3 fixes without a consumer installation patch. Prepare versions before release commits, publish verified tarballs, and verify npm availability before website deployment.",
+      "summary": "Establish the coordinated 0.20.0 release with JavaScript and TypeScript declaration distributions, preserved public subpaths and JSON schemas, and verified Node and Bun consumers. Use published JarenJS 0.83.3 fixes without a consumer installation patch. Prepare versions before release commits and publish verified tarballs. Deploy the website independently from local Tangle workspace source with JarenJS packages from npm, verifying dependency sources and the live commit.",
       "id": "npm-release-workflow"
     }
   ],
@@ -79,5 +79,5 @@
       "version": "0.20.0"
     }
   ],
-  "preparationCommit": "c0037af1baa33707cdbb0436f11ac0909d92622a"
+  "preparationCommit": "d4e67b92ef636b6dd2569acd11c7805b359bf4da"
 }

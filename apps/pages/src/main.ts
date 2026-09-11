@@ -125,7 +125,7 @@ function view(state: any): any {
 
     ['section', { class: 'panel integration', 'data-jaren-version': manifest.dependencies['@jarenjs/app'], 'data-tangle-version': manifest.version },
       ['h2', {}, `Tangle ${manifest.version} · JarenJS ${manifest.dependencies['@jarenjs/app']}`],
-      ['p', {}, 'Eight coordinated npm packages with JavaScript and TypeScript declarations. ', ['a', { href: `https://github.com/jklarenbeek/tangleai/releases/tag/v${manifest.version}` }, 'Release notes']],
+      ['p', {}, 'Eight coordinated packages with JavaScript and TypeScript declarations. ', ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/CHANGELOG.md' }, 'Release notes']],
       ['p', {}, 'Verified workflow checkpoints, lease-aware jobs, atomic agent memory and scheduled document fetching run on the suite. Provider token limits are part of each run’s configuration identity.'],
       ['p', { class: 'note' }, `Measurements below were collected on JarenJS ${integration.jaren}. Keyless checks refreshed ${integration.measuredAt}; paid answers are dated ${integration.paid.qa.at.slice(0, 10)}. Earlier attempts remain available.`],
       ['div', { class: 'report' },

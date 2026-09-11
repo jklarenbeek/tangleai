@@ -268,7 +268,8 @@ Cross-compile with Bun's targets, e.g.
 (run `bun scripts/embed-assets.ts` first so the UI travels inside).
 
 **`apps/pages`** — the GitHub Pages site (`bun apps/pages/build.ts` →
-`apps/pages/dist`, deployed by the release workflow after npm verification). Its demo
+`apps/pages/dist`, deployed after CI independently of Tangle npm publication).
+It builds Tangle's local workspace source and uses JarenJS packages from npm. Its demo
 is not a mock: the real pipeline document executes in your browser over
 the in-memory store, and the recall you ask for afterwards is real
 ranked retrieval — the superseded record provably cannot surface.
@@ -311,9 +312,10 @@ npm run release:closeout -- --message "Fix the affected behavior" --push
 
 Closeout creates a release branch when starting on `main`. Merge its checked pull
 request to run the publication workflow. GitHub Actions tags the accepted commit,
-publishes verified tarballs with npm trusted publishing, tests fresh registry
-installations, and then deploys and verifies the website. A failed or incomplete
-publication cannot finish the release. See the [release protocol](docs/workflow/RELEASE.md)
+publishes verified tarballs with npm trusted publishing and tests fresh registry
+installations. After CI, the website independently builds local Tangle source with
+JarenJS from npm, deploys and verifies the accepted commit. A failed publication
+cannot finish the package release, but does not block the website. See the [release protocol](docs/workflow/RELEASE.md)
 for first-time npm setup, recovery and the full closeout sequence.
 
 Changesets and its configuration/package-discovery APIs are development-only
