@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { ROOT, config, manifestPaths, readJson, writeJson, validateManifests, inputHash, git, assertReleaseTag, SECTIONS, type ReleaseRecord } from '../../scripts/release/common.ts';
+import { ROOT, config, manifestPaths, readJson, writeJson, validateManifests, inputHash, integrity, sha256, git, assertReleaseTag, SECTIONS, type ReleaseRecord } from '../../scripts/release/common.ts';
 import { prepare, synchronizeVersions } from '../../scripts/release/prepare.ts';
 import { checkRelease } from '../../scripts/release/check.ts';
 import { distributionManifest } from '../../scripts/release/build.ts';
@@ -13,6 +13,7 @@ import { publishSequence, type PublishReceipt } from '../../scripts/release/publ
 import { verifyBuildIdentity } from '../../scripts/release/verify-site.ts';
 import type { Artifacts, Artifact } from '../../scripts/release/build.ts';
 import { verifyPageSources } from '../../apps/pages/source.ts';
+import { assertVerifiedGate } from '../../scripts/release/verify.ts';
 
 function commit(root: string) {
   git(root, 'add', '--all');
@@ -145,7 +146,7 @@ it('combines patch and minor intent into one minor release', async t => {
   await prepare(root);
   assert.equal(checkRelease(root)?.version, '0.21.0');
 });
-it('bases a release on main so draft commits can be squash merged', async t => {
+it('bases a release on remote main when local draft commits exist', async t => {
   const { root, base } = fixture(t, '0.20.0');
   git(root, 'update-ref', 'refs/remotes/origin/main', base);
   writeFileSync(resolve(root, 'packages/core/src/index.ts'), 'export const value = 2;\n');
@@ -156,7 +157,7 @@ it('bases a release on main so draft commits can be squash merged', async t => {
   assert.equal(record.baseCommit, base);
   assert.equal(record.preparationCommit, draft);
 });
-it('refreshes a fix on an unmerged release branch but refuses an accepted release', async t => {
+it('refreshes a local fix before pushing main but refuses an accepted release', async t => {
   const { root, base } = prepared(t);
   git(root, 'update-ref', 'refs/remotes/origin/main', base);
   commit(root);
@@ -240,4 +241,34 @@ it('the website resolves Tangle source locally and JarenJS from npm, refusing ei
   assert.deepEqual(await verifyPageSources(ROOT), { tangle: 'workspace', jarenjs: 'npm' });
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@tangleai/core' ? '@jarenjs/core' : name)), /local Tangle source/);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@jarenjs/app' ? '@tangleai/core' : name)), /npm installation/);
+});
+it('the push and publication gate refuses missing, changed or stale verification evidence', t => {
+  const { root } = prepared(t);
+  writeFileSync(resolve(root, '.gitignore'), 'node_modules/\ndist/\n');
+  writeFileSync(resolve(root, '.nvmrc'), process.versions.node + '\n');
+  const directory = resolve(root, 'dist/release');
+  mkdirSync(directory, { recursive: true });
+  const built: Artifacts = { schemaVersion: 1, version: '0.20.0', commit: git(root, 'rev-parse', 'HEAD'), inputHash: inputHash(root),
+    packages: config(root).packages.map(dir => {
+      const pkg = readJson(resolve(root, dir, 'package.json'));
+      const filename = `tangleai-${dir.slice('packages/'.length)}-0.20.0.tgz`;
+      const bytes = Buffer.from(pkg.name);
+      writeFileSync(resolve(directory, filename), bytes);
+      return { name: pkg.name, version: pkg.version, filename, integrity: integrity(bytes), exports: {} };
+    }),
+  };
+  writeJson(resolve(directory, 'artifacts.json'), built);
+  writeJson(resolve(directory, 'verification.json'), { declarations: true, browser: true });
+  assert.throws(() => assertVerifiedGate(root), /ENOENT/);
+  writeJson(resolve(directory, 'gate.json'), { schemaVersion: 1, version: built.version, inputHash: built.inputHash,
+    node: process.version, npm: readJson(resolve(root, 'package.json')).packageManager,
+    artifactsHash: sha256(readFileSync(resolve(directory, 'artifacts.json'))),
+    verificationHash: sha256(readFileSync(resolve(directory, 'verification.json'))),
+  });
+  assertVerifiedGate(root);
+  writeJson(resolve(directory, 'verification.json'), { declarations: false, browser: true });
+  assert.throws(() => assertVerifiedGate(root), assert.AssertionError);
+  writeJson(resolve(directory, 'verification.json'), { declarations: true, browser: true });
+  writeFileSync(resolve(root, 'packages/core/src/index.ts'), 'export const value = 2;\n');
+  assert.throws(() => assertVerifiedGate(root), /Build inputs changed/);
 });

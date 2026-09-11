@@ -99,7 +99,7 @@ export async function prepare(root = ROOT, options: { initial?: boolean; refresh
   const preparationCommit = git(root, 'rev-parse', 'HEAD');
   const baseCommit = mainCommit(root) ?? preparationCommit;
   git(root, 'merge-base', '--is-ancestor', baseCommit, preparationCommit);
-  assert.equal(JSON.parse(git(root, 'show', `${baseCommit}:package.json`)).version, main.version, 'Start a new release from the accepted main version; refresh fixes to an unmerged release instead');
+  assert.equal(JSON.parse(git(root, 'show', `${baseCommit}:package.json`)).version, main.version, 'Start a new release from the accepted main version; refresh local fixes before the main push instead');
   writeJson(backupPath, backup);
   try {
     const record: ReleaseRecord = {

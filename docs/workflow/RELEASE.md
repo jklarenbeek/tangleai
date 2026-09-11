@@ -27,15 +27,19 @@ preserved and require explicit integration.
    and run `npm run release:prepare -- --refresh`. This refreshes the reviewed
    input fingerprint without advancing the version again. New changesets require
    a new plan; a tagged release or one accepted on main cannot be refreshed in place.
-   Reviewed fixes on an unmerged release branch can retain the prepared version.
+   Reviewed local fixes before the main push can retain the prepared version.
 5. Run `npm run release:closeout -- --message "Fix the affected behavior"`.
    The command runs `release:verify`, checks the diff and asset stub, and commits
-   the complete versioned change as Joham. On `main`, it creates a
-   `release/v<version>` branch. Add `--push` when pushing is authorized.
-6. Open and merge the checked pull request. The required `release-ready` CI check
-   rejects missing preparation, stale versions, dependency/lock drift, modified
-   prepared inputs and failed consumer tests. Require this check through a main
-   branch ruleset; a local hook alone is bypassable.
+   the complete versioned change as Joham directly on `main`. Add `--push` when
+   pushing is authorized; closeout fetches main, requires a fast-forward and
+   checks version advancement before committing. It creates no pull request.
+6. Push directly to `main`. The pre-push hook requires the prepared version and
+   a complete gate receipt for the exact source and tarballs. Release CI then
+   independently rejects stale versions, dependency/lock drift, modified inputs
+   and failed consumers before tagging, publishing or deploying. The main
+   ruleset prevents deletion and force pushes; it deliberately has no PR or
+   pre-push GitHub status requirement. Local hooks can be bypassed, so CI remains
+   the publication and deployment backstop rather than a main-branch admission gate.
 
 For example, a patch after `0.20.0` produces `0.20.1`; a minor produces `0.21.0`.
 A change to one library still advances all eight public packages. Neither root
@@ -69,7 +73,7 @@ configuration, documentation, lockfile and submodule identities.
 
 ## Publish and deploy
 
-Merging to `main` runs `.github/workflows/release.yml`. It waits for the complete
+Pushing to `main` runs `.github/workflows/release.yml`. It waits for the complete
 CI gate, retrieves its exact verified Linux tarballs, and creates an annotated
 `v<version>` tag on that commit. npm publication follows the dependency order in
 `release.config.json`. Publication runs serially and is not cancelled by a newer

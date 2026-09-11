@@ -40,7 +40,7 @@ export function checkRelease(root = ROOT, options: { base?: string; structure?: 
   if (options.base) {
     assert.match(options.base, /^[a-f0-9]{40}$/, 'The CI base must be a full commit SHA');
     const previous = JSON.parse(git(root, 'show', `${options.base}:package.json`));
-    assert.ok(compareVersions(main.version, previous.version) > 0, 'This push/PR did not advance the suite version');
+    assert.ok(compareVersions(main.version, previous.version) > 0, 'This push did not advance the suite version');
   }
   return record;
 }

@@ -3,11 +3,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { ROOT, git, assertClean } from './common.ts';
 import { checkRelease } from './check.ts';
+import { assertVerifiedGate } from './verify.ts';
 
 assertClean();
 for (const line of readFileSync(0, 'utf8').trim().split('\n').filter(Boolean)) {
   const [localRef, localSha, remoteRef, remoteSha] = line.split(/\s+/);
   if (/^0+$/.test(localSha)) continue;
+  assertVerifiedGate();
   const head = git(ROOT, 'rev-parse', 'HEAD');
   assert.equal(git(ROOT, 'rev-parse', `${localSha}^{commit}`), head, 'Only the current verified commit may be pushed through closeout');
   if (remoteRef.startsWith('refs/tags/')) {

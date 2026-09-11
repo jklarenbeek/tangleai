@@ -121,14 +121,14 @@ change, record its Changesets impact and update stale documentation first.
    them and run `npm run release:prepare -- --refresh` before closeout.
 2. Run `npm run release:closeout -- --message "Short present-tense message"`.
    It verifies the release, runs the complete gate and packed consumer checks,
-   reviews whitespace/stub invariants, and commits as Joham. Starting on `main`
-   creates a release branch for the checked pull request.
+   reviews whitespace/stub invariants, and commits as Joham directly on `main`.
+   No release branch or pull request is created.
 3. Use one short present-tense commit message, with no attribution footer, tool
    names or version numbers. Annotated tags carry versions.
 4. Add `--push` when pushing is authorized. The pre-push hook checks the actual
-   refs and version advancement; the required CI check enforces the same rule
-   before merging into `main`.
-5. After merge, the release workflow publishes and verifies npm packages and
+   refs, version advancement and the complete gate receipt. Push directly to
+   `main`; CI independently repeats the checks before publication or deployment.
+5. After the main push, the release workflow publishes and verifies npm packages and
    independently deploys Pages after CI. The website builds local Tangle source
    with JarenJS installed from npm; Tangle publication cannot block deployment.
    Package release completion requires all checks. Never report a site deployment

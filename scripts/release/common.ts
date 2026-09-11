@@ -177,7 +177,7 @@ export function assertRefreshable(root: string, record: ReleaseRecord) {
   if (main) {
     const accepted = JSON.parse(git(root, 'show', `${main}:package.json`));
     assert.ok(compareVersions(accepted.version, record.version) < 0, 'A release accepted on main needs a new changeset and version');
-  } else assert.equal(record.preparationCommit ?? record.baseCommit, git(root, 'rev-parse', 'HEAD'), 'Fetch origin/main before refreshing a committed release branch');
+  } else assert.equal(record.preparationCommit ?? record.baseCommit, git(root, 'rev-parse', 'HEAD'), 'Fetch origin/main before refreshing a locally committed release');
 }
 export const isMain = (url: string) => !!process.argv[1] && resolve(process.argv[1]) === fileURLToPath(url);
 export function relativePath(root: string, path: string) { return relative(root, path).split(sep).join('/'); }

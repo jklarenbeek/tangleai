@@ -14,6 +14,11 @@ assert.ok(messageIndex >= 0 && args[messageIndex + 1], 'Use release:closeout -- 
 assert.ok(args.every((arg, index) => ['--message', '--push'].includes(arg) || index === messageIndex + 1), 'Unknown closeout option');
 const message = args[messageIndex + 1];
 assert.ok(message.length <= 72 && !/[\r\n\0]/.test(message) && !/\d+\.\d+\.\d+/.test(message), 'Use one short commit message; versions belong in tags');
+assert.equal(git(ROOT, 'branch', '--show-current'), 'main', 'Closeout commits and pushes directly from main');
+if (args.includes('--push')) {
+  git(ROOT, 'fetch', 'origin', 'main');
+  git(ROOT, 'merge-base', '--is-ancestor', 'origin/main', 'HEAD');
+}
 await prepare();
 let verified = false;
 try { assertVerifiedGate(); verified = true; } catch { /* The current tree still needs its full gate. */ }
@@ -22,16 +27,11 @@ else console.log('Reusing the complete gate for the unchanged release inputs and
 git(ROOT, 'diff', '--check');
 assert.equal(readFileSync(resolve(ROOT, 'apps/desktop/src/assets.gen.ts'), 'utf8').trim(), git(ROOT, 'show', 'HEAD:apps/desktop/src/assets.gen.ts'), 'Restore the desktop asset stub before committing');
 const record = checkRelease()!;
-let branch = git(ROOT, 'branch', '--show-current');
-assert.ok(branch, 'Closeout requires a branch');
-if (branch === 'main') {
-  branch = `release/v${record.version}`;
-  git(ROOT, 'switch', '-c', branch);
-}
+if (args.includes('--push')) checkRelease(ROOT, { base: git(ROOT, 'rev-parse', 'origin/main') });
 git(ROOT, 'add', '--all');
 git(ROOT, 'diff', '--cached', '--check');
 execFileSync('git', ['-c', 'user.name=Joham', '-c', 'user.email=jklarenbeek@gmail.com', 'commit', '-m', message], { cwd: ROOT, stdio: 'inherit' });
 assertClean();
 checkRelease();
-if (args.includes('--push')) execFileSync('git', ['push', '--set-upstream', 'origin', branch], { cwd: ROOT, stdio: 'inherit' });
-console.log(`Closed out ${record.version} on ${branch}. Merge its checked pull request; the main release workflow tags, publishes, verifies and deploys that commit.`);
+if (args.includes('--push')) execFileSync('git', ['push', 'origin', 'main'], { cwd: ROOT, stdio: 'inherit' });
+console.log(`Closed out ${record.version} on main. After a push, release CI gates tagging and npm publication; Pages deploys independently after those same checks.`);

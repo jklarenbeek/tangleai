@@ -9,4 +9,4 @@ assert.ok(!existing || existing === '.githooks', `Preserve the existing hook con
 if (!existing) assert.ok(!existsSync(resolve(ROOT, git(ROOT, 'rev-parse', '--git-path', 'hooks/pre-push'))), 'An existing pre-push hook needs explicit integration');
 chmodSync(resolve(ROOT, '.githooks/pre-push'), 0o755);
 git(ROOT, 'config', '--local', 'core.hooksPath', '.githooks');
-console.log('Installed the repository release pre-push hook. CI remains the authoritative main-branch gate.');
+console.log('Installed the version and complete-gate pre-push hook. CI independently gates publication and deployment after the main push.');

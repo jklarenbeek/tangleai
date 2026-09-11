@@ -310,8 +310,9 @@ npm run release:verify
 npm run release:closeout -- --message "Fix the affected behavior" --push
 ```
 
-Closeout creates a release branch when starting on `main`. Merge its checked pull
-request to run the publication workflow. GitHub Actions tags the accepted commit,
+Closeout commits directly on `main` and pushes when authorized. It creates no
+pull request. The local pre-push hook requires the version bump and complete
+verification receipt; GitHub Actions repeats the release gate, tags the checked commit,
 publishes verified tarballs with npm trusted publishing and tests fresh registry
 installations. After CI, the website independently builds local Tangle source with
 JarenJS from npm, deploys and verifies the accepted commit. A failed publication
