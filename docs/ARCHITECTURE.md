@@ -62,11 +62,11 @@ and memory records remain readable with their existing schemas.
 observations (text + evidence + timestamp — or refused)
    │  createMemoryUnit: content-addressed id → re-ingestion is idempotent
    ▼
-novelty gate         threshold HIGH (near-verbatim only)
+novelty gate         opt-in; selected default off
    ▼
-contradiction pass   similar pairs judged; older loser SUPERSEDED, never deleted
+contradiction pass   opt-in; a judged loser is SUPERSEDED, never deleted
    ▼
-crystallization      paraphrase merge; provenance in mergedFrom; skips superseded
+crystallization      opt-in; merge provenance in mergedFrom; skips superseded
    ▼
 outcome learning     confidence moves on evidenced real-world reports only
    ▼
@@ -78,12 +78,23 @@ recall               recallByEmbedding (excludes superseded, un-embedded and
       because the vector travels with its identity
 ```
 
-Two ordering rules are load-bearing and test-pinned:
+`@tangleai/memory/policy` owns the generated values and their measured
+provenance. Pipeline defaults and memory retrieval import them; the config
+registry references the policy component and its report revision. Document
+retrieval retains its separate grounding contract. The selected memory default
+has all three ingest policies off, k = 10, minScore = 0 and an independently
+selected 512-dimensional offline hash embedder. Runtime code reads no benchmark
+artifact. Development generation validates the registered live decision and raw
+evidence; `policy:check`, schema emission and Jaren contract diff gate drift.
+See [LOCOMO_POLICY.md](LOCOMO_POLICY.md) for the experiment and bounded null.
+
+When the ingest mechanisms are explicitly enabled, two ordering rules are
+load-bearing and test-pinned:
 
 1. **Contradiction before crystallization.** A contradiction is by nature
    ~0.95-similar to what it contradicts ("limit is 100" / "limit is 500").
    Gate too eagerly, or merge first, and the correction is eaten as a
-   duplicate. So the gate only filters near-verbatim repeats, and the judge
+   duplicate. Explicit threshold choices determine what the gate filters; the judge
    runs before the merger.
 2. **A resolution equal to the winner's text writes nothing.** Ids are
    content-addressed, so re-writing the winner's text as an un-embedded
@@ -122,7 +133,7 @@ bottom, with the boundary each line keeps:
   a version.
 - **Pure validation and lowering.** Nine semantic gates return sorted
   `TMAS1xxx` issues with exact JSON Pointers; the partitioner cuts the
-  graph into regions (D4) and lowers every acyclic region to a
+  graph into single-entry regions and lowers every acyclic region to a
   `jaren-dag` document and every switch/loop/interaction to a
   `jaren-fsm` document through `@jarenjs/linq/flow`, compile-proven
   before any activation. Suite compile refusals surface as `TMAS1011`

@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.83.3](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.84.3](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads and scheduled document transport are available. The open policies below
 still require their own corpus and quality measurements.
@@ -42,26 +42,15 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Memory policies
 
-- [ ] **Memory policies, measured.** *Wanted:* the LoCoMo matrix over the policy
-  knobs that already exist — novelty threshold, crystallize threshold,
-  contradiction on/off, ranker k / minScore, embedder width — with a real
-  embedding client behind the same seam (`createEmbeddingClient` from
-  `@jarenjs/ai/embed`, the desktop's embed setting), wins AND losses published,
-  and every policy that does not move the number demoted to opt-in. *Constraint:*
-  the first row of this matrix is a loss. With the lexical embedder the shipped
-  defaults cost evidence recall at k = 20 and the ingest census names the
-  culprits — the gate's filtered turns, the judge's numeric-contrast
-  supersessions, the crystallizer's merges — and in the live table the policies
-  leave most prompts byte-identical to the inert pipeline's and score lower on the
-  ones they change, at the same ceiling ([`LOCOMO_REFRESH.md`](LOCOMO_REFRESH.md)).
-  The instrument's knobs are `--novelty`, `--contradiction`, `--crystallize` and
-  `--dims`; a real embedder behind them is the one thing it lacks. The offline
-  width was measured for threshold margin over the skeleton corpus, not for
-  retrieval, and one probe (128 dims on one conversation) moved recall
-  substantially — the width is a cell of this matrix, not a constant. *Salvage:*
-  memflow's tuned starting values are in `attic/memflow-modules/` (novelty 0.75,
-  synthesis 0.82, relation 0.7). *Closes on:* LoCoMo F1 and evidence recall per
-  policy, cost (tokens, calls) beside each.
+- [ ] **Embedding width against a variable-dimension semantic embedder.**
+  *Wanted:* test whether the offline width decision transfers to semantic
+  retrieval and answers. *Constraint:* the [registered policy result](LOCOMO_POLICY.md)
+  selected 512 dimensions using lexical hash evidence recall; its live tier held
+  `baai/bge-m3` fixed at 1024 dimensions and did not vary width. The local width
+  knob does not parameterize that model. *Closes on:* an explicitly registered
+  width comparison using a provider that supports variable dimensions, with
+  held-out answer F1, evidence recall, latency and token/call cost beside each
+  width. Existing policy and lexical-width identities remain the baselines.
 - [ ] **Consolidation tiers** (LightMem / SimpleMem / StructMem). *Wanted:*
   sleep-time consolidation as a Tangle-scheduled pass — STM buffer, topic
   segmentation, cross-event synthesis behind the same injected-judge seam as

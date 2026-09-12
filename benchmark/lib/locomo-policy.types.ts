@@ -325,6 +325,10 @@ export interface Registration {
    */
   cells: Array<Cell>;
   inference: null | Inference;
+  /**
+   * Dataset byte identity for new registrations. Historical reports bind it at the report root and every raw live evidence record.
+   */
+  datasetSha256?: Sha256;
 }
 
 
@@ -824,7 +828,7 @@ export interface Clause {
 
 /**
  * One treatment against one control on the questions they BOTH answered. The acting set travels beside the overall interval and can block a cell, never promote it: the estimand for a global default is the whole corpus.
- * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.power.tiedPairs","$.pairs"]},{"$le":["$.power.actingSetSize","$.pairs"]},{"$le":["$.actingSet.size","$.pairs"]},{"$eq":["$.actingSet.size","$.power.actingSetSize"]},{"$le":["$.interval.low","$.interval.high"]},{"$or":[{"$not":"$.eligible"},{"$and":[{"$eq":[2,{"$count":{"$for":{"a":"$root.attempts[*]"},"$where":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]}]},"$return":"$a.runId"}}]},{"$every":{"a":"$root.attempts[*]"},"$satisfies":{"$or":[{"$not":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]}]}},{"$and":[{"$eq":["$a.denominators.questionSet","$.questionSet"]},{"$eq":["$a.denominators.answered","$.pairs"]},{"$eq":[true,"$a.eligibility.eligible"]}]}]}}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$and":[{"$eq":[true,"$.eligible"]},{"$gt":["$.interval.low",0]}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$every":{"c":"$.verdict.clauses[*]"},"$satisfies":{"$eq":[true,"$c.passed"]}}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.power.tiedPairs","$.pairs"]},{"$le":["$.power.actingSetSize","$.pairs"]},{"$le":["$.actingSet.size","$.pairs"]},{"$eq":["$.actingSet.size","$.power.actingSetSize"]},{"$le":["$.interval.low","$.interval.high"]},{"$or":[{"$not":"$.eligible"},{"$and":[{"$eq":[2,{"$count":{"$for":{"a":"$root.attempts[*]"},"$where":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]},{"$or":[{"$and":[{"$eq":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","live"]}]},{"$and":[{"$ne":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","keyless"]}]}]}]},"$return":"$a.runId"}}]},{"$every":{"a":"$root.attempts[*]"},"$satisfies":{"$or":[{"$not":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]},{"$or":[{"$and":[{"$eq":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","live"]}]},{"$and":[{"$ne":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","keyless"]}]}]}]}},{"$and":[{"$eq":["$a.denominators.questionSet","$.questionSet"]},{"$eq":["$a.denominators.answered","$.pairs"]},{"$eq":[true,"$a.eligibility.eligible"]}]}]}}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$and":[{"$eq":[true,"$.eligible"]},{"$gt":["$.interval.low",0]}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$every":{"c":"$.verdict.clauses[*]"},"$satisfies":{"$eq":[true,"$c.passed"]}}]}]}
  */
 export interface Comparison {
   /**
@@ -1087,6 +1091,18 @@ export interface CensusRowsItem {
 }
 
 
+export interface CensusEmbedder {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+}
+
+
 /**
  * The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold — every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values — because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.
  * Schema constraints this type cannot express: $query={"$eq":[0,"$.chatCalls"]}
@@ -1101,6 +1117,7 @@ export interface Census {
    */
   chatCalls: 0;
   rows: Array<CensusRowsItem>;
+  embedder?: CensusEmbedder;
 }
 
 
@@ -1162,6 +1179,29 @@ export interface LocomoPolicySource {
  */
 export type LocomoPolicyGateFailuresItem = string;
 
+export interface LocomoPolicyLiveEvidenceItem {
+  path: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+  phase: "selection" | "confirmation";
+}
+
+
+export interface LocomoPolicyPurchases {
+  path: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physical: number;
+}
+
+
 /**
  * What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose — the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.cells[*].cellId"},{"$count":{"$distinct":"$.registration.cells[*].cellId"}}]},{"$eq":[{"$count":"$.attempts[*].runId"},{"$count":{"$distinct":"$.attempts[*].runId"}}]},{"$every":{"a":"$.attempts[*]"},"$satisfies":{"$exists":{"$index-of":["$.registration.cells[*].cellId","$a.cellId"]}}},{"$every":{"c":"$.comparisons[*]"},"$satisfies":{"$and":[{"$exists":{"$index-of":["$.registration.cells[*].cellId","$c.treatment"]}},{"$exists":{"$index-of":["$.registration.cells[*].cellId","$c.control"]}}]}},{"$or":[{"$ne":["$.selection.state","open"]},{"$not":{"$some":{"a":"$.attempts[*]"},"$satisfies":{"$eq":["$a.phase","confirmation"]}}}]},{"$or":[{"$eq":["$.selection.state","open"]},{"$exists":"$.selection.shortlist[*]"}]},{"$or":[{"$ne":["$.selection.state","confirmed"]},{"$exists":"$.selection.decision.default"}]},{"$or":[{"$eq":["$.selection.state","confirmed"]},{"$empty":"$.selection.decision.default"}]},{"$or":[{"$eq":["$.selection.state","open"]},{"$exists":"$.selection.frozen.identity"}]},{"$or":[{"$ne":["$.selection.state","open"]},{"$empty":"$.selection.frozen.identity"}]},{"$every":{"a":"$.attempts[*]"},"$satisfies":{"$or":[{"$eq":["$a.run.tier","keyless"]},{"$exists":"$.registration.inference.identity"}]}},{"$or":[{"$not":{"$some":{"a":"$.attempts[*]"},"$satisfies":{"$eq":["$a.phase","confirmation"]}}},{"$exists":"$.selection.transition.identity"}]}]}
@@ -1190,6 +1230,8 @@ export interface LocomoPolicy {
    * the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary
    */
   configIdentities: unknown;
+  liveEvidence?: Array<LocomoPolicyLiveEvidenceItem>;
+  purchases?: LocomoPolicyPurchases;
 }
 
 

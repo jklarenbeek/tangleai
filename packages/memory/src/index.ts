@@ -33,3 +33,6 @@ export { applyOutcome, outcomeAdjustment, DEFAULT_OUTCOME_OPTIONS } from './outc
 export type { OutcomeOptions, ApplyOutcomeResult } from './outcome.ts';
 export { rankByEmbedding, recallByEmbedding } from './retrieval.ts';
 export type { RankOptions, RankedMemory, RankedRecall } from './retrieval.ts';
+
+export { DEFAULT_MEMORY_POLICY, POLICY_PROVENANCE, MEASURED_MEMORY_POLICIES, SHIPPED_LEGACY_POLICY, SHIPPED_LEGACY_CELL_ID, POLICY_CONTRACT_REVISION, policyThresholds } from './policy.ts';
+export type { MemoryPolicyValues } from './policy.ts';

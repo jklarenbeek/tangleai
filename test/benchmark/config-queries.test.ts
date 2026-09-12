@@ -60,7 +60,8 @@ describe('the committed query documents', () => {
     const statuses = Object.fromEntries(committed.queries.identityInventory.byStatus
       .map((row: { identityStatus: string, rows: number }) => [row.identityStatus, row.rows]));
     assert.equal(statuses['legacy-unrecorded'], 6, 'the six paid rows');
-    assert.equal(statuses['not-run'], 35, 'the analytic rows of recall, keyless QA and the policy screen');
+    assert.equal(statuses['not-run'], 37, 'the analytic rows include selected-default recall and QA');
+    assert.equal(statuses.run, 8, 'eligible live policy attempts carry their observed stack identity');
   });
 
   it('the same tag across two hosts stays two rows with two identities', () => {

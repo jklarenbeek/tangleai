@@ -1,0 +1,1206 @@
+diff --git a/apps/desktop/src/settings.ts b/apps/desktop/src/settings.ts
+index 9c14f21..19d6b1a 100644
+--- a/apps/desktop/src/settings.ts
++++ b/apps/desktop/src/settings.ts
+@@ -283,6 +283,7 @@ export function embedderFor(
+   settings: Settings,
+   fetchImpl?: typeof globalThis.fetch,
+   cache?: AiReplayCache,
++  retry?: { attempts?: number, baseMs?: number, maxMs?: number },
+ ): Embedder {
+   const embed = settings.embed;
+   if (!embedWireConfigured(embed)) return createOfflineEmbedder();
+@@ -293,6 +294,7 @@ export function embedderFor(
+     apiKey: embed.apiKey ?? undefined,
+     fetch: fetchImpl,
+     cache,
++    retry,
+   });
+ }
+ 
+diff --git a/benchmark/lib/locomo-policy.ts b/benchmark/lib/locomo-policy.ts
+index 3e27406..9431530 100644
+--- a/benchmark/lib/locomo-policy.ts
++++ b/benchmark/lib/locomo-policy.ts
+@@ -98,7 +98,7 @@ import type {
+   Clause,
+   Comparison,
+   Exclusion,
+-  LocomoPolicy,
++  LocomoPolicy as GeneratedLocomoPolicy,
+   Objective,
+   Prompts,
+   Reason,
+@@ -119,7 +119,6 @@ export type {
+   Clause,
+   Comparison,
+   Exclusion,
+-  LocomoPolicy,
+   Objective,
+   Prompts,
+   Registration,
+@@ -129,6 +128,8 @@ export type {
+   WidthDecision,
+ };
+ 
++export type LocomoPolicy = Omit<GeneratedLocomoPolicy, 'configIdentities'> & { configIdentities: import('@tangleai/config').IdentityEnvelope };
++
+ const exec = promisify(execFile);
+ 
+ // ---------------------------------------------------------------------------
+@@ -297,6 +298,10 @@ export const SOURCE_ROOTS: readonly string[] = [
+   'benchmark/schemas',
+   'packages/memory/src',
+   'packages/pipeline/src',
++  'packages/models/src',
++  'packages/context/src',
++  'packages/agents/src',
++  'packages/config/src',
+ ];
+ 
+ /** The files beside those directories that are equally load-bearing. */
+@@ -304,6 +309,8 @@ export const SOURCE_FILES: readonly string[] = [
+   'benchmark/locomo-policy.ts',
+   'benchmark/locomo-qa.ts',
+   'benchmark/locomo-recall.ts',
++  'apps/desktop/src/settings.ts',
++  'package-lock.json',
+ ];
+ 
+ async function gitLine(cwd: string, args: readonly string[]): Promise<string> {
+@@ -321,12 +328,14 @@ export async function sourceRevision(root = process.cwd()): Promise<LocomoPolicy
+   const head = (await gitLine(root, ['rev-parse', 'HEAD'])).trim();
+   const clean = (await gitLine(root, ['status', '--porcelain'])).trim() === '';
+   const paths: string[] = [...SOURCE_FILES];
+-  for (const dir of SOURCE_ROOTS) {
+-    const names = await readdir(join(root, dir));
+-    for (const name of names) {
+-      if (name.endsWith('.ts') || name.endsWith('.json')) paths.push(`${dir}/${name}`);
++  async function scan(dir: string): Promise<void> {
++    for (const entry of await readdir(join(root, dir), { withFileTypes: true })) {
++      const path = `${dir}/${entry.name}`;
++      if (entry.isDirectory()) await scan(path);
++      else if (/\.(ts|json)$/.test(entry.name)) paths.push(path);
+     }
+   }
++  for (const dir of SOURCE_ROOTS) await scan(dir);
+   paths.sort();
+   const files: Array<{ path: string, sha256: string }> = [];
+   for (const path of paths) {
+@@ -424,12 +433,7 @@ export function bootstrapInterval(
+ }
+ 
+ /** The one-sided lower bound at `level` over a sample's own SD. */
+-function lowerBound(values: readonly number[], level: number): number {
+-  if (values.length === 0) return 0;
+-  const m = meanOf(values) ?? 0;
+-  const sd = values.length < 2 ? 0 : (stddev(values) ?? 0);
+-  return m - normalQuantile(level) * sd / Math.sqrt(values.length);
+-}
++
+ 
+ // ---------------------------------------------------------------------------
+ // eligibility — a failure stays in the row and refuses the comparison
+@@ -482,6 +486,10 @@ export function comparabilityReasons(treatment: Attempt, control: Attempt): Reas
+   }
+   if (treatment.run.tier !== control.run.tier) reasons.push({ code: 'different-tier', detail: `${treatment.run.tier} against ${control.run.tier}` });
+   if (treatment.run.source !== control.run.source) reasons.push({ code: 'different-source', detail: 'the two rows ran different bytes' });
++  for (const key of ['provider', 'endpoint', 'thinking', 'responseSchema', 'retry', 'deadlineMs', 'concurrency', 'budgetCeiling', 'keySource'] as const) {
++    if (JSON.stringify(treatment.run[key]) !== JSON.stringify(control.run[key]))
++      reasons.push({ code: 'different-inference', detail: `the effective ${key} differs` });
++  }
+   for (const attempt of [treatment, control]) {
+     for (const reason of attempt.eligibility.reasons) {
+       reasons.push({ code: reason.code, detail: `${attempt.cellId.slice(0, 12)}…: ${reason.detail}` });
+@@ -537,7 +545,7 @@ export function comparisonOf(
+       pairs: own.length,
+       mean: own.length === 0 ? 0 : average(own),
+       sd: own.length < 2 ? 0 : (stddev(own) ?? 0),
+-      lowerBound: lowerBound(own, objective.categoryLevel),
++      lowerBound: bootstrapInterval(own, { resamples: objective.resamples, seed: objective.bootstrapSeed, level: 2 * objective.categoryLevel - 1 }).low,
+     };
+   });
+   const cost = treatment.cost === null || control.cost === null || control.cost.tokensPerAnswer === 0 || control.cost.callsPerAnswer === 0
+@@ -618,7 +626,7 @@ export function attemptRefusal(report: LocomoPolicy, fresh: Attempt): string | n
+   if (!report.registration.cells.some((c) => c.cellId === fresh.cellId)) {
+     return `cell ${fresh.cellId.slice(0, 12)}… is not in the registration`;
+   }
+-  const clash = report.attempts.find((a) => a.cellId === fresh.cellId && a.phase === fresh.phase && a.runId !== fresh.runId);
++  const clash = report.attempts.find((a) => a.cellId === fresh.cellId && a.phase === fresh.phase && a.run.tier === fresh.run.tier && a.runId !== fresh.runId);
+   if (clash !== undefined) {
+     return `cell ${fresh.cellId.slice(0, 12)}… already has a ${fresh.phase} attempt under run ${clash.runId.slice(0, 12)}…; a run identity is not interchangeable with another`;
+   }
+@@ -637,6 +645,12 @@ export function attemptRefusal(report: LocomoPolicy, fresh: Attempt): string | n
+ export function mergeAttempt(report: LocomoPolicy, fresh: Attempt): LocomoPolicy {
+   const refusal = attemptRefusal(report, fresh);
+   if (refusal !== null) throw new Error(`the attempt cannot join this report: ${refusal}`);
++  const previous = report.attempts.find(a => a.runId === fresh.runId);
++  if (previous) for (const result of previous.results) {
++    const replacement = fresh.results.find(r => r.id === result.id);
++    if (!replacement || JSON.stringify(result) !== JSON.stringify(replacement))
++      throw new Error(`A successful answer is immutable: ${result.id}`);
++  }
+   const kept = report.attempts.filter((a) => a.runId !== fresh.runId);
+   return { ...report, attempts: [...kept, fresh] };
+ }
+@@ -1435,13 +1449,16 @@ function categoryCells(block: MeansBlock | null): Cell[] {
+ export function renderMarkdown(report: LocomoPolicy): string {
+   const out: string[] = [];
+   const { registration } = report;
+-  out.push('# LoCoMo policy matrix — the keyless screen');
++  const hasLive = report.registration.inference !== null;
++  const rowLabel = (a: Attempt): string => `${cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12)}${hasLive ? ` (${a.run.tier}/${a.phase})` : ''}`;
++  out.push(hasLive ? '# LoCoMo policy matrix — registered live experiment' : '# LoCoMo policy matrix — the keyless screen');
+   out.push('');
+   out.push(`Source: \`${report.dataset.path}\` (sha256 \`${report.dataset.sha256.slice(0, 12)}…\`, ${count(report.dataset.bytes)} bytes, schema ${report.dataset.schemaValid ? 'valid' : '**INVALID**'})`
+     + (report.dataset.restricted === null ? '' : ` — restricted to ${report.dataset.restricted.map((id) => `\`${id}\``).join(', ')}`) + '.');
+   out.push(`Registration \`${registration.registrationId.slice(0, 12)}…\` · report \`${report.reportId.slice(0, 12)}…\` · source \`${report.source.sha256.slice(0, 12)}…\` (HEAD \`${report.source.head.slice(0, 12)}…\`, working tree ${report.source.clean ? 'clean' : 'modified'}, ${report.source.files.length} files in the manifest).`);
+   out.push('');
+-  out.push('A memory policy becomes the default only when a preregistered comparison proves it improves answers without hiding a category loss, a cost overrun, a failed call or an unequal denominator. **Nothing on this page is such a proof.** The embedder here is the suite\'s hashed-trigram reference: two texts score high when they share letters, so every number below is a property of the MECHANISM — ingest, gate, rank, cite — and of no model. This page is a screen, and a screen allocates budget; it does not predict the wire. The same shipped cell fires the contradiction judge about thirty times more often under this lexical embedder than under a real one, so a frontier read here says what is worth paying to measure, never what a policy does to an answer. Only an eligible live comparison on the held-out split can select a default.');
++  if (hasLive) out.push('The lexical screen allocated the live budget; it does not predict answer quality. Live rows use one approved provider and embedding identity. Only complete eligible held-out comparisons can select a default. Shipped is a historical control, never the fallback winner. Failed and partial attempts remain visible.');
++  else out.push('A memory policy becomes the default only when a preregistered comparison proves it improves answers without hiding a category loss, a cost overrun, a failed call or an unequal denominator. **Nothing on this page is such a proof.** The embedder here is the suite\'s hashed-trigram reference: two texts score high when they share letters, so every number below is a property of the MECHANISM — ingest, gate, rank, cite — and of no model. This page is a screen, and a screen allocates budget; it does not predict the wire. The same shipped cell fires the contradiction judge about thirty times more often under this lexical embedder than under a real one, so a frontier read here says what is worth paying to measure, never what a policy does to an answer. Only an eligible live comparison on the held-out split can select a default.');
+   out.push('');
+   out.push('## The registration');
+   out.push('');
+@@ -1473,9 +1490,9 @@ export function renderMarkdown(report: LocomoPolicy): string {
+       const cell = cellOf(report, a.cellId);
+       const o = a.operations;
+       return [
+-        cell?.key ?? a.cellId.slice(0, 12),
++        rowLabel(a),
+         cell === undefined ? '—' : `${cell.ingest.novelty} / ${cell.ingest.contradiction} / ${cell.ingest.crystallize}`,
+-        cell?.retrieval.k ?? null, cell?.retrieval.minScore ?? null, cell?.embedding.dims ?? null,
++        cell?.retrieval.k ?? null, cell?.retrieval.minScore ?? null, a.run.embedder.dims,
+         o.runs, o.admitted, o.filtered, o.judged, o.judgeFailures, o.contradictions, o.contradictionSkips,
+         o.merged, o.mergeSkips, o.live, o.total,
+       ];
+@@ -1488,7 +1505,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
+     head: ['cell', 'phase', 'tier', 'planned', 'answered', 'wire', 'budget', 'invalid', 'eligible', 'why not'],
+     numeric: [3, 4, 5, 6, 7],
+     rows: report.attempts.map((a) => [
+-      cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
++      rowLabel(a),
+       a.phase, a.run.tier,
+       a.denominators.planned, a.denominators.answered, a.denominators.unanswered.wire, a.denominators.unanswered.budget, a.denominators.invalid,
+       a.eligibility.eligible ? 'yes' : '**no**',
+@@ -1500,7 +1517,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
+   out.push('');
+   out.push(table({
+     head: ['cell', 'overall', ...SCORABLE_CATEGORIES.map((c) => `category ${c}`)],
+-    rows: report.attempts.map((a) => [cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12), ...categoryCells(a.recall)]),
++    rows: report.attempts.map((a) => [rowLabel(a), ...categoryCells(a.recall)]),
+   }));
+   out.push('');
+   out.push('## Where every gold address went');
+@@ -1516,7 +1533,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
+       rows: report.attempts.map((a) => {
+         const at = a.causes?.byK[String(k)];
+         return [
+-          cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
++          rowLabel(a),
+           at?.denominator ?? null,
+           ...CAUSES.map((cause) => at?.partition.find((p) => p.cause === cause)?.count ?? null),
+         ];
+@@ -1530,9 +1547,9 @@ export function renderMarkdown(report: LocomoPolicy): string {
+     head: ['cell', 'prompts unchanged', 'prompts changed', 'token proxy', 'per question', 'ratio vs inert', 'policy operations', 'verbatim floor'],
+     numeric: [1, 2, 3, 4, 5, 6, 7],
+     rows: report.attempts.map((a) => {
+-      const inertProxy = report.attempts.find((x) => x.cellId === a.prompts.against)?.prompts.tokenProxy ?? 0;
++      const inertProxy = report.attempts.find((x) => x.cellId === a.prompts.against && x.phase === a.phase && x.run.tier === a.run.tier)?.prompts.tokenProxy ?? 0;
+       return [
+-        cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
++        rowLabel(a),
+         a.prompts.unchanged, a.prompts.changed, count(a.prompts.tokenProxy),
+         a.denominators.answered === 0 ? null : Math.round(a.prompts.tokenProxy / a.denominators.answered),
+         inertProxy === 0 ? null : (a.prompts.tokenProxy / inertProxy).toFixed(3),
+@@ -1542,7 +1559,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
+     }),
+   }));
+   out.push('');
+-  out.push('`token proxy` is `sizeOf` over the serialized context — characters, the suite\'s one size rule — and it IS a proxy: a tier that buys nothing has no provider usage to report. `prompts changed` counts the questions whose serialized prompt this cell made different from the inert reference\'s, read from the prompt bytes and never from a score; it is what the acting set below is computed from. `verbatim floor` is the retrieved context quoted as the answer and scored by the official evaluator — the best a model could do by copying, at this cell\'s own k.');
++  if (!hasLive) out.push('`token proxy` is `sizeOf` over the serialized context — characters, the suite\'s one size rule — and it IS a proxy: a tier that buys nothing has no provider usage to report. `prompts changed` counts the questions whose serialized prompt this cell made different from the inert reference\'s, read from the prompt bytes and never from a score; it is what the acting set below is computed from. `verbatim floor` is the retrieved context quoted as the answer and scored by the official evaluator — the best a model could do by copying, at this cell\'s own k.');
+   out.push('');
+   out.push('## Every comparison, with what it could have seen');
+   out.push('');
+@@ -1571,6 +1588,30 @@ export function renderMarkdown(report: LocomoPolicy): string {
+   out.push('');
+   out.push('The acting set is a blocking secondary: a policy that changes a quarter of the prompts can only move the product by a quarter of its local effect, so it can refuse a cell and never promote one. A comparison with a zero-crossing interval is a bounded null, not a proven absence.');
+   out.push('');
++  if (hasLive) {
++    const inference = registration.inference!;
++    out.push('## Live inference and purchase accounting', '');
++    out.push(`Provider ${inference.provider}, endpoint ${inference.endpoint}; answer ${inference.answerModel}; judge ${inference.judgeModel}; embedding ${report.census?.embedder?.model ?? inference.embedder.model} at ${report.census?.embedder?.dims ?? 'unobserved'} dimensions. Thinking ${inference.thinking}; schema ${inference.responseSchema}; HTTP attempts ${inference.retry.attempts}; deadline ${inference.deadlineMs} ms; concurrency ${inference.concurrency}; ceilings ${inference.perRunCeiling} per run / ${inference.campaignCeiling} total.`);
++    out.push(`Inference identity: \`${inference.identity}\`. Physical requests recorded: ${report.purchases?.physical ?? 0}. Repairs, retries and failed requests consume this ceiling; cache replays do not. Provider token costs below include replayed response usage for a fair paired comparison.`, '');
++    if (report.census) {
++      out.push('### Embeddings-only census', '');
++      out.push(`Observed embedding calls (including cache invocations): ${report.census.embedRequests}; chat calls: ${report.census.chatCalls}. A candidate is dropped only if both operation counts and every registered retrieved context equal inert.`, '');
++      out.push(table({ head: ['cell', 'filtered', 'judged', 'judge failures', 'resolutions', 'merged', 'live', 'superseded', 'changed contexts', 'dropped'],
++        rows: report.census.rows.map(r => [cellOf(report, r.cellId)!.key, r.operations.filtered, r.operations.judged, r.operations.judgeFailures, r.operations.resolutions, r.operations.merged, r.operations.live, r.operations.superseded, r.prompts?.changed ?? 0, r.dropped ? 'yes' : 'no']) }));
++    }
++    out.push('', '### Live answer quality', '');
++    out.push(table({ head: ['cell / phase', 'F1', 'category 1', 'category 2', 'category 3', 'category 4', 'evidence recall', 'cited recall', 'tokens / answer', 'calls / answer'],
++      rows: report.attempts.filter(a => a.run.tier === 'live').map(a => [rowLabel(a), ...categoryCells(a.quality?.f1 ?? null), score(a.quality?.ceiling?.overall ?? null), score(a.quality?.citedRecall?.overall ?? null), a.cost?.tokensPerAnswer ?? null, a.cost?.callsPerAnswer ?? null]) }));
++    out.push('', '### Live paired category bounds', '');
++    out.push(table({ head: ['cell / phase', 'category', 'pairs', 'mean delta', 'one-sided lower bound'],
++      rows: report.comparisons.filter(c => c.metric === 'locomo-f1').flatMap(c => c.byCategory.map(row => [`${cellOf(report, c.treatment)!.key} / ${c.phase}`, row.category, row.pairs, row.mean.toFixed(4), row.lowerBound.toFixed(4)])) }));
++    out.push('', '### Locked selection and default decision', '');
++    out.push(report.selection.transition ? `Challenger \`${cellOf(report, report.selection.transition.challenger)!.key}\`, transition \`${report.selection.transition.identity}\`: ${report.selection.transition.calculation}.` : 'Selection is incomplete; confirmation remains locked.');
++    out.push(report.selection.decision ? `Default \`${cellOf(report, report.selection.decision.default)!.key}\`. ${report.selection.decision.statement}.` : 'No eligible completed confirmation has selected a runtime default.');
++    out.push('', 'Raw evidence retains category-5 judgments, invalid replies, unresolved citations, provider usage, errors and latency. Each file has an immutable content hash:', '');
++    for (const evidence of report.liveEvidence ?? []) out.push(`- [${evidence.phase} evidence ${evidence.sha256.slice(0, 12)}](../${evidence.path}) (SHA-256 \`${evidence.sha256}\`).`);
++    out.push('');
++  }
+   out.push('## The gate');
+   out.push('');
+   out.push(report.gate.passed
+@@ -1610,12 +1651,12 @@ export function renderMarkdown(report: LocomoPolicy): string {
+     out.push('');
+     out.push(`Read at k = ${w.k}. Proposed \`OFFLINE_EMBEDDER_DIMS\`: **${w.proposedDims}** — ${w.caveat}`);
+     out.push('');
+-    out.push('This is the only decision this page proposes, and it is proposed here because this is the only tier that can decide it: a live run resolves one embedder identity, the wire model is not parameterized by a hash width, and vectors from two identities never rank against each other.');
++    if (!hasLive) out.push('This is the only decision this page proposes, and it is proposed here because this is the only tier that can decide it: a live run resolves one embedder identity, the wire model is not parameterized by a hash width, and vectors from two identities never rank against each other.');
+   }
+   out.push('');
+   out.push('---');
+   out.push('');
+-  out.push('Retrieval recall is the official `recall_acc` of `task_eval/evaluation.py`, and the verbatim floor is that evaluator\'s F1 over the retrieved context quoted as the answer. Neither is an answer-quality result. This page makes no default claim and selects no policy: it names what is worth paying to measure, and the live comparison on the held-out split is what may change a runtime default.');
++  if (!hasLive) out.push('Retrieval recall is the official `recall_acc` of `task_eval/evaluation.py`, and the verbatim floor is that evaluator\'s F1 over the retrieved context quoted as the answer. Neither is an answer-quality result. This page makes no default claim and selects no policy: it names what is worth paying to measure, and the live comparison on the held-out split is what may change a runtime default.');
+   out.push('');
+   out.push('LoCoMo is CC BY-NC 4.0 (Maharana et al., ACL 2024, arXiv:2402.17753). This repository does not redistribute it; `git submodule update --init benchmark/locomo` fetches it.');
+   return out.join('\n');
+@@ -1706,7 +1747,7 @@ export function describePlan(plan: NonNullable<LocomoPolicy['plan']>, controls:
+     `endpoint              ${controls.endpoint}`,
+     `answer model          ${controls.answerModel}`,
+     `judge model           ${controls.judgeModel}`,
+-    `embedder              ${controls.embedder.model} @ ${controls.embedder.dims} dims`,
++    `embedder              ${controls.embedder.model} @ ${controls.embedder.dims || 'unobserved'} dims`,
+     `thinking              ${controls.thinking}`,
+     `response contract     ${controls.responseSchema}`,
+     `retry                 ${controls.retry.attempts} attempts, ${controls.retry.baseMs}–${controls.retry.maxMs} ms backoff`,
+@@ -1751,12 +1792,32 @@ export interface CensusInput {
+ export async function runLiveCensus(input: CensusInput): Promise<NonNullable<LocomoPolicy['census']>> {
+   const progress = input.onProgress ?? ((): void => {});
+   let embedRequests = 0;
++  const table = new Map<string, Float32Array>();
++  const texts = [...new Set(input.entries.flatMap(entry => [
++    ...entry.corpus.sessions.flatMap(session => session.inputs.map(item => item.text)),
++    ...entry.questions.map(q => q.text),
++  ]))];
++  for (let i = 0; i < texts.length; i += 256) {
++    const batch = texts.slice(i, i + 256);
++    const vectors = await input.embedder.embed(batch); embedRequests++;
++    batch.forEach((text, n) => table.set(text, vectors[n]));
++  }
++  const dims = input.embedder.dims || table.values().next().value?.length;
++  if (!dims) throw new Error('The census needs an observed embedding width');
+   const embedder: Embedder = {
+-    model: input.embedder.model,
+-    dims: input.embedder.dims,
+-    embed: async (texts, hooks) => { embedRequests++; return input.embedder.embed(texts, hooks); },
++    model: input.embedder.model, dims,
++    embed: async (texts, hooks) => {
++      const missing = [...new Set(texts.filter(text => !table.has(text)))];
++      if (missing.length) {
++        const vectors = await input.embedder.embed(missing, hooks); embedRequests++;
++        missing.forEach((text, n) => table.set(text, vectors[n]));
++      }
++      const result = texts.map(text => table.get(text)!);
++      if (result.some(vector => vector.length !== dims)) throw new Error('The census cannot mix embedding identities');
++      return result;
++    },
+   };
+-  const identity = { model: input.embedder.model, dims: input.embedder.dims };
++  const identity = { model: input.embedder.model, dims };
+   const questionIds = input.entries.flatMap((entry) => entry.questions.map((q) => q.id));
+   const questionVectors: Array<Awaited<ReturnType<Embedder['embed']>>> = [];
+   for (const entry of input.entries) {
+@@ -1790,6 +1851,7 @@ export async function runLiveCensus(input: CensusInput): Promise<NonNullable<Loc
+   const same = (a: IngestCensus, b: IngestCensus): boolean =>
+     (Object.keys(a) as Array<keyof IngestCensus>).every((member) => a[member] === b[member]);
+   return {
++    embedder: identity,
+     embedRequests,
+     chatCalls: 0,
+     rows: input.cells.map((cell) => {
+@@ -1977,7 +2039,8 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
+     const row = live.configurations.find((c) => c.key === cell.key);
+     if (row === undefined) continue;
+     const scored = row.questions.results.filter((r) => !r.invalid);
+-    const ids = row.questions.results.map((r) => r.id);
++    const known = input.dataset.samples.flatMap(sample => questionsOf(sample, conversationCorpus(sample)));
++    const ids = live.sample.ids.filter(id => known.find(q => q.id === id)?.category !== 5);
+     const questionSet = await questionSetOf(ids);
+     const denominators: Denominators = {
+       planned: row.questions.planned,
+@@ -1987,13 +2050,16 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
+       questionSet,
+     };
+     const reasons = eligibilityReasons(denominators, row.ingest ?? emptyCensus());
++    if (row.adversarial.judged !== row.adversarial.planned || row.adversarial.judgeFailed > 0
++      || row.adversarial.unanswered.wire > 0 || row.adversarial.unanswered.budget > 0)
++      reasons.push({ code: 'incomplete-judgments', detail: 'Every registered adversarial answer must have a valid judgment' });
+     const run: Run = {
+       tier: 'live',
+       provider: input.controls.provider,
+       endpoint: input.controls.endpoint,
+       answerModel: input.controls.answerModel,
+       judgeModel: input.controls.judgeModel,
+-      embedder: input.controls.embedder,
++      embedder: live.generated.embedder,
+       thinking: input.controls.thinking,
+       responseSchema: input.controls.responseSchema,
+       retry: input.controls.retry,
+@@ -2037,7 +2103,7 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
+         ceiling: r.ceiling,
+         promptSha256: r.promptSha256 ?? EMPTY_PROMPT,
+         tokens: r.tokens,
+-        calls: 1,
++        calls: r.calls ?? 1,
+       })),
+     });
+   }
+diff --git a/benchmark/lib/locomo-policy.types.ts b/benchmark/lib/locomo-policy.types.ts
+index 412c2f5..362d7ec 100644
+--- a/benchmark/lib/locomo-policy.types.ts
++++ b/benchmark/lib/locomo-policy.types.ts
+@@ -824,7 +824,7 @@ export interface Clause {
+ 
+ /**
+  * One treatment against one control on the questions they BOTH answered. The acting set travels beside the overall interval and can block a cell, never promote it: the estimand for a global default is the whole corpus.
+- * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.power.tiedPairs","$.pairs"]},{"$le":["$.power.actingSetSize","$.pairs"]},{"$le":["$.actingSet.size","$.pairs"]},{"$eq":["$.actingSet.size","$.power.actingSetSize"]},{"$le":["$.interval.low","$.interval.high"]},{"$or":[{"$not":"$.eligible"},{"$and":[{"$eq":[2,{"$count":{"$for":{"a":"$root.attempts[*]"},"$where":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]}]},"$return":"$a.runId"}}]},{"$every":{"a":"$root.attempts[*]"},"$satisfies":{"$or":[{"$not":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]}]}},{"$and":[{"$eq":["$a.denominators.questionSet","$.questionSet"]},{"$eq":["$a.denominators.answered","$.pairs"]},{"$eq":[true,"$a.eligibility.eligible"]}]}]}}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$and":[{"$eq":[true,"$.eligible"]},{"$gt":["$.interval.low",0]}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$every":{"c":"$.verdict.clauses[*]"},"$satisfies":{"$eq":[true,"$c.passed"]}}]}]}
++ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.power.tiedPairs","$.pairs"]},{"$le":["$.power.actingSetSize","$.pairs"]},{"$le":["$.actingSet.size","$.pairs"]},{"$eq":["$.actingSet.size","$.power.actingSetSize"]},{"$le":["$.interval.low","$.interval.high"]},{"$or":[{"$not":"$.eligible"},{"$and":[{"$eq":[2,{"$count":{"$for":{"a":"$root.attempts[*]"},"$where":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]},{"$or":[{"$and":[{"$eq":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","live"]}]},{"$and":[{"$ne":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","keyless"]}]}]}]},"$return":"$a.runId"}}]},{"$every":{"a":"$root.attempts[*]"},"$satisfies":{"$or":[{"$not":{"$and":[{"$eq":["$a.phase","$.phase"]},{"$or":[{"$eq":["$a.cellId","$.treatment"]},{"$eq":["$a.cellId","$.control"]}]},{"$or":[{"$and":[{"$eq":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","live"]}]},{"$and":[{"$ne":["$.metric","locomo-f1"]},{"$eq":["$a.run.tier","keyless"]}]}]}]}},{"$and":[{"$eq":["$a.denominators.questionSet","$.questionSet"]},{"$eq":["$a.denominators.answered","$.pairs"]},{"$eq":[true,"$a.eligibility.eligible"]}]}]}}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$and":[{"$eq":[true,"$.eligible"]},{"$gt":["$.interval.low",0]}]}]},{"$or":[{"$not":"$.verdict.promotes"},{"$every":{"c":"$.verdict.clauses[*]"},"$satisfies":{"$eq":[true,"$c.passed"]}}]}]}
+  */
+ export interface Comparison {
+   /**
+@@ -1087,6 +1087,18 @@ export interface CensusRowsItem {
+ }
+ 
+ 
++export interface CensusEmbedder {
++  /**
++   * Schema constraints this type cannot express: minLength=1
++   */
++  model: string;
++  /**
++   * Schema constraints this type cannot express: type="integer", minimum=1
++   */
++  dims: number;
++}
++
++
+ /**
+  * The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold — every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values — because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.
+  * Schema constraints this type cannot express: $query={"$eq":[0,"$.chatCalls"]}
+@@ -1101,6 +1113,7 @@ export interface Census {
+    */
+   chatCalls: 0;
+   rows: Array<CensusRowsItem>;
++  embedder?: CensusEmbedder;
+ }
+ 
+ 
+@@ -1162,6 +1175,29 @@ export interface LocomoPolicySource {
+  */
+ export type LocomoPolicyGateFailuresItem = string;
+ 
++export interface LocomoPolicyLiveEvidenceItem {
++  path: string;
++  /**
++   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
++   */
++  sha256: string;
++  phase: "selection" | "confirmation";
++}
++
++
++export interface LocomoPolicyPurchases {
++  path: string;
++  /**
++   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
++   */
++  sha256: string;
++  /**
++   * Schema constraints this type cannot express: type="integer", minimum=0
++   */
++  physical: number;
++}
++
++
+ /**
+  * What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose — the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.
+  * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.cells[*].cellId"},{"$count":{"$distinct":"$.registration.cells[*].cellId"}}]},{"$eq":[{"$count":"$.attempts[*].runId"},{"$count":{"$distinct":"$.attempts[*].runId"}}]},{"$every":{"a":"$.attempts[*]"},"$satisfies":{"$exists":{"$index-of":["$.registration.cells[*].cellId","$a.cellId"]}}},{"$every":{"c":"$.comparisons[*]"},"$satisfies":{"$and":[{"$exists":{"$index-of":["$.registration.cells[*].cellId","$c.treatment"]}},{"$exists":{"$index-of":["$.registration.cells[*].cellId","$c.control"]}}]}},{"$or":[{"$ne":["$.selection.state","open"]},{"$not":{"$some":{"a":"$.attempts[*]"},"$satisfies":{"$eq":["$a.phase","confirmation"]}}}]},{"$or":[{"$eq":["$.selection.state","open"]},{"$exists":"$.selection.shortlist[*]"}]},{"$or":[{"$ne":["$.selection.state","confirmed"]},{"$exists":"$.selection.decision.default"}]},{"$or":[{"$eq":["$.selection.state","confirmed"]},{"$empty":"$.selection.decision.default"}]},{"$or":[{"$eq":["$.selection.state","open"]},{"$exists":"$.selection.frozen.identity"}]},{"$or":[{"$ne":["$.selection.state","open"]},{"$empty":"$.selection.frozen.identity"}]},{"$every":{"a":"$.attempts[*]"},"$satisfies":{"$or":[{"$eq":["$a.run.tier","keyless"]},{"$exists":"$.registration.inference.identity"}]}},{"$or":[{"$not":{"$some":{"a":"$.attempts[*]"},"$satisfies":{"$eq":["$a.phase","confirmation"]}}},{"$exists":"$.selection.transition.identity"}]}]}
+@@ -1190,6 +1226,8 @@ export interface LocomoPolicy {
+    * the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary
+    */
+   configIdentities: unknown;
++  liveEvidence?: Array<LocomoPolicyLiveEvidenceItem>;
++  purchases?: LocomoPolicyPurchases;
+ }
+ 
+ 
+diff --git a/benchmark/lib/locomo-qa.ts b/benchmark/lib/locomo-qa.ts
+index c7eb18c..08548b7 100644
+--- a/benchmark/lib/locomo-qa.ts
++++ b/benchmark/lib/locomo-qa.ts
+@@ -1490,7 +1490,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
+           citedRecall.add(q.category, citedR);
+           results.push({
+             id: q.id, category: q.category as 1 | 2 | 3 | 4, f1: own1, ceiling: ceil, citedRecall: citedR,
+-            cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: bad, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed,
++            cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: bad, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed, calls: mine.turns,
+             ...(options.digestPrompt === undefined ? {} : { promptSha256: await options.digestPrompt(context.map(contextLine)) }),
+           });
+           return;
+@@ -1500,7 +1500,8 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
+         let answerText: string;
+         try {
+           const reply = await adversarialAnswerer.generate(answerMessages(q.text, context)) as { value: AnswerValue } | { raw: string };
+-          answerText = 'value' in reply ? reply.value.answer : reply.raw;
++          if (!('value' in reply)) { lane.judgeFailed++; return; }
++          answerText = reply.value.answer;
+         } catch (error) {
+           if (error instanceof BudgetStop) lane.unanswered.budget++;
+           else { lane.unanswered.wire++; noteError(`${q.id}: ${error instanceof Error ? error.message : String(error)}`); }
+diff --git a/benchmark/locomo-policy.ts b/benchmark/locomo-policy.ts
+index d20ca57..e0c9221 100644
+--- a/benchmark/locomo-policy.ts
++++ b/benchmark/locomo-policy.ts
+@@ -1,48 +1,19 @@
+ /* eslint-disable no-console */
+-/**
+- * LoCoMo policy matrix — the keyless screen.
+- *
+- * Registers the splits, the objective, the axes and the cell registry,
+- * assigns every identity, then screens the requested cells over the
+- * real pipeline: one store per conversation, one run per session, the
+- * cell's own thresholds, its own k and minScore, its own built-in
+- * embedding width, and the official evidence recall per question. It
+- * spends nothing, reads no clock and reaches no wire, so two runs of
+- * the same registration over the same bytes are byte-identical.
+- *
+- *   node benchmark/locomo-policy.ts --cells all                  # the committed selection screen
+- *   node benchmark/locomo-policy.ts                              # the inert and shipped cells only
+- *   node benchmark/locomo-policy.ts --cells inert,novelty-0.97
+- *   node benchmark/locomo-policy.ts --phase screen --samples conv-30
+- *   node benchmark/locomo-policy.ts --json PATH --md PATH
+- *   node benchmark/locomo-policy.ts --require                    # exit 1 if the submodule is absent
+- *
+- * `--phase selection` (the default) scores the registered selection
+- * sample over the selection conversations and, when every registered
+- * cell ran, expands the registry with the pairwise combinations its own
+- * Pareto frontier earns, decides the built-in embedding width and
+- * freezes at most four non-control live candidates. `--phase screen`
+- * scores every scorable question of whatever conversations it is given
+- * and freezes nothing: it is a diagnostic.
+- *
+- * There is no `--live` here and `--phase confirmation` is refused. A
+- * live matrix spends a budget the operator authorizes per run, and the
+- * held-out split cannot be unlocked by a flag on a screen.
+- *
+- * Exit 1 with the reason when the gate fails or the report does not
+- * validate against `schemas/locomo-policy.schema.json` — whose `$query`
+- * assertions refuse a report whose denominators, operation counts or
+- * paired question sets do not reconcile. Nothing is printed or written
+- * in either case. Elapsed time goes to stderr; the report carries none.
++/** Registered lexical screen and authorized, resumable live policy experiment.
++ * --cells all runs the keyless screen; --render reproduces a stored report without a wire.
++ * --live --phase census|selection|confirmation prints a no-call plan. Its inference
++ * identity must be explicitly authorized; answering runs default to one pending cell.
+  */
+ 
+-import { existsSync } from 'node:fs';
++import assert from 'node:assert/strict';
++import { createHash } from 'node:crypto';
++import { existsSync, writeFileSync, renameSync } from 'node:fs';
+ import { readFile, writeFile } from 'node:fs/promises';
+ 
+ import { resolveEndpoint } from '@tangleai/models/providers';
+ 
+ import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../apps/desktop/src/settings.ts';
+-import { chatSettingsOf, embedSettingsOf, readAiEnv } from './lib/ai-env.ts';
++import { chatSettingsOf, embedSettingsOf, readAiEnv, envConfigIdentity } from './lib/ai-env.ts';
+ import { parseArgs } from './lib/args.ts';
+ import { loadLocomo } from './lib/locomo.ts';
+ import { conversationCorpus } from './lib/locomo-corpus.ts';
+@@ -66,13 +37,14 @@ import {
+   runLocomoPolicy,
+   transitionOf,
+   withPrompts,
++  sourceRevision,
+   type InferenceControls,
+   type LocomoPolicy,
+ } from './lib/locomo-policy.ts';
+ import { createReportValidator, describeErrors } from './lib/validate.ts';
+-import { analyticEnvelope } from './lib/report-envelope.ts';
++import { createPurchaseGuard, verifyPolicyReport, validatePhase, type PurchaseJournal } from './lib/policy-execution.ts';
+ import RUN_IDENTITY_SCHEMA from '../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
+-import { WIRE_CACHE_PATH, openWireCache } from './lib/wire-cache.ts';
++import { openWireCache } from './lib/wire-cache.ts';
+ import SCHEMA from './schemas/locomo-policy.schema.json' with { type: 'json' };
+ 
+ /**
+@@ -98,8 +70,8 @@ function corpusTexts(
+ }
+ 
+ const args = parseArgs(process.argv.slice(2), {
+-  flags: ['require', 'live', 'fresh'],
+-  values: ['phase', 'cells', 'samples', 'seed', 'json', 'md', 'authorize', 'campaign-ceiling', 'thinking', 'cache'],
++  flags: ['require', 'live', 'fresh', 'render'],
++  values: ['phase', 'cells', 'samples', 'seed', 'json', 'md', 'authorize', 'campaign-ceiling', 'thinking', 'cache', 'journal'],
+ });
+ 
+ const live = args.flags.has('live');
+@@ -117,6 +89,20 @@ if (live && !LIVE_PHASES.includes(phase)) {
+   process.exit(1);
+ }
+ 
++if (args.flags.has('render')) {
++  const path = args.values.get('json');
++  assert.ok(path, '--render requires --json');
++  const report = JSON.parse(await readFile(path, 'utf8')) as LocomoPolicy;
++  await verifyPolicyReport(report);
++  const outcome = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA])(report);
++  assert.ok(outcome.valid, describeErrors(outcome).join('\n'));
++  const markdown = renderMarkdown(report);
++  console.log(markdown);
++  const destination = args.values.get('md');
++  if (destination) await writeFile(destination, `${markdown}\n`);
++  process.exit(0);
++}
++
+ const dataset = await loadLocomo();
+ if (!dataset.available) {
+   console.log(`# LoCoMo policy matrix\n\n**Skipped** — ${dataset.reason}.\n`);
+@@ -191,6 +177,7 @@ if (jsonPath === undefined || !existsSync(jsonPath)) {
+ }
+ const stored = JSON.parse(await readFile(jsonPath, 'utf8')) as LocomoPolicy;
+ mustValidate(stored);
++await verifyPolicyReport(stored);
+ if (stored.selection.frozen === null) {
+   console.error('the shortlist is not frozen, so there is nothing a live run is allowed to spend on');
+   process.exit(1);
+@@ -212,7 +199,8 @@ if (!Number.isInteger(campaignCeiling) || campaignCeiling < 1) {
+   process.exit(1);
+ }
+ 
+-const RETRY = { attempts: 8, baseMs: 3000, maxMs: 60000 };
++const RETRY = { attempts: 1, baseMs: 3000, maxMs: 60000 };
++const DEADLINE_MS = 120_000;
+ const resolved = resolveEndpoint({ provider: env.provider, baseUrl: env.baseUrl ?? undefined, model: env.model });
+ const embedSettings = embedSettingsOf(env);
+ const probe = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings });
+@@ -225,7 +213,7 @@ const controls: InferenceControls = {
+   thinking,
+   responseSchema: RESPONSE_SCHEMA_REVISION,
+   retry: RETRY,
+-  deadlineMs: null,
++  deadlineMs: DEADLINE_MS,
+   concurrency: env.maxConcurrency,
+   perRunCeiling: env.maxCalls,
+   campaignCeiling,
+@@ -242,7 +230,7 @@ const split = phase === 'confirmation' ? stored.registration.splits.confirmation
+ 
+ // what the cache already holds is read, never bought — a cache lookup is
+ // not a request and a warm cache is not an authorization
+-const cachePath = args.values.get('cache') ?? WIRE_CACHE_PATH;
++const cachePath = args.values.get('cache') ?? `${jsonPath}.sqlite`;
+ const cache = cachePath === 'none' ? undefined : await openWireCache({ path: cachePath });
+ const texts = corpusTexts(dataset, conversations, { seed: seed ?? stored.registration.seed, perCategory: split.perCategory['1'], adversarial: split.adversarial });
+ const replayEndpoint = { provider: resolved.provider, base: resolved.base, model: probe.model };
+@@ -258,9 +246,25 @@ const embedFresh = Math.ceil(Math.max(0, uniqueTexts - held.length) / 256);
+ // money nobody intends to spend
+ const shippedCellId = stored.registration.cells.find((c) => c.role === 'shipped')!.cellId;
+ const inertId = stored.registration.cells.find((c) => c.role === 'inert')!.cellId;
+-const planCells = phase !== 'confirmation'
+-  ? shortlist
+-  : [inertId, shippedCellId, ...(stored.selection.transition === null ? [] : [stored.selection.transition.challenger])];
++const phaseCells = phase !== 'confirmation' ? (stored.census ? stored.selection.shortlist : shortlist)
++  : [inertId, shippedCellId, ...(stored.selection.transition ? [stored.selection.transition.challenger] : [])];
++const requested = list('cells');
++const pending = phaseCells.filter(id => !stored.attempts.some(a => a.run.tier === 'live' && a.phase === phase && a.cellId === id && a.eligibility.eligible));
++const planCells = phase === 'census' ? phaseCells : requested
++  ? (requested.includes('all') ? phaseCells : requested.map(key => {
++    const cell = stored.registration.cells.find(c => c.key === key || c.cellId === key);
++    assert.ok(cell && phaseCells.includes(cell.cellId), `Cell ${key} is outside this phase`);
++    return cell.cellId;
++  })) : pending.slice(0, 1);
++assert.equal(new Set(planCells).size, planCells.length, 'Duplicate requested cells');
++const journalPath = args.values.get('journal') ?? `${jsonPath}.purchases.json`;
++const journal: PurchaseJournal = existsSync(journalPath)
++  ? JSON.parse(await readFile(journalPath, 'utf8')) as PurchaseJournal
++  : { inference: identity, source: stored.source.sha256, ceiling: campaignCeiling, requests: [], cacheWrites: {} };
++assert.equal(journal.inference, identity, 'Purchase journal inference changed');
++assert.equal(journal.ceiling, campaignCeiling, 'Purchase journal ceiling changed');
++assert.equal(journal.source, stored.source.sha256, 'Purchase journal source changed');
++if (stored.registration.inference) assert.equal(stored.registration.inference.identity, identity, 'Approved inference controls changed');
+ 
+ const plan = planOf({
+   phase: phase as 'census' | 'selection' | 'confirmation',
+@@ -276,6 +280,15 @@ const plan = planOf({
+ console.error('');
+ console.error('  the plan, before any request:');
+ for (const line of describePlan(plan, controls, stored.registration)) console.error(`    ${line}`);
++console.error(`  Physical requests already purchased: ${journal.requests.length}/${campaignCeiling}`);
++const selectionSplit = stored.registration.splits.selection, confirmationSplit = stored.registration.splits.confirmation;
++const censusBase = Math.ceil(new Set(corpusTexts(dataset, selectionSplit.conversations, { seed: stored.registration.seed, perCategory: selectionSplit.perCategory['1'], adversarial: selectionSplit.adversarial })).size / 256);
++const confirmationBase = Math.ceil(new Set(corpusTexts(dataset, confirmationSplit.conversations, { seed: stored.registration.seed, perCategory: confirmationSplit.perCategory['1'], adversarial: confirmationSplit.adversarial })).size / 256);
++const selectionCalls = shortlist.length * (selectionSplit.scorable + 2 * selectionSplit.adversarial);
++const confirmationCalls = 3 * (confirmationSplit.scorable + 2 * confirmationSplit.adversarial);
++console.error(`  Cold campaign base: ${censusBase} census embeddings + ${selectionCalls} selection answers/judgments + ${confirmationBase} held-out embeddings + ${confirmationCalls} confirmation answers/judgments = ${censusBase + selectionCalls + confirmationBase + confirmationCalls} requests.`);
++console.error('  Derived embeddings, repairs, failures and retries also consume the hard ceiling; cache replays consume zero physical requests.');
++console.error('  Answering is split into one cell per run by default; no incomplete matrix can freeze a challenger.');
+ console.error('');
+ 
+ const authorized = args.values.get('authorize');
+@@ -300,18 +313,33 @@ if (!plan.withinCeilings) {
+   process.exit(1);
+ }
+ 
+-console.error(`  authorized as ${identity.slice(0, 12)}… — spending up to ${plan.requests.total} requests`);
+-
++validatePhase(stored, phase as 'census' | 'selection' | 'confirmation');
++assert.ok(planCells.length, 'This phase has no pending cells');
++assert.ok(cache && !args.flags.has('fresh'), 'Policy campaigns require a persistent replay cache and forbid --fresh');
++assert.ok(journal.requests.length < campaignCeiling, 'Campaign physical request ceiling exhausted');
++assert.equal((await sourceRevision()).sha256, stored.source.sha256, 'Source changed: regenerate the keyless screen before a new experiment; an active experiment cannot change source');
++await envConfigIdentity(env, null); // Fail config resolution before buying embeddings.
++const lockPath = `${journalPath}.lock`;
++await writeFile(lockPath, `${process.pid}\n`, { flag: 'wx' });
++const { unlink } = await import('node:fs/promises');
++try {
++const saveJournal = (): void => {
++  writeFileSync(`${journalPath}.tmp`, `${JSON.stringify(journal, null, 2)}\n`);
++  renameSync(`${journalPath}.tmp`, journalPath);
++};
++saveJournal();
++const guard = createPurchaseGuard({ journal, limit: env.maxCalls, deadlineMs: DEADLINE_MS, fetch: globalThis.fetch, save: saveJournal });
+ const registration = { ...stored.registration, inference: await approvedInference(controls) };
+ registration.registrationId = await registrationIdOf(registration);
+-const replay = cache?.adapter({ fresh: args.flags.has('fresh') });
+-const wire = { retry: RETRY, ...(thinking === 'off' ? { reasoning: { effort: 'none' as const } } : {}) };
++const replay = guard.cache(cache.adapter());
++const wire = { fetch: guard.fetch, retry: RETRY, ...(thinking === 'off' ? { reasoning: { effort: 'none' as const } } : {}) };
+ const chat = chatClientFor(chatSettingsOf(env), { ...wire, cache: replay });
+ const judgeClient = chatClientFor(chatSettingsOf(env, env.modelStrong), { ...wire, cache: replay });
+-const wireEmbedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings }, undefined, replay);
+-const inertCellId = stored.registration.cells.find((c) => c.role === 'inert')!.cellId;
+-
++const wireEmbedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings }, guard.fetch, replay, RETRY);
++const inertCellId = inertId;
+ let next: LocomoPolicy = { ...stored, registration, plan };
++next = { ...next, reportId: await reportIdOf(next) };
++await publish(next); // Persist approved controls before the first purchase.
+ 
+ if (phase === 'census') {
+   // embeddings only, and the schema asserts the zero: a census that
+@@ -370,11 +398,9 @@ if (phase === 'census') {
+       process.exit(1);
+     }
+   }
+-  const running = phase === 'confirmation'
+-    ? [inertCellId, stored.registration.cells.find((c) => c.role === 'shipped')!.cellId, next.selection.transition!.challenger]
+-      .map((id) => stored.registration.cells.find((c) => c.cellId === id)!)
+-    : cells.filter((c) => next.selection.shortlist.includes(c.cellId));
+-  const { attempts } = await runLivePhase({
++  const running = planCells.map(id => stored.registration.cells.find(c => c.cellId === id)!);
++  const { attempts, live: evidence } = await runLivePhase({
++    configIdentityFor: observed => envConfigIdentity(env, observed),
+     dataset,
+     phase: phase as 'selection' | 'confirmation',
+     cells: running,
+@@ -392,44 +418,47 @@ if (phase === 'census') {
+     seed: stored.registration.seed,
+     onProgress,
+   });
+-  const priced = withPrompts(attempts, inertCellId);
++  const evidenceBytes = `${JSON.stringify(evidence, null, 2)}\n`;
++  const evidenceHash = createHash('sha256').update(evidenceBytes).digest('hex');
++  const evidencePath = `${jsonPath}.${phase}.${evidenceHash}.json`;
++  if (!existsSync(evidencePath)) await writeFile(evidencePath, evidenceBytes, { flag: 'wx' });
+   let merged = next;
+-  for (const attempt of priced) merged = mergeAttempt(merged, attempt);
+-  const inertAttempt = priced.find((a) => a.cellId === inertCellId);
+-  const comparisons = inertAttempt === undefined
+-    ? merged.comparisons
+-    : [...merged.comparisons, ...priced.filter((a) => a.cellId !== inertCellId)
+-      .map((a) => comparisonOf(a, inertAttempt, registration.objective, 'locomo-f1'))];
+-  merged = { ...merged, comparisons };
+-
+-  if (phase === 'selection') {
+-    const candidates = merged.selection.shortlist.filter((id) => id !== inertCellId
+-      && id !== stored.registration.cells.find((c) => c.role === 'shipped')!.cellId);
+-    const choice = chooseChallenger(comparisons.filter((c) => c.phase === 'selection'), candidates, registration.objective);
+-    if (choice.challenger === null) {
+-      console.error(`  no challenger could be nominated: ${choice.calculation}`);
+-    } else {
+-      merged = {
+-        ...merged,
+-        selection: { ...merged.selection, transition: await transitionOf(choice, registration, merged.selection.frozen!.identity), finalist: choice.challenger },
+-      };
+-    }
+-  } else {
+-    const challenger = merged.selection.transition!.challenger;
+-    const confirmation = merged.comparisons.find((c) => c.phase === 'confirmation' && c.treatment === challenger) ?? null;
+-    merged = {
+-      ...merged,
+-      selection: { ...merged.selection, state: 'confirmed', decision: decisionOf(confirmation, inertCellId, registration.objective) },
+-    };
++  for (const attempt of attempts) merged = mergeAttempt(merged, attempt);
++  const phaseAttempts = withPrompts(merged.attempts.filter(a => a.run.tier === 'live' && a.phase === phase), inertCellId);
++  merged = { ...merged, attempts: merged.attempts.map(a => phaseAttempts.find(p => p.runId === a.runId) ?? a),
++    liveEvidence: [...(merged.liveEvidence ?? []), { path: evidencePath, sha256: evidenceHash, phase: phase as 'selection' | 'confirmation' }],
++  };
++  const inertAttempt = phaseAttempts.find(a => a.cellId === inertCellId);
++  const comparisons = inertAttempt ? phaseAttempts.filter(a => a.cellId !== inertCellId)
++    .map(a => comparisonOf(a, inertAttempt, registration.objective, 'locomo-f1')) : [];
++  merged.comparisons = [...merged.comparisons.filter(c => c.metric !== 'locomo-f1' || c.phase !== phase), ...comparisons];
++  const complete = phaseCells.every(id => phaseAttempts.some(a => a.cellId === id && a.eligibility.eligible));
++  if (complete && phase === 'selection') {
++    const candidates = phaseCells.filter(id => id !== inertCellId && id !== shippedCellId);
++    const choice = chooseChallenger(comparisons, candidates, registration.objective);
++    if (choice.challenger) merged.selection = { ...merged.selection,
++      transition: await transitionOf(choice, registration, merged.selection.frozen!.identity), finalist: choice.challenger };
++  } else if (complete && phase === 'confirmation') {
++    const comparison = comparisons.find(c => c.treatment === merged.selection.transition!.challenger)!;
++    assert.ok(comparison.eligible, 'Ineligible confirmation cannot select a default');
++    merged.selection = { ...merged.selection, state: 'confirmed', decision: decisionOf(comparison, inertCellId, registration.objective) };
+   }
++  const identities = new Map([...merged.configIdentities.identities, ...evidence.configIdentities.identities].map(i => [i.identityId, i]));
++  const ids = new Map(evidence.configIdentities.rows.filter(r => r.identityStatus === 'run').map(r => [r.rowId, r.identityId]));
++  merged.configIdentities = { identities: [...identities.values()], rows: [
++    ...merged.configIdentities.rows.filter(r => !attempts.some(a => a.runId === r.rowId)),
++    ...attempts.map(a => ({ rowId: a.runId, identityStatus: 'run' as const, identityId: ids.get(stored.registration.cells.find(c => c.cellId === a.cellId)!.key)! })),
++  ] };
++
+   next = merged;
+ }
+ 
+-next = { ...next, configIdentities: analyticEnvelope(next.attempts.map((attempt) => attempt.runId)) };
++next = { ...next, purchases: { path: journalPath, sha256: createHash('sha256').update(await readFile(journalPath)).digest('hex'), physical: journal.requests.length } };
+ next = { ...next, reportId: await reportIdOf(next) };
+ if (cache !== undefined) {
+   const after = await cache.stats();
+   console.error(`  wire cache: ${after.embeddings} embeddings, ${after.completions} completions remembered now`);
+-  await cache.close();
+ }
+ await publish(next);
++
++} finally { await unlink(lockPath); await cache.close(); }
+diff --git a/benchmark/schemas/locomo-policy.schema.json b/benchmark/schemas/locomo-policy.schema.json
+index 784bb8a..bda6776 100644
+--- a/benchmark/schemas/locomo-policy.schema.json
++++ b/benchmark/schemas/locomo-policy.schema.json
+@@ -1,8 +1,8 @@
+ {
+   "$schema": "http://json-schema.org/draft-07/schema#",
+   "$id": "https://tangleai.dev/schemas/locomo-policy",
+-  "title": "LoCoMo policy-matrix report — the measurement contract",
+-  "description": "What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose — the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.",
++  "title": "LoCoMo policy-matrix report \u2014 the measurement contract",
++  "description": "What `benchmark/locomo-policy.ts` writes, validated before anything is printed or written. This document is the source of truth for the matrix: its TypeScript is generated from it, and the arithmetic every honest comparison depends on is asserted HERE through the `$query` keyword rather than only in a test, so a report that does not reconcile cannot be published at all. Self-contained on purpose \u2014 the generated declarations must be readable without following a reference into another document. Every effective knob is a value; no cell is named by a profile. Key material is refused by construction: every object closes its properties, so a member nobody declared cannot be carried.",
+   "type": "object",
+   "required": [
+     "benchmark",
+@@ -386,6 +386,55 @@
+     "configIdentities": {
+       "description": "the shared config-identity envelope; the keyless screen attempts are not-run analytic rows, and the policy campaign's own registration/cell/run identities remain the treatment vocabulary",
+       "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
++    },
++    "liveEvidence": {
++      "type": "array",
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "path",
++          "sha256",
++          "phase"
++        ],
++        "properties": {
++          "path": {
++            "type": "string"
++          },
++          "sha256": {
++            "type": "string",
++            "pattern": "^[a-f0-9]{64}$"
++          },
++          "phase": {
++            "enum": [
++              "selection",
++              "confirmation"
++            ]
++          }
++        }
++      }
++    },
++    "purchases": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "path",
++        "sha256",
++        "physical"
++      ],
++      "properties": {
++        "path": {
++          "type": "string"
++        },
++        "sha256": {
++          "type": "string",
++          "pattern": "^[a-f0-9]{64}$"
++        },
++        "physical": {
++          "type": "integer",
++          "minimum": 0
++        }
++      }
+     }
+   },
+   "definitions": {
+@@ -650,7 +699,7 @@
+       }
+     },
+     "cell": {
+-      "description": "A treatment cell as effective VALUES — never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.",
++      "description": "A treatment cell as effective VALUES \u2014 never a profile name. `cellId` is the canonical digest of those values and of nothing else, so a source change or a result can never move it.",
+       "type": "object",
+       "required": [
+         "cellId",
+@@ -935,7 +984,7 @@
+       }
+     },
+     "run": {
+-      "description": "Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares — never a hand-written subset. The key itself never appears; only the name of the variable it came from.",
++      "description": "Everything that has to be equal for two rows to be the same experiment. `runId` over this block plus the cell and the source revision is what a merge compares \u2014 never a hand-written subset. The key itself never appears; only the name of the variable it came from.",
+       "type": "object",
+       "required": [
+         "tier",
+@@ -1113,7 +1162,7 @@
+           ]
+         },
+         "questionSet": {
+-          "description": "The canonical digest of the sorted scored question ids — what a comparison compares instead of walking two lists.",
++          "description": "The canonical digest of the sorted scored question ids \u2014 what a comparison compares instead of walking two lists.",
+           "$ref": "#/definitions/sha256"
+         },
+         "sampleIds": {
+@@ -1169,11 +1218,11 @@
+           ]
+         },
+         "ceiling": {
+-          "description": "The evidence recall this row's own retrieval reached for this question — the model-free ceiling the score is read against. On a tier that scores recall itself, the two are the same number, and saying so is the point.",
++          "description": "The evidence recall this row's own retrieval reached for this question \u2014 the model-free ceiling the score is read against. On a tier that scores recall itself, the two are the same number, and saying so is the point.",
+           "$ref": "#/definitions/unit"
+         },
+         "promptSha256": {
+-          "description": "The digest of the serialized prompt this cell produced for this question. Two cells act on a question when their digests differ — the acting set is read from the prompt, never from the score.",
++          "description": "The digest of the serialized prompt this cell produced for this question. Two cells act on a question when their digests differ \u2014 the acting set is read from the prompt, never from the score.",
+           "$ref": "#/definitions/sha256"
+         },
+         "tokens": {
+@@ -1518,7 +1567,7 @@
+           ]
+         },
+         "oracleCeiling": {
+-          "description": "The best any top-k retrieval could have scored on these questions — analytic, not observed. Null where the phase does not compute it.",
++          "description": "The best any top-k retrieval could have scored on these questions \u2014 analytic, not observed. Null where the phase does not compute it.",
+           "oneOf": [
+             {
+               "type": "null"
+@@ -1529,7 +1578,7 @@
+           ]
+         },
+         "verbatimFloor": {
+-          "description": "The retrieved context quoted as the answer, scored by the official evaluator — the model-free floor at this cell's own k. null where quoting the context is not a floor.",
++          "description": "The retrieved context quoted as the answer, scored by the official evaluator \u2014 the model-free floor at this cell's own k. null where quoting the context is not a floor.",
+           "oneOf": [
+             {
+               "type": "null"
+@@ -1559,7 +1608,7 @@
+               ]
+             },
+             "ceiling": {
+-              "description": "The evidence recall the retrieval reached, averaged — what the F1 beside it is read against.",
++              "description": "The evidence recall the retrieval reached, averaged \u2014 what the F1 beside it is read against.",
+               "oneOf": [
+                 {
+                   "type": "null"
+@@ -1783,6 +1832,42 @@
+                                     ]
+                                   }
+                                 ]
++                              },
++                              {
++                                "$or": [
++                                  {
++                                    "$and": [
++                                      {
++                                        "$eq": [
++                                          "$.metric",
++                                          "locomo-f1"
++                                        ]
++                                      },
++                                      {
++                                        "$eq": [
++                                          "$a.run.tier",
++                                          "live"
++                                        ]
++                                      }
++                                    ]
++                                  },
++                                  {
++                                    "$and": [
++                                      {
++                                        "$ne": [
++                                          "$.metric",
++                                          "locomo-f1"
++                                        ]
++                                      },
++                                      {
++                                        "$eq": [
++                                          "$a.run.tier",
++                                          "keyless"
++                                        ]
++                                      }
++                                    ]
++                                  }
++                                ]
+                               }
+                             ]
+                           },
+@@ -1821,6 +1906,42 @@
+                                     ]
+                                   }
+                                 ]
++                              },
++                              {
++                                "$or": [
++                                  {
++                                    "$and": [
++                                      {
++                                        "$eq": [
++                                          "$.metric",
++                                          "locomo-f1"
++                                        ]
++                                      },
++                                      {
++                                        "$eq": [
++                                          "$a.run.tier",
++                                          "live"
++                                        ]
++                                      }
++                                    ]
++                                  },
++                                  {
++                                    "$and": [
++                                      {
++                                        "$ne": [
++                                          "$.metric",
++                                          "locomo-f1"
++                                        ]
++                                      },
++                                      {
++                                        "$eq": [
++                                          "$a.run.tier",
++                                          "keyless"
++                                        ]
++                                      }
++                                    ]
++                                  }
++                                ]
+                               }
+                             ]
+                           }
+@@ -2309,7 +2430,7 @@
+       }
+     },
+     "prompts": {
+-      "description": "What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters — the suite's one size rule — where none did.",
++      "description": "What this cell did to the request, read from the prompt bytes and never from a score. `tokenProxy` is the provider's prompt tokens where a provider answered, and `sizeOf` characters \u2014 the suite's one size rule \u2014 where none did.",
+       "type": "object",
+       "required": [
+         "unchanged",
+@@ -2356,7 +2477,7 @@
+           ]
+         },
+         "against": {
+-          "description": "The cell whose prompts these were compared with — the inert reference, or the cell itself.",
++          "description": "The cell whose prompts these were compared with \u2014 the inert reference, or the cell itself.",
+           "$ref": "#/definitions/sha256"
+         }
+       }
+@@ -2464,7 +2585,7 @@
+       }
+     },
+     "inference": {
+-      "description": "The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be — only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.",
++      "description": "The live host, frozen by the operator's authorization BEFORE a request is made and part of the registration identity from then on. Every control that has to be equal for two live rows to be one experiment is here; the key itself is not, and cannot be \u2014 only the name of the variable it came from. A run whose resolved controls differ from these is a new registration, never a merge.",
+       "type": "object",
+       "required": [
+         "authorized",
+@@ -2522,7 +2643,7 @@
+               "minimum": 0
+             }
+           },
+-          "description": "The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it — a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed."
++          "description": "The embedding model the approval covers. `dims` is 0 until the provider's first reply settles it \u2014 a width is a property of the model, not a control anyone chooses, and every attempt's run identity carries the width it actually observed."
+         },
+         "thinking": {
+           "enum": [
+@@ -2724,7 +2845,7 @@
+       }
+     },
+     "census": {
+-      "description": "The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold — every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values — because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.",
++      "description": "The frozen shortlist re-measured under the real embedder before any answer exists. It reads operation counts and retrieved-context bytes, never a score: a lexical screen fires the contradiction judge far more often than a real embedder does, so a frozen cell can arrive here with nothing to do. A cell is mechanically inert only when BOTH halves hold \u2014 every live operation count equals the inert cell's AND every registered selection question retrieves byte-identical ordered context under the cell's own retrieval values \u2014 because only then does buying its answers provably buy the inert cell twice; equal counts alone prove nothing for a retrieval-axis cell, which acts after ingest on the ranking cutoff and can change every prompt while changing no count. It may drop a doubly-proven cell by that registered rule and may never reorder, re-rank, add or substitute one; a census handed no questions claims nothing and drops nothing.",
+       "type": "object",
+       "required": [
+         "embedRequests",
+@@ -2868,6 +2989,24 @@
+               }
+             }
+           }
++        },
++        "embedder": {
++          "type": "object",
++          "required": [
++            "model",
++            "dims"
++          ],
++          "additionalProperties": false,
++          "properties": {
++            "model": {
++              "type": "string",
++              "minLength": 1
++            },
++            "dims": {
++              "type": "integer",
++              "minimum": 1
++            }
++          }
+         }
+       }
+     },
+diff --git a/benchmark/lib/policy-execution.ts b/benchmark/lib/policy-execution.ts
+new file mode 100644
+index 0000000..9e34714
+--- /dev/null
++++ b/benchmark/lib/policy-execution.ts
+@@ -0,0 +1,117 @@
++/** Purchase accounting and immutable phase boundaries for the policy experiment. */
++import assert from 'node:assert/strict';
++import { createHash } from 'node:crypto';
++import { createBudgetAccount } from '@tangleai/agents/recursive';
++import { canonicalSha256 } from '@jarenjs/json/canonical';
++import type { ReplayCache } from '@tangleai/models/replay';
++import { cellIdOf, registrationIdOf, reportIdOf, runIdOf, questionSetOf, inferenceIdentityOf, transitionOf, comparisonOf, chooseChallenger, decisionOf, FREEZE_ALGORITHM, type LocomoPolicy } from './locomo-policy.ts';
++
++export interface PurchaseJournal {
++  inference: string;
++  source: string;
++  ceiling: number;
++  requests: Array<{ kind: 'embedding' | 'chat'; status: number | 'pending' | 'failed'; request: string }>;
++  cacheWrites: Record<string, string>;
++}
++const digest = (value: string) => createHash('sha256').update(value).digest('hex');
++/** The accounts reserve synchronously before fetch; the journal persists even a failed or interrupted purchase. */
++export function createPurchaseGuard(options: {
++  journal: PurchaseJournal; limit: number; deadlineMs: number; fetch: typeof globalThis.fetch; save: () => void;
++}) {
++  const { journal, save } = options;
++  assert.ok(Number.isSafeInteger(journal.ceiling) && journal.ceiling > 0);
++  assert.ok(Number.isSafeInteger(options.limit) && options.limit > 0);
++  const campaign = createBudgetAccount({ turns: journal.ceiling, spent: { turns: journal.requests.length } });
++  const run = createBudgetAccount({ turns: options.limit });
++  const fetch: typeof globalThis.fetch = async (url, init) => {
++    if (campaign.stop() || run.stop()) throw new Error('Policy physical request ceiling reached');
++    campaign.reserve(); run.reserve();
++    const entry: PurchaseJournal['requests'][number] = {
++      kind: String(url).endsWith('/embeddings') ? 'embedding' : 'chat', status: 'pending',
++      request: digest(String(init?.body ?? '')),
++    };
++    journal.requests.push(entry); save();
++    const timeout = AbortSignal.timeout(options.deadlineMs);
++    const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
++    try {
++      const response = await options.fetch(url, { ...init, signal });
++      entry.status = response.status; save();
++      return response;
++    } catch (error) { entry.status = 'failed'; save(); throw error; }
++  };
++  return {
++    fetch,
++    spent: () => run.spent().turns,
++    /** Lost successful cache entries cannot silently buy a new answer after its score was seen. */
++    cache(cache: ReplayCache): ReplayCache {
++      return {
++        async get(key) {
++          const value = await cache.get(key), id = digest(key);
++          if (journal.cacheWrites[id] !== undefined) {
++            if (value === undefined || digest(JSON.stringify(value)) !== journal.cacheWrites[id])
++              throw new Error('A recorded policy replay is missing or changed');
++          }
++          return value;
++        },
++        async set(key, value) {
++          const id = digest(key), hash = digest(JSON.stringify(value));
++          assert.ok(journal.cacheWrites[id] === undefined || journal.cacheWrites[id] === hash, 'A successful policy response is immutable');
++          await cache.set(key, value); journal.cacheWrites[id] = hash; save();
++        },
++      };
++    },
++  };
++}
++
++/** Recompute the identities before resuming, selecting a default or rendering a claimed result. */
++export async function verifyPolicyReport(report: LocomoPolicy): Promise<void> {
++  assert.equal(report.reportId, await reportIdOf(report), 'Policy report identity changed');
++  for (const cell of report.registration.cells) assert.equal(cell.cellId, await cellIdOf(cell), 'Policy cell identity changed');
++  assert.equal(report.registration.registrationId, await registrationIdOf(report.registration), 'Policy registration identity changed');
++  assert.equal(report.source.sha256, await canonicalSha256({ head: report.source.head, files: report.source.files }), 'Policy source identity changed');
++  const inference = report.registration.inference;
++  if (inference) {
++    const { authorized: _approved, identity, ...controls } = inference;
++    assert.equal(identity, await inferenceIdentityOf(controls), 'Policy inference identity changed');
++  }
++  for (const attempt of report.attempts) {
++    assert.equal(attempt.runId, await runIdOf(attempt.cellId, attempt.run), 'Policy run identity changed');
++    assert.equal(attempt.denominators.questionSet, await questionSetOf(attempt.run.sampleIds), 'Policy question identity changed');
++  }
++  const frozen = report.selection.frozen;
++  if (frozen) assert.equal(frozen.identity, await canonicalSha256({
++    registrationId: await registrationIdOf({ ...report.registration, inference: null }),
++    algorithm: FREEZE_ALGORITHM, cells: frozen.cells,
++  }), 'Policy shortlist identity changed');
++  for (const comparison of report.comparisons.filter(c => c.metric === 'locomo-f1')) {
++    const treatment = report.attempts.find(a => a.run.tier === 'live' && a.phase === comparison.phase && a.cellId === comparison.treatment);
++    const control = report.attempts.find(a => a.run.tier === 'live' && a.phase === comparison.phase && a.cellId === comparison.control);
++    assert.ok(treatment && control, 'Live comparison is missing its attempts');
++    assert.deepEqual(comparison, comparisonOf(treatment, control, report.registration.objective, comparison.metric), 'Policy decision statistics changed');
++  }
++  if (report.selection.transition) {
++    const next = await transitionOf(report.selection.transition, report.registration, report.selection.frozen!.identity);
++    assert.deepEqual(report.selection.transition, next, 'Policy challenger identity changed');
++    const nonControls = report.selection.shortlist.filter(id => !['inert', 'shipped'].includes(report.registration.cells.find(c => c.cellId === id)!.role));
++    const choice = chooseChallenger(report.comparisons.filter(c => c.phase === 'selection' && c.metric === 'locomo-f1'), nonControls, report.registration.objective);
++    assert.equal(choice.challenger, report.selection.transition.challenger, 'Challenger differs from the registered selection rule');
++    assert.equal(choice.calculation, report.selection.transition.calculation, 'Challenger calculation changed');
++  }
++  if (report.selection.decision) {
++    const inert = report.registration.cells.find(c => c.role === 'inert')!.cellId;
++    const comparison = report.comparisons.find(c => c.phase === 'confirmation' && c.metric === 'locomo-f1' && c.treatment === report.selection.transition?.challenger);
++    assert.ok(comparison?.eligible, 'Default requires eligible confirmation');
++    assert.deepEqual(report.selection.decision, decisionOf(comparison, inert, report.registration.objective), 'Policy default decision changed');
++  }
++}
++export function validatePhase(report: LocomoPolicy, phase: 'census' | 'selection' | 'confirmation'): void {
++  assert.ok(report.selection.frozen, 'The policy shortlist must be frozen');
++  if (phase === 'census') {
++    assert.ok(!report.attempts.some(a => a.run.tier === 'live'), 'The census cannot change after answers were observed');
++    assert.equal(report.census, null, 'The completed census is immutable');
++    return;
++  }
++  assert.ok(report.census, 'A live census must precede every answer');
++  if (phase === 'selection') assert.equal(report.selection.transition, null, 'Selection is frozen; proceed to confirmation');
++  if (phase === 'confirmation') assert.ok(report.selection.transition, 'A frozen challenger must precede confirmation');
++}

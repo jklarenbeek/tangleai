@@ -36,6 +36,18 @@ pinned candidate the host cannot serve, an exhausted tag, a missing required
 tool, a raised budget, a dimension disagreement or a credential-bearing URL
 refuses before a paid answer or an index mutation.
 
+## Measured memory policy
+
+The production registry references `memory-policies-selected` from
+`@tangleai/memory` with the confirmation report ID as its revision. Effective
+values and per-field measurement provenance live in `@tangleai/memory/policy`;
+the registry copies no ingest or retrieval knobs. Its built-in embedding
+candidate is `builtin-hash-512`, matching the independent lexical-width decision.
+`npm run policy:check` gates both references against the generated policy and
+actual runtime behavior. The complete default decision and explicit historical
+opt-ins are documented in [LOCOMO_POLICY.md](LOCOMO_POLICY.md) and the
+[memory package](../packages/memory/README.md).
+
 ## The host boundary
 
 Effectful work lives in the host adapter (`apps/desktop/src/ai-host.ts`),

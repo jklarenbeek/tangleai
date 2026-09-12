@@ -139,8 +139,8 @@ describe('the read-only inspection', () => {
     try {
       const ready = JSON.parse((await get(desktop, '/api/config')).body);
       assert.equal(ready.resolution.state, 'ready');
-      assert.equal(ready.identity.embedding.model, 'hash-trigram-64');
-      assert.equal(ready.identity.components.policy.id, 'memory-policies-shipped');
+      assert.equal(ready.identity.embedding.model, 'hash-trigram-512');
+      assert.equal(ready.identity.components.policy.id, 'memory-policies-selected');
       assert.deepEqual(ready.registry.tags.map((tag: { tag: string }) => tag.tag), ['reasoning', 'fast', 'cheap']);
       assert.equal(ready.hostObservation, null, 'no observation is claimed that no probe made');
       for (const tag of ready.registry.tags) {

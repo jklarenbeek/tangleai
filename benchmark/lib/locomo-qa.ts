@@ -46,7 +46,8 @@
  *  - `long-horizon` — the suite's own answer to a corpus that will not
  *    fit: `createLongHorizonAgent` over `createEnvironment`, authoring
  *    a compile-gated program and fanning sub-calls over the pieces;
- *  - `near` — Tangle, the shipped policies.
+ *  - `near` — the historical shipped thresholds.
+ *  - `selected-default` — the measured public policy at this run’s embedder.
  *
  * Six rows do not fit one 200-request ceiling, so a live run answers a
  * chosen subset (`--rows`) and the committed live document is the MERGE
@@ -109,7 +110,7 @@ import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/que
 import QUERY_SCHEMA from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { runBoundedQa, HORIZON_POLICY, type HorizonMetrics } from './horizon-agent.ts';
-import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
+import { recallByEmbedding, DEFAULT_MAX_PAIRS, DEFAULT_MEMORY_POLICY, POLICY_PROVENANCE, SHIPPED_LEGACY_POLICY, policyThresholds } from '@tangleai/memory';
 import { createOfflineEmbedder, DEFAULT_THRESHOLDS, OFFLINE_EMBEDDER_DIMS, type PipelineThresholds } from '@tangleai/pipeline';
 
 import type { IdentityEnvelope, RunIdentity } from '@tangleai/config';
@@ -181,11 +182,12 @@ export const ROWS: readonly QaRow[] = [
   { key: 'rag-observation', label: 'RAG over the release\'s observations', kind: 'rag', corpus: 'observation', thresholds: POLICIES_OFF },
   { key: 'rag-summary', label: 'RAG over the release\'s session summaries', kind: 'rag', corpus: 'summary', thresholds: POLICIES_OFF },
   { key: 'long-horizon', label: 'long-horizon agent (createLongHorizonAgent over createEnvironment)', kind: 'long-horizon' },
-  { key: 'near', label: 'Tangle (the pipeline, shipped defaults)', kind: 'pipeline', corpus: 'turns', thresholds: DEFAULT_THRESHOLDS },
+  { key: 'near', label: 'Tangle (historical shipped thresholds; this run’s embedder)', kind: 'pipeline', corpus: 'turns', thresholds: policyThresholds(SHIPPED_LEGACY_POLICY) },
+  { key: 'selected-default', label: `Selected default (cell ${POLICY_PROVENANCE.cellId}; report ${POLICY_PROVENANCE.reportId})`, kind: 'pipeline', corpus: 'turns', thresholds: DEFAULT_THRESHOLDS, retrieval: DEFAULT_MEMORY_POLICY.retrieval },
 ];
 
-/** The pipeline pair: the same pipeline with its policies inert, and with the shipped defaults. */
-export const CONFIGURATIONS: readonly QaRow[] = ROWS.filter((row) => row.kind === 'pipeline');
+/** The historical diagnostic pair, retained for reproducibility. */
+export const CONFIGURATIONS: readonly QaRow[] = ROWS.filter((row) => row.key === 'near-raw' || row.key === 'near');
 
 /** The rows a live run answers unasked — the pipeline pair, which fits the ceiling. */
 export const DEFAULT_LIVE_ROWS: readonly string[] = ['near-raw', 'near'];
@@ -785,7 +787,7 @@ export async function runLocomoQa(dataset: Dataset, options: QaRunOptions = {}):
       const vectors = scorable.length === 0 ? [] : await embedder.embed(scorable.map((q) => q.text));
       let skippedSeen = false;
       scorable.forEach((q, i) => {
-        const { context, retrieved, skipped } = retrieve(units, vectors[i], k, identity, sample.sample_id);
+        const { context, retrieved, skipped } = retrieve(units, vectors[i], row.retrieval?.k ?? k, identity, sample.sample_id, row.retrieval?.minScore ?? 0);
         if (!skippedSeen) { unranked += skipped; skippedSeen = true; }
         const recall = evidenceRecall(q.gold, retrieved);
         const quoted = f1Of(q, context.map((u) => u.text).join(' '))!;
@@ -1490,7 +1492,7 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
           citedRecall.add(q.category, citedR);
           results.push({
             id: q.id, category: q.category as 1 | 2 | 3 | 4, f1: own1, ceiling: ceil, citedRecall: citedR,
-            cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: bad, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed,
+            cited: check.resolved.length > 0, unresolved: check.unresolved.length, invalid: bad, tokens: mine.tokens, ms: mine.ms, replayed: mine.replayed, calls: mine.turns,
             ...(options.digestPrompt === undefined ? {} : { promptSha256: await options.digestPrompt(context.map(contextLine)) }),
           });
           return;
@@ -1500,7 +1502,8 @@ export async function runLocomoQaLive(dataset: Dataset, options: LiveRunOptions)
         let answerText: string;
         try {
           const reply = await adversarialAnswerer.generate(answerMessages(q.text, context)) as { value: AnswerValue } | { raw: string };
-          answerText = 'value' in reply ? reply.value.answer : reply.raw;
+          if (!('value' in reply)) { lane.judgeFailed++; return; }
+          answerText = reply.value.answer;
         } catch (error) {
           if (error instanceof BudgetStop) lane.unanswered.budget++;
           else { lane.unanswered.wire++; noteError(`${q.id}: ${error instanceof Error ? error.message : String(error)}`); }
@@ -1992,7 +1995,8 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
       ['**RAG over observations**', `the release's own \`observation\` corpus (${count(corpora.observation.entries)} facts, each citing the turns it was written from) through the same pipeline`, `the ${k} nearest observations`, 'the gold turns the retrieved observations cite'],
       ['**RAG over session summaries**', `the release's own \`session_summary\` corpus (${count(corpora.summary.entries)} summaries, each evidencing its whole session)`, `the ${k} nearest summaries`, 'SESSION-level: a retrieved summary counts as holding every turn of its session, whether or not it kept the fact'],
       ['**long-horizon agent**', '`createLongHorizonAgent` over `createEnvironment` — the suite\'s own answer to a corpus that will not fit: it authors a compile-gated program over the transcript\'s digest and fans sub-calls over the pieces', 'the root sees a digest; each sub-call sees one piece', 'the gold turns some sub-call was shown'],
-      ['**Tangle** (`near`)', 'the pipeline with the shipped policies — the row the policy matrix and the temporal lane tune', `the ${k} nearest surviving memories`, 'the gold turns among them (a merged survivor cites every turn it absorbed)'],
+      ['**Historical Tangle** (`near`)', 'the historical shipped thresholds at this run’s embedder', `the ${k} nearest surviving memories`, 'the gold turns among them (a merged survivor cites every turn it absorbed)'],
+      ...report.configurations.filter(row => row.key === 'selected-default').map(row => [row.label, 'measured memory policy; see LOCOMO_POLICY.md', 'selected retrieval controls', 'gold evidence in the retrieved memories']),
     ],
   }));
   out.push('');
@@ -2149,7 +2153,7 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
       }
 
       // --- Tangle against the field
-      out.push('### Tangle against the field');
+      out.push('### Historical Tangle against the field');
       out.push('');
       const contests = versusTangle(live);
       if (contests === null || contests.length === 0) {
@@ -2224,7 +2228,7 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
   }
   out.push('## What this table can and cannot decide');
   out.push('');
-  out.push('It decides, for one model over one sample, where Tangle\'s curated memory stands against the alternatives — the whole conversation, the paper\'s three retrieval corpora, the suite\'s own long-horizon agent — with the ceiling beside every F1 so the reader can tell a retrieval loss from a prompting one, and the cost of each row in the same table. It cannot decide the model: the sample is sized to a request ceiling, and a difference within a few points is noise until the sample grows. It cannot decide embedding quality either: the keyless rows rank lexically, and only the live rows rank through a real wire. The long-horizon row is compared over a subset it could afford, and says so by its count. The policy matrix turns the knobs under this table; the temporal lane gives the temporal category a structure a cosine ranker cannot express — both open in `docs/ROADMAP.md`.');
+  out.push('It decides, for one model over one sample, where Tangle\'s curated memory stands against the alternatives — the whole conversation, the paper\'s three retrieval corpora, the suite\'s own long-horizon agent — with the ceiling beside every F1 so the reader can tell a retrieval loss from a prompting one, and the cost of each row in the same table. It cannot decide the model: the sample is sized to a request ceiling, and a difference within a few points is noise until the sample grows. It cannot decide embedding quality either: the keyless rows rank lexically, and only the live rows rank through a real wire. The long-horizon row is compared over a subset it could afford, and says so by its count. The registered policy decision is published separately in `docs/LOCOMO_POLICY.md`; historical live rows here retain their original settings and answers. The temporal lane remains open in `docs/ROADMAP.md`.');
   out.push('');
   out.push('---');
   out.push('');

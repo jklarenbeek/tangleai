@@ -39,16 +39,20 @@ memories into an unmodified `@tangleai/context` ledger, where a Tangle
 agent can recall them by tag:
 
 ```
-ingest: 5 admitted, 1 filtered as near-verbatim repeats
-contradiction: judged 2 similar pairs, resolved 1
-crystallize: examined 5, merged 1
+ingest: 6 admitted, 0 filtered as near-verbatim repeats
+contradiction: attempted 0 similar pairs, judged 0, resolved 0
+crystallize: examined 6, planned 0, merged 0
 outcome: "Deploys must run the full gate before shipping" boosted to confidence 0.65
-recall for: "what is the current api rate limit?"
-  0.594  [fact] The API rate limit is 500 requests per minute  (evidence: gateway config v2)
-answer (grounded): The API rate limit is 500 requests per minute — per gateway config v2
-ledger mirror: 3 live memories admitted to a @tangleai/context ledger
-  ledger recall near "what is the current api rate limit?": The API rate limit is 500 requests per minute (0.594, skipped 0)
+recall: both the 100 and 500 requests/minute observations remain live
+ledger mirror: 6 live memories admitted to a @tangleai/context ledger
 ```
+
+The skeleton prints the exact selected cell and report identity. The measured
+default disables the three ingest policies, retrieves up to 10 memories at
+minScore 0, and uses 512-dimensional lexical hash embeddings offline. Retrieving
+a conflicting observation does not establish which figure is current. Explicit
+measured opt-ins and provenance are documented in
+[packages/memory/README.md](packages/memory/README.md).
 
 The vectors travel with their identity (`embeddedBy: { model, dims }`),
 which is what lets the mirrored ledger rank them by meaning through the
@@ -125,12 +129,39 @@ conversation and one run per session, and each of the 1,540 scorable
 questions asks for k memories; the official `recall_acc` says how much
 of its gold evidence arrived. The gate reproduces the 0.996 ceiling
 exactly at k = 20 (and its lower, k-dependent ceiling at 5 and 10) before
-a row prints, and the headline is a **published loss**: with the suite's
-lexical reference embedder, the shipped memory policies cost 0.9 points
-of evidence recall at k = 20 against the same pipeline with every policy
-inert (0.241 vs 0.250), and the ingest census says exactly what they did
-to the corpus. [docs/LOCOMO_RECALL.md](docs/LOCOMO_RECALL.md) is the
-rendered report; the run is deterministic, keyless, and 13 seconds.
+a row prints. The original 64-dimensional lexical run showed a **loss** from
+the historical shipped policies: evidence recall at k = 20 fell from 0.250 to
+0.241. That [baseline JSON](benchmark/results/locomo-recall-baseline.json) is
+retained. [docs/LOCOMO_RECALL.md](docs/LOCOMO_RECALL.md) reports the current
+512-dimensional run, including both the historical thresholds and the selected
+default. These deterministic keyless scores measure lexical retrieval.
+
+The [registered memory-policy experiment](docs/LOCOMO_POLICY.md) completed on
+2026-09-12: 24 lexical screen cells, five live selection cells (64 scored plus
+6 adversarial questions each), then inert, historical shipped and the frozen
+challenger on 89 held-out scored plus 8 adversarial questions each. OpenRouter
+served `z-ai/glm-5.3-flash` answers, `qwen/qwen3.8-27b` adversarial judgments and
+1024-dimensional `baai/bge-m3` embeddings. All eight live rows were eligible;
+258 physical requests succeeded within the approved 900-request ceiling.
+
+Held-out F1 was 0.156189 inert, 0.166193 historical shipped and 0.156908 for the
+contradiction-0.8/minScore-0.25 challenger. The challenger's delta was +0.000719,
+95% interval [-0.001464, 0.003216], paired SD 0.011458 and minimum detectable
+effect 0.002380. That last quantity is the registered 1.96 × standard-error
+precision diagnostic, not an equivalence test or an 80%-power calculation.
+The challenger passed category and cost bounds but failed the required positive
+overall interval, so **inert is the default**. Its evidence recall was 0.237266,
+cited recall 0.227903 and tokens per answer 998.494, at one call per answer.
+The historical shipped control also failed the overall interval; it had no
+incumbency privilege. This result is bounded to one model, dataset and sample.
+
+The default is derived from report
+`b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14`.
+Its independent offline width decision (512) comes from lexical evidence recall,
+not live answer quality. The screen allocated live budget; it did not predict
+the wire. The [full report](docs/LOCOMO_POLICY.md) retains every loss, category
+bound, cost and raw evidence link. `npm run policy:check` verifies the generated
+policy, evidence identities, registry reference and effective runtime behavior.
 
 The scorer that reads a model's answers beside those ceilings is at
 parity with the published one: `benchmark/lib/locomo-parity.ts` ports
@@ -161,7 +192,7 @@ Tangle — each with its ceiling, cited recall, cost and latency in the
 row. Six rows do not fit one request ceiling, so the table is the merge
 of runs, each inside `TANGLE_AI_MAX_CALLS`, and everything a run buys is
 kept in a wire cache (`benchmark/cache/`, deletable at will) so a re-run
-replays what it holds and spends only on the rest. **The table**
+replays what it holds and spends only on the rest. **The historical table**
 (2026-08-27, `z-ai/glm-5.3-flash` at its default thinking — its endpoint
 refuses to disable reasoning — over `baai/bge-m3`, four runs, zero wire
 errors, every row 64 of 64): **Tangle loses to every rival.** Long
@@ -358,6 +389,7 @@ are excluded from every public distribution.
 
 ## Where things stand
 
+- [docs/LOCOMO_POLICY.md](docs/LOCOMO_POLICY.md) — registered policy screen, live census, selection and held-out decision, with paired uncertainty and cost
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what Tangle wants to have and does
   not yet: open work only, each entry with the constraint that makes it
   hard and the measurement that would close it; the LoCoMo instrument

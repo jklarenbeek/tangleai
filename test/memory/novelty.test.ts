@@ -1,3 +1,4 @@
+// Mechanism tests opt in explicitly; the selected runtime default is tested separately.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -16,7 +17,7 @@ function unit(id: string, embedding: number[], model = 'test'): MemoryUnit {
 describe('noveltyGate', () => {
   it('filters a near-duplicate of an existing memory', () => {
     const existing = [unit('e1', [1, 0, 0])];
-    const { novel, filtered } = noveltyGate([unit('c1', [0.99, 0.01, 0]), unit('c2', [0, 1, 0])], existing);
+    const { novel, filtered } = noveltyGate([unit('c1', [0.99, 0.01, 0]), unit('c2', [0, 1, 0])], existing, { threshold: 0.97 });
     assert.deepEqual(novel.map((u) => u.id), ['c2']);
     assert.deepEqual(filtered.map((u) => u.id), ['c1']);
   });
@@ -24,7 +25,7 @@ describe('noveltyGate', () => {
   it('filters duplicates WITHIN the batch, not only against the store', () => {
     const { novel, filtered } = noveltyGate(
       [unit('c1', [1, 0]), unit('c2', [0.999, 0.001])],
-      [],
+      [], { threshold: 0.97 }
     );
     assert.deepEqual(novel.map((u) => u.id), ['c1']);
     assert.deepEqual(filtered.map((u) => u.id), ['c2']);
@@ -32,14 +33,14 @@ describe('noveltyGate', () => {
 
   it('passes units without an embedding — unmeasurable is not duplicate', () => {
     const bare: MemoryUnit = { id: 'c1', text: 't', evidence: 'e', tags: [], at: AT, kind: 'fact' };
-    const { novel, filtered } = noveltyGate([bare], [unit('e1', [1, 0])]);
+    const { novel, filtered } = noveltyGate([bare], [unit('e1', [1, 0])], { threshold: 0.97 });
     assert.equal(novel.length, 1);
     assert.equal(filtered.length, 0);
   });
 
   it('never measures across embedders — another identity is unmeasurable, so novel', () => {
     const existing = [unit('e1', [1, 0, 0], 'model-a')];
-    const { novel, filtered } = noveltyGate([unit('c1', [1, 0, 0], 'model-b')], existing);
+    const { novel, filtered } = noveltyGate([unit('c1', [1, 0, 0], 'model-b')], existing, { threshold: 0.97 });
     assert.deepEqual(novel.map((u) => u.id), ['c1']);
     assert.equal(filtered.length, 0);
   });

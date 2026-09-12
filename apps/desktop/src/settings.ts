@@ -283,6 +283,7 @@ export function embedderFor(
   settings: Settings,
   fetchImpl?: typeof globalThis.fetch,
   cache?: AiReplayCache,
+  retry?: { attempts?: number, baseMs?: number, maxMs?: number },
 ): Embedder {
   const embed = settings.embed;
   if (!embedWireConfigured(embed)) return createOfflineEmbedder();
@@ -293,6 +294,7 @@ export function embedderFor(
     apiKey: embed.apiKey ?? undefined,
     fetch: fetchImpl,
     cache,
+    retry,
   });
 }
 

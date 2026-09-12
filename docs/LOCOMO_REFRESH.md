@@ -14,7 +14,7 @@ Two numbers per row, always together: the **ceiling** is evidence recall at k �
 | **RAG over observations** | the release's own `observation` corpus (2,541 facts, each citing the turns it was written from) through the same pipeline | the 10 nearest observations | the gold turns the retrieved observations cite |
 | **RAG over session summaries** | the release's own `session_summary` corpus (272 summaries, each evidencing its whole session) | the 10 nearest summaries | SESSION-level: a retrieved summary counts as holding every turn of its session, whether or not it kept the fact |
 | **long-horizon agent** | `createLongHorizonAgent` over `createEnvironment` — the suite's own answer to a corpus that will not fit: it authors a compile-gated program over the transcript's digest and fans sub-calls over the pieces | the root sees a digest; each sub-call sees one piece | the gold turns some sub-call was shown |
-| **Tangle** (`near`) | the pipeline with the shipped policies — the row the policy matrix and the temporal lane tune | the 10 nearest surviving memories | the gold turns among them (a merged survivor cites every turn it absorbed) |
+| **Historical Tangle** (`near`) | the historical shipped thresholds at this run’s embedder | the 10 nearest surviving memories | the gold turns among them (a merged survivor cites every turn it absorbed) |
 
 ## The corpus and the questions
 
@@ -131,7 +131,7 @@ Every row over those 11 questions:
 | **long-horizon agent (createLongHorizonAgent over createEnvironment)** | 11 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.311 | 0.000 | 155 | 249,294 |
 | **Tangle (the pipeline, shipped defaults)** | 11 | 0.296 | 0.228 | 0.456 | 0.100 | 0.333 | 0.288 | 0.288 | 11 | 9,507 |
 
-### Tangle against the field
+### Historical Tangle against the field
 
 Tangle's row is compared with each rival over the questions BOTH answered; a rival ahead on overall F1 is a published loss. Tangle's ceiling over its answered questions was 0.202 against an F1 of 0.115: 8.6 points of gap is the prompting side of the ledger, 20.2% the retrieval side.
 
@@ -162,7 +162,7 @@ A category-5 question has a false premise (it attributes to one speaker what the
 
 ## What this table can and cannot decide
 
-It decides, for one model over one sample, where Tangle's curated memory stands against the alternatives — the whole conversation, the paper's three retrieval corpora, the suite's own long-horizon agent — with the ceiling beside every F1 so the reader can tell a retrieval loss from a prompting one, and the cost of each row in the same table. It cannot decide the model: the sample is sized to a request ceiling, and a difference within a few points is noise until the sample grows. It cannot decide embedding quality either: the keyless rows rank lexically, and only the live rows rank through a real wire. The long-horizon row is compared over a subset it could afford, and says so by its count. The policy matrix turns the knobs under this table; the temporal lane gives the temporal category a structure a cosine ranker cannot express — both open in `docs/ROADMAP.md`.
+It decides, for one model over one sample, where Tangle's curated memory stands against the alternatives — the whole conversation, the paper's three retrieval corpora, the suite's own long-horizon agent — with the ceiling beside every F1 so the reader can tell a retrieval loss from a prompting one, and the cost of each row in the same table. It cannot decide the model: the sample is sized to a request ceiling, and a difference within a few points is noise until the sample grows. It cannot decide embedding quality either: the keyless rows rank lexically, and only the live rows rank through a real wire. The long-horizon row is compared over a subset it could afford, and says so by its count. The registered policy decision is published separately in `docs/LOCOMO_POLICY.md`; historical live rows here retain their original settings and answers. The temporal lane remains open in `docs/ROADMAP.md`.
 
 ---
 

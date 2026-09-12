@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/memory-policy-values",
+  "title": "MemoryPolicyValues",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "novelty",
+    "contradiction",
+    "crystallization",
+    "retrieval",
+    "embedding"
+  ],
+  "properties": {
+    "novelty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "threshold"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "threshold": {
+          "type": "number"
+        }
+      }
+    },
+    "contradiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "threshold",
+        "maxPairs"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "maxPairs": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "crystallization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "threshold"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "threshold": {
+          "type": "number"
+        }
+      }
+    },
+    "retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "k",
+        "minScore"
+      ],
+      "properties": {
+        "k": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minScore": {
+          "type": "number"
+        }
+      }
+    },
+    "embedding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "dims",
+        "tier"
+      ],
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "keyless"
+          ]
+        }
+      }
+    }
+  }
+}

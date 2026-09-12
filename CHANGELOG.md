@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.23.0
+
+Derive memory defaults from a registered held-out policy experiment and expose their values, evidence provenance and measured opt-ins through a public contract. Novelty filtering, contradiction resolution and crystallization now default to off; memory retrieval defaults to k 10 and minScore 0, and the independently measured offline hash width is 512.
+
+Explicit policy overrides retain their meaning. Use the shipped-legacy policy data with a 64-dimensional hash embedder to reproduce the former settings; existing vectors retain their original embedding identity and require re-embedding to rank with the new offline default. Preserve the full live evidence, bounded-null decision and historical losses, enforce purchase and identity boundaries, and gate generated defaults, public contract compatibility, examples and documentation.
+
 ## 0.22.0
 
 Convert the migrated source, tests, benchmarks and hosts to strict TypeScript,

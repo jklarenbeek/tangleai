@@ -1,3 +1,4 @@
+// Mechanism tests opt in explicitly; the selected runtime default is tested separately.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -30,7 +31,7 @@ describe('planContradictionPairs', () => {
       unit('c', 'coffee is free', LATE, [0, 1, 0]),
       { ...unit('d', 'office is on Mars', LATE, [0.999, 0.001, 0]), supersededBy: 'b' },
     ];
-    const pairs = planContradictionPairs(units, { maxPairs: 5 });
+    const pairs = planContradictionPairs(units, { threshold: 0.8, maxPairs: 5 });
     assert.deepEqual(pairs.map((p) => [p.a.id, p.b.id]), [['a', 'b']]);
   });
 
@@ -40,7 +41,7 @@ describe('planContradictionPairs', () => {
       unit('b', 'y', LATE, [0.99, 0.01]),
       unit('c', 'z', LATE, [0.98, 0.02]),
     ];
-    assert.equal(planContradictionPairs(units, { maxPairs: 1 }).length, 1);
+    assert.equal(planContradictionPairs(units, { threshold: 0.8, maxPairs: 1 }).length, 1);
   });
 });
 
@@ -52,7 +53,7 @@ describe('resolveContradictions', () => {
     await store.put(older);
     await store.put(newer);
 
-    const outcome = await resolveContradictions(store, planContradictionPairs([older, newer]), {
+    const outcome = await resolveContradictions(store, planContradictionPairs([older, newer], { threshold: 0.8 }), {
       judge: async () => ({ contradiction: true, reason: 'the office moved', resolution: 'the office is in Nijmegen since August' }),
       now,
     });
@@ -81,7 +82,7 @@ describe('resolveContradictions', () => {
     await store.put(older);
     await store.put(newer);
 
-    const outcome = await resolveContradictions(store, planContradictionPairs([older, newer]), {
+    const outcome = await resolveContradictions(store, planContradictionPairs([older, newer], { threshold: 0.8 }), {
       judge: async () => ({ contradiction: true, reason: 'figures differ', resolution: 'limit is 500' }),
       now,
     });
@@ -102,7 +103,7 @@ describe('resolveContradictions', () => {
     const b = unit('b', 'y', LATE, [0.99, 0.01]);
     await store.put(a);
     await store.put(b);
-    const pairs = planContradictionPairs([a, b]);
+    const pairs = planContradictionPairs([a, b], { threshold: 0.8 });
 
     const noVerdict = await resolveContradictions(store, pairs, {
       judge: async () => ({ contradiction: false }), now,
@@ -125,7 +126,7 @@ describe('resolveContradictions', () => {
     const d = unit('d', 'y', LATE, [0.99, 0.01]);
     for (const u of [c, d]) await store.put(u);
     let call = 0;
-    const mixed = await resolveContradictions(store, planContradictionPairs([a, b, c, d], { maxPairs: 4 }), {
+    const mixed = await resolveContradictions(store, planContradictionPairs([a, b, c, d], { threshold: 0.8, maxPairs: 4 }), {
       judge: async () => { if (call++ === 0) throw new Error('provider down'); return { contradiction: false }; },
       now,
     });
@@ -138,7 +139,7 @@ describe('resolveContradictions', () => {
     const store = createMemoryUnitStore();
     const older = unit('a', 'limit is 100', EARLY, [1, 0]);
     const newer = unit('b', 'limit is 500', LATE, [0.99, 0.01]);
-    const pairs = planContradictionPairs([older, newer]);
+    const pairs = planContradictionPairs([older, newer], { threshold: 0.8 });
     // only the winner reaches the store: a prior pass or a host raced the loser away
     await store.put(newer);
 

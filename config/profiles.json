@@ -1,6 +1,8 @@
 {
   "version": 1,
-  "credentialSlots": ["openrouter-primary"],
+  "credentialSlots": [
+    "openrouter-primary"
+  ],
   "candidates": [
     {
       "id": "openrouter-glm-flash",
@@ -9,7 +11,9 @@
       "model": "z-ai/glm-5.3-flash",
       "baseUrl": null,
       "credentialSlot": "openrouter-primary",
-      "features": ["structured-json-schema"],
+      "features": [
+        "structured-json-schema"
+      ],
       "rateCard": null,
       "limitations": "the flash tier of its family; its endpoint refuses to disable reasoning, so thinking is always the provider default; no sourced rate card yet, so its cost is unknown, never free"
     },
@@ -20,21 +24,23 @@
       "model": "qwen/qwen3.8-27b",
       "baseUrl": null,
       "credentialSlot": "openrouter-primary",
-      "features": ["structured-json-schema"],
+      "features": [
+        "structured-json-schema"
+      ],
       "rateCard": null,
-      "limitations": "declared as the stronger judge model by operator configuration; no measured quality or cost evidence in this repository yet"
+      "limitations": "declared as the stronger judge by operator configuration; no independent judge-quality comparison or sourced rate card establishes that ordering"
     },
     {
-      "id": "builtin-hash-64",
+      "id": "builtin-hash-512",
       "kind": "embedding",
       "provider": "builtin",
-      "model": "hash-trigram-64",
-      "dims": 64,
+      "model": "hash-trigram-512",
+      "dims": 512,
       "baseUrl": null,
       "credentialSlot": null,
       "features": [],
       "rateCard": null,
-      "limitations": "the deliberately offline reference embedder at the measured width; it costs nothing and proves nothing about semantic quality"
+      "limitations": "Lexical hash width selected by registered evidence recall; no semantic answer-quality claim."
     }
   ],
   "capabilities": [
@@ -42,21 +48,37 @@
       "tag": "reasoning",
       "intent": "prefer the model declared strongest at multi-step reasoning",
       "candidates": [
-        { "candidate": "openrouter-qwen-27b", "priority": 1 },
-        { "candidate": "openrouter-glm-flash", "priority": 2 }
+        {
+          "candidate": "openrouter-qwen-27b",
+          "priority": 1
+        },
+        {
+          "candidate": "openrouter-glm-flash",
+          "priority": 2
+        }
       ],
       "limitations": "an operator-declared ordering; no benchmark in this repository has measured reasoning quality for either candidate, and the tag's spelling proves nothing"
     },
     {
       "tag": "fast",
       "intent": "prefer the lowest-latency answer model",
-      "candidates": [{ "candidate": "openrouter-glm-flash", "priority": 1 }],
-      "limitations": "an operator-declared ordering; latency has not been measured by an instrument here, and the tag's spelling proves nothing"
+      "candidates": [
+        {
+          "candidate": "openrouter-glm-flash",
+          "priority": 1
+        }
+      ],
+      "limitations": "an operator-declared ordering; dated answer latencies are published, but no controlled model comparison establishes the fastest candidate"
     },
     {
       "tag": "cheap",
       "intent": "prefer the lowest-cost answer model",
-      "candidates": [{ "candidate": "openrouter-glm-flash", "priority": 1 }],
+      "candidates": [
+        {
+          "candidate": "openrouter-glm-flash",
+          "priority": 1
+        }
+      ],
       "limitations": "an operator-declared ordering; no rate card is sourced yet, so cost is unknown rather than low, and the tag's spelling proves nothing"
     }
   ],
@@ -70,12 +92,12 @@
   "responseSchemas": [],
   "components": [
     {
-      "id": "memory-policies-shipped",
+      "id": "memory-policies-selected",
       "kind": "policy",
-      "package": "@tangleai/pipeline",
-      "export": "createPipeline",
-      "revision": "f67151cea75f246c313378d12b7217f7b7b9898b6d9a5e0bf7e6a8d060c1e306",
-      "description": "the shipped memory-policy defaults (novelty 0.97, contradiction 0.8, crystallize 0.9, maxPairs 20, k 10, minScore 0, built-in embedding); the revision is the policy instrument's published shipped-control cell identity, and the measured selection of a default beyond it is still open"
+      "package": "@tangleai/memory",
+      "export": "DEFAULT_MEMORY_POLICY",
+      "revision": "b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14",
+      "description": "Measured default cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; effective values and live/lexical provenance are owned by @tangleai/memory/policy."
     }
   ],
   "inference": [
@@ -83,14 +105,22 @@
       "id": "chat-single-attempt",
       "temperature": null,
       "maxTokens": null,
-      "retry": { "attempts": 1, "baseMs": 0, "maxMs": 0 },
+      "retry": {
+        "attempts": 1,
+        "baseMs": 0,
+        "maxMs": 0
+      },
       "reasoning": null
     },
     {
       "id": "benchmark-patient",
       "temperature": null,
       "maxTokens": null,
-      "retry": { "attempts": 8, "baseMs": 3000, "maxMs": 60000 },
+      "retry": {
+        "attempts": 8,
+        "baseMs": 3000,
+        "maxMs": 60000
+      },
       "reasoning": null
     }
   ],
@@ -120,8 +150,8 @@
           "ranker": null
         }
       },
-      "embedding": "builtin-hash-64",
-      "policyComponent": "memory-policies-shipped",
+      "embedding": "builtin-hash-512",
+      "policyComponent": "memory-policies-selected",
       "budget": null
     },
     {
@@ -150,8 +180,8 @@
           "ranker": null
         }
       },
-      "embedding": "builtin-hash-64",
-      "policyComponent": "memory-policies-shipped",
+      "embedding": "builtin-hash-512",
+      "policyComponent": "memory-policies-selected",
       "budget": "live-guard"
     },
     {
@@ -160,7 +190,11 @@
       "extends": "benchmark-live",
       "patch": {
         "description": "the benchmark's paid stack with the answer role asked as cheap instead of fast; everything else inherits",
-        "roles": { "answer": { "capability": "cheap" } }
+        "roles": {
+          "answer": {
+            "capability": "cheap"
+          }
+        }
       }
     }
   ]

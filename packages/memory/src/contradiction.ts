@@ -37,8 +37,10 @@ import type { JsonSchema, MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createMemoryUnit } from './ingest.ts';
 import type { MemoryStore } from './store.ts';
 
-export const DEFAULT_CONTRADICTION_THRESHOLD = 0.75;
-export const DEFAULT_MAX_PAIRS = 20;
+import { policyThresholds, DEFAULT_MEMORY_POLICY } from './policy.ts';
+
+export const DEFAULT_CONTRADICTION_THRESHOLD = policyThresholds().contradiction;
+export const DEFAULT_MAX_PAIRS = DEFAULT_MEMORY_POLICY.contradiction.maxPairs;
 
 /** What a judge must answer. Wire it to @tangleai/models `createStructuredOutput`
  * as the `schema` and the repair loop enforces it for free. */

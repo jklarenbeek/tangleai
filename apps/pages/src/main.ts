@@ -14,7 +14,7 @@ import { bootDemos } from './demos/browser.ts';
 
 import { createApp } from '@jarenjs/app';
 import { renderMermaid } from '@jarenjs/mermaid';
-import { createMemoryUnitStore, recallByEmbedding, type MemoryStore } from '@tangleai/memory';
+import { DEFAULT_MEMORY_POLICY, POLICY_PROVENANCE, createMemoryUnitStore, recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import {
   createOfflineEmbedder,
   createPipeline,
@@ -41,7 +41,7 @@ const embedder = createOfflineEmbedder();
 const strategyLabels: Record<string, string> = {
   'long-context': 'Full conversation', 'near-raw': 'Raw dialogue',
   'rag-observation': 'Observations', 'rag-summary': 'Session summaries',
-  'long-horizon': 'Bounded agent', near: 'Tangle',
+  'long-horizon': 'Bounded agent', near: 'Historical Tangle',
 };
 
 // ---------------------------------------------------------------------------
@@ -108,6 +108,7 @@ function view(state: any): any {
 
     ['section', { class: 'panel demo' },
       ['h2', {}, 'Run it. Here. Now.'],
+      ['p', { 'data-policy-cell': POLICY_PROVENANCE.cellId }, `Selected default: novelty ${DEFAULT_MEMORY_POLICY.novelty.enabled ? 'on' : 'off'}, contradiction ${DEFAULT_MEMORY_POLICY.contradiction.enabled ? 'on' : 'off'}, crystallization ${DEFAULT_MEMORY_POLICY.crystallization.enabled ? 'on' : 'off'}. Local matching uses ${DEFAULT_MEMORY_POLICY.embedding.dims} hash dimensions.`],
       ['p', {}, 'This button executes the real pipeline in your browser — in-memory store, @tangleai/models\'s deterministic hash embedder, no network. Six observations go in: a near-verbatim repeat, a paraphrase pair, and two rate limits that cannot both be true.'],
       ['button', { class: 'button', disabled: state.running ? true : null, on: { click: 'run' } },
         state.ran ? 'run it again' : 'run the loop'],
@@ -121,7 +122,7 @@ function view(state: any): any {
               ['button', { class: 'button', type: 'submit' }, 'recall']],
             answerView(state.answer),
             state.answer !== null && state.answer.results.length > 0
-              ? ['p', { class: 'note' }, 'The superseded 100-rpm record cannot surface — contradiction resolution marked it audit trail before crystallization could average it away. That ordering is a test-pinned design rule.']
+              ? ['p', { class: 'note' }, state.report.contradiction.contradictions > 0 ? 'The resolved older record is retained as audit trail and excluded from recall.' : 'These are retrieved observations. With contradiction resolution off, conflicting records can both appear; matching text alone does not establish which statement is current.']
               : null]
         : null],
 
@@ -142,8 +143,8 @@ function view(state: any): any {
           ['td', {}, `${row.runtime} ${row.version}`], ['td', {}, `${row.previousP95Ms.toFixed(2)} ms`],
           ['td', {}, `${row.boundedP95Ms.toFixed(2)} ms`], ['td', {}, `${row.p95Speedup.toFixed(2)}×`]])]]],
       ['p', {}, 'Exact vector search remains the default: upstream’s labelled BGE-M3 comparison did not find a projection strategy that met both recall and speed requirements. The keyless LoCoMo recall loss remains published; this upgrade is not a claim of better model answers.'],
-      ['h3', {}, 'Fresh answer measurements'],
-      ['p', {}, `${integration.paid.model} with ${integration.paid.embedder.model}. Each direct-answer row uses the same 64 questions; the bounded agent uses 12. F1 measures answer overlap and recall measures how much gold evidence reached the model.`],
+      ['h3', {}, 'Dated answer measurements'],
+      ['p', {}, `Historical answer measurement: ${integration.paid.model} with ${integration.paid.embedder.model}. Each direct-answer row uses the same 64 questions; the bounded agent uses 12. F1 measures answer overlap and recall measures how much gold evidence reached the model.`],
       ['div', { class: 'benchmark-table paid-table' }, ['table', {},
         ['thead', {}, ['tr', {}, ['th', {}, 'Strategy'], ['th', {}, 'Valid replies'], ['th', {}, 'F1'], ['th', {}, 'Recall']]],
         ['tbody', {}, integration.paid.qa.rows.map((row) => ['tr', { key: row.key },
@@ -236,7 +237,7 @@ const app = createApp({
         : 'what is the current api rate limit?';
       void Promise.all([store.list(), embedder.embed([question])]).then(([units, [vector]]) => {
         const identity = { model: embedder.model, dims: embedder.dims };
-        const { ranked } = recallByEmbedding(units, vector, { k: 3, identity });
+        const { ranked } = recallByEmbedding(units, vector, { identity });
         dispatch('ask/done', {
           results: ranked.map(({ unit, score }) => ({
             score: score.toFixed(3),

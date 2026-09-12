@@ -1,7 +1,7 @@
 # LoCoMo evidence recall — the keyless ceiling
 
 Source: `benchmark/locomo/data/locomo10.json` (sha256 `79fa87e90f04…`, 2,805,274 bytes, schema valid).
-Embedder `hash-trigram-64` (64 dims) — the suite's deterministic reference, LEXICAL: two texts score high when they share letters, so every `near` row below is a mechanism score, not an embedding-quality claim. Random seed 17753. Reproduce with `npm run benchmark:locomo:recall`.
+Embedder `hash-trigram-512` (512 dims) — the suite's deterministic reference, LEXICAL: two texts score high when they share letters, so every `near` row below is a mechanism score, not an embedding-quality claim. Random seed 17753. Reproduce with `npm run benchmark:locomo:recall`.
 
 Evidence recall is the official `recall_acc` of `task_eval/evaluation.py`: per question, the fraction of its gold `evidence` turns present in the k retrieved memories (a question citing nothing scores 1), averaged. A fact that never reached the prompt cannot be answered from it, so this is the model-free ceiling on any answer — and it costs nothing, which is why CI runs it on every commit.
 
@@ -17,7 +17,8 @@ One memory per turn, `evidence` = `<sample_id>/<dia_id>`, tags = speaker and ses
 | row | novelty / contradiction / crystallize | runs | observations | admitted | filtered | judged | judge failed | contradictions | unapplied | resolutions | merged | unmerged | live | total | unranked |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | near-raw | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
-| near | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 5326 | 0 | 63 | 0 | 0 | 339 | 0 | 5485 | 5537 | 0 |
+| near | 0.97 / 0.8 / 0.9 | 272 | 5882 | 5876 | 6 | 133 | 0 | 0 | 0 | 0 | 0 | 0 | 5876 | 5876 | 0 |
+| selected-default | 2 / 2 / 2 | 272 | 5882 | 5882 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 5877 | 5877 | 0 |
 
 `filtered` is the novelty gate; `contradictions` marks the older record superseded (unretrievable, kept for audit) and `resolutions` are the synthesized records it wrote (no vector, so `unranked`); `merged` is the crystallizer absorbing a record into a survivor whose `evidence` then cites both turns. A threshold of 2 is a similarity no cosine reaches: the policies ran and did nothing, and that row is the baseline corpus the policy matrix measures against.
 
@@ -42,11 +43,12 @@ One memory per turn, `evidence` = `<sample_id>/<dia_id>`, tags = speaker and ses
 | _oracle (gold first)_ | 0.991 | 0.973 | 0.997 | 0.951 | 1.000 |
 | _random (seed 17753)_ | 0.007 | 0.004 | 0.008 | 0.050 | 0.003 |
 | **recency (last k turns)** | 0.004 | 0.002 | 0.000 | 0.044 | 0.002 |
-| **near (policies off)** | 0.124 | 0.042 | 0.139 | 0.072 | 0.152 |
-| **near (pipeline defaults)** | 0.115 | 0.041 | 0.130 | 0.072 | 0.139 |
+| **near (policies off)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
+| **near (historical shipped thresholds; this run’s embedder)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.288 | 0.092 | 0.366 | 0.083 | 0.347 |
 | _analytic ceiling_ | 0.991 | 0.973 | 0.997 | 0.951 | 1.000 |
 
-Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 10.
+Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.
 
 ### k = 10
 
@@ -55,11 +57,12 @@ Gold hits credited through a crystallized survivor's absorbed address rather tha
 | _oracle (gold first)_ | 0.995 | 0.992 | 0.997 | 0.964 | 1.000 |
 | _random (seed 17753)_ | 0.014 | 0.010 | 0.011 | 0.051 | 0.013 |
 | **recency (last k turns)** | 0.013 | 0.004 | 0.009 | 0.055 | 0.012 |
-| **near (policies off)** | 0.174 | 0.073 | 0.208 | 0.072 | 0.207 |
-| **near (pipeline defaults)** | 0.165 | 0.072 | 0.184 | 0.076 | 0.200 |
+| **near (policies off)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
+| **near (historical shipped thresholds; this run’s embedder)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.360 | 0.136 | 0.450 | 0.141 | 0.425 |
 | _analytic ceiling_ | 0.995 | 0.992 | 0.997 | 0.964 | 1.000 |
 
-Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 17.
+Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.
 
 ### k = 20
 
@@ -68,17 +71,18 @@ Gold hits credited through a crystallized survivor's absorbed address rather tha
 | _oracle (gold first)_ | 0.996 | 0.994 | 0.997 | 0.969 | 1.000 |
 | _random (seed 17753)_ | 0.031 | 0.029 | 0.024 | 0.072 | 0.030 |
 | **recency (last k turns)** | 0.027 | 0.011 | 0.034 | 0.076 | 0.024 |
-| **near (policies off)** | 0.250 | 0.126 | 0.312 | 0.091 | 0.287 |
-| **near (pipeline defaults)** | 0.241 | 0.128 | 0.298 | 0.115 | 0.272 |
+| **near (policies off)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
+| **near (historical shipped thresholds; this run’s embedder)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
+| **Selected default (cell f9a742d02a54a2f222065707243200d84c7bd8afb9d2aacbd8b9ca524aaf49a6; report b003bccaac49b44931787955e5caa0efddb58fec706da029760e50540d8f5b14; default k=10, minScore=0)** | 0.434 | 0.197 | 0.547 | 0.179 | 0.499 |
 | _analytic ceiling_ | 0.996 | 0.994 | 0.997 | 0.969 | 1.000 |
 
-Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 38.
+Gold hits credited through a crystallized survivor's absorbed address rather than its own: near-raw 0, near 0, selected-default 0.
 
 ## What this table can and cannot decide
 
-At k = 20 the shipped policies move overall evidence recall by -0.91 points against the same pipeline with every policy inert (24.14% vs 25.05%), at a ceiling of 99.61%. That is a LOSS, and it is published as one: what the gate filtered and the judge superseded is what these questions could no longer retrieve.
+At k = 20 the historical shipped policies move overall evidence recall by +0.00 points against the same pipeline with every policy inert (43.38% vs 43.38%), at a ceiling of 99.61%. That is the sign to read, and it is small: what the gate filtered and the judge superseded is what these questions could no longer retrieve.
 
-What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. The policy matrix (open in `docs/ROADMAP.md`) puts a real embedding client behind the same seam and re-runs this exact instrument; the temporal lane gives the ranker a notion of *when*; the answer path's F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.
+The hash embedder ranks lexical overlap; these are retrieval mechanism scores, not semantic embedding quality or model answers. The selected-default row runs the public memory policy at the reported width, with k swept here as an experiment (its runtime default is k = 10). Historical shipped thresholds remain explicit in `near`; the original 64-dimensional screen remains in [LOCOMO_POLICY_SCREEN.md](LOCOMO_POLICY_SCREEN.md). The separate registered live decision, bounds and limitations are in [LOCOMO_POLICY.md](LOCOMO_POLICY.md). The temporal lane remains open in `docs/ROADMAP.md`.
 
 ---
 

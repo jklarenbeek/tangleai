@@ -1,48 +1,19 @@
 /* eslint-disable no-console */
-/**
- * LoCoMo policy matrix — the keyless screen.
- *
- * Registers the splits, the objective, the axes and the cell registry,
- * assigns every identity, then screens the requested cells over the
- * real pipeline: one store per conversation, one run per session, the
- * cell's own thresholds, its own k and minScore, its own built-in
- * embedding width, and the official evidence recall per question. It
- * spends nothing, reads no clock and reaches no wire, so two runs of
- * the same registration over the same bytes are byte-identical.
- *
- *   node benchmark/locomo-policy.ts --cells all                  # the committed selection screen
- *   node benchmark/locomo-policy.ts                              # the inert and shipped cells only
- *   node benchmark/locomo-policy.ts --cells inert,novelty-0.97
- *   node benchmark/locomo-policy.ts --phase screen --samples conv-30
- *   node benchmark/locomo-policy.ts --json PATH --md PATH
- *   node benchmark/locomo-policy.ts --require                    # exit 1 if the submodule is absent
- *
- * `--phase selection` (the default) scores the registered selection
- * sample over the selection conversations and, when every registered
- * cell ran, expands the registry with the pairwise combinations its own
- * Pareto frontier earns, decides the built-in embedding width and
- * freezes at most four non-control live candidates. `--phase screen`
- * scores every scorable question of whatever conversations it is given
- * and freezes nothing: it is a diagnostic.
- *
- * There is no `--live` here and `--phase confirmation` is refused. A
- * live matrix spends a budget the operator authorizes per run, and the
- * held-out split cannot be unlocked by a flag on a screen.
- *
- * Exit 1 with the reason when the gate fails or the report does not
- * validate against `schemas/locomo-policy.schema.json` — whose `$query`
- * assertions refuse a report whose denominators, operation counts or
- * paired question sets do not reconcile. Nothing is printed or written
- * in either case. Elapsed time goes to stderr; the report carries none.
+/** Registered lexical screen and authorized, resumable live policy experiment.
+ * --cells all runs the keyless screen; --render reproduces a stored report without a wire.
+ * --live --phase census|selection|confirmation prints a no-call plan. Its inference
+ * identity must be explicitly authorized; answering runs default to one pending cell.
  */
 
-import { existsSync } from 'node:fs';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { existsSync, writeFileSync, renameSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 
 import { resolveEndpoint } from '@tangleai/models/providers';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../apps/desktop/src/settings.ts';
-import { chatSettingsOf, embedSettingsOf, readAiEnv } from './lib/ai-env.ts';
+import { chatSettingsOf, embedSettingsOf, readAiEnv, envConfigIdentity } from './lib/ai-env.ts';
 import { parseArgs } from './lib/args.ts';
 import { loadLocomo } from './lib/locomo.ts';
 import { conversationCorpus } from './lib/locomo-corpus.ts';
@@ -66,13 +37,14 @@ import {
   runLocomoPolicy,
   transitionOf,
   withPrompts,
+  sourceRevision,
   type InferenceControls,
   type LocomoPolicy,
 } from './lib/locomo-policy.ts';
 import { createReportValidator, describeErrors } from './lib/validate.ts';
-import { analyticEnvelope } from './lib/report-envelope.ts';
+import { createPurchaseGuard, verifyPolicyReport, verifyPolicyDataset, verifyPurchaseSnapshot, validatePhase, type PurchaseJournal } from './lib/policy-execution.ts';
 import RUN_IDENTITY_SCHEMA from '../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
-import { WIRE_CACHE_PATH, openWireCache } from './lib/wire-cache.ts';
+import { openWireCache } from './lib/wire-cache.ts';
 import SCHEMA from './schemas/locomo-policy.schema.json' with { type: 'json' };
 
 /**
@@ -98,8 +70,8 @@ function corpusTexts(
 }
 
 const args = parseArgs(process.argv.slice(2), {
-  flags: ['require', 'live', 'fresh'],
-  values: ['phase', 'cells', 'samples', 'seed', 'json', 'md', 'authorize', 'campaign-ceiling', 'thinking', 'cache'],
+  flags: ['require', 'live', 'fresh', 'render'],
+  values: ['phase', 'cells', 'samples', 'seed', 'json', 'md', 'authorize', 'campaign-ceiling', 'thinking', 'cache', 'journal'],
 });
 
 const live = args.flags.has('live');
@@ -115,6 +87,20 @@ if (!live && !KEYLESS_PHASES.includes(phase)) {
 if (live && !LIVE_PHASES.includes(phase)) {
   console.error(`--live --phase is one of ${LIVE_PHASES.join(', ')}, got '${phase}'`);
   process.exit(1);
+}
+
+if (args.flags.has('render')) {
+  const path = args.values.get('json');
+  assert.ok(path, '--render requires --json');
+  const report = JSON.parse(await readFile(path, 'utf8')) as LocomoPolicy;
+  await verifyPolicyReport(report);
+  const outcome = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA])(report);
+  assert.ok(outcome.valid, describeErrors(outcome).join('\n'));
+  const markdown = renderMarkdown(report);
+  console.log(markdown);
+  const destination = args.values.get('md');
+  if (destination) await writeFile(destination, `${markdown}\n`);
+  process.exit(0);
 }
 
 const dataset = await loadLocomo();
@@ -191,6 +177,8 @@ if (jsonPath === undefined || !existsSync(jsonPath)) {
 }
 const stored = JSON.parse(await readFile(jsonPath, 'utf8')) as LocomoPolicy;
 mustValidate(stored);
+await verifyPolicyReport(stored);
+verifyPolicyDataset(stored, dataset);
 if (stored.selection.frozen === null) {
   console.error('the shortlist is not frozen, so there is nothing a live run is allowed to spend on');
   process.exit(1);
@@ -212,7 +200,8 @@ if (!Number.isInteger(campaignCeiling) || campaignCeiling < 1) {
   process.exit(1);
 }
 
-const RETRY = { attempts: 8, baseMs: 3000, maxMs: 60000 };
+const RETRY = { attempts: 1, baseMs: 3000, maxMs: 60000 };
+const DEADLINE_MS = 120_000;
 const resolved = resolveEndpoint({ provider: env.provider, baseUrl: env.baseUrl ?? undefined, model: env.model });
 const embedSettings = embedSettingsOf(env);
 const probe = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings });
@@ -225,7 +214,7 @@ const controls: InferenceControls = {
   thinking,
   responseSchema: RESPONSE_SCHEMA_REVISION,
   retry: RETRY,
-  deadlineMs: null,
+  deadlineMs: DEADLINE_MS,
   concurrency: env.maxConcurrency,
   perRunCeiling: env.maxCalls,
   campaignCeiling,
@@ -242,7 +231,7 @@ const split = phase === 'confirmation' ? stored.registration.splits.confirmation
 
 // what the cache already holds is read, never bought — a cache lookup is
 // not a request and a warm cache is not an authorization
-const cachePath = args.values.get('cache') ?? WIRE_CACHE_PATH;
+const cachePath = args.values.get('cache') ?? `${jsonPath}.sqlite`;
 const cache = cachePath === 'none' ? undefined : await openWireCache({ path: cachePath });
 const texts = corpusTexts(dataset, conversations, { seed: seed ?? stored.registration.seed, perCategory: split.perCategory['1'], adversarial: split.adversarial });
 const replayEndpoint = { provider: resolved.provider, base: resolved.base, model: probe.model };
@@ -258,9 +247,25 @@ const embedFresh = Math.ceil(Math.max(0, uniqueTexts - held.length) / 256);
 // money nobody intends to spend
 const shippedCellId = stored.registration.cells.find((c) => c.role === 'shipped')!.cellId;
 const inertId = stored.registration.cells.find((c) => c.role === 'inert')!.cellId;
-const planCells = phase !== 'confirmation'
-  ? shortlist
-  : [inertId, shippedCellId, ...(stored.selection.transition === null ? [] : [stored.selection.transition.challenger])];
+const phaseCells = phase !== 'confirmation' ? (stored.census ? stored.selection.shortlist : shortlist)
+  : [inertId, shippedCellId, ...(stored.selection.transition ? [stored.selection.transition.challenger] : [])];
+const requested = list('cells');
+const pending = phaseCells.filter(id => !stored.attempts.some(a => a.run.tier === 'live' && a.phase === phase && a.cellId === id && a.eligibility.eligible));
+const planCells = phase === 'census' ? phaseCells : requested
+  ? (requested.includes('all') ? phaseCells : requested.map(key => {
+    const cell = stored.registration.cells.find(c => c.key === key || c.cellId === key);
+    assert.ok(cell && phaseCells.includes(cell.cellId), `Cell ${key} is outside this phase`);
+    return cell.cellId;
+  })) : pending.slice(0, 1);
+assert.equal(new Set(planCells).size, planCells.length, 'Duplicate requested cells');
+const journalPath = args.values.get('journal') ?? `${jsonPath}.purchases.json`;
+const journal: PurchaseJournal = existsSync(journalPath)
+  ? JSON.parse(await readFile(journalPath, 'utf8')) as PurchaseJournal
+  : { inference: identity, source: stored.source.sha256, ceiling: campaignCeiling, requests: [], cacheWrites: {} };
+assert.equal(journal.inference, identity, 'Purchase journal inference changed');
+assert.equal(journal.ceiling, campaignCeiling, 'Purchase journal ceiling changed');
+assert.equal(journal.source, stored.source.sha256, 'Purchase journal source changed');
+if (stored.registration.inference) assert.equal(stored.registration.inference.identity, identity, 'Approved inference controls changed');
 
 const plan = planOf({
   phase: phase as 'census' | 'selection' | 'confirmation',
@@ -276,6 +281,15 @@ const plan = planOf({
 console.error('');
 console.error('  the plan, before any request:');
 for (const line of describePlan(plan, controls, stored.registration)) console.error(`    ${line}`);
+console.error(`  Physical requests already purchased: ${journal.requests.length}/${campaignCeiling}`);
+const selectionSplit = stored.registration.splits.selection, confirmationSplit = stored.registration.splits.confirmation;
+const censusBase = Math.ceil(new Set(corpusTexts(dataset, selectionSplit.conversations, { seed: stored.registration.seed, perCategory: selectionSplit.perCategory['1'], adversarial: selectionSplit.adversarial })).size / 256);
+const confirmationBase = Math.ceil(new Set(corpusTexts(dataset, confirmationSplit.conversations, { seed: stored.registration.seed, perCategory: confirmationSplit.perCategory['1'], adversarial: confirmationSplit.adversarial })).size / 256);
+const selectionCalls = shortlist.length * (selectionSplit.scorable + 2 * selectionSplit.adversarial);
+const confirmationCalls = 3 * (confirmationSplit.scorable + 2 * confirmationSplit.adversarial);
+console.error(`  Cold campaign base: ${censusBase} census embeddings + ${selectionCalls} selection answers/judgments + ${confirmationBase} held-out embeddings + ${confirmationCalls} confirmation answers/judgments = ${censusBase + selectionCalls + confirmationBase + confirmationCalls} requests.`);
+console.error('  Derived embeddings, repairs, failures and retries also consume the hard ceiling; cache replays consume zero physical requests.');
+console.error('  Answering is split into one cell per run by default; no incomplete matrix can freeze a challenger.');
 console.error('');
 
 const authorized = args.values.get('authorize');
@@ -300,18 +314,37 @@ if (!plan.withinCeilings) {
   process.exit(1);
 }
 
-console.error(`  authorized as ${identity.slice(0, 12)}… — spending up to ${plan.requests.total} requests`);
-
+validatePhase(stored, phase as 'census' | 'selection' | 'confirmation');
+assert.ok(planCells.length, 'This phase has no pending cells');
+assert.ok(cache && !args.flags.has('fresh'), 'Policy campaigns require a persistent replay cache and forbid --fresh');
+assert.ok(journal.requests.length < campaignCeiling, 'Campaign physical request ceiling exhausted');
+assert.equal((await sourceRevision()).sha256, stored.source.sha256, 'Source changed: regenerate the keyless screen before a new experiment; an active experiment cannot change source');
+await envConfigIdentity(env, null); // Fail config resolution before buying embeddings.
+const lockPath = `${journalPath}.lock`;
+await writeFile(lockPath, `${process.pid}\n`, { flag: 'wx' });
+const { unlink } = await import('node:fs/promises');
+try {
+verifyPurchaseSnapshot({ journal, reportId: stored.reportId }, {
+  journal: existsSync(journalPath) ? JSON.parse(await readFile(journalPath, 'utf8')) as PurchaseJournal : journal,
+  reportId: (JSON.parse(await readFile(jsonPath, 'utf8')) as LocomoPolicy).reportId,
+});
+const saveJournal = (): void => {
+  writeFileSync(`${journalPath}.tmp`, `${JSON.stringify(journal, null, 2)}\n`);
+  renameSync(`${journalPath}.tmp`, journalPath);
+};
+saveJournal();
+const guard = createPurchaseGuard({ journal, limit: env.maxCalls, deadlineMs: DEADLINE_MS, fetch: globalThis.fetch, save: saveJournal });
 const registration = { ...stored.registration, inference: await approvedInference(controls) };
 registration.registrationId = await registrationIdOf(registration);
-const replay = cache?.adapter({ fresh: args.flags.has('fresh') });
-const wire = { retry: RETRY, ...(thinking === 'off' ? { reasoning: { effort: 'none' as const } } : {}) };
+const replay = guard.cache(cache.adapter());
+const wire = { fetch: guard.fetch, retry: RETRY, ...(thinking === 'off' ? { reasoning: { effort: 'none' as const } } : {}) };
 const chat = chatClientFor(chatSettingsOf(env), { ...wire, cache: replay });
 const judgeClient = chatClientFor(chatSettingsOf(env, env.modelStrong), { ...wire, cache: replay });
-const wireEmbedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings }, undefined, replay);
-const inertCellId = stored.registration.cells.find((c) => c.role === 'inert')!.cellId;
-
+const wireEmbedder = embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettings }, guard.fetch, replay, RETRY);
+const inertCellId = inertId;
 let next: LocomoPolicy = { ...stored, registration, plan };
+next = { ...next, reportId: await reportIdOf(next) };
+await publish(next); // Persist approved controls before the first purchase.
 
 if (phase === 'census') {
   // embeddings only, and the schema asserts the zero: a census that
@@ -370,11 +403,9 @@ if (phase === 'census') {
       process.exit(1);
     }
   }
-  const running = phase === 'confirmation'
-    ? [inertCellId, stored.registration.cells.find((c) => c.role === 'shipped')!.cellId, next.selection.transition!.challenger]
-      .map((id) => stored.registration.cells.find((c) => c.cellId === id)!)
-    : cells.filter((c) => next.selection.shortlist.includes(c.cellId));
-  const { attempts } = await runLivePhase({
+  const running = planCells.map(id => stored.registration.cells.find(c => c.cellId === id)!);
+  const { attempts, live: evidence } = await runLivePhase({
+    configIdentityFor: observed => envConfigIdentity(env, observed),
     dataset,
     phase: phase as 'selection' | 'confirmation',
     cells: running,
@@ -392,44 +423,47 @@ if (phase === 'census') {
     seed: stored.registration.seed,
     onProgress,
   });
-  const priced = withPrompts(attempts, inertCellId);
+  const evidenceBytes = `${JSON.stringify(evidence, null, 2)}\n`;
+  const evidenceHash = createHash('sha256').update(evidenceBytes).digest('hex');
+  const evidencePath = `${jsonPath}.${phase}.${evidenceHash}.json`;
+  if (!existsSync(evidencePath)) await writeFile(evidencePath, evidenceBytes, { flag: 'wx' });
   let merged = next;
-  for (const attempt of priced) merged = mergeAttempt(merged, attempt);
-  const inertAttempt = priced.find((a) => a.cellId === inertCellId);
-  const comparisons = inertAttempt === undefined
-    ? merged.comparisons
-    : [...merged.comparisons, ...priced.filter((a) => a.cellId !== inertCellId)
-      .map((a) => comparisonOf(a, inertAttempt, registration.objective, 'locomo-f1'))];
-  merged = { ...merged, comparisons };
-
-  if (phase === 'selection') {
-    const candidates = merged.selection.shortlist.filter((id) => id !== inertCellId
-      && id !== stored.registration.cells.find((c) => c.role === 'shipped')!.cellId);
-    const choice = chooseChallenger(comparisons.filter((c) => c.phase === 'selection'), candidates, registration.objective);
-    if (choice.challenger === null) {
-      console.error(`  no challenger could be nominated: ${choice.calculation}`);
-    } else {
-      merged = {
-        ...merged,
-        selection: { ...merged.selection, transition: await transitionOf(choice, registration, merged.selection.frozen!.identity), finalist: choice.challenger },
-      };
-    }
-  } else {
-    const challenger = merged.selection.transition!.challenger;
-    const confirmation = merged.comparisons.find((c) => c.phase === 'confirmation' && c.treatment === challenger) ?? null;
-    merged = {
-      ...merged,
-      selection: { ...merged.selection, state: 'confirmed', decision: decisionOf(confirmation, inertCellId, registration.objective) },
-    };
+  for (const attempt of attempts) merged = mergeAttempt(merged, attempt);
+  const phaseAttempts = withPrompts(merged.attempts.filter(a => a.run.tier === 'live' && a.phase === phase), inertCellId);
+  merged = { ...merged, attempts: merged.attempts.map(a => phaseAttempts.find(p => p.runId === a.runId) ?? a),
+    liveEvidence: [...(merged.liveEvidence ?? []), { path: evidencePath, sha256: evidenceHash, phase: phase as 'selection' | 'confirmation' }],
+  };
+  const inertAttempt = phaseAttempts.find(a => a.cellId === inertCellId);
+  const comparisons = inertAttempt ? phaseAttempts.filter(a => a.cellId !== inertCellId)
+    .map(a => comparisonOf(a, inertAttempt, registration.objective, 'locomo-f1')) : [];
+  merged.comparisons = [...merged.comparisons.filter(c => c.metric !== 'locomo-f1' || c.phase !== phase), ...comparisons];
+  const complete = phaseCells.every(id => phaseAttempts.some(a => a.cellId === id && a.eligibility.eligible));
+  if (complete && phase === 'selection') {
+    const candidates = phaseCells.filter(id => id !== inertCellId && id !== shippedCellId);
+    const choice = chooseChallenger(comparisons, candidates, registration.objective);
+    if (choice.challenger) merged.selection = { ...merged.selection,
+      transition: await transitionOf(choice, registration, merged.selection.frozen!.identity), finalist: choice.challenger };
+  } else if (complete && phase === 'confirmation') {
+    const comparison = comparisons.find(c => c.treatment === merged.selection.transition!.challenger)!;
+    assert.ok(comparison.eligible, 'Ineligible confirmation cannot select a default');
+    merged.selection = { ...merged.selection, state: 'confirmed', decision: decisionOf(comparison, inertCellId, registration.objective) };
   }
+  const identities = new Map([...merged.configIdentities.identities, ...evidence.configIdentities.identities].map(i => [i.identityId, i]));
+  const ids = new Map(evidence.configIdentities.rows.filter(r => r.identityStatus === 'run').map(r => [r.rowId, r.identityId]));
+  merged.configIdentities = { identities: [...identities.values()], rows: [
+    ...merged.configIdentities.rows.filter(r => !attempts.some(a => a.runId === r.rowId)),
+    ...attempts.map(a => ({ rowId: a.runId, identityStatus: 'run' as const, identityId: ids.get(stored.registration.cells.find(c => c.cellId === a.cellId)!.key)! })),
+  ] };
+
   next = merged;
 }
 
-next = { ...next, configIdentities: analyticEnvelope(next.attempts.map((attempt) => attempt.runId)) };
+next = { ...next, purchases: { path: journalPath, sha256: createHash('sha256').update(await readFile(journalPath)).digest('hex'), physical: journal.requests.length } };
 next = { ...next, reportId: await reportIdOf(next) };
 if (cache !== undefined) {
   const after = await cache.stats();
   console.error(`  wire cache: ${after.embeddings} embeddings, ${after.completions} completions remembered now`);
-  await cache.close();
 }
 await publish(next);
+
+} finally { await unlink(lockPath); await cache.close(); }

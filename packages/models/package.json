@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/models",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Injected model clients, provider adapters, embeddings, replay, routing and structured generation.",
   "license": "MIT",
   "type": "module",

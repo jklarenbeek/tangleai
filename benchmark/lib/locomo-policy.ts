@@ -98,7 +98,7 @@ import type {
   Clause,
   Comparison,
   Exclusion,
-  LocomoPolicy,
+  LocomoPolicy as GeneratedLocomoPolicy,
   Objective,
   Prompts,
   Reason,
@@ -119,7 +119,6 @@ export type {
   Clause,
   Comparison,
   Exclusion,
-  LocomoPolicy,
   Objective,
   Prompts,
   Registration,
@@ -128,6 +127,8 @@ export type {
   Split,
   WidthDecision,
 };
+
+export type LocomoPolicy = Omit<GeneratedLocomoPolicy, 'configIdentities'> & { configIdentities: import('@tangleai/config').IdentityEnvelope };
 
 const exec = promisify(execFile);
 
@@ -163,7 +164,7 @@ export const POLICY_AXES: readonly Axis[] = [
   { axis: 'crystallize', inert: OFF, levels: [0.95, 0.9, 0.82] },
   { axis: 'k', inert: 10, levels: [5, 20] },
   { axis: 'minScore', inert: 0, levels: [0.25, 0.5, 0.75] },
-  { axis: 'offlineWidth', inert: OFFLINE_EMBEDDER_DIMS, levels: [128, 256, 512] },
+  { axis: 'offlineWidth', inert: 64, levels: [128, 256, 512] },
 ];
 
 /** The objective, as registered. Nothing here may move after a score is read. */
@@ -188,8 +189,8 @@ export const SELECTION_RULE = 'a challenger is the greatest selection overall pa
 
 type Levels = { novelty: number, contradiction: number, crystallize: number, k: number, minScore: number, width: number };
 
-const INERT_LEVELS: Levels = { novelty: OFF, contradiction: OFF, crystallize: OFF, k: 10, minScore: 0, width: OFFLINE_EMBEDDER_DIMS };
-/** The shipped runtime values, as a cell — a published control, never a promotion. */
+const INERT_LEVELS: Levels = { novelty: OFF, contradiction: OFF, crystallize: OFF, k: 10, minScore: 0, width: 64 };
+/** The values shipped at registration — a historical control, never a promotion. */
 const SHIPPED_LEVELS: Levels = { ...INERT_LEVELS, novelty: 0.97, contradiction: 0.8, crystallize: 0.9 };
 
 function levelsOf(cell: CellSpec): Levels {
@@ -259,6 +260,7 @@ export async function cellIdOf(cell: Omit<CellSpec, 'cellId'>): Promise<string> 
 /** The registration's identity: splits, objective, axes and the ordered registry. */
 export async function registrationIdOf(registration: Omit<Registration, 'registrationId'>): Promise<string> {
   return canonicalSha256({
+    ...(registration.datasetSha256 === undefined ? {} : { datasetSha256: registration.datasetSha256 }),
     seed: registration.seed,
     splits: registration.splits,
     objective: registration.objective,
@@ -297,6 +299,10 @@ export const SOURCE_ROOTS: readonly string[] = [
   'benchmark/schemas',
   'packages/memory/src',
   'packages/pipeline/src',
+  'packages/models/src',
+  'packages/context/src',
+  'packages/agents/src',
+  'packages/config/src',
 ];
 
 /** The files beside those directories that are equally load-bearing. */
@@ -304,6 +310,11 @@ export const SOURCE_FILES: readonly string[] = [
   'benchmark/locomo-policy.ts',
   'benchmark/locomo-qa.ts',
   'benchmark/locomo-recall.ts',
+  'apps/desktop/src/settings.ts',
+  'apps/desktop/src/ai-host.ts',
+  'apps/desktop/src/chat.ts',
+  'config/profiles.json',
+  'package-lock.json',
 ];
 
 async function gitLine(cwd: string, args: readonly string[]): Promise<string> {
@@ -321,12 +332,14 @@ export async function sourceRevision(root = process.cwd()): Promise<LocomoPolicy
   const head = (await gitLine(root, ['rev-parse', 'HEAD'])).trim();
   const clean = (await gitLine(root, ['status', '--porcelain'])).trim() === '';
   const paths: string[] = [...SOURCE_FILES];
-  for (const dir of SOURCE_ROOTS) {
-    const names = await readdir(join(root, dir));
-    for (const name of names) {
-      if (name.endsWith('.ts') || name.endsWith('.json')) paths.push(`${dir}/${name}`);
+  async function scan(dir: string): Promise<void> {
+    for (const entry of await readdir(join(root, dir), { withFileTypes: true })) {
+      const path = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) await scan(path);
+      else if (/\.(ts|json)$/.test(entry.name)) paths.push(path);
     }
   }
+  for (const dir of SOURCE_ROOTS) await scan(dir);
   paths.sort();
   const files: Array<{ path: string, sha256: string }> = [];
   for (const path of paths) {
@@ -424,12 +437,7 @@ export function bootstrapInterval(
 }
 
 /** The one-sided lower bound at `level` over a sample's own SD. */
-function lowerBound(values: readonly number[], level: number): number {
-  if (values.length === 0) return 0;
-  const m = meanOf(values) ?? 0;
-  const sd = values.length < 2 ? 0 : (stddev(values) ?? 0);
-  return m - normalQuantile(level) * sd / Math.sqrt(values.length);
-}
+
 
 // ---------------------------------------------------------------------------
 // eligibility — a failure stays in the row and refuses the comparison
@@ -482,6 +490,10 @@ export function comparabilityReasons(treatment: Attempt, control: Attempt): Reas
   }
   if (treatment.run.tier !== control.run.tier) reasons.push({ code: 'different-tier', detail: `${treatment.run.tier} against ${control.run.tier}` });
   if (treatment.run.source !== control.run.source) reasons.push({ code: 'different-source', detail: 'the two rows ran different bytes' });
+  for (const key of ['provider', 'endpoint', 'thinking', 'responseSchema', 'retry', 'deadlineMs', 'concurrency', 'budgetCeiling', 'keySource'] as const) {
+    if (JSON.stringify(treatment.run[key]) !== JSON.stringify(control.run[key]))
+      reasons.push({ code: 'different-inference', detail: `the effective ${key} differs` });
+  }
   for (const attempt of [treatment, control]) {
     for (const reason of attempt.eligibility.reasons) {
       reasons.push({ code: reason.code, detail: `${attempt.cellId.slice(0, 12)}…: ${reason.detail}` });
@@ -537,7 +549,7 @@ export function comparisonOf(
       pairs: own.length,
       mean: own.length === 0 ? 0 : average(own),
       sd: own.length < 2 ? 0 : (stddev(own) ?? 0),
-      lowerBound: lowerBound(own, objective.categoryLevel),
+      lowerBound: bootstrapInterval(own, { resamples: objective.resamples, seed: objective.bootstrapSeed, level: 2 * objective.categoryLevel - 1 }).low,
     };
   });
   const cost = treatment.cost === null || control.cost === null || control.cost.tokensPerAnswer === 0 || control.cost.callsPerAnswer === 0
@@ -618,7 +630,7 @@ export function attemptRefusal(report: LocomoPolicy, fresh: Attempt): string | n
   if (!report.registration.cells.some((c) => c.cellId === fresh.cellId)) {
     return `cell ${fresh.cellId.slice(0, 12)}… is not in the registration`;
   }
-  const clash = report.attempts.find((a) => a.cellId === fresh.cellId && a.phase === fresh.phase && a.runId !== fresh.runId);
+  const clash = report.attempts.find((a) => a.cellId === fresh.cellId && a.phase === fresh.phase && a.run.tier === fresh.run.tier && a.runId !== fresh.runId);
   if (clash !== undefined) {
     return `cell ${fresh.cellId.slice(0, 12)}… already has a ${fresh.phase} attempt under run ${clash.runId.slice(0, 12)}…; a run identity is not interchangeable with another`;
   }
@@ -637,6 +649,12 @@ export function attemptRefusal(report: LocomoPolicy, fresh: Attempt): string | n
 export function mergeAttempt(report: LocomoPolicy, fresh: Attempt): LocomoPolicy {
   const refusal = attemptRefusal(report, fresh);
   if (refusal !== null) throw new Error(`the attempt cannot join this report: ${refusal}`);
+  const previous = report.attempts.find(a => a.runId === fresh.runId);
+  if (previous) for (const result of previous.results) {
+    const replacement = fresh.results.find(r => r.id === result.id);
+    if (!replacement || JSON.stringify(result) !== JSON.stringify(replacement))
+      throw new Error(`A successful answer is immutable: ${result.id}`);
+  }
   const kept = report.attempts.filter((a) => a.runId !== fresh.runId);
   return { ...report, attempts: [...kept, fresh] };
 }
@@ -1050,7 +1068,7 @@ export async function runLocomoPolicy(dataset: Dataset, options: PolicyRunOption
     everyQuestion.push(...questionsOf(sample, corpus));
     entries.push({ corpus, questions: [] });
   }
-  const registration0 = await buildRegistration(releaseIds, confirmation, seed);
+  const registration0 = await buildRegistration(releaseIds, confirmation, seed, null, dataset.sha256);
   const spec = registration0.splits.selection;
   const scored = phase === 'selection'
     ? sampleQuestions(everyQuestion, { seed, perCategory: spec.perCategory['1'], adversarial: spec.adversarial }).filter((q) => q.category !== 5)
@@ -1332,6 +1350,7 @@ export async function buildRegistration(
   confirmation: readonly string[],
   seed = POLICY_SEED,
   inference: Registration['inference'] = null,
+  datasetSha256?: string,
 ): Promise<Registration> {
   const cells: CellSpec[] = [];
   for (const spec of cellDrafts()) cells.push({ ...spec, cellId: await cellIdOf(spec) });
@@ -1344,7 +1363,7 @@ export async function buildRegistration(
     // the held-out split is 17 questions
     confirmation: split([...confirmation], { 1: 24, 2: 24, 3: 17, 4: 24 }, 8),
   };
-  const draftRegistration = { seed, splits, objective: POLICY_OBJECTIVE, axes: POLICY_AXES as Axis[], cells, inference };
+  const draftRegistration = { ...(datasetSha256 === undefined ? {} : { datasetSha256 }), seed, splits, objective: POLICY_OBJECTIVE, axes: POLICY_AXES as Axis[], cells, inference };
   return { registrationId: await registrationIdOf(draftRegistration), ...draftRegistration };
 }
 
@@ -1435,13 +1454,16 @@ function categoryCells(block: MeansBlock | null): Cell[] {
 export function renderMarkdown(report: LocomoPolicy): string {
   const out: string[] = [];
   const { registration } = report;
-  out.push('# LoCoMo policy matrix — the keyless screen');
+  const hasLive = report.registration.inference !== null;
+  const rowLabel = (a: Attempt): string => `${cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12)}${hasLive ? ` (${a.run.tier}/${a.phase})` : ''}`;
+  out.push(hasLive ? '# LoCoMo policy matrix — registered live experiment' : '# LoCoMo policy matrix — the keyless screen');
   out.push('');
   out.push(`Source: \`${report.dataset.path}\` (sha256 \`${report.dataset.sha256.slice(0, 12)}…\`, ${count(report.dataset.bytes)} bytes, schema ${report.dataset.schemaValid ? 'valid' : '**INVALID**'})`
     + (report.dataset.restricted === null ? '' : ` — restricted to ${report.dataset.restricted.map((id) => `\`${id}\``).join(', ')}`) + '.');
   out.push(`Registration \`${registration.registrationId.slice(0, 12)}…\` · report \`${report.reportId.slice(0, 12)}…\` · source \`${report.source.sha256.slice(0, 12)}…\` (HEAD \`${report.source.head.slice(0, 12)}…\`, working tree ${report.source.clean ? 'clean' : 'modified'}, ${report.source.files.length} files in the manifest).`);
   out.push('');
-  out.push('A memory policy becomes the default only when a preregistered comparison proves it improves answers without hiding a category loss, a cost overrun, a failed call or an unequal denominator. **Nothing on this page is such a proof.** The embedder here is the suite\'s hashed-trigram reference: two texts score high when they share letters, so every number below is a property of the MECHANISM — ingest, gate, rank, cite — and of no model. This page is a screen, and a screen allocates budget; it does not predict the wire. The same shipped cell fires the contradiction judge about thirty times more often under this lexical embedder than under a real one, so a frontier read here says what is worth paying to measure, never what a policy does to an answer. Only an eligible live comparison on the held-out split can select a default.');
+  if (hasLive) out.push('The lexical screen allocated the live budget; it does not predict answer quality. Live rows use one approved provider and embedding identity. Only complete eligible held-out comparisons can select a default. Shipped is a historical control, never the fallback winner. Failed and partial attempts remain visible.');
+  else out.push('A memory policy becomes the default only when a preregistered comparison proves it improves answers without hiding a category loss, a cost overrun, a failed call or an unequal denominator. **Nothing on this page is such a proof.** The embedder here is the suite\'s hashed-trigram reference: two texts score high when they share letters, so every number below is a property of the MECHANISM — ingest, gate, rank, cite — and of no model. This page is a screen, and a screen allocates budget; it does not predict the wire. The same shipped cell fires the contradiction judge about thirty times more often under this lexical embedder than under a real one, so a frontier read here says what is worth paying to measure, never what a policy does to an answer. Only an eligible live comparison on the held-out split can select a default.');
   out.push('');
   out.push('## The registration');
   out.push('');
@@ -1473,9 +1495,9 @@ export function renderMarkdown(report: LocomoPolicy): string {
       const cell = cellOf(report, a.cellId);
       const o = a.operations;
       return [
-        cell?.key ?? a.cellId.slice(0, 12),
+        rowLabel(a),
         cell === undefined ? '—' : `${cell.ingest.novelty} / ${cell.ingest.contradiction} / ${cell.ingest.crystallize}`,
-        cell?.retrieval.k ?? null, cell?.retrieval.minScore ?? null, cell?.embedding.dims ?? null,
+        cell?.retrieval.k ?? null, cell?.retrieval.minScore ?? null, a.run.embedder.dims,
         o.runs, o.admitted, o.filtered, o.judged, o.judgeFailures, o.contradictions, o.contradictionSkips,
         o.merged, o.mergeSkips, o.live, o.total,
       ];
@@ -1488,7 +1510,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
     head: ['cell', 'phase', 'tier', 'planned', 'answered', 'wire', 'budget', 'invalid', 'eligible', 'why not'],
     numeric: [3, 4, 5, 6, 7],
     rows: report.attempts.map((a) => [
-      cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
+      rowLabel(a),
       a.phase, a.run.tier,
       a.denominators.planned, a.denominators.answered, a.denominators.unanswered.wire, a.denominators.unanswered.budget, a.denominators.invalid,
       a.eligibility.eligible ? 'yes' : '**no**',
@@ -1500,7 +1522,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
   out.push('');
   out.push(table({
     head: ['cell', 'overall', ...SCORABLE_CATEGORIES.map((c) => `category ${c}`)],
-    rows: report.attempts.map((a) => [cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12), ...categoryCells(a.recall)]),
+    rows: report.attempts.map((a) => [rowLabel(a), ...categoryCells(a.recall)]),
   }));
   out.push('');
   out.push('## Where every gold address went');
@@ -1516,7 +1538,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
       rows: report.attempts.map((a) => {
         const at = a.causes?.byK[String(k)];
         return [
-          cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
+          rowLabel(a),
           at?.denominator ?? null,
           ...CAUSES.map((cause) => at?.partition.find((p) => p.cause === cause)?.count ?? null),
         ];
@@ -1530,9 +1552,9 @@ export function renderMarkdown(report: LocomoPolicy): string {
     head: ['cell', 'prompts unchanged', 'prompts changed', 'token proxy', 'per question', 'ratio vs inert', 'policy operations', 'verbatim floor'],
     numeric: [1, 2, 3, 4, 5, 6, 7],
     rows: report.attempts.map((a) => {
-      const inertProxy = report.attempts.find((x) => x.cellId === a.prompts.against)?.prompts.tokenProxy ?? 0;
+      const inertProxy = report.attempts.find((x) => x.cellId === a.prompts.against && x.phase === a.phase && x.run.tier === a.run.tier)?.prompts.tokenProxy ?? 0;
       return [
-        cellOf(report, a.cellId)?.key ?? a.cellId.slice(0, 12),
+        rowLabel(a),
         a.prompts.unchanged, a.prompts.changed, count(a.prompts.tokenProxy),
         a.denominators.answered === 0 ? null : Math.round(a.prompts.tokenProxy / a.denominators.answered),
         inertProxy === 0 ? null : (a.prompts.tokenProxy / inertProxy).toFixed(3),
@@ -1542,7 +1564,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
     }),
   }));
   out.push('');
-  out.push('`token proxy` is `sizeOf` over the serialized context — characters, the suite\'s one size rule — and it IS a proxy: a tier that buys nothing has no provider usage to report. `prompts changed` counts the questions whose serialized prompt this cell made different from the inert reference\'s, read from the prompt bytes and never from a score; it is what the acting set below is computed from. `verbatim floor` is the retrieved context quoted as the answer and scored by the official evaluator — the best a model could do by copying, at this cell\'s own k.');
+  if (!hasLive) out.push('`token proxy` is `sizeOf` over the serialized context — characters, the suite\'s one size rule — and it IS a proxy: a tier that buys nothing has no provider usage to report. `prompts changed` counts the questions whose serialized prompt this cell made different from the inert reference\'s, read from the prompt bytes and never from a score; it is what the acting set below is computed from. `verbatim floor` is the retrieved context quoted as the answer and scored by the official evaluator — the best a model could do by copying, at this cell\'s own k.');
   out.push('');
   out.push('## Every comparison, with what it could have seen');
   out.push('');
@@ -1552,7 +1574,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
       head: ['treatment', 'control', 'metric', 'pairs', 'mean Δ', 'interval', 'paired SD', 'SE', 'min. detectable', 'tied', 'acting', 'eligible', 'promotes'],
       numeric: [3, 4, 6, 7, 8, 9, 10],
       rows: report.comparisons.map((c) => [
-        cellOf(report, c.treatment)?.key ?? c.treatment.slice(0, 12),
+        `${cellOf(report, c.treatment)?.key ?? c.treatment.slice(0, 12)}${hasLive ? ` / ${c.phase}` : ''}`,
         cellOf(report, c.control)?.key ?? c.control.slice(0, 12),
         c.metric, c.pairs, c.mean.toFixed(4),
         `[${c.interval.low.toFixed(4)}, ${c.interval.high.toFixed(4)}]`,
@@ -1563,7 +1585,7 @@ export function renderMarkdown(report: LocomoPolicy): string {
     }));
     out.push('');
     for (const c of report.comparisons) {
-      out.push(`- **${cellOf(report, c.treatment)?.key ?? c.treatment.slice(0, 12)}**: ${c.boundedNull}. `
+      out.push(`- **${cellOf(report, c.treatment)?.key ?? c.treatment.slice(0, 12)}${hasLive ? ` / ${c.phase} / ${c.metric}` : ''}**: ${c.boundedNull}. `
         + (c.verdict.promotes ? 'Every registered clause holds.' : `Does not promote: ${c.verdict.reasons.map((r) => r.detail).join('; ')}.`)
         + (c.actingSet.size === 0 ? ' The cell changed no prompt at all.' : ` On the ${c.actingSet.size} prompts it changed the mean is ${c.actingSet.mean.toFixed(4)} with interval [${c.actingSet.interval.low.toFixed(4)}, ${c.actingSet.interval.high.toFixed(4)}]${c.actingSet.blocks ? ' — **harmful exactly where it acts**' : ''}.`));
     }
@@ -1571,6 +1593,31 @@ export function renderMarkdown(report: LocomoPolicy): string {
   out.push('');
   out.push('The acting set is a blocking secondary: a policy that changes a quarter of the prompts can only move the product by a quarter of its local effect, so it can refuse a cell and never promote one. A comparison with a zero-crossing interval is a bounded null, not a proven absence.');
   out.push('');
+  if (hasLive) {
+    const inference = registration.inference!;
+    out.push('The registered minimum detectable effect is 1.96 × the realized paired standard error: a precision diagnostic, not an 80%-power design calculation or an equivalence test. An all-tied sample has zero estimated variation and a degenerate bound; it cannot establish absence of a population effect. The conclusion is bounded to this dataset, model and registered sample.', '');
+    out.push('## Live inference and purchase accounting', '');
+    out.push(`Provider ${inference.provider}, endpoint ${inference.endpoint}; answer ${inference.answerModel}; judge ${inference.judgeModel}; embedding ${report.census?.embedder?.model ?? inference.embedder.model} at ${report.census?.embedder?.dims ?? 'unobserved'} dimensions. Thinking ${inference.thinking}; schema ${inference.responseSchema}; HTTP attempts ${inference.retry.attempts}; deadline ${inference.deadlineMs} ms; concurrency ${inference.concurrency}; ceilings ${inference.perRunCeiling} per run / ${inference.campaignCeiling} total.`);
+    out.push(`Inference identity: \`${inference.identity}\`. Physical requests recorded: ${report.purchases?.physical ?? 0}. Repairs, retries and failed requests consume this ceiling; cache replays do not. Provider token costs below include replayed response usage for a fair paired comparison.`, '');
+    if (report.census) {
+      out.push('### Embeddings-only census', '');
+      out.push(`Observed embedding calls (including cache invocations): ${report.census.embedRequests}; chat calls: ${report.census.chatCalls}. A candidate is dropped only if both operation counts and every registered retrieved context equal inert.`, '');
+      out.push(table({ head: ['cell', 'filtered', 'judged', 'judge failures', 'resolutions', 'merged', 'live', 'superseded', 'changed contexts', 'dropped'],
+        rows: report.census.rows.map(r => [cellOf(report, r.cellId)!.key, r.operations.filtered, r.operations.judged, r.operations.judgeFailures, r.operations.resolutions, r.operations.merged, r.operations.live, r.operations.superseded, r.prompts?.changed ?? 0, r.dropped ? 'yes' : 'no']) }));
+    }
+    out.push('', '### Live answer quality', '');
+    out.push(table({ head: ['cell / phase', 'F1', 'category 1', 'category 2', 'category 3', 'category 4', 'evidence recall', 'cited recall', 'tokens / answer', 'calls / answer'],
+      rows: report.attempts.filter(a => a.run.tier === 'live').map(a => [rowLabel(a), ...categoryCells(a.quality?.f1 ?? null), score(a.quality?.ceiling?.overall ?? null), score(a.quality?.citedRecall?.overall ?? null), a.cost?.tokensPerAnswer ?? null, a.cost?.callsPerAnswer ?? null]) }));
+    out.push('', '### Live paired category bounds', '');
+    out.push(table({ head: ['cell / phase', 'category', 'pairs', 'mean delta', 'one-sided lower bound'],
+      rows: report.comparisons.filter(c => c.metric === 'locomo-f1').flatMap(c => c.byCategory.map(row => [`${cellOf(report, c.treatment)!.key} / ${c.phase}`, row.category, row.pairs, row.mean.toFixed(4), row.lowerBound.toFixed(4)])) }));
+    out.push('', '### Locked selection and default decision', '');
+    out.push(report.selection.transition ? `Challenger \`${cellOf(report, report.selection.transition.challenger)!.key}\`, transition \`${report.selection.transition.identity}\`: ${report.selection.transition.calculation}.` : 'Selection is incomplete; confirmation remains locked.');
+    out.push(report.selection.decision ? `Default \`${cellOf(report, report.selection.decision.default)!.key}\`. ${report.selection.decision.statement}.` : 'No eligible completed confirmation has selected a runtime default.');
+    out.push('', 'Raw evidence retains category-5 judgments, invalid replies, unresolved citations, provider usage, errors and latency. Each file has an immutable content hash:', '');
+    for (const evidence of report.liveEvidence ?? []) out.push(`- [${evidence.phase} evidence ${evidence.sha256.slice(0, 12)}](../${evidence.path}) (SHA-256 \`${evidence.sha256}\`).`);
+    out.push('');
+  }
   out.push('## The gate');
   out.push('');
   out.push(report.gate.passed
@@ -1610,12 +1657,12 @@ export function renderMarkdown(report: LocomoPolicy): string {
     out.push('');
     out.push(`Read at k = ${w.k}. Proposed \`OFFLINE_EMBEDDER_DIMS\`: **${w.proposedDims}** — ${w.caveat}`);
     out.push('');
-    out.push('This is the only decision this page proposes, and it is proposed here because this is the only tier that can decide it: a live run resolves one embedder identity, the wire model is not parameterized by a hash width, and vectors from two identities never rank against each other.');
+    if (!hasLive) out.push('This is the only decision this page proposes, and it is proposed here because this is the only tier that can decide it: a live run resolves one embedder identity, the wire model is not parameterized by a hash width, and vectors from two identities never rank against each other.');
   }
   out.push('');
   out.push('---');
   out.push('');
-  out.push('Retrieval recall is the official `recall_acc` of `task_eval/evaluation.py`, and the verbatim floor is that evaluator\'s F1 over the retrieved context quoted as the answer. Neither is an answer-quality result. This page makes no default claim and selects no policy: it names what is worth paying to measure, and the live comparison on the held-out split is what may change a runtime default.');
+  if (!hasLive) out.push('Retrieval recall is the official `recall_acc` of `task_eval/evaluation.py`, and the verbatim floor is that evaluator\'s F1 over the retrieved context quoted as the answer. Neither is an answer-quality result. This page makes no default claim and selects no policy: it names what is worth paying to measure, and the live comparison on the held-out split is what may change a runtime default.');
   out.push('');
   out.push('LoCoMo is CC BY-NC 4.0 (Maharana et al., ACL 2024, arXiv:2402.17753). This repository does not redistribute it; `git submodule update --init benchmark/locomo` fetches it.');
   return out.join('\n');
@@ -1706,7 +1753,7 @@ export function describePlan(plan: NonNullable<LocomoPolicy['plan']>, controls: 
     `endpoint              ${controls.endpoint}`,
     `answer model          ${controls.answerModel}`,
     `judge model           ${controls.judgeModel}`,
-    `embedder              ${controls.embedder.model} @ ${controls.embedder.dims} dims`,
+    `embedder              ${controls.embedder.model} @ ${controls.embedder.dims || 'unobserved'} dims`,
     `thinking              ${controls.thinking}`,
     `response contract     ${controls.responseSchema}`,
     `retry                 ${controls.retry.attempts} attempts, ${controls.retry.baseMs}–${controls.retry.maxMs} ms backoff`,
@@ -1751,12 +1798,32 @@ export interface CensusInput {
 export async function runLiveCensus(input: CensusInput): Promise<NonNullable<LocomoPolicy['census']>> {
   const progress = input.onProgress ?? ((): void => {});
   let embedRequests = 0;
+  const table = new Map<string, Float32Array>();
+  const texts = [...new Set(input.entries.flatMap(entry => [
+    ...entry.corpus.sessions.flatMap(session => session.inputs.map(item => item.text)),
+    ...entry.questions.map(q => q.text),
+  ]))];
+  for (let i = 0; i < texts.length; i += 256) {
+    const batch = texts.slice(i, i + 256);
+    const vectors = await input.embedder.embed(batch); embedRequests++;
+    batch.forEach((text, n) => table.set(text, vectors[n]));
+  }
+  const dims = input.embedder.dims || table.values().next().value?.length;
+  if (!dims) throw new Error('The census needs an observed embedding width');
   const embedder: Embedder = {
-    model: input.embedder.model,
-    dims: input.embedder.dims,
-    embed: async (texts, hooks) => { embedRequests++; return input.embedder.embed(texts, hooks); },
+    model: input.embedder.model, dims,
+    embed: async (texts, hooks) => {
+      const missing = [...new Set(texts.filter(text => !table.has(text)))];
+      if (missing.length) {
+        const vectors = await input.embedder.embed(missing, hooks); embedRequests++;
+        missing.forEach((text, n) => table.set(text, vectors[n]));
+      }
+      const result = texts.map(text => table.get(text)!);
+      if (result.some(vector => vector.length !== dims)) throw new Error('The census cannot mix embedding identities');
+      return result;
+    },
   };
-  const identity = { model: input.embedder.model, dims: input.embedder.dims };
+  const identity = { model: input.embedder.model, dims };
   const questionIds = input.entries.flatMap((entry) => entry.questions.map((q) => q.id));
   const questionVectors: Array<Awaited<ReturnType<Embedder['embed']>>> = [];
   for (const entry of input.entries) {
@@ -1790,6 +1857,7 @@ export async function runLiveCensus(input: CensusInput): Promise<NonNullable<Loc
   const same = (a: IngestCensus, b: IngestCensus): boolean =>
     (Object.keys(a) as Array<keyof IngestCensus>).every((member) => a[member] === b[member]);
   return {
+    embedder: identity,
     embedRequests,
     chatCalls: 0,
     rows: input.cells.map((cell) => {
@@ -1977,7 +2045,8 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
     const row = live.configurations.find((c) => c.key === cell.key);
     if (row === undefined) continue;
     const scored = row.questions.results.filter((r) => !r.invalid);
-    const ids = row.questions.results.map((r) => r.id);
+    const known = input.dataset.samples.flatMap(sample => questionsOf(sample, conversationCorpus(sample)));
+    const ids = live.sample.ids.filter(id => known.find(q => q.id === id)?.category !== 5);
     const questionSet = await questionSetOf(ids);
     const denominators: Denominators = {
       planned: row.questions.planned,
@@ -1987,13 +2056,16 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
       questionSet,
     };
     const reasons = eligibilityReasons(denominators, row.ingest ?? emptyCensus());
+    if (row.adversarial.judged !== row.adversarial.planned || row.adversarial.judgeFailed > 0
+      || row.adversarial.unanswered.wire > 0 || row.adversarial.unanswered.budget > 0)
+      reasons.push({ code: 'incomplete-judgments', detail: 'Every registered adversarial answer must have a valid judgment' });
     const run: Run = {
       tier: 'live',
       provider: input.controls.provider,
       endpoint: input.controls.endpoint,
       answerModel: input.controls.answerModel,
       judgeModel: input.controls.judgeModel,
-      embedder: input.controls.embedder,
+      embedder: live.generated.embedder,
       thinking: input.controls.thinking,
       responseSchema: input.controls.responseSchema,
       retry: input.controls.retry,
@@ -2037,7 +2109,7 @@ export async function runLivePhase(input: LivePhaseInput): Promise<{ attempts: A
         ceiling: r.ceiling,
         promptSha256: r.promptSha256 ?? EMPTY_PROMPT,
         tokens: r.tokens,
-        calls: 1,
+        calls: r.calls ?? 1,
       })),
     });
   }

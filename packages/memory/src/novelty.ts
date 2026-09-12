@@ -25,7 +25,9 @@ import { cosineSimilarity } from '@jarenjs/core/vector';
 import { sameIdentity } from '@tangleai/context/ledger';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
-export const DEFAULT_NOVELTY_THRESHOLD = 0.75;
+import { policyThresholds, DEFAULT_MEMORY_POLICY } from './policy.ts';
+
+export const DEFAULT_NOVELTY_THRESHOLD = policyThresholds().novelty;
 
 export interface NoveltyOptions {
   threshold?: number;

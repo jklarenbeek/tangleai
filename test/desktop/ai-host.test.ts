@@ -102,7 +102,7 @@ describe('the generated legacy request', () => {
     const unconfigured = await legacyRequestOf(DEFAULT_SETTINGS) as Extract<ProfileRequest, { kind: 'legacy' }>;
     assert.equal(unconfigured.chat.state, 'unconfigured');
     assert.equal(unconfigured.embed.state, 'unconfigured');
-    assert.equal(unconfigured.components.policy?.id, 'memory-policies-shipped');
+    assert.equal(unconfigured.components.policy?.id, 'memory-policies-selected');
     assert.equal(unconfigured.chatPrompt, null);
 
     const configured = await legacyRequestOf(wired({
@@ -153,8 +153,8 @@ describe('the credential-free host manifest', () => {
     assert.equal(built.ok, true);
     if (built.ok) {
       assert.equal(built.manifest.providers[0].base, 'http://localhost:11434/v1');
-      assert.equal(built.manifest.embedding[0].model, 'hash-trigram-64');
-      assert.equal(built.manifest.embedding[0].dims, 64);
+      assert.equal(built.manifest.embedding[0].model, 'hash-trigram-512');
+      assert.equal(built.manifest.embedding[0].dims, 512);
     }
   });
 });
@@ -167,7 +167,7 @@ describe('the resolved stack', () => {
       assert.equal(stack.chat, null);
       assert.equal(stack.identity.registryRevision, null);
       assert.equal(stack.identity.embedding?.provider, 'builtin');
-      assert.equal(stack.identity.components.policy?.id, 'memory-policies-shipped');
+      assert.equal(stack.identity.components.policy?.id, 'memory-policies-selected');
     }
   });
 

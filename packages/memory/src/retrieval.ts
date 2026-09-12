@@ -22,6 +22,7 @@
  * the suite ranks by, higher-is-better, 0 for a malformed pair.
  */
 
+import { DEFAULT_MEMORY_POLICY } from './policy.ts';
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
 import { sameIdentity } from '@tangleai/context/ledger';
 import type { EmbeddedBy, MemoryUnit } from '@tangleai/core/schemas/memory';
@@ -55,8 +56,8 @@ export function recallByEmbedding(
   queryEmbedding: Vector,
   options: RankOptions = {},
 ): RankedRecall {
-  const k = options.k ?? 5;
-  const minScore = options.minScore ?? 0;
+  const k = options.k ?? DEFAULT_MEMORY_POLICY.retrieval.k;
+  const minScore = options.minScore ?? DEFAULT_MEMORY_POLICY.retrieval.minScore;
   const identity = options.identity;
 
   const scored: RankedMemory[] = [];

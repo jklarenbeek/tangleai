@@ -48,11 +48,12 @@ Every other workflow file points here instead of restating these.
 |---|---|---|
 | The gate | `npm run check` (strict tsc + all `node --test` suites) | every change, before every commit |
 | Release | `npm run release:verify` (full gate, version record, JavaScript tarballs, external consumers and Pages build) | before release closeout |
+| Policy contract | `npm run policy:check`, `npm run policy:contract:check`, `npm run emit:policy -- --check` (also in `check`) | when memory defaults or their contract change |
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |
 | Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`) | when apps/pages or the pipeline document changed |
 | Migrated Pages browsers | `npm run pages:test:browser` against the built site; same Playwright toolchain as desktop, selected by `PLAYWRIGHT_PACKAGE` | when assistant, game or editor hosts change |
-| Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census`, `npm run benchmark:locomo:recall`, `npm run benchmark:locomo:qa` (keyless; `--live` spends a key and is never a gate) | when a measured claim, a chunker, or a benchmark's corpus changed |
+| Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census`, `npm run benchmark:locomo:recall`, `npm run benchmark:locomo:qa`, `npm run benchmark:locomo:policy` (keyless; `--live` spends a key and is never a gate) | when a measured claim, a chunker, or a benchmark's corpus changed |
 | Binary | `npm run desktop:compile`, then run `dist/tangle` from a foreign cwd | when the server, static layer or embed script changed |
 
 A gate passes when its **exit code is 0**. Grepping output for the word
@@ -168,10 +169,11 @@ ambitions; the instrument is the LoCoMo pair in `docs/`.
   "stages": [],
   "gates": {
     "check": { "cmd": "npm run check", "pass": "exit==0" },
+    "policy-contract": { "cmd": "npm run policy:check && npm run policy:contract:check && npm run emit:policy -- --check", "pass": "exit==0" },
     "skeleton": { "cmd": "npm run skeleton", "pass": "exit==0" },
     "e2e-desktop": { "cmd": "distrobox: node .e2e/desktop.e2e.mjs", "pass": "exit==0" },
     "pages": { "cmd": "bun apps/pages/build.ts", "pass": "exit==0" },
-    "instruments": { "cmd": "npm run documents:benchmark && npm run benchmark:locomo:census && npm run benchmark:locomo:recall && npm run benchmark:locomo:qa", "pass": "exit==0" },
+    "instruments": { "cmd": "npm run documents:benchmark && npm run benchmark:locomo:census && npm run benchmark:locomo:recall && npm run benchmark:locomo:qa && npm run benchmark:locomo:policy", "pass": "exit==0" },
     "binary": { "cmd": "npm run desktop:compile", "pass": "exit==0" }
   }
 }

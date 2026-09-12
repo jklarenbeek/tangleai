@@ -222,8 +222,14 @@ describe('the LoCoMo evidence-recall instrument', { skip: missing }, () => {
     assert.ok(near.ingest!.filtered + near.ingest!.contradictions + near.ingest!.merged > 0,
       'the shipped defaults change the corpus, and the census says how');
     assert.equal(near.ingest!.total - near.ingest!.live, near.ingest!.superseded);
-    // the difference between the two rows is what the policies cost or bought — and it is published either way
-    assert.notEqual(near.recall['20'].overall, raw.recall['20'].overall);
+    // At the selected width the historical policy still filters records, but
+    // none of those records changes gold retrieval on this released corpus.
+    assert.equal(near.recall['20'].overall, raw.recall['20'].overall);
+    const baseline = JSON.parse(await readFile('benchmark/results/locomo-recall-baseline.json', 'utf8')) as RecallReport;
+    assert.ok(baseline.rows.find(r => r.key === 'near')!.recall['20'].overall < baseline.rows.find(r => r.key === 'near-raw')!.recall['20'].overall, 'the historical 64-dimensional loss remains published');
+    const selected = report.rows.find(r => r.key === 'selected-default')!;
+    assert.deepEqual(selected.ingest, raw.ingest);
+    assert.deepEqual(selected.recall, raw.recall);
   });
 
   it('is byte-identical across two runs of the same dataset and options', async () => {

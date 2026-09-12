@@ -46,7 +46,7 @@
  */
 
 import { normalizeSeries } from '@jarenjs/core/series';
-import { recallByEmbedding, DEFAULT_MAX_PAIRS } from '@tangleai/memory';
+import { recallByEmbedding, DEFAULT_MAX_PAIRS, DEFAULT_MEMORY_POLICY, POLICY_PROVENANCE, SHIPPED_LEGACY_POLICY, policyThresholds } from '@tangleai/memory';
 import {
   createOfflineEmbedder,
   DEFAULT_THRESHOLDS,
@@ -162,7 +162,7 @@ export interface RecallRunOptions {
   dims?: number;
   ks?: readonly number[];
   seed?: number;
-  /** The `near` row's thresholds; the defaults are the pipeline's. */
+  /** The historical `near` row’s thresholds; overrides affect that experiment only. */
   thresholds?: PipelineThresholds;
   /** Restrict the run to these sample ids (for tests and quick knobs). */
   samples?: readonly string[];
@@ -249,7 +249,7 @@ export async function runLocomoRecall(
   const maxK = ks[ks.length - 1];
   const seed = options.seed ?? RANDOM_SEED;
   const dims = options.dims ?? OFFLINE_EMBEDDER_DIMS;
-  const thresholds: Required<PipelineThresholds> = { ...DEFAULT_THRESHOLDS, ...options.thresholds };
+  const thresholds: Required<PipelineThresholds> = { ...policyThresholds(SHIPPED_LEGACY_POLICY), ...options.thresholds };
   const embedder = dims === OFFLINE_EMBEDDER_DIMS ? createOfflineEmbedder() : createHashEmbedder({ dims });
   const identity = { model: embedder.model, dims: embedder.dims };
   const progress = options.onProgress ?? ((): void => {});
@@ -266,7 +266,8 @@ export async function runLocomoRecall(
 
   const pipelineRows: Array<{ key: string, label: string, thresholds: Required<PipelineThresholds> }> = [
     { key: 'near-raw', label: 'near (policies off)', thresholds: POLICIES_OFF },
-    { key: 'near', label: 'near (pipeline defaults)', thresholds },
+    { key: 'near', label: 'near (historical shipped thresholds; this run’s embedder)', thresholds },
+    { key: 'selected-default', label: `Selected default (cell ${POLICY_PROVENANCE.cellId}; report ${POLICY_PROVENANCE.reportId}; default k=${DEFAULT_MEMORY_POLICY.retrieval.k}, minScore=${DEFAULT_MEMORY_POLICY.retrieval.minScore})`, thresholds: DEFAULT_THRESHOLDS },
   ];
 
   const scores = new Map<string, Scores>();
@@ -333,7 +334,7 @@ export async function runLocomoRecall(
       const rowMerge = viaMerge.get(row.key)!;
       let skippedSeen = false;
       questions.forEach((q, index) => {
-        const { ranked, skipped } = recallByEmbedding(units, queryVectors[index], { k: maxK, identity });
+        const { ranked, skipped } = recallByEmbedding(units, queryVectors[index], { k: maxK, minScore: row.key === 'selected-default' ? DEFAULT_MEMORY_POLICY.retrieval.minScore : 0, identity });
         if (!skippedSeen) { unranked.set(row.key, unranked.get(row.key)! + skipped); skippedSeen = true; }
         const cited = ranked.map((r) => addressesOf(r.unit.evidence, sample.sample_id));
         for (const k of ks) {
@@ -553,9 +554,9 @@ export function renderMarkdown(report: RecallReport): string {
     const delta = near.recall[k].overall - raw.recall[k].overall;
     out.push('## What this table can and cannot decide');
     out.push('');
-    out.push(`At k = ${k} the shipped policies move overall evidence recall by ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)} points against the same pipeline with every policy inert (${pct(near.recall[k].overall, 2)} vs ${pct(raw.recall[k].overall, 2)}), at a ceiling of ${pct(report.ceiling[k].overall, 2)}. ${delta < 0 ? 'That is a LOSS, and it is published as one: ' : 'That is the sign to read, and it is small: '}what the gate filtered and the judge superseded is what these questions could no longer retrieve.`);
+    out.push(`At k = ${k} the historical shipped policies move overall evidence recall by ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(2)} points against the same pipeline with every policy inert (${pct(near.recall[k].overall, 2)} vs ${pct(raw.recall[k].overall, 2)}), at a ceiling of ${pct(report.ceiling[k].overall, 2)}. ${delta < 0 ? 'That is a LOSS, and it is published as one: ' : 'That is the sign to read, and it is small: '}what the gate filtered and the judge superseded is what these questions could no longer retrieve.`);
     out.push('');
-    out.push('What it cannot decide is embedding quality. The ranker here is the hashed-trigram reference, so `near` finds turns that share letters with the question. Read category 2 with that in mind: a temporal question quotes the event it asks about ("when did Caroline go to the support group"), so a lexical ranker finds the turn easily — but the turn holds no date; the answer is arithmetic over the session stamp, which no recall metric sees, and which is exactly the failure the category measures. The policy matrix (open in `docs/ROADMAP.md`) puts a real embedding client behind the same seam and re-runs this exact instrument; the temporal lane gives the ranker a notion of *when*; the answer path\'s F1 (`docs/LOCOMO_BENCHMARK.md`) says what recall could not, beside this ceiling. Until then, every number above is a property of the mechanism — ingest, gate, rank, cite — and not of any model.');
+    out.push('The hash embedder ranks lexical overlap; these are retrieval mechanism scores, not semantic embedding quality or model answers. The selected-default row runs the public memory policy at the reported width, with k swept here as an experiment (its runtime default is k = 10). Historical shipped thresholds remain explicit in `near`; the original 64-dimensional screen remains in [LOCOMO_POLICY_SCREEN.md](LOCOMO_POLICY_SCREEN.md). The separate registered live decision, bounds and limitations are in [LOCOMO_POLICY.md](LOCOMO_POLICY.md). The temporal lane remains open in `docs/ROADMAP.md`.');
     out.push('');
   }
   out.push('---');

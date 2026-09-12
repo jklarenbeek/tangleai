@@ -10,6 +10,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { createHashEmbedder } from '@tangleai/models/embed';
 import { nodeDriver } from '@jarenjs/db/node';
 import { createMemoryUnitStore, type MemoryStore, type MemoryUnitInput } from '@tangleai/memory';
 import { openTangleDb, createDbMemoryStore } from '@tangleai/store';
@@ -33,7 +34,7 @@ const now = (): string => `2026-08-24T13:00:${String(tick++ % 60).padStart(2, '0
 
 async function runOver(store: MemoryStore): Promise<{ report: any, records: DagNodeRecord[] }> {
   const records: DagNodeRecord[] = [];
-  const pipeline = createPipeline({ store, now });
+  const pipeline = createPipeline({ store, now, embedder: createHashEmbedder({ dims: 64 }), thresholds: { novelty: 0.97, contradiction: 0.8, crystallize: 0.9 } });
   const report = await pipeline.run(OBSERVATIONS, { onNode: (r) => records.push(r) });
   // every stored vector carries the identity of the embedder that wrote it
   for (const unit of await store.list()) {
@@ -46,7 +47,7 @@ async function runOver(store: MemoryStore): Promise<{ report: any, records: DagN
 function assertStory(report: any): void {
   assert.equal(report.observations, 5);
   assert.equal(report.embedded, 5, 'all observations arrived without vectors');
-  assert.equal(report.model, 'hash-trigram-64', "the suite's reference embedder is the offline default");
+  assert.equal(report.model, 'hash-trigram-64', "the explicit historical scenario uses the 64-dimensional reference");
   assert.equal(report.novelty.filtered, 1, 'the near-verbatim repeat is gated');
   assert.equal(report.novelty.admitted, 4);
   assert.equal(report.contradiction.contradictions, 1, 'the rate-limit conflict is caught');

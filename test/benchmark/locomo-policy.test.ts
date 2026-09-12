@@ -69,8 +69,8 @@ import RUN_IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.sche
 
 const LIVE_PATH = 'benchmark/results/locomo-qa-live.json';
 const TYPES_PATH = 'benchmark/lib/locomo-policy.types.ts';
-const POLICY_PATH = 'benchmark/results/locomo-policy.json';
-const POLICY_DOC = 'docs/LOCOMO_POLICY.md';
+const POLICY_PATH = 'benchmark/results/locomo-policy-screen.json';
+const POLICY_DOC = 'docs/LOCOMO_POLICY_SCREEN.md';
 
 const validate = createReportValidator(SCHEMA, [RUN_IDENTITY_SCHEMA]);
 const dataset = await loadLocomo();

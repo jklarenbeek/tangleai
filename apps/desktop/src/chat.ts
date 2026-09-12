@@ -20,13 +20,14 @@
 
 import { hashContent } from '@jarenjs/core/string';
 import { excerpt } from '@jarenjs/core/chunk';
-import { recallByEmbedding, type MemoryStore } from '@tangleai/memory';
+import { DEFAULT_MEMORY_POLICY, recallByEmbedding, type MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { IdentityRepository, TangleDb } from '@tangleai/store';
 import type { DocumentCorpusStore, RankedDocumentChunk } from '@tangleai/documents';
 
 import {
   collectDocumentEvidence,
+  GROUNDING_DEFAULTS,
   generateGroundedAnswer,
   renderGroundedAnswer,
   serializeDocumentEvidence,
@@ -118,7 +119,8 @@ export interface ChatEngine {
 export function createChatEngine(options: ChatEngineOptions): ChatEngine {
   const { db, memoryStore, documentStore } = options;
   const now = options.now ?? ((): string => new Date().toISOString());
-  const recallK = options.recallK ?? 6;
+  const recallK = options.recallK ?? DEFAULT_MEMORY_POLICY.retrieval.k;
+  const documentRecallK = options.recallK ?? GROUNDING_DEFAULTS.k;
   const chats = db.collection<ChatMessageRecord>('chats');
   let sequence = 0;
 
@@ -168,7 +170,7 @@ export function createChatEngine(options: ChatEngineOptions): ChatEngine {
         const [vector] = await embedder.embed([text]);
         const identity = { model: embedder.model, dims: embedder.dims ?? vector.length };
         ranked = recallByEmbedding(await memoryStore.list(), vector, { k: recallK, identity }).ranked;
-        const collected = await collectDocumentEvidence(documentStore, vector, identity, { k: recallK, maxPerSource: 2 });
+        const collected = await collectDocumentEvidence(documentStore, vector, identity, { k: documentRecallK, maxPerSource: 2 });
         // the helper reports a failure as a value; the chat surface keeps
         // its measured degradation and projects it to empty evidence
         if (!collected.ok) throw new Error(collected.error.message);

@@ -6,7 +6,7 @@
  * demo, SQLite in the desktop app), an embedder (the @tangleai/models seam:
  * `{ embed, model, dims }` — `createEmbeddingClient` for a wire,
  * `createHashEmbedder` as the offline default), a contradiction judge,
- * a clock, and the tuned thresholds (salvaged memflow defaults). The
+ * a clock, and explicit threshold overrides over the measured policy. The
  * document stays pure JSON; everything replaceable arrives here.
  *
  * Every vector the embed node writes carries its identity
@@ -23,6 +23,7 @@ import type { Embedder } from '@tangleai/models/embed';
 import {
   createMemoryUnit,
   noveltyGate,
+  policyThresholds,
   planContradictionPairs,
   resolveContradictions,
   planCrystallization,
@@ -85,11 +86,7 @@ export interface Pipeline {
   ): Promise<PipelineReport>;
 }
 
-export const DEFAULT_THRESHOLDS: Required<PipelineThresholds> = {
-  novelty: 0.97,
-  contradiction: 0.8,
-  crystallize: 0.9,
-};
+export const DEFAULT_THRESHOLDS: Required<PipelineThresholds> = policyThresholds();
 
 export function createPipeline(options: PipelineOptions): Pipeline {
   const store = options.store;

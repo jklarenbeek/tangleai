@@ -1,3 +1,4 @@
+// Mechanism tests opt in explicitly; the selected runtime default is tested separately.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -21,7 +22,7 @@ describe('planCrystallization', () => {
       unit('a', [1, 0], { confidence: 0.9 }),
       unit('b', [0.999, 0.001], { confidence: 0.4 }),
       unit('c', [0, 1], { confidence: 0.5 }),
-    ]);
+    ], { threshold: 0.9 });
     assert.equal(plan.examined, 3);
     assert.deepEqual(plan.merges.map((m) => [m.keepId, m.removeId]), [['a', 'b']]);
   });
@@ -31,7 +32,7 @@ describe('planCrystallization', () => {
       unit('a', [1, 0], { confidence: 0.9 }),
       unit('b', [0.9999, 0.0001], { confidence: 0.8 }),
       unit('c', [0.9998, 0.0002], { confidence: 0.7 }),
-    ]);
+    ], { threshold: 0.9 });
     assert.equal(plan.merges.length, 1);
   });
 
@@ -39,7 +40,7 @@ describe('planCrystallization', () => {
     const plan = planCrystallization([
       unit('a', [1, 0]),
       unit('b', [1, 0], { embeddedBy: { model: 'other', dims: 2 } }),
-    ]);
+    ], { threshold: 0.9 });
     assert.deepEqual(plan.merges, []);
   });
 
@@ -49,7 +50,7 @@ describe('planCrystallization', () => {
       unit('a', [1, 0], { supersededBy: 'x' }),
       unit('b', [1, 0]),
       bare,
-    ]);
+    ], { threshold: 0.9 });
     assert.equal(plan.merges.length, 0);
   });
 });
@@ -69,7 +70,7 @@ describe('applyCrystallization', () => {
     await store.put(keep);
     await store.put(remove);
 
-    const plan = planCrystallization([keep, remove]);
+    const plan = planCrystallization([keep, remove], { threshold: 0.9 });
     const outcome = await applyCrystallization(store, plan, { now });
     assert.deepEqual(outcome, { planned: 1, crystallized: 1, applicationSkips: 0 });
 
@@ -91,7 +92,7 @@ describe('applyCrystallization', () => {
     const store = createMemoryUnitStore();
     await store.put(unit('a', [1, 0], { confidence: 0.98 }));
     await store.put(unit('b', [0.999, 0.001], { confidence: 0.1 }));
-    await applyCrystallization(store, planCrystallization(await store.list()), { now });
+    await applyCrystallization(store, planCrystallization(await store.list(), { threshold: 0.9 }), { now });
     assert.equal((await store.get('a'))?.confidence, 1);
   });
 

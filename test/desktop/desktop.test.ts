@@ -73,8 +73,9 @@ describe('tangle desktop API', () => {
     assert.equal(sync.status, 200);
     assert.equal(sync.json.files.ingested, 2, 'node_modules is skipped by the walk');
     assert.ok(sync.json.report.novelty.admitted >= 3);
-    assert.equal(sync.json.report.contradiction.contradictions, 1,
-      'the rate-limit conflict across files is caught');
+    assert.equal(sync.json.report.contradiction.contradictions, 0,
+      'the measured default keeps both conflicting observations');
+    assert.equal(sync.json.report.memories.live, 4);
 
     const after1 = await call(desktop, 'GET', '/api/status');
     assert.ok(after1.json.counts.live >= 3);
@@ -142,8 +143,8 @@ describe('tangle desktop API', () => {
     assert.equal(sent.status, 200);
     assert.equal(sent.json.provider, null, 'no model configured — offline grounded answer');
     assert.match(sent.json.reply.text, /500 requests per minute/);
-    assert.doesNotMatch(sent.json.reply.text, /100 requests per minute/,
-      'the superseded figure cannot surface');
+    assert.match(sent.json.reply.text, /100 requests per minute/,
+      'inert defaults preserve conflicting observations in grounded recall');
     assert.ok(sent.json.citations.length >= 1);
 
     const history = await call(desktop, 'GET', '/api/chat');
@@ -165,7 +166,7 @@ describe('tangle desktop API', () => {
   it('the embed probe answers for the built-in embedder without a network', async () => {
     const probe = await call(desktop, 'GET', '/api/embed/probe');
     assert.equal(probe.status, 200);
-    assert.deepEqual(probe.json, { ok: true, model: 'hash-trigram-64', dims: 64 });
+    assert.deepEqual(probe.json, { ok: true, model: 'hash-trigram-512', dims: 512 });
   });
 
   it('a configured embedding wire is probed through @jarenjs/ai, and a legacy `openai` setting reads as `custom`', async () => {

@@ -1,0 +1,256 @@
+{
+  "$contract": "0.1",
+  "id": "tangle-memory-policy",
+  "version": "1",
+  "operations": {
+    "policy.provenance": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reportId",
+          "registrationId",
+          "cellId",
+          "sourceId",
+          "transitionId",
+          "challengerId",
+          "ingestTier",
+          "retrievalTier",
+          "embeddingTier",
+          "qualifiesAsDefault",
+          "statement",
+          "power",
+          "interval",
+          "clauses"
+        ],
+        "properties": {
+          "reportId": {
+            "type": "string"
+          },
+          "registrationId": {
+            "type": "string"
+          },
+          "cellId": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "transitionId": {
+            "type": "string"
+          },
+          "challengerId": {
+            "type": "string"
+          },
+          "ingestTier": {
+            "const": "live"
+          },
+          "retrievalTier": {
+            "const": "live"
+          },
+          "embeddingTier": {
+            "const": "keyless"
+          },
+          "qualifiesAsDefault": {
+            "type": "boolean"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "power": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pairedSd",
+              "standardError",
+              "minimumDetectableEffect",
+              "tiedPairs",
+              "actingSetSize"
+            ],
+            "properties": {
+              "pairedSd": {
+                "type": "number"
+              },
+              "standardError": {
+                "type": "number"
+              },
+              "minimumDetectableEffect": {
+                "type": "number"
+              },
+              "tiedPairs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "actingSetSize": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "interval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "low",
+              "high"
+            ],
+            "properties": {
+              "low": {
+                "type": "number"
+              },
+              "high": {
+                "type": "number"
+              }
+            }
+          },
+          "clauses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "clause",
+                "passed",
+                "detail"
+              ],
+              "properties": {
+                "clause": {
+                  "type": "string"
+                },
+                "passed": {
+                  "type": "boolean"
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "policy.read": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "novelty",
+          "contradiction",
+          "crystallization",
+          "retrieval",
+          "embedding"
+        ],
+        "properties": {
+          "novelty": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "enabled",
+              "threshold"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "threshold": {
+                "type": "number"
+              }
+            }
+          },
+          "contradiction": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "enabled",
+              "threshold",
+              "maxPairs"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "threshold": {
+                "type": "number"
+              },
+              "maxPairs": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "crystallization": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "enabled",
+              "threshold"
+            ],
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "threshold": {
+                "type": "number"
+              }
+            }
+          },
+          "retrieval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "k",
+              "minScore"
+            ],
+            "properties": {
+              "k": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "minScore": {
+                "type": "number"
+              }
+            }
+          },
+          "embedding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "model",
+              "dims",
+              "tier"
+            ],
+            "properties": {
+              "model": {
+                "type": "string"
+              },
+              "dims": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tier": {
+                "type": "string",
+                "enum": [
+                  "keyless"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

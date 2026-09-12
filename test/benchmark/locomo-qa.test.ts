@@ -184,7 +184,7 @@ describe('readAiEnv — the live tier is never a test dependency', () => {
     assert.equal(chatWireConfigured(chat), true);
     assert.equal(chatClientFor(chat).endpoint.model, 'fast');
     assert.deepEqual(embedSettingsOf(env), { provider: 'builtin', baseUrl: null, model: null, apiKey: null }, 'no embedding model → the built-in');
-    assert.equal(embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }).model, 'hash-trigram-64');
+    assert.equal(embedderFor({ ...DEFAULT_SETTINGS, embed: embedSettingsOf(env) }).model, 'hash-trigram-512');
     const wired = readAiEnv({ OPENROUTER_AI_KEY: 'k', TANGLE_AI_MODEL: 'fast', TANGLE_AI_EMBEDDING_MODEL: 'e' });
     assert.equal(embedSettingsOf(wired).model, 'e');
     assert.throws(() => chatClientFor({ provider: null, baseUrl: null, model: null, apiKey: null }), /no chat wire/);
@@ -286,8 +286,8 @@ describe('the prompt is grounded and its citations checkable', () => {
 });
 
 describe('the rows', () => {
-  it('names six rows in table order, the pipeline pair among them, and refuses an unknown key', () => {
-    assert.deepEqual(ALL_ROWS, ['long-context', 'near-raw', 'rag-observation', 'rag-summary', 'long-horizon', 'near']);
+  it('names seven rows in table order, the pipeline pair among them, and refuses an unknown key', () => {
+    assert.deepEqual(ALL_ROWS, ['long-context', 'near-raw', 'rag-observation', 'rag-summary', 'long-horizon', 'near', 'selected-default']);
     assert.deepEqual(CONFIGURATIONS.map((r) => r.key), ['near-raw', 'near']);
     assert.deepEqual([...DEFAULT_LIVE_ROWS], ['near-raw', 'near']);
     assert.deepEqual(rowsOf(['near', 'long-context']).map((r) => r.key), ['long-context', 'near'], 'table order, whatever the ask');
@@ -478,7 +478,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     assert.equal(raw.ingest!.runs, 272);
     assert.equal(raw.ingest!.filtered + raw.ingest!.contradictions + raw.ingest!.merged, 0);
     assert.ok(near.ingest!.filtered + near.ingest!.contradictions + near.ingest!.merged > 0);
-    for (const key of ['near-raw', 'near', 'rag-observation', 'rag-summary']) {
+    for (const key of ['near-raw', 'near', 'selected-default', 'rag-observation', 'rag-summary']) {
       const c = rowOf(report, key);
       assert.ok(c.ceiling!.all.overall > 0 && c.ceiling!.all.overall < 1, key);
       assert.ok(c.verbatim!.all.overall > 0 && c.verbatim!.all.overall < c.ceiling!.all.overall, `${key}: quoting ten memories is a floor, not an answer`);
@@ -584,8 +584,8 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     assert.equal(run.plan.skipped, null);
     assert.deepEqual(run.rows, ALL_ROWS);
     const horizonRow = rowOf(live, 'long-horizon');
-    assert.equal(run.plan.chatCalls, 5 * live.sample.scorable + horizonRow.questions.planned * HORIZON_DEFAULTS.turnsPerQuestion, 'the plan counts the agent at its per-question bound');
-    assert.equal(run.plan.judgeCalls, 5 * 1 * 2, 'the agent plans no adversarial questions');
+    assert.equal(run.plan.chatCalls, 6 * live.sample.scorable + horizonRow.questions.planned * HORIZON_DEFAULTS.turnsPerQuestion, 'the plan counts the agent at its per-question bound');
+    assert.equal(run.plan.judgeCalls, 6 * 1 * 2, 'the agent plans no adversarial questions');
     assert.equal(run.embedding.requests, run.plan.embedRequests, 'the plan counted the embedding requests exactly');
     assert.equal(calls.embeddings, run.embedding.requests, 'every corpus embedded once, up front');
     assert.ok(run.embedding.texts >= 369 + 169 + 19 + live.sample.ids.length, 'turns, observations, summaries and questions');
@@ -656,7 +656,7 @@ describe('the LoCoMo answer-path instrument', { skip: missing }, () => {
     const doc = renderMarkdown(keyless, live);
     assert.match(doc, /### On common ground/);
     assert.match(doc, /### The long-horizon row's ground/);
-    assert.match(doc, /### Tangle against the field/);
+    assert.match(doc, /### Historical Tangle against the field/);
     assert.match(doc, /### The adversarial lane/);
     assert.match(doc, /Tangle loses to|loses to none/);
 

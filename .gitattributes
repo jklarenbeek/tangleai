@@ -6,3 +6,7 @@
 
 # Preserve the exact historical diff bytes, including blank context lines.
 docs/migrations/jaren-ai/candidate-0.83.3.patch -whitespace
+benchmark/results/locomo-policy-source.patch -whitespace
+
+# Keep the emitter's exact output; its final declaration ends with blank lines.
+packages/memory/src/policy.types.ts whitespace=-blank-at-eof

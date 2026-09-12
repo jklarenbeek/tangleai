@@ -42,7 +42,7 @@ describe('the dated paid refresh', () => {
     assert.equal(validateQa(qa).valid, true, JSON.stringify(validateQa(qa).errors));
     const validateGrounding = createGroundingValidator();
     assert.equal(validateGrounding(grounding).valid, true, JSON.stringify(validateGrounding(grounding).errors));
-    assert.equal(await readFile('docs/LOCOMO_REFRESH.md', 'utf8'), `${renderMarkdown(await read('locomo-qa'), qa)}\n`);
+    assert.equal(await readFile('docs/LOCOMO_REFRESH.md', 'utf8'), `${renderMarkdown(await read('locomo-qa-baseline'), qa)}\n`);
     assert.equal(await readFile('docs/GROUNDING_REFRESH.md', 'utf8'), `${renderGroundingMarkdown(await read('grounding'), grounding)}\n`);
     assert.deepEqual(qa.sample, (await read('locomo-qa')).sample, 'the dated table keeps the registered question sample');
     assert.equal(qa.configurations.length, 6, 'every registered strategy is published, including losses or failed answers');

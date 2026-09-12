@@ -13,123 +13,243 @@
       "inventory": [
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "14e3a2b16a7a047c4ff8c9af273e475e9d102cbcc718db96a81e1c7dc7bf9b65",
+          "rowId": "05e82ae2dba7b3e2ba47423c0b0124075401fcea1e05a0b8516378b23d79e7d7",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "0736df9eb54caba3acd4fe5337525cb02319afdd87ba7981ba02d59950109bfc",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "2a5c6422261cd1efcf13312e7c30f1225ccf7769c992c8e6a51cabe4a20e1b2d",
+          "rowId": "1236866d1126048a1e4a250ba2c681e995350ac07bf380b50baf96e28808b210",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "2bada698bf21faa10276f36da85fdc701b04ab13d27de09da4d2976290222070",
+          "rowId": "1daaf7ace9b4eb3c78be3771e302695cde5ae62bcdafa2f92122aa4ee5f46f28",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "1dca8e26282287b43e29d9ecda09946b14d77512f5d597ed2a6984be63a6aa7c",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "209ad1dde703271cde1f42335a55da47817af95e2583e14060d790001a12f6bb",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "2cc414211228e6eefefaf76bdcceccac936d02ecded358259f873b8421ea1e85",
+          "rowId": "22d244ab1c5071e2100eb875568deb0288c73f439252221bf17537e6925b8f8f",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "310c8df9ff61a699bee31d0fecb59abde031ddb60fd0d1542e142a89ec440b25",
+          "rowId": "2f4f32cbc8b51201a7605e156d9baf31fc72d616779f3f29c39879b538253620",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "3ebaf702f8d51d45c12f5e33c1a5a34438447938d5fad5078a71c7601954b61b",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "3888919060afaa9ce5e7a12635f0dfc7a9fc2ba2e3759d32262417489c1bf244",
+          "rowId": "4e01e60b0906645bc46d05de3f2b5633e88a7e236dbe6a4c28a2e91f53b89258",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "3ec10e447aff567b29000d98f712f55ec0b7d020de641354666e242709d47790",
+          "rowId": "4f1c8414ef9805b2649a9e5a9900aa7ab24dbe56715a2dac386fdb309a7a8559",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "553fe97a24d6c711a4a7f82d4e9c117b1170c1dd5d2a671cca20294e2a0e8f46",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "4531034f714dce64fb6a8b4257fae1ae8d8a2be0acf4ed33d4b11814abcdda79",
+          "rowId": "57a75791b619ef742b59f1104ad1a601cae8a9bd3cfc90f9f9facf63c6ffc8b7",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "48e5848a9dd5a30c8e46705cfe5cca3bda19127eba98a28cbffc930dd1d4a188",
+          "rowId": "64efe8a6c957ed4d2f816b9929a4cf3ccf90836b69201b7207d21b0bf4a39d19",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "568429aca1518c7da6f2e697cd66b574774232e376897c25d3e78a7300da5883",
+          "rowId": "6bc98c20ddf8d24b96d3492857a4de637de47b2c94624a1ba031bfc5162db32d",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "5a1b68f1139e37beea8d85bde4ab27978ac09c51997dd46c23a981c1c9cd30fd",
+          "rowId": "73264af8c1a27a7d6d1b73113f696abb433f8b8b3bbd929d065273f81ef2c350",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "6a40b9cab5a8b3f26cb7e1e954c707b635a9cf1cc0bad6f200afb4fca346d25d",
+          "rowId": "7cef14ff768ce538216bb2afd8c3d077bdea72564e1772a6e2e9290da8bd73e6",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "749b6e1c02b078bd5540891b8cec84f45dc04abcd2f22e4516b80154cd859d93",
+          "rowId": "83e53a3a1eec735e60a99404620f3164d33c89df72b54cc5979a1db629b6cf1a",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "7d51f3d011b853313e65a544e44a6b6306eccd0d63b542e00c813c843e843a6c",
+          "rowId": "86124e227f95d4d996e6d51d8405abe10878831a03ed5011d8044482fea06511",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "813621c0ca1127bde30b7ac1a3eeae1e72af42e39fe1ae9cfb0a9d730584101b",
+          "rowId": "903db28efe8fd1dd85325de6fba1dbf4e9a3c8e430b934e577095e88ef036ee7",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "b5838b6e531798cda18e4bc46de3d7717c66e845629b26827c7866d1b39a76d0",
+          "rowId": "9e7e8cca5d6da44db56b130cb49363af8acbdc1db2d453ca7e9eb9139e6b03f9",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "b643f48f3efeca6748174da685fd15308481fda75dcc2913edaf836678886314",
+          "rowId": "a6509ac724ce673bf11727036df9d6f4b1e2a8aac0eeb2e614497275edf483f1",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "c209ad10c8bc05065ecfcce91f70fa00e92573fb2bed7230f6a9029d98fbd955",
+          "rowId": "abc1fd78001dca0a0395c0d3016b434580a3a7b95855aae227602d4fd89c0c91",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "b0a103e33f0949de477526ea0fe9e5326971d668906540532f3054a3e1c86cfe",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "cc3f6950496a3d416d3e1b8f0701baa824271148f08bd7e6e7bc3f7ff5835d6c",
+          "rowId": "b6bda8c8f989ac19890d314b5a56069fae47eabef6e3fabf22623a01b3bf357a",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "ce432b03680287e8f0bb03d4405f782b83857ce826895a06d272288110d73347",
+          "rowId": "bcb5304f4a450a5251278d3a69e0704c0c615cfede6e9ebce8fea7e6a0c83d7e",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "d82894a1b85f4fa1aaf555693bfd15a2b28135b6917272d202e622e5b740ae81",
+          "rowId": "bfb6dda53edc85b650d42dfc15029e6aa67805bb5c0c5e2c4745134d4db71d17",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "d8c1afea7b74fc3fa1f79f95c72a6842455fc3ee8fcb73b88ed0d558ccbf7b69",
+          "rowId": "c79799b3f43aefea8470a165e9e73685f6405f7f5bc0180c8d3d9970733c1024",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "d8feec54d1f1c7a41c768b78bf0fc79abc129db92697e1af911a07a09b69876a",
+          "rowId": "cbc2033bc1fd3a02baa15e6ee08eae4643f07d1e00fbdf3d60cfb0f5ff2d0127",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "d97ba3b4baf3999b6f363995910b37b19c150304de028bee5a778fbe45e409fd",
           "identityStatus": "not-run"
         },
         {
           "artifact": "benchmark/results/locomo-policy.json",
-          "rowId": "ee67d6b63483f0e47effa35ce003d56b89e1593cf37137fe93f813adeac70014",
+          "rowId": "e4228b4fa1d429b464119eaad8c2c5a50acdc6e53abff9548e7f7f9b87bff60b",
           "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "rowId": "f6bc563c50867fcc8fe2d3e9db15d34725cbca50f1dc31e60f4054746d507c42",
+          "identityStatus": "run",
+          "identityId": "c607694aaafdb8745b38ab62115afef6e282a30e34092da0ce97378ab6e2ecb1",
+          "requestKind": "legacy",
+          "embedding": {
+            "provider": "openrouter",
+            "base": "https://openrouter.ai/api/v1",
+            "model": "baai/bge-m3",
+            "dims": 1024,
+            "credentialSlot": "openrouter-primary"
+          },
+          "policyComponent": null
         },
         {
           "artifact": "benchmark/results/locomo-qa-live.json",
@@ -189,6 +309,11 @@
         {
           "artifact": "benchmark/results/locomo-qa.json",
           "rowId": "rag-summary",
+          "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-qa.json",
+          "rowId": "selected-default",
           "identityStatus": "not-run"
         },
         {
@@ -215,6 +340,11 @@
           "artifact": "benchmark/results/locomo-recall.json",
           "rowId": "recency",
           "identityStatus": "not-run"
+        },
+        {
+          "artifact": "benchmark/results/locomo-recall.json",
+          "rowId": "selected-default",
+          "identityStatus": "not-run"
         }
       ],
       "byStatus": [
@@ -224,7 +354,11 @@
         },
         {
           "identityStatus": "not-run",
-          "rows": 35
+          "rows": 37
+        },
+        {
+          "identityStatus": "run",
+          "rows": 8
         }
       ],
       "byArtifact": [
@@ -234,6 +368,11 @@
           "rows": 24
         },
         {
+          "artifact": "benchmark/results/locomo-policy.json",
+          "identityStatus": "run",
+          "rows": 8
+        },
+        {
           "artifact": "benchmark/results/locomo-qa-live.json",
           "identityStatus": "legacy-unrecorded",
           "rows": 6
@@ -241,12 +380,12 @@
         {
           "artifact": "benchmark/results/locomo-qa.json",
           "identityStatus": "not-run",
-          "rows": 6
+          "rows": 7
         },
         {
           "artifact": "benchmark/results/locomo-recall.json",
           "identityStatus": "not-run",
-          "rows": 5
+          "rows": 6
         }
       ]
     },
@@ -342,11 +481,12 @@
           "near",
           "near-raw",
           "rag-observation",
-          "rag-summary"
+          "rag-summary",
+          "selected-default"
         ],
-        "temporalCeiling": 0.4833333333333334
+        "temporalCeiling": 0.6121495327102804
       }
     }
   },
-  "reportId": "2c258c38ddd20fe9d9f56f5dc6f14ef47978cfbb4cca94247556a6a35be765d3"
+  "reportId": "a17fd56336d6e1e65cb6383751499057c02dad5c1f61f9857097fcd68765707e"
 }

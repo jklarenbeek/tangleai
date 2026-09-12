@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "version": "0.23.0",
+  "baseVersion": "0.22.0",
+  "baseCommit": "4f31d042d3b8e2150b18b388975ed853e6baf2cf",
+  "preparationCommit": "4f31d042d3b8e2150b18b388975ed853e6baf2cf",
+  "initial": false,
+  "inputHash": "375cad12ab6061e23366d8ae7b8b8eec361f0e4e0ca11d7c9ef9f5ee4a735ac3",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        }
+      ],
+      "summary": "Derive memory defaults from a registered held-out policy experiment and expose their values, evidence provenance and measured opt-ins through a public contract. Novelty filtering, contradiction resolution and crystallization now default to off; memory retrieval defaults to k 10 and minScore 0, and the independently measured offline hash width is 512.\n\nExplicit policy overrides retain their meaning. Use the shipped-legacy policy data with a 64-dimensional hash embedder to reproduce the former settings; existing vectors retain their original embedding identity and require re-embedding to rank with the new offline default. Preserve the full live evidence, bounded-null decision and historical losses, enforce purchase and identity boundaries, and gate generated defaults, public contract compatibility, examples and documentation.",
+      "id": "measured-memory-policy"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.23.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.23.0"
+    }
+  ]
+}

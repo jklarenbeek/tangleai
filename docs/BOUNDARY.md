@@ -27,7 +27,7 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 | Concern | Mechanism / foundation owner | Tangle side (policy/infra) |
 |---|---|---|
 | chat completions | `@tangleai/models` `createChatClient` (OpenAI-compatible wire, retry, streaming, effective-request replay key and injected cache seam) | configuration and the SQLite replay adapter |
-| embeddings | `@tangleai/models/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (OpenAI-compatible wire, reply reassembly, per-text partial replay), `createHashEmbedder`, `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration, the SQLite replay adapter, and the measured WIDTH of the offline default (`createOfflineEmbedder`, 64 — see `packages/pipeline/src/standins.ts`) |
+| embeddings | `@tangleai/models/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (OpenAI-compatible wire, reply reassembly, per-text partial replay), `createHashEmbedder`, `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration, the SQLite replay adapter, and the measured WIDTH of the offline default (`createOfflineEmbedder`, 512 lexical dimensions — owned by `@tangleai/memory/policy`, consumed by `packages/pipeline/src/standins.ts`) |
 | durable memory | `@tangleai/context` ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
@@ -149,6 +149,14 @@ would otherwise have to learn the hard way:
   instead of being half-spent. Copied as `benchmark/lib/ai-env.ts`
   (`TANGLE_AI_*`), resolving to the desktop's own settings shape so the
   benchmark's clients are the app's.
+
+The policy instrument's paired bootstrap is implemented in
+`benchmark/lib/locomo-policy.ts`. Jaren supplies seeded randomness (`mulberry32`)
+and nearest-rank quantiles, means and standard deviations; its statistics API
+does not supply a paired resampler. One local implementation resamples the
+registered question pairs for the overall, category and acting-set intervals.
+The memory package owns the resulting policy values; config records a component
+reference to that owner rather than copying its thresholds into profiles.
 
 ## The one load-bearing contract
 

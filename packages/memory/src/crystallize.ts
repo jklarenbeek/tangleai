@@ -7,7 +7,7 @@
  * against a live Memgraph; here the plan is a value you can assert on.
  *
  * Policy (unchanged from memflow):
- *  - pairwise similarity >= threshold (default 0.92) marks a duplicate pair
+ *  - pairwise similarity >= threshold (selected policy; disabled by default) marks a duplicate pair
  *  - the higher-confidence record survives; ties keep the first
  *  - a record participates in at most one merge per pass — a chain
  *    A~B~C collapses over successive passes, not in one ambiguous step
@@ -38,7 +38,9 @@ import { sameIdentity } from '@tangleai/context/ledger';
 import type { MemoryRelation, MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from './store.ts';
 
-export const DEFAULT_CRYSTALLIZE_THRESHOLD = 0.92;
+import { policyThresholds, DEFAULT_MEMORY_POLICY } from './policy.ts';
+
+export const DEFAULT_CRYSTALLIZE_THRESHOLD = policyThresholds().crystallize;
 export const CONFIDENCE_BOOST = 0.05;
 export const CONFIDENCE_FLOOR = 0.1;
 
