@@ -2,7 +2,7 @@
 // Uses the jarenjs repo's playwright install via NODE_PATH.
 // Usage: start the target server on the host, then run inside the
 // playwright distrobox:
-//   distrobox enter ubuntu-playwright -- bash -c 'export PATH=$HOME/.nvm/versions/node/v24.19.0/bin:$PATH; cd ~/projects/jp/tangleai && node .e2e/desktop.e2e.mjs'
+//   distrobox enter ubuntu-playwright -- bash -c 'export PATH=$HOME/.nvm/versions/node/v24.20.0/bin:$PATH; cd ~/projects/jp/tangleai && node .e2e/desktop.e2e.mjs'
 // Playwright is borrowed from the jarenjs repo via createRequire.
 import { createRequire } from 'node:module';
 const jarenRequire = createRequire(process.env.PLAYWRIGHT_PACKAGE ?? new URL('../../jarenjs/package.json', import.meta.url));

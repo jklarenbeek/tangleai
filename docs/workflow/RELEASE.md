@@ -8,6 +8,12 @@ zero until an intentional, reviewed policy change enables a stable public API.
 
 ## Prepare before pushing
 
+The current checkout consumes verified Jaren 0.84.3 registry packages. The
+archived `docs/migrations/jaren-ai/foundations-0.84.3.json` and registry receipt
+record the source/archive comparison. Ordinary `npm ci --ignore-scripts` needs
+no foundation bootstrap. The candidate instructions below apply only to a
+checkout with an active `docs/migrations/jaren-ai/foundations.json`.
+
 Use the Node version in `.nvmrc`, npm from the root `packageManager`, and Bun from
 `release.config.json`. CI reads those same pins. In candidate foundation mode,
 initialize `vendor/jarenjs` and run `node scripts/jaren-artifacts.ts --bootstrap`
@@ -54,6 +60,12 @@ For example, a patch after `0.20.0` produces `0.20.1`; a minor produces `0.21.0`
 A change to one library still advances every public package. Neither root
 version edits alone nor a later automatic release PR on `main` satisfy this
 protocol: the version must already be in the release commit.
+
+An already committed local release may be followed by another release before
+either is pushed. Preparation uses the commit carrying that prior release record
+as its version base and retains the current HEAD as its preparation commit.
+Ordinary draft commits with no version change still use remote main as their
+base. A version edit without a committed release record cannot establish a base.
 
 The starting version override, `release:prepare -- --initial`, is restricted to
 the configured initial commit and old version. It establishes exactly `0.20.0`.

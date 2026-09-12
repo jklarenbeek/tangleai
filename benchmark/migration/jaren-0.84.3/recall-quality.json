@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 1,
+  "instrument": "recall-quality",
+  "date": "2026-09-12T06:20:54.716Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 9 5900HX with Radeon Graphics"
+  },
+  "dataset": {
+    "schemaVersion": 1,
+    "id": "jaren-authored-tiny",
+    "datasetClass": "authored",
+    "source": "Jaren contributors",
+    "license": "MIT",
+    "version": "1",
+    "files": {
+      "corpus": {
+        "path": "corpus.jsonl",
+        "sha256": "a142b9e12226d2549009d09bc30a9f7c76633650ed7e4b1daa00aa94b2cab906"
+      },
+      "queries": {
+        "path": "queries.jsonl",
+        "sha256": "b42a74b59a7bae1abece85316a375eec10e9263b7182ebdfb02c3ec097a32906"
+      },
+      "qrels": {
+        "path": "qrels.jsonl",
+        "sha256": "f23b2a812e687456c901f2216e3ae7bbb7f810620f86bc75be1161511b7e72bb"
+      }
+    },
+    "hash": "6f5323bc8fbc1f001c665ebf9dfc7a0c7bb4a63db085f21d0e7ea3c7b9883d63",
+    "documents": 3,
+    "queries": 3
+  },
+  "config": {
+    "seed": 17,
+    "sizes": [
+      3
+    ],
+    "ks": [
+      1,
+      5,
+      10
+    ],
+    "ann": true,
+    "scope": "memories",
+    "subset": "all positive-qrel documents, then seeded hash distractors; full size is reference",
+    "tags": "first three distinct tokens with length >= 5",
+    "timestamp": "equal; ties lexicographic id",
+    "latency": "one warm-vector real-ledger recall per question; embedding measured separately"
+  },
+  "embedding": {
+    "model": "hash-trigram-64",
+    "dims": 64,
+    "class": "hash",
+    "vectorHashes": [
+      {
+        "textHash": "c41ec5d25401524313e166b554603eccd23514cabfda8d5575bd10b9d53fbb93",
+        "vectorHash": "d4a0af41f23bacbf8a531d3bcc3b6d8e1113b3f697e44242fb1e7de4cad18d14"
+      },
+      {
+        "textHash": "24c18c8690ea6c7182795c93e6302c3639a79ba2cdca59cead2fce833156adf3",
+        "vectorHash": "cf88237d83f04c4fba06d3bb3db1c1d0500e885c3c140515b34f63c5897a3f29"
+      },
+      {
+        "textHash": "0d64690502bcaa980f35c53e5beb4c63572886c17f4a7dbd671502e1c26e3b8b",
+        "vectorHash": "f0f4d9c7882216651819c960d5231069d3bc2d25903779416c470190bd393274"
+      },
+      {
+        "textHash": "44f0d31bcb83758ea36a54250a5ed5e7b5c7f3ed73024aa7055ea2638b7fa8fd",
+        "vectorHash": "cff866a284509667032732ceca283265a25c6670491170078982b7d0a9433454"
+      },
+      {
+        "textHash": "a347160a9ccd47c0b405cef0bb69b84ae578db1852b9ea746a43969f582faf7f",
+        "vectorHash": "6c8374cb1a1bceabc09efc2672c15b54c8b95375111a441b6ec5b20b3d82d74c"
+      },
+      {
+        "textHash": "8fd31490b5e7aaede73d4a92056a286a45520435e60a613980abbc9d5ced3e8f",
+        "vectorHash": "ffd8d5e6f7118ee79d27b5581cf8bd222ff1446099a095ff2107b646999c2ee9"
+      }
+    ]
+  },
+  "bars": {
+    "exactRecall10": 0.95,
+    "relevanceTolerance": 0,
+    "p95Speedup": 2,
+    "minimumExactP95Ms": 100,
+    "maxIndexToVectorBytes": 1,
+    "maxBuildMs": 30000,
+    "maxUpdateP95Ms": 10
+  },
+  "rows": [
+    {
+      "policy": "recency",
+      "recall": {
+        "1": 0.25,
+        "5": 1,
+        "10": 1
+      },
+      "hitRate": {
+        "1": 0.5,
+        "5": 1,
+        "10": 1
+      },
+      "mrr": 0.6666666666666666,
+      "ndcg10": 0.75,
+      "answerable": 2,
+      "noAnswer": {
+        "queries": 1,
+        "abstained": 0,
+        "falseAnswers": 1,
+        "accuracy": 0
+      },
+      "latencyMs": {
+        "p50": 0.05286799999998948,
+        "p95": 0.5599909999999682
+      },
+      "rankings": [
+        {
+          "queryId": "q1",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q2",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q3",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "size": 3,
+      "datasetId": "jaren-authored-tiny",
+      "datasetClass": "authored",
+      "embeddingClass": "hash",
+      "model": "hash-trigram-64",
+      "dims": 64
+    },
+    {
+      "policy": "tag+recency",
+      "recall": {
+        "1": 0.25,
+        "5": 1,
+        "10": 1
+      },
+      "hitRate": {
+        "1": 0.5,
+        "5": 1,
+        "10": 1
+      },
+      "mrr": 0.6666666666666666,
+      "ndcg10": 0.75,
+      "answerable": 2,
+      "noAnswer": {
+        "queries": 1,
+        "abstained": 0,
+        "falseAnswers": 1,
+        "accuracy": 0
+      },
+      "latencyMs": {
+        "p50": 0.24820199999999204,
+        "p95": 0.3250940000000355
+      },
+      "rankings": [
+        {
+          "queryId": "q1",
+          "ids": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "queryId": "q2",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q3",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "size": 3,
+      "datasetId": "jaren-authored-tiny",
+      "datasetClass": "authored",
+      "embeddingClass": "hash",
+      "model": "hash-trigram-64",
+      "dims": 64
+    },
+    {
+      "policy": "exact",
+      "recall": {
+        "1": 0.25,
+        "5": 1,
+        "10": 1
+      },
+      "hitRate": {
+        "1": 0.5,
+        "5": 1,
+        "10": 1
+      },
+      "mrr": 0.75,
+      "ndcg10": 0.8154648767857288,
+      "answerable": 2,
+      "noAnswer": {
+        "queries": 1,
+        "abstained": 0,
+        "falseAnswers": 1,
+        "accuracy": 0
+      },
+      "latencyMs": {
+        "p50": 0.6811160000000882,
+        "p95": 4.391772999999944
+      },
+      "rankings": [
+        {
+          "queryId": "q1",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q2",
+          "ids": [
+            "a",
+            "c",
+            "b"
+          ]
+        },
+        {
+          "queryId": "q3",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "buildMs": 16.722862000000077,
+      "storage": {
+        "records": 3,
+        "vectorBytes": 768,
+        "indexBytes": 0,
+        "documentBytes": 3135,
+        "byteScope": "serialized documents plus resident numeric/key payload; excludes JS object overhead"
+      },
+      "config": {
+        "algorithm": "exact-cosine",
+        "dims": 64
+      },
+      "lifecycle": {
+        "updateP95Ms": 2.0964069999999992,
+        "deleteMs": 0.29774300000008225,
+        "deletedAbsent": true,
+        "updatedPresent": true
+      },
+      "size": 3,
+      "datasetId": "jaren-authored-tiny",
+      "datasetClass": "authored",
+      "embeddingClass": "hash",
+      "model": "hash-trigram-64",
+      "dims": 64
+    },
+    {
+      "policy": "projection-0.1",
+      "recall": {
+        "1": 0.25,
+        "5": 1,
+        "10": 1
+      },
+      "hitRate": {
+        "1": 0.5,
+        "5": 1,
+        "10": 1
+      },
+      "mrr": 0.75,
+      "ndcg10": 0.8154648767857288,
+      "answerable": 2,
+      "noAnswer": {
+        "queries": 1,
+        "abstained": 0,
+        "falseAnswers": 1,
+        "accuracy": 0
+      },
+      "latencyMs": {
+        "p50": 3.0034329999999727,
+        "p95": 3.139825999999971
+      },
+      "rankings": [
+        {
+          "queryId": "q1",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q2",
+          "ids": [
+            "a",
+            "c",
+            "b"
+          ]
+        },
+        {
+          "queryId": "q3",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "buildMs": 26.992680999999948,
+      "storage": {
+        "records": 3,
+        "vectorBytes": 768,
+        "indexBytes": 755,
+        "documentBytes": 3135,
+        "byteScope": "serialized documents plus resident numeric/key payload; excludes JS object overhead"
+      },
+      "config": {
+        "algorithm": "sparse-projection-v1",
+        "dims": 64,
+        "projections": 32,
+        "seed": 17,
+        "fraction": 0.1
+      },
+      "lifecycle": {
+        "updateP95Ms": 2.4572769999999764,
+        "deleteMs": 0.1590760000000273,
+        "deletedAbsent": true,
+        "updatedPresent": true
+      },
+      "size": 3,
+      "datasetId": "jaren-authored-tiny",
+      "datasetClass": "authored",
+      "embeddingClass": "hash",
+      "model": "hash-trigram-64",
+      "dims": 64,
+      "oracle": {
+        "recall": {
+          "1": 1,
+          "5": 1,
+          "10": 1
+        },
+        "mrr": 1,
+        "mrrAt": {
+          "1": 1,
+          "5": 1,
+          "10": 1
+        }
+      },
+      "decision": {
+        "pass": false,
+        "checks": {
+          "oracleRecall": true,
+          "relevance": true,
+          "p95Speedup": false,
+          "ceilingMeasured": false,
+          "bytes": true,
+          "build": true,
+          "updates": true
+        }
+      }
+    },
+    {
+      "policy": "projection-0.5",
+      "recall": {
+        "1": 0.25,
+        "5": 1,
+        "10": 1
+      },
+      "hitRate": {
+        "1": 0.5,
+        "5": 1,
+        "10": 1
+      },
+      "mrr": 0.75,
+      "ndcg10": 0.8154648767857288,
+      "answerable": 2,
+      "noAnswer": {
+        "queries": 1,
+        "abstained": 0,
+        "falseAnswers": 1,
+        "accuracy": 0
+      },
+      "latencyMs": {
+        "p50": 0.3462240000000065,
+        "p95": 0.38530600000001414
+      },
+      "rankings": [
+        {
+          "queryId": "q1",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "queryId": "q2",
+          "ids": [
+            "a",
+            "c",
+            "b"
+          ]
+        },
+        {
+          "queryId": "q3",
+          "ids": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      ],
+      "buildMs": 18.34576900000002,
+      "storage": {
+        "records": 3,
+        "vectorBytes": 768,
+        "indexBytes": 755,
+        "documentBytes": 3135,
+        "byteScope": "serialized documents plus resident numeric/key payload; excludes JS object overhead"
+      },
+      "config": {
+        "algorithm": "sparse-projection-v1",
+        "dims": 64,
+        "projections": 32,
+        "seed": 17,
+        "fraction": 0.5
+      },
+      "lifecycle": {
+        "updateP95Ms": 0.21435900000005859,
+        "deleteMs": 0.06820699999991575,
+        "deletedAbsent": true,
+        "updatedPresent": true
+      },
+      "size": 3,
+      "datasetId": "jaren-authored-tiny",
+      "datasetClass": "authored",
+      "embeddingClass": "hash",
+      "model": "hash-trigram-64",
+      "dims": 64,
+      "oracle": {
+        "recall": {
+          "1": 1,
+          "5": 1,
+          "10": 1
+        },
+        "mrr": 1,
+        "mrrAt": {
+          "1": 1,
+          "5": 1,
+          "10": 1
+        }
+      },
+      "decision": {
+        "pass": false,
+        "checks": {
+          "oracleRecall": true,
+          "relevance": true,
+          "p95Speedup": true,
+          "ceilingMeasured": false,
+          "bytes": true,
+          "build": true,
+          "updates": true
+        }
+      }
+    }
+  ],
+  "annDecision": "retain exact; no contender cleared all bars"
+}

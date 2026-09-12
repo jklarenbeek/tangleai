@@ -2,7 +2,7 @@
   "benchmark": "mas-runtime-handoff",
   "query": "queries/mas/runtime-handoff.json",
   "queryRevision": "1b0864c641b058425fbba0774c94f34c6bc8962e6b67214d419b1cb9c4df5faa",
-  "reportId": "0473e705f2154c59a04c6ac53a0e736797435090e536be92e1e7bbd85e528428",
+  "reportId": "9b9ea63798465649caac0596645961e2b7269ae88f24d35f75f0735f11b400d2",
   "handoff": {
     "decision": "runtime-conformant",
     "clauses": {
@@ -14,7 +14,7 @@
       "persistenceIdentity": true,
       "hygiene": true
     },
-    "reportId": "0473e705f2154c59a04c6ac53a0e736797435090e536be92e1e7bbd85e528428",
+    "reportId": "9b9ea63798465649caac0596645961e2b7269ae88f24d35f75f0735f11b400d2",
     "registration": {
       "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
@@ -32,7 +32,7 @@
     },
     "weeklyReport": {
       "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
-      "executableRevision": "fb98ee0d0672b02a66ebf9ad9fe1530eed1d1ff097fd4d37bf7df29c1b1e1447",
+      "executableRevision": "e95f59b443b669406b2fb0363fe485e9f7282dc6fc3295539cf959857a4ae297",
       "maxObservedConcurrency": 3,
       "calls": 11,
       "state": "runtime-pass"
@@ -112,5 +112,5 @@
       "interactions inside loop bodies or nested graphs refuse as a stated runtime limitation"
     ]
   },
-  "artifactId": "09fa618ae742f284a6525796e6b76c424edb58dfe2a2b9eb9f1b32ded2e6a6b9"
+  "artifactId": "8714969ad8adce22a1687f5266cdec1582c14e596538a07ee6d8fcb17ee47555"
 }

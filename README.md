@@ -15,10 +15,8 @@ the actual publication tarballs outside this checkout.
 ## What runs today
 
 ```sh
-# Candidate foundations must exist before installation. Use their Node 24.20.0 pin:
+# Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.0:
 git submodule update --init vendor/jarenjs
-node scripts/jaren-artifacts.ts --bootstrap
-# Then use Tangle's .nvmrc (Node 24.19.0), with npm 11.12.1:
 npm ci --ignore-scripts
 npm run check      # strict typecheck + complete offline test suite
 npm run skeleton   # the whole loop, end to end, offline
@@ -295,15 +293,17 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-The candidate consumes 23 AI-free Jaren **0.83.3** tarballs recorded in
-[the foundation manifest](docs/migrations/jaren-ai/foundations.json). The source
-submodule at `vendor/jarenjs` pins the committed base; its recorded candidate
-patch reconstructs the qualified source in an isolated checkout before packing.
-Bootstrap precedes `npm ci`, including in CI. `npm run jaren:check` verifies the
-source pin, patch, dependency edges, lockfile, archives and exact installed bytes.
-Installed packages are never patched. These artifacts are locally qualified;
-the new source pin and registry release remain pending. See the
-[migration handoff](docs/JAREN_AI_MIGRATION.md) for reconstruction and ownership.
+Tangle consumes 23 AI-free Jaren **0.84.3** packages from npm. The source
+submodule at `vendor/jarenjs` pins `ac8749711f5d058251f72842ce7e0095b389403f`.
+The [registry receipt](docs/migrations/jaren-ai/registry-0.84.3.json) binds their
+published archives to the exact source-built
+[foundation inventory](docs/migrations/jaren-ai/foundations-0.84.3.json).
+`npm ci --ignore-scripts` installs the exact registry lock without bootstrap;
+`npm run jaren:check` verifies source, manifests, installed versions and archive
+URLs. Qualification checked every installed member against the source-built
+hashes. Installed packages are never patched or source-linked. See the
+[migration handoff](docs/JAREN_AI_MIGRATION.md) for ownership, qualification and
+checkpoint compatibility. Tangle publication remains manually author-owned.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.

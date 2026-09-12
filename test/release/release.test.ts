@@ -157,6 +157,34 @@ it('bases a release on remote main when local draft commits exist', async t => {
   assert.equal(record.baseCommit, base);
   assert.equal(record.preparationCommit, draft);
 });
+it('prepares the next patch after a committed local release without rewriting or pushing it', async t => {
+  const { root, base } = prepared(t);
+  git(root, 'update-ref', 'refs/remotes/origin/main', base);
+  const previous = readFileSync(resolve(root, 'releases/0.20.0.json'), 'utf8');
+  const localRelease = commit(root);
+  writeFileSync(resolve(root, 'packages/core/src/index.ts'), 'export const value = 2;\n');
+  const draft = commit(root);
+  writeFileSync(resolve(root, '.changeset/fix.md'), '---\n"@tangleai/core": patch\n---\n\nUpdate the foundation dependency.\n');
+  await prepare(root);
+  const record = checkRelease(root)!;
+  assert.equal(record.version, '0.20.1');
+  assert.equal(record.baseVersion, '0.20.0');
+  assert.equal(record.baseCommit, localRelease);
+  assert.equal(record.preparationCommit, draft);
+  assert.equal(readFileSync(resolve(root, 'releases/0.20.0.json'), 'utf8'), previous);
+  assert.equal(git(root, 'rev-parse', 'refs/remotes/origin/main'), base);
+});
+it('refuses an unprepared committed version as a new local release base', async t => {
+  const { root, base } = fixture(t, '0.20.0');
+  git(root, 'update-ref', 'refs/remotes/origin/main', base);
+  synchronizeVersions(root, '0.20.1');
+  lock(root);
+  commit(root);
+  writeFileSync(resolve(root, '.changeset/fix.md'), '---\n"@tangleai/core": patch\n---\n\nFix the next version.\n');
+  await assert.rejects(prepare(root), /releases\/0\.20\.1\.json/);
+  assert.equal(readJson(resolve(root, 'package.json')).version, '0.20.1');
+  assert.ok(!existsSync(resolve(root, 'releases/0.20.2.json')));
+});
 it('refreshes a local fix before pushing main but refuses an accepted release', async t => {
   const { root, base } = prepared(t);
   git(root, 'update-ref', 'refs/remotes/origin/main', base);
@@ -267,9 +295,8 @@ it('a website with the right version but wrong commit or incomplete package set 
 it('the website resolves local Tangle source and identifies its installed foundation mode, refusing either fallback', async () => {
   const sources = await verifyPageSources(ROOT);
   assert.equal(sources.tangle, 'workspace');
-  assert.equal(sources.jarenjs, 'candidate-artifacts');
-  assert.match(sources.foundation!.patchSha256, /^[a-f0-9]{64}$/);
-  assert.match(sources.foundation!.commit, /^[a-f0-9]{40}$/);
+  assert.equal(sources.jarenjs, 'npm');
+  assert.equal(sources.foundation, undefined);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@tangleai/core' ? '@jarenjs/core' : name)), /local Tangle source/);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@jarenjs/app' ? '@tangleai/core' : name)), /npm installation/);
 });

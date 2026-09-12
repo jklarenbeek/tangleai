@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "version": "0.21.1",
+  "baseVersion": "0.21.0",
+  "baseCommit": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+  "preparationCommit": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+  "initial": false,
+  "inputHash": "0aefdf5bf9430debb4094c5455c87cdb5e5916b0b5d82423f1d92df62645a91b",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Update the exact Jaren foundation dependencies and source pin to the published\n0.84.3 release after verifying its AI-free archives against source-built bytes.\nRetain Tangle's model, context and agent ownership and align the development\nNode pin with 24.20.0. Tangle publication remains a manual author action.\nAllow release preparation after an already committed local release while\npreserving its record and rejecting unprepared version edits.",
+      "id": "jaren-foundations-0843"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.21.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.21.1"
+    }
+  ]
+}

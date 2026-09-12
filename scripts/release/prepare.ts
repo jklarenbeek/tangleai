@@ -97,8 +97,24 @@ export async function prepare(root = ROOT, options: { initial?: boolean; refresh
   ];
   const backup = Object.fromEntries(paths.map(path => [path, existsSync(resolve(root, path)) ? readFileSync(resolve(root, path)).toString('base64') : null]));
   const preparationCommit = git(root, 'rev-parse', 'HEAD');
-  const baseCommit = mainCommit(root) ?? preparationCommit;
+  const acceptedCommit = mainCommit(root);
+  let baseCommit = acceptedCommit ?? preparationCommit;
   git(root, 'merge-base', '--is-ancestor', baseCommit, preparationCommit);
+  if (acceptedCommit && JSON.parse(git(root, 'show', `${acceptedCommit}:package.json`)).version !== main.version) {
+    // A committed local release can precede another release before either is
+    // pushed. An unprepared version edit must not become that release base.
+    const committed = JSON.parse(git(root, 'show', `${preparationCommit}:package.json`));
+    assert.equal(committed.version, main.version, 'The current version must already be committed before preparing another local release');
+    assert.ok(compareVersions(main.version, JSON.parse(git(root, 'show', `${acceptedCommit}:package.json`)).version) > 0, 'The local release must be newer than remote main');
+    const previous = JSON.parse(git(root, 'show', `${preparationCommit}:releases/${main.version}.json`)) as ReleaseRecord;
+    assert.equal(previous.version, main.version, 'The local release record must identify the committed version');
+    assert.ok(compareVersions(previous.version, previous.baseVersion) > 0, 'The local release record must advance its base version');
+    assert.ok(previous.changesets.length > 0, 'The local release must record Changesets intent');
+    git(root, 'merge-base', '--is-ancestor', previous.baseCommit, preparationCommit);
+    assert.equal(JSON.parse(git(root, 'show', `${previous.baseCommit}:package.json`)).version, previous.baseVersion, 'The local release base must match its record');
+    baseCommit = git(root, 'log', '-1', '--format=%H', preparationCommit, '--', `releases/${main.version}.json`);
+    git(root, 'merge-base', '--is-ancestor', acceptedCommit, baseCommit);
+  }
   assert.equal(JSON.parse(git(root, 'show', `${baseCommit}:package.json`)).version, main.version, 'Start a new release from the accepted main version; refresh local fixes before the main push instead');
   writeJson(backupPath, backup);
   try {

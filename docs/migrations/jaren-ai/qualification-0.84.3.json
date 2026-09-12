@@ -1,0 +1,1078 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-12",
+  "scope": "Jaren 0.84.3 dependency/registry qualification and authorized Tangle patch close-out; no later campaign work",
+  "jaren": {
+    "version": "0.84.3",
+    "commit": "ac8749711f5d058251f72842ce7e0095b389403f",
+    "packages": 23,
+    "exactReferences": 94,
+    "installedMembersVerified": 1339,
+    "mode": "npm",
+    "archiveReceipt": "registry-0.84.3.json",
+    "sourceArchiveManifest": "foundations-0.84.3.json",
+    "patch": "empty",
+    "published": true
+  },
+  "tangle": {
+    "version": "0.21.1",
+    "baseVersion": "0.21.0",
+    "baseCommit": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+    "releaseRecord": "releases/0.21.1.json",
+    "commitIdentity": "The commit carrying releases/0.21.1.json; close-out verifies before committing",
+    "packages": 13,
+    "stateAtReceipt": "prepared; source and integration qualified; final close-out gate recorded in generated artifacts",
+    "published": false,
+    "registryObservation": {
+      "checkedAt": "2026-09-12T06:41:55.904Z",
+      "packages": [
+        {
+          "name": "@tangleai/models",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/context",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/agents",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/jaren",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/assistant",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/core",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/config",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/mas",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/documents",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/memory",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/search",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "version": "0.21.1",
+          "status": 404
+        },
+        {
+          "name": "@tangleai/store",
+          "version": "0.21.1",
+          "status": 404
+        }
+      ]
+    },
+    "finalArtifacts": "dist/release/artifacts.json",
+    "finalConsumers": "dist/release/verification.json",
+    "finalGate": "dist/release/gate.json",
+    "binding": "Generated artifacts bind the exact final input hash; do not substitute the original 0.21.0 release hash or the preliminary consumer input hash."
+  },
+  "sourceTests": {
+    "command": "npm run check",
+    "version": "0.21.1",
+    "node": "24.20.0",
+    "npm": "11.12.1",
+    "bun": "1.4.0",
+    "exit": 0,
+    "tests": 1381,
+    "passed": 1381,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 297,
+    "strictJavaScriptDeclarationModules": 53
+  },
+  "jarenIndependent": {
+    "isolation": "Disposable Podman container with only Jaren checkout (six initialized test submodules), toolchains, browser binaries and result directory mounted. No Tangle checkout or installed Tangle package was available. Jaren source, manifests, lock and installed dependency gate independently reject reverse dependencies.",
+    "sourceTests": {
+      "total": 14264,
+      "passed": 14223,
+      "failed": 0,
+      "skipped": 41,
+      "suites": 2243,
+      "functionsExecuted": 8261,
+      "functionsTotal": 8261
+    },
+    "browsers": {
+      "passed": 409,
+      "failed": 0,
+      "skipped": 5
+    },
+    "distributionPackages": 23,
+    "existingDevAdvisories": 24,
+    "commands": [
+      {
+        "command": [
+          "npm",
+          "run",
+          "site:gate",
+          "--",
+          "--workers=2"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 537.27,
+        "log": "/tmp/tangle-jaren-0843/jresults/site:gate.log",
+        "sha256": "eedfaf0d6455922c7e8a1bae3cc6f5dcf4a65809c39af8dabe257b435850a7f9",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:deps"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 5.7,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:deps.log",
+        "sha256": "14f26d1ba022aa6e2cc0e55ab5bd639e6cec6a89ca9e7280169bbee72fcdc435",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:lock"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 0.12,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:lock.log",
+        "sha256": "bddc3e8d9724222eb10cc80d361c7484ee22df43da479dc7928af864a4bab133",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:native"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 0.12,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:native.log",
+        "sha256": "c5f4c9b720d0153c4a94f84facd376703dfe58b672bc7e8a4839977d6bf2e97e",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:packed:release"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 68.34,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:packed:release.log",
+        "sha256": "a043d7a0a7ff2581c08120add15cb4b8495803e1e5577d64d7c2aceb29ad277d",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:source:release"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 2.89,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:source:release.log",
+        "sha256": "0a52d9fd65c9781f4d6b0a4b1ce7d5cb48f20e1a4434edbe3022d4e7ad120915",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:tree-shaking"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 0.6,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:tree-shaking.log",
+        "sha256": "5fd25ae50cb231c17dd2d2cf31e2015c6e96e3ad87d91d89cdd1c3f452c8dd11",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "test:types"
+        ],
+        "cwd": "/work",
+        "exit": 0,
+        "seconds": 0.7,
+        "log": "/tmp/tangle-jaren-0843/jresults/test:types.log",
+        "sha256": "980a2d901decc75c4900cf4c51b8eded8b53c2d817ee95261b6331235de659f1",
+        "node": "24.20.0",
+        "npm": "11.19.0",
+        "bun": "1.4.2"
+      }
+    ],
+    "toolchainNote": "Independent gate used Node 24.20.0/npm 11.19.0/Bun 1.4.2. Source archive capture/reconstruction used the recorded npm 11.12.1 pin. No runtime or archive identity was relabeled."
+  },
+  "pages": {
+    "versionAtMatrix": "0.21.0 with final Jaren 0.84.3 registry bytes",
+    "node": "24.20.0",
+    "passed": 118,
+    "failed": 0,
+    "skipped": 8,
+    "skipReasons": {
+      "paidProvider": 3,
+      "unavailableWebKitOPFS": 5
+    },
+    "coverage": [
+      "assistant settings, transcripts, cancellation, tools, focus and disposal",
+      "complete keyless game, scripted NPC success/failure, save/load and victory",
+      "Studio project editing, Data real WASM workers and Flow diagram/text/inspector execution",
+      "AI proposals share manual validation and revision guards",
+      "storage ownership, subscriptions, failure/retry and disposal",
+      "explicit non-secret import repeated without writes",
+      "both WebMCP roots, priority, aliases, invalid/partial/async registrations and pending/repeated cleanup"
+    ],
+    "native": [
+      {
+        "browser": "chromium",
+        "version": "149.0.7827.55",
+        "document": false,
+        "navigator": false,
+        "registration": "unavailable"
+      },
+      {
+        "browser": "firefox",
+        "version": "151.0",
+        "document": false,
+        "navigator": false,
+        "registration": "unavailable"
+      },
+      {
+        "browser": "webkit",
+        "version": "26.5",
+        "document": false,
+        "navigator": false,
+        "registration": "unavailable"
+      }
+    ]
+  },
+  "consumers": {
+    "preparationQualificationVersion": "0.21.0",
+    "node": "24.20.0",
+    "minimumNode": "24.0.0",
+    "bun": "1.4.0",
+    "npm": "11.12.1",
+    "packages": 13,
+    "exportsPerRuntime": 103,
+    "mappedDeclarationOccurrences": 260,
+    "editorTestsPerRuntime": 5,
+    "assistantTestsPerRuntime": 6,
+    "failed": 0,
+    "skipped": 0,
+    "strictDeclarations": true,
+    "browserBundles": true,
+    "finalRelease": "The same full consumer gate is required by close-out for the prepared 0.21.1 archives."
+  },
+  "benchmarks": {
+    "paidCalls": 0,
+    "config": {
+      "holds": 44,
+      "gaps": 0
+    },
+    "mas": {
+      "runtimeOracles": 11,
+      "registeredRefusals": 7,
+      "substrate": 7,
+      "durability": 6
+    },
+    "longHorizon": {
+      "rows": 52,
+      "scriptedDepthSuccess": "8/8 at depths 0, 1 and 2; deeper execution costs more calls"
+    },
+    "retrieval": {
+      "rows": 12,
+      "sizes": [
+        1000,
+        10000
+      ],
+      "questions": 160,
+      "oracle": "1.000 at each cutoff",
+      "nearRecall10At10000": 0.05,
+      "tagRecencyRecall10At10000": 0.0125
+    },
+    "recallQuality": {
+      "rows": 5,
+      "dataset": "authored relevance-tiny fixture",
+      "annDecision": "retain exact; no contender cleared all bars"
+    },
+    "refinementPressure": {
+      "policies": 7,
+      "clearedBars": 4,
+      "didNotClearBars": 3,
+      "limits": "Measured policy comparisons; weaker baselines remain reported failures, not release test failures."
+    },
+    "retention": {
+      "rows": 16,
+      "decision": {
+        "archive": "unreferenced",
+        "goal": "lossless-dictionary",
+        "rationale": "Refuse an impossible budget; preserve admitted references and exact progress evidence."
+      }
+    },
+    "locomo": {
+      "keyless": true,
+      "recall20Policies": 0.2414,
+      "recall20PoliciesOff": 0.2505,
+      "differencePercentagePoints": -0.91,
+      "limit": "Known policy loss retained; lexical hash embeddings do not establish production model quality."
+    },
+    "historyStrategy": {
+      "nodeP95Speedup": 1.5200797208268466,
+      "bunP95Speedup": 1.305147377000165,
+      "hostRows": "5000 to 50, identical results",
+      "limit": "Synthetic warm SQLite measurements under concurrent qualification load; not production latency claims."
+    },
+    "artifacts": [
+      {
+        "path": "benchmark/migration/jaren-0.84.3/long-horizon.json",
+        "sha256": "b372eeb2b34ae85b88bcbe486b07fb0758db8c28bb3f2aae128f6209edbe7ce3"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/recall-quality.json",
+        "sha256": "aa2b4f9bab508f222aa7b997ce29ba4003a9307f87d91b6466055ea173924934"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/refinement-pressure.json",
+        "sha256": "cdc9bfa8c226955e6e279b21878c6960b500e070bc686266c06d42a66e374d89"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/retention.json",
+        "sha256": "491fbb232a2f96de803d98a6d564414e19d3e319cec41bbc6c7a224b06b1b3e9"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/retrieval.json",
+        "sha256": "b82350d8cbd9c90567fc62b7689048c123784e4ae5941208704552feacd77d99"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/strategies-bun.json",
+        "sha256": "5146ca10cef94cb75c5947adcf490e48a9974c1eac884e2c0495bc72fbdd7ac0"
+      },
+      {
+        "path": "benchmark/migration/jaren-0.84.3/strategies-node.json",
+        "sha256": "106aee814c37345cf68ab12d0adbb83229fe9e00e393b71f9f20f3722cf94435"
+      }
+    ]
+  },
+  "history": {
+    "rewritten": false,
+    "filteredMerge": false,
+    "originalMigrationAndPaidReceiptsPreserved": true,
+    "originalReleaseRecord": "releases/0.21.0.json",
+    "candidateArchivePathChange": "The active 0.84.0 foundation manifest is preserved by the original commit; the 0.84.3 capture is archived under foundations-0.84.3.json after registry cutover."
+  },
+  "compatibility": {
+    "records": "Ledger/memory/evidence and embedding formats retained; no automatic cross-origin or credential transfer.",
+    "checkpoints": "MAS identity contains Flow and mechanism versions. Mismatched 0.84.0 or 0.21.0 executable identities refuse TMAS2002 before effects; no automatic conversion.",
+    "webmcp": "Stock browsers expose neither native root. Injected coverage is separate from unavailable native integration."
+  },
+  "resolvedQualificationIssues": [
+    "Switching Node via PATH selected npm 11.17.0: initial source run had 1373 passes and 6 release-tool failures. Explicit npm 11.12.1 made the full gate green; Node was then aligned to the operator-selected 24.20.0.",
+    "A second attempted PATH correction still selected npm 11.19.0 and was terminated before qualification; an isolated npm 11.12.1 installation fixed tool selection.",
+    "The first browser matrix ran the distrobox as root; 42 Firefox launches refused a user-owned home. An initial regular-user retry refused root-owned generated output. Restoring that output ownership and running as the regular user passed all three engines.",
+    "Desktop smoke initially used notes without its required port-9090 fixture; reusing that database also exposed stale run history in the harness waits. Fresh disposable databases and the documented fixture passed source Chromium and foreign-cwd binary WebKit.",
+    "npm retained file: lock resolutions when manifests changed to identical registry versions. Verified registry URLs replaced those entries and jaren:check now refuses that drift.",
+    "Release preparation rejected a prior committed local release behind remote main. Regression coverage now preserves the prior release record and commit, distinguishes later drafts, and rejects an unprepared committed version."
+  ],
+  "commands": [
+    {
+      "command": [
+        "node",
+        "scripts/jaren-artifacts.ts",
+        "--capture",
+        "/tmp/tangle-jaren-0843/jaren"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 26.83,
+      "log": "/tmp/tangle-jaren-0843/capture.log",
+      "sha256": "c5b1a24dcf728f84b61dece42b7a7e39f40643804da2359d9ce97e32ee8a28f2",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/jaren-artifacts.ts",
+        "--bootstrap"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 33.13,
+      "log": "/tmp/tangle-jaren-0843/t-bootstrap.log",
+      "sha256": "a28587daf13071aaa0d5cf776265656744ecf7f87d1894f19065a8b306df6bc2",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/jaren-artifacts.ts",
+        "--bootstrap"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.1,
+      "log": "/tmp/tangle-jaren-0843/t-bootstrap-repeat.log",
+      "sha256": "d62d37d793a8f8de9f2483d5997679fa17d1c1c36888ce9905dc1145ad67aae3",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.86,
+      "log": "/tmp/tangle-jaren-0843/registry-install-final.log",
+      "sha256": "8a24280fb3b842257884ad583ce7228cc358f8a1508382487d82a287325f3df7",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "node",
+        "/tmp/tangle-jaren-0843/verify-installed.mjs"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.07,
+      "log": "/tmp/tangle-jaren-0843/registry-installed-bytes.log",
+      "sha256": "c0f5a824f26a470171ef90537344c15b67aedbebeff60244478e949e9b03fe0a",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "jaren:check"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.16,
+      "log": "/tmp/tangle-jaren-0843/registry-check-final.log",
+      "sha256": "ca97d17458eb4024fca47a958e68b6a86249648fcb215dede1c4b1ffaf38b560",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "check"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 55.54,
+      "log": "/tmp/tangle-jaren-0843/t-source-release.log",
+      "sha256": "4651fcb1814ab0bf579ecbdfef661cd80bf110b80c20e1114876ba243ab261e2",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "test:release"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 3.72,
+      "log": "/tmp/tangle-jaren-0843/local-release-regression.log",
+      "sha256": "5ef751bfe961e763b664be0094914fa66c5917c77df57a129de399f59ec41370",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "release:build"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 13.08,
+      "log": "/tmp/tangle-jaren-0843/t-release-build.log",
+      "sha256": "26dee413471136d289a144e74b08e540faaa3d63c83c837fe22337b440cf790f",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "release:test"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 9.5,
+      "log": "/tmp/tangle-jaren-0843/t-release-test.log",
+      "sha256": "ab5a2fe3ac3a1a2c061f587cc075cab531c721dbfba248567ecc59bc0e134ad5",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "release:test",
+        "--",
+        "--runtime-only"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 4.02,
+      "log": "/tmp/tangle-jaren-0843/t-minimum.log",
+      "sha256": "e56163d3a5329d7703a2c416ef34a8593c65accdcad67e435146932dd986e7c2",
+      "node": "24.0.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "pages:build"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.27,
+      "log": "/tmp/tangle-jaren-0843/pages-build-registry.log",
+      "sha256": "494725225c45061d735790c939b21a34dbfd615f8a7475d36be0c21983d236db",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "--user",
+        "1000",
+        "-e",
+        "PATH=/tmp/tangle-jaren-0843/npm-bin:/home/joham/.nvm/versions/node/v24.20.0/bin:/home/joham/.bun/bin:/usr/bin:/bin",
+        "-e",
+        "PLAYWRIGHT_PACKAGE=/tmp/tangle-jaren-0843/jaren/package.json",
+        "-w",
+        "/home/joham/projects/jp/tangleai",
+        "ubuntu-playwright",
+        "npm",
+        "run",
+        "pages:test:browser"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 96.58,
+      "log": "/tmp/tangle-jaren-0843/t-pages-browser-registry.log",
+      "sha256": "1bb6e8562e71131947dc86fa18131f7c305c07ba860770288d7dea9e8bb7539c",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "--user",
+        "1000",
+        "-e",
+        "PATH=/home/joham/.nvm/versions/node/v24.20.0/bin:/usr/bin:/bin",
+        "ubuntu-playwright",
+        "node",
+        "/tmp/tangle-jaren-0843/native.mjs"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 3.67,
+      "log": "/tmp/tangle-jaren-0843/native-webmcp.log",
+      "sha256": "a92563a5fe73e573d028b277d66e53771fc2d8a860bb40b3b0ab8a79766a0d83",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "-e",
+        "PATH=/home/joham/.nvm/versions/node/v24.19.0/bin:/home/joham/.bun/bin:/usr/bin:/bin",
+        "-e",
+        "PLAYWRIGHT_PACKAGE=/tmp/tangle-jaren-0843/jaren/package.json",
+        "-w",
+        "/home/joham/projects/jp/tangleai",
+        "ubuntu-playwright",
+        "node",
+        ".e2e/pages.e2e.mjs"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.81,
+      "log": "/tmp/tangle-jaren-0843/t-landing.log",
+      "sha256": "cced10a2e45152075229224e100029c0f77e9814ce8c973d8edca67620393116",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "-e",
+        "PATH=/home/joham/.nvm/versions/node/v24.19.0/bin:/home/joham/.bun/bin:/usr/bin:/bin",
+        "-e",
+        "PLAYWRIGHT_PACKAGE=/tmp/tangle-jaren-0843/jaren/package.json",
+        "-e",
+        "SCRIPTED=1",
+        "-e",
+        "DRIVE_OUTPUT=/tmp/tangle-jaren-0843/assistant",
+        "-w",
+        "/home/joham/projects/jp/tangleai",
+        "ubuntu-playwright",
+        "node",
+        ".e2e/drive-assistant.mjs",
+        "jaren-0843",
+        "Summarize the available editor tools. || Confirm the current route."
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 5.13,
+      "log": "/tmp/tangle-jaren-0843/t-assistant-scripted.log",
+      "sha256": "0ed4eac73664eeac1a1d82bb6a7b9c947ad6ec45d06932d24141c207fcde5123",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "desktop:ui"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.24,
+      "log": "/tmp/tangle-jaren-0843/desktop-ui.log",
+      "sha256": "9ccb0cc67968ea629d911428a56a65f09f904d695057565aa28f7f9985786399",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "desktop:compile"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 3.26,
+      "log": "/tmp/tangle-jaren-0843/desktop-compile.log",
+      "sha256": "46f811adcd7d92f3fbddca08b773c1dd4285863d93ed62db53e8062e517ee0a7",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "-e",
+        "TANGLE_URL=http://127.0.0.1:4717",
+        "--user",
+        "1000",
+        "-e",
+        "PATH=/home/joham/.nvm/versions/node/v24.19.0/bin:/home/joham/.bun/bin:/usr/bin:/bin",
+        "-e",
+        "PLAYWRIGHT_PACKAGE=/tmp/tangle-jaren-0843/jaren/package.json",
+        "-e",
+        "TANGLE_SHOTS=/tmp/tangle-jaren-0843/desktop-shots",
+        "-w",
+        "/home/joham/projects/jp/tangleai",
+        "ubuntu-playwright",
+        "node",
+        ".e2e/desktop.e2e.mjs"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 2.61,
+      "log": "/tmp/tangle-jaren-0843/desktop-browser-clean.log",
+      "sha256": "84297eb4b48ae9c9c80400ca83e7da5ff41a856629ebd08cfb7a69b1130524b6",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "podman",
+        "exec",
+        "--user",
+        "1000",
+        "-e",
+        "PATH=/home/joham/.nvm/versions/node/v24.19.0/bin:/home/joham/.bun/bin:/usr/bin:/bin",
+        "-e",
+        "PLAYWRIGHT_PACKAGE=/tmp/tangle-jaren-0843/jaren/package.json",
+        "-e",
+        "TANGLE_SHOTS=/tmp/tangle-jaren-0843/binary-shots",
+        "-e",
+        "TANGLE_URL=http://127.0.0.1:4718",
+        "-e",
+        "TANGLE_ENGINE=webkit",
+        "-w",
+        "/home/joham/projects/jp/tangleai",
+        "ubuntu-playwright",
+        "node",
+        ".e2e/desktop.e2e.mjs"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 3.29,
+      "log": "/tmp/tangle-jaren-0843/binary-browser-clean.log",
+      "sha256": "84297eb4b48ae9c9c80400ca83e7da5ff41a856629ebd08cfb7a69b1130524b6",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:config"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.72,
+      "log": "/tmp/tangle-jaren-0843/config-release.log",
+      "sha256": "58237e7506a16bb8bc574b7226e00c12014c6664787c97891112e1e1c1af0254",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:config:queries"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.53,
+      "log": "/tmp/tangle-jaren-0843/config-queries-release.log",
+      "sha256": "ac215205edc5fd93d708604c4a1c1ef01ecf471b6d3807169517fd64099e8787",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:mas"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.68,
+      "log": "/tmp/tangle-jaren-0843/mas-release.log",
+      "sha256": "ee015729194decd2504e23d3a8980da51307feafa2d9c83de5ef182501d3464a",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:mas:handoff"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.42,
+      "log": "/tmp/tangle-jaren-0843/mas-handoff-release.log",
+      "sha256": "b3f6615dfce0f52400b388e2e287cd07042edfb4e16f81a9cf08496bfd69c9a1",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "skeleton"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.34,
+      "log": "/tmp/tangle-jaren-0843/skeleton-final.log",
+      "sha256": "5c2a81bbb0e6953a34d3128f95394708d2ae7c75235428a5e4b2e8f3000562ef",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "mas:smoke"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.75,
+      "log": "/tmp/tangle-jaren-0843/mas-smoke-final.log",
+      "sha256": "151a4a59310f5eae67a1fb49314591aaa06c436ce1b1f438aa800909402e6996",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:long-horizon",
+        "--",
+        "--output",
+        "json",
+        "--filepath",
+        "/tmp/tangle-jaren-0843/long-horizon-final-result.json"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 2.9,
+      "log": "/tmp/tangle-jaren-0843/long-horizon-final.log",
+      "sha256": "e42b8cf8d092a646493f06693fa14515e8235def38999601996e6cf73a895d9c",
+      "node": "24.20.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "documents:benchmark"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.8,
+      "log": "/tmp/tangle-jaren-0843/documents.log",
+      "sha256": "270a6dba6740f6dd8251466b7c2d2a33afdfb6c885034bad9c53336abb4fc8e8",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:locomo:census"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.31,
+      "log": "/tmp/tangle-jaren-0843/census.log",
+      "sha256": "35dba133557214cbd727e46e36c4e0fd2f89156a4dbe95a95043c3e13741ab09",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:locomo:recall"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 61.09,
+      "log": "/tmp/tangle-jaren-0843/recall.log",
+      "sha256": "b3a6da7835bac002c6052fb2c1365b91e2fddbe8fd84dd1ebe20645788826de8",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:locomo:qa"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 72.54,
+      "log": "/tmp/tangle-jaren-0843/qa.log",
+      "sha256": "d8e0cc452bafa4e42cb1bade42bb1f20059d680d781f1fb311a4e53d1a6a6b9b",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:grounding"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.11,
+      "log": "/tmp/tangle-jaren-0843/grounding.log",
+      "sha256": "81e36ed1890bceaac1b6602f5c3c1e31d4868c31e41896e83e57cff206d7def2",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:retrieval",
+        "--",
+        "--output",
+        "json",
+        "--filepath",
+        "/tmp/tangle-jaren-0843/retrieval-result.json"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 662.16,
+      "log": "/tmp/tangle-jaren-0843/retrieval.log",
+      "sha256": "ab904278e72b2492c735a9f5399a288bd5ca8e0b265095168776fbbcbc9ca224",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:recall-quality",
+        "--",
+        "--dataset",
+        "benchmark/fixtures/relevance-tiny/manifest.json",
+        "--ann",
+        "--filepath",
+        "/tmp/tangle-jaren-0843/recall-quality-result.json"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.16,
+      "log": "/tmp/tangle-jaren-0843/recall-quality.log",
+      "sha256": "53295839802bc511194c9b2806eb26d41eacee2f34e242f99c0ee2b791a8ffc8",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:refinement-pressure",
+        "--",
+        "--directory",
+        "/tmp/tangle-jaren-0843/pressure-run",
+        "--filepath",
+        "/tmp/tangle-jaren-0843/pressure-result.json"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 1.77,
+      "log": "/tmp/tangle-jaren-0843/pressure.log",
+      "sha256": "be23acd46e06cbefe3d06e96600c94072635b9f5f2e3fe1923a497ebb3a0fa31",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:retention",
+        "--",
+        "--filepath",
+        "/tmp/tangle-jaren-0843/retention-result.json"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.26,
+      "log": "/tmp/tangle-jaren-0843/retention.log",
+      "sha256": "da1a26cdb91a5615b795da5c367e696c00563e46e9b11166f2d6708e166af71f",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "npm",
+        "run",
+        "benchmark:patch-decoding"
+      ],
+      "cwd": "/home/joham/projects/jp/tangleai",
+      "exit": 0,
+      "seconds": 0.2,
+      "log": "/tmp/tangle-jaren-0843/patch-decoding.log",
+      "sha256": "1a7488e5021ea8ec8145aa6d396a9d148eb0059bbbe497dd928d0cdeb0a9c725",
+      "node": "24.19.0",
+      "npm": "11.17.0"
+    },
+    {
+      "command": [
+        "node",
+        "/home/joham/projects/jp/tangleai/benchmark/jaren-strategies.ts"
+      ],
+      "cwd": "/tmp/tangle-jaren-0843/strategies",
+      "exit": 0,
+      "seconds": 1.76,
+      "log": "/tmp/tangle-jaren-0843/strategies-node.log",
+      "sha256": "106aee814c37345cf68ab12d0adbb83229fe9e00e393b71f9f20f3722cf94435",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    },
+    {
+      "command": [
+        "bun",
+        "/home/joham/projects/jp/tangleai/benchmark/jaren-strategies.ts"
+      ],
+      "cwd": "/tmp/tangle-jaren-0843/strategies",
+      "exit": 0,
+      "seconds": 1.37,
+      "log": "/tmp/tangle-jaren-0843/strategies-bun.log",
+      "sha256": "5146ca10cef94cb75c5947adcf490e48a9974c1eac884e2c0495bc72fbdd7ac0",
+      "node": "24.19.0",
+      "npm": "11.12.1"
+    }
+  ],
+  "remaining": [
+    "Tangle npm publication is a manual author action; all 13 versions were absent when checked.",
+    "Push and deployment were not authorized.",
+    "Native WebMCP, WebKit OPFS and paid/live-provider evidence remain the recorded limitations.",
+    "No POLICY, GMPL, HERA, desktop redesign or later campaign was executed."
+  ]
+}

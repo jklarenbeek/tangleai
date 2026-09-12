@@ -2,33 +2,41 @@
 
 Jaren supplies independent generic engines, contracts and complete editors.
 Tangle owns the model, context and agent mechanisms, their Jaren integrations,
-the reusable assistant, and the Pages adventure. The source close-out uses
-Jaren 0.84.0 and Tangle 0.21.0. The [close-out receipt](migrations/jaren-ai/closeout.json)
-records the committed foundation, release inputs, commands and limits. Registry
-publication remains separate from this source close-out.
+the reusable assistant, and the Pages adventure. The current dependency update uses
+Jaren 0.84.3 and Tangle 0.21.1. The original [close-out receipt](migrations/jaren-ai/closeout.json)
+records the committed 0.84.0 migration; its foundation-manifest hash describes
+the bytes at Tangle commit `2fcb6b0dfbd3b5f390af8d8040e162d080653945`.
+The [0.84.3 qualification](migrations/jaren-ai/qualification-0.84.3.json) records
+the subsequent local update. Registry publication remains a separate, manual
+author action.
 
 ## Source and installation identity
 
 | Input | Identity |
 |---|---|
-| Jaren source release | `b111a633f6d35f00109902a16cc25776ccaaf4ea`, version `0.84.0` |
+| Current Jaren source | `ac8749711f5d058251f72842ce7e0095b389403f`, version `0.84.3`; remote `main` and `v0.84.3` agreed when fetched |
+| Original migration source | `b111a633f6d35f00109902a16cc25776ccaaf4ea`, version `0.84.0` |
 | Foundation source state | Committed; empty patch SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
-| Tangle source release | `0.21.0`; the release commit carries [the prepared release record](../releases/0.21.0.json) |
+| Tangle release | `0.21.1`, prepared through the fixed Changesets group from `2fcb6b0dfbd3b5f390af8d8040e162d080653945` (`0.21.0`); its commit carries [the release record](../releases/0.21.1.json) |
 | Source provenance | Original execution bases remain recoverable; the Jaren gitlink now names the committed AI-free source |
-| Foundation mode | 23 complete AI-free Jaren tarballs; exact relative `file:dist/jaren/*.tgz` root dependencies and matching lock integrity |
-| Toolchains | Jaren Node `24.20.0`, Bun `1.4.2`; Tangle Node `24.19.0`, Bun `1.4.0`; npm `11.12.1` |
+| Foundation mode | 23 published AI-free Jaren packages; exact `0.84.3` dependencies and registry URLs/integrities in the lock |
+| Toolchains | Jaren Node `24.20.0`, Bun `1.4.2`; Tangle Node `24.20.0`, Bun `1.4.0`; npm `11.12.1` |
 
-The [foundation manifest](migrations/jaren-ai/foundations.json) records each
-archive's SHA-256, npm integrity, complete member hashes and dependency edges.
-The current source patch is empty: bootstrap builds the exact committed
-gitlink in a disposable checkout. A committed source receipt cannot carry an
-uncommitted patch. Capture cleans generated output
-before building: declaration emitters otherwise leave files for removed modules.
-No installed package is patched, repaired, source-linked or silently substituted.
-The verifier rejects missing/altered archives, extra installed files, unrecorded
-or nested legacy foundations, unsafe member paths, changed edges and wrong pins.
-A missing archive never permits bootstrap to overwrite a different existing one.
+The [0.84.3 foundation manifest](migrations/jaren-ai/foundations-0.84.3.json)
+preserves the source-built archive hashes, complete member inventories and
+AI-free dependency edges. The [registry receipt](migrations/jaren-ai/registry-0.84.3.json)
+records all 23 published tarball URLs: their downloaded bytes match those
+source-built archives exactly. The installed closure was checked against the
+same complete member inventories. Root and workspace dependencies now use
+exact `0.84.3` registry versions; the checker refuses a stale `file:` lock entry.
+The active candidate `foundations.json` has been archived under its versioned
+name, so CI and ordinary installs use npm without an archive bootstrap.
 
+During qualification, capture and clean bootstrap both built the exact committed
+source with an empty patch. A repeated bootstrap made no writes. Those candidate
+reconstruction checks remain available for future unpublished foundations; no
+installed package was patched or source-linked. The empty `foundations.patch`
+and earlier close-out receipt are historical migration material.
 The earlier 0.83.3 candidate is preserved in [its manifest](migrations/jaren-ai/candidate-0.83.3.json)
 and [patch](migrations/jaren-ai/candidate-0.83.3.patch), with the
 [pre-closeout verification](migrations/jaren-ai/verification.json). Those dated
@@ -180,20 +188,22 @@ is promised. Pages conservatively uses one ledger writer on every browser.
 
 MAS executable identity is
 `tangle-mas/3:flow/<version>:models/<version>:context/<version>:agents/<version>:<registry>`.
-Legacy executable checkpoints are refused with `TMAS2002` before effects or
-writes; repeating the attempt leaves the checkpoint intact. Ordinary records
+Mismatched executable checkpoints are refused with `TMAS2002` before effects or
+writes; repeating the attempt leaves the checkpoint intact. This includes a
+0.84.0 Flow execution identity when the runtime now uses Flow 0.84.3, as well as
+legacy executable identity formats. Ordinary records
 remain readable. No automatic legacy executable conversion is claimed.
 
 ## Verification commands and measured gates
 
-Initialize the source submodule, use the foundation manifest's toolchain and
-bootstrap **before** dependency installation:
+Use Node 24.20.0, npm 11.12.1 and Bun 1.4.0. The source submodule remains
+an audit input; installed Jaren code comes from npm:
 
 ```sh
 git submodule update --init vendor/jarenjs
-# Node 24.20.0, npm 11.12.1; this command has no installed dependencies:
-node scripts/jaren-artifacts.ts --bootstrap
-# Restore Tangle Node 24.19.0, npm 11.12.1 and Bun 1.4.0:
+node --version
+npm --version
+bun --version
 npm ci --ignore-scripts
 npm run check
 npm run release:build
@@ -203,16 +213,23 @@ npm run pages:test:browser
 ```
 
 Run declaration/build commands sequentially in a checkout: they own the same
-generated declaration directories. CI's composite setup performs the bootstrap
-under the recorded Jaren pins, then restores its requested Tangle runtime.
-The Windows and minimum-Node jobs use that ordering too. A fresh source
+generated declaration directories. CI's composite setup reads `.nvmrc` and installs the exact registry lock.
+Historical candidate checkouts bootstrap under their recorded Jaren pins before
+installing. During the original migration, a fresh source
 reconstruction reproduced all 23 archives; a second bootstrap preserved all
 archive mtimes, and two clean installs verified every byte and lock edge.
 The initial independent Tangle gate passed all 1,377 tests after generating its
 optional local LoCoMo oracle with the existing Python instrument. Its 4,602
 dataset-derived rows remain ignored and are never redistributed.
 
-| Measured gate | Result |
+The following table preserves the original 0.84.0 migration results. Current
+0.84.3 commands, runtimes, counts and benchmark limits are recorded in the
+[qualification receipt](migrations/jaren-ai/qualification-0.84.3.json): the
+0.21.1 source gate passes 1,381 tests, including the two new local-release
+regressions. The three-engine Pages matrix passes 118 cases with eight declared
+skips; the independent Jaren gate passes 14,223 source and 409 browser cases.
+
+| Original measured gate | Result |
 |---|---|
 | Jaren full source/site gate, including independent checkout with six test submodules and no Tangle sibling | 14,263 tests: 14,222 pass, 41 existing skips; 2,243 suites; 8,261/8,261 functions; zero dead files/functions and lint findings |
 | Jaren browser matrix | 409 pass, 5 platform skips across Chromium/Firefox/WebKit |
@@ -223,7 +240,7 @@ dataset-derived rows remain ignored and are never redistributed.
 | Config and MAS | Config 44/44; MAS seven substrate probes, six durability probes, 11 runtime oracles and seven exact refusals |
 | External Tangle distributions | 13 JavaScript/declaration packages; 103 exports on Node/Bun; 260 mapped type occurrences; five editor and six assistant cases per runtime; strict types and browser bundles pass; minimum Node 24.0.0 also passes |
 
-The Jaren dependency audit accepts 24 existing advisories confined to benchmark
+The original Jaren dependency audit accepted 24 existing advisories confined to benchmark
 rivals/build tooling; none reach shipped packages. These are declared existing
 exceptions, not newly introduced runtime dependencies. Native-browser and
 paid-provider skips are not counted as successful integrations.
@@ -276,19 +293,24 @@ Checked and dropped suspicions:
   runtime imports, orphan worker/styles and unexecuted inherited JS tests were
   checked through source, operation, browser and packed-consumer gates.
 
-Jaren's AI-free source is committed at `b111a633f6d35f00109902a16cc25776ccaaf4ea` for 0.84.0,
-and Tangle's gitlink names that revision. The five introduced packages join the
+The original AI-free migration committed Jaren
+`b111a633f6d35f00109902a16cc25776ccaaf4ea` for 0.84.0. The current gitlink
+advances to committed Jaren 0.84.3 at `ac8749711f5d058251f72842ce7e0095b389403f`.
+The original 0.21.0 release record is preserved: its input hash qualifies the
+original migration. The patch Changeset prepared 0.21.1 through the existing
+fixed-group workflow. The commit carrying `releases/0.21.1.json` identifies
+this release; generated gate and consumer receipts bind its exact inputs. The five introduced packages join the
 existing fixed Changesets group in 0.21.0; the tracked release record identifies
 its source commit and the generated full gate binds the exact input fingerprint
 and package artifacts. The original repository history was not rewritten or
 merged through a filtered history.
 
-The Jaren close-out protocol deploys its website, tags and pushes after its
-committed gate passes. Tangle's close-out command commits locally; its push and
-deployment remain separate. Neither operation establishes npm availability.
-Publication preflight still refuses candidate artifact mode, including artifacts
-from committed source. A registry release must publish and verify the AI-free
-Jaren closure first, switch Tangle's exact dependencies and lock to that registry
-release, then repeat release verification and publication availability checks.
-Pages remains independent of Tangle npm publication. POLICY, later Tangle
-campaigns and generic Jaren roadmap work remain parked.
+The Jaren 0.84.3 foundation release is available from npm and its archives were
+verified against the source-built closure. Tangle's package versions were absent from npm when checked. The authorized
+0.21.1 close-out uses a new release record and preserves the original 0.21.0
+record. Preparation now supports a previously committed local release before
+its push, while rejecting an unprepared version edit as a base. The complete
+release gate and exact archive identities are generated under `dist/release`.
+Publication belongs to the author and is performed manually; push, deployment
+and publication are separate from the local close-out. Pages can build from local Tangle source independently of npm
+publication. POLICY and later campaigns remain parked.

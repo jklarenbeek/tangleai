@@ -8,8 +8,8 @@ import { readFoundationArtifacts, verifyFoundationArtifacts, verifyFoundationSou
 const root = fileURLToPath(new URL('../', import.meta.url));
 const candidate = readFoundationArtifacts(root);
 if (candidate) { verifyFoundationSourcePin(root, candidate); verifyFoundationArtifacts(root, true); }
-const version = candidate?.source.version ?? '0.83.3';
-const commit = candidate?.source.commit ?? '3491513e164dc30e429c84e709bd738841f4df16';
+const version = candidate?.source.version ?? '0.84.3';
+const commit = candidate?.source.commit ?? 'ac8749711f5d058251f72842ce7e0095b389403f';
 const artifacts = new Map(candidate?.packages.map(pkg => [pkg.name, pkg]) ?? []);
 const read = async (path: string) => JSON.parse(await readFile(root + path, 'utf8'));
 const manifests = ['package.json', 'benchmark/package.json'];
@@ -52,6 +52,8 @@ for (const [path, raw] of Object.entries(lock.packages)) {
     assert.equal(pkg.resolved, artifactSpecifier(artifact), `${path}: lockfile artifact source drift`);
     assert.notEqual(name, '@jarenjs/ai', 'Legacy AI cannot enter the cutover closure');
     assert.equal((raw as {integrity?:string}).integrity, artifact.integrity, `${path}: lockfile artifact integrity drift`);
+  } else {
+    assert.equal(pkg.resolved, `https://registry.npmjs.org/${name}/-/${name.slice('@jarenjs/'.length)}-${version}.tgz`, `${path}: foundation must resolve to the exact npm archive`);
   }
   assert.equal(pkg.version, version, `${path}: lockfile version`);
   assert.equal((await read(`${path}/package.json`)).version, version, `${path}: installed version`);
