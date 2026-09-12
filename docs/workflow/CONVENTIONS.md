@@ -48,6 +48,7 @@ Every other workflow file points here instead of restating these.
 |---|---|---|
 | The gate | `npm run check` (strict tsc + all `node --test` suites) | every change, before every commit |
 | Release | `npm run release:verify` (full gate, version record, JavaScript tarballs, external consumers and Pages build) | before release closeout |
+| Outcome lifecycle | `npm run outcomes:smoke`, `npm run benchmark:outcome -- --require complete`, `npm run outcomes:contract:check` | when outcome schemas, lifecycle, guards, storage or measurement change |
 | Policy contract | `npm run policy:check`, `npm run policy:contract:check`, `npm run emit:policy -- --check` (also in `check`) | when memory defaults or their contract change |
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |

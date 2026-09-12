@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/search",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Tangle AI search — a zero-dependency SearxNG client.",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/core": "^0.23.0"
+    "@tangleai/core": "^0.24.0"
   },
   "private": false,
   "types": "./src/index.ts",

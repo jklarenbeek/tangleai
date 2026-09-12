@@ -21,9 +21,6 @@
  */
 
 import { readdir, readFile } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { join } from 'node:path';
 
 import { canonicalSha256 } from '@jarenjs/json/canonical';
@@ -68,7 +65,7 @@ import type {
   SuiteProbe,
 } from './mas-conformance.types.ts';
 
-const exec = promisify(execFile);
+import { sourceManifest } from './source-manifest.ts';
 
 export const MANIFEST_PATH = 'benchmark/fixtures/mas/manifest.json';
 export const REPORT_PATH = 'benchmark/results/mas-conformance.json';
@@ -105,6 +102,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
   'benchmark/lib/mas-conformance.ts',
   'benchmark/lib/mas-conformance.types.ts',
   'benchmark/lib/mas-runner.ts',
+  'benchmark/lib/source-manifest.ts',
   'benchmark/lib/validate.ts',
   'benchmark/mas-conformance.ts',
   'benchmark/schemas/mas-conformance.schema.json',
@@ -114,14 +112,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
 
 /** HEAD, cleanliness, and the digest of every manifest file. No clock. */
 export async function conformanceSource(root = process.cwd()): Promise<MasConformance['source']> {
-  const head = (await exec('git', ['rev-parse', 'HEAD'], { cwd: root })).stdout.trim();
-  const clean = (await exec('git', ['status', '--porcelain'], { cwd: root })).stdout.trim() === '';
-  const files: Array<{ path: string, sha256: string }> = [];
-  for (const path of [...SOURCE_MANIFEST].sort()) {
-    const bytes = await readFile(join(root, path));
-    files.push({ path, sha256: createHash('sha256').update(bytes).digest('hex') });
-  }
-  return { head, clean, files, sha256: await canonicalSha256({ head, files }) };
+  return sourceManifest(root, SOURCE_MANIFEST);
 }
 
 /** Installed foundation and executed mechanism identities, name-sorted. */

@@ -11,7 +11,7 @@ Keep generic validation, guarded mutation, contract projection, typed document
 capture and Studio/Data/Flow editing in Jaren. Jaren has no Tangle dependency.
 Models, context and agents are reusable Tangle mechanisms with injected host
 services; they never import the higher-level core/config/memory/pipeline/store
-or MAS policy packages. Jaren-specific AI authors live in `@tangleai/jaren`
+or MAS/outcomes policy packages. Jaren-specific AI authors live in `@tangleai/jaren`
 and use public Jaren operations. Tangle document pens live in `@tangleai/linq`,
 with one `/program` pen today; they produce immutable JSON through Jaren
 authoring primitives and import no execution engines. The existing applications and policy packages
@@ -32,7 +32,8 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
 | LLM judgment | `@tangleai/models` `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
-| self-refinement | `@tangleai/context` RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
+| self-refinement | `@jarenjs/core/guarded` generic guarded refinement and `@jarenjs/json/patch`; `@tangleai/agents` `createRefiner` specializes RFC-6902 mutation for the context ledger | `@tangleai/outcomes` uses the generic engine for bounded domain artifacts; skill-loop policy remains open |
+| evidenced outcomes | Jaren validation, canonical hashing, schema emission, contract local/HTTP bindings and database transactions; Tangle model/configuration/budget seams | `@tangleai/outcomes` owns immutable lifecycle records, domain gates, host authority, replay and version/revision CAS; `@tangleai/store` owns atomic persistence and memory projection. Artifact versions are not memory units |
 | orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@tangleai/models`, `@tangleai/context` and `@tangleai/agents` for model, context and tool-loop mechanisms | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
 | scheduling | `@jarenjs/core/schedule` bounded, fair, per-scope admission and drain | Document HTTP admission uses the suite scheduler; consolidation cadence remains a Tangle policy (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
@@ -40,7 +41,8 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 
 ## What the suite already has — read before building
 
-Current audit: [JarenJS 0.83.3 integration](JARENJS_INTEGRATION.md), 2026-09-11.
+Current ownership and Jaren 0.84.3 baseline: [migration handoff](JAREN_AI_MIGRATION.md).
+The [0.83.3 integration audit](JARENJS_INTEGRATION.md) retains its historical measurements.
 The following historical baseline retains its original `@jarenjs/ai` names
 and records the 0.56.0 adoption; the current audit supersedes
 its availability claims and documents the newer runtime seams.
@@ -60,7 +62,7 @@ otherwise write.
 | Cost, and a run that stops instead of overrunning | `createBudgetAccount`, `BUDGET_DIMENSIONS` (`turns`/`tokens`/`ms`), the agent's `budget` with `spent` seeded for resume, a named `stopReason`, and one account shared by a whole recursion tree | **Landed** — `benchmark/lib/locomo-qa.ts` meters every live call through one account; the temporal lane inherits it. The cost column is this, not `@tangleai/core/tokens`. The suite already prefers the provider's own `usage` and falls back to a 4-char estimate only when a token budget is set — `estimateTokens` stays a truncation helper and stops being a cost number. |
 | A trajectory to cluster into skills | `createTrajectory` (sequenced entries, excerpted answers, `summary()` by kind/depth), `describeTrajectory` | The skill loop. |
 | Skills as records, and getting them back into a prompt | `SKILL_SCHEMA`, `ledger.recallSkills({ near })`, the agent's `retrieval.skills` slot | The skill loop. |
-| Self-modification that cannot go rogue | `createRefiner`: RFC 6902 patch → shape → semantics-on-a-copy → ledger legality → commit with snapshot rollback; the base system prompt is not in the patched document at all | The skill loop, outcome-grounded decisions, the evolution loop. |
+| Self-modification that cannot go rogue | `@tangleai/agents` `createRefiner`: RFC 6902 patch → shape → semantics-on-a-copy → ledger legality → commit with snapshot rollback; the base system prompt is not in the patched document at all | The skill loop and repository evolution; outcome artifact refinement uses Jaren core/guarded directly. |
 | Structured output with a repair loop | `createStructuredOutput`, `unfence`, coded errors carrying a `docPath` into the offending document | The temporal lane (window extraction); landed as the answer path's category-5 judge. |
 | Constrained decoding against a local model | `@jarenjs/josl/gbnf` — a character-level GBNF for the llama.cpp family, beside the hosted `json_schema` twins the query and JSLT grammars publish | Config profiles, if a local provider becomes a profile. |
 | Reading memflow's TOML prompt packs | `parseToml` from `@jarenjs/josl` — passes the official toml-test 1.0.0 suite in strict mode, the only engine in its benchmark that does | Patterns as flow documents. Do not write a TOML reader. (The packs themselves stay Tangle's — see *What must never migrate down*; consuming the suite's parser is not migrating anything down.) |

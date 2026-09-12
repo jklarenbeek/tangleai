@@ -50,7 +50,7 @@ style.
 
 ## Operator conventions (binding)
 
-- Work lands on `master`, uncommitted, for human review. Never commit,
+- Work lands on `main`, uncommitted, for human review. Never commit,
   tag, push, or branch on your own initiative; the close-out protocol
   in `CONVENTIONS.md` §5 runs only when the operator explicitly asks,
   and what happens to an order after it lands is the operator's decision.

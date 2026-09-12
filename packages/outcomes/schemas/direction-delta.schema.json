@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/outcomes/direction-delta",
+  "$ref": "#/$defs/artifact",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "base"
+      ],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "predicted": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "predicted"
+      ],
+      "additionalProperties": false
+    },
+    "resolution": {
+      "type": "object",
+      "properties": {
+        "actual": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "actual"
+      ],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "offset"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

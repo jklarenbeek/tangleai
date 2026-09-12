@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "version": "0.24.0",
+  "baseVersion": "0.23.0",
+  "baseCommit": "19c0d20aa0308cc2a89cfb5a80dff7915edcff95",
+  "preparationCommit": "19c0d20aa0308cc2a89cfb5a80dff7915edcff95",
+  "initial": false,
+  "inputHash": "d463c248e3eedbd716fe8a62182c963e15ac839c9bfc44fa8fa8c8de728a6752",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/outcomes",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add the outcomes package for independently evidenced decisions, deterministic scoring, atomic confidence projection, bounded artifact refinement and explicitly approved promotion and rollback. The public operation contract, two-domain adapter kit and keyless example share the same scoped request receipts, one-use held-out gates, full head revision checks and interruption recovery.\n\nThe store adapter owns outcome records and memory changes in one SQLite transaction. The new pure confidence helper preserves fact fields; existing applyOutcome calls retain their original duplicate-citation and timestamp behavior and do not acquire a durable replay guarantee. No existing persisted memory format changes. Hosts opt into the new lifecycle, provide evidence and approval authority, and use a new artifact key for schema or policy changes. Scripted paired measurements and Node/Bun packed consumers qualify the mechanism; downstream domain integrations and automatic promotion remain separate work.",
+      "id": "evidenced-outcome-lifecycle"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.24.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.24.0"
+    }
+  ]
+}

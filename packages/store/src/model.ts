@@ -33,6 +33,26 @@ const ID: JsonSchema = { type: 'string', minLength: 1 };
 export const TANGLE_DB_MODEL = {
   $model: '0.1',
   collections: {
+    outcome_records: {
+      schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
+      key: '/id',
+      indexes: [{ name: 'by_scope_sequence', path: ['$.scopeId', '$.seq'] }, { name: 'by_artifact_kind', path: ['$.scopeId', '$.artifactKey', '$.kind'] }],
+    },
+    outcome_keys: {
+      schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
+      key: '/id',
+      indexes: [{ name: 'by_scope', path: '$.scopeId' }],
+    },
+    outcome_heads: {
+      schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
+      key: '/id',
+      indexes: [{ name: 'by_scope', path: '$.scopeId' }],
+    },
+    outcome_operations: {
+      schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
+      key: '/id',
+      indexes: [{ name: 'by_artifact', path: ['$.scopeId', '$.artifactKey'] }],
+    },
     memories: {
       schema: { type: 'object', required: ['id'], properties: { id: ID } },
       key: '/id',

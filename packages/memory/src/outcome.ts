@@ -14,6 +14,7 @@
 
 import type { MemoryUnit, OutcomeReport } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from './store.ts';
+import { cloneJson } from '@jarenjs/core/object';
 
 export interface OutcomeOptions {
   successBoost: number;
@@ -50,6 +51,19 @@ export interface ApplyOutcomeResult {
   missing: string[];
 }
 
+/** Detached confidence projection; preserves fact time and all other fields. */
+export function projectOutcomeConfidence(
+  unit: MemoryUnit,
+  category: OutcomeReport['outcome'],
+  options: OutcomeOptions = DEFAULT_OUTCOME_OPTIONS,
+): MemoryUnit {
+  const next = cloneJson(unit);
+  next.confidence = Math.min(options.maxConfidence, Math.max(
+    options.minConfidence, (unit.confidence ?? 0.5) + outcomeAdjustment(category, options),
+  ));
+  return next;
+}
+
 /** Apply an outcome report to the store. */
 export async function applyOutcome(
   store: MemoryStore,
@@ -68,12 +82,9 @@ export async function applyOutcome(
       missing.push(id); // reported, not swallowed — a report citing a
       continue;         // vanished memory is a fact the host should see
     }
-    unit.confidence = Math.min(
-      options.maxConfidence,
-      Math.max(options.minConfidence, (unit.confidence ?? 0.5) + adjustment),
-    );
-    unit.at = report.at;
-    await store.put(unit);
+    const next = projectOutcomeConfidence(unit, report.outcome, options);
+    next.at = report.at;
+    await store.put(next);
     adjusted++;
   }
 

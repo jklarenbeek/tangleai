@@ -1,5 +1,23 @@
 # @tangleai/store
 
+## 0.24.0
+
+### Minor Changes
+
+- Add the outcomes package for independently evidenced decisions, deterministic scoring, atomic confidence projection, bounded artifact refinement and explicitly approved promotion and rollback. The public operation contract, two-domain adapter kit and keyless example share the same scoped request receipts, one-use held-out gates, full head revision checks and interruption recovery.
+
+  The store adapter owns outcome records and memory changes in one SQLite transaction. The new pure confidence helper preserves fact fields; existing applyOutcome calls retain their original duplicate-citation and timestamp behavior and do not acquire a durable replay guarantee. No existing persisted memory format changes. Hosts opt into the new lifecycle, provide evidence and approval authority, and use a new artifact key for schema or policy changes. Scripted paired measurements and Node/Bun packed consumers qualify the mechanism; downstream domain integrations and automatic promotion remain separate work.
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/outcomes@0.24.0
+  - @tangleai/memory@0.24.0
+  - @tangleai/config@0.24.0
+  - @tangleai/core@0.24.0
+  - @tangleai/documents@0.24.0
+  - @tangleai/mas@0.24.0
+
 ## 0.23.0
 
 ### Patch Changes

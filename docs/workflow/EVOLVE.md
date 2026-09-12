@@ -6,8 +6,9 @@ because the pieces finally line up, and because the standing rule
 capability ships before the instrument that can call it an improvement.*
 This is the capability that rule was written for. `docs/ROADMAP.md`
 carries it as the evolution-loop entry; the instrument now exists
-(`docs/LOCOMO_BENCHMARK.md`), and the skill loop and outcome-grounded
-decisions — roadmap entries of their own — are its prerequisites.
+(`docs/LOCOMO_BENCHMARK.md`), and the skill loop and repository-specific outcome adapters remain prerequisites.
+The generic evidenced lifecycle now ships in `@tangleai/outcomes`; its scripted
+checks do not establish repository evolution quality.
 
 ## The idea
 
@@ -75,7 +76,7 @@ signal this repo insists on.
 |---|---|
 | dag execution with per-node records | exists (`@tangleai/pipeline`, `@jarenjs/flow`) |
 | run history + live streaming surface | exists (`@tangleai/store`, desktop `dag.live`) |
-| outcome-driven strategy fitness | exists (`@tangleai/memory` `applyOutcome`) |
+| outcome-driven strategy fitness | generic lifecycle and checked artifacts exist (`@tangleai/outcomes`); repository-specific evidence, scoring and measured fitness remain downstream |
 | proposal discipline | exists in the suite (`@tangleai/context` refine gates: RFC-6902, evidence-mandatory) — not yet wired here |
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |
 | worktree executor (add/apply/gate/measure/remove) | missing — `node:child_process` over git, no new dependencies |

@@ -1,0 +1,183 @@
+{
+  "scenarios": [
+    {
+      "id": "pending-only",
+      "code": "OUTC1005"
+    },
+    {
+      "id": "success",
+      "code": null
+    },
+    {
+      "id": "partial",
+      "code": null
+    },
+    {
+      "id": "failure",
+      "code": null
+    },
+    {
+      "id": "late-resolution",
+      "code": null
+    },
+    {
+      "id": "missing-evidence",
+      "code": "OUTC1006"
+    },
+    {
+      "id": "mutated-evidence",
+      "code": "OUTC1006"
+    },
+    {
+      "id": "wrong-subject",
+      "code": "OUTC1003"
+    },
+    {
+      "id": "model-self-resolution",
+      "code": "OUTC1006"
+    },
+    {
+      "id": "duplicate-resolution",
+      "code": null
+    },
+    {
+      "id": "conflicting-resolution",
+      "code": "OUTC1007"
+    },
+    {
+      "id": "duplicate-citations",
+      "code": null
+    },
+    {
+      "id": "missing-memory",
+      "code": null
+    },
+    {
+      "id": "projection-crash",
+      "code": "OUTC1015"
+    },
+    {
+      "id": "stale-parent",
+      "code": "OUTC1013"
+    },
+    {
+      "id": "cross-scope",
+      "code": "OUTC1003"
+    },
+    {
+      "id": "unmeasured-candidate",
+      "code": "OUTC1011"
+    },
+    {
+      "id": "regressing-candidate",
+      "code": "OUTC1011"
+    },
+    {
+      "id": "forged-approval",
+      "code": "OUTC1012"
+    },
+    {
+      "id": "concurrent-promotions",
+      "code": "OUTC1013"
+    },
+    {
+      "id": "rollback",
+      "code": null
+    },
+    {
+      "id": "aba-head",
+      "code": "OUTC1013"
+    },
+    {
+      "id": "version-cap",
+      "code": "OUTC1014"
+    },
+    {
+      "id": "uncertain-dispatch",
+      "code": "OUTC1017"
+    }
+  ],
+  "scores": [
+    {
+      "predicted": 0,
+      "actual": 0,
+      "outcome": "success"
+    },
+    {
+      "predicted": 0,
+      "actual": 0.049,
+      "outcome": "success"
+    },
+    {
+      "predicted": 0,
+      "actual": 0.05,
+      "outcome": "partial"
+    },
+    {
+      "predicted": 0,
+      "actual": 0.051,
+      "outcome": "partial"
+    },
+    {
+      "predicted": -0.1,
+      "actual": -0.12,
+      "outcome": "success"
+    },
+    {
+      "predicted": -0.1,
+      "actual": 0.1,
+      "outcome": "failure"
+    },
+    {
+      "predicted": 0,
+      "actual": -0.01,
+      "outcome": "failure"
+    }
+  ],
+  "candidates": {
+    "direction-delta": [
+      {
+        "offset": 0.1
+      },
+      {
+        "offset": -0.1
+      },
+      {
+        "offset": -1000
+      }
+    ],
+    "exact-match": [
+      {
+        "fallbackLabel": "unknown",
+        "rules": [
+          {
+            "prefix": "accept:",
+            "label": "yes"
+          }
+        ]
+      },
+      {
+        "fallbackLabel": "no",
+        "rules": [
+          {
+            "prefix": "accept:",
+            "label": "yes"
+          }
+        ]
+      },
+      {
+        "fallbackLabel": "wrong",
+        "rules": []
+      }
+    ]
+  },
+  "static": {
+    "direction-delta": {
+      "offset": 0
+    },
+    "exact-match": {
+      "fallbackLabel": "unknown",
+      "rules": []
+    }
+  }
+}

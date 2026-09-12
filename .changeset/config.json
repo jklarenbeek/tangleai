@@ -17,6 +17,7 @@
       "@tangleai/memory",
       "@tangleai/search",
       "@tangleai/pipeline",
+      "@tangleai/outcomes",
       "@tangleai/store"
     ]
   ],

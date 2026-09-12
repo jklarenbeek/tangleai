@@ -1,3 +1,6 @@
+import { runOutcomeExample } from './outcomes-example.ts';
+import { createMemoryOutcomeStore } from '@tangleai/outcomes';
+import { createOutcomeStore } from '@tangleai/store';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { estimateTokens } from '@tangleai/core/tokens';
@@ -65,12 +68,19 @@ assert.equal((await inMemory.get(unit.id)).text, unit.text);
 await assert.rejects(inMemory.put({ ...unit, evidence: '' }));
 const document = extractHtml('<html><body><main><h1>Release fixture</h1><p>The cobalt release contains the complete consumer contract.</p></main></body></html>', 'https://example.test/release');
 assert.ok(JSON.stringify(document).includes('cobalt'));
+const outcomeMemory = createMemoryOutcomeStore();
+const initialOutcome = await runOutcomeExample(outcomeMemory);
+const replayOutcome = await runOutcomeExample(outcomeMemory);
+assert.equal(replayOutcome.writes, 0); assert.equal(replayOutcome.sourceReads, 0);
+assert.deepEqual(replayOutcome.ids, initialOutcome.ids);
 const db = await openTangleDb();
 try {
+  const sqliteOutcome = await runOutcomeExample(createOutcomeStore(db));
+  assert.deepEqual(sqliteOutcome.ids, initialOutcome.ids);
   const store = createDbMemoryStore(db.collection('memories'));
   await store.put(unit);
   assert.equal((await store.get(unit.id)).text, unit.text);
-  assert.equal((await store.list()).length, 1);
+  assert.ok((await store.list()).some(memory => memory.id === unit.id));
   await store.delete(unit.id);
   assert.equal(await store.get(unit.id), undefined);
 } finally { await db.close(); }

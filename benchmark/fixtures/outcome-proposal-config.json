@@ -1,0 +1,219 @@
+{
+  "registry": {
+    "version": 1,
+    "credentialSlots": [
+      "openrouter-primary"
+    ],
+    "candidates": [
+      {
+        "id": "chat-alpha",
+        "kind": "chat",
+        "provider": "openrouter",
+        "model": "example/alpha",
+        "baseUrl": null,
+        "credentialSlot": "openrouter-primary",
+        "features": [
+          "structured-json-schema"
+        ],
+        "rateCard": {
+          "currency": "USD",
+          "inputPerMillionTokens": 0.1,
+          "outputPerMillionTokens": 0.2,
+          "source": "fixture",
+          "asOf": "2026-08-30"
+        }
+      },
+      {
+        "id": "chat-beta",
+        "kind": "chat",
+        "provider": "ollama",
+        "model": "example/beta",
+        "baseUrl": null,
+        "credentialSlot": null,
+        "features": [],
+        "rateCard": null
+      },
+      {
+        "id": "embed-hash",
+        "kind": "embedding",
+        "provider": "builtin",
+        "model": "hash-trigram-64",
+        "dims": 64,
+        "baseUrl": null,
+        "credentialSlot": null,
+        "features": [],
+        "rateCard": null
+      }
+    ],
+    "capabilities": [
+      {
+        "tag": "fast",
+        "intent": "lowest-latency fixture intent",
+        "candidates": [
+          {
+            "candidate": "chat-alpha",
+            "priority": 1
+          },
+          {
+            "candidate": "chat-beta",
+            "priority": 2
+          }
+        ],
+        "limitations": "fixture intent; proves nothing about real latency"
+      }
+    ],
+    "prompts": [
+      {
+        "id": "grounded-answer",
+        "revision": "1111111111111111111111111111111111111111111111111111111111111111",
+        "description": "fixture prompt revision"
+      }
+    ],
+    "responseSchemas": [
+      {
+        "id": "answer-v1",
+        "revision": "2222222222222222222222222222222222222222222222222222222222222222",
+        "description": "fixture response schema"
+      }
+    ],
+    "components": [
+      {
+        "id": "policy-shipped",
+        "kind": "policy",
+        "package": "@tangleai/pipeline",
+        "export": "createPipeline",
+        "revision": "3333333333333333333333333333333333333333333333333333333333333333",
+        "description": "fixture policy component"
+      },
+      {
+        "id": "ranker-cosine",
+        "kind": "ranker",
+        "package": "@tangleai/memory",
+        "export": "recallByEmbedding",
+        "revision": "4444444444444444444444444444444444444444444444444444444444444444",
+        "description": "fixture ranker component"
+      }
+    ],
+    "inference": [
+      {
+        "id": "chat-default",
+        "temperature": null,
+        "maxTokens": null,
+        "retry": {
+          "attempts": 1,
+          "baseMs": 0,
+          "maxMs": 0
+        },
+        "reasoning": null
+      }
+    ],
+    "budgets": [
+      {
+        "id": "guarded",
+        "maxCalls": 100,
+        "maxTokens": null,
+        "maxMs": null,
+        "maxConcurrency": 4
+      }
+    ],
+    "profiles": [
+      {
+        "id": "base",
+        "kind": "root",
+        "description": "fixture root profile",
+        "roles": {
+          "answer": {
+            "capability": "fast",
+            "candidate": null,
+            "prompt": "grounded-answer",
+            "responseSchema": "answer-v1",
+            "tools": [
+              "recall_memories"
+            ],
+            "toolsRequired": false,
+            "inference": "chat-default",
+            "ranker": "ranker-cosine"
+          }
+        },
+        "embedding": "embed-hash",
+        "policyComponent": "policy-shipped",
+        "budget": "guarded"
+      },
+      {
+        "id": "child",
+        "kind": "child",
+        "extends": "base",
+        "patch": {
+          "description": "fixture child profile"
+        }
+      }
+    ]
+  },
+  "request": {
+    "kind": "profile",
+    "profile": "base",
+    "overrides": null
+  },
+  "host": {
+    "sourceClass": "synthetic",
+    "credentialSlots": [
+      {
+        "name": "openrouter-primary",
+        "configured": true,
+        "source": "OPENROUTER_AI_KEY"
+      }
+    ],
+    "providers": [
+      {
+        "provider": "openrouter",
+        "base": "https://openrouter.ai/api/v1",
+        "models": [
+          "example/alpha"
+        ],
+        "features": [
+          "structured-json-schema"
+        ]
+      },
+      {
+        "provider": "ollama",
+        "base": "http://localhost:11434/v1",
+        "models": [
+          "example/beta"
+        ],
+        "features": []
+      }
+    ],
+    "embedding": [
+      {
+        "provider": "builtin",
+        "base": null,
+        "model": "hash-trigram-64",
+        "dims": 64
+      }
+    ],
+    "tools": [
+      {
+        "name": "recall_memories",
+        "description": "fixture tool",
+        "inputSchemaRevision": "5555555555555555555555555555555555555555555555555555555555555555"
+      }
+    ],
+    "components": [
+      {
+        "id": "policy-shipped",
+        "revision": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      {
+        "id": "ranker-cosine",
+        "revision": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "budget": {
+      "maxCalls": 200,
+      "maxTokens": null,
+      "maxMs": null,
+      "maxConcurrency": 4
+    },
+    "observation": null
+  }
+}

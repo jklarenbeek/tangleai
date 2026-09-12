@@ -1,0 +1,290 @@
+[
+  {
+    "id": "direction-delta/held-1/1",
+    "domain": "direction-delta",
+    "slot": 1,
+    "input": {
+      "base": 111
+    },
+    "outcome": {
+      "actual": 111.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-1/2",
+    "domain": "direction-delta",
+    "slot": 1,
+    "input": {
+      "base": 112
+    },
+    "outcome": {
+      "actual": 112.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-1/3",
+    "domain": "direction-delta",
+    "slot": 1,
+    "input": {
+      "base": 113
+    },
+    "outcome": {
+      "actual": 113.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-1/4",
+    "domain": "direction-delta",
+    "slot": 1,
+    "input": {
+      "base": 114
+    },
+    "outcome": {
+      "actual": 113.9
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "exact-match/held-1/1",
+    "domain": "exact-match",
+    "slot": 1,
+    "input": {
+      "token": "accept:held:1:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-1/2",
+    "domain": "exact-match",
+    "slot": 1,
+    "input": {
+      "token": "accept:held:1:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-1/3",
+    "domain": "exact-match",
+    "slot": 1,
+    "input": {
+      "token": "accept:held:1:3"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-1/4",
+    "domain": "exact-match",
+    "slot": 1,
+    "input": {
+      "token": "reject:held:1:4"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "direction-delta/held-2/1",
+    "domain": "direction-delta",
+    "slot": 2,
+    "input": {
+      "base": 121
+    },
+    "outcome": {
+      "actual": 121.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-2/2",
+    "domain": "direction-delta",
+    "slot": 2,
+    "input": {
+      "base": 122
+    },
+    "outcome": {
+      "actual": 122.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-2/3",
+    "domain": "direction-delta",
+    "slot": 2,
+    "input": {
+      "base": 123
+    },
+    "outcome": {
+      "actual": 123.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-2/4",
+    "domain": "direction-delta",
+    "slot": 2,
+    "input": {
+      "base": 124
+    },
+    "outcome": {
+      "actual": 123.9
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "exact-match/held-2/1",
+    "domain": "exact-match",
+    "slot": 2,
+    "input": {
+      "token": "accept:held:2:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-2/2",
+    "domain": "exact-match",
+    "slot": 2,
+    "input": {
+      "token": "accept:held:2:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-2/3",
+    "domain": "exact-match",
+    "slot": 2,
+    "input": {
+      "token": "accept:held:2:3"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-2/4",
+    "domain": "exact-match",
+    "slot": 2,
+    "input": {
+      "token": "reject:held:2:4"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "direction-delta/held-3/1",
+    "domain": "direction-delta",
+    "slot": 3,
+    "input": {
+      "base": 131
+    },
+    "outcome": {
+      "actual": 131.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-3/2",
+    "domain": "direction-delta",
+    "slot": 3,
+    "input": {
+      "base": 132
+    },
+    "outcome": {
+      "actual": 132.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-3/3",
+    "domain": "direction-delta",
+    "slot": 3,
+    "input": {
+      "base": 133
+    },
+    "outcome": {
+      "actual": 133.1
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/held-3/4",
+    "domain": "direction-delta",
+    "slot": 3,
+    "input": {
+      "base": 134
+    },
+    "outcome": {
+      "actual": 133.9
+    },
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "exact-match/held-3/1",
+    "domain": "exact-match",
+    "slot": 3,
+    "input": {
+      "token": "accept:held:3:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-3/2",
+    "domain": "exact-match",
+    "slot": 3,
+    "input": {
+      "token": "accept:held:3:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-3/3",
+    "domain": "exact-match",
+    "slot": 3,
+    "input": {
+      "token": "accept:held:3:3"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/held-3/4",
+    "domain": "exact-match",
+    "slot": 3,
+    "input": {
+      "token": "reject:held:3:4"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "expectedStatic": "failure"
+  }
+]

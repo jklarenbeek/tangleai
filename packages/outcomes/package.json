@@ -1,0 +1,60 @@
+{
+  "name": "@tangleai/outcomes",
+  "version": "0.24.0",
+  "description": "Evidenced decisions, deterministic retrospective checks and explicitly approved artifact promotion",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/outcomes.contracts.gen.ts",
+    "./schemas/outcomes": "./schemas/outcomes.schema.json",
+    "./package.json": "./package.json",
+    "./adapters/direction-delta": "./src/adapters/direction-delta.ts",
+    "./schemas/direction-delta": "./schemas/direction-delta.schema.json",
+    "./adapters/exact-match": "./src/adapters/exact-match.ts",
+    "./schemas/exact-match": "./schemas/exact-match.schema.json",
+    "./proposer": "./src/proposer.ts",
+    "./contract": "./src/contract.ts",
+    "./schemas/contract": "./schemas/outcomes.contract.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/core": "0.84.3",
+    "@jarenjs/json": "0.84.3",
+    "@jarenjs/validate": "0.84.3",
+    "@tangleai/core": "^0.24.0",
+    "@tangleai/memory": "^0.24.0",
+    "@tangleai/models": "^0.24.0",
+    "@tangleai/agents": "^0.24.0",
+    "@tangleai/config": "^0.24.0",
+    "@jarenjs/contract": "0.84.3"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/**/*.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/outcomes"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

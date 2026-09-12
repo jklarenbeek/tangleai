@@ -1,0 +1,434 @@
+[
+  {
+    "id": "direction-delta/round-1/1",
+    "domain": "direction-delta",
+    "round": 1,
+    "input": {
+      "base": 11
+    },
+    "outcome": {
+      "actual": 11.1
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-1/2",
+    "domain": "direction-delta",
+    "round": 1,
+    "input": {
+      "base": 12
+    },
+    "outcome": {
+      "actual": 12.1
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-1/3",
+    "domain": "direction-delta",
+    "round": 1,
+    "input": {
+      "base": 13
+    },
+    "outcome": {
+      "actual": 12.9
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-1/4",
+    "domain": "direction-delta",
+    "round": 1,
+    "input": {
+      "base": 14
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "exact-match/round-1/1",
+    "domain": "exact-match",
+    "round": 1,
+    "input": {
+      "token": "accept:quality:1:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-1/2",
+    "domain": "exact-match",
+    "round": 1,
+    "input": {
+      "token": "accept:quality:1:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-1/3",
+    "domain": "exact-match",
+    "round": 1,
+    "input": {
+      "token": "reject:quality:1:3"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-1/4",
+    "domain": "exact-match",
+    "round": 1,
+    "input": {
+      "token": "reject:quality:1:4"
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-01T00:00:00.000Z",
+    "observedAt": "2026-01-01T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "direction-delta/round-2/1",
+    "domain": "direction-delta",
+    "round": 2,
+    "input": {
+      "base": 21
+    },
+    "outcome": {
+      "actual": 21.1
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-2/2",
+    "domain": "direction-delta",
+    "round": 2,
+    "input": {
+      "base": 22
+    },
+    "outcome": {
+      "actual": 22.1
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-2/3",
+    "domain": "direction-delta",
+    "round": 2,
+    "input": {
+      "base": 23
+    },
+    "outcome": {
+      "actual": 22.9
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-2/4",
+    "domain": "direction-delta",
+    "round": 2,
+    "input": {
+      "base": 24
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "exact-match/round-2/1",
+    "domain": "exact-match",
+    "round": 2,
+    "input": {
+      "token": "accept:quality:2:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-2/2",
+    "domain": "exact-match",
+    "round": 2,
+    "input": {
+      "token": "accept:quality:2:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-2/3",
+    "domain": "exact-match",
+    "round": 2,
+    "input": {
+      "token": "reject:quality:2:3"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-2/4",
+    "domain": "exact-match",
+    "round": 2,
+    "input": {
+      "token": "reject:quality:2:4"
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-02T00:00:00.000Z",
+    "observedAt": "2026-01-02T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "direction-delta/round-3/1",
+    "domain": "direction-delta",
+    "round": 3,
+    "input": {
+      "base": 31
+    },
+    "outcome": {
+      "actual": 31.1
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-3/2",
+    "domain": "direction-delta",
+    "round": 3,
+    "input": {
+      "base": 32
+    },
+    "outcome": {
+      "actual": 32.1
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-3/3",
+    "domain": "direction-delta",
+    "round": 3,
+    "input": {
+      "base": 33
+    },
+    "outcome": {
+      "actual": 32.9
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-3/4",
+    "domain": "direction-delta",
+    "round": 3,
+    "input": {
+      "base": 34
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "exact-match/round-3/1",
+    "domain": "exact-match",
+    "round": 3,
+    "input": {
+      "token": "accept:quality:3:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-3/2",
+    "domain": "exact-match",
+    "round": 3,
+    "input": {
+      "token": "accept:quality:3:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-3/3",
+    "domain": "exact-match",
+    "round": 3,
+    "input": {
+      "token": "reject:quality:3:3"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-3/4",
+    "domain": "exact-match",
+    "round": 3,
+    "input": {
+      "token": "reject:quality:3:4"
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-03T00:00:00.000Z",
+    "observedAt": "2026-01-03T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "direction-delta/round-4/1",
+    "domain": "direction-delta",
+    "round": 4,
+    "input": {
+      "base": 41
+    },
+    "outcome": {
+      "actual": 41.1
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-4/2",
+    "domain": "direction-delta",
+    "round": 4,
+    "input": {
+      "base": 42
+    },
+    "outcome": {
+      "actual": 42.1
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-4/3",
+    "domain": "direction-delta",
+    "round": 4,
+    "input": {
+      "base": 43
+    },
+    "outcome": {
+      "actual": 42.9
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "partial"
+  },
+  {
+    "id": "direction-delta/round-4/4",
+    "domain": "direction-delta",
+    "round": 4,
+    "input": {
+      "base": 44
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": null
+  },
+  {
+    "id": "exact-match/round-4/1",
+    "domain": "exact-match",
+    "round": 4,
+    "input": {
+      "token": "accept:quality:4:1"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-4/2",
+    "domain": "exact-match",
+    "round": 4,
+    "input": {
+      "token": "accept:quality:4:2"
+    },
+    "outcome": {
+      "label": "yes"
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-4/3",
+    "domain": "exact-match",
+    "round": 4,
+    "input": {
+      "token": "reject:quality:4:3"
+    },
+    "outcome": {
+      "label": "no"
+    },
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": "failure"
+  },
+  {
+    "id": "exact-match/round-4/4",
+    "domain": "exact-match",
+    "round": 4,
+    "input": {
+      "token": "reject:quality:4:4"
+    },
+    "outcome": null,
+    "decidedAt": "2026-01-04T00:00:00.000Z",
+    "observedAt": "2026-01-04T01:00:00.000Z",
+    "expectedStatic": null
+  }
+]

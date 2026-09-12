@@ -170,6 +170,13 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   non-regression gate on LoCoMo categories 1–4; the `spatialGates` refusal counts
   as a correctness result.
 
+- [ ] **MAS head revision fencing.** `packages/store/src/mas-store.ts`
+  `activateHead` stores a revision but currently compares only the expected active
+  version. Inspect and reproduce A→B→A with an old activation token, then bind
+  workflow/template activation to both version and revision with compatibility
+  tests. This is a source-level concern, not a reported production incident.
+  Outcome heads already use both fields; this task concerns the separate MAS API.
+
 ## Learning from outcomes and traces
 
 - [ ] **The skill loop.** *Wanted:* close the loop the suite names as open work —
@@ -196,21 +203,17 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* repeat-task success with skills on vs off on a held-out set; skill
   count stays bounded; the loss published if the mechanism does not beat the
   retrieval baseline.
-- [ ] **Outcome-grounded decisions, two-phase.** *Wanted:* pending decision →
-  resolved against a real-world outcome → reflection, generalizing
-  `@tangleai/memory/outcome`, with versioned harnesses as memory records under
-  `VERSION_OF`-style relations. *Constraint:* `applyOutcome` moves confidence on
-  cited memories after a host supplies a report; it does not represent an
-  unresolved question, revisit it at ordered checkpoints, or promote anything.
-  *Salvage:* the four-mode harness state machine (Create / Evolve / Retrospective
-  / Inject-validated-only, maxVersions 10) in `attic/memflow-modules/evolution.md`;
-  the graph it wrote (`:PredictionHarness`, `:VERSION_OF`) in
-  `attic/memflow-ARCHITECTURE.md`; the outcome-evaluator rule (direction and
-  |Δ| < 0.05 → success / partial / failure) in `attic/memflow-GMPL_TUTORIAL.md` §3.
-  *Closes on:* decision quality over rounds on a replayable domain, in the
-  benchmark report's format.
+- [ ] **Real-domain outcome quality and policy.** The generic evidenced lifecycle,
+  checked artifact promotion/rollback and adapter kit now ship in
+  `@tangleai/outcomes` ([capability](../packages/outcomes/README.md),
+  [scripted evidence](OUTCOME_BENCHMARK.md)). Measure domain-owned candidates on
+  replayable independent real outcomes, with frozen held-out gates, paired
+  quality, coverage, harms and costs. Scripted numeric/label fixtures establish
+  mechanism behavior only. Source-correction semantics, learned gate/retention
+  policy, automatic promotion and consumer review UI remain unimplemented and
+  need separate registered comparisons and host authority decisions.
 - [ ] **Harness evolution for forecasting (Milkyway).** *Wanted:* the domain loop
-  the entry above generalizes toward — an unresolved forecasting question run at
+  that consumes the shipped outcome lifecycle — an unresolved forecasting question run at
   two or more ordered checkpoints under version-pinned prompts and tools, each
   with a cutoff-audited evidence set, prediction, raw trace, a six-part local note,
   spend and stop reason; from checkpoint two, source-backed internal feedback and a
@@ -400,7 +403,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   moves the proposing strategy's confidence. Design, rails and the exists/missing
   table: [`workflow/EVOLVE.md`](workflow/EVOLVE.md). *Constraint:* this is the
   capability the standing rule was written for. The instrument exists now; the
-  skill loop and outcome-grounded decisions are its prerequisites; the mutator may
+  skill loop and domain-specific outcome adapters are its prerequisites; the mutator may
   never touch tests, gates or CI; `master` is never a write target. *Closes on:*
   over N experiments on a fixed repo state, the strategy ledger's hit rate rises
   while gate-red and goalpost-refusal counts are fully accounted, and zero writes

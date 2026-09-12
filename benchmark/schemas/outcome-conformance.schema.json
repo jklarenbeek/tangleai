@@ -1,0 +1,1040 @@
+{
+  "type": "object",
+  "properties": {
+    "benchmark": {
+      "const": "outcome-conformance"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "registration": {
+      "$ref": "#/$defs/manifest"
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "type": "string"
+        },
+        "bun": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tangle": {
+          "type": "string"
+        },
+        "jaren": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "bun",
+        "tangle",
+        "jaren"
+      ],
+      "additionalProperties": false
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/row"
+      }
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/probe"
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "oracle": {
+          "type": "boolean"
+        },
+        "storage": {
+          "type": "boolean"
+        },
+        "resolution": {
+          "type": "boolean"
+        },
+        "promotion": {
+          "type": "boolean"
+        },
+        "contract": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "oracle",
+        "storage",
+        "resolution",
+        "promotion",
+        "contract",
+        "complete"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/trace"
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/binding"
+      }
+    }
+  },
+  "required": [
+    "benchmark",
+    "schemaVersion",
+    "source",
+    "registration",
+    "runtime",
+    "rows",
+    "probes",
+    "capabilities",
+    "limitations",
+    "reportId",
+    "traces",
+    "bindings"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/outcome-conformance",
+  "title": "OutcomeConformance",
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "domain": {
+          "enum": [
+            "direction-delta",
+            "exact-match"
+          ]
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input": {
+          "$ref": "#/$defs/json"
+        },
+        "outcome": {
+          "$ref": "#/$defs/json"
+        },
+        "decidedAt": {
+          "type": "string"
+        },
+        "observedAt": {
+          "type": "string"
+        },
+        "expectedStatic": {
+          "anyOf": [
+            {
+              "enum": [
+                "success",
+                "partial",
+                "failure"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "domain",
+        "round",
+        "input",
+        "outcome",
+        "decidedAt",
+        "observedAt",
+        "expectedStatic"
+      ],
+      "additionalProperties": false
+    },
+    "heldCase": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "domain": {
+          "enum": [
+            "direction-delta",
+            "exact-match"
+          ]
+        },
+        "slot": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input": {
+          "$ref": "#/$defs/json"
+        },
+        "outcome": {
+          "$ref": "#/$defs/json"
+        },
+        "expectedStatic": {
+          "enum": [
+            "success",
+            "partial",
+            "failure"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "domain",
+        "slot",
+        "input",
+        "outcome",
+        "expectedStatic"
+      ],
+      "additionalProperties": false
+    },
+    "manifest": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "adapters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "digest"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "quality": {
+          "type": "object",
+          "properties": {
+            "rounds": {
+              "const": 4
+            },
+            "planned": {
+              "const": 32
+            },
+            "available": {
+              "const": 24
+            },
+            "pending": {
+              "const": 8
+            }
+          },
+          "required": [
+            "rounds",
+            "planned",
+            "available",
+            "pending"
+          ],
+          "additionalProperties": false
+        },
+        "heldOut": {
+          "const": 24
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "maxVersions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxPayloadBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxOperations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxChangedLeaves": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxReflectionBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "physicalRequests": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "maxVersions",
+            "maxPayloadBytes",
+            "maxOperations",
+            "maxChangedLeaves",
+            "maxReflectionBytes",
+            "physicalRequests"
+          ],
+          "additionalProperties": false
+        },
+        "configuration": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "scripted"
+            },
+            "version": {
+              "const": 1
+            }
+          },
+          "required": [
+            "kind",
+            "version"
+          ],
+          "additionalProperties": false
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "namespace",
+        "subject",
+        "adapters",
+        "files",
+        "quality",
+        "heldOut",
+        "policy",
+        "configuration",
+        "registrationId"
+      ],
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "properties": {
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "code"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "predicted": {
+                "type": "number"
+              },
+              "actual": {
+                "type": "number"
+              },
+              "outcome": {
+                "enum": [
+                  "success",
+                  "partial",
+                  "failure"
+                ]
+              }
+            },
+            "required": [
+              "predicted",
+              "actual",
+              "outcome"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "candidates": {
+          "type": "object",
+          "properties": {
+            "direction-delta": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/json"
+              }
+            },
+            "exact-match": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/json"
+              }
+            }
+          },
+          "required": [
+            "direction-delta",
+            "exact-match"
+          ],
+          "additionalProperties": false
+        },
+        "static": {
+          "type": "object",
+          "properties": {
+            "direction-delta": {
+              "$ref": "#/$defs/json"
+            },
+            "exact-match": {
+              "$ref": "#/$defs/json"
+            }
+          },
+          "required": [
+            "direction-delta",
+            "exact-match"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "scenarios",
+        "scores",
+        "candidates",
+        "static"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "head",
+        "clean",
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "success",
+                "partial",
+                "failure"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "utility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "scored",
+            "pending",
+            "failed"
+          ]
+        },
+        "versionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "domain",
+        "round",
+        "available",
+        "outcome",
+        "utility",
+        "status",
+        "versionId"
+      ],
+      "additionalProperties": false
+    },
+    "probe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/json"
+        },
+        "actual": {
+          "$ref": "#/$defs/json"
+        },
+        "holds": {
+          "type": "boolean"
+        },
+        "capability": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "expected",
+        "actual",
+        "holds",
+        "capability"
+      ],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "planned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "available": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unscored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "success": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "partial": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scriptedCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncertain": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "versions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promotions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rollbacks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "projectionApplied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "projectionMissing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "projectionChanged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proposed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "approved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxVersions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reflectionBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "projectionReplayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "projectionFailed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "planned",
+        "available",
+        "pending",
+        "scored",
+        "unscored",
+        "success",
+        "partial",
+        "failure",
+        "physicalRequests",
+        "scriptedCalls",
+        "writes",
+        "replayed",
+        "refused",
+        "failed",
+        "uncertain",
+        "versions",
+        "promotions",
+        "rollbacks",
+        "retainedBytes",
+        "projectionApplied",
+        "projectionMissing",
+        "projectionChanged",
+        "proposed",
+        "evaluated",
+        "eligible",
+        "approved",
+        "maxVersions",
+        "reflectionBytes",
+        "projectionReplayed",
+        "projectionFailed"
+      ],
+      "additionalProperties": false
+    },
+    "row": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "not-implemented",
+            "expected-unsafe"
+          ]
+        },
+        "evidence": {
+          "enum": [
+            "oracle",
+            "legacy",
+            "scripted",
+            "unavailable",
+            "unsafe-control"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measurement"
+          }
+        },
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "utility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conditionalUtility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usageKnown": {
+          "type": "boolean"
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/probe"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "evidence",
+        "reason",
+        "cases",
+        "counts",
+        "utility",
+        "conditionalUtility",
+        "cost",
+        "usageKnown",
+        "probes"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.counts.planned",
+              {
+                "$add": [
+                  "$.counts.available",
+                  "$.counts.pending"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.available",
+              {
+                "$add": [
+                  "$.counts.scored",
+                  "$.counts.unscored"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.scored",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      "$.counts.success",
+                      "$.counts.partial"
+                    ]
+                  },
+                  "$.counts.failure"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.cases[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.cases[*].id"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "trace": {
+      "type": "object",
+      "properties": {
+        "rowId": {
+          "type": "string"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        "memories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolverReads": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "rowId",
+        "records",
+        "memories",
+        "writes",
+        "resolverReads"
+      ],
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "binding": {
+          "enum": [
+            "local",
+            "http",
+            "direct"
+          ]
+        },
+        "store": {
+          "enum": [
+            "memory",
+            "sqlite"
+          ]
+        },
+        "runtime": {
+          "enum": [
+            "node",
+            "bun"
+          ]
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contractRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trace": {
+          "$ref": "#/$defs/trace"
+        }
+      },
+      "required": [
+        "binding",
+        "store",
+        "runtime",
+        "requests",
+        "contractRevision",
+        "trace"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$query": {
+    "$eq": [
+      {
+        "$count": "$.rows[*].id"
+      },
+      {
+        "$count": {
+          "$distinct": "$.rows[*].id"
+        }
+      }
+    ]
+  }
+}

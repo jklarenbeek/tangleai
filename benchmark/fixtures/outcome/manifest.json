@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "namespace": "outcome-fixture",
+  "subject": "scalar-replay",
+  "adapters": [
+    "direction-delta/v1",
+    "exact-match/v1"
+  ],
+  "files": [
+    {
+      "path": "quality.json",
+      "digest": "6031aa8cf6dadae0c1eaf5ba613eb5a78e51426fb42e51ccdbd6f9279e30c2c0"
+    },
+    {
+      "path": "held-out.json",
+      "digest": "edced9981964da22fcadf9e3d7d41407df9c742628a283270a983bd5aa91ce70"
+    },
+    {
+      "path": "lifecycle.json",
+      "digest": "1517ba1335ef1e882f469c97080a9388cfc80b09a17fb41f4374fde1a7e82630"
+    }
+  ],
+  "quality": {
+    "rounds": 4,
+    "planned": 32,
+    "available": 24,
+    "pending": 8
+  },
+  "heldOut": 24,
+  "policy": {
+    "maxVersions": 10,
+    "maxPayloadBytes": 32768,
+    "maxOperations": 32,
+    "maxChangedLeaves": 32,
+    "maxReflectionBytes": 8192,
+    "physicalRequests": 0
+  },
+  "configuration": {
+    "kind": "scripted",
+    "version": 1
+  },
+  "registrationId": "65f2b022355c23a173e44a1056b1a06e83da8f6b4eb25ba94e22218d715d3e58"
+}

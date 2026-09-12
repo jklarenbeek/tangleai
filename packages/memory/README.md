@@ -46,3 +46,23 @@ npm run emit:policy -- --check
 ```
 
 The drift check validates the immutable live evidence, regenerates the expected artifact in memory, checks the registry reference and probes the public runtime behavior. `npm run policy:generate` writes a default only from a complete eligible confirmation; regenerate declarations with `npm run emit:policy` after a contract change. Contract compatibility is checked against the committed v1 fixture.
+
+## Outcome confidence
+
+`applyOutcome(store, report, {options}?)` adjusts confidence once per cited entry
+in that call: success +0.15, failure −0.25, partial +0.05 by default, starting at
+0.5 when absent and clamping to [0.1, 1]. It preserves the legacy behavior:
+duplicate citations apply repeatedly, repeated calls apply again, and `report.at`
+replaces fact time. Its four-method store interface supplies no durable replay
+receipt or atomic multi-memory guarantee; a failed later write can leave an
+earlier write applied. A host-supplied report is not independently resolved by
+this helper.
+
+`projectOutcomeConfidence(unit, outcome, options?)` is the shared pure arithmetic
+helper. It returns a detached unit and preserves all fields except confidence.
+For independently evidenced scoring, sorted unique authorized citations,
+preserved fact timestamps and atomic receipt-plus-memory updates, use
+`@tangleai/outcomes` with its own memory store or `@tangleai/store`'s
+`createOutcomeStore(db)`. Missing cited ids are terminal counted skips there;
+a completed projection never reapplies after the id is restored. See the
+[outcome adapter kit](../outcomes/docs/ADAPTERS.md).

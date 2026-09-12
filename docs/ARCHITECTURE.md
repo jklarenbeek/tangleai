@@ -6,7 +6,7 @@ a bespoke workflow engine, a Zod type system, LangChain plumbing and a
 Memgraph dependency it carried everywhere. Every one of those has a jarenjs
 replacement that is smaller, tested, and already shipped; Tangle keeps only
 what jarenjs does not do: model/context/agent mechanisms, memory policies,
-search, persistence, the apps,
+search, durable outcomes, persistence, the apps,
 and (to come) the evolution loops. See [BOUNDARY.md](BOUNDARY.md) for the rule that keeps
 it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 
@@ -23,6 +23,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                         contradiction — plan pairs / injected judge / supersede
                         outcome     — ground-truth confidence adjustment
                         retrieval   — recallByEmbedding (identity-gated ranker)
+@tangleai/outcomes    immutable decisions, trusted resolution, scores and projection
+                      bounded proposals, held-out evaluation, host approval,
+                      version/revision CAS promotion, rollback and audit reads
 @tangleai/search      SearxNG JSON client
 @tangleai/config      the capability-profile registry and run-identity
                       contract: JSON Schemas are the runtime truth (types
@@ -36,7 +39,7 @@ The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,
 embeddings, provider wires, structured generation and replay;
 `@tangleai/context` owns the ledger, bounded environment, evidence and recall;
 `@tangleai/agents` owns tool loops, budgets and program execution. Existing
-memory, config, pipeline, store and MAS packages retain their policies.
+memory, outcomes, config, pipeline, store and MAS packages retain their policies.
 `@tangleai/linq` owns immutable document pens: its `/program` entry constructs
 program JSON with phantom binding and terminal types, using the shared
 `@jarenjs/linq/authoring` primitives. Execution remains in `@tangleai/agents`.
@@ -232,3 +235,27 @@ archaeology. Secrets bind to named slots in memory and appear in no
 manifest, identity, report or read response; an incomplete explicit
 configuration refuses as a `TCFG` issue instead of quietly becoming another
 model. [CONFIGURATION.md](CONFIGURATION.md) is the full contract.
+
+## Checked outcome artifacts
+
+`@tangleai/outcomes` owns the lifecycle schema, immutable identities, deterministic
+eligibility, scoped request receipts, principal checks and the public operation
+contract. `@tangleai/store` supplies the SQLite transaction owner, including memory
+projection; a reference in-memory owner implements the same transitions. Outcome
+artifacts are bounded domain payload versions with immutable parent/evaluation/
+approval references, not `MemoryUnit` records. Confidence is a derived projection
+of an independently resolved and scored decision.
+
+Create/evolve stages inactive payloads; retrospective checks a frozen candidate
+against independent disjoint held-out cases; inject-checked validates the active
+version's provenance and performs no learning. Host approval and promotion are
+separate commands. Promotion and separately approved rollback compare both head
+version and revision, preserving all history. Missing memories are terminal
+projection skips. Unknown external completion requires trusted reconciliation.
+
+The generic guarded engine and JSON Patch are Jaren-owned (`core/guarded` and
+`json/patch`). `@tangleai/agents`' `createRefiner` specializes refinement for the
+context ledger; the outcome package uses the generic engine directly. Hosts own
+domain schemas, evidence origin, configuration, authority, scheduling and UI.
+The [adapter kit](../packages/outcomes/docs/ADAPTERS.md) and
+[scripted measurement](OUTCOME_BENCHMARK.md) document the supported boundary.

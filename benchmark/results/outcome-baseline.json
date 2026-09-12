@@ -1,0 +1,1170 @@
+{
+  "benchmark": "outcome-conformance",
+  "schemaVersion": 1,
+  "source": {
+    "head": "19c0d20aa0308cc2a89cfb5a80dff7915edcff95",
+    "clean": false,
+    "files": [
+      {
+        "path": "benchmark/fixtures/outcome/held-out.json",
+        "sha256": "0a0f9eef83e20e1a95f7c63484884f83a0be9079491f4e91d2cf07b746ad67c3"
+      },
+      {
+        "path": "benchmark/fixtures/outcome/lifecycle.json",
+        "sha256": "849880c021afb13f7db53676873df35f0b2fe6c1ceeb65cb8add4a52b5147a56"
+      },
+      {
+        "path": "benchmark/fixtures/outcome/manifest.json",
+        "sha256": "acc25725cde50f5875c3574776df49c693f7a60ed6791952b8ab38454740e162"
+      },
+      {
+        "path": "benchmark/fixtures/outcome/quality.json",
+        "sha256": "d6ad1858c0537d399fae8c3031785b57dbe9aa316bb69562744a05a9dfbe9eec"
+      },
+      {
+        "path": "benchmark/lib/args.ts",
+        "sha256": "d243ac26d4beb119ec3254786a79140cf34d30373c3655714c08b96159707ab0"
+      },
+      {
+        "path": "benchmark/lib/outcome-conformance.ts",
+        "sha256": "f00a273fa407ec6064ab499385fe4291fef3297cfe24f22c63b61412fe88a558"
+      },
+      {
+        "path": "benchmark/lib/outcome-conformance.types.ts",
+        "sha256": "0db4a88a41b4407a536c2c34af3dd53e39c95ac113994b6624a2a8890815d91a"
+      },
+      {
+        "path": "benchmark/lib/outcome-fixtures.ts",
+        "sha256": "8c053062bda5ff61145da32155efd962a4538a8d1f30d98b7266df4923b56fc4"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "01aef957a66264b6c4a6e6f3ad3d8f2301bfd3c996175df81389890eb2ba9afb"
+      },
+      {
+        "path": "benchmark/lib/table.ts",
+        "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/outcome-conformance.ts",
+        "sha256": "5cbd74b88c9ecd94787e4cd6a8cad4846f289509acc5b1e45fa7842b3e1ebda0"
+      },
+      {
+        "path": "benchmark/schemas/outcome-conformance.schema.json",
+        "sha256": "2093a50a2b5d15d3aeccabe9258460c4f74a87957469933da32c8b7f53dff88c"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "6b8de35632b54313f817d19fa2fda6c33c76733d09c5f1c27b37da9968f6abad"
+      },
+      {
+        "path": "package.json",
+        "sha256": "a31b4fe29eaee6192dbb2dd61d43c70c4dea68d50182ce354a816354e9844692"
+      },
+      {
+        "path": "packages/core/src/schemas/memory.ts",
+        "sha256": "0d38bcbf2ee4d4c18dc0980a4f827d96d5767cb056fababea4940f2e0c6a38d4"
+      },
+      {
+        "path": "packages/memory/src/outcome.ts",
+        "sha256": "c7b3492364c8f53188fee7ef351e408f45740addd743625d4b5a789a86e50afb"
+      },
+      {
+        "path": "packages/memory/src/store.ts",
+        "sha256": "15fd261b91b6d7e1c5ba302142c30022f64746f7fcd8a1848b712db7332e383c"
+      }
+    ],
+    "sha256": "5740db43f068bb8e193c22791ee6fef0ef07277cc3a066d548f0e83d7b4fcd5b"
+  },
+  "registration": {
+    "schemaVersion": 1,
+    "namespace": "outcome-fixture",
+    "subject": "scalar-replay",
+    "adapters": [
+      "direction-delta/v1",
+      "exact-match/v1"
+    ],
+    "files": [
+      {
+        "path": "quality.json",
+        "digest": "6031aa8cf6dadae0c1eaf5ba613eb5a78e51426fb42e51ccdbd6f9279e30c2c0"
+      },
+      {
+        "path": "held-out.json",
+        "digest": "edced9981964da22fcadf9e3d7d41407df9c742628a283270a983bd5aa91ce70"
+      },
+      {
+        "path": "lifecycle.json",
+        "digest": "1517ba1335ef1e882f469c97080a9388cfc80b09a17fb41f4374fde1a7e82630"
+      }
+    ],
+    "quality": {
+      "rounds": 4,
+      "planned": 32,
+      "available": 24,
+      "pending": 8
+    },
+    "heldOut": 24,
+    "policy": {
+      "maxVersions": 10,
+      "maxPayloadBytes": 32768,
+      "maxOperations": 32,
+      "maxChangedLeaves": 32,
+      "maxReflectionBytes": 8192,
+      "physicalRequests": 0
+    },
+    "configuration": {
+      "kind": "scripted",
+      "version": 1
+    },
+    "registrationId": "65f2b022355c23a173e44a1056b1a06e83da8f6b4eb25ba94e22218d715d3e58"
+  },
+  "runtime": {
+    "node": "24.20.0",
+    "bun": null,
+    "tangle": "0.23.0",
+    "jaren": "0.84.3"
+  },
+  "rows": [
+    {
+      "id": "oracle",
+      "status": "measured",
+      "evidence": "oracle",
+      "reason": null,
+      "cases": [
+        {
+          "id": "direction-delta/round-1/1",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/2",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/3",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/4",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/1",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/2",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/3",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/4",
+          "domain": "exact-match",
+          "round": 1,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/1",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/2",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/3",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/4",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/1",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/2",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/3",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/4",
+          "domain": "exact-match",
+          "round": 2,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/1",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/2",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/3",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/4",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/1",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/2",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/3",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/4",
+          "domain": "exact-match",
+          "round": 3,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/1",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/2",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/3",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/4",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/1",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/2",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/3",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/4",
+          "domain": "exact-match",
+          "round": 4,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        }
+      ],
+      "counts": {
+        "planned": 32,
+        "available": 24,
+        "pending": 8,
+        "scored": 24,
+        "unscored": 0,
+        "success": 0,
+        "partial": 12,
+        "failure": 12,
+        "physicalRequests": 0,
+        "scriptedCalls": 0,
+        "writes": 0,
+        "replayed": 0,
+        "refused": 0,
+        "failed": 0,
+        "uncertain": 0,
+        "versions": 0,
+        "promotions": 0,
+        "rollbacks": 0,
+        "retainedBytes": 0,
+        "projectionApplied": 0,
+        "projectionMissing": 0,
+        "projectionChanged": 0
+      },
+      "utility": 0.25,
+      "conditionalUtility": 0.25,
+      "cost": null,
+      "usageKnown": false,
+      "probes": []
+    },
+    {
+      "id": "legacy-static",
+      "status": "measured",
+      "evidence": "legacy",
+      "reason": null,
+      "cases": [
+        {
+          "id": "direction-delta/round-1/1",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/2",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/3",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-1/4",
+          "domain": "direction-delta",
+          "round": 1,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/1",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/2",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/3",
+          "domain": "exact-match",
+          "round": 1,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-1/4",
+          "domain": "exact-match",
+          "round": 1,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/1",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/2",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/3",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-2/4",
+          "domain": "direction-delta",
+          "round": 2,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/1",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/2",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/3",
+          "domain": "exact-match",
+          "round": 2,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-2/4",
+          "domain": "exact-match",
+          "round": 2,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/1",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/2",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/3",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-3/4",
+          "domain": "direction-delta",
+          "round": 3,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/1",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/2",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/3",
+          "domain": "exact-match",
+          "round": 3,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-3/4",
+          "domain": "exact-match",
+          "round": 3,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/1",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/2",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/3",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": true,
+          "outcome": "partial",
+          "utility": 0.5,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "direction-delta/round-4/4",
+          "domain": "direction-delta",
+          "round": 4,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/1",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/2",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/3",
+          "domain": "exact-match",
+          "round": 4,
+          "available": true,
+          "outcome": "failure",
+          "utility": 0,
+          "status": "scored",
+          "versionId": null
+        },
+        {
+          "id": "exact-match/round-4/4",
+          "domain": "exact-match",
+          "round": 4,
+          "available": false,
+          "outcome": null,
+          "utility": null,
+          "status": "pending",
+          "versionId": null
+        }
+      ],
+      "counts": {
+        "planned": 32,
+        "available": 24,
+        "pending": 8,
+        "scored": 24,
+        "unscored": 0,
+        "success": 0,
+        "partial": 12,
+        "failure": 12,
+        "physicalRequests": 0,
+        "scriptedCalls": 0,
+        "writes": 0,
+        "replayed": 0,
+        "refused": 0,
+        "failed": 0,
+        "uncertain": 0,
+        "versions": 0,
+        "promotions": 0,
+        "rollbacks": 0,
+        "retainedBytes": 0,
+        "projectionApplied": 0,
+        "projectionMissing": 0,
+        "projectionChanged": 0
+      },
+      "utility": 0.25,
+      "conditionalUtility": 0.25,
+      "cost": null,
+      "usageKnown": false,
+      "probes": [
+        {
+          "id": "legacy-repeat",
+          "expected": [
+            0.65,
+            0.8
+          ],
+          "actual": [
+            0.65,
+            0.8
+          ],
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "legacy-duplicate",
+          "expected": [
+            2,
+            0.8
+          ],
+          "actual": [
+            2,
+            0.8
+          ],
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "legacy-partial-write",
+          "expected": [
+            true,
+            0.65,
+            0.5
+          ],
+          "actual": [
+            true,
+            0.65,
+            0.5
+          ],
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "legacy-timestamp",
+          "expected": "2026-01-02T00:00:00.000Z",
+          "actual": "2026-01-02T00:00:00.000Z",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "baseline-score-parity",
+          "expected": [
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null
+          ],
+          "actual": [
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null,
+            "partial",
+            "partial",
+            "partial",
+            null,
+            "failure",
+            "failure",
+            "failure",
+            null
+          ],
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score-0-0",
+          "expected": "success",
+          "actual": "success",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score-0-0.049",
+          "expected": "success",
+          "actual": "success",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score-0-0.05",
+          "expected": "partial",
+          "actual": "partial",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score-0-0.051",
+          "expected": "partial",
+          "actual": "partial",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score--0.1--0.12",
+          "expected": "success",
+          "actual": "success",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score--0.1-0.1",
+          "expected": "failure",
+          "actual": "failure",
+          "holds": true,
+          "capability": "oracle"
+        },
+        {
+          "id": "score-0--0.01",
+          "expected": "failure",
+          "actual": "failure",
+          "holds": true,
+          "capability": "oracle"
+        }
+      ]
+    },
+    {
+      "id": "integrated-static",
+      "status": "not-implemented",
+      "evidence": "unavailable",
+      "reason": "No public outcome lifecycle is implemented.",
+      "cases": [],
+      "counts": {
+        "planned": 0,
+        "available": 0,
+        "pending": 0,
+        "scored": 0,
+        "unscored": 0,
+        "success": 0,
+        "partial": 0,
+        "failure": 0,
+        "physicalRequests": 0,
+        "scriptedCalls": 0,
+        "writes": 0,
+        "replayed": 0,
+        "refused": 0,
+        "failed": 0,
+        "uncertain": 0,
+        "versions": 0,
+        "promotions": 0,
+        "rollbacks": 0,
+        "retainedBytes": 0,
+        "projectionApplied": 0,
+        "projectionMissing": 0,
+        "projectionChanged": 0
+      },
+      "utility": null,
+      "conditionalUtility": null,
+      "cost": null,
+      "usageKnown": false,
+      "probes": []
+    },
+    {
+      "id": "checked-scripted",
+      "status": "not-implemented",
+      "evidence": "unavailable",
+      "reason": "No public outcome lifecycle is implemented.",
+      "cases": [],
+      "counts": {
+        "planned": 0,
+        "available": 0,
+        "pending": 0,
+        "scored": 0,
+        "unscored": 0,
+        "success": 0,
+        "partial": 0,
+        "failure": 0,
+        "physicalRequests": 0,
+        "scriptedCalls": 0,
+        "writes": 0,
+        "replayed": 0,
+        "refused": 0,
+        "failed": 0,
+        "uncertain": 0,
+        "versions": 0,
+        "promotions": 0,
+        "rollbacks": 0,
+        "retainedBytes": 0,
+        "projectionApplied": 0,
+        "projectionMissing": 0,
+        "projectionChanged": 0
+      },
+      "utility": null,
+      "conditionalUtility": null,
+      "cost": null,
+      "usageKnown": false,
+      "probes": []
+    },
+    {
+      "id": "unsafe-control",
+      "status": "expected-unsafe",
+      "evidence": "unsafe-control",
+      "reason": "Benchmark-only activation without evidence/approval is rejected by the independent trace expectation.",
+      "cases": [],
+      "counts": {
+        "planned": 0,
+        "available": 0,
+        "pending": 0,
+        "scored": 0,
+        "unscored": 0,
+        "success": 0,
+        "partial": 0,
+        "failure": 0,
+        "physicalRequests": 0,
+        "scriptedCalls": 0,
+        "writes": 0,
+        "replayed": 0,
+        "refused": 0,
+        "failed": 0,
+        "uncertain": 0,
+        "versions": 0,
+        "promotions": 0,
+        "rollbacks": 0,
+        "retainedBytes": 0,
+        "projectionApplied": 0,
+        "projectionMissing": 0,
+        "projectionChanged": 0
+      },
+      "utility": null,
+      "conditionalUtility": null,
+      "cost": null,
+      "usageKnown": false,
+      "probes": [
+        {
+          "id": "unsafe-activation-must-fail",
+          "expected": false,
+          "actual": false,
+          "holds": true,
+          "capability": "oracle"
+        }
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "id": "fixture-census",
+      "expected": [
+        32,
+        24,
+        8,
+        24,
+        24
+      ],
+      "actual": [
+        32,
+        24,
+        8,
+        24,
+        24
+      ],
+      "holds": true,
+      "capability": "oracle"
+    }
+  ],
+  "capabilities": {
+    "oracle": true,
+    "storage": false,
+    "resolution": false,
+    "promotion": false,
+    "contract": false,
+    "complete": false
+  },
+  "limitations": [
+    "Scripted fixture evidence is not measured autonomous learning.",
+    "No live requests; monetary cost and usage are unmeasured.",
+    "Legacy confidence projection is not atomic or replay-safe."
+  ],
+  "reportId": "2011db9c5bd7681abc22b13d6010e03b8983b3bc0d9707938470dad71958bf05"
+}

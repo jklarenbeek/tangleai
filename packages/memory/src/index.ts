@@ -29,7 +29,7 @@ export type {
   ResolveOptions,
   ResolveOutcome,
 } from './contradiction.ts';
-export { applyOutcome, outcomeAdjustment, DEFAULT_OUTCOME_OPTIONS } from './outcome.ts';
+export { applyOutcome, projectOutcomeConfidence, outcomeAdjustment, DEFAULT_OUTCOME_OPTIONS } from './outcome.ts';
 export type { OutcomeOptions, ApplyOutcomeResult } from './outcome.ts';
 export { rankByEmbedding, recallByEmbedding } from './retrieval.ts';
 export type { RankOptions, RankedMemory, RankedRecall } from './retrieval.ts';

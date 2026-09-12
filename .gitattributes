@@ -10,3 +10,6 @@ benchmark/results/locomo-policy-source.patch -whitespace
 
 # Keep the emitter's exact output; its final declaration ends with blank lines.
 packages/memory/src/policy.types.ts whitespace=-blank-at-eof
+packages/outcomes/src/outcomes.contracts.gen.ts whitespace=-blank-at-eof
+packages/outcomes/src/adapters/*.gen.ts whitespace=-blank-at-eof
+benchmark/lib/outcome-conformance.types.ts whitespace=-blank-at-eof

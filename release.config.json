@@ -20,6 +20,7 @@
     "packages/memory",
     "packages/search",
     "packages/pipeline",
+    "packages/outcomes",
     "packages/store"
   ],
   "privateWorkspaces": [

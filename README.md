@@ -8,7 +8,7 @@ First-party source, tests, benchmarks and migration scripts use
 **strict TypeScript**. The JavaScript received from Jaren has been converted. Vendor submodules and generated browser bundles keep their
 upstream or output formats; `.mjs` browser/release harnesses remain JavaScript. Node 24 runs workspace source and tests directly;
 public packages are built as ESM JavaScript with strict TypeScript declarations
-and their JSON schemas. The fourteen public packages share one version,
+and their JSON schemas. The fifteen public packages share one version,
 starting at **0.20.0**. The major version remains zero during development.
 `npm run check` validates source; `npm run release:verify` also installs and tests
 the actual publication tarballs outside this checkout.
@@ -70,11 +70,12 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/jaren` | Jaren grammar authors and revision-checked Studio/Data/Flow AI adapters ([API](packages/jaren/README.md)) |
 | `@tangleai/assistant` | reusable headless assistant controller and scoped visual component ([API](components/assistant/README.md)) |
 | `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
-| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `recallByEmbedding` (identity-gated, skip-reporting) |
+| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, per-report confidence adjustment, `recallByEmbedding` (identity-gated, skip-reporting) |
+| `@tangleai/outcomes` | independently resolved decisions, deterministic scores, atomic confidence projection, bounded artifact proposals, held-out checks and explicit CAS promotion/rollback ([API](packages/outcomes/README.md)) |
 | `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
 | `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
-| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
+| `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus atomic outcome records/projection and transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
 | `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@tangleai/models`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
 | `@tangleai/mas` | the durable typed multi-agent runtime: one closed content-addressed workflow IR (`agent`/`task`/`graph`/`loop`/`switch`/`interaction`), a pure nine-gate validator with stable `TMAS1xxx` refusals, LINQ-pen lowering to compile-proven `jaren-dag`/`jaren-fsm` documents, and the transactional node lifecycle over `createAgent`/`createToolbox`/`createStructuredOutput`/`createBudgetAccount` ([packages/mas/README.md](packages/mas/README.md)) |
 
@@ -101,6 +102,33 @@ chat client speaks), the deterministic reference (`createHashEmbedder`),
 the probe and the `{ embed, model, dims }` seam are `@tangleai/models/embed`,
 and the kernels are `@jarenjs/core/vector`. Tangle brings the policies
 and the configuration.
+
+## Evidenced outcome lifecycle
+
+`@tangleai/outcomes` separates decision creation, independent resolution, scoring
+and confidence projection from artifact proposals, held-out checks and host
+approval. Checked promotion and rollback compare both head version and revision.
+Artifacts are immutable outcome records; they are not generic memory units.
+
+```sh
+npm run outcomes:smoke
+node examples/outcomes.ts --db /tmp/outcomes.sqlite
+npm run benchmark:outcome -- --require complete
+```
+
+The [public example](examples/outcomes.ts) runs numeric and exact-label adapters,
+checks two versions in each domain and restores a previously active version.
+Repeating it against the same file adds no writes or evidence reads.
+The [adapter kit](packages/outcomes/docs/ADAPTERS.md) explains the trusted resolver,
+scope/principal wiring, contract operations, request receipts and recovery.
+
+The [registered outcome report](docs/OUTCOME_BENCHMARK.md) compares static,
+checked scripted, projection-disabled and proposal-only behavior over the same
+32 decisions, with 24 available outcomes and eight pending. It publishes every
+round/domain, rejected candidates and safety result. Scripted candidates measure
+the checked mechanism on this fixture; real-domain quality and automatic learning
+remain open work. Its predictor does not consume confidence, so its projection
+ablation cannot establish confidence's effect on decisions.
 
 ## Measurement
 
@@ -350,7 +378,7 @@ draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Package releases
 
-Changesets records patch or minor intent for one fixed group of fourteen public
+Changesets records patch or minor intent for one fixed group of fifteen public
 packages. `npm run release:prepare` updates their versions, all private workspace
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while
@@ -375,7 +403,7 @@ npm run publish
 ```
 
 The command verifies the final committed artifacts, creates the local annotated
-tag, publishes the 13 tested JavaScript/declaration archives using local npm
+tag, publishes the 15 tested JavaScript/declaration archives using local npm
 authentication, and checks fresh registry installations. It does not push.
 Separate edits, including `.env.example`, must be committed through closeout or
 stashed and restored around publication. GitHub Actions verifies the release

@@ -5,7 +5,7 @@ patch for a compatible fix or a minor for a new capability. During development,
 breaking changes also use a minor and must include migration notes. Major release
 intent is refused while the suite remains at major zero.
 
-The eight explicitly listed public packages form one fixed group. The highest
+The explicitly listed public packages form one fixed group. The highest
 impact across pending records determines the shared next version. Application
 and tooling changes that ship with the product also need a release record; select
 the affected public package or core for suite-wide maintenance.
