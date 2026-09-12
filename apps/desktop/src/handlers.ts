@@ -6,8 +6,8 @@
 
 import { stat } from 'node:fs/promises';
 
-import { probeProvider } from '@jarenjs/ai';
-import { probeEmbeddings } from '@jarenjs/ai/embed';
+import { probeProvider } from '@tangleai/models/providers';
+import { probeEmbeddings } from '@tangleai/models/embed';
 import type { MemoryStore } from '@tangleai/memory';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createPipeline, dagToMermaid, numericContrastJudge, PIPELINE_DAG, PIPELINE_NODES } from '@tangleai/pipeline';
@@ -445,7 +445,7 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
 
     /** Can the configured embedder embed, and at what width? The
      * built-in answers without a network; a wire is probed with one
-     * attempt through @jarenjs/ai's `probeEmbeddings`. Never an error. */
+     * attempt through @tangleai/models's `probeEmbeddings`. Never an error. */
     'embed.probe': async () => {
       const current = await settings.read();
       if (!embedWireConfigured(current.embed)) {

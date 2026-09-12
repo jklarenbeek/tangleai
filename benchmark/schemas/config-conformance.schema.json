@@ -75,7 +75,7 @@
             "required": ["name", "version"],
             "additionalProperties": false,
             "properties": {
-              "name": { "type": "string", "pattern": "^@jarenjs/[a-z0-9-]+$" },
+              "name": { "type": "string", "pattern": "^@(jarenjs/[a-z0-9-]+|tangleai/(models|context|agents))$" },
               "version": { "type": "string", "minLength": 1 }
             }
           }

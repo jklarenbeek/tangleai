@@ -19,8 +19,8 @@ import assert from 'node:assert/strict';
 import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createChatClient } from '@jarenjs/ai';
-import jaren from '@jarenjs/ai/package.json' with { type: 'json' };
+import { createChatClient } from '@tangleai/models/client';
+import jaren from '@jarenjs/flow/package.json' with { type: 'json' };
 import { readAiEnv } from '../benchmark/lib/ai-env.ts';
 import { parseArgs } from '../benchmark/lib/args.ts';
 

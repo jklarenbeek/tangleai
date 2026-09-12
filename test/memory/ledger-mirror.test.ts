@@ -11,9 +11,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createLedger, createMemoryStorage } from '@jarenjs/ai';
-import { createHashEmbedder } from '@jarenjs/ai/embed';
-import type { LedgerMemory as JarenLedgerMemory } from '@jarenjs/ai/schemas/ledger';
+import { createLedger } from '@tangleai/context/ledger';
+import { createMemoryStorage } from '@tangleai/context/storage/memory';
+import { createHashEmbedder } from '@tangleai/models/embed';
+import type { LedgerMemory as JarenLedgerMemory } from '@tangleai/context/schemas/ledger';
 import { toLedgerMemory, type LedgerMemory } from '@tangleai/core/schemas/memory';
 import { createMemoryUnitStore, createMemoryUnit } from '@tangleai/memory';
 

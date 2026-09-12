@@ -1,0 +1,104 @@
+[
+  {
+    "host": "jarenjs",
+    "engine": "chromium",
+    "version": "149.0.7827.55",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  },
+  {
+    "host": "tangleai",
+    "engine": "chromium",
+    "version": "149.0.7827.55",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  },
+  {
+    "host": "jarenjs",
+    "engine": "firefox",
+    "version": "151.0",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  },
+  {
+    "host": "tangleai",
+    "engine": "firefox",
+    "version": "151.0",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  },
+  {
+    "host": "jarenjs",
+    "engine": "webkit",
+    "version": "26.5",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  },
+  {
+    "host": "tangleai",
+    "engine": "webkit",
+    "version": "26.5",
+    "configuration": "stock headless; localhost; no flags or origin trial",
+    "secure": true,
+    "roots": {
+      "document": {
+        "present": false,
+        "methods": []
+      },
+      "navigator": {
+        "present": false,
+        "methods": []
+      }
+    }
+  }
+]

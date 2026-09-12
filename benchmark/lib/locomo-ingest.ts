@@ -19,7 +19,7 @@
  * change its number.
  */
 
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createMemoryUnitStore } from '@tangleai/memory';
 import { createPipeline, type PipelineReport, type PipelineThresholds } from '@tangleai/pipeline';

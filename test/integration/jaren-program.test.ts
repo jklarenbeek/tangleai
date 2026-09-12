@@ -1,10 +1,13 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { createEnvironment, createProgramAuthor, createProgramRunner, createLongHorizonAgent,
-  createStructuredOutput, readProgramAnswer, type ProgramRunResult } from '@jarenjs/ai';
+import { createEnvironment } from '@tangleai/context/environment';
+import { createProgramAuthor, createProgramRunner, readProgramAnswer } from '@tangleai/agents/program';
+import { createLongHorizonAgent } from '@tangleai/agents/recursive';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import { type ProgramRunResult } from '@tangleai/agents/program-result';
 import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 
-it('the installed JarenJS package preserves failed and large cited leaves through real recursion', async () => {
+it('the migrated program mechanisms preserve failed and large cited leaves through real recursion', async () => {
   const environment = createEnvironment();
   await environment.put('corpus', ['[D1:1] timeout', '[D1:2] Boston'].map(line => line.padEnd(1800, '.')).join('\n'));
   const evidence = { records: [{ text: 'A supported fact about Boston. '.repeat(90), ids: ['D1:2'] }] };

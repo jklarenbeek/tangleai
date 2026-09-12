@@ -21,7 +21,7 @@
  * a workflow cannot execute on a path that says "future node".
  */
 
-import { createBudgetAccount } from '@jarenjs/ai';
+import { createBudgetAccount } from '@tangleai/agents/recursive';
 
 import { masIssue, refuse, type MasIssue, type MasValidated } from './errors.ts';
 import { compileEmbeddedSchema } from './schema.ts';

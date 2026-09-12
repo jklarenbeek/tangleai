@@ -335,7 +335,7 @@ export interface MasConformanceSource {
 
 export interface MasConformanceSuitePackagesItem {
   /**
-   * Schema constraints this type cannot express: pattern="^@jarenjs/[a-z0-9-]+$"
+   * Schema constraints this type cannot express: pattern="^@(jarenjs/[a-z0-9-]+|tangleai/(models|context|agents))$"
    */
   name: string;
   /**

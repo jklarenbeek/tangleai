@@ -1,0 +1,30 @@
+import { test, expect } from './playwright.mjs';
+import { readFile } from 'node:fs/promises';
+test('explicit old-origin export imports once and a second import makes no writes', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('jaren-ai', JSON.stringify({ apiKey: 'never-export-this-fixture-key', model: 'not-exported' }));
+    localStorage.setItem('jaren-ai-chat', JSON.stringify({ messages: [{ role: 'assistant', content: '**Transferred** transcript' }] }));
+    localStorage.setItem('jaren-ai-ledger', JSON.stringify({ 'ai/state/memory/m000001': { id: 'm000001', text: 'same id', evidence: 'original receipt', at: '2026-09-09T00:00:00Z' }, 'ai/counters/memory': 2 }));
+    localStorage.setItem('jaren-game', '{"nameForm":{"name":"Original pirate"}}');
+  });
+  const guide = await readFile(new URL('../../docs/migrations/jaren-ai/BROWSER_DATA.md', import.meta.url), 'utf8');
+  const script = guide.match(/```js\n([\s\S]*?)\n```/)[1];
+  const downloading = page.waitForEvent('download'); await page.evaluate(script);
+  const download = await downloading, bytes = await readFile(await download.path());
+  expect(bytes.toString()).not.toContain('never-export-this-fixture-key'); expect(bytes.toString()).not.toContain('apiKey');
+  const old = await page.evaluate(() => Object.fromEntries(['jaren-ai', 'jaren-ai-chat', 'jaren-ai-ledger', 'jaren-game'].map(k => [k, localStorage.getItem(k)])));
+  await page.locator('.demo-transfer summary').click();
+  const file = page.getByLabel('Import browser data');
+  await file.setInputFiles({ name: 'old-browser-data.json', mimeType: 'application/json', buffer: bytes });
+  await expect(page.locator('#data-transfer-controls [role="status"]')).toContainText('Imported 3 slots');
+  const first = await page.evaluate(() => ({ chat: localStorage.getItem('tangle-ai-chat'), ledger: localStorage.getItem('tangle-ai-ledger'), game: localStorage.getItem('tangle-game') }));
+  await page.evaluate(() => { window.transferWrites = 0; const set = Storage.prototype.setItem; Storage.prototype.setItem = function(...args) { window.transferWrites++; return set.apply(this, args); }; });
+  await file.setInputFiles({ name: 'old-browser-data.json', mimeType: 'application/json', buffer: bytes });
+  await expect(page.locator('#data-transfer-controls [role="status"]')).toContainText('Imported 0 slots; 3 already matched');
+  const second = await page.evaluate(() => ({ chat: localStorage.getItem('tangle-ai-chat'), ledger: localStorage.getItem('tangle-ai-ledger'), game: localStorage.getItem('tangle-game') }));
+  expect(second).toEqual(first); expect(await page.evaluate(() => window.transferWrites)).toBe(0);
+  expect(await page.evaluate(() => Object.fromEntries(['jaren-ai', 'jaren-ai-chat', 'jaren-ai-ledger', 'jaren-game'].map(k => [k, localStorage.getItem(k)])))).toEqual(old);
+  await page.getByRole('button', { name: 'Resume Tangle' }).click();
+  await page.locator('.ai-launch').click(); await expect(page.locator('.ai-msg.assistant strong')).toHaveText('Transferred');
+});

@@ -22,7 +22,7 @@
  */
 
 import { cosineSimilarity } from '@jarenjs/core/vector';
-import { sameIdentity } from '@jarenjs/ai';
+import { sameIdentity } from '@tangleai/context/ledger';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
 
 export const DEFAULT_NOVELTY_THRESHOLD = 0.75;

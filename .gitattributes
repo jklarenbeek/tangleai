@@ -3,3 +3,6 @@
 *.png binary
 *.jpg binary
 *.tgz binary
+
+# Preserve the exact historical diff bytes, including blank context lines.
+docs/migrations/jaren-ai/candidate-0.83.3.patch -whitespace

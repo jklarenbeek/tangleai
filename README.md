@@ -4,9 +4,10 @@ Self-improving memory and retrieval for agents, built on the
 [jarenjs](https://github.com/jklarenbeek/jarenjs) suite as the foundational
 layer.
 
-The codebase is authored in **strict TypeScript**. Node 24 runs workspace source
-and tests directly; public npm packages are built as ESM JavaScript with TypeScript
-declarations and their JSON schemas. The eight public packages share one version,
+The codebase uses **strict TypeScript**, with migrated mechanisms retaining their
+JS/JSDoc source and tests. Node 24 runs workspace source and tests directly;
+public packages are built as ESM JavaScript with strict TypeScript declarations
+and their JSON schemas. The thirteen public packages share one version,
 starting at **0.20.0**. The major version remains zero during development.
 `npm run check` validates source; `npm run release:verify` also installs and tests
 the actual publication tarballs outside this checkout.
@@ -14,7 +15,11 @@ the actual publication tarballs outside this checkout.
 ## What runs today
 
 ```sh
-npm install
+# Candidate foundations must exist before installation. Use their Node 24.20.0 pin:
+git submodule update --init vendor/jarenjs
+node scripts/jaren-artifacts.ts --bootstrap
+# Then use Tangle's .nvmrc (Node 24.19.0), with npm 11.12.1:
+npm ci --ignore-scripts
 npm run check      # strict typecheck + complete offline test suite
 npm run skeleton   # the whole loop, end to end, offline
 npm run desktop    # folder memory + versioned web/PDF document corpus
@@ -31,7 +36,7 @@ npm run documents:live-smoke
 The skeleton ingests evidenced observations and runs them through the
 policy chain — novelty gate → contradiction resolution → crystallization →
 outcome learning → embedding-ranked recall — then mirrors the surviving
-memories into an unmodified `@jarenjs/ai` ledger, where a plain jarenjs
+memories into an unmodified `@tangleai/context` ledger, where a Tangle
 agent can recall them by tag:
 
 ```
@@ -42,26 +47,31 @@ outcome: "Deploys must run the full gate before shipping" boosted to confidence 
 recall for: "what is the current api rate limit?"
   0.594  [fact] The API rate limit is 500 requests per minute  (evidence: gateway config v2)
 answer (grounded): The API rate limit is 500 requests per minute — per gateway config v2
-ledger mirror: 3 live memories admitted to a @jarenjs/ai ledger
+ledger mirror: 3 live memories admitted to a @tangleai/context ledger
   ledger recall near "what is the current api rate limit?": The API rate limit is 500 requests per minute (0.594, skipped 0)
 ```
 
 The vectors travel with their identity (`embeddedBy: { model, dims }`),
 which is what lets the mirrored ledger rank them by meaning through the
-same `@jarenjs/ai` embedder seam that wrote them — and what lets every
+same `@tangleai/models` embedder seam that wrote them — and what lets every
 Tangle policy refuse to compare vectors from two models.
 
 ## Packages
 
 | package | what it is |
 |---|---|
+| `@tangleai/models` | injected model clients, embeddings, replay, routing and structured generation ([API](packages/models/README.md)) |
+| `@tangleai/context` | ledgers, bounded environments, evidence, recall and retention ([API](packages/context/README.md)) |
+| `@tangleai/agents` | validated tools, bounded agents, checked programs, recursion and refinement ([API](packages/agents/README.md)) |
+| `@tangleai/jaren` | Jaren grammar authors, typed program pen and revision-checked Studio/Data/Flow AI adapters ([API](packages/jaren/README.md)) |
+| `@tangleai/assistant` | reusable headless assistant controller and scoped visual component ([API](components/assistant/README.md)) |
 | `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
 | `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `recallByEmbedding` (identity-gated, skip-reporting) |
 | `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
 | `@tangleai/documents` | static-first HTTP(S) fetching with URL/DNS/redirect/stream budgets, typed HTML/Markdown/PDF extraction, recursive/semantic/S2 chunkers, versioned corpus contracts, optional browser adapters, and identity-gated chunk retrieval |
 | `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
-| `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@jarenjs/ai`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
+| `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@tangleai/models`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
 | `@tangleai/mas` | the durable typed multi-agent runtime: one closed content-addressed workflow IR (`agent`/`task`/`graph`/`loop`/`switch`/`interaction`), a pure nine-gate validator with stable `TMAS1xxx` refusals, LINQ-pen lowering to compile-proven `jaren-dag`/`jaren-fsm` documents, and the transactional node lifecycle over `createAgent`/`createToolbox`/`createStructuredOutput`/`createBudgetAccount` ([packages/mas/README.md](packages/mas/README.md)) |
 
 The MAS runtime is measured before it is claimed: the registered
@@ -81,10 +91,10 @@ suite's token-overshoot bound under concurrency, and no
 natural-language workflow authoring or desktop runtime surface
 ([docs/ROADMAP.md](docs/ROADMAP.md) keeps those open).
 
-Embeddings are not a Tangle package any more: the wire client
+Embedding mechanisms live in `@tangleai/models`: the wire client
 (`createEmbeddingClient`, the same OpenAI-compatible provider family the
 chat client speaks), the deterministic reference (`createHashEmbedder`),
-the probe and the `{ embed, model, dims }` seam are `@jarenjs/ai/embed`,
+the probe and the `{ embed, model, dims }` seam are `@tangleai/models/embed`,
 and the kernels are `@jarenjs/core/vector`. Tangle brings the policies
 and the configuration.
 
@@ -269,18 +279,31 @@ Cross-compile with Bun's targets, e.g.
 
 **`apps/pages`** — the GitHub Pages site (`bun apps/pages/build.ts` →
 `apps/pages/dist`, deployed after CI independently of Tangle npm publication).
-It builds Tangle's local workspace source and uses JarenJS packages from npm. Its demo
+It builds Tangle's local workspace source and uses the recorded installed Jaren
+artifacts. Its demo
 is not a mock: the real pipeline document executes in your browser over
 the in-memory store, and the recall you ask for afterwards is real
 ranked retrieval — the superseded record provably cannot surface.
 
+The private Pages build uses the official `@sqlite.org/sqlite-wasm`
+`3.53.0-build1` initializer for its browser Data and project workers. This is a
+narrow exception to the JarenJS-only dependency rule: it is a Pages build
+dependency, bundled with its WASM asset for that private application. Published
+Tangle packages and Jaren's shared editors contain no foreign initializer; the
+workers inject it into the public `@jarenjs/studio/data/host` factories. The
+shared Jaren driver, contract, transport and editor remain the execution path.
+
 ## JarenJS release integration
 
-All JarenJS dependencies are pinned to **0.83.3**, including the published
-recursive-program fixes. The source submodule at `vendor/jarenjs` pins `v0.83.3`;
-initialize it with `git submodule update --init vendor/jarenjs` for source and
-benchmark review. `npm run jaren:check` verifies the package, lockfile,
-installation and source pins. Consumers do not need an installation patch.
+The candidate consumes 23 AI-free Jaren **0.83.3** tarballs recorded in
+[the foundation manifest](docs/migrations/jaren-ai/foundations.json). The source
+submodule at `vendor/jarenjs` pins the committed base; its recorded candidate
+patch reconstructs the qualified source in an isolated checkout before packing.
+Bootstrap precedes `npm ci`, including in CI. `npm run jaren:check` verifies the
+source pin, patch, dependency edges, lockfile, archives and exact installed bytes.
+Installed packages are never patched. These artifacts are locally qualified;
+the new source pin and registry release remain pending. See the
+[migration handoff](docs/JAREN_AI_MIGRATION.md) for reconstruction and ownership.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
@@ -294,7 +317,7 @@ draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Package releases
 
-Changesets records patch or minor intent for one fixed group of eight public
+Changesets records patch or minor intent for one fixed group of thirteen public
 packages. `npm run release:prepare` updates their versions, all private workspace
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while
@@ -315,7 +338,7 @@ pull request. The local pre-push hook requires the version bump and complete
 verification receipt; GitHub Actions repeats the release gate, tags the checked commit,
 publishes verified tarballs with npm trusted publishing and tests fresh registry
 installations. After CI, the website independently builds local Tangle source with
-JarenJS from npm, deploys and verifies the accepted commit. A failed publication
+the recorded Jaren dependency mode, deploys and verifies the accepted commit. A failed publication
 cannot finish the package release, but does not block the website. See the [release protocol](docs/workflow/RELEASE.md)
 for first-time npm setup, recovery and the full closeout sequence.
 
@@ -330,7 +353,7 @@ are excluded from every public distribution.
   hard and the measurement that would close it; the LoCoMo instrument
   ([docs/LOCOMO_BENCHMARK.md](docs/LOCOMO_BENCHMARK.md)) gates every
   policy entry
-- [docs/BOUNDARY.md](docs/BOUNDARY.md) — what belongs in `@jarenjs/ai`
+- [docs/BOUNDARY.md](docs/BOUNDARY.md) — where generic Jaren foundations, Tangle mechanisms and host policies belong
   versus here, and the one test-pinned contract between them
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the loop, the two
   load-bearing ordering rules, the house style

@@ -2,7 +2,7 @@
   "benchmark": "mas-runtime-baseline",
   "query": "queries/mas/runtime-baseline.json",
   "queryRevision": "4e68896842dc8d5eb886254bb19096c38924b36d50ba27b54cf4b1adf8eac52e",
-  "reportId": "0d099cf4db3f458b3f9cf83688c735899dde689efa6f2e02f9a11bee9df39de7",
+  "reportId": "0473e705f2154c59a04c6ac53a0e736797435090e536be92e1e7bbd85e528428",
   "rows": {
     "rows": [
       {
@@ -161,5 +161,5 @@
       }
     ]
   },
-  "artifactId": "3a96c3bccb750fe87b3ed1c7309d202313e990796bb4ecc07bc45528da35f4b0"
+  "artifactId": "305f380fe90d6263621d3c83bfd3c2eb438e6f959fe5306ca25acba44b3b63e4"
 }

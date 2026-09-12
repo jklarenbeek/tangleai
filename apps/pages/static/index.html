@@ -9,7 +9,11 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+  <nav class="demo-nav" aria-label="Tangle pages"><a href="#/">Tangle</a><a href="#/project">Studio</a><a href="#/play">Playground</a><a href="#/flow">Flow</a><a href="#/data">Data</a><a href="#/game">Adventure</a></nav>
   <div id="app"><noscript>Tangle AI — the live demo needs JavaScript; the README does not: https://github.com/jklarenbeek/tangleai</noscript></div>
+  <main id="demos" hidden></main>
+  <details class="demo-transfer"><summary>Move browser data</summary><p>Export selected data, or import a file into empty slots. Close other Tangle tabs first. Settings and credentials are excluded.</p><div id="data-transfer-controls"></div></details>
+  <div id="assistant"></div>
   <script type="module" src="./app.js"></script>
 </body>
 </html>

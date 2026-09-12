@@ -2,13 +2,15 @@
  * The Tangle AI pages site — one @jarenjs/app document, and a live
  * demo that is NOT a mock: the real @tangleai/pipeline (the same
  * jaren-dag document the desktop executes) runs here in the browser
- * over the in-memory store with @jarenjs/ai's built-in hash embedder —
+ * over the in-memory store with @tangleai/models's built-in hash embedder —
  * zero network, zero backend. The diagram is projected from the executable
  * document; the numbers on screen are a real run's numbers.
  */
 
 import integration from '../../../benchmark/results/jaren-integration.json' with { type: 'json' };
 import manifest from '../package.json' with { type: 'json' };
+import release from '../../../release.config.json' with { type: 'json' };
+import { bootDemos } from './demos/browser.js';
 
 import { createApp } from '@jarenjs/app';
 import { renderMermaid } from '@jarenjs/mermaid';
@@ -106,7 +108,7 @@ function view(state: any): any {
 
     ['section', { class: 'panel demo' },
       ['h2', {}, 'Run it. Here. Now.'],
-      ['p', {}, 'This button executes the real pipeline in your browser — in-memory store, @jarenjs/ai\'s deterministic hash embedder, no network. Six observations go in: a near-verbatim repeat, a paraphrase pair, and two rate limits that cannot both be true.'],
+      ['p', {}, 'This button executes the real pipeline in your browser — in-memory store, @tangleai/models\'s deterministic hash embedder, no network. Six observations go in: a near-verbatim repeat, a paraphrase pair, and two rate limits that cannot both be true.'],
       ['button', { class: 'button', disabled: state.running ? true : null, on: { click: 'run' } },
         state.ran ? 'run it again' : 'run the loop'],
       nodeStrip(state.records),
@@ -125,7 +127,7 @@ function view(state: any): any {
 
     ['section', { class: 'panel integration', 'data-jaren-version': manifest.dependencies['@jarenjs/app'], 'data-tangle-version': manifest.version },
       ['h2', {}, `Tangle ${manifest.version} · JarenJS ${manifest.dependencies['@jarenjs/app']}`],
-      ['p', {}, 'Eight coordinated packages with JavaScript and TypeScript declarations. ', ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/CHANGELOG.md' }, 'Release notes']],
+      ['p', {}, `${release.packages.length} coordinated packages with JavaScript and TypeScript declarations. `, ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/CHANGELOG.md' }, 'Release notes']],
       ['p', {}, 'Verified workflow checkpoints, lease-aware jobs, atomic agent memory and scheduled document fetching run on the suite. Provider token limits are part of each run’s configuration identity.'],
       ['p', { class: 'note' }, `Measurements below were collected on JarenJS ${integration.jaren}. Keyless checks refreshed ${integration.measuredAt}; paid answers are dated ${integration.paid.qa.at.slice(0, 10)}. Earlier attempts remain available.`],
       ['div', { class: 'report' },
@@ -172,7 +174,7 @@ function view(state: any): any {
         ['p', {}, 'The campaign rule, learned the hard way: no self-evolving capability ships before the instrument that can call it an improvement. LoCoMo is the fitness signal; policies that do not move the number get demoted to opt-in.']],
       ['div', {},
         ['h3', {}, 'jarenjs below, Tangle above'],
-        ['p', {}, 'Contracts and seams (@jarenjs/ai, /flow, /db, /contract) below the boundary; policies and infrastructure above. A curated Tangle memory projects its evidence and embedding fields into an unmodified @jarenjs/ai ledger.']]],
+        ['p', {}, 'Jaren supplies the app, workflow, database and contract engines. Tangle adds models, context, agents and measured policies. A curated Tangle memory projects its evidence and embedding fields into the @tangleai/context ledger.']]],
 
     ['footer', { class: 'footer' },
       ['p', {}, 'MIT · rebuilt from the memflow prototype on the jarenjs suite · this page is itself a @jarenjs/app document rendered by @jarenjs/view']],
@@ -249,3 +251,4 @@ const app = createApp({
 });
 
 void app; // mounted; interaction drives everything else
+bootDemos(window);

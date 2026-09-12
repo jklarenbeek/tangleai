@@ -1,7 +1,7 @@
 /** Compile the publication boundary without changing workspace source exports. */
 import assert from 'node:assert/strict';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
-import { resolve, basename } from 'node:path';
+import { resolve, basename, relative, dirname } from 'node:path';
 import ts from 'typescript';
 import { ROOT, config, readJson, writeJson, npm, inputHash, integrity, git, isMain, type Manifest } from './common.ts';
 
@@ -29,19 +29,70 @@ export const jsonDeclarationAttributes: ts.TransformerFactory<ts.SourceFile | ts
 };
 export function distributionManifest(pkg: Manifest): Manifest {
   const exports = Object.fromEntries(Object.entries(pkg.exports ?? {}).map(([name, target]) => {
-    assert.equal(typeof target, 'string', `${pkg.name}: source exports must use explicit paths`);
-    const path = target as string;
-    assert.match(path, /^\.\/(?:src\/[\w/.-]+\.ts|schemas\/[\w.-]+\.json|package\.json)$/);
-    assert.ok(!path.includes('..'), 'Export paths cannot traverse outside the package');
-    return [name, path.endsWith('.ts') ? { types: path.replace(/\.ts$/, '.d.ts'), import: path.replace(/\.ts$/, '.js'), default: path.replace(/\.ts$/, '.js') } : path];
+    const path = typeof target === 'string' ? target : target.default;
+    assert.equal(typeof path, 'string', `${pkg.name}: source exports need an explicit runtime path`);
+    assert.match(path!, /^\.\/(?:src\/[\w/.-]+\.(?:ts|js)|schemas\/[\w.-]+\.json|styles\/[\w/.-]+\.css|package\.json)$/);
+    assert.ok(!path!.includes('..'), 'Export paths cannot traverse outside the package');
+    if (typeof target !== 'string') {
+      assert.match(path!, /\.js$/);
+      assert.equal(target.types, path!.replace('./src/', './dist/types/').replace(/\.js$/, '.d.ts'), `${pkg.name}: declaration path must match its JS source`);
+      assert.deepEqual(Object.keys(target).sort(), ['default', 'types']);
+    }
+    return [name, /\.(ts|js)$/.test(path!) ? { types: path!.replace(/\.(ts|js)$/, '.d.ts'), import: path!.replace(/\.ts$/, '.js'), default: path!.replace(/\.ts$/, '.js') } : path];
   }));
   const result = { ...pkg, main: './src/index.js', types: './src/index.d.ts', exports };
   delete result.scripts;
   delete result.devDependencies;
   return result;
 }
+/** Keep the inherited JS/JSDoc source language and check every emitted declaration.
+ * Existing TypeScript retains its strict source gate. JS declaration emission
+ * uses the source suite's compiler contract; the following strict program and
+ * installed consumers verify the resulting API rather than skipping its files. */
+export function buildJavaScriptDeclarations(root = ROOT) {
+  const declarations: string[] = [];
+  for (const dir of config(root).packages) {
+    const pkg = readJson(resolve(root, dir, 'package.json'));
+    if (!pkg.main?.endsWith('.js')) continue;
+    const source = resolve(root, dir, 'src'), output = resolve(root, dir, 'dist/types');
+    rmSync(output, { recursive: true, force: true });
+    const files = ts.sys.readDirectory(source, ['.js']);
+    assert.ok(files.length > 0, `${pkg.name}: no JS source discovered`);
+    const program = ts.createProgram(files, {
+      allowJs: true, declaration: true, emitDeclarationOnly: true, noCheck: true,
+      target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.NodeNext, moduleResolution: ts.ModuleResolutionKind.NodeNext,
+      rootDir: source, outDir: output, newLine: ts.NewLineKind.LineFeed,
+    });
+    const emitted = program.emit();
+    if (emitted.diagnostics.length) throw new Error(ts.formatDiagnosticsWithColorAndContext(emitted.diagnostics, {
+      getCanonicalFileName: path => path, getCurrentDirectory: () => root, getNewLine: () => '\n',
+    }));
+    assert.equal(emitted.emitSkipped, false, `${pkg.name}: declaration emission failed`);
+    assert.equal(emitted.diagnostics.length, 0);
+    // The inherited program pen has a deliberately authored phantom-binding
+    // contract. Preserve such declarations, then check them with every emitted
+    // declaration rather than widening their API through JS inference.
+    for (const declaration of ts.sys.readDirectory(source, ['.d.ts'])) {
+      assert.ok(existsSync(declaration.replace(/\.d\.ts$/, '.js')), `${declaration}: no corresponding JavaScript module`);
+      const destination = resolve(output, relative(source, declaration));
+      mkdirSync(dirname(destination), { recursive: true });
+      cpSync(declaration, destination);
+    }
+    declarations.push(...ts.sys.readDirectory(output, ['.d.ts']));
+  }
+  if (declarations.length) {
+    const checked = ts.createProgram(declarations, { strict: true, noEmit: true, skipLibCheck: false,
+      target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.NodeNext, moduleResolution: ts.ModuleResolutionKind.NodeNext });
+    const diagnostics = ts.getPreEmitDiagnostics(checked);
+    if (diagnostics.length) throw new Error(ts.formatDiagnosticsWithColorAndContext(diagnostics, {
+      getCanonicalFileName: path => path, getCurrentDirectory: () => root, getNewLine: () => '\n',
+    }));
+  }
+  console.log(`Emitted and strictly checked ${declarations.length} JS declaration modules.`);
+}
 export async function buildPackages(root = ROOT) {
   const cfg = config(root);
+  buildJavaScriptDeclarations(root);
   const main = readJson(resolve(root, 'package.json'));
   const destination = resolve(root, 'dist/npm');
   const releaseDir = resolve(root, 'dist/release');
@@ -69,7 +120,13 @@ export async function buildPackages(root = ROOT) {
   for (const dir of cfg.packages) {
     const source = resolve(root, dir);
     const output = resolve(destination, basename(dir));
-    const pkg = distributionManifest(readJson(resolve(source, 'package.json')));
+    const sourceManifest = readJson(resolve(source, 'package.json'));
+    const pkg = distributionManifest(sourceManifest);
+    if (sourceManifest.main?.endsWith('.js')) {
+      cpSync(resolve(source, 'src'), resolve(output, 'src'), { recursive: true });
+      cpSync(resolve(source, 'dist/types'), resolve(output, 'src'), { recursive: true });
+    }
+    if (existsSync(resolve(source, 'styles'))) cpSync(resolve(source, 'styles'), resolve(output, 'styles'), { recursive: true });
     for (const file of ['README.md', 'LICENSE', 'CHANGELOG.md']) {
       assert.ok(existsSync(resolve(source, file)), `${dir}: missing ${file}`);
       cpSync(resolve(source, file), resolve(output, file));
@@ -85,7 +142,7 @@ export async function buildPackages(root = ROOT) {
     for (const required of ['README.md', 'LICENSE', 'CHANGELOG.md', 'package.json']) assert.ok(files.has(required), `${pkg.name}: ${required} missing from tarball`);
     for (const file of files) {
       assert.ok(!file.endsWith('.ts') || file.endsWith('.d.ts'), `${pkg.name}: raw TypeScript leaked into npm package`);
-      assert.ok(file === 'package.json' || ['README.md', 'LICENSE', 'CHANGELOG.md'].includes(file) || /^src\/.+\.(js|d\.ts)$/.test(file) || /^schemas\/.+\.json$/.test(file), `${pkg.name}: unexpected packed file ${file}`);
+      assert.ok(file === 'package.json' || ['README.md', 'LICENSE', 'CHANGELOG.md'].includes(file) || /^src\/.+\.(js|d\.ts)$/.test(file) || /^schemas\/.+\.json$/.test(file) || /^styles\/.+\.css$/.test(file), `${pkg.name}: unexpected packed file ${file}`);
     }
     for (const target of Object.values(pkg.exports ?? {})) {
       for (const file of typeof target === 'string' ? [target] : Object.values(target)) assert.ok(files.has(file.slice(2)), `${pkg.name}: missing export ${file}`);
@@ -99,4 +156,8 @@ export async function buildPackages(root = ROOT) {
   console.log(`Built ${artifacts.packages.length} JavaScript/declaration tarballs for ${main.version}.`);
   return artifacts;
 }
-if (isMain(import.meta.url)) await buildPackages();
+if (isMain(import.meta.url)) {
+  assert.ok(process.argv.slice(2).every(arg => arg === '--declarations'));
+  if (process.argv.includes('--declarations')) buildJavaScriptDeclarations();
+  else await buildPackages();
+}

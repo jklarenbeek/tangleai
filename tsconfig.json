@@ -24,6 +24,8 @@
     "benchmark/lib/**/*.ts",
     "benchmark/scripts/*.ts",
     "test/**/*.ts",
-    "scripts/release/**/*.ts"
+    "scripts/release/**/*.ts",
+    "scripts/jaren-artifacts.ts",
+    "components/*/src/**/*.ts"
   ]
 }

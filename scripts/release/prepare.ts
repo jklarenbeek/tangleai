@@ -117,7 +117,7 @@ export async function prepare(root = ROOT, options: { initial?: boolean; refresh
     record.inputHash = inputHash(root);
     writeJson(resolve(root, recordPath), record);
     rmSync(backupPath);
-    console.log(`Prepared ${version} across eight public packages and all private workspaces. Run npm run release:verify before closeout.`);
+    console.log(`Prepared ${version} across ${names.length} public packages and all private workspaces. Run npm run release:verify before closeout.`);
   } catch (error) {
     restorePreparation(root, backup);
     rmSync(backupPath);

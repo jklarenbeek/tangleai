@@ -4,12 +4,12 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "534657a166b2ba4c560abc42c1ae7fbc8f9aef20",
+    "head": "13330f3ce81bc8afa35265d829bafd2b3430d897",
     "clean": false,
     "files": [
       {
         "path": "apps/desktop/src/ai-host.ts",
-        "sha256": "42c90f8b53e18390998b2f2eb04d90db9f911aa4953d41452a353f15ee50edb4"
+        "sha256": "f9a8760f2a3e06d75120eae8ad5d92d13c96ac940d008c0665c1b8e5b418134f"
       },
       {
         "path": "apps/desktop/src/chat.ts",
@@ -17,15 +17,15 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "b38dbe741b89f26290ef57e9d859a4a999d9654a29b0a01f14058061251c8079"
+        "sha256": "9cd128139be977c66cd3a1c3a2133112b0b69098b39e8f396efdb9c0868f23d6"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "60bc5d7684194cb7e8354bcbaefd6f238e4c8fb8286bb2b24219e30300ac3434"
+        "sha256": "68a75c8aca8401e3728cd0eebbac68be0c8a7f3c13d40f3e4e399ef113ef497c"
       },
       {
         "path": "apps/desktop/src/settings.ts",
-        "sha256": "5b72a7b73397dee64d3ada8afc4646a7ecf3f78fa63f9d07b366660231f56673"
+        "sha256": "cfe8492d70c506a9db17b52002282139b5bfe67d9487d2410ade473673761996"
       },
       {
         "path": "benchmark/config-conformance.ts",
@@ -33,15 +33,15 @@
       },
       {
         "path": "benchmark/lib/ai-env.ts",
-        "sha256": "41a82ccdeccadca1d55f2866edd05843eb8177bb7fedabef9aa9ed209be50f76"
+        "sha256": "bb1cf8848648abd8f7ad7f470c8325b4dc9d1e23b511927f895d21cb7c345fe6"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
-        "sha256": "e2b06f3985e25925fa7fb8f4d62d97247bfc879582073833d6aba44a7c604724"
+        "sha256": "6c6aeb70b96c891874431af000dc72671b62b25d21eddd7499b0cee5563d463c"
       },
       {
         "path": "benchmark/lib/config-conformance.types.ts",
-        "sha256": "5199a6a3e25430daa73acfb3188dd3c43c4881ea4ced9c88d1becde478642b5c"
+        "sha256": "7ab5ee682b01ff2c1780e91a125725ab92c28f0cf820ebf8e2c64172141ef6b6"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -69,7 +69,7 @@
       },
       {
         "path": "benchmark/schemas/config-conformance.schema.json",
-        "sha256": "a986147b3d75126e012fd6a4f2566167bb4b583dfe24e8b65fce7945539583f0"
+        "sha256": "6ad7f6a4c06b98145013db3ff40fbd26fd9df6055d04f97d5617c43f5c36959d"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -97,7 +97,7 @@
       },
       {
         "path": "packages/config/src/resolve.ts",
-        "sha256": "c015aba2120284396c55f1fe2fcb970d933ff38e9021c2671f45a40862440b73"
+        "sha256": "885887b79e42f2021d380d9baf695993d5fbdaeabca0bb851a3ba421da79221b"
       },
       {
         "path": "packages/config/src/schema.ts",
@@ -120,65 +120,113 @@
         "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
       }
     ],
-    "sha256": "b9acf570056c238b264458fca5144ef3d0effee89d0677186232df351c26a1e4"
+    "sha256": "86e0925ec1338d5e2e6e0086e7541cb7a13a325157b3abfafad7842113bf11d0"
   },
   "suite": {
     "packages": [
       {
-        "name": "@jarenjs/ai",
-        "version": "0.83.2"
+        "name": "@jarenjs/app",
+        "version": "0.84.0"
       },
       {
-        "name": "@jarenjs/app",
-        "version": "0.83.2"
+        "name": "@jarenjs/calc",
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.83.2"
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/collection",
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.83.2"
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/formats",
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/forms",
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/josl",
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.83.2"
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/locales",
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.83.2"
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/play",
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/refs",
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/rules",
+        "version": "0.84.0"
+      },
+      {
+        "name": "@jarenjs/studio",
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.83.2"
+        "version": "0.84.0"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.83.2"
+        "version": "0.84.0"
+      },
+      {
+        "name": "@tangleai/agents",
+        "version": "0.21.0"
+      },
+      {
+        "name": "@tangleai/context",
+        "version": "0.21.0"
+      },
+      {
+        "name": "@tangleai/models",
+        "version": "0.21.0"
       }
     ]
   },
@@ -286,7 +334,7 @@
     ],
     "desktopContract": {
       "operations": 21,
-      "revision": "a8549ef0e08a251c23a0cbfe0927b7de3c76fc52ce99f57a58970c2b7fb28495"
+      "revision": "9898c2904a4005970faa03e263d374ce0bd39e0356df3a5792106215cebc5690"
     },
     "summary": {
       "hostInputs": 2,
@@ -924,5 +972,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "1e0c736ae07a88a2ed6303beb4fc70d527aca3549c127757b6f753f418cd0e37"
+  "reportId": "2686216ae39a08339d57f5925f1b654884f6bd1ca9038470fbd080a6b33d19cb"
 }

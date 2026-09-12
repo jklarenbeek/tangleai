@@ -23,7 +23,9 @@ import { compileDag, compileFsm } from '@jarenjs/flow';
 import { defineDag, defineFsm, edge, effect, input, on, output, state, task, type AnyNode, type EdgeDeclaration } from '@jarenjs/linq/flow';
 import { deepFreeze } from '@jarenjs/core/object';
 import flowPackage from '@jarenjs/flow/package.json' with { type: 'json' };
-import aiPackage from '@jarenjs/ai/package.json' with { type: 'json' };
+import modelsPackage from '@tangleai/models/package.json' with { type: 'json' };
+import contextPackage from '@tangleai/context/package.json' with { type: 'json' };
+import agentsPackage from '@tangleai/agents/package.json' with { type: 'json' };
 import type {} from './jaren-flow.d.ts';
 
 import { masIssue, refuse, type MasValidated } from './errors.ts';
@@ -107,7 +109,7 @@ const member = (root: string, ...names: string[]): string =>
 /** Bump the host ABI when lifecycle semantics change. Suite and registry
  * upgrades also change the declared handler identity and executable revision. */
 export function masTaskVersionOf(registryRevision: string): string {
-  return `tangle-mas/2:flow/${flowPackage.version}:ai/${aiPackage.version}:${registryRevision}`;
+  return `tangle-mas/3:flow/${flowPackage.version}:models/${modelsPackage.version}:context/${contextPackage.version}:agents/${agentsPackage.version}:${registryRevision}`;
 }
 
 export interface Feed {

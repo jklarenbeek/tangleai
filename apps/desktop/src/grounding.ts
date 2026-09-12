@@ -20,7 +20,8 @@
  * one.
  */
 
-import { createStructuredOutput, validateClaimEvidence } from '@jarenjs/ai';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import { validateClaimEvidence } from '@tangleai/context/evidence';
 import type { Vector } from '@jarenjs/core/vector';
 import { estimateTokens } from '@tangleai/core/tokens';
 import {

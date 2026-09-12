@@ -999,7 +999,7 @@
             "properties": {
               "name": {
                 "type": "string",
-                "pattern": "^@jarenjs/[a-z0-9-]+$"
+                "pattern": "^@(jarenjs/[a-z0-9-]+|tangleai/(models|context|agents))$"
               },
               "version": {
                 "type": "string",

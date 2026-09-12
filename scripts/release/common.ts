@@ -53,7 +53,8 @@ export function nextVersion(version: string, impact: 'patch' | 'minor') {
 }
 export function manifestPaths(root = ROOT) {
   const dirs: string[] = [];
-  for (const parent of ['packages', 'apps']) {
+  for (const parent of ['packages', 'components', 'apps']) {
+    if (!existsSync(resolve(root, parent))) continue;
     for (const entry of readdirSync(resolve(root, parent), { withFileTypes: true })) {
       if (entry.isDirectory() && existsSync(resolve(root, parent, entry.name, 'package.json'))) dirs.push(`${parent}/${entry.name}`);
     }

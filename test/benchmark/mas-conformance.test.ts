@@ -415,7 +415,7 @@ describe('the generated bundle and the import census', () => {
     const instrument = await readFile('benchmark/lib/mas-conformance.ts', 'utf8');
     for (const imported of [
       "from '@jarenjs/flow'", "from '@jarenjs/linq/flow'", "from '@jarenjs/db'",
-      "from '@jarenjs/ai'", "from '@jarenjs/json/canonical'", "from '@jarenjs/json/query'",
+      "from '@tangleai/agents/recursive'", "from '@jarenjs/json/canonical'", "from '@jarenjs/json/query'",
     ]) {
       assert.ok(instrument.includes(imported), `the instrument imports ${imported}`);
     }

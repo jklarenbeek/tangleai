@@ -14,7 +14,7 @@
  * silent retry.
  */
 
-import { createToolbox } from '@jarenjs/ai';
+import { createToolbox } from '@tangleai/agents/toolbox';
 
 import { masIssue, type MasIssue, type MasValidated } from './errors.ts';
 import type { MasRegistry, ToolStep } from './contracts.gen.ts';

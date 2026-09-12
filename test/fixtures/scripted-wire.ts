@@ -11,7 +11,7 @@
  * thing to disagree would be the failure path nobody exercises.
  */
 
-import { createHashEmbedder } from '@jarenjs/ai/embed';
+import { createHashEmbedder } from '@tangleai/models/embed';
 import { addressedLines, evidenceProgram } from '../../benchmark/lib/horizon-agent.ts';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../../apps/desktop/src/settings.ts';

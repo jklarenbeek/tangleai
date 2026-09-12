@@ -76,7 +76,7 @@ signal this repo insists on.
 | dag execution with per-node records | exists (`@tangleai/pipeline`, `@jarenjs/flow`) |
 | run history + live streaming surface | exists (`@tangleai/store`, desktop `dag.live`) |
 | outcome-driven strategy fitness | exists (`@tangleai/memory` `applyOutcome`) |
-| proposal discipline | exists in the suite (`@jarenjs/ai` refine gates: RFC-6902, evidence-mandatory) — not yet wired here |
+| proposal discipline | exists in the suite (`@tangleai/context` refine gates: RFC-6902, evidence-mandatory) — not yet wired here |
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |
 | worktree executor (add/apply/gate/measure/remove) | missing — `node:child_process` over git, no new dependencies |
 | mutation/proposal operators | missing — starts hand-authored; LLM-backed via `createStructuredOutput` later |

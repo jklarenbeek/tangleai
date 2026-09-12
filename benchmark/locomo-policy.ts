@@ -39,7 +39,7 @@
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 
-import { resolveEndpoint } from '@jarenjs/ai';
+import { resolveEndpoint } from '@tangleai/models/providers';
 
 import { DEFAULT_SETTINGS, chatClientFor, embedderFor } from '../apps/desktop/src/settings.ts';
 import { chatSettingsOf, embedSettingsOf, readAiEnv } from './lib/ai-env.ts';

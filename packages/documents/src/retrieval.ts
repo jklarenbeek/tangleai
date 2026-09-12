@@ -1,6 +1,6 @@
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
-import { sameIdentity } from '@jarenjs/ai';
+import { sameIdentity } from '@tangleai/context/ledger';
 
 import type { DocumentChunk, DocumentCorpusStore, DocumentSource, EmbeddedBy } from './contracts.ts';
 

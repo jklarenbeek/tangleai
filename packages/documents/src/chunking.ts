@@ -1,4 +1,4 @@
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import { cosineSimilarity } from '@jarenjs/core/vector';
 import { kMeans } from '@tangleai/core/clustering';
 import { CHARS_PER_TOKEN, estimateTokens } from '@tangleai/core/tokens';

@@ -264,8 +264,12 @@ it('a website with the right version but wrong commit or incomplete package set 
   assert.throws(() => verifyBuildIdentity({ ...expected, commit: 'b'.repeat(40) }, expected), /Live website/);
   assert.throws(() => verifyBuildIdentity({ ...expected, packages: {} }, expected), /Live website/);
 });
-it('the website resolves Tangle source locally and JarenJS from npm, refusing either fallback', async () => {
-  assert.deepEqual(await verifyPageSources(ROOT), { tangle: 'workspace', jarenjs: 'npm' });
+it('the website resolves local Tangle source and identifies its installed foundation mode, refusing either fallback', async () => {
+  const sources = await verifyPageSources(ROOT);
+  assert.equal(sources.tangle, 'workspace');
+  assert.equal(sources.jarenjs, 'candidate-artifacts');
+  assert.match(sources.foundation!.patchSha256, /^[a-f0-9]{64}$/);
+  assert.match(sources.foundation!.commit, /^[a-f0-9]{40}$/);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@tangleai/core' ? '@jarenjs/core' : name)), /local Tangle source/);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@jarenjs/app' ? '@tangleai/core' : name)), /npm installation/);
 });
@@ -278,7 +282,7 @@ it('the push and publication gate refuses missing, changed or stale verification
   const built: Artifacts = { schemaVersion: 1, version: '0.20.0', commit: git(root, 'rev-parse', 'HEAD'), inputHash: inputHash(root),
     packages: config(root).packages.map(dir => {
       const pkg = readJson(resolve(root, dir, 'package.json'));
-      const filename = `tangleai-${dir.slice('packages/'.length)}-0.20.0.tgz`;
+      const filename = `${pkg.name.slice(1).replace('/', '-')}-0.20.0.tgz`;
       const bytes = Buffer.from(pkg.name);
       writeFileSync(resolve(directory, filename), bytes);
       return { name: pkg.name, version: pkg.version, filename, integrity: integrity(bytes), exports: {} };
@@ -298,4 +302,15 @@ it('the push and publication gate refuses missing, changed or stale verification
   writeJson(resolve(directory, 'verification.json'), { declarations: true, browser: true });
   writeFileSync(resolve(root, 'packages/core/src/index.ts'), 'export const value = 2;\n');
   assert.throws(() => assertVerifiedGate(root), /Build inputs changed/);
+});
+
+it('publishes transferred JS with declarations and rejects a mismatched source declaration path', () => {
+  const source = { name: '@tangleai/models', version: '0.20.1', exports: {
+    '.': { default: './src/index.js', types: './dist/types/index.d.ts' },
+    './schemas/ledger': { default: './src/schemas/ledger.js', types: './dist/types/schemas/ledger.d.ts' },
+  } };
+  const built = distributionManifest(source);
+  assert.deepEqual(built.exports?.['./schemas/ledger'], { types: './src/schemas/ledger.d.ts', import: './src/schemas/ledger.js', default: './src/schemas/ledger.js' });
+  source.exports['.'].types = './dist/types/wrong.d.ts';
+  assert.throws(() => distributionManifest(source), /declaration path must match/);
 });

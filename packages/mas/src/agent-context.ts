@@ -14,7 +14,8 @@
  * composition of the published seams, with every slot address traceable.
  */
 
-import { createEnvironment, createLedger } from '@jarenjs/ai';
+import { createEnvironment } from '@tangleai/context/environment';
+import { createLedger } from '@tangleai/context/ledger';
 import { compileJsonQuery } from '@jarenjs/json/query';
 
 type LedgerOptions = NonNullable<Parameters<typeof createLedger>[0]>;

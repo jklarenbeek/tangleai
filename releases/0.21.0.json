@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "version": "0.21.0",
+  "baseVersion": "0.20.1",
+  "baseCommit": "13330f3ce81bc8afa35265d829bafd2b3430d897",
+  "preparationCommit": "13330f3ce81bc8afa35265d829bafd2b3430d897",
+  "initial": false,
+  "inputHash": "34111d9d04a964be7212581eda4a22b88e7f114135b6e528e777c1f8fe6cec76",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/config",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/pipeline",
+          "type": "minor"
+        }
+      ],
+      "summary": "Use the models, context and agents owners of the inherited AI mechanisms. MAS\nexecutable identity version 3 names all executed mechanism versions; an old\nexecutable checkpoint is refused intact through the existing mismatch path.\nMemory and ledger records retain their schemas and projection contracts.",
+      "id": "ai-consumers"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/models",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add independent model transport, evidence-backed context, and bounded agent/program packages. Preserve the JavaScript/JSDoc APIs, strict result contracts and injected host services, with JavaScript distributions and checked declarations. Toolbox browser registration delegates to Jaren's shared WebMCP contract.",
+      "id": "ai-mechanisms"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/assistant",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "minor"
+        }
+      ],
+      "summary": "Receive the reusable assistant and injected slot ledger storage, preserving\nstreaming, transcript and evidenced-memory behavior with owned cleanup.",
+      "id": "assistant-component"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        }
+      ],
+      "summary": "Provide Jaren grammar authors, typed AI program construction and revision-checked shared editor adapters.",
+      "id": "jaren-integrations"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.21.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.21.0"
+    }
+  ]
+}

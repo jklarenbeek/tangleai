@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "rows": [
+    {
+      "grammar": "model",
+      "sourceHash": "e0457754c71c4d95e6383b305ee1ff0f64c868e0d3746779ba8ee06ff83473c5",
+      "seamHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "profileHash": "cd036e1bcd47f40255341038fb77ae0f88b27daf4dbd328da9577c46eae2d1a6",
+      "open": [],
+      "full": {
+        "bytes": 8972,
+        "branches": 7
+      },
+      "profile": {
+        "bytes": 8903,
+        "branches": 7
+      }
+    },
+    {
+      "grammar": "query",
+      "sourceHash": "98ad2c2b24dcbdfcc3e4f5c9a47c578b23099e5ba0daf33b9c0bc38e2a25a6d1",
+      "seamHash": "f0d41be2c687a847bb30b6271a691b76477fbce80460d4aa7388e6a1469ea80e",
+      "profileHash": "72217bd6d84bf3512c2a62df0196ec00dfcc55a73a64e20f9e5ba9877541f035",
+      "open": [
+        "objectExpression"
+      ],
+      "full": {
+        "bytes": 20709,
+        "branches": 47
+      },
+      "profile": {
+        "bytes": 3564,
+        "branches": 10
+      }
+    },
+    {
+      "grammar": "jslt",
+      "sourceHash": "ef1a67dd620abcbca3462adc3d7a787d4b581237a1ed913a42d56c7cf9ad5340",
+      "seamHash": "05e477048a83ec7fd8b9c4578a0a33bc108da17e7043c35d73f420cefe1ec6fd",
+      "profileHash": "8fe3692c07e19b6794712e58f894a526c3d6afa7d486801ff7f94207877f4f8a",
+      "open": [
+        "queryDocument"
+      ],
+      "full": {
+        "bytes": 23515,
+        "branches": 59
+      },
+      "profile": {
+        "bytes": 3491,
+        "branches": 6
+      }
+    },
+    {
+      "grammar": "app",
+      "sourceHash": "7b95677e0f0b3576cd3c570d5a9cccc82c953c4b4321c5baa80ad7a5dee1598e",
+      "seamHash": "3212745ee17fb35df53b9b8046cce2995d4d92d22d2eef34a68676462f3d4e4d",
+      "profileHash": "a1ef08043bd897fda00cf7501a437115dcb798d7609dcd6535421cbe9e10b8b6",
+      "open": [
+        "queryDocument",
+        "stylesheetDocument"
+      ],
+      "full": {
+        "bytes": 47275,
+        "branches": 106
+      },
+      "profile": {
+        "bytes": 2799,
+        "branches": 0
+      }
+    },
+    {
+      "grammar": "fsm",
+      "sourceHash": "88774f9cc250cafdd4b7ad50b132e61fd365719ec4df36afc54ab376e6aa1caa",
+      "seamHash": "6082dff6cd338b5716282b69d20f59bff625dd2edb4feb0a6f7345efd2c36e1f",
+      "profileHash": "5e1f8bf951ae8a6d390a232f6e85b0e48ea2ca2311f0b0eec512a3a381391ec8",
+      "open": [
+        "queryDocument"
+      ],
+      "full": {
+        "bytes": 24140,
+        "branches": 51
+      },
+      "profile": {
+        "bytes": 3026,
+        "branches": 4
+      }
+    },
+    {
+      "grammar": "dag",
+      "sourceHash": "10fde5220cfbe12f496c1112e9e0874c30d1cc0b51d9c79fbb05be75a4b9cf9f",
+      "seamHash": "3212745ee17fb35df53b9b8046cce2995d4d92d22d2eef34a68676462f3d4e4d",
+      "profileHash": "878742d5ab5e438ba341d2c2681f7c33caf6d013109a01a9a2bc57be3af3d56a",
+      "open": [
+        "queryDocument",
+        "stylesheetDocument"
+      ],
+      "full": {
+        "bytes": 49558,
+        "branches": 112
+      },
+      "profile": {
+        "bytes": 5128,
+        "branches": 6
+      }
+    },
+    {
+      "grammar": "statechart",
+      "sourceHash": "98191f3fe30c85f237a41b83d58e419cc1be6879c66fa18653fb5368bff1e859",
+      "seamHash": "6082dff6cd338b5716282b69d20f59bff625dd2edb4feb0a6f7345efd2c36e1f",
+      "profileHash": "cebf65ba626891957ff09067c933f8e124fe5fd73057dacac71608436261fa05",
+      "open": [
+        "queryDocument"
+      ],
+      "full": {
+        "bytes": 23058,
+        "branches": 49
+      },
+      "profile": {
+        "bytes": 2634,
+        "branches": 2
+      }
+    },
+    {
+      "grammar": "workflow",
+      "sourceHash": "5e1ba7aeb294b22ab987677b54beb628d281c4e55ba579dc741dfa23df92ccc0",
+      "seamHash": "90746ef8f331b94259a96fa3d6d349640ef37d56ce332da4229b6645c27f0a9d",
+      "profileHash": "3e12c5db1285a96f3115390234fdbe61fa5078a77f309f8be2ae8b53817032bc",
+      "open": [
+        "queryDocument",
+        "dagDocument"
+      ],
+      "full": {
+        "bytes": 52878,
+        "branches": 121
+      },
+      "profile": {
+        "bytes": 3685,
+        "branches": 9
+      }
+    }
+  ]
+}

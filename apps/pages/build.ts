@@ -39,13 +39,28 @@ if (!built.success) {
 }
 await writeFile(join(dist, 'app.js'), await built.outputs[0].text());
 
+for (const name of ['data-worker', 'project-worker']) {
+  const worker = await Bun.build({ entrypoints: [join(here, 'src/demos/playground', `${name}.js`)], target: 'browser', format: 'esm' });
+  if (!worker.success) throw new Error(worker.logs.join('\n'));
+  await writeFile(join(dist, `${name}.js`), await worker.outputs[0].text());
+}
+for (const asset of ['sqlite3.wasm', 'sqlite3-opfs-async-proxy.js'])
+  await cp(join(repo, 'node_modules/@sqlite.org/sqlite-wasm/dist', asset), join(dist, asset));
+
 await cp(join(here, 'static'), dist, { recursive: true });
 
 const vendor = [
   'node_modules/@jarenjs/mermaid/styles/mermaid.css',
 ];
 let css = '';
+for (const name of ['studio', 'play', 'md']) {
+  await cp(join(repo, `node_modules/@jarenjs/${name}/styles`), join(dist, `vendor/${name}`), { recursive: true });
+}
+await cp(join(repo, 'components/assistant/styles/assistant.css'), join(dist, 'vendor/assistant.css'));
+css += ['studio/studio.css', 'studio/data.css', 'play/play.css', 'md/md.css', 'assistant.css']
+  .map(path => `@import url('./vendor/${path}');\n`).join('');
 for (const path of vendor) css += await readFile(join(repo, path), 'utf8');
+css += await readFile(join(here, 'src/demos/game/styles.css'), 'utf8');
 await writeFile(join(dist, 'vendor.css'), css);
 
 await writeFile(join(dist, '.nojekyll'), '');

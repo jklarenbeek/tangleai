@@ -53,7 +53,7 @@ import {
   OFFLINE_EMBEDDER_DIMS,
   type PipelineThresholds,
 } from '@tangleai/pipeline';
-import { createHashEmbedder } from '@jarenjs/ai/embed';
+import { createHashEmbedder } from '@tangleai/models/embed';
 
 import {
   CATEGORY_NAMES,

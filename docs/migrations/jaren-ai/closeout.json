@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-12",
+  "jaren": {
+    "version": "0.84.0",
+    "commit": "b111a633f6d35f00109902a16cc25776ccaaf4ea",
+    "sourceState": "committed",
+    "foundationManifest": "foundations.json",
+    "foundationManifestSha256": "daea0d175ff1ffe3d3fed628a67c675ad69534b43b0548c4cf69e9108a13db71",
+    "packages": 23,
+    "registryPublication": false
+  },
+  "tangle": {
+    "version": "0.21.0",
+    "releaseRecord": "releases/0.21.0.json",
+    "packages": 13,
+    "commitIdentity": "The commit carrying releases/0.21.0.json; no self-referential commit hash is embedded",
+    "gate": "dist/release/gate.json",
+    "artifacts": "dist/release/artifacts.json",
+    "consumers": "dist/release/verification.json",
+    "registryPublication": false
+  },
+  "toolchains": {
+    "jarenNode": "24.20.0",
+    "jarenBun": "1.4.2",
+    "tangleNode": "24.19.0",
+    "tangleBun": "1.4.0",
+    "npm": "11.12.1"
+  },
+  "sourceGate": {
+    "command": "npm run check",
+    "cwd": "/home/joham/projects/jp/tangleai",
+    "exit": 0,
+    "tests": 1379,
+    "passed": 1379,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 297,
+    "declarationModules": 53,
+    "log": {
+      "path": "/tmp/jaren-ai-migration/t-closeout-source.log",
+      "sha256": "23fb46d8056d519e6b398fbf230673f49b8c707843b153b1653caba9e2c2e3ce"
+    }
+  },
+  "sourceProtocol": {
+    "focusedTests": 22,
+    "exit": 0,
+    "log": {
+      "path": "/tmp/jaren-ai-migration/t-committed-foundations-green.log",
+      "sha256": "b0df68dd4fafd44485c158db81256ebcd6f894cf468903527c9fadc8decea2d3"
+    },
+    "committedPatch": "Empty, SHA-256 recorded in foundations.json; a committed receipt with a non-empty patch is refused"
+  },
+  "cleanInstall": {
+    "command": "node scripts/jaren-artifacts.ts --bootstrap; npm ci --ignore-scripts; node scripts/check-jaren.ts",
+    "cwd": "/home/joham/.cache/jaren-ai-migration/tangle-closeout/source",
+    "exit": 0,
+    "reconstructedArchives": 23,
+    "archiveBytes": "identical",
+    "repeatBootstrapWrites": 0,
+    "cleanInstalls": 2,
+    "installedPackages": 23,
+    "exactReferences": 94,
+    "log": {
+      "path": "/tmp/jaren-ai-migration/t-closeout-clean.log",
+      "sha256": "0d8dca1ab585492d43e092d47a1f375c3cbae1051b26eabaf5336fb67c84a8f0"
+    }
+  },
+  "instruments": {
+    "command": "npm run benchmark:config; npm run benchmark:config:queries; npm run benchmark:mas; npm run benchmark:mas:handoff; npm run migration:docs:check",
+    "exit": 0,
+    "configHolds": 44,
+    "masRuntimeOracles": 11,
+    "masRefusals": 7,
+    "masSubstrate": 7,
+    "masDurability": 6,
+    "paidCalls": 0,
+    "log": {
+      "path": "/tmp/jaren-ai-migration/t-closeout-identities.log",
+      "sha256": "37011a0052283bdb814d5dc721bc000ab4baa4bbfd0dbcc31501569394479506"
+    }
+  },
+  "history": {
+    "priorQualification": "verification.json",
+    "priorFoundationManifest": "candidate-0.83.3.json",
+    "priorFoundationPatch": "candidate-0.83.3.patch",
+    "originalCommitsRewritten": false,
+    "filteredHistoryMerged": false
+  },
+  "remaining": "Tangle push/deployment and registry release are separate actions. Registry cutover must publish and verify the Jaren foundation closure first, then switch Tangle to exact registry dependencies and requalify."
+}

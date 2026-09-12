@@ -1,5 +1,20 @@
 # @tangleai/config
 
+## 0.21.0
+
+### Minor Changes
+
+- Use the models, context and agents owners of the inherited AI mechanisms. MAS
+  executable identity version 3 names all executed mechanism versions; an old
+  executable checkpoint is refused intact through the existing mismatch path.
+  Memory and ledger records retain their schemas and projection contracts.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @tangleai/context@0.21.0
+
 ## 0.20.1
 
 No changes in this release.

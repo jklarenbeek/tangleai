@@ -2,7 +2,7 @@
  * The memory store seam and its default in-memory implementation.
  *
  * The contract is four async methods — `get`, `put`, `delete`, `list` —
- * the same injection shape as the @jarenjs/ai ledger's storage seam, one
+ * the same injection shape as the @tangleai/context ledger's storage seam, one
  * level up: this store holds validated memory UNITS, not raw strings.
  * A host backs it with SQLite, OPFS, a graph database, whatever; the
  * policies in this package only ever see the contract.

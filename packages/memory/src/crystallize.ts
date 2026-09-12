@@ -34,7 +34,7 @@
  */
 
 import { cosineSimilarity } from '@jarenjs/core/vector';
-import { sameIdentity } from '@jarenjs/ai';
+import { sameIdentity } from '@tangleai/context/ledger';
 import type { MemoryRelation, MemoryUnit } from '@tangleai/core/schemas/memory';
 import type { MemoryStore } from './store.ts';
 

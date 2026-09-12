@@ -443,7 +443,7 @@ function settingsPage(state: any): any {
       field('base url', 'settings/embed-baseurl', draft.embed.baseUrl, 'http://localhost:11434'),
       field('model', 'settings/embed-model', draft.embed.model, 'nomic-embed-text'),
       secretField('api key', 'settings/embed-apikey', 'settings/clear-embed-key', state.settings.draft?.slots?.embedKey === true, state.settings.clear.embedKey, state.settings.saveCount),
-      ['p', { class: 'hint' }, '`builtin` is @jarenjs/ai\'s deterministic hash-trigram embedder — lexical, demo-grade, zero setup. Configure a real model for semantic recall; memories synced under one embedder are only ever ranked by that embedder.']],
+      ['p', { class: 'hint' }, '`builtin` is @tangleai/models\'s deterministic hash-trigram embedder — lexical, demo-grade, zero setup. Configure a real model for semantic recall; memories synced under one embedder are only ever ranked by that embedder.']],
     ['div', { class: 'group' },
       ['h3', {}, 'Document corpus'],
       select('chunker', 'settings/document-chunker', draft.documents.chunker, ['recursive', 'semantic-boundary', 's2']),

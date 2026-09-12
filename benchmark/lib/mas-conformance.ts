@@ -32,7 +32,7 @@ import { compileDag, compileFsm, createFsmSession, snapshotFsm, resumeFsmSession
 import { defineDag, defineFsm, edge, input, on, output, state, task, typedTasks } from '@jarenjs/linq/flow';
 import { openStore } from '@jarenjs/db';
 import { nodeDriver } from '@jarenjs/db/node';
-import { createBudgetAccount } from '@jarenjs/ai';
+import { createBudgetAccount } from '@tangleai/agents/recursive';
 
 import {
   createMasConfigCatalog,
@@ -124,7 +124,7 @@ export async function conformanceSource(root = process.cwd()): Promise<MasConfor
   return { head, clean, files, sha256: await canonicalSha256({ head, files }) };
 }
 
-/** Installed `@jarenjs/*` packages, name-sorted — the suite pin census. */
+/** Installed foundation and executed mechanism identities, name-sorted. */
 export async function suitePackages(root = process.cwd()): Promise<MasConformance['suite']> {
   const dir = join(root, 'node_modules', '@jarenjs');
   const names = (await readdir(dir)).filter((name) => !name.startsWith('.')).sort();
@@ -133,6 +133,11 @@ export async function suitePackages(root = process.cwd()): Promise<MasConformanc
     const manifest = JSON.parse(await readFile(join(dir, name, 'package.json'), 'utf8')) as { version: string };
     packages.push({ name: `@jarenjs/${name}`, version: manifest.version });
   }
+  for (const name of ['models', 'context', 'agents']) {
+    const manifest = JSON.parse(await readFile(join(root, 'node_modules', '@tangleai', name, 'package.json'), 'utf8')) as { version: string };
+    packages.push({ name: `@tangleai/${name}`, version: manifest.version });
+  }
+  packages.sort((a, b) => a.name.localeCompare(b.name));
   return { packages };
 }
 

@@ -18,6 +18,7 @@ apps/pages/dist/
 
 # TODO: AI integration
 TODO*.md
+TODO_*.*
 PROGRESS*.md
 NEXT_SESSION.md
 JAREN*.md
@@ -29,3 +30,7 @@ benchmark/cache/
 # Committed release integration evidence (JAREN*.md elsewhere remains scratch).
 !docs/JARENJS_INTEGRATION.md
 !docs/JARENJS_BENCHMARK.md
+!docs/JAREN_AI_MIGRATION.md
+
+# Browser migration traces and screenshots are generated qualification output.
+.e2e/migration-results/

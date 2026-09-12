@@ -12,7 +12,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { createStructuredOutput } from '@jarenjs/ai';
+import { createStructuredOutput } from '@tangleai/models/structured';
 
 import { chatClientFor } from '../../apps/desktop/src/settings.ts';
 import { completion, scriptedFetch } from '../fixtures/scripted-wire.ts';
@@ -706,7 +706,8 @@ describe('the run-path import census', () => {
   it('consumes the one environment reader, factory pair, replay adapter, budget account, structured output and bounded mapper', async () => {
     const run = await readFile('benchmark/lib/grounding-run.ts', 'utf8');
     const cli = await readFile('benchmark/grounding.ts', 'utf8');
-    assert.match(run, /createBudgetAccount, createStructuredOutput/);
+    assert.match(run, /import \{ createBudgetAccount \} from '@tangleai\/agents\/recursive'/);
+    assert.match(run, /import \{ createStructuredOutput \} from '@tangleai\/models\/structured'/);
     assert.match(run, /mapConcurrent/);
     assert.match(run, /from '\.\.\/\.\.\/apps\/desktop\/src\/grounding\.ts'/);
     assert.match(run, /bootstrapInterval/);

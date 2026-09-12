@@ -1,5 +1,19 @@
 # Tangle releases
 
+## 0.21.0
+
+Use the models, context and agents owners of the inherited AI mechanisms. MAS
+executable identity version 3 names all executed mechanism versions; an old
+executable checkpoint is refused intact through the existing mismatch path.
+Memory and ledger records retain their schemas and projection contracts.
+
+Add independent model transport, evidence-backed context, and bounded agent/program packages. Preserve the JavaScript/JSDoc APIs, strict result contracts and injected host services, with JavaScript distributions and checked declarations. Toolbox browser registration delegates to Jaren's shared WebMCP contract.
+
+Receive the reusable assistant and injected slot ledger storage, preserving
+streaming, transcript and evidenced-memory behavior with owned cleanup.
+
+Provide Jaren grammar authors, typed AI program construction and revision-checked shared editor adapters.
+
 ## 0.20.1
 
 Wait for npm publish-time scanning before verifying fresh installations. Upload the complete suite, then poll full and install package indexes for up to 20 minutes, requiring matching versions, integrity and latest tags. Keep mismatched artifacts fatal and report packages that remain unavailable, so direct main releases can finish without manually retrying normal scan delays. Complete each release from the successful publication attempt's exact artifact ID, preserving earlier failed receipts without selecting them.

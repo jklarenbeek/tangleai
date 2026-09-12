@@ -1,12 +1,14 @@
 /** Consumers install real tarballs outside the checkout; no workspace symlinks. */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import vm from 'node:vm';
 import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, isMain } from './common.ts';
 import type { Artifacts } from './build.ts';
+import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
+import { checkProgramBundle } from '../check-program-bundle.ts';
 
 export function readArtifacts(root = ROOT) {
   const directory = resolve(root, 'dist/release');
@@ -31,6 +33,11 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
   const directory = mkdtempSync(resolve(tmpdir(), 'tangle-npm-consumer-'));
   try {
     const dependencies = Object.fromEntries(artifacts.packages.map(pkg => [pkg.name, options.registry ? pkg.version : `file:${resolve(root, 'dist/release', pkg.filename)}`]));
+    const foundations = options.registry ? null : readFoundationArtifacts(root);
+    if (foundations) {
+      verifyFoundationArtifacts(root);
+      for (const pkg of foundations.packages) dependencies[pkg.name] = `file:${resolve(root, 'dist/jaren', pkg.filename)}`;
+    }
     writeJson(resolve(directory, 'package.json'), {
       name: 'tangle-release-consumer', version: '0.0.0', private: true, type: 'module', dependencies,
       devDependencies: options.runtimeOnly ? {} : {
@@ -39,19 +46,53 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       },
     });
     npm(['install', '--ignore-scripts', '--no-audit', '--no-fund', '--registry', cfg.registry], { root, cwd: directory });
+    if (foundations) {
+      cpSync(resolve(root, 'docs/migrations/jaren-ai'), resolve(directory, 'docs/migrations/jaren-ai'), { recursive: true });
+      cpSync(resolve(root, 'dist/jaren'), resolve(directory, 'dist/jaren'), { recursive: true });
+      verifyFoundationArtifacts(directory, true);
+    }
     writeJson(resolve(directory, 'artifacts.json'), artifacts);
+    const migrationPath = resolve(root, 'docs/migrations/jaren-ai/manifest.json');
+    const migration = existsSync(migrationPath) ? readJson<{ declarations: Array<{ symbols: Array<{ name: string; destination: { entry: string } }> }>; rootSymbols: Array<{ name: string; destination: { entry: string } }> }>(migrationPath) : null;
+    if (migration) writeJson(resolve(directory, 'migration.json'), migration);
     cpSync(resolve(root, 'test/release/fixtures/consumer.mjs'), resolve(directory, 'consumer.mjs'));
     for (const command of [process.execPath, 'bun']) execFileSync(command, ['consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    cpSync(resolve(root, 'test/jaren/editor-adapters.test.js'), resolve(directory, 'editor-adapters.test.js'));
+    execFileSync(process.execPath, ['--test', 'editor-adapters.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    execFileSync('bun', ['test', 'editor-adapters.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    cpSync(resolve(root, 'test/assistant/dom.stub.js'), resolve(directory, 'dom.stub.js'));
+    const assistantTests = readFileSync(resolve(root, 'test/assistant/component.test.js'), 'utf8')
+      .replace("new URL('../../components/assistant/styles/assistant.css', import.meta.url)", "new URL(import.meta.resolve('@tangleai/assistant/styles/assistant.css'))");
+    writeFileSync(resolve(directory, 'assistant.test.js'), assistantTests);
+    execFileSync(process.execPath, ['--test', 'assistant.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    execFileSync('bun', ['test', 'assistant.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
     if (!options.runtimeOnly) {
+      checkProgramBundle(directory, root);
       const imports: string[] = [];
       let count = 0;
       for (const pkg of artifacts.packages) for (const [key, target] of Object.entries(pkg.exports)) {
+        if (typeof target === 'string' && target.endsWith('.css')) continue;
         const name = pkg.name + (key === '.' ? '' : key.slice(1));
         const json = typeof target === 'string' && target.endsWith('.json');
         imports.push(`import ${json ? '' : '* as '}entry${count} from ${JSON.stringify(name)}${json ? ' with { type: "json" }' : ''};\nexport type Entry${count} = typeof entry${count};`);
         count++;
       }
+      cpSync(resolve(root, 'test/release/fixtures/assistant-types.ts'), resolve(directory, 'assistant-types.ts'));
+      cpSync(resolve(root, 'test/jaren/program-types.ts'), resolve(directory, 'program-types.ts'));
+      cpSync(resolve(root, 'test/jaren/editor-types.ts'), resolve(directory, 'editor-types.ts'));
+      cpSync(resolve(root, 'test/jaren/mechanism-types.ts'), resolve(directory, 'mechanism-types.ts'));
+      cpSync(resolve(root, 'test/jaren/program-result-types.ts'), resolve(directory, 'program-result-types.ts'));
+      imports.push("import './program-types.js'; import './editor-types.js'; import './assistant-types.js';");
+      cpSync(resolve(root, 'test/jaren/packed-mechanism-types.ts'), resolve(directory, 'packed-mechanism-types.ts'));
+      imports.push("import './mechanism-types.js'; import './program-result-types.js'; import './packed-mechanism-types.js';");
       imports.push(`import { estimateTokens } from '@tangleai/core';\nconst count: number = estimateTokens('typed consumer');\n// @ts-expect-error public declarations must reject a numeric token input\nestimateTokens(42);\nvoid count;`);
+      if (migration) {
+        const qualified = new Set(artifacts.packages.map(pkg => pkg.name));
+        for (const declaration of migration.declarations) for (const symbol of declaration.symbols) {
+          if (!qualified.has(symbol.destination.entry.split('/').slice(0, 2).join('/'))) continue;
+          imports.push(`export type { ${symbol.name} as Receipt${count++} } from ${JSON.stringify(symbol.destination.entry)};`);
+        }
+      }
       writeFileSync(resolve(directory, 'consumer.mts'), imports.join('\n'));
       writeJson(resolve(directory, 'tsconfig.json'), { compilerOptions: {
         target: 'ES2022', module: 'NodeNext', moduleResolution: 'NodeNext', strict: true,
@@ -63,9 +104,15 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       const browser = { crypto: globalThis.crypto, console, TextEncoder, TextDecoder, URL, URLSearchParams, AbortController, performance, setTimeout, clearTimeout, tangleConsumer: undefined as any };
       vm.runInNewContext(readFileSync(resolve(directory, 'browser.js'), 'utf8'), browser, { timeout: 30_000 });
       assert.equal(browser.tangleConsumer.tokens, 2);
+      assert.equal(JSON.stringify(browser.tangleConsumer.program), JSON.stringify({ steps: [{ op: 'stat', from: 'data', as: 'meta' }, { op: 'answer', from: 'meta' }] }));
+      assert.equal(browser.tangleConsumer.adapters.every((adapter: unknown) => typeof adapter === 'function'), true);
       assert.equal((await browser.tangleConsumer.store.list()).length, 0);
       assert.equal((await browser.tangleConsumer.embedder.embed(['browser consumer']))[0].length, browser.tangleConsumer.embedder.dims);
       assert.equal(typeof browser.tangleConsumer.mermaid, 'string');
+      cpSync(resolve(root, 'test/release/fixtures/assistant-browser.mjs'), resolve(directory, 'assistant-browser.mjs'));
+      execFileSync('bun', ['build', 'assistant-browser.mjs', '--target=browser', '--outdir=browser-host'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+      writeFileSync(resolve(directory, 'browser-host/index.html'), '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><link rel=stylesheet href=assistant-browser.css><style>.ai-panel{position:relative!important;inset:auto!important}.assistant-slot{max-width:100%}</style><main class=assistant-slot id=host-0></main><main class=assistant-slot id=host-1></main><script type=module src=assistant-browser.js></script>');
+      if (process.env.TANGLE_CONSUMER_OUTPUT) cpSync(resolve(directory, 'browser-host'), process.env.TANGLE_CONSUMER_OUTPUT, { recursive: true });
     }
     const verification = {
       schemaVersion: 1, version: artifacts.version, inputHash: artifacts.inputHash,

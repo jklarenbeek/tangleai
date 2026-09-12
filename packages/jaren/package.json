@@ -1,0 +1,82 @@
+{
+  "name": "@tangleai/jaren",
+  "version": "0.21.0",
+  "description": "Grammar authors, revision-checked editor adapters and typed program construction over public Jaren APIs.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./studio": {
+      "types": "./dist/types/studio.d.ts",
+      "default": "./src/studio.js"
+    },
+    "./data": {
+      "types": "./dist/types/data.d.ts",
+      "default": "./src/data.js"
+    },
+    "./flow": {
+      "types": "./dist/types/flow.d.ts",
+      "default": "./src/flow.js"
+    },
+    "./program": {
+      "types": "./dist/types/program.d.ts",
+      "default": "./src/program.js"
+    },
+    "./stylesheet": {
+      "types": "./dist/types/stylesheet.d.ts",
+      "default": "./src/stylesheet.js"
+    },
+    "./spatial": {
+      "types": "./dist/types/spatial.d.ts",
+      "default": "./src/spatial.js"
+    },
+    "./geo-tools": {
+      "types": "./dist/types/geo-tools.d.ts",
+      "default": "./src/geo-tools.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/core": "0.84.0",
+    "@jarenjs/validate": "0.84.0",
+    "@jarenjs/json": "0.84.0",
+    "@jarenjs/app": "0.84.0",
+    "@jarenjs/flow": "0.84.0",
+    "@jarenjs/db": "0.84.0",
+    "@jarenjs/studio": "0.84.0",
+    "@jarenjs/linq": "0.84.0",
+    "@tangleai/models": "^0.21.0",
+    "@tangleai/context": "^0.21.0",
+    "@tangleai/agents": "^0.21.0"
+  },
+  "private": false,
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/jaren"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

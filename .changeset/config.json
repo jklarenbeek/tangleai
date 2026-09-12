@@ -2,12 +2,31 @@
   "$schema": "https://unpkg.com/@changesets/config@4.0.0/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@tangleai/core", "@tangleai/config", "@tangleai/mas", "@tangleai/documents", "@tangleai/memory", "@tangleai/search", "@tangleai/pipeline", "@tangleai/store"]],
+  "fixed": [
+    [
+      "@tangleai/models",
+      "@tangleai/context",
+      "@tangleai/agents",
+      "@tangleai/jaren",
+      "@tangleai/assistant",
+      "@tangleai/core",
+      "@tangleai/config",
+      "@tangleai/mas",
+      "@tangleai/documents",
+      "@tangleai/memory",
+      "@tangleai/search",
+      "@tangleai/pipeline",
+      "@tangleai/store"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "format": false,
   "updateInternalDependencies": "patch",
-  "privatePackages": { "version": false, "tag": false },
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
   "ignore": []
 }

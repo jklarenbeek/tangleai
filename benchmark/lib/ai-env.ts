@@ -38,7 +38,7 @@
  *    exceed one stops up front with a named reason.
  */
 
-import { PROVIDERS, resolveEndpoint } from '@jarenjs/ai';
+import { PROVIDERS, resolveEndpoint } from '@tangleai/models/providers';
 import { JarenValidator } from '@jarenjs/validate';
 import { compileNormalizer } from '@jarenjs/validate/normalize';
 import { resolveProfile, type HostManifest, type ProfileRequest, type RunIdentity } from '@tangleai/config';

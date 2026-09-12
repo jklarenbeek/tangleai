@@ -3,7 +3,7 @@
  * validated read of the whole object, and the ONE chat/embed factory
  * pair every consumer builds clients through.
  *
- * The default embedder is the pipeline's offline one (@jarenjs/ai's
+ * The default embedder is the pipeline's offline one (@tangleai/models's
  * hash reference at the measured width) — the app works COMPLETELY
  * offline out of the box; a real provider (the same OpenAI-compatible
  * family the chat client speaks: Ollama, LM Studio, OpenRouter, any
@@ -26,8 +26,9 @@
  * and a custom provider without a base is not.
  */
 
-import { createChatClient, resolveEndpoint } from '@jarenjs/ai';
-import { createEmbeddingClient, type Embedder } from '@jarenjs/ai/embed';
+import { createChatClient } from '@tangleai/models/client';
+import { resolveEndpoint } from '@tangleai/models/providers';
+import { createEmbeddingClient, type Embedder } from '@tangleai/models/embed';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import type { TangleDb } from '@tangleai/store';
 
@@ -309,7 +310,7 @@ export function chatWireConfigured(chat: ChatSettings): boolean {
  * wire answers at once, a benchmark retries a rate limit for minutes);
  * `reasoning` is the client's default thinking control, forwarded
  * verbatim (a benchmark turns thinking off for short-answer extraction,
- * the measured case in @jarenjs/ai's README; the chat engine leaves the
+ * the measured case in @tangleai/models's README; the chat engine leaves the
  * model's default). Throws when `chatWireConfigured` is false — check
  * first.
  */

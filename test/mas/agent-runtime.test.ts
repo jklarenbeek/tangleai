@@ -9,7 +9,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { createBudgetAccount } from '@jarenjs/ai';
+import { createBudgetAccount } from '@tangleai/agents/recursive';
 import {
   buildEffectiveToolbox,
   createSharedBudgetClient,

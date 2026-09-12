@@ -2,7 +2,7 @@
  * Embedding-ranked retrieval over memory units.
  *
  * This is Tangle's ranker over its OWN store of full units, beside the
- * @jarenjs/ai ledger's `recall({ near })` (which ranks the mirrored
+ * @tangleai/context ledger's `recall({ near })` (which ranks the mirrored
  * ledger records the same way, through the same kernels). Superseded
  * records never surface — they exist for audit, not for recall. Records
  * without embeddings never surface either, which is a real bias (see
@@ -23,7 +23,7 @@
  */
 
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
-import { sameIdentity } from '@jarenjs/ai';
+import { sameIdentity } from '@tangleai/context/ledger';
 import type { EmbeddedBy, MemoryUnit } from '@tangleai/core/schemas/memory';
 
 export interface RankOptions {

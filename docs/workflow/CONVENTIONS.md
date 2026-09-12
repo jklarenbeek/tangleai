@@ -10,6 +10,13 @@ Every other workflow file points here instead of restating these.
   npm publication; JSON schema paths are preserved. The packed consumer gate
   verifies installed artifacts on Node, Bun and supported browser surfaces.
   Erasable syntax, `verbatimModuleSyntax` and strict typing remain mandatory.
+- **Inherited JS/JSDoc exception.** The transferred models, context, agents,
+  Jaren integration, assistant, game and transferred Pages host glue retain
+  their source language and JS tests. New data-transfer policy uses strict TS.
+  Declaration emission preserves their source compiler contract; every emitted
+  declaration is checked with strict typing and `skipLibCheck: false`, and
+  packed Node/Bun consumers exercise the public surface. Existing and new
+  TypeScript still use the unchanged strict source gate.
 - **One development version.** All workspaces share the public fixed group's
   version, starting at `0.20.0`. Major versions remain zero. Changesets records
   patch or minor intent; preparation updates the full suite before a release
@@ -45,6 +52,7 @@ Every other workflow file points here instead of restating these.
 | Skeleton | `npm run skeleton` | when the loop's policies or core schemas changed |
 | Desktop e2e | `.e2e/desktop.e2e.mjs` via the `ubuntu-playwright` distrobox (usage header in the script) | when the desktop UI or contract changed |
 | Pages build | `bun apps/pages/build.ts` (+ `.e2e/pages.e2e.mjs`) | when apps/pages or the pipeline document changed |
+| Migrated Pages browsers | `npm run pages:test:browser` against the built site; same Playwright toolchain as desktop, selected by `PLAYWRIGHT_PACKAGE` | when assistant, game or editor hosts change |
 | Instruments | `npm run documents:benchmark`, `npm run benchmark:locomo:census`, `npm run benchmark:locomo:recall`, `npm run benchmark:locomo:qa` (keyless; `--live` spends a key and is never a gate) | when a measured claim, a chunker, or a benchmark's corpus changed |
 | Binary | `npm run desktop:compile`, then run `dist/tangle` from a foreign cwd | when the server, static layer or embed script changed |
 
@@ -131,6 +139,8 @@ change, record its Changesets impact and update stale documentation first.
 5. After the main push, the release workflow publishes and verifies npm packages and
    independently deploys Pages after CI. The website builds local Tangle source
    with JarenJS installed from npm; Tangle publication cannot block deployment.
+   Before registry cutover, the recorded candidate foundation mode instead
+   bootstraps and verifies Jaren tarballs before installation; see RELEASE.md.
    Package release completion requires all checks. Never report a site deployment
    as proof of npm publication.
 

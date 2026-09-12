@@ -1,6 +1,6 @@
 /**
  * The Tangle memory record, as plain JSON Schema — memflow's `MemoryUnit`
- * aligned with the text-evidence specialization of the @jarenjs/ai ledger memory.
+ * aligned with the text-evidence specialization of the @tangleai/context ledger memory.
  *
  * The alignment is the design decision that matters. A jarenjs ledger
  * memory is `{ id, text, evidence, tags, at }` with evidence REQUIRED —
@@ -27,7 +27,7 @@
  * `toLedgerMemory()` projects a Tangle record down to the jarenjs fields
  * — the five the ledger always held plus the optional embedding pair —
  * so any Tangle memory can be mirrored into a real ledger and recalled
- * by an unmodified @jarenjs/ai agent, by tag AND by meaning
+ * by an unmodified @tangleai/context agent, by tag AND by meaning
  * (`recall({ near })` through the same embedder that wrote the vector).
  * The projection is lossy by design — the ledger's strictness
  * (`additionalProperties: false`) is a feature we align with, not a
@@ -88,8 +88,8 @@ export interface MemoryRelation {
 }
 
 /** Which model produced a vector, at what width — the same shape as
- * `LedgerEmbeddedBy` in `@jarenjs/ai/schemas/ledger`, restated here
- * because this package is dependency-free (the mirror test pins the
+ * `LedgerEmbeddedBy` in `@tangleai/context/schemas/ledger`, restated here
+ * as the memory-unit projection contract (the mirror test pins the
  * two against each other). */
 export interface EmbeddedBy {
   model: string;
@@ -133,7 +133,7 @@ export type EmbeddingPair =
   | { embedding?: undefined, embeddedBy?: undefined }
   | { embedding: number[], embeddedBy: EmbeddedBy };
 
-/** A @jarenjs/ai ledger memory's own five fields. */
+/** A @tangleai/context ledger memory's own five fields. */
 export interface LedgerMemoryFields {
   id: string;
   text: string;
@@ -142,12 +142,11 @@ export interface LedgerMemoryFields {
   at: string;
 }
 
-/** What a @jarenjs/ai ledger memory holds: the five fields, plus the
+/** What a @tangleai/context ledger memory holds: the five fields, plus the
  * vector pair. Structurally identical to `LedgerMemory` in
- * `@jarenjs/ai/schemas/ledger` — restated because this package is
- * dependency-free; `test/memory/ledger-mirror.test.ts` pins the two
+ * `@tangleai/context/schemas/ledger` — referenced directly as the declared type dependency; `test/memory/ledger-mirror.test.ts` pins the two
  * against each other at compile time, in both directions. */
-export type LedgerMemory = import('@jarenjs/ai/schemas/ledger').LedgerMemory;
+export type LedgerMemory = import('@tangleai/context/schemas/ledger').LedgerMemory;
 
 export const MEMORY_RELATION_SCHEMA: JsonSchema = {
   $id: 'https://tangleai.dev/schemas/memory-relation.json',
@@ -208,7 +207,7 @@ export const MEMORY_SCHEMAS = {
 } as const;
 
 /**
- * Project a Tangle memory down to what a @jarenjs/ai ledger accepts:
+ * Project a Tangle memory down to what a @tangleai/context ledger accepts:
  * the five fields, and the embedding pair when the unit carries one —
  * so a mirrored memory is recallable by meaning, not only by tag.
  * Lossy on purpose; see the header.

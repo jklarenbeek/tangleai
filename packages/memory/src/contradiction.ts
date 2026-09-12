@@ -5,7 +5,7 @@
  * memflow called `llm.invoke()` inline and regex-scraped JSON out of the
  * reply. Here the judge is INJECTED: any async function answering the
  * verdict shape. The intended production judge is two lines of
- * @jarenjs/ai — `createStructuredOutput({ client, schema:
+ * @tangleai/models — `createStructuredOutput({ client, schema:
  * CONTRADICTION_VERDICT_SCHEMA })` over `contradictionMessages(a, b)` —
  * which buys schema-constrained decoding and the bounded repair loop
  * instead of a regex. The tests inject a table.
@@ -40,7 +40,7 @@ import type { MemoryStore } from './store.ts';
 export const DEFAULT_CONTRADICTION_THRESHOLD = 0.75;
 export const DEFAULT_MAX_PAIRS = 20;
 
-/** What a judge must answer. Wire it to @jarenjs/ai `createStructuredOutput`
+/** What a judge must answer. Wire it to @tangleai/models `createStructuredOutput`
  * as the `schema` and the repair loop enforces it for free. */
 export const CONTRADICTION_VERDICT_SCHEMA: JsonSchema = {
   $id: 'https://tangleai.dev/schemas/contradiction-verdict.json',

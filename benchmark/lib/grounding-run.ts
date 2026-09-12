@@ -38,8 +38,10 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { createBudgetAccount, createStructuredOutput, resolveEndpoint } from '@jarenjs/ai';
-import type { Embedder } from '@jarenjs/ai/embed';
+import { createBudgetAccount } from '@tangleai/agents/recursive';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import { resolveEndpoint } from '@tangleai/models/providers';
+import type { Embedder } from '@tangleai/models/embed';
 import { mapConcurrent } from '@jarenjs/core/async';
 import { excerpt } from '@jarenjs/core/chunk';
 import { mean as meanOf, stddev } from '@jarenjs/core/stats';

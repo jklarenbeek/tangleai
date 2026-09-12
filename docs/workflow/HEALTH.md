@@ -25,7 +25,7 @@ the second time, and "found nothing" is a valid, reportable outcome.
    into the logical parent (the package lower in the dependency graph).
    The former standing case (a trigram embedder in `@tangleai/pipeline`
    and again inline in `examples/skeleton.ts`) closed on 2026-08-26: both
-   now use `@jarenjs/ai/embed`'s hash embedder through the pipeline's
+   now use `@tangleai/models/embed`'s hash embedder through the pipeline's
    `createOfflineEmbedder`. The parent may be BELOW this repo — a shape
    that jarenjs already ships (vector kernels, the embed wire) is deleted
    here, not collapsed here.

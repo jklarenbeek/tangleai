@@ -1,6 +1,6 @@
 # Shipping Tangle
 
-Tangle uses Changesets with one fixed group of eight public libraries. Every
+Tangle uses Changesets with one fixed group of public libraries. Every
 workspace shares the release version, beginning at `0.20.0`; the private root,
 applications and benchmark are never published. `release.config.json` is the
 explicit publication inventory and dependency order. The major version remains
@@ -9,8 +9,17 @@ zero until an intentional, reviewed policy change enables a stable public API.
 ## Prepare before pushing
 
 Use the Node version in `.nvmrc`, npm from the root `packageManager`, and Bun from
-`release.config.json`. CI reads those same pins. Install with `npm ci
---ignore-scripts`; no private installation patch is required. Install the local
+`release.config.json`. CI reads those same pins. In candidate foundation mode,
+initialize `vendor/jarenjs` and run `node scripts/jaren-artifacts.ts --bootstrap`
+with the Node/npm pins in `docs/migrations/jaren-ai/foundations.json`, then
+restore Tangle's toolchain before `npm ci --ignore-scripts`. CI performs these
+steps in the same order, including its minimum-Node and Windows jobs. The source
+patch is applied only in a disposable build checkout; no installed package is
+patched. When the source state is `committed`, the gitlink names that exact
+revision and the patch must be empty; bootstrap builds the commit directly.
+Candidate artifact mode still means unpublished local tarballs, even when their
+source is committed. In registry mode, install directly with `npm ci --ignore-scripts`.
+Install the local
 push check with `npm run release:install-hook`. Existing custom hooks are
 preserved and require explicit integration.
 
@@ -42,7 +51,7 @@ preserved and require explicit integration.
    the publication and deployment backstop rather than a main-branch admission gate.
 
 For example, a patch after `0.20.0` produces `0.20.1`; a minor produces `0.21.0`.
-A change to one library still advances all eight public packages. Neither root
+A change to one library still advances every public package. Neither root
 version edits alone nor a later automatic release PR on `main` satisfy this
 protocol: the version must already be in the release commit.
 
@@ -55,7 +64,7 @@ Ordinary releases must use the version computed from their Changesets records.
 `npm run release:verify` runs the full source gate, release-record checks, package
 build, packed consumers and Pages build. `release:build` emits ESM JavaScript and
 TypeScript declarations into a staging directory, preserves public subpaths,
-copies JSON schemas, and creates eight tarballs with package documentation,
+copies JSON schemas, and creates the configured tarballs with package documentation,
 license and changelog. Workspace manifests continue to serve TypeScript during
 development. Their lifecycle guards refuse direct source publication.
 
@@ -72,6 +81,13 @@ release record binds versions and release intent to a fingerprint of the source,
 configuration, documentation, lockfile and submodule identities.
 
 ## Publish and deploy
+
+Candidate foundation mode is a local installation qualification. Publication
+preflight refuses it: first publish and verify the AI-free Jaren closure, then
+switch Tangle's exact dependencies, source pin and lock to that registry release
+and repeat the clean-consumer gate. Pages can still build the recorded candidate
+artifacts independently. Neither qualification nor a Git tag establishes npm
+availability.
 
 Pushing to `main` runs `.github/workflows/release.yml`. It waits for the complete
 CI gate, retrieves its exact verified Linux tarballs, and creates an annotated
@@ -109,11 +125,13 @@ alone do not establish an installable release.
 `release:verify-registry` then checks each package's version, exports, integrity and
 `latest` tag, then installs the published versions in another fresh project and
 runs the consumer gate. Pages runs independently after the source CI gate: it
-builds Tangle's local workspace TypeScript and installs JarenJS from npm. The
+builds Tangle's local workspace source and uses its recorded installed JarenJS
+closure (candidate tarballs until a separately qualified registry cutover). The
 build refuses published Tangle dependencies or JarenJS source links. Website
 deployment requires no Tangle npm publication or npm publishing authentication.
 The live `build.json` must identify the expected version, commit, complete package
-set and dependency sources (`tangle: workspace`, `jarenjs: npm`). The GitHub release is
+set and dependency sources (`tangle: workspace`, plus `jarenjs: npm` or
+`candidate-artifacts` with its committed base and candidate patch hash). The GitHub release is
 finalized only after publication and deployment verification succeed. The Linux
 x64 desktop binary is compiled and smoke-tested from a foreign directory before
 publication, then attached to the release beside its npm tarballs.
@@ -139,7 +157,7 @@ The bootstrap is restricted to the initial `0.20.0` release, uses the maintainer
 npm authentication, and does not claim GitHub OIDC provenance. It has the same
 artifact and consumer checks. npm may require account authentication or 2FA.
 
-Configure the trusted publisher for each of the eight newly created packages.
+Configure the trusted publisher for each public package in `release.config.json`.
 For npm's documented trust-management CLI, use npm 11.15 or newer; the following
 command uses an isolated CLI without changing JarenJS's or Tangle's build pin:
 
@@ -149,7 +167,8 @@ npm exec --yes --package=npm@11.19.1 -- npm trust github @tangleai/core \
   --allow-publish --yes
 ```
 
-Repeat for config, mas, documents, memory, search, pipeline and store. Verify the
+Repeat for every public package in `release.config.json`, including the new
+models, context, agents, jaren and assistant names. Verify the
 saved relationships with `npm trust list`. Trust management requires npm account
 2FA and does not accept bypass-2FA granular tokens. A package bootstrap token alone
 is not proof that trusted publishing has been configured. Retry the initial

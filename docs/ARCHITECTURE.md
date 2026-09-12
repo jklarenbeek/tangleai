@@ -5,7 +5,8 @@ foundational layer. memflow proved the designs and died of its own weight —
 a bespoke workflow engine, a Zod type system, LangChain plumbing and a
 Memgraph dependency it carried everywhere. Every one of those has a jarenjs
 replacement that is smaller, tested, and already shipped; Tangle keeps only
-what jarenjs does not do: memory policies, search, persistence, the apps,
+what jarenjs does not do: model/context/agent mechanisms, memory policies,
+search, persistence, the apps,
 and (to come) the evolution loops. See [BOUNDARY.md](BOUNDARY.md) for the rule that keeps
 it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 
@@ -14,7 +15,7 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 ```
 @tangleai/core        errors (TA-coded) · k-means (injected RNG) · token
                       heuristics · memory-unit schema (JSON Schema, superset
-                      of the jarenjs ledger memory; a vector always carries
+                      of the context ledger memory; a vector always carries
                       its `embeddedBy` identity)
 @tangleai/memory      the policy layer, over an injected 4-method store:
                         novelty     — LightMem Tier-1 gate (batch-aware)
@@ -31,15 +32,26 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       every host resolves through it — see CONFIGURATION.md
 ```
 
-Chat completions, structured output, tool use, the agent loop, budgets,
-compaction, the durable ledger and gated self-refinement are NOT here —
-they are `@jarenjs/ai`, consumed as a dependency. So are embeddings: the
-wire client, the deterministic reference embedder, the probe and the
-`{ embed, model, dims }` seam are `@jarenjs/ai/embed`, and every cosine
-is `@jarenjs/core/vector`'s. Every policy above compares vectors only
-within one identity — the jarenjs rule that vectors from two models never
-meet — and `recallByEmbedding` reports what it skipped rather than
-scoring it.
+The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,
+embeddings, provider wires, structured generation and replay;
+`@tangleai/context` owns the ledger, bounded environment, evidence and recall;
+`@tangleai/agents` owns tool loops, budgets and program execution. Existing
+memory, config, pipeline, store and MAS packages retain their policies.
+`@tangleai/jaren` connects models to Jaren grammars and the public shared
+Studio/Data/Flow editor operations. It owns no editor or execution engine.
+`@tangleai/assistant` supplies the reusable controller and visual component;
+Pages supplies routing, templates, storage and actual worker bootstraps around
+the same complete public Jaren editors used by Jaren's own site. The Adventure
+experience is Pages-owned and retains optional structured NPC dialogue and
+fully scripted play without a provider. Browser operations use the single
+`@jarenjs/contract/webmcp` adapter; Jaren exposes ordinary operations independently.
+Vector arithmetic stays in `@jarenjs/core/vector`; ranking only compares
+matching identities and reports skipped vectors.
+
+MAS executable identity version 3 includes the actual models, context and
+agents versions plus the Jaren Flow version and registry revision. Legacy
+executable checkpoints fail through `TMAS2002` before work or writes; ledger
+and memory records remain readable with their existing schemas.
 
 ## The loop (examples/skeleton.ts runs all of it offline)
 
@@ -58,8 +70,8 @@ outcome learning     confidence moves on evidenced real-world reports only
 recall               recallByEmbedding (excludes superseded, un-embedded and
                      other-identity records — and says how many it skipped)
    │
-   └─ mirror: live units → toLedgerMemory() → @jarenjs/ai createLedger,
-      where a plain jarenjs agent recalls them by tag — and by meaning,
+   └─ mirror: live units → toLedgerMemory() → @tangleai/context createLedger,
+      where a Tangle agent recalls them by tag — and by meaning,
       because the vector travels with its identity
 ```
 
@@ -77,12 +89,12 @@ Two ordering rules are load-bearing and test-pinned:
 
 ## Design style (inherited from jarenjs, on purpose — with one deliberate inversion)
 
-- TypeScript-only, run WITHOUT a build step: Node 24's native type
-  stripping executes `.ts` directly (workspace packages included, through
-  symlinks), `tsc --noEmit` under `strict` + `erasableSyntaxOnly` is the
-  type gate, `node --test` runs `.ts` test files as-is. The inversion is
-  deliberate: jarenjs is JSDoc-JS, and this repo being strict TS makes it
-  the standing compatibility test for jarenjs's generated `.d.ts`.
+- Strict TypeScript executes directly in the workspace on Node 24; the
+  inherited JS/JSDoc mechanisms keep their source language. `node --test`
+  executes both test families. Strict TypeScript checks source and all emitted
+  declarations. Public packages ship built JavaScript and declarations, tested
+  outside workspace links on Node and Bun; installed TypeScript stripping is
+  never required. See the language exception in the workflow conventions.
 - Policies are split plan/apply: the plan is a pure value you can assert on;
   only the applier touches the store.
 - Every edge is injected: `fetch`, `now`, RNG, store, judge, validator.
@@ -182,7 +194,7 @@ Two packages and two apps sit on top of the loop, jarenjs-suite-only:
 Chat grounding: question → embed → `recallByEmbedding` over live memories
 (only those embedded by the same identity as the question) plus
 `collectDocumentEvidence` over the versioned document corpus → CANDIDATES.
-A configured model (`@jarenjs/ai` `createChatClient` under
+A configured model (`@tangleai/models` `createChatClient` under
 `createStructuredOutput`) answers ONLY from those candidates through the
 measured claims-with-citations contract; a supplied-reference gate hands a
 fabricated citation id back for the one bounded repair, and only the ids the

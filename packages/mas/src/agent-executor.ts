@@ -13,7 +13,8 @@
  * nothing here parses or repairs a reply locally.
  */
 
-import { createAgent, createStructuredOutput } from '@jarenjs/ai';
+import { createAgent } from '@tangleai/agents/agent';
+import { createStructuredOutput } from '@tangleai/models/structured';
 
 import { masIssue, type MasIssue } from './errors.ts';
 import { compileEmbeddedSchema } from './schema.ts';

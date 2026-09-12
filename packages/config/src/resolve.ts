@@ -18,7 +18,7 @@
  * the genuinely unconfigured legacy request keeps.
  */
 
-import { sameIdentity } from '@jarenjs/ai';
+import { sameIdentity } from '@tangleai/context/ledger';
 import { cloneJson, deepFreeze } from '@jarenjs/core/object';
 
 import type {

@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "originalAiFiles": 44,
+  "originalExecutedTests": 585,
+  "originalLiteralTestNames": 548,
+  "sameNameInReceivingFile": 532,
+  "additionalDispositions": [
+    {
+      "source": "test/ai/check.test.js",
+      "name": "passes a value through every check; the first invalid wins",
+      "destination": "test/models/check.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/check.test.js",
+        "sha256": "dd0c41be2282a318e938bfbd9ec0d09d9b8ef893e11e502a56ca973b78ddb285"
+      },
+      "reason": "Generic check/compile assertions retained verbatim"
+    },
+    {
+      "source": "test/ai/check.test.js",
+      "name": "order matters: the earlier failing check is the one reported",
+      "destination": "test/models/check.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/check.test.js",
+        "sha256": "dd0c41be2282a318e938bfbd9ec0d09d9b8ef893e11e502a56ca973b78ddb285"
+      },
+      "reason": "Generic check/compile assertions retained verbatim"
+    },
+    {
+      "source": "test/ai/check.test.js",
+      "name": "mixes boolean and {valid,errors} checks freely",
+      "destination": "test/models/check.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/check.test.js",
+        "sha256": "dd0c41be2282a318e938bfbd9ec0d09d9b8ef893e11e502a56ca973b78ddb285"
+      },
+      "reason": "Generic check/compile assertions retained verbatim"
+    },
+    {
+      "source": "test/ai/check.test.js",
+      "name": "a JarenValidator schema check composes with an engine compile gate",
+      "destination": "test/models/check.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/check.test.js",
+        "sha256": "dd0c41be2282a318e938bfbd9ec0d09d9b8ef893e11e502a56ca973b78ddb285"
+      },
+      "reason": "Generic check/compile assertions retained verbatim"
+    },
+    {
+      "source": "test/ai/check.test.js",
+      "name": "a JQ compile error exposes code and docPath",
+      "destination": "test/models/check.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/check.test.js",
+        "sha256": "dd0c41be2282a318e938bfbd9ec0d09d9b8ef893e11e502a56ca973b78ddb285"
+      },
+      "reason": "Generic check/compile assertions retained verbatim"
+    },
+    {
+      "source": "test/ai/deps.test.js",
+      "name": "declares exactly @jarenjs/core and @jarenjs/validate",
+      "destination": "test/models/deps.test.ts",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/models/deps.test.ts",
+        "sha256": "692a280466b23600a4f261a20e863b9e558fb0b25c235fa5fdb4a880c0585279"
+      },
+      "reason": "Original two-dependency monolith assertions replaced by the exact three-owner AST/type/import and manifest closure gate"
+    },
+    {
+      "source": "test/ai/deps.test.js",
+      "name": "declares no peer, optional or bundled dependencies either",
+      "destination": "test/models/deps.test.ts",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/models/deps.test.ts",
+        "sha256": "692a280466b23600a4f261a20e863b9e558fb0b25c235fa5fdb4a880c0585279"
+      },
+      "reason": "Original two-dependency monolith assertions replaced by the exact three-owner AST/type/import and manifest closure gate"
+    },
+    {
+      "source": "test/ai/deps.test.js",
+      "name": "the compaction path imports nothing outside those two either",
+      "destination": "test/models/deps.test.ts",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/models/deps.test.ts",
+        "sha256": "692a280466b23600a4f261a20e863b9e558fb0b25c235fa5fdb4a880c0585279"
+      },
+      "reason": "Original two-dependency monolith assertions replaced by the exact three-owner AST/type/import and manifest closure gate"
+    },
+    {
+      "source": "test/ai/deps.test.js",
+      "name": "the embeddings client and the shared retry policy import nothing outside those two",
+      "destination": "test/models/deps.test.ts",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/models/deps.test.ts",
+        "sha256": "692a280466b23600a4f261a20e863b9e558fb0b25c235fa5fdb4a880c0585279"
+      },
+      "reason": "Original two-dependency monolith assertions replaced by the exact three-owner AST/type/import and manifest closure gate"
+    },
+    {
+      "source": "test/ai/deps.test.js",
+      "name": "the ledger, refinement and their schemas import nothing outside those two",
+      "destination": "test/models/deps.test.ts",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/models/deps.test.ts",
+        "sha256": "692a280466b23600a4f261a20e863b9e558fb0b25c235fa5fdb4a880c0585279"
+      },
+      "reason": "Original two-dependency monolith assertions replaced by the exact three-owner AST/type/import and manifest closure gate"
+    },
+    {
+      "source": "test/ai/grammar-profiles.test.js",
+      "name": "derives every profile without drift and detects source drift",
+      "destination": "test/jaren/grammar-profiles.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/scripts/grammar-profiles.test.js",
+        "sha256": "242e9158b8b5286e7b9ed5de8c173424db64366413baf08a08cbe5c03e7e526b"
+      },
+      "reason": "Generic profile drift assertion retained verbatim"
+    },
+    {
+      "source": "test/ai/guarded-evidence.test.js",
+      "name": "guards a non-ledger document and restores exactly once, keeping both failures",
+      "destination": "test/context/guarded-evidence.test.js",
+      "received": {
+        "repository": "jarenjs",
+        "path": "test/core/guarded.test.js",
+        "sha256": "d8288593571e045e06698a2679853edf32e0024515de4f327f7ac7cb94138e57"
+      },
+      "reason": "Generic non-ledger rollback assertion retained verbatim"
+    },
+    {
+      "source": "test/ai/ledger-db.test.js",
+      "name": "the ai README carries the adapter verbatim",
+      "destination": "test/context/ledger-db.test.js",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/context/ledger-db.test.js",
+        "sha256": "779782edc8fc2f10c5fc3efd3b483ae8fc0ab51b657349baa58ec19d0f1e02c5"
+      },
+      "reason": "Assertion unchanged; title names the current context owner and README"
+    },
+    {
+      "source": "test/ai/ledger-db.test.js",
+      "name": "the adapter imports @jarenjs/db and nothing from @jarenjs/ai",
+      "destination": "test/context/ledger-db.test.js",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/context/ledger-db.test.js",
+        "sha256": "779782edc8fc2f10c5fc3efd3b483ae8fc0ab51b657349baa58ec19d0f1e02c5"
+      },
+      "reason": "Assertion unchanged; title names the current context owner and README"
+    },
+    {
+      "source": "test/ai/toolbox.test.js",
+      "name": "reports false for an absent or unusable context",
+      "destination": "test/agents/toolbox.test.js",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/agents/toolbox.test.js",
+        "sha256": "a753679bc76aa272e05e84aefae5fdc14b6b721fc641761c874d4e7afd192b90"
+      },
+      "reason": "Boolean registration result replaced by awaited binding readiness; same unavailable and thrown-error cases asserted"
+    },
+    {
+      "source": "test/ai/toolbox.test.js",
+      "name": "reports false and surfaces the error when registration throws",
+      "destination": "test/agents/toolbox.test.js",
+      "received": {
+        "repository": "tangleai",
+        "path": "test/agents/toolbox.test.js",
+        "sha256": "a753679bc76aa272e05e84aefae5fdc14b6b721fc641761c874d4e7afd192b90"
+      },
+      "reason": "Boolean registration result replaced by awaited binding readiness; same unavailable and thrown-error cases asserted"
+    }
+  ],
+  "mixed": {
+    "files": 23,
+    "retainedLiteralNames": 238,
+    "receivedOrReplacedLiteralNames": 22,
+    "newLiteralNames": 4,
+    "details": "removal.json"
+  },
+  "note": "Literal names are an audit aid, not an executed-test count: parameterized tests expand at runtime. Original source hashes, behavior fixtures, compiled declarations and actual gate counts remain separate evidence."
+}

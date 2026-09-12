@@ -3,7 +3,7 @@
  * The walking skeleton — the whole Tangle loop, end to end, with zero
  * network: ingest → novelty-gate → contradiction-resolve → crystallize →
  * outcome-learn → recall → answer, with the curated memories mirrored
- * into an unmodified @jarenjs/ai ledger.
+ * into an unmodified @tangleai/context ledger.
  *
  * The ORDER is a lesson the first draft of this file taught: a
  * contradiction is, by nature, very similar to the record it contradicts
@@ -15,19 +15,20 @@
  *
  * Two stand-ins keep it offline, both at seams where a host would inject
  * the real thing:
- *  - the embedder is @jarenjs/ai's `createHashEmbedder` at the width the
+ *  - the embedder is @tangleai/context's `createHashEmbedder` at the width the
  *    pipeline measured (`createOfflineEmbedder`; a deterministic
  *    character-trigram hash — lexical, but real enough that paraphrases
  *    land near each other) — swap in `createEmbeddingClient` from
- *    `@jarenjs/ai/embed` for real vectors; the seam is identical
- *  - the contradiction judge is a rule — swap in @jarenjs/ai
+ *    `@tangleai/models/embed` for real vectors; the seam is identical
+ *  - the contradiction judge is a rule — swap in @tangleai/context
  *    `createStructuredOutput({ client, schema: CONTRADICTION_VERDICT_SCHEMA })`
  *    over `contradictionMessages(a, b)` for a real one
  *
  * Run: npm run skeleton
  */
 
-import { createLedger, createMemoryStorage } from '@jarenjs/ai';
+import { createLedger } from '@tangleai/context/ledger';
+import { createMemoryStorage } from '@tangleai/context/storage/memory';
 import { cosineSimilarity } from '@jarenjs/core/vector';
 import { toLedgerMemory, type MemoryUnit } from '@tangleai/core/schemas/memory';
 import {
@@ -142,7 +143,7 @@ const best = ranked[0]?.unit;
 if (best) console.log(`answer (grounded): ${best.text} — per ${best.evidence}`);
 
 // ---------------------------------------------------------------------------
-// 7. mirror the LIVE curated memories into an unmodified @jarenjs/ai
+// 7. mirror the LIVE curated memories into an unmodified @tangleai/context
 //    ledger, where a plain jarenjs agent recalls them by tag — and, since
 //    the vectors travel with their identity, by meaning through the same
 //    embedder seam
@@ -155,7 +156,7 @@ for (const unit of await store.list()) {
   const outcome = await ledger.addMemory(toLedgerMemory(unit));
   if (!('error' in outcome)) mirrored++;
 }
-console.log(`\nledger mirror: ${mirrored} live memories admitted to a @jarenjs/ai ledger`);
+console.log(`\nledger mirror: ${mirrored} live memories admitted to a @tangleai/context ledger`);
 const fromLedger = await ledger.recall({ tags: ['api'], limit: 5 });
 if (Array.isArray(fromLedger)) {
   for (const memory of fromLedger) console.log(`  ledger recall [api]: ${memory.text}`);

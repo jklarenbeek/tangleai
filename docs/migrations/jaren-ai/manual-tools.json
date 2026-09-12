@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "3491513e164dc30e429c84e709bd738841f4df16",
+  "files": [
+    {
+      "source": "packages/website/scripts/drive-assistant.mjs",
+      "sourceSha256": "48fd6d73f62bdb30c785bfd14b91b62027fcbbebe08421c5b7cbd34662af22f1",
+      "destination": ".e2e/drive-assistant.mjs",
+      "destinationSha256": "a6a0ef51488e0f6374d16522d26b07ad980327c09594157d24d86f04aa790780",
+      "disposition": "Assistant-only manual instrument received; two scripted turns qualified with no errors or paid requests"
+    },
+    {
+      "source": "packages/website/scripts/shots.mjs",
+      "sourceSha256": "9711a170272e2c46a8b8670a02b0b8fdb9acb8f2c195d4f4acaeddc05da57287",
+      "destination": ".e2e/assistant-shots.mjs",
+      "destinationSha256": "b6a7632e52d8f5e80df31deb089fbd7cdbb69a38ae3858e25f8bf29b87bac262",
+      "disposition": "Configured assistant screenshot section received on all four original viewports; generic Jaren appearance sweep retained"
+    }
+  ]
+}

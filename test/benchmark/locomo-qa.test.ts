@@ -25,9 +25,10 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
 import { JarenValidator } from '@jarenjs/validate';
-import { createEnvironment, createProgramRunner } from '@jarenjs/ai';
+import { createEnvironment } from '@tangleai/context/environment';
+import { createProgramRunner } from '@tangleai/agents/program';
 import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
-import { createHashEmbedder } from '@jarenjs/ai/embed';
+import { createHashEmbedder } from '@tangleai/models/embed';
 import { nodeDriver } from '@jarenjs/db/node';
 
 import { DEFAULT_SETTINGS, chatClientFor, chatWireConfigured, embedderFor } from '../../apps/desktop/src/settings.ts';

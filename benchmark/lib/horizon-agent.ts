@@ -1,6 +1,9 @@
 /** QA policy over JarenJS programs: bounded coverage, checked evidence and cited synthesis. */
-import { createBudgetAccount, createEnvironment, createLongHorizonAgent, createProgramAuthor,
-  createProgramRunner, createStructuredOutput, readProgramAnswer, type ProgramRunResult } from '@jarenjs/ai';
+import { createBudgetAccount, createLongHorizonAgent } from '@tangleai/agents/recursive';
+import { createEnvironment } from '@tangleai/context/environment';
+import { createProgramAuthor, createProgramRunner, readProgramAnswer } from '@tangleai/agents/program';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import { type ProgramRunResult } from '@tangleai/agents/program-result';
 import { chunkText } from '@jarenjs/core/chunk';
 import { compileJsonQuery, analyzeQuery, annotateTypes } from '@jarenjs/json/query';
 import { canonicalSha256 } from '@jarenjs/json/canonical';

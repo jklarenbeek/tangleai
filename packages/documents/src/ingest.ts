@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import { mapConcurrent } from '@jarenjs/core/async';
 import { estimateTokens } from '@tangleai/core/tokens';
 

@@ -2,7 +2,7 @@
  * Turning raw observations into memory units.
  *
  * Ids are content-addressed — `m-<fnv1a(text)>-<length>` via the same
- * `hashContent` the @jarenjs/ai recall slots use — so ingesting the same
+ * `hashContent` the @tangleai/context recall slots use — so ingesting the same
  * observation twice produces the same id and the second write is an
  * overwrite, not a duplicate. Idempotence by construction beats
  * deduplication by policy; the crystallizer then only has to handle

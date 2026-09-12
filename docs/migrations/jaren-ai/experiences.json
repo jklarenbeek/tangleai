@@ -1,0 +1,1377 @@
+{
+  "schemaVersion": 1,
+  "phase": "05",
+  "status": "received and qualified before Jaren removal",
+  "source": {
+    "jarenjs": {
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "version": "0.83.3",
+      "trackedClean": true,
+      "node": "24.20.0"
+    },
+    "tangleai": {
+      "commit": "13330f3ce81bc8afa35265d829bafd2b3430d897",
+      "version": "0.20.1",
+      "trackedClean": true,
+      "node": "24.19.0",
+      "foundationPin": "3491513e164dc30e429c84e709bd738841f4df16"
+    }
+  },
+  "foundationSource": {
+    "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+    "version": "0.83.3",
+    "node": "24.20.0",
+    "npm": "11.12.1",
+    "patchSha256": "a5f980327f970246819c47ce2a36e30072874f48e8d15012dabd3121330cafd8",
+    "state": "uncommitted candidate"
+  },
+  "dedicatedSources": [
+    {
+      "source": "packages/website/e2e/assistant.spec.js",
+      "sha256": "0efb73a07986f13785c1f895828cd244ee8ab13bd8566c1160cf6b03098dfc12",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": ".e2e/migration/assistant.spec.mjs",
+            "sha256": "d179f67dca49c39134ca3b4b8d2480534fe17bc9c71c69dfff7ef8141df8b19b"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/e2e/game-smoke.spec.js",
+      "sha256": "731e9a322ca628b361ef0a4ec5f740e826a27b2b8be6ec097d855420a7c9d570",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": ".e2e/migration/game-smoke.spec.mjs",
+            "sha256": "7edf8d1a76e202afd49a1a559eb7ab0b8c714a3264c09b063f6d5bcd37e9d193"
+          },
+          {
+            "path": ".e2e/migration/game-npc.spec.mjs",
+            "sha256": "f10c70fd868478f4e0edde5c01c900f8f89f88e15ccea9c955d8e2550fa57c9b"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/e2e/ledger-lifecycle.spec.js",
+      "sha256": "54f33a512e5f9dce0149d8c074dd23e4105d7d410b157b4364669b4b58230c64",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": ".e2e/migration/ledger-lifecycle.spec.mjs",
+            "sha256": "51fcc1fec4d7de8343814f981433140755d08858ef44815adfdbfeb343127b64"
+          },
+          {
+            "path": ".e2e/migration/ledger-fixture.js",
+            "sha256": "1740b1047e8ddd18434f294c9ce8042169d11a40570a14ebaca0acde38392361"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/boundaries/assistant.js",
+      "sha256": "a444ba0afdfc308e5425f7aeabbd8c9513f3ae0f2d4c15b1343032141a668fd4",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "components/assistant/src/controller.js",
+            "sha256": "5cfc681472d6ad6cac88898862eb8062c4e63a5adee15366b94ebc758798b1fe"
+          },
+          {
+            "path": "components/assistant/src/settings.js",
+            "sha256": "fbcb0f5624bae193ad31ba5c2be374120f41fd4ef08cdb101c6f68d73330bcee"
+          },
+          {
+            "path": "apps/pages/src/demos/playground/toolbox.js",
+            "sha256": "3d337e817b6cf657b9a98f961f23b118b25fb908f65c624436373f5f6655f3e8"
+          },
+          {
+            "path": "apps/pages/src/demos/playground/prompt.js",
+            "sha256": "436be65dbc421daa672dea7cc888df69c229df9dcb925685519305b899893e46"
+          },
+          {
+            "path": "apps/pages/src/demos/playground/tool-definitions.js",
+            "sha256": "aa8fb987f70e2171e85c1be6b7580b0f6e4912ccf39dae345af535ce0e4d8dcb"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/boundaries/game.js",
+      "sha256": "e7718f17770ac1d4c5828a0e41120400519c7300b7f1a0f053f0626498a930da",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "apps/pages/src/demos/game/runtime.js",
+            "sha256": "60a2d4244cdf7558f874e0a1beda81fe06c9a6f6c5bb03a2943aec47967d9668"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/content/gameContent.js",
+      "sha256": "e59fd4e5e0ed53449dd1baaa78a23327e167b404ef4c74086a11b4eb89b721df",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "apps/pages/src/demos/game/gameContent.js",
+            "sha256": "e59fd4e5e0ed53449dd1baaa78a23327e167b404ef4c74086a11b4eb89b721df"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/content/gameFsms.js",
+      "sha256": "6374886ece2ba61e48400a453e2f0190e365a2b6202cca7cfc27e47df811c9b6",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "apps/pages/src/demos/game/gameFsms.js",
+            "sha256": "6374886ece2ba61e48400a453e2f0190e365a2b6202cca7cfc27e47df811c9b6"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/lib/ledgerStore.js",
+      "sha256": "fc64f422ad951a52791cf6ce7538158a7e157a1ecba3fdc5070602f141038b0f",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "packages/context/src/storage/slot.js",
+            "sha256": "a4fd99558eab8af00e1e5aa332fcd6fdc4b855dea456e5831eb5a766f4472428"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/views/assistant.js",
+      "sha256": "5f682943c887189b4c1fd52c48a866ebff89638bc8376e9558ad4836664244a4",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "components/assistant/src/views.js",
+            "sha256": "e9835a2bab8d62c5d09a5d8bc707a8dffadf88011cb47fb3d11e270957907070"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "packages/website/src/views/game.js",
+      "sha256": "3515ace14eb65d1aae4da65b8bf306536e3e8753f64c4dfba66fa88bc2bd49fc",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "apps/pages/src/demos/game/views.js",
+            "sha256": "4beb1150eb7547b0900fe838146e8850075fa7585ea5fdcb8386c3952ff52190"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "test/website/assistant.test.js",
+      "sha256": "f48c2a520fd14c0178d9fe0ca2e93e5a44440a1f6df5d70b10b95c510547e203",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "test/pages/assistant.test.js",
+            "sha256": "055b07df640e41b65a7a57329a1c872cb2b6567a5946dd94e8cab5bbb41a38f2"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "test/website/game.test.js",
+      "sha256": "ec4ce5fe5d25a0bcda5f22012c6249b979f79cf18be1bfb18cdd5071c2446331",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "test/pages/game.test.js",
+            "sha256": "9b7d5f134856870bc5622a23cf625a0235195e8ba223ba6e7dbd83e4256d65ac"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    },
+    {
+      "source": "test/website/ledger-storage.test.js",
+      "sha256": "b1c145b910d4efa3b833fe5836976f12fe7207efbd46e413f584f7eb5bbbd03f",
+      "disposition": "move",
+      "destination": {
+        "repository": "tangleai",
+        "files": [
+          {
+            "path": "test/context/slot-storage.test.js",
+            "sha256": "f353cca98a07cf70f05a94da5fce67b780c3feec2165052775998222b157d122"
+          }
+        ]
+      },
+      "receipt": {
+        "status": "received and qualified",
+        "gate": "experiences",
+        "details": "docs/migrations/jaren-ai/experiences.json"
+      }
+    }
+  ],
+  "mixedSections": [
+    {
+      "source": "packages/website/src/app/actions.js",
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "sha256": "af00b510ef610e4eebe0816257e92565b6906b901fc48d0b43bcf530140e24a9",
+      "selection": "ACTIONS properties whose names begin ai/; GAME_ACTIONS composition",
+      "destination": [
+        {
+          "path": "components/assistant/src/actions.js",
+          "sha256": "07bb4d243e4973c9ab596bdd2c3e9862fd034e553d0371f3c61cc61775c01e64"
+        },
+        {
+          "path": "apps/pages/src/demos/game/runtime.js",
+          "sha256": "60a2d4244cdf7558f874e0a1beda81fe06c9a6f6c5bb03a2943aec47967d9668"
+        }
+      ]
+    },
+    {
+      "source": "packages/website/src/app/state.js",
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "sha256": "6468d669caff046deb2dbe2fb93cfd7215239816d2562cf3e5f62a1d72c88f94",
+      "selection": "DEFAULT_AI_SETTINGS; initial state ai and game members",
+      "destination": [
+        {
+          "path": "components/assistant/src/settings.js",
+          "sha256": "fbcb0f5624bae193ad31ba5c2be374120f41fd4ef08cdb101c6f68d73330bcee"
+        },
+        {
+          "path": "components/assistant/src/state.js",
+          "sha256": "c7f67669a4bd05b14056f8f4b81251b8fe29a6fb7daa33221a0e50f8612c8953"
+        },
+        {
+          "path": "apps/pages/src/demos/game/state.js",
+          "sha256": "25d3a30c838efc64b8f98605c7d21eba619cc1abf3b9c927471c7e63ad19e834"
+        }
+      ]
+    },
+    {
+      "source": "packages/website/src/app/viewmodel.js",
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "sha256": "631938b1f864cd8d859164be212eb7ab808f00911b2fc98d2418c889a72eb053",
+      "selection": "assistantView, PROGRESS_SHOWN; game route projection",
+      "destination": [
+        {
+          "path": "components/assistant/src/viewmodel.js",
+          "sha256": "a496cea0a2aa8be2eeb25395c28c46bfa425eeed2679399120f31a9d7ad77226"
+        },
+        {
+          "path": "apps/pages/src/demos/game/runtime.js",
+          "sha256": "60a2d4244cdf7558f874e0a1beda81fe06c9a6f6c5bb03a2943aec47967d9668"
+        }
+      ]
+    },
+    {
+      "source": "packages/website/src/styles.css",
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "sha256": "a6c1c59ebbc74c0b22268b6c90cd6909da95d8564e69c3d2fbe229298c4c968f",
+      "selection": "AI assistant slide-out and adventure game sections only",
+      "destination": [
+        {
+          "path": "components/assistant/styles/assistant.css",
+          "sha256": "07e0899b4a9ddad1bf30411d005297fcee5d37a63531d12ecc1b3adfdc3bff58"
+        },
+        {
+          "path": "apps/pages/src/demos/game/styles.css",
+          "sha256": "21260ea0564f23a778439382e219cbff276751b1ee2a81cfa2efb8694f4d6428"
+        }
+      ]
+    },
+    {
+      "source": "packages/website/src/app/createSiteApp.js",
+      "commit": "3491513e164dc30e429c84e709bd738841f4df16",
+      "sha256": "3c94b31d5e5742f29c163ca22ba3f3aff0e1bc8edcf0d27033029539337d3947",
+      "selection": "assistant/game effects, storage and toolbox composition only; generic app composition remains J",
+      "destination": [
+        {
+          "path": "apps/pages/src/demos/host.js",
+          "sha256": "05d7bf1fa9da976f77a663667438c0bdf75cef5fc9470f6bca9ae6f19c4f28db"
+        },
+        {
+          "path": "apps/pages/src/demos/browser.js",
+          "sha256": "6cee7cdb74bdf40035f16f5414cd0d16575bd75793406975f945d0253835d536"
+        }
+      ]
+    }
+  ],
+  "receivedFiles": [
+    {
+      "path": ".e2e/migration/assistant.spec.mjs",
+      "sha256": "d179f67dca49c39134ca3b4b8d2480534fe17bc9c71c69dfff7ef8141df8b19b"
+    },
+    {
+      "path": ".e2e/migration/data.spec.mjs",
+      "sha256": "bc67ca1129e7c4e40734682e5e258ca545df9869cdf301072f20030ec70e2432"
+    },
+    {
+      "path": ".e2e/migration/editor-ai.spec.mjs",
+      "sha256": "76ad2f298840788083bce6e7572f14cc1f4ab42ef8db0c7b51c34e1a7b974fe0"
+    },
+    {
+      "path": ".e2e/migration/flow.spec.mjs",
+      "sha256": "b47548c74b4fd3c5807e173f2e9d53dd528c29600accd403379658dcf430b05c"
+    },
+    {
+      "path": ".e2e/migration/game-npc.spec.mjs",
+      "sha256": "f10c70fd868478f4e0edde5c01c900f8f89f88e15ccea9c955d8e2550fa57c9b"
+    },
+    {
+      "path": ".e2e/migration/game-smoke.spec.mjs",
+      "sha256": "7edf8d1a76e202afd49a1a559eb7ab0b8c714a3264c09b063f6d5bcd37e9d193"
+    },
+    {
+      "path": ".e2e/migration/host-fixture.js",
+      "sha256": "6b0edfc34e2d17179cfa3f79a0521559b12f0b848646411c39cbb106b8382a42"
+    },
+    {
+      "path": ".e2e/migration/host-webmcp.spec.mjs",
+      "sha256": "95b58a7fa688bbe53d1a2b9892a9ab0d42ad8b8392bef18a263b534d6e6b6144"
+    },
+    {
+      "path": ".e2e/migration/ledger-fixture.js",
+      "sha256": "1740b1047e8ddd18434f294c9ce8042169d11a40570a14ebaca0acde38392361"
+    },
+    {
+      "path": ".e2e/migration/ledger-lifecycle.spec.mjs",
+      "sha256": "51fcc1fec4d7de8343814f981433140755d08858ef44815adfdbfeb343127b64"
+    },
+    {
+      "path": ".e2e/migration/playwright.mjs",
+      "sha256": "c83a9cf20aa92571d98a07ff4ebe788507b03660ac8814b6bb20a8c045bd9b46"
+    },
+    {
+      "path": ".e2e/migration/project-kinds.spec.mjs",
+      "sha256": "a519f06472be884511512aefc8402739013a01ef5793be03815139a75a3a85f2"
+    },
+    {
+      "path": ".e2e/migration/run.mjs",
+      "sha256": "2d04dd4eb3c6670d5f720d1ce8946503b08bdf44ce8c73ab0c875fc4394e2e1e"
+    },
+    {
+      "path": ".e2e/migration/transfer.spec.mjs",
+      "sha256": "41bf39d28eeb6e3638b364689f284e6878a60f663b112825b76dc19cfd5ecab4"
+    },
+    {
+      "path": "apps/pages/src/demos/browser.d.ts",
+      "sha256": "edbe1d8dc7a848ea60afe088c66232660a0d598c2ef5125d0b8d589d7f9c1f58"
+    },
+    {
+      "path": "apps/pages/src/demos/browser.js",
+      "sha256": "6cee7cdb74bdf40035f16f5414cd0d16575bd75793406975f945d0253835d536"
+    },
+    {
+      "path": "apps/pages/src/demos/game/gameContent.js",
+      "sha256": "e59fd4e5e0ed53449dd1baaa78a23327e167b404ef4c74086a11b4eb89b721df"
+    },
+    {
+      "path": "apps/pages/src/demos/game/gameFsms.js",
+      "sha256": "6374886ece2ba61e48400a453e2f0190e365a2b6202cca7cfc27e47df811c9b6"
+    },
+    {
+      "path": "apps/pages/src/demos/game/mount.js",
+      "sha256": "8536238394b16047fa0e298d00aff31ed45d87f310a2b465eb2bd5d976d62756"
+    },
+    {
+      "path": "apps/pages/src/demos/game/runtime.js",
+      "sha256": "60a2d4244cdf7558f874e0a1beda81fe06c9a6f6c5bb03a2943aec47967d9668"
+    },
+    {
+      "path": "apps/pages/src/demos/game/state.js",
+      "sha256": "25d3a30c838efc64b8f98605c7d21eba619cc1abf3b9c927471c7e63ad19e834"
+    },
+    {
+      "path": "apps/pages/src/demos/game/styles.css",
+      "sha256": "21260ea0564f23a778439382e219cbff276751b1ee2a81cfa2efb8694f4d6428"
+    },
+    {
+      "path": "apps/pages/src/demos/game/views.js",
+      "sha256": "4beb1150eb7547b0900fe838146e8850075fa7585ea5fdcb8386c3952ff52190"
+    },
+    {
+      "path": "apps/pages/src/demos/host.js",
+      "sha256": "05d7bf1fa9da976f77a663667438c0bdf75cef5fc9470f6bca9ae6f19c4f28db"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/actions.js",
+      "sha256": "3bb8ab76601f5dcda70396c2fa22c8a8d909015e7203ae96d434d5ae65955ef5"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/appTemplates.js",
+      "sha256": "66c8f7b8b2f4d39ff5e711865ead78757abe453466dd371bfcce3719cb922469"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/charts.js",
+      "sha256": "5bf3867166cd0d8691fe63c563e34b9ae0c5637974ce6897122d3ade039da3b8"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/data-worker.js",
+      "sha256": "1e761ec4de345bc6468c4514cc33eaf5686bfd1225b78ddcf7682e23b2704c48"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/dataExample.js",
+      "sha256": "1a7f6f10924f5be3bd9071dc73b6ce3c334c2306779309bfe555f840d2296f87"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/effects.js",
+      "sha256": "039093d2fbab296dfa635630ab7a06e768dc32bf48e0cbb4cfda40ebefe6880a"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/engines.js",
+      "sha256": "ba78b7c6f91a42268d329f537dec8a27db86806b7e14f177510617f42f55b91c"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/flowTemplates.js",
+      "sha256": "28c36dca3bd99a851829367a6274638979d2195282b30c86799d05ba7c738de1"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/format.js",
+      "sha256": "620c3a80e69e3e57009afb77296a92f22691e0f4dbefe58a2ff7cfd0465224a0"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/mount-play.js",
+      "sha256": "3dd78b875ac033819eeb004516aca0b96a6fdb511e68d23cad274ac3dc3f2916"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/play.js",
+      "sha256": "bb094a27da0d2263cd3fd7d932ada4c7173541391c0ffee7e79e90b03b4b09de"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/project-worker.js",
+      "sha256": "bb3c543d497d156c949eb1428964aa2c8f4f58f4e004410552acca136e83269b"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/projectTemplates.js",
+      "sha256": "a4e37fa43bd3b6d66beaa23c14ba3b51678dcc6e18e682277d36b196c164adac"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/prompt.js",
+      "sha256": "436be65dbc421daa672dea7cc888df69c229df9dcb925685519305b899893e46"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/services.js",
+      "sha256": "999a8a6705c0cc25b7eb14587bb4d2a9cc270f38547a0b9fdcbc3d4c7f077a71"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/tool-definitions.js",
+      "sha256": "aa8fb987f70e2171e85c1be6b7580b0f6e4912ccf39dae345af535ce0e4d8dcb"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/toolbox.js",
+      "sha256": "3d337e817b6cf657b9a98f961f23b118b25fb908f65c624436373f5f6655f3e8"
+    },
+    {
+      "path": "apps/pages/src/demos/playground/validator.js",
+      "sha256": "033e98d033a6fd35170194c095d25ad4ae88af42ccf1fb29a740d4df847afbf5"
+    },
+    {
+      "path": "apps/pages/src/demos/storage-transfer.ts",
+      "sha256": "bda2f98fed1670d848e353f0c235a20b12a58978df239329e18eb06abcef7de4"
+    },
+    {
+      "path": "apps/pages/src/demos/transfer-controls.ts",
+      "sha256": "001ba7676aa9370c2944adc1b4a15434246bbbbcea986d084e0e6bae0bb75dff"
+    },
+    {
+      "path": "components/assistant/CHANGELOG.md",
+      "sha256": "e803124589e0d4b9d09601e7234c92448f42703109c83e83163f368aa12e08b6"
+    },
+    {
+      "path": "components/assistant/LICENSE",
+      "sha256": "4082f73b1655b94f45130965b02e4df32ab3493c9291494647b74bb78aec0fc5"
+    },
+    {
+      "path": "components/assistant/README.md",
+      "sha256": "ad5476c322ef09e3e7f2ca689bd24b1ba6a29a7946371ccd23f964b306db8640"
+    },
+    {
+      "path": "components/assistant/package.json",
+      "sha256": "cdb2f804a44755b0ec8a3b042876080532083ca50fd6592920ba03ca9fc1e136"
+    },
+    {
+      "path": "components/assistant/src/actions.js",
+      "sha256": "07bb4d243e4973c9ab596bdd2c3e9862fd034e553d0371f3c61cc61775c01e64"
+    },
+    {
+      "path": "components/assistant/src/component.js",
+      "sha256": "1e351bd89a779b8838c3916e1716b155dc281a6fc59411461e2ff1e3af2a1359"
+    },
+    {
+      "path": "components/assistant/src/controller.js",
+      "sha256": "5cfc681472d6ad6cac88898862eb8062c4e63a5adee15366b94ebc758798b1fe"
+    },
+    {
+      "path": "components/assistant/src/index.js",
+      "sha256": "705a83e5e60ceb6a42190934b091210e0d66f53491075b1686c1a599616c605b"
+    },
+    {
+      "path": "components/assistant/src/settings.js",
+      "sha256": "fbcb0f5624bae193ad31ba5c2be374120f41fd4ef08cdb101c6f68d73330bcee"
+    },
+    {
+      "path": "components/assistant/src/state.js",
+      "sha256": "c7f67669a4bd05b14056f8f4b81251b8fe29a6fb7daa33221a0e50f8612c8953"
+    },
+    {
+      "path": "components/assistant/src/viewmodel.js",
+      "sha256": "a496cea0a2aa8be2eeb25395c28c46bfa425eeed2679399120f31a9d7ad77226"
+    },
+    {
+      "path": "components/assistant/src/views.js",
+      "sha256": "e9835a2bab8d62c5d09a5d8bc707a8dffadf88011cb47fb3d11e270957907070"
+    },
+    {
+      "path": "components/assistant/styles/assistant.css",
+      "sha256": "07e0899b4a9ddad1bf30411d005297fcee5d37a63531d12ecc1b3adfdc3bff58"
+    },
+    {
+      "path": "test/assistant/component.test.js",
+      "sha256": "e0e47c9ac47ed5a367420e17f91ac86da049e62b8db6d3170ec512114b8b51b1"
+    },
+    {
+      "path": "test/assistant/controller.test.js",
+      "sha256": "c42b00ed96156886c9f47b2cbadf2c6fec936b6b73b00357c108bf760cbeb686"
+    },
+    {
+      "path": "test/assistant/dom.stub.js",
+      "sha256": "068922919bd834ba06b74d204e943ef24e39e6dfd79bbf75479a3fd55f9adff6"
+    },
+    {
+      "path": "test/pages/assistant.test.js",
+      "sha256": "055b07df640e41b65a7a57329a1c872cb2b6567a5946dd94e8cab5bbb41a38f2"
+    },
+    {
+      "path": "test/pages/game.test.js",
+      "sha256": "9b7d5f134856870bc5622a23cf625a0235195e8ba223ba6e7dbd83e4256d65ac"
+    },
+    {
+      "path": "test/pages/host-fixture.js",
+      "sha256": "d13d4f7964b066eb22e7304f018e5f66bc23342cdb35563502ee8ac62d80acf1"
+    },
+    {
+      "path": "test/pages/lifecycle.test.js",
+      "sha256": "fca4b52b23104d135199b4cfd3c5528b2123be960aeb155bbfaaa15c40638a47"
+    },
+    {
+      "path": "test/pages/storage-transfer.test.ts",
+      "sha256": "cff9230c17a0c4f78d65f720f46033f8f100ced43ee561910c5eb3a6a0bbfd6b"
+    }
+  ],
+  "sharedEditors": {
+    "owner": "jarenjs",
+    "publicEntries": [
+      "@jarenjs/studio/component",
+      "@jarenjs/studio/data",
+      "@jarenjs/studio/data/host",
+      "@jarenjs/studio/flow"
+    ],
+    "host": "apps/pages/src/demos/host.js",
+    "policy": "Complete public components; private host seeds/services only. No copied generic controllers, views or worker protocols."
+  },
+  "tools": {
+    "retained": 22,
+    "added": 3,
+    "mapping": "docs/migrations/jaren-ai/PAGES.md",
+    "definitions": "apps/pages/src/demos/playground/tool-definitions.js",
+    "refusals": "Optional Jaren-only docs, chart gallery, calculator route and benchmarks; offline ejection unless injected. Core editing, execution, saves, downloads and sharing available."
+  },
+  "assets": {
+    "assistant": "Original assistant CSS scoped to .tangle-assistant; host presentation parameters",
+    "game": "Original game rules scoped to host; inline content/emojis; no external bitmap dependency",
+    "shared": "Public Jaren Studio/Data/Flow/Play/Markdown CSS and components copied by build as assets",
+    "sqlite": {
+      "package": "@sqlite.org/sqlite-wasm",
+      "version": "3.53.0-build1",
+      "scope": "Exact private Pages initializer, declared before installation; official WASM and OPFS proxy validated at build; no published foreign initializer"
+    }
+  },
+  "storage": {
+    "policy": "docs/migrations/jaren-ai/BROWSER_DATA.md",
+    "implementation": "apps/pages/src/demos/storage-transfer.ts",
+    "slots": [
+      "transcript",
+      "ledger",
+      "game",
+      "projects",
+      "play"
+    ],
+    "excluded": [
+      "provider settings",
+      "API credentials"
+    ],
+    "semantics": "Explicit selected old-origin export; validate before writes; reject conflicts; preserve IDs/schema/counters; repeat causes zero writes; partial failure reports completed slots. No claim of cross-slot atomicity or automatic cross-origin access."
+  },
+  "nativeWebMcp": [
+    {
+      "engine": "chromium",
+      "version": "149.0.7827.55",
+      "configuration": "headless default; localhost; no flags or origin trial",
+      "contexts": {
+        "document": {
+          "present": false,
+          "methods": []
+        },
+        "navigator": {
+          "present": false,
+          "methods": []
+        }
+      }
+    },
+    {
+      "engine": "firefox",
+      "version": "151.0",
+      "configuration": "headless default; localhost; no flags or origin trial",
+      "contexts": {
+        "document": {
+          "present": false,
+          "methods": []
+        },
+        "navigator": {
+          "present": false,
+          "methods": []
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "version": "26.5",
+      "configuration": "headless default; localhost; no flags or origin trial",
+      "contexts": {
+        "document": {
+          "present": false,
+          "methods": []
+        },
+        "navigator": {
+          "present": false,
+          "methods": []
+        }
+      }
+    }
+  ],
+  "checks": {
+    "unit": {
+      "command": "npm run check",
+      "node": "24.19.0",
+      "exit": 0,
+      "passed": 1318,
+      "suites": 290,
+      "jsDeclarationModules": 53
+    },
+    "browser": {
+      "command": "npm run pages:test:browser",
+      "exit": 0,
+      "passed": 115,
+      "skipped": 8,
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "skips": "3 optional paid provider; 5 WebKit OPFS availability cases",
+      "followup": "Corrected the new buffer regression to await initial seeded rows before independent insertion; all three engines pass. Full matrix remains 115 pass and eight declared skips."
+    },
+    "pages": {
+      "command": "npm run pages:build",
+      "exit": 0
+    },
+    "desktop": {
+      "sourceChromium": 0,
+      "compiledForeignDirectoryWebKit": 0,
+      "compile": 0
+    },
+    "jaren": {
+      "node": "24.20.0",
+      "command": "npm run site:gate; npm run test:types; npm run test:packed",
+      "exit": 0,
+      "tests": 14927,
+      "passed": 14886,
+      "skipped": 41,
+      "suites": 2368,
+      "coveredFunctions": 8768,
+      "totalFunctions": 8768,
+      "browserPassed": 427,
+      "browserSkipped": 8,
+      "packedPackages": 24
+    },
+    "packed": {
+      "node": "24.19.0",
+      "bun": "1.4.0",
+      "command": "npm run release:build; npm run release:test",
+      "exit": 0,
+      "packages": 13,
+      "exportsPerRuntime": 103,
+      "mappedDeclarationOccurrences": 260,
+      "installedEditorTestsPerRuntime": 5,
+      "installedAssistantTestsPerRuntime": 5,
+      "browserModules": 283,
+      "assistantBrowserModules": 228,
+      "visualBrowserEngines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "artifactReceipt": {
+        "schemaVersion": 1,
+        "version": "0.20.1",
+        "commit": "13330f3ce81bc8afa35265d829bafd2b3430d897",
+        "inputHash": "c4b9528c565d7d1a96a5936f4a0e54ec20b88c5c741392fcfe92bee0e56800ea",
+        "packages": [
+          {
+            "name": "@tangleai/models",
+            "version": "0.20.1",
+            "filename": "tangleai-models-0.20.1.tgz",
+            "integrity": "sha512-IJDUPAWLVsnIPkfuC0yB/wfEP1Waoz9cYEW5p+abx28ztjgReY4SO9jFpgmlDuAFCxjaNzXn7rRvXsaZG4m2Gg==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./providers": {
+                "types": "./src/providers.d.ts",
+                "import": "./src/providers.js",
+                "default": "./src/providers.js"
+              },
+              "./sse": {
+                "types": "./src/sse.d.ts",
+                "import": "./src/sse.js",
+                "default": "./src/sse.js"
+              },
+              "./client": {
+                "types": "./src/client.d.ts",
+                "import": "./src/client.js",
+                "default": "./src/client.js"
+              },
+              "./embed": {
+                "types": "./src/embed.d.ts",
+                "import": "./src/embed.js",
+                "default": "./src/embed.js"
+              },
+              "./structured": {
+                "types": "./src/structured.d.ts",
+                "import": "./src/structured.js",
+                "default": "./src/structured.js"
+              },
+              "./errors": {
+                "types": "./src/errors.d.ts",
+                "import": "./src/errors.js",
+                "default": "./src/errors.js"
+              },
+              "./check": {
+                "types": "./src/check.d.ts",
+                "import": "./src/check.js",
+                "default": "./src/check.js"
+              },
+              "./routing": {
+                "types": "./src/routing.d.ts",
+                "import": "./src/routing.js",
+                "default": "./src/routing.js"
+              },
+              "./grammar": {
+                "types": "./src/grammar.d.ts",
+                "import": "./src/grammar.js",
+                "default": "./src/grammar.js"
+              },
+              "./replay": {
+                "types": "./src/replay.d.ts",
+                "import": "./src/replay.js",
+                "default": "./src/replay.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/context",
+            "version": "0.20.1",
+            "filename": "tangleai-context-0.20.1.tgz",
+            "integrity": "sha512-bJuoQ+NdbVjPfy3i6Vq2GIPbekGdILO4OtgPTdCOU58C/amoGv9qy/ANJHGkZsPrbn9Wz7VFr7tg+eQRPzTWWw==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./recall": {
+                "types": "./src/recall.d.ts",
+                "import": "./src/recall.js",
+                "default": "./src/recall.js"
+              },
+              "./ledger": {
+                "types": "./src/ledger.d.ts",
+                "import": "./src/ledger.js",
+                "default": "./src/ledger.js"
+              },
+              "./environment": {
+                "types": "./src/environment.d.ts",
+                "import": "./src/environment.js",
+                "default": "./src/environment.js"
+              },
+              "./storage/memory": {
+                "types": "./src/storage/memory.d.ts",
+                "import": "./src/storage/memory.js",
+                "default": "./src/storage/memory.js"
+              },
+              "./schemas/ledger": {
+                "types": "./src/schemas/ledger.d.ts",
+                "import": "./src/schemas/ledger.js",
+                "default": "./src/schemas/ledger.js"
+              },
+              "./schemas/patch": {
+                "types": "./src/schemas/patch.d.ts",
+                "import": "./src/schemas/patch.js",
+                "default": "./src/schemas/patch.js"
+              },
+              "./evidence": {
+                "types": "./src/evidence.d.ts",
+                "import": "./src/evidence.js",
+                "default": "./src/evidence.js"
+              },
+              "./retention": {
+                "types": "./src/retention.d.ts",
+                "import": "./src/retention.js",
+                "default": "./src/retention.js"
+              },
+              "./schemas/evidence": {
+                "types": "./src/schemas/evidence.d.ts",
+                "import": "./src/schemas/evidence.js",
+                "default": "./src/schemas/evidence.js"
+              },
+              "./archive": {
+                "types": "./src/archive.d.ts",
+                "import": "./src/archive.js",
+                "default": "./src/archive.js"
+              },
+              "./package.json": "./package.json",
+              "./storage/slot": {
+                "types": "./src/storage/slot.d.ts",
+                "import": "./src/storage/slot.js",
+                "default": "./src/storage/slot.js"
+              }
+            }
+          },
+          {
+            "name": "@tangleai/agents",
+            "version": "0.20.1",
+            "filename": "tangleai-agents-0.20.1.tgz",
+            "integrity": "sha512-sy6adVc/ORMFXyxBiCi+HEHhVLXOR8La9zq2BLFkhcuRZDU+ubinu0hevqiLXR4sOjM0a4SZHBrMt27SzYJJVg==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./toolbox": {
+                "types": "./src/toolbox.d.ts",
+                "import": "./src/toolbox.js",
+                "default": "./src/toolbox.js"
+              },
+              "./agent": {
+                "types": "./src/agent.d.ts",
+                "import": "./src/agent.js",
+                "default": "./src/agent.js"
+              },
+              "./program": {
+                "types": "./src/program.d.ts",
+                "import": "./src/program.js",
+                "default": "./src/program.js"
+              },
+              "./recursive": {
+                "types": "./src/recursive.d.ts",
+                "import": "./src/recursive.js",
+                "default": "./src/recursive.js"
+              },
+              "./refine": {
+                "types": "./src/refine.d.ts",
+                "import": "./src/refine.js",
+                "default": "./src/refine.js"
+              },
+              "./schemas/program": {
+                "types": "./src/schemas/program.d.ts",
+                "import": "./src/schemas/program.js",
+                "default": "./src/schemas/program.js"
+              },
+              "./program-result": {
+                "types": "./src/program-result.d.ts",
+                "import": "./src/program-result.js",
+                "default": "./src/program-result.js"
+              },
+              "./program-session": {
+                "types": "./src/program-session.d.ts",
+                "import": "./src/program-session.js",
+                "default": "./src/program-session.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/jaren",
+            "version": "0.20.1",
+            "filename": "tangleai-jaren-0.20.1.tgz",
+            "integrity": "sha512-52xsSIUfVKNyYNOM0XV5f1sWvntJhDCfdFp8PD+/1W461jALVR4bLNsVdYG5vum0l7HkjY6HbqmDORESlLdvYg==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./studio": {
+                "types": "./src/studio.d.ts",
+                "import": "./src/studio.js",
+                "default": "./src/studio.js"
+              },
+              "./data": {
+                "types": "./src/data.d.ts",
+                "import": "./src/data.js",
+                "default": "./src/data.js"
+              },
+              "./flow": {
+                "types": "./src/flow.d.ts",
+                "import": "./src/flow.js",
+                "default": "./src/flow.js"
+              },
+              "./program": {
+                "types": "./src/program.d.ts",
+                "import": "./src/program.js",
+                "default": "./src/program.js"
+              },
+              "./stylesheet": {
+                "types": "./src/stylesheet.d.ts",
+                "import": "./src/stylesheet.js",
+                "default": "./src/stylesheet.js"
+              },
+              "./spatial": {
+                "types": "./src/spatial.d.ts",
+                "import": "./src/spatial.js",
+                "default": "./src/spatial.js"
+              },
+              "./geo-tools": {
+                "types": "./src/geo-tools.d.ts",
+                "import": "./src/geo-tools.js",
+                "default": "./src/geo-tools.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/assistant",
+            "version": "0.20.1",
+            "filename": "tangleai-assistant-0.20.1.tgz",
+            "integrity": "sha512-4whjN1OUeK4mx6vtx0eEUeUl4XfkaaCHvEinJysDQqCgTu9XXE2zz8J8pSvY5H8AZfeBZ3U1wMDjMC6ey/uR7A==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./package.json": "./package.json",
+              "./component": {
+                "types": "./src/component.d.ts",
+                "import": "./src/component.js",
+                "default": "./src/component.js"
+              },
+              "./styles/assistant.css": "./styles/assistant.css"
+            }
+          },
+          {
+            "name": "@tangleai/core",
+            "version": "0.20.1",
+            "filename": "tangleai-core-0.20.1.tgz",
+            "integrity": "sha512-kl9XpM+HvHCvirVnJLEQnFLCPNfqeRPtj8bJLnq+I2cMFdVPKSfmOSmgWf6g6vdPgksTmA1YtbOHiXNXLVOIYQ==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./errors": {
+                "types": "./src/errors.d.ts",
+                "import": "./src/errors.js",
+                "default": "./src/errors.js"
+              },
+              "./clustering": {
+                "types": "./src/clustering.d.ts",
+                "import": "./src/clustering.js",
+                "default": "./src/clustering.js"
+              },
+              "./tokens": {
+                "types": "./src/tokens.d.ts",
+                "import": "./src/tokens.js",
+                "default": "./src/tokens.js"
+              },
+              "./schemas/memory": {
+                "types": "./src/schemas/memory.d.ts",
+                "import": "./src/schemas/memory.js",
+                "default": "./src/schemas/memory.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/config",
+            "version": "0.20.1",
+            "filename": "tangleai-config-0.20.1.tgz",
+            "integrity": "sha512-GaBVA13ltwXl+eum5/+e9AaMRDbIklH0Le7UpWIEtsmHLMaOUIjsmEdiPqN17Ri6RaJcOO/uJQGdUGOGQpQWeg==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./contracts": {
+                "types": "./src/contracts.gen.d.ts",
+                "import": "./src/contracts.gen.js",
+                "default": "./src/contracts.gen.js"
+              },
+              "./schemas/profile-registry": "./schemas/profile-registry.schema.json",
+              "./schemas/run-identity": "./schemas/run-identity.schema.json",
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/mas",
+            "version": "0.20.1",
+            "filename": "tangleai-mas-0.20.1.tgz",
+            "integrity": "sha512-FwxXLOFWcG+b+rrXIxwHWuaH9InG5KSXaU40mef4aTVfeddIKHCuQFTitWZyaohWI8HQadwmkj4+Rx3gycKn5A==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./contracts": {
+                "types": "./src/contracts.gen.d.ts",
+                "import": "./src/contracts.gen.js",
+                "default": "./src/contracts.gen.js"
+              },
+              "./schemas/mas-workflow": "./schemas/mas-workflow.schema.json",
+              "./schemas/mas-registry": "./schemas/mas-registry.schema.json",
+              "./schemas/mas-template": "./schemas/mas-template.schema.json",
+              "./schemas/mas-runtime": "./schemas/mas-runtime.schema.json",
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/documents",
+            "version": "0.20.1",
+            "filename": "tangleai-documents-0.20.1.tgz",
+            "integrity": "sha512-n4cf3lT6vM0Pq2aXgdOr6EJaxLGPlW9az/X+oUYUuriK33PHTCgsXs8r00wqWpjv7DjRRak7/5gbFdr6iVTK6Q==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./browser": {
+                "types": "./src/browser.d.ts",
+                "import": "./src/browser.js",
+                "default": "./src/browser.js"
+              },
+              "./chunking": {
+                "types": "./src/chunking.d.ts",
+                "import": "./src/chunking.js",
+                "default": "./src/chunking.js"
+              },
+              "./contracts": {
+                "types": "./src/contracts.d.ts",
+                "import": "./src/contracts.js",
+                "default": "./src/contracts.js"
+              },
+              "./extract": {
+                "types": "./src/extract.d.ts",
+                "import": "./src/extract.js",
+                "default": "./src/extract.js"
+              },
+              "./fetch": {
+                "types": "./src/fetch.d.ts",
+                "import": "./src/fetch.js",
+                "default": "./src/fetch.js"
+              },
+              "./ingest": {
+                "types": "./src/ingest.d.ts",
+                "import": "./src/ingest.js",
+                "default": "./src/ingest.js"
+              },
+              "./retrieval": {
+                "types": "./src/retrieval.d.ts",
+                "import": "./src/retrieval.js",
+                "default": "./src/retrieval.js"
+              },
+              "./url-policy": {
+                "types": "./src/url-policy.d.ts",
+                "import": "./src/url-policy.js",
+                "default": "./src/url-policy.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/memory",
+            "version": "0.20.1",
+            "filename": "tangleai-memory-0.20.1.tgz",
+            "integrity": "sha512-eJTUDCjddlVrOiNpkdPiPtT4IyeKDIaG/MM/imlA6twEnAp9cWfa+D22Gww+fV1YSDguhwCRW8DlpHy8t7Rypw==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./store": {
+                "types": "./src/store.d.ts",
+                "import": "./src/store.js",
+                "default": "./src/store.js"
+              },
+              "./ingest": {
+                "types": "./src/ingest.d.ts",
+                "import": "./src/ingest.js",
+                "default": "./src/ingest.js"
+              },
+              "./novelty": {
+                "types": "./src/novelty.d.ts",
+                "import": "./src/novelty.js",
+                "default": "./src/novelty.js"
+              },
+              "./crystallize": {
+                "types": "./src/crystallize.d.ts",
+                "import": "./src/crystallize.js",
+                "default": "./src/crystallize.js"
+              },
+              "./contradiction": {
+                "types": "./src/contradiction.d.ts",
+                "import": "./src/contradiction.js",
+                "default": "./src/contradiction.js"
+              },
+              "./outcome": {
+                "types": "./src/outcome.d.ts",
+                "import": "./src/outcome.js",
+                "default": "./src/outcome.js"
+              },
+              "./retrieval": {
+                "types": "./src/retrieval.d.ts",
+                "import": "./src/retrieval.js",
+                "default": "./src/retrieval.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/search",
+            "version": "0.20.1",
+            "filename": "tangleai-search-0.20.1.tgz",
+            "integrity": "sha512-Fy4VSAvIdpqYTJ5g+K96gS8xR497Ikj4jZK5kExZLzMg6iZdXLwNjGV0bpfZP9F7SvtQ4GW1vyMNQgyyXsrA3A==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./searxng": {
+                "types": "./src/searxng.d.ts",
+                "import": "./src/searxng.js",
+                "default": "./src/searxng.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/pipeline",
+            "version": "0.20.1",
+            "filename": "tangleai-pipeline-0.20.1.tgz",
+            "integrity": "sha512-rAOeSdDWvk3GlmR5nwPimDy5ECswzMxb/rKAkry3CqGOp2YEiyBxms7u7v2v+tHFDiFbgD347QxzTO31FTYAWw==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./dag": {
+                "types": "./src/dag.d.ts",
+                "import": "./src/dag.js",
+                "default": "./src/dag.js"
+              },
+              "./run": {
+                "types": "./src/run.d.ts",
+                "import": "./src/run.js",
+                "default": "./src/run.js"
+              },
+              "./mermaid": {
+                "types": "./src/mermaid.d.ts",
+                "import": "./src/mermaid.js",
+                "default": "./src/mermaid.js"
+              },
+              "./standins": {
+                "types": "./src/standins.d.ts",
+                "import": "./src/standins.js",
+                "default": "./src/standins.js"
+              },
+              "./package.json": "./package.json"
+            }
+          },
+          {
+            "name": "@tangleai/store",
+            "version": "0.20.1",
+            "filename": "tangleai-store-0.20.1.tgz",
+            "integrity": "sha512-KdB6B3FcNKg5A4gSMQTurDWWb4OnJE/jAaNMO9xqym4xbHUUuJ+uJZX1JfddOqckPVA2SJ5muSDqTmxjovCUfQ==",
+            "exports": {
+              ".": {
+                "types": "./src/index.d.ts",
+                "import": "./src/index.js",
+                "default": "./src/index.js"
+              },
+              "./model": {
+                "types": "./src/model.d.ts",
+                "import": "./src/model.js",
+                "default": "./src/model.js"
+              },
+              "./db": {
+                "types": "./src/db.d.ts",
+                "import": "./src/db.js",
+                "default": "./src/db.js"
+              },
+              "./memory-store": {
+                "types": "./src/memory-store.d.ts",
+                "import": "./src/memory-store.js",
+                "default": "./src/memory-store.js"
+              },
+              "./runs": {
+                "types": "./src/runs.d.ts",
+                "import": "./src/runs.js",
+                "default": "./src/runs.js"
+              },
+              "./package.json": "./package.json",
+              "./mas-store": {
+                "types": "./src/mas-store.d.ts",
+                "import": "./src/mas-store.js",
+                "default": "./src/mas-store.js"
+              },
+              "./mas-jobs": {
+                "types": "./src/mas-jobs.d.ts",
+                "import": "./src/mas-jobs.js",
+                "default": "./src/mas-jobs.js"
+              },
+              "./ledger-storage": {
+                "types": "./src/ledger-storage.d.ts",
+                "import": "./src/ledger-storage.js",
+                "default": "./src/ledger-storage.js"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "bootstrap": {
+      "command": "bootstrapFoundations in fresh fixture, then repeat",
+      "exit": 0,
+      "tarballsByteIdentical": 24,
+      "secondRun": "no writes",
+      "installedBytesVerified": true
+    },
+    "logs": [
+      "/tmp/jaren-ai-migration/j-gate-05-ready.log",
+      "/tmp/jaren-ai-migration/j-types-05-ready.log",
+      "/tmp/jaren-ai-migration/j-packed-05-ready.log",
+      "/tmp/jaren-ai-migration/t-check-05-closed.log",
+      "/tmp/jaren-ai-migration/t-packed-consumers-05-ready.log",
+      "/tmp/jaren-ai-migration/t-bootstrap-05-ready.log",
+      "/home/joham/.cache/jaren-ai-migration/t-browser-05-buffers.log",
+      "/home/joham/.cache/jaren-ai-migration/t-browser-05-ready.log",
+      "/home/joham/.cache/jaren-ai-migration/t-inspect-05-packed-current.log"
+    ]
+  },
+  "fixes": [
+    "Public Data setActive releases/resumes worker ownership while retaining raw buffers.",
+    "Data model/query/CSV text publishes on input, preserving incomplete drafts during live store renders.",
+    "Assistant clear/cancel/dispose blocks late replies, tool execution and child authoring publication, even with a non-cooperative provider.",
+    "Closed ledger adapters reject writes and release writer ownership.",
+    "Public host share initialization occurs before mount, preserving uncontrolled stage state."
+  ],
+  "release": "Local candidate only; no commits, tags, registry publication or deployment."
+}

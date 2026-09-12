@@ -60,7 +60,7 @@ import { conversationCorpus } from '../../benchmark/lib/locomo-corpus.ts';
 import { emptyCensus } from '../../benchmark/lib/locomo-ingest.ts';
 import { questionsOf, sampleQuestions } from '../../benchmark/lib/locomo-qa.ts';
 import type { MemoryUnit } from '@tangleai/core/schemas/memory';
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import { liveClients, scriptedEnv, scriptedFetch } from '../fixtures/scripted-wire.ts';
 import { normalQuantile } from '../../benchmark/lib/stats.ts';
 import { createReportValidator } from '../../benchmark/lib/validate.ts';

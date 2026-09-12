@@ -80,7 +80,7 @@
  * it for the price of the missing answers alone; `--fresh` buys
  * everything again; deleting `benchmark/cache/` starts over.
  *
- * **Cost sits in the same table as quality**, through `@jarenjs/ai`'s
+ * **Cost sits in the same table as quality**, through `@tangleai/models`'s
  * `createBudgetAccount` (turns / tokens / ms, the provider's `usage`
  * preferred over any estimate), and latency is p50/p95 of the chat
  * call. Category 5 gets its own LLM-judge lane — the question's
@@ -94,17 +94,13 @@
  * rewards it; the structure around it is this repository's.
  */
 
-import {
-  createBudgetAccount,
-  createEnvironment,
-  createLongHorizonAgent,
-  createProgramAuthor,
-  createProgramRunner,
-  createStructuredOutput,
-  resolveEndpoint,
-  transcriptText,
-} from '@jarenjs/ai';
-import { createHashEmbedder, type Embedder } from '@jarenjs/ai/embed';
+import { createBudgetAccount, createLongHorizonAgent } from '@tangleai/agents/recursive';
+import { createEnvironment } from '@tangleai/context/environment';
+import { createProgramAuthor, createProgramRunner } from '@tangleai/agents/program';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import { resolveEndpoint } from '@tangleai/models/providers';
+import { transcriptText } from '@tangleai/agents/agent';
+import { createHashEmbedder, type Embedder } from '@tangleai/models/embed';
 import { mapConcurrent } from '@jarenjs/core/async';
 import { excerpt } from '@jarenjs/core/chunk';
 import { drawDistinct, mulberry32 } from '@jarenjs/core/random';

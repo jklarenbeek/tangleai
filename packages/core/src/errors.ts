@@ -9,7 +9,7 @@
  *   TA0003 — malformed payload (a provider answered, but not with what
  *             the contract promises)
  *
- * The split matters the same way it does in @jarenjs/ai: TA0001 is a bug
+ * The split matters the same way it does in @tangleai/models: TA0001 is a bug
  * in the host, TA0002 is the network's fault, TA0003 is the provider's.
  * A retry policy may retry the second, must not retry the first, and
  * should log the third.

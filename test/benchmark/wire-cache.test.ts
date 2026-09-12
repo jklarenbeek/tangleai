@@ -12,8 +12,8 @@ import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { createChatClient } from '@jarenjs/ai';
-import { createEmbeddingClient } from '@jarenjs/ai/embed';
+import { createChatClient } from '@tangleai/models/client';
+import { createEmbeddingClient } from '@tangleai/models/embed';
 import { nodeDriver } from '@jarenjs/db/node';
 
 import {

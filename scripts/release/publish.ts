@@ -8,6 +8,7 @@ import { readArtifacts } from './consumers.ts';
 import { publicationDecision, registryVersion, type RegistryVersion } from './registry.ts';
 import type { Artifact, Artifacts } from './build.ts';
 import { assertVerifiedGate } from './verify.ts';
+import { readFoundationArtifacts } from '../jaren-artifacts.ts';
 
 export interface PublishReceipt {
   version: string; commit: string; complete: boolean;
@@ -37,6 +38,7 @@ export async function publishSequence(artifacts: Artifacts, io: {
   return receipt;
 }
 export async function publish(root = ROOT, options: { execute?: boolean; bootstrap?: boolean } = {}) {
+  assert.equal(readFoundationArtifacts(root), null, 'Candidate foundations require a qualified registry cutover before Tangle publication');
   const record = checkRelease(root)!;
   assertVerifiedGate(root);
   const artifacts = readArtifacts(root);

@@ -3,7 +3,7 @@
  *
  * `createPipeline` binds the DAG's named task handlers to injected
  * seams — the store (any MemoryStore: in-memory for tests and the pages
- * demo, SQLite in the desktop app), an embedder (the @jarenjs/ai seam:
+ * demo, SQLite in the desktop app), an embedder (the @tangleai/models seam:
  * `{ embed, model, dims }` — `createEmbeddingClient` for a wire,
  * `createHashEmbedder` as the offline default), a contradiction judge,
  * a clock, and the tuned thresholds (salvaged memflow defaults). The
@@ -19,7 +19,7 @@
  */
 
 import { compileDag } from '@jarenjs/flow';
-import type { Embedder } from '@jarenjs/ai/embed';
+import type { Embedder } from '@tangleai/models/embed';
 import {
   createMemoryUnit,
   noveltyGate,

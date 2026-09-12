@@ -35,7 +35,7 @@ import { join } from 'node:path';
 
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { applyJSONPatch } from '@jarenjs/json';
-import { resolveEndpoint } from '@jarenjs/ai';
+import { resolveEndpoint } from '@tangleai/models/providers';
 import { compileContract } from '@jarenjs/contract';
 import { publicProjection } from '@jarenjs/contract/project';
 import {
@@ -126,7 +126,7 @@ export async function conformanceSource(root = process.cwd()): Promise<ConfigCon
   return { head, clean, files, sha256: await canonicalSha256({ head, files }) };
 }
 
-/** Installed `@jarenjs/*` packages, name-sorted — the suite pin census. */
+/** Installed foundation and executed mechanism identities, name-sorted. */
 export async function suitePackages(root = process.cwd()): Promise<ConfigConformance['suite']> {
   const dir = join(root, 'node_modules', '@jarenjs');
   const names = (await readdir(dir)).filter((name) => !name.startsWith('.')).sort();
@@ -135,6 +135,11 @@ export async function suitePackages(root = process.cwd()): Promise<ConfigConform
     const manifest = JSON.parse(await readFile(join(dir, name, 'package.json'), 'utf8')) as { version: string };
     packages.push({ name: `@jarenjs/${name}`, version: manifest.version });
   }
+  for (const name of ['models', 'context', 'agents']) {
+    const manifest = JSON.parse(await readFile(join(root, 'node_modules', '@tangleai', name, 'package.json'), 'utf8')) as { version: string };
+    packages.push({ name: `@tangleai/${name}`, version: manifest.version });
+  }
+  packages.sort((a, b) => a.name.localeCompare(b.name));
   return { packages };
 }
 

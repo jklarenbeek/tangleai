@@ -1,0 +1,73 @@
+/* ---- The adventure game (#/game) ------------------------------------ */
+:where(.tangle-game) .game-title { display: grid; place-items: center; padding-block: var(--space-8); }
+:where(.tangle-game) .game-title-card { max-width: 44rem; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-8); }
+:where(.tangle-game) .game-goal { font-size: 1.1rem; color: var(--fg); background: var(--accent-soft); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); }
+:where(.tangle-game) .game-name { display: flex; flex-direction: column; gap: var(--space-2); max-width: 24rem; margin: var(--space-6) auto; text-align: left; }
+:where(.tangle-game) .game-name-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+:where(.tangle-game) .game-locales { display: flex; gap: 2px; }
+/* dense in-flow chrome, so the 2.2rem tier (DESIGN §5) — these were 18px */
+:where(.tangle-game) .game-loc { display: inline-flex; align-items: center; min-height: 2.2rem; padding: 2px var(--space-2); font-size: 0.7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--muted); cursor: pointer; }
+:where(.tangle-game) .game-loc.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+:where(.tangle-game) .game-name input, :where(.tangle-game) .game-name select { padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); }
+:where(.tangle-game) .game-start { font-size: 1.05rem; padding: var(--space-3) var(--space-6); }
+:where(.tangle-game) .game-hint { color: var(--muted); font-size: 0.9rem; margin-top: var(--space-5); }
+
+:where(.tangle-game) .game-goalbar { background: var(--accent-soft); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); margin-bottom: var(--space-4); }
+:where(.tangle-game) .game-won { color: var(--accent); font-weight: 700; }
+:where(.tangle-game) .game-stage { display: grid; grid-template-columns: 1fr 16rem; gap: var(--space-4); align-items: start; }
+@media (max-width: 720px) { :where(.tangle-game) .game-stage { grid-template-columns: 1fr; } }
+:where(.tangle-game) .game-scene { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-5); min-height: 14rem; }
+:where(.tangle-game) .game-scene h2 { margin-top: 0; }
+:where(.tangle-game) .game-look { color: var(--fg); line-height: 1.6; }
+:where(.tangle-game) .game-hotspots { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+:where(.tangle-game) .hs-group h4 { margin: 0 0 var(--space-1); color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+:where(.tangle-game) .hs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+:where(.tangle-game) .hs-btn { padding: var(--space-1) var(--space-3); border: 1px solid var(--border); border-radius: 999px; background: var(--bg); color: var(--fg); cursor: pointer; font-size: 0.9rem; }
+:where(.tangle-game) .hs-btn:hover { border-color: var(--accent); color: var(--accent); }
+:where(.tangle-game) .hs-btn.exit { border-style: dashed; }
+:where(.tangle-game) .hs-btn.npc { border-color: var(--accent); }
+
+:where(.tangle-game) .game-side { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); }
+:where(.tangle-game) .game-side h4 { margin: 0 0 var(--space-2); }
+:where(.tangle-game) .game-inv { display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: 2rem; }
+:where(.tangle-game) .game-item { padding: var(--space-1) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); cursor: pointer; font-size: 0.85rem; }
+:where(.tangle-game) .game-item.armed { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent-soft); }
+:where(.tangle-game) .game-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+:where(.tangle-game) .game-controls .btn { font-size: 0.8rem; padding: var(--space-1) var(--space-2); }
+:where(.tangle-game) .game-look p { margin: 0; line-height: 1.6; }
+:where(.tangle-game) .gd-text p { margin: 0; line-height: 1.6; }
+:where(.tangle-game) .game-maph { margin-top: var(--space-4); }
+:where(.tangle-game) .game-map { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-2); overflow-x: auto; }
+:where(.tangle-game) .game-map svg { max-width: 100%; height: auto; }
+:where(.tangle-game) .game-muted { color: var(--muted); font-size: 0.85rem; }
+
+:where(.tangle-game) .game-verbs { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+:where(.tangle-game) .game-verb { padding: var(--space-2) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--fg); cursor: pointer; font-weight: 600; }
+:where(.tangle-game) .game-verb:hover { border-color: var(--accent); }
+:where(.tangle-game) .game-verb.on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+
+:where(.tangle-game) .game-log { display: flex; flex-direction: column; gap: var(--space-1); max-height: 12rem; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); }
+:where(.tangle-game) .game-line { margin: 0; line-height: 1.5; }
+:where(.tangle-game) .game-line.sys { color: var(--muted); font-style: italic; }
+:where(.tangle-game) .game-line.win { color: var(--accent); font-weight: 600; }
+:where(.tangle-game) .game-line.npc { color: var(--fg); }
+
+:where(.tangle-game) .game-dialogue { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: grid; place-items: center; z-index: 50; padding: var(--space-4); }
+:where(.tangle-game) .gd-inner { position: relative; max-width: 36rem; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-6); }
+:where(.tangle-game) .gd-close { position: absolute; top: var(--space-3); right: var(--space-3); border: none; background: transparent; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
+:where(.tangle-game) .gd-text { line-height: 1.6; }
+:where(.tangle-game) .gd-options { display: flex; flex-direction: column; gap: var(--space-2); margin: var(--space-4) 0; }
+:where(.tangle-game) .gd-option { text-align: left; padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); cursor: pointer; }
+:where(.tangle-game) .gd-option:hover { border-color: var(--accent); color: var(--accent); }
+:where(.tangle-game) .gd-ask { display: flex; gap: var(--space-2); border-top: 1px dashed var(--border); padding-top: var(--space-4); }
+:where(.tangle-game) .gd-ask input { flex: 1; padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--fg); }
+
+/* the insult sword-fight */
+:where(.tangle-game) .game-duel .gd-inner { border-color: var(--accent); }
+:where(.tangle-game) .duel-meters { display: flex; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-3); color: var(--muted); font-size: 0.9rem; }
+:where(.tangle-game) .duel-poise b { color: var(--accent); letter-spacing: 2px; }
+:where(.tangle-game) .duel-insult { font-style: italic; font-size: 1.05rem; }
+:where(.tangle-game) .duel-comeback { border-color: var(--accent); }
+:where(.tangle-game) .duel-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); border-top: 1px dashed var(--border); padding-top: var(--space-4); align-items: center; }
+:where(.tangle-game) .duel-chart { margin: var(--space-2) 0; }
+:where(.tangle-game) .duel-chart svg { max-width: 100%; height: auto; max-height: 9rem; }

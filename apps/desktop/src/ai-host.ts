@@ -23,8 +23,9 @@
  * a vector under an unproven identity.
  */
 
-import { PROVIDERS, probeProvider, resolveEndpoint, createToolbox } from '@jarenjs/ai';
-import { probeEmbeddings, type Embedder } from '@jarenjs/ai/embed';
+import { PROVIDERS, probeProvider, resolveEndpoint } from '@tangleai/models/providers';
+import { createToolbox } from '@tangleai/agents/toolbox';
+import { probeEmbeddings, type Embedder } from '@tangleai/models/embed';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import {
   resolveProfile,

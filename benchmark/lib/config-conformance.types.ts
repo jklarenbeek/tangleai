@@ -148,7 +148,7 @@ export interface ConfigConformanceSource {
 
 export interface ConfigConformanceSuitePackagesItem {
   /**
-   * Schema constraints this type cannot express: pattern="^@jarenjs/[a-z0-9-]+$"
+   * Schema constraints this type cannot express: pattern="^@(jarenjs/[a-z0-9-]+|tangleai/(models|context|agents))$"
    */
   name: string;
   /**

@@ -30,8 +30,9 @@
  * member of the flat denominator.
  */
 
-import { createBudgetAccount, createStructuredOutput } from '@jarenjs/ai';
-import type { Embedder } from '@jarenjs/ai/embed';
+import { createBudgetAccount } from '@tangleai/agents/recursive';
+import { createStructuredOutput } from '@tangleai/models/structured';
+import type { Embedder } from '@tangleai/models/embed';
 import { mapConcurrent } from '@jarenjs/core/async';
 import { excerpt } from '@jarenjs/core/chunk';
 import { mean as meanOf } from '@jarenjs/core/stats';

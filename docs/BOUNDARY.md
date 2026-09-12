@@ -1,39 +1,37 @@
-# The boundary: @jarenjs/ai below, Tangle above
+# The boundary: Jaren foundations, Tangle mechanisms and host policies
 
-Tangle AI is a downstream application of the jarenjs suite. This document is the
-rule for deciding, for any new capability, which side of the line it lives on —
-written down so the decision is made once, not re-argued per feature.
+Jaren supplies generic engines, contracts and complete editors. Tangle owns
+model interaction, context, agents and the applications built around them.
+The migration moved ownership without changing persisted schemas or request,
+cache, ranking, budget and provider policies.
 
 ## The rule
 
-**@jarenjs/ai gets contracts and seams. Tangle gets policies and infrastructure.**
+Keep generic validation, guarded mutation, contract projection, typed document
+capture and Studio/Data/Flow editing in Jaren. Jaren has no Tangle dependency.
+Models, context and agents are reusable Tangle mechanisms with injected host
+services; they never import the higher-level core/config/memory/pipeline/store
+or MAS policy packages. Jaren-specific AI authors live in `@tangleai/jaren`
+and use public Jaren operations. The existing applications and policy packages
+continue to own databases, scheduling, configuration and product decisions.
 
-A thing belongs in @jarenjs/ai only if ALL of these hold:
-
-1. It is generic — meaningful to a host that has never heard of Tangle.
-2. It is zero-dependency — implementable inside jarenjs's two-dependency
-   constitution (`@jarenjs/core`, `@jarenjs/validate`), with anything heavier
-   injected through a seam.
-3. It is testable without network, deterministically.
-4. jarenjs itself has a consumer and a test for it — the suite never grows API
-   for one external consumer that its own tests don't exercise.
-
-Everything else — provider-specific wires outside the suite's published
-adapters, host databases, schedulers, paper-specific pipelines, servers and UI
-— is Tangle's.
+Require a concrete consumer, deterministic tests and a documented dependency
+argument for a new seam. Reuse the shipped compiler or component before adding
+an implementation. Model proposals validate and publish through the same
+revision checks as manual edits; hosts retain execution and lifecycle ownership.
 
 ## How the line runs today
 
-| Concern | @jarenjs/ai side (contract) | Tangle side (policy/infra) |
+| Concern | Mechanism / foundation owner | Tangle side (policy/infra) |
 |---|---|---|
-| chat completions | `createChatClient` (OpenAI-compatible wire, retry, streaming, effective-request replay key and injected cache seam) | configuration and the SQLite replay adapter |
-| embeddings | `@jarenjs/ai/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (OpenAI-compatible wire, reply reassembly, per-text partial replay), `createHashEmbedder`, `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration, the SQLite replay adapter, and the measured WIDTH of the offline default (`createOfflineEmbedder`, 64 — see `packages/pipeline/src/standins.ts`) |
-| durable memory | ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
+| chat completions | `@tangleai/models` `createChatClient` (OpenAI-compatible wire, retry, streaming, effective-request replay key and injected cache seam) | configuration and the SQLite replay adapter |
+| embeddings | `@tangleai/models/embed`: the `{ embed, model, dims }` seam, `createEmbeddingClient` (OpenAI-compatible wire, reply reassembly, per-text partial replay), `createHashEmbedder`, `probeEmbeddings`; kernels in `@jarenjs/core/vector` | configuration, the SQLite replay adapter, and the measured WIDTH of the offline default (`createOfflineEmbedder`, 64 — see `packages/pipeline/src/standins.ts`) |
+| durable memory | `@tangleai/context` ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
-| LLM judgment | `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
-| self-refinement | RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
-| orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@jarenjs/ai` agent/toolbox/structured-output/budget/ledger/environment | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
+| LLM judgment | `@tangleai/models` `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
+| self-refinement | `@tangleai/context` RFC-6902 patch over ledger state, 4 gates, rollback | future: skill loop and harness evolution PROPOSE through those gates (roadmap: the skill loop, outcome-grounded decisions) |
+| orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@tangleai/models`, `@tangleai/context` and `@tangleai/agents` for model, context and tool-loop mechanisms | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
 | scheduling | `@jarenjs/core/schedule` bounded, fair, per-scope admission and drain | Document HTTP admission uses the suite scheduler; consolidation cadence remains a Tangle policy (roadmap: consolidation tiers) |
 | web search | — | `@tangleai/search` (SearxNG) + `compose/searxng` |
 | configuration identity | `PROVIDERS`/`resolveEndpoint` (the only endpoint authority), probes, clients, budget/structured-output/toolbox, the replay cache keyed by the effective request; `applyMergePatch`, `canonicalSha256`, `compileJsonQuery`, `$query` validation, `jaren-emit` types, `deepFreeze`/`cloneJson`, `sameIdentity`, `diffContracts` | `@tangleai/config`: the profile registry, pure resolution, TCFG refusal vocabulary and the run-identity envelope; the host adapter binding write-only secret slots; the identity repository beside runs/chats — a run identity is never a replay key (see CONFIGURATION.md) |
@@ -41,7 +39,8 @@ adapters, host databases, schedulers, paper-specific pipelines, servers and UI
 ## What the suite already has — read before building
 
 Current audit: [JarenJS 0.83.3 integration](JARENJS_INTEGRATION.md), 2026-09-11.
-The following baseline records the 0.56.0 adoption; the current audit supersedes
+The following historical baseline retains its original `@jarenjs/ai` names
+and records the 0.56.0 adoption; the current audit supersedes
 its availability claims and documents the newer runtime seams.
 
 The rule above decides where a NEW capability goes. This section answers the
@@ -164,9 +163,10 @@ dropping them, so the projection is the only door). The record types are
 pinned to each other at compile time too. If that test breaks, the two
 projects have drifted at the seam that matters most.
 
-## Changing @jarenjs/ai
+## Changing a shared foundation or mechanism
 
-Only from concrete friction, never speculatively. The loop:
+Use concrete friction to improve the package that owns the behavior. For a
+generic Jaren foundation, the established loop remains:
 
 1. Build the capability in Tangle against today's seams. Where a seam is
    missing, work around it locally and note the friction.
