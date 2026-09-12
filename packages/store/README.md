@@ -37,7 +37,13 @@ WAL-backed outcome receipts on both runtimes and verify zero-effect replay.
 
 Native physical schemas and migrations remain direct Jaren operations; this
 package does not convert existing collections or grant raw SQL callers outcome
-service authority. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
+service authority. Jaren 0.87.0 provides `planSchemaChange` and
+`applySchemaChange` through `@jarenjs/db/relational`, plus column references and
+native JSON type inspection. A host can extend `TANGLE_DB_MODEL` for `openStore`
+and pass the resulting Store to these adapters. Schema operations require an
+available synchronous connection; their source-bound plans do not replace a
+host's durable migration receipt. The current Tangle model needs no schema
+change for this update. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
 for ownership, compatibility and available mechanisms.
 
 ## Atomic outcome storage

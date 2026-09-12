@@ -1,5 +1,13 @@
 # @tangleai/core
 
+## 0.25.1
+
+### Patch Changes
+
+- Consume the exact Jaren 0.87.0 registry packages and source pin. Qualify native SQLite schema changes, column references, JSON type inspection and per-call mutation semantics alongside Tangle records across Node, Bun and installed consumers. Preserve the existing document storage model and historical paid measurements.
+- Updated dependencies
+  - @tangleai/context@0.25.1
+
 ## 0.25.0
 
 ### Patch Changes

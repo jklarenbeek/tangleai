@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/gmpl",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "description": "Immutable evidence-bound multi-agent pattern recipes and prompt artifacts for MAS",
   "license": "MIT",
   "type": "module",
@@ -17,11 +17,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.86.0",
-    "@jarenjs/json": "0.86.0",
-    "@jarenjs/josl": "0.86.0",
-    "@jarenjs/validate": "0.86.0",
-    "@tangleai/mas": "^0.25.0"
+    "@jarenjs/core": "0.87.0",
+    "@jarenjs/json": "0.87.0",
+    "@jarenjs/josl": "0.87.0",
+    "@jarenjs/validate": "0.87.0",
+    "@tangleai/mas": "^0.25.1"
   },
   "private": false,
   "types": "./src/index.ts",

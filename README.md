@@ -372,15 +372,19 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.86.0** packages from npm. The source
-submodule at `vendor/jarenjs` pins `ce489546f21a176a2574169b65b95f9dc15461f7`.
-The [registry receipt](docs/integration/jaren-0.86.0-registry.json) verifies all
+Tangle consumes 23 AI-free Jaren **0.87.0** packages from npm. The source
+submodule at `vendor/jarenjs` pins `9b67ed8cb88d2dbe95cb3eb5fe0ac88cfb70f347`.
+The [registry receipt](docs/integration/jaren-0.87.0-registry.json) verifies all
 23 downloaded archives against the exact lockfile integrities.
 `npm ci --ignore-scripts` installs from npm without a foundation bootstrap;
 `npm run jaren:check` verifies source, manifests, installed versions and archive
 URLs. Installed packages are never patched or source-linked. The existing
 storage seam accepts supervised Node processes; `npm run store:supervised:smoke`
 runs both outcome domains and proves zero-effect replay after reopening.
+Native SQLite schema plans, column references and JSON type inspection are
+qualified alongside Tangle records on Node and Bun. The current document model
+requires no schema migration; host-owned physical entities use Jaren's bounded
+mutation statement cache directly.
 See the [migration handoff](docs/JAREN_AI_MIGRATION.md) for ownership and
 historical source/archive qualification. Tangle publication remains manually
 author-owned.

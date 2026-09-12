@@ -1,11 +1,11 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.86.0**, tag `v0.86.0`, source commit
-`ce489546f21a176a2574169b65b95f9dc15461f7`. Upstream `main`, the tag and npm's
+Tangle consumes **Jaren 0.87.0**, tag `v0.87.0`, source commit
+`9b67ed8cb88d2dbe95cb3eb5fe0ac88cfb70f347`. Upstream `main`, the tag and npm's
 latest release agreed when checked on 2026-09-12. The submodule is the source
 reference; runtime imports resolve to the 23 published npm packages. All 103
 direct dependency references are exact pins. The lock records registry URLs and
-integrities; the [registry receipt](integration/jaren-0.86.0-registry.json) checks
+integrities; the [registry receipt](integration/jaren-0.87.0-registry.json) checks
 all 23 downloaded archives against it. This receipt does not claim a source
 rebuild comparison. Installed packages are neither patched nor source-linked.
 
@@ -24,10 +24,31 @@ upstream benchmark datasets for an application build.
 
 ## What changed and how Tangle uses it
 
-The update spans two upstream commits: `5765fba5` introduces native relational
-schema/query operations; `ce489546` introduces supervised SQLite processes and
-collection drag interactions. Core model/context/agent ownership remains in
-Tangle. The [migration handoff](JAREN_AI_MIGRATION.md) describes that boundary.
+The [0.87.0 release](https://github.com/jklarenbeek/jarenjs/releases/tag/v0.87.0)
+is one commit after the qualified 0.86.0 source. Its implementation changes are
+in `@jarenjs/db`: guarded native schema changes, column references, `json_type`
+and bounded SQL-keyed mutation statement reuse. The other consumed packages
+advance their versions and dependency references; they do not add new model,
+agent, Flow, editor or pen implementations in this release.
+
+| New surface | Application to Tangle |
+|---|---|
+| `planSchemaChange` / `applySchemaChange` | Hosts can plan ADD COLUMN, DROP INDEX, RENAME TABLE and DROP TABLE directly through `@jarenjs/db/relational`. The plans bind the current main schema and relevant settings, and refuse drift. The [native consumer](../test/store/native-foundation.test.ts) qualifies rollback, a transactionally recorded host migration receipt, reopening and preservation of Tangle evidence/settings. Tangle's current model uses document collections and needs no physical-column migration for this update. |
+| Column `references` | Host-owned physical tables can declare a single-column foreign key in a table or additive column definition. Qualification proves an invalid reference fails without inserting a row and Tangle records remain unchanged. |
+| Structural `sql.call('json_type', ...)` | Native inspection distinguishes missing paths, explicit JSON null and scalar/container types while preserving original text bytes. Qualification uses an adopted host entity beside the Tangle model. This does not replace JSON document-query semantics with SQLite semantics. |
+| Mutation statement retention | Jaren's bounded cache keys prepared statements by emitted SQL and retains no prior payload documents, bindings, projections or output limits. Tangle adds no cache. The consumer exercises changing payloads, per-call projection and output-bound rollback while ordinary Tangle collection writes continue. No application RSS or throughput improvement is claimed: Tangle's production model has no physical entities, and Jaren documents a repeated-document compilation tradeoff. |
+
+The native consumer opens a caller-owned extension of `TANGLE_DB_MODEL` with
+`openStore` and uses the existing Tangle store adapters. Its host tables are
+qualification fixtures, not a new production storage lane. Native schema work
+requires an available synchronous Node/Bun SQLite connection and runs between
+completed store operations. It is not supported by the asynchronous process
+connection. A schema plan is not a durable migration receipt: the host owns
+completion identity, transaction boundaries and any row-disposition policy.
+Tangle does not expose destructive DDL through an AI editor or perform schema
+changes automatically on a user's database.
+
+Existing integrations retained from 0.86.0 are qualified against the new packages:
 
 | Upstream surface | Tangle integration and limits |
 |---|---|
@@ -92,7 +113,7 @@ claims page-identical archival copies or power-loss qualification.
 ## Compatibility and evidence
 
 The full source gate exercises the actual installed foundation. Packed consumers
-also execute the process host on Node, the explicit unsupported-host refusal on
+also execute the native schema/entity consumer on Node and Bun, the process host on Node, the explicit unsupported-host refusal on
 Bun, restored outcome replay on both runtimes, Data authoring, declaration checks
 with `skipLibCheck: false`, and browser bundles. The lifecycle conformance run and
 MAS smoke qualify the ordinary stores and durable workflow engine. The local
@@ -100,14 +121,16 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.84.3 must not silently resume as 0.86.0 executions; the identity
+checkpoints from 0.86.0 must not silently resume as 0.87.0 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The typed versioned-task overload bridge in
 `packages/mas/src/jaren-flow.d.ts` and the LINQ coded-error constructor bridge in
 `packages/linq/src/errors.ts` are still needed: neither upstream declaration was
-changed in this release. No new declaration workaround is introduced.
+changed in this release. No new declaration workaround is introduced. The native test fixture names only
+the synchronous operations it observes on the intentionally opaque driver handle.
 
-Historical paid POLICY, QA and grounding reports retain their original bytes,
+The [0.86.0 registry receipt](integration/jaren-0.86.0-registry.json) remains a
+historical archive check. Historical paid POLICY, QA and grounding reports retain their original bytes,
 identities and selected defaults. Keyless replays test compatibility; they do not
 establish new model quality. The [0.83.3 audit](jaren-integration-0.83.3.md),
 [history measurements](JARENJS_BENCHMARK.md) and

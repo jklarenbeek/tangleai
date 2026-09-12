@@ -24,6 +24,12 @@ The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
 Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
 explains choices against the pinned upstream benchmarks. Reproduce it with
 `npm run benchmark:jaren` (keyless).
+The current foundation is Jaren 0.87.0. Its native schema and mutation changes
+are qualified by the [store consumer](../test/store/native-foundation.test.ts)
+and the installed Node/Bun gate. These compatibility checks do not measure an
+application memory or speed improvement. Historical paid reports and selected
+policy defaults retain their original identities; fresh keyless GMPL, MAS and
+outcome reports identify the foundation used by each run.
 The [bounded-agent repair](../docs/BOUNDED_AGENT_BENCHMARK.md) measures full-corpus
 coverage and cited synthesis against the original twelve-question attempt. The
 default `--rows long-horizon` uses `covered-evidence-v1`; pass
