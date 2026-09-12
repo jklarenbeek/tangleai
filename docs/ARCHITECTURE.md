@@ -37,6 +37,9 @@ embeddings, provider wires, structured generation and replay;
 `@tangleai/context` owns the ledger, bounded environment, evidence and recall;
 `@tangleai/agents` owns tool loops, budgets and program execution. Existing
 memory, config, pipeline, store and MAS packages retain their policies.
+`@tangleai/linq` owns immutable document pens: its `/program` entry constructs
+program JSON with phantom binding and terminal types, using the shared
+`@jarenjs/linq/authoring` primitives. Execution remains in `@tangleai/agents`.
 `@tangleai/jaren` connects models to Jaren grammars and the public shared
 Studio/Data/Flow editor operations. It owns no editor or execution engine.
 `@tangleai/assistant` supplies the reusable controller and visual component;
@@ -90,11 +93,11 @@ Two ordering rules are load-bearing and test-pinned:
 ## Design style (inherited from jarenjs, on purpose — with one deliberate inversion)
 
 - Strict TypeScript executes directly in the workspace on Node 24; the
-  inherited JS/JSDoc mechanisms keep their source language. `node --test`
-  executes both test families. Strict TypeScript checks source and all emitted
+  migrated mechanisms, host glue, tests and benchmarks are TypeScript too. `node --test`
+  executes the complete test suite. Strict TypeScript checks source and all emitted
   declarations. Public packages ship built JavaScript and declarations, tested
   outside workspace links on Node and Bun; installed TypeScript stripping is
-  never required. See the language exception in the workflow conventions.
+  never required. Vendor source and `.mjs` browser/release harnesses retain their existing formats.
 - Policies are split plan/apply: the plan is a pure value you can assert on;
   only the applier touches the store.
 - Every edge is injected: `fetch`, `now`, RNG, store, judge, validator.

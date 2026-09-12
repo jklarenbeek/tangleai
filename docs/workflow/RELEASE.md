@@ -115,7 +115,7 @@ revision. Closeout verifies before committing, so the first publication check
 normally rebuilds to bind its artifacts to that new commit. No version bump is
 needed for this rebuild.
 
-It preflights all 13 public packages, creates or verifies the exact annotated
+It preflights all 14 public packages, creates or verifies the exact annotated
 local tag, publishes the tested archives in dependency order, then runs the
 registry installation and consumer gate. It never publishes private workspaces
 or pushes Git refs. A dry run may rebuild ignored artifacts but creates no tag

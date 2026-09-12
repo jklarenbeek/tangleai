@@ -40,7 +40,7 @@ if (!built.success) {
 await writeFile(join(dist, 'app.js'), await built.outputs[0].text());
 
 for (const name of ['data-worker', 'project-worker']) {
-  const worker = await Bun.build({ entrypoints: [join(here, 'src/demos/playground', `${name}.js`)], target: 'browser', format: 'esm' });
+  const worker = await Bun.build({ entrypoints: [join(here, 'src/demos/playground', `${name}.ts`)], target: 'browser', format: 'esm' });
   if (!worker.success) throw new Error(worker.logs.join('\n'));
   await writeFile(join(dist, `${name}.js`), await worker.outputs[0].text());
 }

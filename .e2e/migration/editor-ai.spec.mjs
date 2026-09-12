@@ -2,9 +2,9 @@ import { test, expect } from './playwright.mjs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { encodeShare } from '@jarenjs/app';
-import { projectTemplate } from '../../apps/pages/src/demos/playground/projectTemplates.js';
+import { projectTemplate } from '../../apps/pages/src/demos/playground/projectTemplates.ts';
 let bundle;
-test.beforeAll(() => { bundle = execFileSync('bun', ['build', fileURLToPath(new URL('./host-fixture.js', import.meta.url)), '--target=browser'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }); });
+test.beforeAll(() => { bundle = execFileSync('bun', ['build', fileURLToPath(new URL('./host-fixture.ts', import.meta.url)), '--target=browser'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }); });
 async function api(page) {
   await page.route('**/host-fixture.js', route => route.fulfill({ contentType: 'text/javascript', body: bundle }));
   await page.evaluate(async () => { window.hostApi = await import('/host-fixture.js'); });

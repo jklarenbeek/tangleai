@@ -89,7 +89,7 @@ async function ledgerTypedBlock() {
   void ledger.addMemory({ text: 'a fact', evidence: 'a source', embedding: [1, 2] });
   void ledger.addMemory({ text: 'a fact', evidence: 'a source', embedding: [1, 2], embeddedBy: { model: 'm', dims: 2 } });
 
-  const recalled = await ledger.recall({ tags: ['t'] });
+  const recalled = await ledger.recall({ tags: ['t'] } as import('@tangleai/context/ledger').LedgerQuery);
   if (Array.isArray(recalled)) {
     const newest: LedgerMemory | undefined = recalled[0];
     void newest?.at;

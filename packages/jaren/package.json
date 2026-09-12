@@ -1,44 +1,19 @@
 {
   "name": "@tangleai/jaren",
-  "version": "0.21.1",
-  "description": "Grammar authors, revision-checked editor adapters and typed program construction over public Jaren APIs.",
+  "version": "0.22.0",
+  "description": "Grammar authors and revision-checked editor adapters over public Jaren APIs.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./studio": {
-      "types": "./dist/types/studio.d.ts",
-      "default": "./src/studio.js"
-    },
-    "./data": {
-      "types": "./dist/types/data.d.ts",
-      "default": "./src/data.js"
-    },
-    "./flow": {
-      "types": "./dist/types/flow.d.ts",
-      "default": "./src/flow.js"
-    },
-    "./program": {
-      "types": "./dist/types/program.d.ts",
-      "default": "./src/program.js"
-    },
-    "./stylesheet": {
-      "types": "./dist/types/stylesheet.d.ts",
-      "default": "./src/stylesheet.js"
-    },
-    "./spatial": {
-      "types": "./dist/types/spatial.d.ts",
-      "default": "./src/spatial.js"
-    },
-    "./geo-tools": {
-      "types": "./dist/types/geo-tools.d.ts",
-      "default": "./src/geo-tools.js"
-    },
+    ".": "./src/index.ts",
+    "./studio": "./src/studio.ts",
+    "./data": "./src/data.ts",
+    "./flow": "./src/flow.ts",
+    "./stylesheet": "./src/stylesheet.ts",
+    "./spatial": "./src/spatial.ts",
+    "./geo-tools": "./src/geo-tools.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -54,9 +29,9 @@
     "@jarenjs/db": "0.84.3",
     "@jarenjs/studio": "0.84.3",
     "@jarenjs/linq": "0.84.3",
-    "@tangleai/models": "^0.21.1",
-    "@tangleai/context": "^0.21.1",
-    "@tangleai/agents": "^0.21.1"
+    "@tangleai/models": "^0.22.0",
+    "@tangleai/context": "^0.22.0",
+    "@tangleai/agents": "^0.22.0"
   },
   "private": false,
   "files": [

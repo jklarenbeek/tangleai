@@ -8,7 +8,7 @@ import { ROOT, config, isMain, readJson, writeJson } from './release/common.ts';
 export function measureProgramBundle(directory: string) {
   const temporary = mkdtempSync(resolve(directory, '.program-probe-'));
   try {
-    writeFileSync(resolve(temporary,'entry.js'), "import { program } from '@tangleai/jaren/program'; export const doc = program(['data']).stat('data', 'meta').answer('meta').schema;\n");
+    writeFileSync(resolve(temporary,'entry.js'), "import { program } from '@tangleai/linq/program'; export const doc = program(['data']).stat('data', 'meta').answer('meta').schema;\n");
     execFileSync('bun', ['build',resolve(temporary,'entry.js'),'--target=browser','--format=esm','--minify',`--outfile=${resolve(temporary,'bundle.js')}`,`--metafile=${resolve(temporary,'meta.json')}`], {cwd:directory,stdio:['ignore','pipe','pipe']});
     const meta = JSON.parse(readFileSync(resolve(temporary,'meta.json'),'utf8'));
     const modules = (Object.values(meta.outputs)[0] as {inputs:Record<string,{bytesInOutput:number}>}).inputs;

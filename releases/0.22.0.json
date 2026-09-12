@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "version": "0.22.0",
+  "baseVersion": "0.21.1",
+  "baseCommit": "e0f7dd209f50026ab921c480f867fe6ecf669447",
+  "preparationCommit": "e0f7dd209f50026ab921c480f867fe6ecf669447",
+  "initial": false,
+  "inputHash": "1fb93949f66f66f119a6757d3c42ff7167c6c218cbcb83bedf47058816d1bc7c",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/linq",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/models",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/agents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        }
+      ],
+      "summary": "Convert the migrated source, tests, benchmarks and hosts to strict TypeScript,\nwith JavaScript and declarations emitted through one release build. Move the\nprogram pen from `@tangleai/jaren/program` and the Jaren integration barrel to\n`@tangleai/linq/program`, preserving its JSON format and phantom binding types.\nThe new `@tangleai/linq` root exposes the program namespace and shared build error.\n\nMatch the embedder declarations to unknown widths before the first response,\nretain precise ledger result variants, and enforce the refinement-pressure\ninstrument's stated 60-second deadline through the chat client's abort signal.",
+      "id": "typed-document-pens"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.22.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.22.0"
+    }
+  ]
+}

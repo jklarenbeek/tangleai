@@ -2,7 +2,8 @@
 
 Injected model clients, provider adapters, embeddings, replay, routing and structured generation.
 
-This package keeps its JS/JSDoc implementation and deterministic tests. Inject
+The implementation and deterministic tests use strict TypeScript. Published
+packages contain ESM JavaScript and declarations emitted from that source. Inject
 fetch, storage and compiler services at the existing seams. The public source
 exports and emitted npm JavaScript share one implementation.
 

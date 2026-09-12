@@ -1,7 +1,7 @@
 /**
  * The ONE place an instrument reads its live-model configuration from.
  *
- * Copied as a method from jarenjs's `benchmark/lib/env.js` (BOUNDARY
+ * Copied as a method from jarenjs's `benchmark/lib/env.ts` (BOUNDARY
  * §"Copy the method, not the code"): every live tier in this workspace
  * resolves its provider, models, key and spend guards here — a second
  * reader would mean two ideas of what "no key" means, and the first

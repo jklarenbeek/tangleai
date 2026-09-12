@@ -385,13 +385,12 @@ it('the push and publication gate refuses missing, changed or stale verification
   assert.throws(() => assertVerifiedGate(root), /Build inputs changed/);
 });
 
-it('publishes transferred JS with declarations and rejects a mismatched source declaration path', () => {
+it('publishes converted TypeScript with colocated declarations and refuses legacy JavaScript source exports', () => {
   const source = { name: '@tangleai/models', version: '0.20.1', exports: {
-    '.': { default: './src/index.js', types: './dist/types/index.d.ts' },
-    './schemas/ledger': { default: './src/schemas/ledger.js', types: './dist/types/schemas/ledger.d.ts' },
+    '.': './src/index.ts', './schemas/ledger': './src/schemas/ledger.ts',
   } };
   const built = distributionManifest(source);
   assert.deepEqual(built.exports?.['./schemas/ledger'], { types: './src/schemas/ledger.d.ts', import: './src/schemas/ledger.js', default: './src/schemas/ledger.js' });
-  source.exports['.'].types = './dist/types/wrong.d.ts';
-  assert.throws(() => distributionManifest(source), /declaration path must match/);
+  assert.throws(() => distributionManifest({ ...source, exports: { '.': './src/index.js' } }), /match/);
+  assert.throws(() => distributionManifest({ ...source, exports: { '.': { default: './src/index.js', types: './dist/types/index.d.ts' } } }), /point directly to TypeScript/);
 });

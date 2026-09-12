@@ -10,7 +10,7 @@
 import integration from '../../../benchmark/results/jaren-integration.json' with { type: 'json' };
 import manifest from '../package.json' with { type: 'json' };
 import release from '../../../release.config.json' with { type: 'json' };
-import { bootDemos } from './demos/browser.js';
+import { bootDemos } from './demos/browser.ts';
 
 import { createApp } from '@jarenjs/app';
 import { renderMermaid } from '@jarenjs/mermaid';

@@ -7,6 +7,7 @@
       "@tangleai/models",
       "@tangleai/context",
       "@tangleai/agents",
+      "@tangleai/linq",
       "@tangleai/jaren",
       "@tangleai/assistant",
       "@tangleai/core",

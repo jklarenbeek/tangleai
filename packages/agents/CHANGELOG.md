@@ -1,5 +1,22 @@
 # @tangleai/agents
 
+## 0.22.0
+
+### Patch Changes
+
+- Convert the migrated source, tests, benchmarks and hosts to strict TypeScript,
+  with JavaScript and declarations emitted through one release build. Move the
+  program pen from `@tangleai/jaren/program` and the Jaren integration barrel to
+  `@tangleai/linq/program`, preserving its JSON format and phantom binding types.
+  The new `@tangleai/linq` root exposes the program namespace and shared build error.
+
+  Match the embedder declarations to unknown widths before the first response,
+  retain precise ledger result variants, and enforce the refinement-pressure
+  instrument's stated 60-second deadline through the chat client's abort signal.
+- Updated dependencies
+  - @tangleai/models@0.22.0
+  - @tangleai/context@0.22.0
+
 ## 0.21.1
 
 ### Patch Changes

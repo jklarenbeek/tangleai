@@ -13,8 +13,6 @@ Models, context and agent policy remain in their respective Tangle packages.
   shared editor and inspects the actual contract result and plan. Publication
   only updates buffers. `run({ operation: 'query' })` executes explicitly;
   `run({ operation: 'open' })` explicitly asks the owning host to open the model.
-- `/program`: typed program construction with scoped slots and a terminal answer.
-  The JSON and compiler remain independent of this authoring convenience.
 - `/stylesheet`, `/spatial`, `/geo-tools`: compiler-gated stylesheet authoring,
   spatial agents and tools backed by Jaren's shipped spatial operations.
 
@@ -27,4 +25,4 @@ See [engine authoring and measured limits](docs/AUTHORING.md) for the retained
 compile-gated recipes, schema-size tradeoffs, spatial intent limits and original
 provider evidence.
 
-The [program pen reference](docs/PROGRAM-PEN.md) documents factories, types, refusals and executable examples for `@tangleai/jaren/program`.
+The [program pen reference](../linq/docs/PROGRAM-PEN.md) documents factories, types, refusals and executable examples for `@tangleai/linq/program`.

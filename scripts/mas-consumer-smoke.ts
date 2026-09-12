@@ -167,7 +167,7 @@ try {
           message: { content: 'The launch plan in one paragraph.' },
           finishReason: 'stop',
           usage: { prompt_tokens: 5, completion_tokens: 7 },
-        } : await liveClient.complete({ ...(request as object), signal: AbortSignal.timeout(60_000) });
+        } : await liveClient.complete({ ...(request as import('@tangleai/models/client').ChatRequest), signal: AbortSignal.timeout(60_000) });
         drafted = String(result.message?.content ?? '');
         assert.ok(drafted.trim().length > 0, 'the drafting agent returns content');
         return result;

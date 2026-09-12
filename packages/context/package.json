@@ -1,61 +1,25 @@
 {
   "name": "@tangleai/context",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "description": "Evidence-backed ledgers, bounded environments, recall, retention and storage contracts.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./recall": {
-      "types": "./dist/types/recall.d.ts",
-      "default": "./src/recall.js"
-    },
-    "./ledger": {
-      "types": "./dist/types/ledger.d.ts",
-      "default": "./src/ledger.js"
-    },
-    "./environment": {
-      "types": "./dist/types/environment.d.ts",
-      "default": "./src/environment.js"
-    },
-    "./storage/memory": {
-      "types": "./dist/types/storage/memory.d.ts",
-      "default": "./src/storage/memory.js"
-    },
-    "./schemas/ledger": {
-      "types": "./dist/types/schemas/ledger.d.ts",
-      "default": "./src/schemas/ledger.js"
-    },
-    "./schemas/patch": {
-      "types": "./dist/types/schemas/patch.d.ts",
-      "default": "./src/schemas/patch.js"
-    },
-    "./evidence": {
-      "types": "./dist/types/evidence.d.ts",
-      "default": "./src/evidence.js"
-    },
-    "./retention": {
-      "types": "./dist/types/retention.d.ts",
-      "default": "./src/retention.js"
-    },
-    "./schemas/evidence": {
-      "types": "./dist/types/schemas/evidence.d.ts",
-      "default": "./src/schemas/evidence.js"
-    },
-    "./archive": {
-      "types": "./dist/types/archive.d.ts",
-      "default": "./src/archive.js"
-    },
+    ".": "./src/index.ts",
+    "./recall": "./src/recall.ts",
+    "./ledger": "./src/ledger.ts",
+    "./environment": "./src/environment.ts",
+    "./storage/memory": "./src/storage/memory.ts",
+    "./schemas/ledger": "./src/schemas/ledger.ts",
+    "./schemas/patch": "./src/schemas/patch.ts",
+    "./evidence": "./src/evidence.ts",
+    "./retention": "./src/retention.ts",
+    "./schemas/evidence": "./src/schemas/evidence.ts",
+    "./archive": "./src/archive.ts",
     "./package.json": "./package.json",
-    "./storage/slot": {
-      "types": "./dist/types/storage/slot.d.ts",
-      "default": "./src/storage/slot.js"
-    }
+    "./storage/slot": "./src/storage/slot.ts"
   },
   "engines": {
     "node": ">=24"
@@ -64,7 +28,7 @@
   "dependencies": {
     "@jarenjs/core": "0.84.3",
     "@jarenjs/validate": "0.84.3",
-    "@tangleai/models": "^0.21.1"
+    "@tangleai/models": "^0.22.0"
   },
   "private": false,
   "files": [

@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 test.use({ serviceWorkers: 'block' });
 let bundle;
 test.beforeAll(() => {
-  bundle = execFileSync('bun', ['build', fileURLToPath(new URL('./ledger-fixture.js', import.meta.url)), '--target=browser'], { encoding: 'utf8' });
+  bundle = execFileSync('bun', ['build', fileURLToPath(new URL('./ledger-fixture.ts', import.meta.url)), '--target=browser'], { encoding: 'utf8' });
 });
 const bootPage = async (page, noLocks = false, singleWriter = false) => {
   await page.route('**/ledger-fixture.js*', (route) => route.fulfill({ contentType: 'text/javascript', headers: { 'cache-control': 'no-store' }, body: bundle }));

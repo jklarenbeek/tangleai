@@ -66,10 +66,10 @@ padding does not. Both run; the table labels them `front` and `late`, and
 which is why neither shape may be dropped.
 
 ```bash
-node benchmark/long-horizon.js                    # the ceilings; no key needed
+node benchmark/long-horizon.ts                    # the ceilings; no key needed
 npm run benchmark:long-horizon                    # the same, with .env loaded
-node --env-file-if-exists=.env benchmark/long-horizon.js --live
-node benchmark/long-horizon.js --live --trials 1 --budgets 6000 --verbose
+node --env-file-if-exists=.env benchmark/long-horizon.ts --live
+node benchmark/long-horizon.ts --live --trials 1 --budgets 6000 --verbose
 ```
 
 The live tier is **opt-in and never mandatory**: with no key the ceilings still
@@ -150,7 +150,7 @@ has — so the tag rows' latency includes carrying a 64-float vector per record
 through the in-memory adapter's JSON copy; the scores are unchanged by it.
 
 The corpus ([`fixtures/retrieval-corpus.json`](./fixtures/retrieval-corpus.json),
-written by `scripts/generate-retrieval-corpus.js`, seeded and byte-identical run
+written by `scripts/generate-retrieval-corpus.ts`, seeded and byte-identical run
 to run — a test proves it) is **synthetic**: <!--fact:retrieval.corpus-->240 facts over 20 topic vocabularies, 160 questions<!--/fact-->,
 one gold memory per fact, and distractors built to defeat one cheap signal each —
 the same tag with a different fact, and the same words with a different fact.
@@ -167,10 +167,10 @@ right record among distractors, and nothing about whether any model understands
 a question — no deterministic row involves one.
 
 ```bash
-node benchmark/retrieval.js                         # both sizes, the table
+node benchmark/retrieval.ts                         # both sizes, the table
 npm run benchmark:retrieval                         # the same
-node benchmark/retrieval.js --sizes 1000 --verbose  # one size, plus every question the incumbent missed
-node benchmark/retrieval.js --output json --filepath out.json
+node benchmark/retrieval.ts --sizes 1000 --verbose  # one size, plus every question the incumbent missed
+node benchmark/retrieval.ts --output json --filepath out.json
 ```
 
 `--live` adds a second ranked row, **near-live**: the corpus is loaded into a
@@ -187,7 +187,7 @@ without it: this suite publishes no model-quality number as its own.
 
 ```bash
 JAREN_AI_PROVIDER=ollama JAREN_AI_EMBED_MODEL=nomic-embed-text \
-  node --env-file-if-exists=.env benchmark/retrieval.js --live --sizes 1000
+  node --env-file-if-exists=.env benchmark/retrieval.ts --live --sizes 1000
 ```
 
 The corpus and the scorer have their own tests in
@@ -211,7 +211,7 @@ latency column is allowed to move. The flag is a hand-run mode; the tracked file
 is always generated without it.
 
 ```bash
-node benchmark/retrieval.js --store=db              # both sizes, nine rows
+node benchmark/retrieval.ts --store=db              # both sizes, nine rows
 ```
 
 ## Labelled recall and repeated refinement
@@ -236,11 +236,11 @@ optional import. Corpus text and cached vectors stay under ignored
 The task is article retrieval for scientific claims, not judging claim truth.
 
 ```sh
-node scripts/import-scifact.js benchmark/cache/recall-quality/scifact
-EMBEDDING_MODEL=baai/bge-m3 node --env-file-if-exists=.env benchmark/retrieval.js \
+node scripts/import-scifact.ts benchmark/cache/recall-quality/scifact
+EMBEDDING_MODEL=baai/bge-m3 node --env-file-if-exists=.env benchmark/retrieval.ts \
   --dataset benchmark/cache/recall-quality/scifact/manifest.json --live --dims 1024 \
   --sizes 500,2000,5183 --ann --filepath benchmark/recall-quality-scifact-live.json
-node benchmark/recall-quality.js --dataset benchmark/fixtures/relevance-tiny/manifest.json --ann
+node benchmark/recall-quality.ts --dataset benchmark/fixtures/relevance-tiny/manifest.json --ann
 ```
 
 `--live` requires an explicit model and width; omitting it labels the embedder
@@ -329,10 +329,15 @@ are separate: freely generated proposals remain explicitly unlabelled and do
 not establish a policy's quality. The guarded-model contender uses scripted
 extractive suggestions, not a claim of live-model merge reliability.
 
+The optional `--live-proposals` path allows one transport attempt per request
+and enforces a 60-second abort deadline, combined with any caller signal.
+`createChatClient` has no `timeoutMs` option; the instrument supplies the
+deadline through `complete({ signal })`. No paid run is part of the source gate.
+
 ```sh
-node benchmark/refinement-pressure.js --directory benchmark/cache/pressure-hash-run \
+node benchmark/refinement-pressure.ts --directory benchmark/cache/pressure-hash-run \
   --filepath benchmark/recall-quality-pressure-hash.json
-EMBEDDING_MODEL=baai/bge-m3 node --env-file-if-exists=.env benchmark/refinement-pressure.js \
+EMBEDDING_MODEL=baai/bge-m3 node --env-file-if-exists=.env benchmark/refinement-pressure.ts \
   --live --dims 1024 --directory benchmark/cache/pressure-live-run \
   --filepath benchmark/recall-quality-pressure-live.json
 ```
@@ -381,12 +386,12 @@ remains opt-in because authored proposals do not establish a safe general defaul
 The long-horizon entry point also runs independent, reproducible scorecards:
 
 ```sh
-node benchmark/long-horizon.js --authoring --trials 1 --filepath benchmark/programmind-authoring-fixture.json
-node benchmark/long-horizon.js --question-stream --filepath benchmark/programmind-reuse.json
-node benchmark/long-horizon.js --hierarchical --filepath benchmark/programmind-depth-fixture.json
-node --env-file-if-exists=.env benchmark/long-horizon.js --authoring --live --filepath benchmark/programmind-authoring-remeasured-live.json
-node --env-file-if-exists=.env benchmark/long-horizon.js --hierarchical --live --filepath benchmark/programmind-depth-live.json
-node --env-file-if-exists=.env benchmark/long-horizon.js --question-stream --live --filepath benchmark/programmind-reuse-live.json
+node benchmark/long-horizon.ts --authoring --trials 1 --filepath benchmark/programmind-authoring-fixture.json
+node benchmark/long-horizon.ts --question-stream --filepath benchmark/programmind-reuse.json
+node benchmark/long-horizon.ts --hierarchical --filepath benchmark/programmind-depth-fixture.json
+node --env-file-if-exists=.env benchmark/long-horizon.ts --authoring --live --filepath benchmark/programmind-authoring-remeasured-live.json
+node --env-file-if-exists=.env benchmark/long-horizon.ts --hierarchical --live --filepath benchmark/programmind-depth-live.json
+node --env-file-if-exists=.env benchmark/long-horizon.ts --question-stream --live --filepath benchmark/programmind-reuse-live.json
 ```
 
 Live runs use the primary and secondary model variables in `.env.example`. Authoring

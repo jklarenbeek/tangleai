@@ -4,10 +4,11 @@ Self-improving memory and retrieval for agents, built on the
 [jarenjs](https://github.com/jklarenbeek/jarenjs) suite as the foundational
 layer.
 
-The codebase uses **strict TypeScript**, with migrated mechanisms retaining their
-JS/JSDoc source and tests. Node 24 runs workspace source and tests directly;
+First-party source, tests, benchmarks and migration scripts use
+**strict TypeScript**. The JavaScript received from Jaren has been converted. Vendor submodules and generated browser bundles keep their
+upstream or output formats; `.mjs` browser/release harnesses remain JavaScript. Node 24 runs workspace source and tests directly;
 public packages are built as ESM JavaScript with strict TypeScript declarations
-and their JSON schemas. The thirteen public packages share one version,
+and their JSON schemas. The fourteen public packages share one version,
 starting at **0.20.0**. The major version remains zero during development.
 `npm run check` validates source; `npm run release:verify` also installs and tests
 the actual publication tarballs outside this checkout.
@@ -61,7 +62,8 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/models` | injected model clients, embeddings, replay, routing and structured generation ([API](packages/models/README.md)) |
 | `@tangleai/context` | ledgers, bounded environments, evidence, recall and retention ([API](packages/context/README.md)) |
 | `@tangleai/agents` | validated tools, bounded agents, checked programs, recursion and refinement ([API](packages/agents/README.md)) |
-| `@tangleai/jaren` | Jaren grammar authors, typed program pen and revision-checked Studio/Data/Flow AI adapters ([API](packages/jaren/README.md)) |
+| `@tangleai/linq` | immutable document pens; the program pen tracks slot bindings and terminal answers ([API](packages/linq/README.md)) |
+| `@tangleai/jaren` | Jaren grammar authors and revision-checked Studio/Data/Flow AI adapters ([API](packages/jaren/README.md)) |
 | `@tangleai/assistant` | reusable headless assistant controller and scoped visual component ([API](components/assistant/README.md)) |
 | `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
 | `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, ground-truth outcome learning, `recallByEmbedding` (identity-gated, skip-reporting) |
@@ -317,7 +319,7 @@ draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Package releases
 
-Changesets records patch or minor intent for one fixed group of thirteen public
+Changesets records patch or minor intent for one fixed group of fourteen public
 packages. `npm run release:prepare` updates their versions, all private workspace
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while

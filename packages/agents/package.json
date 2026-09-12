@@ -1,48 +1,21 @@
 {
   "name": "@tangleai/agents",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "description": "Validated tools, bounded agents, action programs, recursive execution and guarded refinement.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./toolbox": {
-      "types": "./dist/types/toolbox.d.ts",
-      "default": "./src/toolbox.js"
-    },
-    "./agent": {
-      "types": "./dist/types/agent.d.ts",
-      "default": "./src/agent.js"
-    },
-    "./program": {
-      "types": "./dist/types/program.d.ts",
-      "default": "./src/program.js"
-    },
-    "./recursive": {
-      "types": "./dist/types/recursive.d.ts",
-      "default": "./src/recursive.js"
-    },
-    "./refine": {
-      "types": "./dist/types/refine.d.ts",
-      "default": "./src/refine.js"
-    },
-    "./schemas/program": {
-      "types": "./dist/types/schemas/program.d.ts",
-      "default": "./src/schemas/program.js"
-    },
-    "./program-result": {
-      "types": "./dist/types/program-result.d.ts",
-      "default": "./src/program-result.js"
-    },
-    "./program-session": {
-      "types": "./dist/types/program-session.d.ts",
-      "default": "./src/program-session.js"
-    },
+    ".": "./src/index.ts",
+    "./toolbox": "./src/toolbox.ts",
+    "./agent": "./src/agent.ts",
+    "./program": "./src/program.ts",
+    "./recursive": "./src/recursive.ts",
+    "./refine": "./src/refine.ts",
+    "./schemas/program": "./src/schemas/program.ts",
+    "./program-result": "./src/program-result.ts",
+    "./program-session": "./src/program-session.ts",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -52,8 +25,8 @@
   "dependencies": {
     "@jarenjs/core": "0.84.3",
     "@jarenjs/validate": "0.84.3",
-    "@tangleai/models": "^0.21.1",
-    "@tangleai/context": "^0.21.1",
+    "@tangleai/models": "^0.22.0",
+    "@tangleai/context": "^0.22.0",
     "@jarenjs/contract": "0.84.3"
   },
   "private": false,

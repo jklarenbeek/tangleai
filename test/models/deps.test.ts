@@ -16,7 +16,7 @@ describe('mechanism ownership includes static, dynamic and declaration imports',
     const manifest = JSON.parse(read(`packages/${owner}/package.json`));
     assert.deepEqual(Object.keys(manifest.dependencies).sort(), dependencies);
     for (const field of ['peerDependencies', 'optionalDependencies', 'bundledDependencies']) assert.equal(manifest[field], undefined);
-    const files = [...ts.sys.readDirectory(directory.pathname + 'src', ['.js']), ...ts.sys.readDirectory(directory.pathname + 'dist/types', ['.d.ts'])];
+    const files = ts.sys.readDirectory(directory.pathname + 'src', ['.ts']);
     assert.ok(files.length > 0);
     for (const file of files) {
       const source = readFileSync(file, 'utf8');

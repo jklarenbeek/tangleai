@@ -1,56 +1,23 @@
 {
   "name": "@tangleai/models",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "description": "Injected model clients, provider adapters, embeddings, replay, routing and structured generation.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./providers": {
-      "types": "./dist/types/providers.d.ts",
-      "default": "./src/providers.js"
-    },
-    "./sse": {
-      "types": "./dist/types/sse.d.ts",
-      "default": "./src/sse.js"
-    },
-    "./client": {
-      "types": "./dist/types/client.d.ts",
-      "default": "./src/client.js"
-    },
-    "./embed": {
-      "types": "./dist/types/embed.d.ts",
-      "default": "./src/embed.js"
-    },
-    "./structured": {
-      "types": "./dist/types/structured.d.ts",
-      "default": "./src/structured.js"
-    },
-    "./errors": {
-      "types": "./dist/types/errors.d.ts",
-      "default": "./src/errors.js"
-    },
-    "./check": {
-      "types": "./dist/types/check.d.ts",
-      "default": "./src/check.js"
-    },
-    "./routing": {
-      "types": "./dist/types/routing.d.ts",
-      "default": "./src/routing.js"
-    },
-    "./grammar": {
-      "types": "./dist/types/grammar.d.ts",
-      "default": "./src/grammar.js"
-    },
-    "./replay": {
-      "types": "./dist/types/replay.d.ts",
-      "default": "./src/replay.js"
-    },
+    ".": "./src/index.ts",
+    "./providers": "./src/providers.ts",
+    "./sse": "./src/sse.ts",
+    "./client": "./src/client.ts",
+    "./embed": "./src/embed.ts",
+    "./structured": "./src/structured.ts",
+    "./errors": "./src/errors.ts",
+    "./check": "./src/check.ts",
+    "./routing": "./src/routing.ts",
+    "./grammar": "./src/grammar.ts",
+    "./replay": "./src/replay.ts",
     "./package.json": "./package.json"
   },
   "engines": {

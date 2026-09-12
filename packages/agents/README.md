@@ -2,7 +2,8 @@
 
 Validated tools, bounded agents, action programs, recursive execution and guarded refinement.
 
-This package keeps its JS/JSDoc implementation and deterministic tests. Inject
+The implementation and deterministic tests use strict TypeScript. Published
+packages contain ESM JavaScript and declarations emitted from that source. Inject
 fetch, storage and compiler services at the existing seams. The public source
 exports and emitted npm JavaScript share one implementation.
 
@@ -164,7 +165,7 @@ Back it with `@jarenjs/db` over OPFS, with one `localStorage` slot, with a file,
 server — or with nothing. The package gains no dependency either way, which is the whole
 posture: storage stays injected and it degrades to in-memory and
 schema-only. This site's assistant backs it with a single JSON slot
-([`ledgerStore.js`](https://github.com/jklarenbeek/jarenjs/blob/main/packages/website/src/lib/ledgerStore.js)), which is all a browser session
+([`storage/slot.ts`](../context/src/storage/slot.ts)), which is all a browser session
 needs. The ledger serializes its own writes. An adapter with `mutate` also
 serializes other writers at storage; `ledger.concurrency` reports `atomic` or
 `single-writer`. Four-method adapters require host coordination between writers.
@@ -247,7 +248,7 @@ const { memories, scores, skipped } = await ledger.recall({
   collection is the query language's own k-nearest composition (QUERY-FORMAT §8.15) — and
   over a `derive: 'vector'` column the store plans it as a cut the engine finishes, with
   `explain()` naming the mode (its ARCHITECTURE, "The k-nearest plan").
-- **Measured, whichever way it fell.** `benchmark/retrieval.js` scores the ranked path beside the
+- **Measured, whichever way it fell.** `benchmark/retrieval.ts` scores the ranked path beside the
   default over the same seeded corpus, through the deterministic reference embedder
   (§Embeddings — lexical, so a mechanism score, not a model-quality claim): <!--fact:retrieval.ranked-->5.0% of questions at 10,000 memories through the hash-trigram-64 reference embedder (33.8% at 1,000), ahead of tag match and recency's 1.3%<!--/fact-->.
   A real model's number is the host's to measure through the same instrument's `--live` tier.
@@ -487,7 +488,7 @@ the model fetches a round back when it needs one — a normal tool call that sho
   a round while claiming an address for it, which is the failure this exists to remove.
 
 The contract, asserted over every budget the benchmark sweeps in both payload shapes
-(`test/agents/compaction-recovery.test.js`): **every fact the full transcript held is either
+(`test/agents/compaction-recovery.test.ts`): **every fact the full transcript held is either
 still in the request verbatim or reachable through an address the request names** — <!--fact:horizon.ledgerRecovered-->40 of 40<!--/fact--> record values at the same budget, where the same runs without a ledger keep <!--fact:horizon.synopsisBand-->1 to 28<!--/fact--> of them. What that
 costs is a few characters of verbatim retention at the tightest budgets, published beside
 the win.
@@ -529,7 +530,7 @@ Without a `ledger`, all of this is inert and compaction behaves exactly as it al
 
 ## The action language — a program the model writes and the compiler checks
 
-For typed fixture and host authoring, the [AI program pen](../jaren/docs/PROGRAM-PEN.md)
+For typed fixture and host authoring, the [AI program pen](../linq/docs/PROGRAM-PEN.md)
 emits this same document and imports no AI runtime.
 
 The environment lets a model *address* a corpus. A program lets it *work* one: a small
@@ -574,7 +575,7 @@ Three properties, each asserted rather than intended:
   compile keeps the **query engine's own** code (`JQ0003`, …) with its pointer rebased onto
   the step it came from.
 - **No step can carry content.** Every member of every step is an operation name, a binding,
-  a slot reference, a bounded instruction or a query document — `test/agents/program.test.js`
+  a slot reference, a bounded instruction or a query document — `test/agents/program.test.ts`
   walks the grammar and fails if a string member is ever declared without a cap. So the
   program is the same size for a 10 kB corpus and a 10 MB one, which is what keeps the root
   request flat while a program runs.

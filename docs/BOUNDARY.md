@@ -12,7 +12,9 @@ capture and Studio/Data/Flow editing in Jaren. Jaren has no Tangle dependency.
 Models, context and agents are reusable Tangle mechanisms with injected host
 services; they never import the higher-level core/config/memory/pipeline/store
 or MAS policy packages. Jaren-specific AI authors live in `@tangleai/jaren`
-and use public Jaren operations. The existing applications and policy packages
+and use public Jaren operations. Tangle document pens live in `@tangleai/linq`,
+with one `/program` pen today; they produce immutable JSON through Jaren
+authoring primitives and import no execution engines. The existing applications and policy packages
 continue to own databases, scheduling, configuration and product decisions.
 
 Require a concrete consumer, deterministic tests and a documented dependency
@@ -129,13 +131,13 @@ spends an afternoon looking:
 packages, so nothing below is importable — but each is a decision this repo
 would otherwise have to learn the hard way:
 
-- `benchmark/retrieval.js` scores recall@{1,5,10}, MRR and latency per policy,
+- `benchmark/retrieval.ts` scores recall@{1,5,10}, MRR and latency per policy,
   and **gates the scorer before any number prints**: an `oracle` row must be
   exactly 1.000 at every k, and a seeded `random` row must land inside its
   analytic band, or the run exits 1 with the row named. The oracle row is what
   catches a corpus whose gold ids do not exist — which is precisely the risk in
   LoCoMo's evidence dialog ids, some of which are parenthesized.
-- `benchmark/long-horizon.js` publishes a **model-free ceiling beside the actual
+- `benchmark/long-horizon.ts` publishes a **model-free ceiling beside the actual
   score**. The ceiling asks only "was the fact needed to answer present in the
   request at all" — no key, no cost, no flake, so it is the tier CI runs — and
   the GAP between it and a real model's score says whether a failure is a

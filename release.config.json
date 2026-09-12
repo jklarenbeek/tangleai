@@ -10,6 +10,7 @@
     "packages/models",
     "packages/context",
     "packages/agents",
+    "packages/linq",
     "packages/jaren",
     "components/assistant",
     "packages/core",

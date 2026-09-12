@@ -57,15 +57,17 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     if (migration) writeJson(resolve(directory, 'migration.json'), migration);
     cpSync(resolve(root, 'test/release/fixtures/consumer.mjs'), resolve(directory, 'consumer.mjs'));
     for (const command of [process.execPath, 'bun']) execFileSync(command, ['consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    cpSync(resolve(root, 'test/jaren/editor-adapters.test.js'), resolve(directory, 'editor-adapters.test.js'));
-    execFileSync(process.execPath, ['--test', 'editor-adapters.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    execFileSync('bun', ['test', 'editor-adapters.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    cpSync(resolve(root, 'test/assistant/dom.stub.js'), resolve(directory, 'dom.stub.js'));
-    const assistantTests = readFileSync(resolve(root, 'test/assistant/component.test.js'), 'utf8')
+    cpSync(resolve(root, 'test/assert-result.ts'), resolve(directory, 'assert-result.ts'));
+    writeFileSync(resolve(directory, 'editor-adapters.test.ts'), readFileSync(resolve(root, 'test/jaren/editor-adapters.test.ts'), 'utf8').replace("from '../assert-result.ts'", "from './assert-result.ts'"));
+    execFileSync(process.execPath, ['--test', 'editor-adapters.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    execFileSync('bun', ['test', 'editor-adapters.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    cpSync(resolve(root, 'test/assistant/dom.stub.ts'), resolve(directory, 'dom.stub.ts'));
+    const assistantTests = readFileSync(resolve(root, 'test/assistant/component.test.ts'), 'utf8')
+      .replace("from '../assert-result.ts'", "from './assert-result.ts'")
       .replace("new URL('../../components/assistant/styles/assistant.css', import.meta.url)", "new URL(import.meta.resolve('@tangleai/assistant/styles/assistant.css'))");
-    writeFileSync(resolve(directory, 'assistant.test.js'), assistantTests);
-    execFileSync(process.execPath, ['--test', 'assistant.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    execFileSync('bun', ['test', 'assistant.test.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    writeFileSync(resolve(directory, 'assistant.test.ts'), assistantTests);
+    execFileSync(process.execPath, ['--test', 'assistant.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    execFileSync('bun', ['test', 'assistant.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
     if (!options.runtimeOnly) {
       checkProgramBundle(directory, root);
       const imports: string[] = [];
@@ -78,7 +80,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         count++;
       }
       cpSync(resolve(root, 'test/release/fixtures/assistant-types.ts'), resolve(directory, 'assistant-types.ts'));
-      cpSync(resolve(root, 'test/jaren/program-types.ts'), resolve(directory, 'program-types.ts'));
+      cpSync(resolve(root, 'test/linq/program-types.ts'), resolve(directory, 'program-types.ts'));
       cpSync(resolve(root, 'test/jaren/editor-types.ts'), resolve(directory, 'editor-types.ts'));
       cpSync(resolve(root, 'test/jaren/mechanism-types.ts'), resolve(directory, 'mechanism-types.ts'));
       cpSync(resolve(root, 'test/jaren/program-result-types.ts'), resolve(directory, 'program-result-types.ts'));
@@ -96,7 +98,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       writeFileSync(resolve(directory, 'consumer.mts'), imports.join('\n'));
       writeJson(resolve(directory, 'tsconfig.json'), { compilerOptions: {
         target: 'ES2022', module: 'NodeNext', moduleResolution: 'NodeNext', strict: true,
-        noEmit: true, skipLibCheck: false, resolveJsonModule: true, types: ['node'],
+        noEmit: true, skipLibCheck: false, resolveJsonModule: true, types: ['node'], allowImportingTsExtensions: true,
       }, files: ['consumer.mts'] });
       execFileSync(process.execPath, [resolve(directory, 'node_modules/typescript/bin/tsc'), '-p', 'tsconfig.json'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
       cpSync(resolve(root, 'test/release/fixtures/browser.mjs'), resolve(directory, 'browser.mjs'));

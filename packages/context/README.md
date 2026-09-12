@@ -2,7 +2,8 @@
 
 Evidence-backed ledgers, bounded environments, recall, retention and storage contracts.
 
-This package keeps its JS/JSDoc implementation and deterministic tests. Inject
+The implementation and deterministic tests use strict TypeScript. Published
+packages contain ESM JavaScript and declarations emitted from that source. Inject
 fetch, storage and compiler services at the existing seams. The public source
 exports and emitted npm JavaScript share one implementation.
 
@@ -310,7 +311,7 @@ the single exception and it makes the caller state a budget, because a design wh
 is as easy as peeking is a design that ends up back in the transcript.
 
 **The root view does not grow with the corpus.** Sweeping a corpus across three orders of
-magnitude (10 kB → 10 MB, `test/context/environment-scale.test.js`), the root request stays
+magnitude (10 kB → 10 MB, `test/context/environment-scale.test.ts`), the root request stays
 inside a 3 000-character band and moves by *tens* of characters between decades — the extra
 digits in a chunk's index, and nothing else. The digest lists at most twelve slots and
 reports how many it did not list; a cap that hid the difference would let a model conclude
@@ -338,7 +339,7 @@ so the request stops growing with the conversation, and an earlier round is reac
 anything else is: `env_grep` for it, `env_read` at the offset it reports. Over forty
 gathering rounds the request stays under 3 000 characters, and a value that a
 6 000-character `historyBudget` run no longer carries comes back from a 600-character read
-(`test/agents/transcript-slot.test.js`).
+(`test/agents/transcript-slot.test.ts`).
 
 This is the alternative to `historyBudget` rather than a tuning of it: there is no budget to
 exceed when the history is addressed instead of resent. `historyBudget` keeps working
@@ -350,7 +351,7 @@ this existed — and which to reach for is the choice, not a migration.
 
 This injected adapter stores the complete ledger contract in one collection.
 
-```js
+```ts
 import { openStore } from '@jarenjs/db';
 import { nodeDriver } from '@jarenjs/db/node';
 
@@ -361,7 +362,7 @@ import { nodeDriver } from '@jarenjs/db/node';
  * untyped: the ledger stores objects, strings and arrays under the same
  * contract, and only the vector member has to be declared.
  */
-const ledgerModel = (dims) => ({
+const ledgerModel = (dims: any) => ({
   $model: '0.1',
   collections: {
     slots: {
@@ -381,7 +382,7 @@ const ledgerModel = (dims) => ({
 });
 
 /** A collection answer as a list — `execute` returns the bare item for one. */
-const many = (result) => (Array.isArray(result) ? result : result === undefined ? [] : [result]);
+const many = (result: any) => (Array.isArray(result) ? result : result === undefined ? [] : [result]);
 
 /**
  * A durable ledger storage adapter over one `@jarenjs/db` collection:
@@ -395,20 +396,20 @@ const many = (result) => (Array.isArray(result) ? result : result === undefined 
  * range scan over the key column. The ledger asks for a handful of
  * distinct prefixes, so the documents are built once each and cached.
  */
-export async function createDbStorage({ path = ':memory:', dims } = {}) {
+export async function createDbStorage({ path = ':memory:', dims }: { path?: string; dims?: number; } = {}) {
   const store = await openStore(ledgerModel(dims), { driver: nodeDriver(), path });
-  const slots = store.collection('slots');
+  const slots = store.collection<{ key: string; value: any; }>('slots');
   const documents = new Map();
 
   /** Every query document one prefix needs, built once. */
-  const forPrefix = (prefix) => {
+  const forPrefix = (prefix: any) => {
     let built = documents.get(prefix);
     if (built !== undefined) return built;
     const under = { '$starts-with': ['$r.key', prefix] };
     const score = { $similarity: ['$r.value.embedding', '$q'] };
     const mine = [{ $eq: ['$r.value.embeddedBy.model', '$model'] },
-      { $eq: ['$r.value.embeddedBy.dims', '$dims'] }];
-    const counted = (where) => ({ $count: { $for: { r: '$[*]' }, $where: where, $return: '$r' } });
+    { $eq: ['$r.value.embeddedBy.dims', '$dims'] }];
+    const counted = (where: any) => ({ $count: { $for: { r: '$[*]' }, $where: where, $return: '$r' } });
     const ranked = {
       $for: { r: '$[*]' },
       $where: { $and: [under, ...mine] },
@@ -416,13 +417,13 @@ export async function createDbStorage({ path = ':memory:', dims } = {}) {
       // ordering only has to agree with its tie-break: score, then
       // newest, then the key
       $orderby: [{ $key: score, $dir: 'desc', $empty: 'least' },
-        { $key: '$r.value.at', $dir: 'desc' }, '$r.key'],
+      { $key: '$r.value.at', $dir: 'desc' }, '$r.key'],
       $return: { key: '$r.key', score },
     };
     built = {
       keys: { $for: { r: '$[*]' }, $where: under, $orderby: ['$r.key'], $return: '$r.key' },
       ranked,
-      window: (limit) => ({ $subsequence: [ranked, 0, limit] }),
+      window: (limit: any) => ({ $subsequence: [ranked, 0, limit] }),
       skipped: counted({ $and: [under, { $not: { $exists: '$r.value.embedding' } }] }),
       held: counted({ $and: [under, { $exists: '$r.value.embedding' }] }),
       ours: counted({ $and: [under, { $exists: '$r.value.embedding' }, ...mine] }),
@@ -433,12 +434,12 @@ export async function createDbStorage({ path = ':memory:', dims } = {}) {
   };
 
   return {
-    mutate: async (prefix, transform) => store.transaction((tx) => {
-      const rows = tx.sync.collection('slots');
+    mutate: async (prefix: any, transform: any) => store.transaction((tx) => {
+      const rows = tx.sync!.collection<{ key: string; value: any; }>('slots');
       const prefixes = typeof prefix === 'string' ? [prefix] : prefix.prefixes ?? [];
-      const keys = [...new Set([...(prefix.keys ?? []), ...prefixes.flatMap((part) => many(rows.execute(forPrefix(part).keys)))])].sort();
-      const matches = (key) => (prefix.keys ?? []).includes(key) || prefixes.some((part) => key.startsWith(part));
-      const current = Object.fromEntries(keys.map((key) => [key, rows.get(key)?.value]));
+      const keys = [...new Set([...(prefix.keys ?? []), ...prefixes.flatMap((part: any) => many(rows.execute(forPrefix(part).keys)))])].sort();
+      const matches = (key: any) => (prefix.keys ?? []).includes(key) || prefixes.some((part: any) => key.startsWith(part));
+      const current = Object.fromEntries(keys.map((key: any) => [key, rows.get(key)?.value]));
       for (const key of Object.keys(current)) if (current[key] === undefined) delete current[key];
       const outcome = transform(current);
       if (!outcome || typeof outcome.then === 'function') throw new TypeError('mutate callback must be synchronous');
@@ -450,9 +451,9 @@ export async function createDbStorage({ path = ':memory:', dims } = {}) {
       }
       return outcome.result;
     }, { mode: 'immediate' }),
-    get: async (key) => (await slots.get(key))?.value,
-    set: async (key, value) => { await slots.put({ key, value }); },
-    delete: async (key) => { await slots.delete(key); },
+    get: async (key: any) => (await slots.get(key))?.value,
+    set: async (key: any, value: any) => { await slots.put({ key, value }); },
+    delete: async (key: any) => { await slots.delete(key); },
     // sorted, because the ledger reads listings, the goal archive and a
     // snapshot's entries in key order and its zero-padded sequences
     // exist so that order is chronological
@@ -465,12 +466,12 @@ export async function createDbStorage({ path = ':memory:', dims } = {}) {
      * paid only when the counts prove a mixture, which is the one case
      * that is about to refuse anyway.
      */
-    rank: async ({ prefix, vector, model, dims: width, limit }) => {
+    rank: async ({ prefix, vector, model, dims: width, limit }: { prefix?: any; vector?: any; model?: any; dims?: any; limit?: any; }) => {
       const docs = forPrefix(prefix);
       const externals = { q: vector, model, dims: width };
       const hits = many(await slots.execute(
         limit === undefined ? docs.ranked : docs.window(limit), { externals }));
-      const skipped = await slots.execute(docs.skipped);
+      const skipped = await slots.execute(docs.skipped) as number;
       const held = await slots.execute(docs.held);
       const ours = await slots.execute(docs.ours, { externals });
       const identities = held === ours

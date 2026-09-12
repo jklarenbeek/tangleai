@@ -10,13 +10,12 @@ Every other workflow file points here instead of restating these.
   npm publication; JSON schema paths are preserved. The packed consumer gate
   verifies installed artifacts on Node, Bun and supported browser surfaces.
   Erasable syntax, `verbatimModuleSyntax` and strict typing remain mandatory.
-- **Inherited JS/JSDoc exception.** The transferred models, context, agents,
-  Jaren integration, assistant, game and transferred Pages host glue retain
-  their source language and JS tests. New data-transfer policy uses strict TS.
-  Declaration emission preserves their source compiler contract; every emitted
-  declaration is checked with strict typing and `skipLibCheck: false`, and
-  packed Node/Bun consumers exercise the public surface. Existing and new
-  TypeScript still use the unchanged strict source gate.
+- **One TypeScript source gate.** Models, context, agents, Jaren integrations,
+  the assistant, Pages demos, benchmarks and tests use the same strict compiler
+  settings. Vendor submodules retain their upstream languages; generated browser
+  assets and `.mjs` browser/release harnesses remain JavaScript. Declaration
+  files are emitted from TypeScript and checked by installed consumers with
+  `skipLibCheck: false`.
 - **One development version.** All workspaces share the public fixed group's
   version, starting at `0.20.0`. Major versions remain zero. Changesets records
   patch or minor intent; preparation updates the full suite before a release
