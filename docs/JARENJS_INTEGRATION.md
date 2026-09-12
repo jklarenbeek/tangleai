@@ -1,147 +1,98 @@
 # JarenJS integration
 
-The current dependency and source baseline is **0.83.3**, source tag `v0.83.3`,
-commit `3491513e164dc30e429c84e709bd738841f4df16`. The published AI package includes
-recursive child failure envelopes, complete answer reads and runner result types;
-no local installation patch is required. Runtime code uses npm packages and
-[`vendor/jarenjs`](../vendor/jarenjs) supplies the auditable source reference.
-
-The adoption and strategy audit below was originally measured against **0.83.2**
-on 2026-09-11. Historical benchmark identities and numbers retain that baseline;
-they are not relabelled as new measurements when dependencies advance.
+Tangle consumes **Jaren 0.86.0**, tag `v0.86.0`, source commit
+`ce489546f21a176a2574169b65b95f9dc15461f7`. Upstream `main`, the tag and npm's
+latest release agreed when checked on 2026-09-12. The submodule is the source
+reference; runtime imports resolve to the 23 published npm packages. All 99
+direct dependency references are exact pins. The lock records registry URLs and
+integrities; the [registry receipt](integration/jaren-0.86.0-registry.json) checks
+all 23 downloaded archives against it. This receipt does not claim a source
+rebuild comparison. Installed packages are neither patched nor source-linked.
 
 ```sh
-npm ci
+npm ci --ignore-scripts
 git submodule update --init vendor/jarenjs
 npm run jaren:check
 npm run check
+npm run store:supervised:smoke
 ```
 
-Do not recursively initialize the upstream benchmark datasets for an application
-build. The source pin, direct dependency pins, lockfile and installed release are
-checked together. The source checkout is optional for consumers and Pages builds;
-the committed gitlink is always checked.
+The source pin, direct references, lock and installed versions are checked
+together. Source initialization is optional for package consumers and Pages;
+the repository gitlink is always checked. Do not recursively initialize
+upstream benchmark datasets for an application build.
 
-## Adopted surfaces
+## What changed and how Tangle uses it
 
-| Component | Suite authority and integration |
+The update spans two upstream commits: `5765fba5` introduces native relational
+schema/query operations; `ce489546` introduces supervised SQLite processes and
+collection drag interactions. Core model/context/agent ownership remains in
+Tangle. The [migration handoff](JAREN_AI_MIGRATION.md) describes that boundary.
+
+| Upstream surface | Tangle integration and limits |
 |---|---|
-| Storage | `@jarenjs/db` owns SQLite drivers, transactions, validation, query plans, cursors, jobs and checkpoint persistence. Transaction callbacks now accept the actual scoped `TransactionStore`. `openTangleDb` exposes all suite host options, including runtime, transaction policy, native pragmas and maintenance/read-only profiles. |
-| History and traces | Run history consumes an ordered suite cursor and closes it after the requested number of rows. MAS attempt/message/state/trace predicates and ordering execute through the query planner; document version filters execute before materialization. Document text ordering retains the existing locale comparison. |
-| Durable workflows | `@jarenjs/linq/flow` authors versioned tasks; `@jarenjs/flow` compiles DAGs/FSMs, checks checkpoint identity and drains sibling work on abort. The executable identity includes the host ABI, suite versions, registry revision and CONFIG catalog revision. Stored checkpoint values carry the suite's provenance atomically. Changed input, mismatched executable revisions, mixed identities and old identity-free checkpoints refuse automatic restore. |
-| Durable queue | Worker checkpoints follow the currently renewed lease. Completion/failure uses the claimed lease token; the suite owns renewal and fencing. The MAS worker exposes the full suite worker options, including renewal, effect admission and outcome observation, plus its lost/cancelled/renewed counts. Tangle owns semantic attempt commits, interaction resolution and uncertain external-effect policy. |
-| Agent memory | `createMasAgentContext` composes the suite ledger, environment and JSON query engine. `createDbLedgerStorage` supplies atomic scoped mutations over the existing settings collection, so independent ledger instances share counters and publish complete changes in one transaction. Embedder, goal limits and archive retention limits pass directly to the suite. No second ledger, compactor or retention algorithm is introduced. |
-| Grounded answers | `createStructuredOutput` owns generation and repair. `validateClaimEvidence` now owns generic claim identity and supplied-reference integrity through an envelope built from the evidence actually serialized into the prompt. The measured answer contract still allows uncited claims; Tangle's fixture oracle alone judges semantic support, source freshness and the six terminal citation states. |
-| Memory policy | Ledger projection uses the published `LedgerMemory` type. Tangle's stored policy records specialize evidence to a nonempty source string, while the suite ledger also accepts structured claim evidence. Novelty, contradiction, crystallization, policy learning and benchmark-specific scoring remain application policies. |
-| Bounded corpus QA | `createLongHorizonAgent` receives the query analyzer and type annotator. Tangle's `covered-evidence-v1` policy sizes line chunks for complete coverage within the call cap, validates leaf references, checks reducers on empty/single/multiple inputs, and synthesizes a nonempty cited answer. Runtime reducer repairs reuse identical validated leaf requests. Explicit abstentions and invalid answers remain separate. The legacy strategy is retained for historical replay. |
-| Provider configuration | The suite owns endpoint resolution, completion/embedding transport, retries, replay keys, structured output and budgets. Optional `maxTokens` and `maxTokensField` settings reach the chat client and the effective run identity. Both `max_tokens` and `max_completion_tokens` are selectable. Historical identities remain readable. |
-| Document transport | `@jarenjs/core/schedule` replaces the custom semaphore and host timers. Each robots, document and redirect request is scheduled by its actual host, through body consumption, with bounded queue/scope state, a suite LRU robots cache, cancellation and drained shutdown. URL/DNS/robots/terms/byte policies remain Tangle's. Clock and sleep are injectable. |
-| Desktop host | One `createRuntime` record reaches the database and HTTP dispatcher; its clock supplies default application timestamps and request scheduling. Explicit host overrides retain precedence. Desktop shutdown drains document requests before closing the database. The UI uses bounded suite reconnects and reconciles completed syncs through the same contract snapshot read; late stream frames cannot replace newer state. |
-| UI and website | `@jarenjs/app` and `/view` execute both UI documents; `/contract` owns HTTP, clients, subscriptions and contract diffs; `/json` owns queries and patches; `/mermaid`, `/charts` and `/md` supply the existing renderers. `/validate` and `/emit` validate contracts and generate all six declaration bundles. |
-| Shared algorithms | `/core` supplies vectors, random draws, statistics, JSON cloning/equality, canonical helpers and bounded async work. `/ai` supplies embedders, chunking primitives, agent/toolbox/budget/environment/program execution. Existing parser exceptions remain `linkedom`, `unpdf`, and Playwright in the external scraper. |
+| `@jarenjs/db/node-process` | The existing `openTangleDb({ driver })` seam accepts the actual process driver. The [supervised example](../examples/supervised-store.ts) retains its owner, supervises the ordinary outcome service, closes the store, waits for OS exit and explicitly reopens. Both reference domains retain exact audit identities and completed replay performs zero writes/source reads. Tangle adds no process protocol, timer engine or automatic retry. |
+| Process admission, fencing and settlement | Store integration tests cover pre-abort, ordinary callback failure, same-file admission refusal, deadline invalidation, rollback of an acknowledged open transaction, stale-handle refusal and explicit reopening with integrity verification. Quarantine retains the owner's credit until exit. An uncertain commit still requires durable-receipt reconciliation. |
+| Disk-backed Bun snapshots | The existing `db.backupTo(path)` now uses Jaren's VACUUM INTO path on Bun instead of a database-sized JavaScript image. Node retains its online backup. Tests snapshot a WAL database without checkpointing, reopen it, and replay both outcome domains with zero new effects; post-snapshot writes are absent and a cancelled replacement preserves the previous backup. |
+| Expanded model schema and model pen | `createDataAdapter` consumes Jaren's authoring schema directly. Tests author physical column types, defaults, AUTOINCREMENT identity, collation, uniqueness and STRICT through `@jarenjs/linq/model`, then accept through the shared editor revision check. Acceptance changes buffers; it does not create or migrate a database. |
+| Native relational expressions and exact mutations | `@jarenjs/db/relational` owns structural SQL, parameters, native NULL/aggregate/collation semantics, expression assignments, matched/changed reporting, conflict targets and byte values. Tangle has no hand-written SQL builder to replace. These operations require an explicitly owned synchronous SQLite connection; they are available for a future physical-table consumer. They do not bypass outcome or MAS service authority. |
+| Guarded physical-table migrations | `defineTable`, `planTableMigration`, `applyTableMigration` and `withForeignKeysSuspended` own schema inspection, checked plans, rebuild/copy, indexes/triggers and foreign-key restoration. Existing Tangle collections retain their schema and transaction owner. A physical outcome/MAS layout would require a migration and measurement of equivalent replay, immutability and CAS behavior before adoption. |
+| Lightweight database imports and `compileEntityModel` | `/query`, `/model`, `/entity` and `/relational` serve existing-connection consumers. Tangle currently needs the full Store for collections, jobs, transactions and maintenance; it does not separately normalize entities or maintain duplicate mapping caches. |
+| LINQ provider iteration | A provider's optional `syncQuery` streams native synchronous cursors and closes them on early return. Existing Tangle history and outcome reads already use bounded database cursors/queries. There is no local provider materialization loop to remove. |
+| Collection drag | `createDragInteraction`, `mountCollectionDrag` and `createDraggableCollectionWidget` provide stable-key/revision intent, bounded pending authority and owned pointer/keyboard lifecycle. Current desktop and Pages hosts have no row move/copy command or mounted collection drag consumer. A future collection editor should use these surfaces and add its own authoritative revision-checked operation. |
 
-Example durable context, using the same database as a host:
+## Process host ownership
 
-```ts
-import { createMasAgentContext } from '@tangleai/mas';
-import { createDbLedgerStorage, openTangleDb } from '@tangleai/store';
+One process driver should be shared across one host ownership domain. Retain the
+connection returned by its `open`, and pass a driver adapter returning that
+connection to `openTangleDb`. The runnable example supplies finite busy and queue
+timeouts and a 30-second supervised deadline for its full scripted walkthrough.
+Store initialization is outside that walkthrough deadline; process startup has
+Jaren's separate startup deadline. Host callbacks must remain bounded and drain
+admitted work. No function is serialized into the child.
 
-const db = await openTangleDb({ path: 'tangle.sqlite' });
-const context = createMasAgentContext({
-  storage: createDbLedgerStorage(db, 'assistant/main'),
-  now: () => new Date().toISOString(),
-  archiveLimits: { maxItems: 100, maxBytes: 1_000_000 },
-});
-await context.putCorpus('source/report', 'An addressed source document.');
-// Finish active agent work before closing its host database.
-await db.close();
-```
+`owner.supervise(() => serviceOperation())` observes the response deadline;
+`owner.settled()` observes OS process exit. `JD2097` fences the generation, and
+later operations refuse with `JD2090`. A deadline is not evidence that a write
+rolled back. Keep the owner quarantined until exit, close the invalid Store,
+reopen and inspect durable receipts before any explicit retry. The example
+preserves both operation and cleanup errors when both fail.
 
-## Strategy evidence
+Process supervision requires Node 24 or newer. The entry imports under Bun,
+but opening refuses with `JD0003`; the packaged consumer checks that refusal.
+The ordinary runtime-picked synchronous Node/Bun drivers remain the defaults.
+The desktop needs the synchronous/live Store capabilities that an asynchronous
+process connection does not provide. Replacing that host would require a
+subscription and lifecycle design, not only a driver switch.
 
-The pinned [upstream benchmark report](../vendor/jarenjs/benchmark/README.md)
-and [database measurements](../vendor/jarenjs/packages/db/README.md) inform the
-choices; they are separate from Tangle's own results.
+Bun's native snapshot is synchronous SQLite work even though the outer backup
+API is asynchronous. It has no incremental native cancellation or progress
+promise. `snapshotDatabase` on a raw connection refuses an existing destination;
+Store `backupTo` retains its separate atomic replacement contract. Neither path
+claims page-identical archival copies or power-loss qualification.
 
-* **Exact vector search remains the default.** The upstream labelled SciFact
-  BGE-M3/1024 run over 5,183 documents and 300 queries reports exact recall@10
-  0.783, MRR 0.608, nDCG 0.644 and p95 23.356 ms. Projection at 0.1 reports
-  recall 0.597/p95 60.017 ms; at 0.5, 0.760/324.474 ms. None of six tested
-  approximate settings passed all adoption bars. These particular strategies
-  fail to justify replacing exact ranking; the result does not generalize to
-  every ANN index or corpus.
-* **Packed vectors need a dimension-specific migration and host measurement.**
-  Upstream's synthetic 10k × 768 comparison reports 468 ms for JSON-document
-  scanning, 30 ms for a packed plan and 5.8 ms for a resident scan. Packed
-  storage also increases write cost and footprint. Tangle supports changing
-  embedding models and widths; it keeps identity-gated exact ranking until a
-  representative corpus justifies a persistent packed layout. A SQLite vector
-  UDF cannot become a shared default because Bun lacks that registration seam.
-* **Bounded history is adopted and measured locally.**
-  [`benchmark/jaren-strategies.ts`](../benchmark/jaren-strategies.ts) compares
-  the shipped ordered cursor with the former full-load/sort/slice path on real
-  SQLite in Node and Bun. Both must return identical IDs. See
-  [the recorded measurements](JARENJS_BENCHMARK.md): the reduction in host rows
-  is reliable; elapsed time depends on runtime and query planning.
-* **Virtual collections and lexical ranking have different semantics.**
-  Upstream's fixed collection benchmark mounts 170 cells and retains 256 rows
-  for 10,000 records, demonstrating bounded rendering and cache work. The
-  current memory screen requests at most 200 rows and has no remote grid
-  protocol. Introducing a virtual grid would require that product contract.
-  Lexical search is available for a future ranked text endpoint; it cannot
-  silently replace substring filtering or embedding scores. Current limited
-  history reads use database cursors now.
-* **Workflow and agent composition follows the existing contracts.** The new
-  composed workflow/statechart formats, formulas/rules, ingestion providers,
-  automatic model routing, skill evolution, format/localization/form builders
-  and authoring studio have no separate shipped component to replace here.
-  MAS still lowers its typed port, branch, loop and interaction policies into
-  suite DAG/FSM documents. Model choice remains explicit in CONFIG; automatic
-  routing would change benchmark identities and spending policy. Self-evolving
-  policies still require the registered quality instrument before activation.
+## Compatibility and evidence
 
-The upstream adoption report explicitly separates synthetic evidence from real
-host qualification. This integration likewise does not claim production-scale
-recall, browser-grid performance or paid model quality from keyless fixtures.
+The full source gate exercises the actual installed foundation. Packed consumers
+also execute the process host on Node, the explicit unsupported-host refusal on
+Bun, restored outcome replay on both runtimes, Data authoring, declaration checks
+with `skipLibCheck: false`, and browser bundles. The lifecycle conformance run and
+MAS smoke qualify the ordinary stores and durable workflow engine. The local
+process test qualifies Linux/Node behavior; it is not a universal scheduling or
+operating-system timing guarantee.
 
-## Compatibility and verification
+MAS executable identities include the installed Flow version. Existing
+checkpoints from 0.84.3 must not silently resume as 0.86.0 executions; the identity
+refusal is intentional. Resume with the matching historical execution environment
+or an explicitly reviewed migration. The typed versioned-task overload bridge in
+`packages/mas/src/jaren-flow.d.ts` and the LINQ coded-error constructor bridge in
+`packages/linq/src/errors.ts` are still needed: neither upstream declaration was
+changed in this release. No new declaration workaround is introduced.
 
-The optional token properties constrain previously unspecified extra input
-members; the contract diff correctly reports two `R6` entries. The existing
-citation output closure remains `R8`. Tests pin those exact changes while
-preserving previously supported settings and credential redaction.
-
-One upstream declaration defect needs a narrow, documented bridge:
-[`jaren-flow.d.ts`](../packages/mas/src/jaren-flow.d.ts) adds the versioned
-three-argument `task` overload that the 0.83.2 JavaScript runtime implements
-but its published handwritten declaration omits. It changes no runtime code.
-The upstream fix belongs in `packages/linq/types/flow.d.ts`.
-
-The AI patch makes runner results a typed success/failure union with complete
-accounting, including zero counts on compile refusal. The long-horizon benchmark
-still reads historical step counts alongside aggregates without double-counting.
-Recursive failure envelopes retain `value: null` and their error metadata, so a
-failed leaf does not invalidate otherwise usable collected evidence.
-
-The [bounded-agent repair](BOUNDED_AGENT_BENCHMARK.md) was measured using the
-unmodified published release. The current installation applies
-the explicit AI patch while preserving the source submodule. QA-specific prompt,
-coverage, evidence, repair and synthesis policies live in
-[`horizon-agent.ts`](../benchmark/lib/horizon-agent.ts). Its single host budget
-includes all authoring, leaf and synthesis attempts. Full checked result slots
-are now read through the suite's `readProgramAnswer` with Tangle's 64,000-character
-bound, because the runner's answer field is a preview. JarenJS uses the same
-reader for complete child results at recursive depth. Installed-consumer tests
-exercise the actual default author example with a failed leaf and a child answer
-beyond the preview, and typecheck the generated public result declarations.
-
-Regression checks exercise checkpoint identity refusal, crash/reclaim without
-duplicate calls, concurrent ledger counters, transaction rollback and SQLite
-reopening, scheduling/abort/drain, both token-limit fields and run identity,
-contract narrowing, all existing policy oracles and the keyless instruments.
-The [paid refresh](PAID_REFRESH.md) exercises the configured OpenRouter chat,
-judge and embedding models through all six answer strategies, the registered
-grounding comparison, the durable MAS review/resume workflow and the desktop's
-live document path. Failures and unequal coverage remain in the reports.
-Historical paid reports retain their original identities and results. Browser,
-compiled-binary and deployed-site checks validate the actual packaged surfaces.
+Historical paid POLICY, QA and grounding reports retain their original bytes,
+identities and selected defaults. Keyless replays test compatibility; they do not
+establish new model quality. The [0.83.3 audit](jaren-integration-0.83.3.md),
+[history measurements](JARENJS_BENCHMARK.md) and
+[0.84.3 qualification](migrations/jaren-ai/qualification-0.84.3.json) retain their
+original measured baselines. Exact vector ranking, selected memory policy and
+embedding width require their own evidence before changing.

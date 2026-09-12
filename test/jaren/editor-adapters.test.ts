@@ -13,6 +13,7 @@ import { resolveProjectFile } from '@jarenjs/studio';
 import { createStudioAdapter } from '@tangleai/jaren/studio';
 import { createFlowAdapter } from '@tangleai/jaren/flow';
 import { createDataAdapter } from '@tangleai/jaren/data';
+import { defineModel, object, integer, string } from '@jarenjs/linq/model';
 const fsm = { $fsm: '0.1', initial: 'a', states: ['a', 'b'], transitions: [{ from: 'a', event: 'go', to: 'b' }] };
 const dag = { $dag: '0.1', nodes: { input: { kind: 'input' }, task: { kind: 'task', run: 'double' }, out: { kind: 'output' } }, edges: [{ from: 'input', to: 'task' }, { from: 'task', to: 'out' }] };
 const model = { $model: '0.1', collections: { rows: { schema: { type: 'object', properties: { id: { type: 'string' }, value: { type: 'integer' } } }, key: '/id' } } };
@@ -142,4 +143,26 @@ it('Data conflicts preserve manual buffers, while accepting a model never recrea
   assert.equal((await adapter.write((proposal.candidate as any), { expectedRevision: editor.read().revision })).ok, true);
   assert.equal(opens(), 0); assert.deepEqual(withMember((await adapter.run()), 'result').result, [{ id: 'one', value: 7 }]);
   editor.dispose(); assert.equal((await adapter.run()).ok, false);
+});
+it('Data authors physical types, defaults and constraints through the Jaren model pen without migrating', async t => {
+  const { editor, opens } = await data(t);
+  const physical = defineModel({ entities: {
+    Item: object({ id: integer().identity('auto'), label: string() }).physical({
+      table: 'items', strict: true,
+      columns: {
+        id: { name: 'id', codec: 'integer', null: 'reject', type: 'INTEGER', identity: 'autoincrement' },
+        label: { name: 'label', codec: 'text', null: 'reject', type: 'TEXT', defaultValue: 'draft', collation: 'BINARY' },
+      },
+      constraints: [{ kind: 'unique', columns: ['label'] }],
+    }),
+  } });
+  const client = scripted([physical]), adapter = createDataAdapter({ editor, client });
+  const before = editor.read();
+  const proposal = await adapter.propose({ member: 'model', prompt: 'Describe an existing strict items table.' });
+  assert.equal(proposal.ok, true, JSON.stringify(proposal));
+  assert.equal(proposal.attempts, 1);
+  assert.deepEqual(editor.read(), before);
+  assert.equal((await adapter.accept(proposal as Parameters<typeof adapter.accept>[0])).ok, true);
+  assert.deepEqual(editor.read().document.model, JSON.parse(JSON.stringify(physical)));
+  assert.equal(opens(), 0);
 });

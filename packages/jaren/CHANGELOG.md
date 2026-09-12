@@ -1,5 +1,14 @@
 # @tangleai/jaren
 
+## 0.24.1
+
+### Patch Changes
+
+- Update the Jaren foundation to 0.86.0 with exact registry and source pins. Qualify supervised Node SQLite execution, outcome replay after native backups, and physical-model authoring through the shared Data editor. Document the available relational, migration, cursor and collection-drag mechanisms and their host boundaries.
+- @tangleai/agents@0.24.1
+  - @tangleai/context@0.24.1
+  - @tangleai/models@0.24.1
+
 ## 0.24.0
 
 ### Patch Changes

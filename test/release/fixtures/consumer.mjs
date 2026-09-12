@@ -1,4 +1,6 @@
 import { runOutcomeExample } from './outcomes-example.ts';
+import { runSupervisedStoreExample } from './supervised-store.ts';
+import { nodeProcessDriver } from '@jarenjs/db/node-process';
 import { createMemoryOutcomeStore } from '@tangleai/outcomes';
 import { createOutcomeStore } from '@tangleai/store';
 import assert from 'node:assert/strict';
@@ -83,5 +85,19 @@ try {
   assert.ok((await store.list()).some(memory => memory.id === unit.id));
   await store.delete(unit.id);
   assert.equal(await store.get(unit.id), undefined);
+  await db.backupTo('consumer-backup.db');
+  const restored = await openTangleDb({ path: 'consumer-backup.db' });
+  try {
+    const replay = await runOutcomeExample(createOutcomeStore(restored));
+    assert.equal(replay.writes, 0);
+    assert.deepEqual(replay.ids, initialOutcome.ids);
+  } finally { await restored.close(); }
 } finally { await db.close(); }
+if (process.versions.bun) {
+  await assert.rejects(() => nodeProcessDriver().open(), error => error.code === 'JD0003');
+} else {
+  const supervised = await runSupervisedStoreExample('consumer-supervised.db');
+  assert.equal(supervised.replay.writes, 0);
+  assert.equal(supervised.owners, 0);
+}
 console.log(JSON.stringify({ ok: true, version: artifacts.version, runtime: process.versions.bun ? 'bun' : 'node', exportsChecked }));

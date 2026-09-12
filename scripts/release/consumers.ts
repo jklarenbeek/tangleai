@@ -56,6 +56,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     const migration = existsSync(migrationPath) ? readJson<{ declarations: Array<{ symbols: Array<{ name: string; destination: { entry: string } }> }>; rootSymbols: Array<{ name: string; destination: { entry: string } }> }>(migrationPath) : null;
     if (migration) writeJson(resolve(directory, 'migration.json'), migration);
     cpSync(resolve(root, 'examples/outcomes.ts'), resolve(directory, 'outcomes-example.ts'));
+    writeFileSync(resolve(directory, 'supervised-store.ts'), readFileSync(resolve(root, 'examples/supervised-store.ts'), 'utf8')
+      .replace("from './outcomes.ts'", "from './outcomes-example.ts'"));
     cpSync(resolve(root, 'test/release/fixtures/consumer.mjs'), resolve(directory, 'consumer.mjs'));
     for (const command of [process.execPath, 'bun']) execFileSync(command, ['consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
     cpSync(resolve(root, 'test/assert-result.ts'), resolve(directory, 'assert-result.ts'));
@@ -82,6 +84,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       }
       cpSync(resolve(root, 'test/release/fixtures/outcomes-types.ts'), resolve(directory, 'outcomes-types.ts'));
       imports.push("import './outcomes-types.js';");
+      imports.push("import './supervised-store.ts';");
       cpSync(resolve(root, 'test/release/fixtures/assistant-types.ts'), resolve(directory, 'assistant-types.ts'));
       cpSync(resolve(root, 'test/linq/program-types.ts'), resolve(directory, 'program-types.ts'));
       cpSync(resolve(root, 'test/jaren/editor-types.ts'), resolve(directory, 'editor-types.ts'));

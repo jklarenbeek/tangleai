@@ -354,17 +354,18 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.84.3** packages from npm. The source
-submodule at `vendor/jarenjs` pins `ac8749711f5d058251f72842ce7e0095b389403f`.
-The [registry receipt](docs/migrations/jaren-ai/registry-0.84.3.json) binds their
-published archives to the exact source-built
-[foundation inventory](docs/migrations/jaren-ai/foundations-0.84.3.json).
-`npm ci --ignore-scripts` installs the exact registry lock without bootstrap;
+Tangle consumes 23 AI-free Jaren **0.86.0** packages from npm. The source
+submodule at `vendor/jarenjs` pins `ce489546f21a176a2574169b65b95f9dc15461f7`.
+The [registry receipt](docs/integration/jaren-0.86.0-registry.json) verifies all
+23 downloaded archives against the exact lockfile integrities.
+`npm ci --ignore-scripts` installs from npm without a foundation bootstrap;
 `npm run jaren:check` verifies source, manifests, installed versions and archive
-URLs. Qualification checked every installed member against the source-built
-hashes. Installed packages are never patched or source-linked. See the
-[migration handoff](docs/JAREN_AI_MIGRATION.md) for ownership, qualification and
-checkpoint compatibility. Tangle publication remains manually author-owned.
+URLs. Installed packages are never patched or source-linked. The existing
+storage seam accepts supervised Node processes; `npm run store:supervised:smoke`
+runs both outcome domains and proves zero-effect replay after reopening.
+See the [migration handoff](docs/JAREN_AI_MIGRATION.md) for ownership and
+historical source/archive qualification. Tangle publication remains manually
+author-owned.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.

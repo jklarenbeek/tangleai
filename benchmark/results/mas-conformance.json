@@ -4,7 +4,7 @@
     "entry": "benchmark/mas-conformance.ts"
   },
   "source": {
-    "head": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+    "head": "b69251afb1856f0f7ee6652be1a998cd28c10d26",
     "clean": false,
     "files": [
       {
@@ -93,7 +93,7 @@
       },
       {
         "path": "benchmark/lib/mas-conformance.ts",
-        "sha256": "21e3215455961003c6ce95c2f7e2adf0b4aec2c29df29c2e164a7d398d2d09f8"
+        "sha256": "3cb90313457d34c21ab16bc242a381369669344de5f015342073bea113dbf76b"
       },
       {
         "path": "benchmark/lib/mas-conformance.types.ts",
@@ -102,6 +102,10 @@
       {
         "path": "benchmark/lib/mas-runner.ts",
         "sha256": "3095fb821848f5a0cc901d3e4837f045c11f2af7b68d5c71947777efd0c2f733"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "01aef957a66264b6c4a6e6f3ad3d8f2301bfd3c996175df81389890eb2ba9afb"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -124,113 +128,113 @@
         "sha256": "3b05fd2e51a975a9b4bc25ab13813f6e887bf1fcbc1b48c37f6529b4c235f409"
       }
     ],
-    "sha256": "257160eeaa5df35d6cdf846d098e53aa40ffd4431ac9bc0e2a26061fce3529fa"
+    "sha256": "b80c78682efc8714ba18fa1cd3ec32658a88dcc48cce562977ec5fe486930363"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.84.3"
+        "version": "0.86.0"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.21.1"
+        "version": "0.24.1"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.21.1"
+        "version": "0.24.1"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.21.1"
+        "version": "0.24.1"
       }
     ]
   },
@@ -936,7 +940,7 @@
       "reason": null,
       "workflowVersionId": "6c963ac5efeeeaaf62c0a123233b753c9e92af7adf278a165322b6cfd759860a",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "aee8061a0467d402169a4dfc8114d1b34c0712d77f8876561cd9d84fd9ffc4d4",
+      "executableRevision": "28c8747a5a51ea6b10185453e4f6d0e99299781ac87a0b32b34a7d94d91df503",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -952,7 +956,7 @@
       "reason": null,
       "workflowVersionId": "2b83d4eeebca28c90fd85667a951a1ce5d14ca0e6810d37279d863453a52e856",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "ab8ed5b043615bd73ba906b311d0edf4484dba0a4df3ca5297a2adb9953f95e7",
+      "executableRevision": "63984dd4c6712d4c79f11f875dd5e431b0559adf36762341e1ea442f8ec1bdfa",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -968,7 +972,7 @@
       "reason": null,
       "workflowVersionId": "c8a9efd06e90e794899424b94f6c68cc4bdc058523507958df4ec0d6e0deb27e",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "af0eb2c1d4f6ace74b4eae5064a90f337617ebd81d3ba361d39abab21233c195",
+      "executableRevision": "f0886244b49822f1c296a3486e7928f0beac254d494c0dac0d873a291b08cfeb",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -984,7 +988,7 @@
       "reason": null,
       "workflowVersionId": "38e3553996de9c2ae7c5038b61a766f7d9b06ab92bca802ce0f2045e21b4b4ff",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "b74be00b574e8ce74244ffb277d33020a7e18df989b98f39ebb7a77424d72a3c",
+      "executableRevision": "49efd060f91726b74d39892c3eec0e2d7b9cc1b509e91a3e0435606a8a550b95",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -1000,7 +1004,7 @@
       "reason": null,
       "workflowVersionId": "302680e43d029a6360bfe000ab1bc315bc1ee3639db7fa3da21d8f41102cf971",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "f8d3bd43d493e2f9c76a2f00cdae33bc66f7b9d58e6d0ba93c399af352811981",
+      "executableRevision": "67d68f887c92b08e06ae7ac0838e192eaf3dcf228c5ff35f5fa109c1fb756632",
       "attempts": 3,
       "calls": 0,
       "toolCalls": 0,
@@ -1016,7 +1020,7 @@
       "reason": null,
       "workflowVersionId": "5815c9b9943c576afaba21f5b984dde2668c3cbe6f26f64d92198908f9779a85",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "eea2000634476b6a9fd032fcba055be75ed8ab4152b8a1989c57a0a5c39d2828",
+      "executableRevision": "34fd32e5153e3fbc620a44cfaaf0622a21d329bebef5670ba213bd6f57ea8581",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -1032,7 +1036,7 @@
       "reason": null,
       "workflowVersionId": "3db23ac13f12dc3e83f4f2ee39b11ffe3cfa2422d3b494adf767351d5709a71d",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "96b9afd1a72f81f4e2302c1794c5cd39091ce149359dc9ad24d8779c3f1d1848",
+      "executableRevision": "ec2be753306f1926ebdd664bddb490c707c36ded097c2495f4a1bbf94ac6ec9b",
       "attempts": 3,
       "calls": 0,
       "toolCalls": 0,
@@ -1048,7 +1052,7 @@
       "reason": null,
       "workflowVersionId": "c4eb677f27e06f17fcd64a2330800a3abb2061bcf50c96387f136cfcebe1458a",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "87240ed14d56cc8ded196e25a79eedc8ecff49986bd8073cee9be5fbcb530fa9",
+      "executableRevision": "36650bd36e8509623408a4facc6dce7e65fffe9c1e63fa39e4cafbf9e033663c",
       "attempts": 4,
       "calls": 0,
       "toolCalls": 0,
@@ -1064,7 +1068,7 @@
       "reason": null,
       "workflowVersionId": "5ffb2979ab85fa2cee8e42c7c84bf8668d62bfaf68977d53dbd2fd7621a9db23",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "331f0021d358470198470d2c206c40030e2e059a8c2508bf07f3120b24befa40",
+      "executableRevision": "814d0b9849ae07321f20b5e93b4274929f33ac1c654adcc15cd533014229b900",
       "attempts": 3,
       "calls": 1,
       "toolCalls": 0,
@@ -1080,7 +1084,7 @@
       "reason": null,
       "workflowVersionId": "e0cb4b4a150c535d742696cd06b4f742cc53fe0daea786f09f9b4d4634460341",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "89c19698bc21435d62ab6d9677e974f6e02160257d12c68e577321b1788c6a88",
+      "executableRevision": "7de1bec57c453b7fe91a5f746a70c1d968614c1bc211dc051f37710d9e79637d",
       "attempts": 2,
       "calls": 0,
       "toolCalls": 0,
@@ -1096,7 +1100,7 @@
       "reason": null,
       "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
-      "executableRevision": "e95f59b443b669406b2fb0363fe485e9f7282dc6fc3295539cf959857a4ae297",
+      "executableRevision": "3b866643e87769a30d9c855036119e8a425b91b9ab6aee56184dd5dbc62ab695",
       "attempts": 4,
       "calls": 11,
       "toolCalls": 3,
@@ -1271,7 +1275,7 @@
     "state": "not-run",
     "reason": "no authorized live plan"
   },
-  "reportId": "9b9ea63798465649caac0596645961e2b7269ae88f24d35f75f0735f11b400d2",
+  "reportId": "2dcf62ceb1a7fadcd48b2322496ece5912cfe5f4161c1c1df8b7260b31791da6",
   "decision": {
     "outcome": "runtime-conformant",
     "failedClauses": [],

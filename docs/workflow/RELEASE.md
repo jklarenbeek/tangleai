@@ -8,9 +8,10 @@ zero until an intentional, reviewed policy change enables a stable public API.
 
 ## Prepare before pushing
 
-The current checkout consumes verified Jaren 0.84.3 registry packages. The
-archived `docs/migrations/jaren-ai/foundations-0.84.3.json` and registry receipt
-record the source/archive comparison. Ordinary `npm ci --ignore-scripts` needs
+The current checkout consumes Jaren 0.86.0 registry packages. The
+[registry receipt](../integration/jaren-0.86.0-registry.json) verifies downloaded
+archives against the exact lock. Archived 0.84.3 migration receipts retain their
+historical source/archive comparison. Ordinary `npm ci --ignore-scripts` needs
 no foundation bootstrap. The candidate instructions below apply only to a
 checkout with an active `docs/migrations/jaren-ai/foundations.json`.
 

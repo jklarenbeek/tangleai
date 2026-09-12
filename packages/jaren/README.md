@@ -13,6 +13,9 @@ Models, context and agent policy remain in their respective Tangle packages.
   shared editor and inspects the actual contract result and plan. Publication
   only updates buffers. `run({ operation: 'query' })` executes explicitly;
   `run({ operation: 'open' })` explicitly asks the owning host to open the model.
+  The shared model pen and authoring schema accept physical column types,
+  database defaults, identity, collation, constraints and STRICT declarations.
+  Accepting those declarations never implicitly applies a table migration.
 - `/stylesheet`, `/spatial`, `/geo-tools`: compiler-gated stylesheet authoring,
   spatial agents and tools backed by Jaren's shipped spatial operations.
 

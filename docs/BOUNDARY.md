@@ -33,6 +33,7 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies |
 | LLM judgment | `@tangleai/models` `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
 | self-refinement | `@jarenjs/core/guarded` generic guarded refinement and `@jarenjs/json/patch`; `@tangleai/agents` `createRefiner` specializes RFC-6902 mutation for the context ledger | `@tangleai/outcomes` uses the generic engine for bounded domain artifacts; skill-loop policy remains open |
+| SQLite execution and physical schemas | `@jarenjs/db` driver ownership, process supervision, settlement, backups, relational expressions and guarded table migrations | `openTangleDb` consumes injected drivers; Tangle owns durable outcome/MAS receipts, schema migration decisions and retry policy. No local SQL or process engine |
 | evidenced outcomes | Jaren validation, canonical hashing, schema emission, contract local/HTTP bindings and database transactions; Tangle model/configuration/budget seams | `@tangleai/outcomes` owns immutable lifecycle records, domain gates, host authority, replay and version/revision CAS; `@tangleai/store` owns atomic persistence and memory projection. Artifact versions are not memory units |
 | orchestration | `@jarenjs/flow` FSM/DAG compile + checkpoints + snapshot/resume; `@jarenjs/linq/flow` by-code pen (`defineDag`/`defineFsm`); `@jarenjs/db` durable jobs with per-job flow checkpoint rows and atomic complete-and-prune; `@tangleai/models`, `@tangleai/context` and `@tangleai/agents` for model, context and tool-loop mechanisms | `@tangleai/mas`: the canonical MAS workflow IR, `TMAS` refusal vocabulary, nine semantic gates, region partition/lowering policy, transactional node lifecycle, namespaced segment checkpoints and the resume outbox reconciler; GMPL patterns as flow documents stay future work |
 | scheduling | `@jarenjs/core/schedule` bounded, fair, per-scope admission and drain | Document HTTP admission uses the suite scheduler; consolidation cadence remains a Tangle policy (roadmap: consolidation tiers) |
@@ -41,8 +42,9 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 
 ## What the suite already has — read before building
 
-Current ownership and Jaren 0.84.3 baseline: [migration handoff](JAREN_AI_MIGRATION.md).
-The [0.83.3 integration audit](JARENJS_INTEGRATION.md) retains its historical measurements.
+Current Jaren 0.86.0 adoption: [integration audit](JARENJS_INTEGRATION.md).
+Current ownership: [migration handoff](JAREN_AI_MIGRATION.md).
+The [0.83.3 integration audit](jaren-integration-0.83.3.md) retains its historical measurements.
 The following historical baseline retains its original `@jarenjs/ai` names
 and records the 0.56.0 adoption; the current audit supersedes
 its availability claims and documents the newer runtime seams.

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "version": "0.24.1",
+  "baseVersion": "0.24.0",
+  "baseCommit": "b69251afb1856f0f7ee6652be1a998cd28c10d26",
+  "preparationCommit": "b69251afb1856f0f7ee6652be1a998cd28c10d26",
+  "initial": false,
+  "inputHash": "1db5a4146c8815083ebae057bc33a26585bfce6bd221c474c94180bd696e9726",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        }
+      ],
+      "summary": "Update the Jaren foundation to 0.86.0 with exact registry and source pins. Qualify supervised Node SQLite execution, outcome replay after native backups, and physical-model authoring through the shared Data editor. Document the available relational, migration, cursor and collection-drag mechanisms and their host boundaries.",
+      "id": "jaren-foundation-upgrade"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.24.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.24.1"
+    }
+  ]
+}

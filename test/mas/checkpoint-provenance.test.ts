@@ -62,16 +62,23 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
       },
     });
   };
-  assert.equal((await run(`tangle-mas/2:flow/${flow.version}:ai/0.83.3:registry-1`)).ok, true);
-  const before = structuredClone({ values, writes, ledger, calls });
-  for (let retry = 0; retry < 2; retry++) {
-    const refused = await run(current); assert.equal(refused.ok, false);
-    if (!refused.ok) assert.equal(refused.failure.error.code, 'TMAS2002');
-    assert.deepEqual({ values, writes, ledger, calls }, before);
+  for (const previous of [
+    `tangle-mas/2:flow/${flow.version}:ai/0.83.3:registry-1`,
+    current.replace(`flow/${flow.version}:`, 'flow/0.84.3:'),
+  ]) {
+    for (const name of Object.keys(values)) delete values[name];
+    assert.notEqual(previous, current);
+    assert.equal((await run(previous)).ok, true);
+    const before = structuredClone({ values, writes, ledger, calls });
+    for (let retry = 0; retry < 2; retry++) {
+      const refused = await run(current); assert.equal(refused.ok, false);
+      if (!refused.ok) assert.equal(refused.failure.error.code, 'TMAS2002');
+      assert.deepEqual({ values, writes, ledger, calls }, before);
+    }
   }
   // A fresh checkpoint in the new identity resumes the exact same operation.
   for (const name of Object.keys(values)) delete values[name];
   assert.equal((await run(current)).ok, true);
   assert.equal((await run(current)).ok, true);
-  assert.equal(calls, 2); assert.equal(ledger.length, 2);
+  assert.equal(calls, 3); assert.equal(ledger.length, 3);
 });
