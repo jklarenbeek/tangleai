@@ -2,6 +2,8 @@
 
 ## 0.21.1
 
+Make npm publication an explicit local author command with final-commit verification, actionable dirty-tree errors, and no automatic CI publication.
+
 Update the exact Jaren foundation dependencies and source pin to the published
 0.84.3 release after verifying its AI-free archives against source-built bytes.
 Retain Tangle's model, context and agent ownership and align the development

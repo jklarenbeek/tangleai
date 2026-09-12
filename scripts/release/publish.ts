@@ -37,8 +37,10 @@ export async function publishSequence(artifacts: Artifacts, io: {
   io.save(receipt);
   return receipt;
 }
-export async function publish(root = ROOT, options: { execute?: boolean; bootstrap?: boolean } = {}) {
+export async function publish(root = ROOT, options: { execute?: boolean } = {}) {
   assert.equal(readFoundationArtifacts(root), null, 'Candidate foundations require a qualified registry cutover before Tangle publication');
+  assertClean(root);
+  if (options.execute) assert.notEqual(process.env.GITHUB_ACTIONS, 'true', 'npm publication is a manual local author action; CI only verifies and deploys Pages');
   const record = checkRelease(root)!;
   assertVerifiedGate(root);
   const artifacts = readArtifacts(root);
@@ -49,21 +51,9 @@ export async function publish(root = ROOT, options: { execute?: boolean; bootstr
   assert.equal(verified.declarations, true);
   assert.equal(verified.browser, true);
   if (options.execute) {
-    assertClean(root);
     const head = git(root, 'rev-parse', 'HEAD');
     assert.equal(artifacts.commit, head, 'Build and verify release artifacts at the final committed revision');
     assertReleaseTag(root, record.version, head);
-    if (options.bootstrap) {
-      assert.equal(record.initial, true);
-      assert.equal(record.version, cfg.initialVersion, 'Local bootstrap is only permitted for the initial version');
-      assert.notEqual(process.env.GITHUB_ACTIONS, 'true', 'Bootstrap uses the authenticated local maintainer');
-    } else {
-      assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Normal publication runs in GitHub Actions with OIDC');
-      assert.equal(process.env.GITHUB_REPOSITORY, cfg.repository);
-      assert.equal(process.env.GITHUB_SHA, head);
-      assert.ok(['refs/heads/main', `refs/tags/v${record.version}`].includes(process.env.GITHUB_REF ?? ''), 'Publication requires main or the exact release tag');
-      assert.ok(process.env.ACTIONS_ID_TOKEN_REQUEST_URL, 'The publication job requires id-token: write');
-    }
   }
   for (const pkg of artifacts.packages) {
     const latest = await registryVersion(cfg.registry, pkg.name, 'latest');
@@ -91,7 +81,6 @@ export async function publish(root = ROOT, options: { execute?: boolean; bootstr
   });
 }
 if (isMain(import.meta.url)) {
-  assert.ok(process.argv.slice(2).every(arg => ['--execute', '--bootstrap'].includes(arg)), 'Unknown publication option');
-  assert.ok(!process.argv.includes('--bootstrap') || process.argv.includes('--execute'), '--bootstrap requires --execute');
-  await publish(ROOT, { execute: process.argv.includes('--execute'), bootstrap: process.argv.includes('--bootstrap') });
+  assert.ok(process.argv.slice(2).every(arg => arg === '--execute'), 'Use release:publish [--execute], or npm run publish for the complete manual workflow');
+  await publish(ROOT, { execute: process.argv.includes('--execute') });
 }

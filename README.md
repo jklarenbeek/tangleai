@@ -334,13 +334,21 @@ npm run release:closeout -- --message "Fix the affected behavior" --push
 ```
 
 Closeout commits directly on `main` and pushes when authorized. It creates no
-pull request. The local pre-push hook requires the version bump and complete
-verification receipt; GitHub Actions repeats the release gate, tags the checked commit,
-publishes verified tarballs with npm trusted publishing and tests fresh registry
-installations. After CI, the website independently builds local Tangle source with
-the recorded Jaren dependency mode, deploys and verifies the accepted commit. A failed publication
-cannot finish the package release, but does not block the website. See the [release protocol](docs/workflow/RELEASE.md)
-for first-time npm setup, recovery and the full closeout sequence.
+pull request. The author publishes manually from the clean committed checkout:
+
+```sh
+npm run publish -- --dry-run
+npm run publish
+```
+
+The command verifies the final committed artifacts, creates the local annotated
+tag, publishes the 13 tested JavaScript/declaration archives using local npm
+authentication, and checks fresh registry installations. It does not push.
+Separate edits, including `.env.example`, must be committed through closeout or
+stashed and restored around publication. GitHub Actions verifies the release
+and independently deploys Pages; it does not publish npm packages. See the
+[release protocol](docs/workflow/RELEASE.md) for setup, recovery and the complete
+closeout sequence.
 
 Changesets and its configuration/package-discovery APIs are development-only
 release tooling. They are exempt from the JarenJS runtime dependency policy and

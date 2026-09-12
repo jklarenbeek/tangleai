@@ -49,12 +49,12 @@ preserved and require explicit integration.
    pushing is authorized; closeout fetches main, requires a fast-forward and
    checks version advancement before committing. It creates no pull request.
 6. Push directly to `main`. The pre-push hook requires the prepared version and
-   a complete gate receipt for the exact source and tarballs. Release CI then
-   independently rejects stale versions, dependency/lock drift, modified inputs
-   and failed consumers before tagging, publishing or deploying. The main
+   a complete gate receipt for the exact source and tarballs. CI then independently
+   rejects stale versions, dependency/lock drift, modified inputs and failed
+   consumers before Pages deployment. The main
    ruleset prevents deletion and force pushes; it deliberately has no PR or
    pre-push GitHub status requirement. Local hooks can be bypassed, so CI remains
-   the publication and deployment backstop rather than a main-branch admission gate.
+   the deployment backstop rather than a main-branch admission gate.
 
 For example, a patch after `0.20.0` produces `0.20.1`; a minor produces `0.21.0`.
 A change to one library still advances every public package. Neither root
@@ -92,103 +92,94 @@ verification receipt is refused. Generated files remain uncommitted; the tracked
 release record binds versions and release intent to a fingerprint of the source,
 configuration, documentation, lockfile and submodule identities.
 
-## Publish and deploy
+## Publish manually
 
-Candidate foundation mode is a local installation qualification. Publication
-preflight refuses it: first publish and verify the AI-free Jaren closure, then
-switch Tangle's exact dependencies, source pin and lock to that registry release
-and repeat the clean-consumer gate. Pages can still build the recorded candidate
-artifacts independently. Neither qualification nor a Git tag establishes npm
-availability.
+Publishing npm packages is a manual author action. From the clean committed
+release checkout, using the pinned Node/npm and Bun toolchains, run:
 
-Pushing to `main` runs `.github/workflows/release.yml`. It waits for the complete
-CI gate, retrieves its exact verified Linux tarballs, and creates an annotated
-`v<version>` tag on that commit. npm publication follows the dependency order in
-`release.config.json`. Publication runs serially and is not cancelled by a newer
-push.
+```sh
+npm run publish -- --dry-run  # verify and inspect; no tag or upload
+npm run publish              # verify, tag locally, upload and verify installation
+```
 
-Normal publication uses a GitHub-hosted runner with npm trusted publishing. Each
-public package must trust `jklarenbeek/tangleai`, workflow `release.yml`, environment
-`npm`, with direct publishing enabled. The job has `id-token: write`. Public
-repository/package releases through this path receive npm provenance. The package
-repository metadata and trusted publisher identity must agree.
+The author authenticates to npm locally (for example with `npm login`) and must
+have publish access to the `@tangleai` scope. npm may request account confirmation
+or 2FA. The command uses the existing authenticated npm configuration; it does
+not require GitHub Actions, OIDC or a special first-version bootstrap. Do not run
+`npm publish --workspaces`: source workspaces are not the tested distributions.
 
-`npm run release:publish` is a read-only preflight by default. In the release job,
-`npm run release:publish -- --execute` requires a clean committed tree, the exact
-annotated tag, GitHub identity and consumer verification. It publishes the tested
-`.tgz` files with lifecycle scripts disabled and explicit public registry/access.
-It never publishes private workspaces. A complete gate receipt binds the source
-checks, packed consumers and artifact identities; closeout reuses it only while
-those inputs and artifacts are unchanged.
+The command checks the release record and clean tree first. It reuses a complete
+gate only when both the source fingerprint and artifact commit match the current
+HEAD; otherwise it runs `release:verify` to build and test the final committed
+revision. Closeout verifies before committing, so the first publication check
+normally rebuilds to bind its artifacts to that new commit. No version bump is
+needed for this rebuild.
 
-An accepted npm upload can remain unavailable while npm scans it. The publisher
+It preflights all 13 public packages, creates or verifies the exact annotated
+local tag, publishes the tested archives in dependency order, then runs the
+registry installation and consumer gate. It never publishes private workspaces
+or pushes Git refs. A dry run may rebuild ignored artifacts but creates no tag
+and uploads nothing. Published versions with matching bytes are skipped; an
+existing version with different bytes or a newer `latest` is refused.
+
+`npm run release:publish` remains the lower-level read-only preflight; it expects
+already verified artifacts. `npm run release:publish -- --execute` only uploads
+already verified, tagged artifacts from a clean local checkout. Prefer the
+complete `npm run publish` workflow, including its registry verification.
+
+### Changed release inputs
+
+The fingerprint includes tracked examples and documentation, including
+`.env.example`. A restored edit changes the working-tree fingerprint even when
+the committed release is valid. Check `git status --short` before publishing.
+If those edits belong to the release, review them and follow the existing
+prepare/refresh and closeout protocol. If they are separate work, stash just
+those paths or publish from a clean checkout of the release commit; restore the
+edits afterward. Do not refresh a release merely to bypass unrelated changes.
+
+For a checkout whose only separate edit is `.env.example`:
+
+```sh
+git stash push -m "Keep env example edits outside publication" -- .env.example
+npm run publish
+# After the command finishes (including failure), restore that saved entry:
+git stash pop
+```
+
+Select the saved entry explicitly if other stashes were created in between.
+Ignored `.env` credentials are not release inputs and are not copied into npm
+archives. No workflow should stash, commit or discard the author's edits silently.
+
+Candidate foundation mode still refuses publication. Publish and verify the
+AI-free Jaren closure first, then switch Tangle's exact dependencies, source pin
+and lock to that registry release and repeat the consumer gate. A Git tag or
+local tarball does not establish npm availability.
+
+An accepted upload can remain unavailable while npm scans it. The publisher
 uploads the suite in dependency order, recording accepted uploads, then
-`release:verify-registry` polls both full and install package indexes together for
-up to 20 minutes. It checks versions, tarball integrity and `latest` in both formats
-before attempting an install. Missing versions or stale indexes remain pending;
-different bytes fail immediately. The publication job allows 40 minutes for
-uploads, scan availability and consumer verification. A longer npm hold fails
-with the unavailable package names and can be retried at the same commit.
+`release:verify-registry` polls both full and install indexes for up to 20 minutes.
+It checks versions, tarball integrity and `latest` in both formats before an
+external consumer install. Matching upload receipts alone do not establish an
+installable release. A longer npm hold fails with the unavailable package names;
+retry at the same commit without changing the artifacts.
 
-This accommodates npm's [publish-time scanning](https://github.blog/changelog/2026-07-28-npm-publish-time-malware-scanning-and-dual-use-metadata/),
-which commonly delays installation for several minutes. Accepted upload receipts
-alone do not establish an installable release.
+## Push and deploy
 
-`release:verify-registry` then checks each package's version, exports, integrity and
-`latest` tag, then installs the published versions in another fresh project and
-runs the consumer gate. Pages runs independently after the source CI gate: it
-builds Tangle's local workspace source and uses its recorded installed JarenJS
-closure (candidate tarballs until a separately qualified registry cutover). The
-build refuses published Tangle dependencies or JarenJS source links. Website
-deployment requires no Tangle npm publication or npm publishing authentication.
-The live `build.json` must identify the expected version, commit, complete package
-set and dependency sources (`tangle: workspace`, plus `jarenjs: npm` or
-`candidate-artifacts` with its committed base and candidate patch hash). The GitHub release is
-finalized only after publication and deployment verification succeed. The Linux
-x64 desktop binary is compiled and smoke-tested from a foreign directory before
-publication, then attached to the release beside its npm tarballs.
+Pushing `main` runs `.github/workflows/release.yml`: CI verifies the prepared
+release, packed consumers and instruments, then Pages independently builds,
+deploys and verifies the accepted commit. CI does not publish npm packages,
+create release tags or complete a GitHub package release. Publication remains
+the author's separate local command. Push the annotated version tag separately
+when desired; the publication command does not push it.
 
-The website labels historical benchmarks with the version that actually produced
-them. A version bump never rewrites old measurements to imply a fresh run.
+Pages builds local Tangle source with its recorded Jaren foundation mode. It
+refuses published Tangle dependencies or Jaren source links. Its `build.json`
+must identify the expected version, commit, complete package set and dependency
+sources. Website deployment requires no npm publication or publishing credentials,
+and a deployed website is not proof of package publication.
 
-## First-publication setup
-
-Verify ownership of the `tangleai` npm scope and authenticated maintainer access.
-New package names must exist before their npm trusted publishers can be configured.
-The initial release therefore supports one explicit local bootstrap:
-
-```sh
-# At the accepted, committed release revision:
-node scripts/release/tag.ts
-npm run release:verify
-npm run release:publish -- --bootstrap --execute
-npm run release:verify-registry
-```
-
-The bootstrap is restricted to the initial `0.20.0` release, uses the maintainer's
-npm authentication, and does not claim GitHub OIDC provenance. It has the same
-artifact and consumer checks. npm may require account authentication or 2FA.
-
-Configure the trusted publisher for each public package in `release.config.json`.
-For npm's documented trust-management CLI, use npm 11.15 or newer; the following
-command uses an isolated CLI without changing JarenJS's or Tangle's build pin:
-
-```sh
-npm exec --yes --package=npm@11.19.1 -- npm trust github @tangleai/core \
-  --repository jklarenbeek/tangleai --file release.yml --environment npm \
-  --allow-publish --yes
-```
-
-Repeat for every public package in `release.config.json`, including the new
-models, context, agents, jaren and assistant names. Verify the
-saved relationships with `npm trust list`. Trust management requires npm account
-2FA and does not accept bypass-2FA granular tokens. A package bootstrap token alone
-is not proof that trusted publishing has been configured. Retry the initial
-GitHub release workflow after setup; already published matching tarballs are
-recognized instead of republished.
-
-References: [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/)
-and [npm trust](https://docs.npmjs.com/cli/v11/commands/npm-trust/).
+The website labels historical benchmarks with the version that produced them.
+A version bump never rewrites old measurements to imply a fresh run.
 
 ## Recover without inventing a new release
 
@@ -199,19 +190,16 @@ successful preparation is a no-op when rerun.
 
 npm publication is not atomic across packages. Preflight checks the whole set
 before the first publish, and a receipt records each accepted package. If a later
-publish fails, rerun the same workflow at the same commit. Matching existing
+publish fails, rerun `npm run publish` at the same commit. Matching existing
 versions are verified and skipped; missing ones are published in dependency order.
 A version already present with different bytes is refused. Published defects need
 a new patch version; never retag or overwrite a released artifact. Moving `latest`
 backwards is refused.
 
-Artifacts and partial receipts are retained by Actions even when publication
-fails. Each publication attempt retains a separately named artifact; release
-completion downloads the successful job's exact artifact ID, so an older failed
-attempt cannot replace its registry verification receipt. An incomplete
-publication cannot finish the GitHub package release, but
-does not block Pages. A failed Pages deployment can be retried using the same
-checked source identity. Normal workflow retries do not advance package versions.
+Local artifacts and partial publication receipts remain in `dist/release/` after
+failure. CI separately retains its verified distribution artifacts. An incomplete
+npm publication does not block Pages. A failed Pages deployment can be retried
+with the same checked source identity. Retries do not advance package versions.
 
 This policy currently accepts numeric development releases on `latest`. A separate
 prerelease channel or a future major release requires an explicit policy change;

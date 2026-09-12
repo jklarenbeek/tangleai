@@ -136,13 +136,13 @@ change, record its Changesets impact and update stale documentation first.
 4. Add `--push` when pushing is authorized. The pre-push hook checks the actual
    refs, version advancement and the complete gate receipt. Push directly to
    `main`; CI independently repeats the checks before publication or deployment.
-5. After the main push, the release workflow publishes and verifies npm packages and
-   independently deploys Pages after CI. The website builds local Tangle source
-   with JarenJS installed from npm; Tangle publication cannot block deployment.
-   Before registry cutover, the recorded candidate foundation mode instead
-   bootstraps and verifies Jaren tarballs before installation; see RELEASE.md.
-   Package release completion requires all checks. Never report a site deployment
-   as proof of npm publication.
+5. The author runs `npm run publish` from the clean committed release checkout.
+   It verifies final-commit archives, tags locally, publishes using local npm
+   authentication, and verifies registry installs. `-- --dry-run` verifies without
+   tagging or uploading. Publishing and pushing are separate actions. After a
+   main push, CI verifies the release and independently deploys Pages; it does
+   not publish npm packages. Never report a site deployment as proof of npm
+   publication. See RELEASE.md for unrelated edits and retry handling.
 
 Abort at the first failure. A failed preparation restores its version, lockfile,
 changeset and changelog writes. An interrupted npm publication resumes against

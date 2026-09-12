@@ -161,7 +161,8 @@ export function npm(args: string[], options: { root?: string; cwd?: string; capt
   }) ?? '';
 }
 export function assertClean(root = ROOT) {
-  assert.equal(git(root, 'status', '--porcelain'), '', 'Commit the complete reviewed release tree first');
+  const status = git(root, 'status', '--porcelain');
+  assert.equal(status, '', `Release commands require a clean committed tree. Review and close out intended release changes, or stash unrelated edits before publishing; restore them afterward. Changed paths:\n${status}`);
 }
 export function assertReleaseTag(root: string, version: string, commit: string) {
   assert.equal(git(root, 'rev-parse', `refs/tags/v${version}^{commit}`), commit, 'Release tag must identify the tested commit');

@@ -67,6 +67,7 @@
     "release:test": "node scripts/release/consumers.ts",
     "release:verify": "node scripts/release/verify.ts",
     "release:publish": "node scripts/release/publish.ts",
+    "publish": "node scripts/release/manual-publish.ts",
     "release:verify-registry": "node scripts/release/registry.ts",
     "release:closeout": "node scripts/release/closeout.ts",
     "release:install-hook": "node scripts/release/install-hook.ts",

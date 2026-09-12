@@ -54,6 +54,11 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup
       - run: npm run release:verify
+      - name: Verify the standalone desktop on Linux
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          npm run desktop:compile
+          node scripts/release/binary.ts
       - name: Retain the exact Linux artifacts for publication
         if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

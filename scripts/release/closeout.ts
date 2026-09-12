@@ -34,4 +34,4 @@ execFileSync('git', ['-c', 'user.name=Joham', '-c', 'user.email=jklarenbeek@gmai
 assertClean();
 checkRelease();
 if (args.includes('--push')) execFileSync('git', ['push', 'origin', 'main'], { cwd: ROOT, stdio: 'inherit' });
-console.log(`Closed out ${record.version} on main. After a push, release CI gates tagging and npm publication; Pages deploys independently after those same checks.`);
+console.log(`Closed out ${record.version} on main. The author runs npm run publish separately; a push runs CI and deploys Pages after its checks.`);

@@ -9,7 +9,8 @@ import { prepare, synchronizeVersions } from '../../scripts/release/prepare.ts';
 import { checkRelease } from '../../scripts/release/check.ts';
 import { distributionManifest } from '../../scripts/release/build.ts';
 import { publicationDecision, waitForInstallable, type RegistryVersion } from '../../scripts/release/registry.ts';
-import { publishSequence, type PublishReceipt } from '../../scripts/release/publish.ts';
+import { publish, publishSequence, type PublishReceipt } from '../../scripts/release/publish.ts';
+import { manualPublish } from '../../scripts/release/manual-publish.ts';
 import { verifyBuildIdentity } from '../../scripts/release/verify-site.ts';
 import type { Artifacts, Artifact } from '../../scripts/release/build.ts';
 import { verifyPageSources } from '../../apps/pages/source.ts';
@@ -227,6 +228,59 @@ function artifacts(): Artifacts {
   })) };
 }
 const metadata = (pkg: Artifact): RegistryVersion => ({ name: pkg.name, version: pkg.version, exports: pkg.exports, dist: { integrity: pkg.integrity } });
+function manualFixture(t: TestContext) {
+  const { root, record } = prepared(t);
+  const actions = process.env.GITHUB_ACTIONS;
+  delete process.env.GITHUB_ACTIONS;
+  t.after(() => { if (actions === undefined) delete process.env.GITHUB_ACTIONS; else process.env.GITHUB_ACTIONS = actions; });
+  writeFileSync(resolve(root, '.nvmrc'), process.versions.node + '\n');
+  writeFileSync(resolve(root, '.env.example'), 'EXAMPLE=committed\n');
+  record.inputHash = inputHash(root);
+  writeJson(resolve(root, 'releases/0.20.0.json'), record);
+  const head = commit(root);
+  const built = { ...artifacts(), commit: head, inputHash: record.inputHash };
+  const calls: string[] = [];
+  const io = {
+    assertGate: () => {}, artifacts: () => built,
+    verify: async () => { calls.push('verify'); built.commit = head; },
+    publish: async (_root: string, options?: { execute?: boolean }) => { calls.push(options?.execute ? 'upload' : 'preflight'); },
+    tag: () => { calls.push('tag'); }, registry: async () => { calls.push('registry'); },
+  };
+  return { root, head, built, calls, io };
+}
+it('reports restored example edits before hashing, verifying or publishing and preserves their bytes', async t => {
+  const { root, calls, io } = manualFixture(t);
+  writeFileSync(resolve(root, '.env.example'), 'EXAMPLE=preserve-me\n');
+  await assert.rejects(manualPublish(root, {}, io), /clean committed tree[\s\S]*\.env\.example/);
+  await assert.rejects(publish(root), /clean committed tree[\s\S]*\.env\.example/);
+  assert.deepEqual(calls, []);
+  assert.equal(readFileSync(resolve(root, '.env.example'), 'utf8'), 'EXAMPLE=preserve-me\n');
+});
+it('rebuilds pre-commit artifacts at the final commit and a dry run never tags or uploads', async t => {
+  const { root, built, calls, io } = manualFixture(t);
+  built.commit = 'a'.repeat(40);
+  await manualPublish(root, { dryRun: true }, io);
+  assert.deepEqual(calls, ['verify', 'preflight']);
+  assert.equal(git(root, 'tag', '--list'), '');
+});
+it('manual publication reuses final-commit evidence and verifies installed registry consumers after uploading', async t => {
+  const { root, calls, io } = manualFixture(t);
+  await manualPublish(root, {}, io);
+  assert.deepEqual(calls, ['preflight', 'tag', 'upload', 'registry']);
+});
+it('a registry preflight refusal stops manual publication before any tag or upload', async t => {
+  const { root, calls, io } = manualFixture(t);
+  io.publish = async () => { calls.push('preflight'); throw new Error('immutable version has different bytes'); };
+  await assert.rejects(manualPublish(root, {}, io), /different bytes/);
+  assert.deepEqual(calls, ['preflight']);
+});
+it('CI cannot execute the manual command or the lower-level npm publisher', async t => {
+  const { root, calls, io } = manualFixture(t);
+  process.env.GITHUB_ACTIONS = 'true';
+  await assert.rejects(manualPublish(root, {}, io), /locally as the author/);
+  await assert.rejects(publish(root, { execute: true }), /manual local author action/);
+  assert.deepEqual(calls, []);
+});
 it('waits through npm scanning and cached indexes before permitting installed consumers', async () => {
   const packages = artifacts().packages;
   let now = 0;

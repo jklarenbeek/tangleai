@@ -3,9 +3,9 @@
   "version": "0.21.1",
   "baseVersion": "0.21.0",
   "baseCommit": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
-  "preparationCommit": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+  "preparationCommit": "8b298dd4a606b7fb247a0ee3c5f36f3eab11d9a0",
   "initial": false,
-  "inputHash": "0aefdf5bf9430debb4094c5455c87cdb5e5916b0b5d82423f1d92df62645a91b",
+  "inputHash": "c6951156ac230517c0129464b29253221fbe0c1425d999e9c24b897093c438f5",
   "changesets": [
     {
       "releases": [
@@ -58,7 +58,7 @@
           "type": "patch"
         }
       ],
-      "summary": "Update the exact Jaren foundation dependencies and source pin to the published\n0.84.3 release after verifying its AI-free archives against source-built bytes.\nRetain Tangle's model, context and agent ownership and align the development\nNode pin with 24.20.0. Tangle publication remains a manual author action.\nAllow release preparation after an already committed local release while\npreserving its record and rejecting unprepared version edits.",
+      "summary": "Update the exact Jaren foundation dependencies and source pin to the published\n0.84.3 release after verifying its AI-free archives against source-built bytes.\nRetain Tangle's model, context and agent ownership and align the development\nNode pin with 24.20.0. Tangle publication remains a manual author action.\nAllow release preparation after an already committed local release while\npreserving its record and rejecting unprepared version edits.\nMake npm publication an explicit local author command with final-commit verification, actionable dirty-tree errors, and no automatic CI publication.",
       "id": "jaren-foundations-0843"
     }
   ],
