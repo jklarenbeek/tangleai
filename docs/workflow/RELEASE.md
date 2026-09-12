@@ -30,6 +30,13 @@ Install the local
 push check with `npm run release:install-hook`. Existing custom hooks are
 preserved and require explicit integration.
 
+An operator request for closeout includes committing the verified version,
+creating its annotated tag and pushing both `main` and the tag to `origin`.
+No separate tag/push approval is needed. An explicit local-only request ends
+at the verified local commit. `release:prepare` by itself only prepares files;
+it does not authorize or perform a Git release. npm publication remains a
+separate manual author action.
+
 1. Finish the change and update its documentation and relevant measurements.
 2. Run `npm run changeset` and record the reason plus patch or minor impact.
    Compatible fixes use patch. Features use minor. Breaking development changes
@@ -44,18 +51,51 @@ preserved and require explicit integration.
    input fingerprint without advancing the version again. New changesets require
    a new plan; a tagged release or one accepted on main cannot be refreshed in place.
    Reviewed local fixes before the main push can retain the prepared version.
-5. Run `npm run release:closeout -- --message "Fix the affected behavior"`.
+5. Run `npm run release:closeout -- --message "Fix the affected behavior" --push`.
    The command runs `release:verify`, checks the diff and asset stub, and commits
-   the complete versioned change as Joham directly on `main`. Add `--push` when
-   pushing is authorized; closeout fetches main, requires a fast-forward and
-   checks version advancement before committing. It creates no pull request.
-6. Push directly to `main`. The pre-push hook requires the prepared version and
-   a complete gate receipt for the exact source and tarballs. CI then independently
-   rejects stale versions, dependency/lock drift, modified inputs and failed
-   consumers before Pages deployment. The main
-   ruleset prevents deletion and force pushes; it deliberately has no PR or
-   pre-push GitHub status requirement. Local hooks can be bypassed, so CI remains
-   the deployment backstop rather than a main-branch admission gate.
+   the complete versioned change as Joham directly on `main`, then pushes it.
+   With `--push`, closeout fetches main, requires a fast-forward and checks
+   version advancement before committing. It creates no pull request.
+6. Create or verify the annotated tag for the committed version, then push that
+   exact tag. The current helper does not tag; these commands complete closeout:
+
+   ```sh
+   node scripts/release/tag.ts
+   release_tag="v$(node -p 'require("./package.json").version')"
+   git push origin "refs/tags/$release_tag"
+   ```
+
+   Execute each command only after the previous one exits 0. The tag helper
+   requires a clean, prepared release, uses Joham's identity, and refuses an
+   existing lightweight tag or a tag pointing at a different commit. `main`
+   is pushed first because the pre-push hook requires the tag's commit to
+   already be on `origin/main`. Push only this version's tag, never `--tags`.
+7. Verify the remote refs and local state:
+
+   ```sh
+   git rev-parse HEAD
+   git ls-remote origin refs/heads/main "refs/tags/$release_tag" "refs/tags/$release_tag^{}"
+   git status --porcelain
+   ```
+
+   Remote `main` and the peeled tag (`^{}`) must both identify the release
+   commit; the tag object itself has its own hash. The working tree must be
+   clean. Report any remote advancement or incomplete push explicitly instead
+   of claiming matching refs. CI independently rejects stale versions,
+   dependency/lock drift, modified inputs and failed consumers before Pages
+   deployment. A successful push is not a completed CI or deployment result.
+
+For an explicit **local-only closeout**, run step 5 without `--push`, skip
+steps 6–7, and verify the local commit and clean tree. Local-only is an operator
+choice expressed through this sequence; the current CLI has no `--local-only`
+flag. A later request to finish the Git release resumes the push/tag steps at
+the existing verified commit, without creating another release.
+
+The pre-push hook requires the prepared version and a complete gate receipt
+for the exact source and tarballs. The main ruleset prevents deletion and force
+pushes; it deliberately has no PR or pre-push GitHub status requirement. Local
+hooks can be bypassed, so CI remains the deployment backstop rather than a
+main-branch admission gate. Keep the hook enabled throughout closeout.
 
 For example, a patch after `0.20.0` produces `0.20.1`; a minor produces `0.21.0`.
 A change to one library still advances every public package. Neither root
@@ -100,7 +140,7 @@ release checkout, using the pinned Node/npm and Bun toolchains, run:
 
 ```sh
 npm run publish -- --dry-run  # verify and inspect; no tag or upload
-npm run publish              # verify, tag locally, upload and verify installation
+npm run publish              # verify artifacts/tag, upload and verify installation
 ```
 
 The author authenticates to npm locally (for example with `npm login`) and must
@@ -170,8 +210,9 @@ Pushing `main` runs `.github/workflows/release.yml`: CI verifies the prepared
 release, packed consumers and instruments, then Pages independently builds,
 deploys and verifies the accepted commit. CI does not publish npm packages,
 create release tags or complete a GitHub package release. Publication remains
-the author's separate local command. Push the annotated version tag separately
-when desired; the publication command does not push it.
+the author's separate local command. The closeout sequence above creates and
+pushes the annotated version tag by default; the publication command verifies
+that local tag (or creates it when absent) and does not push Git refs.
 
 Pages builds local Tangle source with its recorded Jaren foundation mode. It
 refuses published Tangle dependencies or Jaren source links. Its `build.json`
@@ -183,6 +224,18 @@ The website labels historical benchmarks with the version that produced them.
 A version bump never rewrites old measurements to imply a fresh run.
 
 ## Recover without inventing a new release
+
+Git closeout spans separate operations. A failed gate stops before commit,
+tagging and pushing. If the local commit exists but a push failed, retain the
+commit, inspect the remote refs, and retry only the missing steps after checking
+the release and complete gate again. For a local-only release, fetch `origin/main`
+and confirm it is an ancestor of HEAD before resuming. Push `main`, create or
+verify the exact annotated tag, push that tag, and confirm both remote refs as
+above. If `main` was pushed and tagging or the tag push failed, resume at that
+step. Do not rerun closeout to create a duplicate commit, bypass a failed hook,
+force-push, replace a tag, or advance the version solely to retry a transport
+failure. A conflicting remote tag or divergent main requires reconciliation;
+report the incomplete release until it is resolved.
 
 A failed preparation restores its manifest, lockfile, changelog and changeset
 writes. If the process was killed before cleanup, `release:prepare -- --recover`

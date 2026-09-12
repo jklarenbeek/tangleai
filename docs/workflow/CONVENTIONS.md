@@ -120,33 +120,48 @@ before it is believed.
 
 ## 5. Close-out & commit protocol
 
-The executable protocol is `npm run release:closeout`; [RELEASE.md](RELEASE.md)
-describes it. It runs when the operator requests closeout. Prepare a reviewable
-change, record its Changesets impact and update stale documentation first.
+The close-out protocol uses `npm run release:closeout` and the tag/push commands
+in [RELEASE.md](RELEASE.md). An operator request to run closeout authorizes the
+complete versioned Git release: prepare, verify, commit, create the annotated
+version tag, and push both `main` and that tag to `origin`. Complete these steps
+without requesting separate tag or push approval, unless the operator explicitly
+requests a local-only closeout. Version preparation alone does not authorize
+tagging or pushing. Prepare a reviewable change, record its Changesets impact
+and update stale documentation first.
 
 1. Run `npm run release:prepare` before committing. The command updates every
    workspace version and internal reference, the lockfile, changelogs and release
    record. Major release intent is refused. If fixes follow preparation, review
    them and run `npm run release:prepare -- --refresh` before closeout.
-2. Run `npm run release:closeout -- --message "Short present-tense message"`.
+2. Run `npm run release:closeout -- --message "Short present-tense message" --push`.
    It verifies the release, runs the complete gate and packed consumer checks,
-   reviews whitespace/stub invariants, and commits as Joham directly on `main`.
-   No release branch or pull request is created.
+   reviews whitespace/stub invariants, commits as Joham directly on `main`, and
+   pushes `main`. No release branch or pull request is created. For an explicit
+   local-only closeout, omit `--push` and stop after the verified local commit.
 3. Use one short present-tense commit message, with no attribution footer, tool
    names or version numbers. Annotated tags carry versions.
-4. Add `--push` when pushing is authorized. The pre-push hook checks the actual
-   refs, version advancement and the complete gate receipt. Push directly to
-   `main`; CI independently repeats the checks before publication or deployment.
+4. After the verified commit, create or verify its annotated `v<version>` tag
+   with `node scripts/release/tag.ts`, then push that exact tag to `origin` using
+   the commands in RELEASE.md. The current closeout helper does not create or
+   push tags itself; its successful exit is one step of this protocol. The
+   pre-push hook checks the actual refs, version advancement and complete gate
+   receipt, and requires the tag's commit to be on `origin/main`. Confirm remote
+   `main` and the peeled tag both identify the release commit and the working
+   tree is clean before reporting the Git release complete. Skip tagging and
+   pushing for an explicit local-only request.
 5. The author runs `npm run publish` from the clean committed release checkout.
-   It verifies final-commit archives, tags locally, publishes using local npm
-   authentication, and verifies registry installs. `-- --dry-run` verifies without
+   It verifies final-commit archives, verifies or creates the local tag, publishes
+   using local npm authentication, and verifies registry installs. `-- --dry-run` verifies without
    tagging or uploading. Publishing and pushing are separate actions. After a
    main push, CI verifies the release and independently deploys Pages; it does
    not publish npm packages. Never report a site deployment as proof of npm
    publication. See RELEASE.md for unrelated edits and retry handling.
 
-Abort at the first failure. A failed preparation restores its version, lockfile,
-changeset and changelog writes. An interrupted npm publication resumes against
+Abort at the first failure. If a push fails after the commit or tag exists,
+retain those identities and resume the missing step as described in RELEASE.md;
+never force-push, move a release tag, or bump again just to retry. A failed
+preparation restores its version, lockfile, changeset and changelog writes.
+An interrupted npm publication resumes against
 immutable artifact identities; it cannot be rolled back as one transaction.
 
 ## 6. Decisions and authority

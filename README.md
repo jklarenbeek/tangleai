@@ -415,18 +415,27 @@ npm run changeset
 npm run release:prepare
 npm run release:verify
 npm run release:closeout -- --message "Fix the affected behavior" --push
+node scripts/release/tag.ts
+release_tag="v$(node -p 'require("./package.json").version')"
+git push origin "refs/tags/$release_tag"
 ```
 
-Closeout commits directly on `main` and pushes when authorized. It creates no
-pull request. The author publishes manually from the clean committed checkout:
+A closeout request authorizes the complete sequence by default: verify, commit
+directly on `main`, push `main`, create the annotated version tag and push it.
+Run each command only after the preceding one succeeds, then confirm both
+remote refs identify the release commit as described in the
+[release protocol](docs/workflow/RELEASE.md). The current closeout helper needs
+`--push` and the separate tag commands shown above. For an explicit local-only
+closeout, omit `--push` and skip tagging/pushing. No pull request is created.
+The author publishes manually from the clean committed checkout:
 
 ```sh
 npm run publish -- --dry-run
 npm run publish
 ```
 
-The command verifies the final committed artifacts, creates the local annotated
-tag, publishes the 15 tested JavaScript/declaration archives using local npm
+The command verifies the final committed artifacts, verifies or creates the local
+annotated tag, publishes the 16 tested JavaScript/declaration archives using local npm
 authentication, and checks fresh registry installations. It does not push.
 Separate edits, including `.env.example`, must be committed through closeout or
 stashed and restored around publication. GitHub Actions verifies the release

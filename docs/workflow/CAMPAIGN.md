@@ -323,6 +323,10 @@ embedder or a threshold moves the baseline row it is measured against.
   non-idempotent until proven otherwise; a new lane's failure is a bare catch until
   a test says it is a counted value). The close-out record carries the hunt's
   three lists next to the baseline table.
+  Executing the campaign does not itself authorize a Git release. When the
+  operator requests closeout, follow CONVENTIONS §5 through the annotated tag,
+  pushes and remote-ref confirmation; an explicit local-only request is the
+  exception. Record the actual commit/tag and push outcome in the handoff.
 
 ## Non-negotiables (inherited, not restated)
 

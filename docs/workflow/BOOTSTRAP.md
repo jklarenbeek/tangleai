@@ -54,6 +54,10 @@ style.
   tag, push, or branch on your own initiative; the close-out protocol
   in `CONVENTIONS.md` §5 runs only when the operator explicitly asks,
   and what happens to an order after it lands is the operator's decision.
+  Once closeout is requested, that protocol includes the version tag and both
+  pushes by default; follow RELEASE.md through remote-ref confirmation without
+  asking again. An explicit local-only request ends at the verified commit.
+  npm publication remains a separate manual author action.
 - Committed code, comments and docs never reference scratch planning
   files or their order numbers (anything gitignored) — module headers
   describe the current role of the code, not its extraction history
