@@ -1,0 +1,48 @@
+{
+  "id": "direct-fact-success",
+  "group": "direct-fact",
+  "variant": "success",
+  "input": {
+    "caseId": "direct-fact-success",
+    "query": "Using only these records, answer the direct-fact question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "direct-fact-success-e1",
+        "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9",
+        "text": "Case direct-fact-success: The approved delivery day is Tuesday."
+      },
+      {
+        "id": "direct-fact-success-e2",
+        "digest": "c20cdc7dc12e331ebdf49f0a63bba01248b84ccae8f56bd25bc656573efba7c9",
+        "text": "Case direct-fact-success: A minority report records flooding on Tuesday; Wednesday remains available."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "Tuesday",
+    "abstention": false,
+    "requiredFindings": []
+  },
+  "script": {
+    "result": {
+      "answer": "Tuesday",
+      "disposition": "completed",
+      "claims": [
+        {
+          "text": "Tuesday",
+          "citations": [
+            {
+              "id": "direct-fact-success-e1",
+              "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+            },
+            {
+              "id": "direct-fact-success-e2",
+              "digest": "c20cdc7dc12e331ebdf49f0a63bba01248b84ccae8f56bd25bc656573efba7c9"
+            }
+          ]
+        }
+      ],
+      "findings": []
+    }
+  }
+}

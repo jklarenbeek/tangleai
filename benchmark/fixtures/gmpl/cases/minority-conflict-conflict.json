@@ -1,0 +1,67 @@
+{
+  "id": "minority-conflict-conflict",
+  "group": "minority-conflict",
+  "variant": "conflict",
+  "input": {
+    "caseId": "minority-conflict-conflict",
+    "query": "Using only these records, answer the minority-conflict question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "minority-conflict-conflict-e1",
+        "digest": "fb50223440dcc3be509c2dcad4ce3b83bea80b09b3d470bcf66e08e8a43b2e41",
+        "text": "Case minority-conflict-conflict: The approved delivery day is Tuesday."
+      },
+      {
+        "id": "minority-conflict-conflict-e2",
+        "digest": "0ee4a56535d762603f07c69222597ce5b963ebb76cff9d87d95106d9ca0171d9",
+        "text": "Case minority-conflict-conflict: A minority report records flooding on Tuesday; Wednesday remains available."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "Wednesday",
+    "abstention": false,
+    "requiredFindings": [
+      "minority-conflict-conflict-minority"
+    ]
+  },
+  "script": {
+    "result": {
+      "answer": "Wednesday",
+      "disposition": "completed",
+      "claims": [
+        {
+          "text": "Wednesday",
+          "citations": [
+            {
+              "id": "minority-conflict-conflict-e1",
+              "digest": "fb50223440dcc3be509c2dcad4ce3b83bea80b09b3d470bcf66e08e8a43b2e41"
+            },
+            {
+              "id": "minority-conflict-conflict-e2",
+              "digest": "0ee4a56535d762603f07c69222597ce5b963ebb76cff9d87d95106d9ca0171d9"
+            }
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "id": "minority-conflict-conflict-minority",
+          "origin": "source-review",
+          "disposition": "supported",
+          "reason": "Retain the conflicting source or critical risk in the decision.",
+          "citations": [
+            {
+              "id": "minority-conflict-conflict-e1",
+              "digest": "fb50223440dcc3be509c2dcad4ce3b83bea80b09b3d470bcf66e08e8a43b2e41"
+            },
+            {
+              "id": "minority-conflict-conflict-e2",
+              "digest": "0ee4a56535d762603f07c69222597ce5b963ebb76cff9d87d95106d9ca0171d9"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -5,7 +5,7 @@
  * `@tangleai/store` implements over the Jaren database. Every mutation
  * is a pure `plan*` decision (validated against the generated runtime
  * schemas, refusing with stable `TMAS2xxx` values) followed by one
- * adapter transaction that applies it atomically — D6 as an interface:
+ * adapter transaction that applies it atomically:
  * a node's terminal attempt, outbound messages, state revision, budget
  * snapshot and artifacts commit together under its semantic idempotency
  * key or not at all, and returning a stored completion on replay is
@@ -69,6 +69,8 @@ export interface CompletionMessagePlan {
 }
 
 export interface CommitCompletionPlan {
+  /** Cumulative active run time from the shared account, atomically checkpointed. */
+  activeMs?: number;
   runId: string;
   attemptId: string;
   claimSeq: number;
@@ -87,11 +89,14 @@ export interface CommitCompletionPlan {
 }
 
 export interface FailAttemptPlan {
+  activeMs?: number;
   runId: string;
   attemptId: string;
   claimSeq: number;
   status: 'failed' | 'aborted' | 'uncertain';
   error: RuntimeError;
+  /** Actual incurred work retained atomically even when the node fails. */
+  receipt?: Pick<CommitCompletionPlan, 'spend' | 'usage' | 'stopReason' | 'transcript' | 'toolSteps' | 'contextReads'>;
 }
 
 export interface TraceView {

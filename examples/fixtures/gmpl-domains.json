@@ -1,0 +1,18 @@
+{
+  "document-review": {
+    "title": "Document review",
+    "instructions": "Review the cited pilot documents. Preserve conflicting findings and use textual answer keys.",
+    "query": "What does the pilot review recommend?",
+    "evidence": ["The pilot review recommends extending the evaluation for one reporting period.", "The extension remains within the approved pilot scope."],
+    "answer": "Extend the pilot evaluation for one reporting period.",
+    "estimate": null
+  },
+  "estimate-panel": {
+    "title": "Estimate panel",
+    "instructions": "Estimate the synthetic completion fraction on the closed interval [0,1]. Cite the observations and return a finite estimate.",
+    "query": "What fraction of the synthetic checklist is complete?",
+    "evidence": ["Two of four synthetic checklist items are complete.", "Every checklist item has equal weight."],
+    "answer": "0.5",
+    "estimate": 0.5
+  }
+}

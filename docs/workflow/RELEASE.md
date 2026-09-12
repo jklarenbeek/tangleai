@@ -77,7 +77,7 @@ Ordinary releases must use the version computed from their Changesets records.
 `npm run release:verify` runs the full source gate, release-record checks, package
 build, packed consumers and Pages build. `release:build` emits ESM JavaScript and
 TypeScript declarations into a staging directory, preserves public subpaths,
-copies JSON schemas, and creates the configured tarballs with package documentation,
+copies JSON schemas and compiled content artifacts, and creates the configured tarballs with package documentation,
 license and changelog. Workspace manifests continue to serve TypeScript during
 development. Their lifecycle guards refuse direct source publication.
 
@@ -116,7 +116,7 @@ revision. Closeout verifies before committing, so the first publication check
 normally rebuilds to bind its artifacts to that new commit. No version bump is
 needed for this rebuild.
 
-It preflights all 15 public packages, creates or verifies the exact annotated
+It preflights all 16 public packages, creates or verifies the exact annotated
 local tag, publishes the tested archives in dependency order, then runs the
 registry installation and consumer gate. It never publishes private workspaces
 or pushes Git refs. A dry run may rebuild ignored artifacts but creates no tag

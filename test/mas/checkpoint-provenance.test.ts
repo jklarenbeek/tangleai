@@ -28,7 +28,7 @@ it('restores identical region inputs but refuses changed inputs, revisions and u
   for (const changed of [{ ...run, scope: { input: 'changed', nodes: {} } }, { ...run, executableRevision: 'revision-2' }]) {
     const result = await executeDagRegion(changed);
     assert.equal(result.ok, false);
-    if (!result.ok) assert.equal(result.failure.error.code, 'TMAS2002');
+    assert.ok('failure' in result); assert.equal(result.failure.error.code, 'TMAS2002');
   }
   values['t:work'] = { result: 'unverified old checkpoint' };
   const legacy = await executeDagRegion(run);
@@ -44,7 +44,7 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
   const context = (await import('@tangleai/context/package.json', { with: { type: 'json' } })).default;
   const agents = (await import('@tangleai/agents/package.json', { with: { type: 'json' } })).default;
   const current = masTaskVersionOf('registry-1');
-  assert.equal(current, `tangle-mas/3:flow/${flow.version}:models/${models.version}:context/${context.version}:agents/${agents.version}:registry-1`);
+  assert.equal(current, `tangle-mas/5:flow/${flow.version}:models/${models.version}:context/${context.version}:agents/${agents.version}:registry-1`);
   assert.notEqual(masTaskVersionOf('registry-2'), current);
   const values: Record<string, unknown> = {};
   let calls = 0, writes = 0;
@@ -72,7 +72,7 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
     const before = structuredClone({ values, writes, ledger, calls });
     for (let retry = 0; retry < 2; retry++) {
       const refused = await run(current); assert.equal(refused.ok, false);
-      if (!refused.ok) assert.equal(refused.failure.error.code, 'TMAS2002');
+      assert.ok('failure' in refused); assert.equal(refused.failure.error.code, 'TMAS2002');
       assert.deepEqual({ values, writes, ledger, calls }, before);
     }
   }

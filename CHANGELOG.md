@@ -1,5 +1,23 @@
 # Tangle releases
 
+## 0.25.0
+
+Add immutable schema-bound prompt artifacts, evidence-preserving pattern recipes and pure host bindings for the MAS runtime.
+
+Enforce semantic template binding targets, monotone caps and tool subsets at admission and instantiation. Pin and capture host message adapter versions, check child graph bindings, and preserve optional no-change instantiation.
+
+Enforce workflow concurrency through Jaren scheduling, retain failed physical request costs in durable receipts, restore switch outputs from committed branches, and preserve hierarchical message paths. Advance the runtime checkpoint ABI for the changed execution semantics.
+
+Compose durable human waits through nested graphs, switches and loop iterations.
+Derive interaction ids from full paths, reconcile the current reserved resume
+segment, and reject conflicting response bytes under an existing key. Drain
+started host lifetimes before reporting failure or suspension.
+
+Enforce physical-request context and retained trace quotas, retain the shared
+account's provider-total or estimated token charge, and claim-fence cumulative
+active-time settlement across resumable segments. Quota refusals roll back the
+attempted payload while retaining actual failure costs.
+
 ## 0.24.1
 
 Update the Jaren foundation to 0.86.0 with exact registry and source pins. Qualify supervised Node SQLite execution, outcome replay after native backups, and physical-model authoring through the shared Data editor. Document the available relational, migration, cursor and collection-drag mechanisms and their host boundaries.

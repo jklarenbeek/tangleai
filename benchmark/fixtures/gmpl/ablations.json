@@ -1,0 +1,9 @@
+[
+  {"id":"analysis-serial","kind":"serial","pattern":"parallel-analysis","caseId":"minority-conflict-success","parameters":{"pattern":"parallel-analysis","caps":{"concurrency":1}},"expectedRoles":3,"semantics":"Same analysts, evidence and ordering; only overlap is removed."},
+  {"id":"peer-one-round","kind":"one-round","pattern":"peer-review","caseId":"panel-insufficient","parameters":{"pattern":"peer-review","maxRounds":1},"expectedRoles":3,"semantics":"Last review skips revision and returns no-consensus."},
+  {"id":"red-one-round","kind":"one-round","pattern":"red-team","caseId":"panel-insufficient","parameters":{"pattern":"red-team","maxRounds":1},"expectedRoles":4,"semantics":"One attack/defense/judge cycle returns no-consensus."},
+  {"id":"debate-one-round","kind":"one-round","pattern":"structured-debate","caseId":"panel-insufficient","parameters":{"pattern":"structured-debate","maxRounds":1},"expectedRoles":6,"semantics":"One position/rebuttal/judge round precedes terminal synthesis."},
+  {"id":"clarification-one-turn","kind":"one-round","pattern":"clarification","caseId":"ambiguous-intent-insufficient","parameters":{"pattern":"clarification","maxTurns":1},"expectedRoles":2,"semantics":"No host information is added; the unresolved case still waits at its first question."},
+  {"id":"delphi-one-round","kind":"one-round","pattern":"delphi-panel","caseId":"panel-insufficient","parameters":{"pattern":"delphi-panel","maxRounds":1},"expectedRoles":6,"semantics":"One independent poll and synthesis retains disagreement."},
+  {"id":"delphi-no-peer-history","kind":"no-peer-history","pattern":"delphi-panel","caseId":"panel-insufficient","parameters":{"pattern":"delphi-panel","peerHistory":false},"expectedRoles":16,"semantics":"Own prior response remains available; peer history is omitted from all polls."}
+]

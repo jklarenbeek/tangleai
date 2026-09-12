@@ -1,0 +1,1839 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/gmpl",
+  "$defs": {
+    "gmplIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "TGMPL1001",
+            "TGMPL1002",
+            "TGMPL1003",
+            "TGMPL1004",
+            "TGMPL1005",
+            "TGMPL1006",
+            "TGMPL1007"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "docPath": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "docPath",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "gmplCitation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "gmplEvidenceUnit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "gmplClaim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "gmplFinding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "contradictory": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "disposition",
+        "reason",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPatternResult": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "outstandingQuestions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "gmplInput": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplEvidenceUnit"
+          }
+        }
+      },
+      "required": [
+        "caseId",
+        "query",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPromptPack": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pattern": {
+              "enum": [
+                "parallel-analysis",
+                "peer-review",
+                "red-team",
+                "structured-debate",
+                "clarification",
+                "delphi-panel"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "pattern",
+            "role"
+          ],
+          "additionalProperties": false
+        },
+        "system": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "meta",
+        "system",
+        "user"
+      ],
+      "additionalProperties": false
+    },
+    "gmplVariable": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "render": {
+          "enum": [
+            "text",
+            "json"
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "render"
+      ],
+      "additionalProperties": false
+    },
+    "gmplVariables": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "not": {
+          "enum": [
+            "prototype",
+            "constructor",
+            "__proto__"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/gmplVariable"
+      }
+    },
+    "gmplRoleVersion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "title",
+        "instructions"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPromptArtifact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "policyVersion": {
+          "const": "gmpl-jtlt-v1"
+        },
+        "sourceDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "pack": {
+          "$ref": "#/$defs/gmplPromptPack"
+        },
+        "role": {
+          "$ref": "#/$defs/gmplRoleVersion"
+        },
+        "variables": {
+          "$ref": "#/$defs/gmplVariables"
+        },
+        "variableSchema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "outputSchema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "userStylesheet": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "policyVersion",
+        "sourceDigest",
+        "pack",
+        "role",
+        "variables",
+        "variableSchema",
+        "outputSchema",
+        "userStylesheet"
+      ],
+      "additionalProperties": false
+    },
+    "gmplProjection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "numeric"
+          ]
+        },
+        "scale": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "minimum": {
+                  "type": "number"
+                },
+                "maximum": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "minimum",
+                "maximum"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "kind",
+        "scale"
+      ],
+      "additionalProperties": false
+    },
+    "gmplDomainBinding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payloadSchema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "projection": {
+          "$ref": "#/$defs/gmplProjection"
+        },
+        "rolePrompts": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        },
+        "requiredCapabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "version"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "title",
+        "payloadSchema",
+        "projection",
+        "rolePrompts",
+        "requiredCapabilities"
+      ],
+      "additionalProperties": false
+    },
+    "gmplCaps": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolRounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fanOut": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextChars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "gmplPatternParameters": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "parallel-analysis"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "participants": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "peer-review"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "participants": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "maxRounds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "red-team"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "participants": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "maxRounds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "structured-debate"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "participants": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 8
+            },
+            "maxRounds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "clarification"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "maxTurns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "const": "delphi-panel"
+            },
+            "caps": {
+              "$ref": "#/$defs/gmplCaps"
+            },
+            "participants": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 20
+            },
+            "maxRounds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "peerHistory": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pattern"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "gmplPatternRecipe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "parameters": {
+          "$ref": "#/$defs/gmplPatternParameters"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "minItems": 1
+        },
+        "scope": {
+          "enum": [
+            "pattern",
+            "round"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "parameters",
+        "stages"
+      ],
+      "additionalProperties": false
+    },
+    "gmplCatalogDocument": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplPromptArtifact"
+          }
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplDomainBinding"
+          }
+        },
+        "recipes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplPatternRecipe"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "prompts",
+        "domains",
+        "recipes"
+      ],
+      "additionalProperties": false
+    },
+    "gmplQuestion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "q1",
+            "q2",
+            "q3"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "gmplHumanResponse": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "object",
+          "properties": {
+            "q1": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "q2": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "q3": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "answers"
+      ],
+      "additionalProperties": false
+    },
+    "analysis-analyst": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "analysis-merge": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "peer-review-revision": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "red-team-attack": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "strategy": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      },
+      "required": [
+        "result",
+        "strategy"
+      ],
+      "additionalProperties": false
+    },
+    "red-team-defense": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "mitigations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "result",
+        "mitigations"
+      ],
+      "additionalProperties": false
+    },
+    "delphi-panel-aggregate": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "peer-review-review": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "assessment": {
+          "enum": [
+            "accept",
+            "minor-revision",
+            "major-revision",
+            "reject"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "result",
+        "assessment",
+        "issues",
+        "strengths"
+      ],
+      "additionalProperties": false
+    },
+    "red-team-resilience": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "resilience": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "action": {
+          "enum": [
+            "accept",
+            "reject",
+            "continue",
+            "escalate"
+          ]
+        }
+      },
+      "required": [
+        "result",
+        "resilience",
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "debate-position": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "stance": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "result",
+        "stance"
+      ],
+      "additionalProperties": false
+    },
+    "debate-rebuttal": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "addresses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "result",
+        "addresses"
+      ],
+      "additionalProperties": false
+    },
+    "debate-judge": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "action": {
+          "enum": [
+            "accept",
+            "reject",
+            "continue",
+            "escalate"
+          ]
+        }
+      },
+      "required": [
+        "result",
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "clarification-question": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplQuestion"
+          },
+          "minItems": 1,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "questions"
+      ],
+      "additionalProperties": false
+    },
+    "clarification-resolve": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "refinedQuery": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "result",
+        "resolved",
+        "refinedQuery"
+      ],
+      "additionalProperties": false
+    },
+    "delphi-panel-poll": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "answerKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "result",
+        "answerKey",
+        "estimate",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPolicy": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "$ref": "#/$defs/gmplPatternParameters"
+        },
+        "domain": {
+          "$ref": "#/$defs/gmplDomainBinding"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "recipeRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "parameters",
+        "domain",
+        "catalogRevision",
+        "recipeRevision"
+      ],
+      "additionalProperties": false
+    },
+    "gmplRoundSummary": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "draftRevision": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "action": {
+          "enum": [
+            "accept",
+            "revise",
+            "continue",
+            "reject",
+            "escalate"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/debate-position"
+          }
+        },
+        "rebuttals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/debate-rebuttal"
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/peer-review-review"
+          }
+        },
+        "attacks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/red-team-attack"
+          }
+        },
+        "defenses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/red-team-defense"
+          }
+        },
+        "judgment": {
+          "$ref": "#/$defs/debate-judge"
+        },
+        "polls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delphi-panel-poll"
+          }
+        },
+        "statistics": {
+          "$ref": "#/$defs/gmplPanelStatistics"
+        }
+      },
+      "required": [
+        "round",
+        "draftRevision",
+        "action",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "gmplRoundState": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "$ref": "#/$defs/gmplInput"
+        },
+        "policy": {
+          "$ref": "#/$defs/gmplPolicy"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "draft": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gmplPatternResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "draftRevision": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewedRevision": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/peer-review-review"
+          }
+        },
+        "attacks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/red-team-attack"
+          }
+        },
+        "defenses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/red-team-defense"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplRoundSummary"
+          }
+        },
+        "done": {
+          "type": "boolean"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected",
+            null
+          ]
+        },
+        "acceptance": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "accepted": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "ratio": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "accepted",
+                "total",
+                "ratio"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/debate-position"
+          }
+        },
+        "rebuttals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/debate-rebuttal"
+          }
+        },
+        "polls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/delphi-panel-poll"
+          }
+        },
+        "peerFeedback": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/gmplPeerFeedback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "input",
+        "policy",
+        "round",
+        "draft",
+        "draftRevision",
+        "reviewedRevision",
+        "findings",
+        "reviews",
+        "attacks",
+        "defenses",
+        "history",
+        "done",
+        "disposition",
+        "acceptance",
+        "positions",
+        "rebuttals",
+        "polls",
+        "peerFeedback"
+      ],
+      "additionalProperties": false
+    },
+    "gmplHumanResponse1": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "object",
+          "properties": {
+            "q1": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "q1"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "answers"
+      ],
+      "additionalProperties": false
+    },
+    "gmplHumanResponse2": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "object",
+          "properties": {
+            "q1": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "q2": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "q1",
+            "q2"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "answers"
+      ],
+      "additionalProperties": false
+    },
+    "gmplHumanResponse3": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "object",
+          "properties": {
+            "q1": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "q2": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "q3": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "q1",
+            "q2",
+            "q3"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "answers"
+      ],
+      "additionalProperties": false
+    },
+    "gmplHumanPrompt": {
+      "type": "object",
+      "properties": {
+        "turn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplQuestion"
+          },
+          "minItems": 1,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "turn",
+        "query",
+        "questions"
+      ],
+      "additionalProperties": false
+    },
+    "gmplClarificationHistory": {
+      "type": "object",
+      "properties": {
+        "turn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplQuestion"
+          }
+        },
+        "response": {
+          "$ref": "#/$defs/gmplHumanResponse"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "const": "host-response"
+        }
+      },
+      "required": [
+        "turn",
+        "questions",
+        "response",
+        "evidenceIds",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "gmplClarificationState": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "$ref": "#/$defs/gmplInput"
+        },
+        "policy": {
+          "$ref": "#/$defs/gmplPolicy"
+        },
+        "turn": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "refinedQuery": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "\\S"
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "done": {
+          "type": "boolean"
+        },
+        "questionCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplQuestion"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplClarificationHistory"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        }
+      },
+      "required": [
+        "input",
+        "policy",
+        "turn",
+        "refinedQuery",
+        "resolved",
+        "done",
+        "questionCount",
+        "questions",
+        "history",
+        "findings",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "gmplProjectedAnswer": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "estimate"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPanelStatistics": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "numeric",
+            "text"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 20
+        },
+        "mean": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "median": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "sampleStddev": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "confidenceMean": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "keyAgreement": {
+          "type": "boolean"
+        },
+        "converged": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "count",
+        "mean",
+        "median",
+        "sampleStddev",
+        "confidenceMean",
+        "keyAgreement",
+        "converged"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPeerFinding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "contradictory": {
+          "type": "boolean"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "disposition",
+        "critical",
+        "contradictory",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPeerResponse": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": "string",
+          "pattern": "^panel-[0-9]+$"
+        },
+        "key": {
+          "type": "string"
+        },
+        "estimate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "findingIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "alias",
+        "key",
+        "estimate",
+        "confidence",
+        "findingIds"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPeerFeedback": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplPeerResponse"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplPeerFinding"
+          }
+        },
+        "statistics": {
+          "$ref": "#/$defs/gmplPanelStatistics"
+        }
+      },
+      "required": [
+        "round",
+        "responses",
+        "findings",
+        "statistics"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$ref": "#/$defs/gmplCatalogDocument"
+}

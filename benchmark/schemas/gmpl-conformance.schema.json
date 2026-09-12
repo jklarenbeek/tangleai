@@ -1,0 +1,1167 @@
+{
+  "type": "object",
+  "properties": {
+    "instrument": {
+      "const": "gmpl-conformance"
+    },
+    "version": {
+      "const": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "suite": {
+      "type": "object",
+      "properties": {
+        "tangle": {
+          "type": "string"
+        },
+        "jaren": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tangle",
+        "jaren"
+      ],
+      "additionalProperties": false
+    },
+    "registrationId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "corpusId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "scorer": {
+      "const": "fixture-answer-f1-and-evidence-v1"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/row"
+      },
+      "minItems": 12,
+      "maxItems": 12
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/probe"
+      },
+      "minItems": 30
+    },
+    "unsafeControls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rejected": {
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "rejected"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pair"
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "planned": {
+          "const": 288
+        },
+        "executed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "planned",
+        "executed",
+        "missing"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.planned",
+          {
+            "$add": [
+              "$.executed",
+              "$.missing"
+            ]
+          }
+        ]
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "reason",
+          "count"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "packs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "validRenders": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "packs",
+        "validRenders",
+        "catalogRevision"
+      ],
+      "additionalProperties": false
+    },
+    "ablations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ablation"
+      }
+    },
+    "ablationRegistrationId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "instrument",
+    "version",
+    "source",
+    "suite",
+    "registrationId",
+    "corpusId",
+    "scorer",
+    "rows",
+    "probes",
+    "unsafeControls",
+    "pairs",
+    "capabilities",
+    "coverage",
+    "failures",
+    "limitations",
+    "reportId",
+    "artifacts",
+    "ablations",
+    "ablationRegistrationId"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "citation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "origin": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          },
+          "minItems": 1
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "contradictory": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "disposition",
+        "reason",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "outstandingQuestions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      },
+      "required": [
+        "caseId",
+        "query",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "group": {
+          "enum": [
+            "direct-fact",
+            "multi-source",
+            "minority-conflict",
+            "ambiguous-intent",
+            "adversarial-proposal",
+            "panel"
+          ]
+        },
+        "variant": {
+          "enum": [
+            "success",
+            "insufficient",
+            "conflict",
+            "misleading"
+          ]
+        },
+        "input": {
+          "$ref": "#/$defs/input"
+        },
+        "oracle": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "string"
+            },
+            "abstention": {
+              "type": "boolean"
+            },
+            "requiredFindings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "answer",
+            "abstention",
+            "requiredFindings"
+          ],
+          "additionalProperties": false
+        },
+        "script": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "$ref": "#/$defs/result"
+            }
+          },
+          "required": [
+            "result"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "group",
+        "variant",
+        "input",
+        "oracle",
+        "script"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "head",
+        "clean",
+        "sha256",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repair": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tools": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "context": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "money": {
+          "type": "null"
+        },
+        "moneyReason": {
+          "const": "scripted; live monetary cost unmeasured"
+        }
+      },
+      "required": [
+        "roles",
+        "completion",
+        "normalization",
+        "repair",
+        "physical",
+        "tools",
+        "context",
+        "promptTokens",
+        "completionTokens",
+        "unknownTokenRequests",
+        "activeMs",
+        "traceBytes",
+        "replays",
+        "restores",
+        "money",
+        "moneyReason"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.physical",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.completion",
+                  "$.normalization"
+                ]
+              },
+              "$.repair"
+            ]
+          }
+        ]
+      }
+    },
+    "visibility": {
+      "type": "object",
+      "properties": {
+        "node": {
+          "type": "string"
+        },
+        "phase": {
+          "enum": [
+            "completion",
+            "normalization",
+            "repair"
+          ]
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "role",
+              "content"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "node",
+        "phase",
+        "messages",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "valid",
+            "refused",
+            "failed",
+            "waiting",
+            "not-implemented"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "utility": {
+          "type": "number",
+          "minimum": 0
+        },
+        "citationFidelity": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "findingRetention": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/result"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usage": {
+          "$ref": "#/$defs/usage"
+        },
+        "visibility": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/visibility"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "receiptId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resources": {
+          "$ref": "#/$defs/resources"
+        }
+      },
+      "required": [
+        "caseId",
+        "status",
+        "reason",
+        "utility",
+        "citationFidelity",
+        "findingRetention",
+        "output",
+        "usage",
+        "visibility",
+        "events",
+        "receiptId",
+        "resources"
+      ],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "planned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "waiting": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not-implemented": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "planned",
+        "valid",
+        "refused",
+        "failed",
+        "waiting",
+        "not-implemented"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.planned",
+          {
+            "$add": [
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      {
+                        "$add": [
+                          "$.valid",
+                          "$.refused"
+                        ]
+                      },
+                      "$.failed"
+                    ]
+                  },
+                  "$.waiting"
+                ]
+              },
+              "$['not-implemented']"
+            ]
+          }
+        ]
+      }
+    },
+    "row": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pattern": {
+          "enum": [
+            "parallel-analysis",
+            "peer-review",
+            "red-team",
+            "structured-debate",
+            "clarification",
+            "delphi-panel"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "pattern",
+            "single-agent"
+          ]
+        },
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "utility": {
+          "type": "number",
+          "minimum": 0
+        },
+        "conditionalUtility": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/receipt"
+          },
+          "minItems": 24,
+          "maxItems": 24
+        }
+      },
+      "required": [
+        "id",
+        "pattern",
+        "kind",
+        "counts",
+        "utility",
+        "conditionalUtility",
+        "cases"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.counts.planned",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.cases[*].caseId"
+                }
+              },
+              24
+            ]
+          }
+        ]
+      }
+    },
+    "probe": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "capability": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "pass",
+            "fail",
+            "not-implemented"
+          ]
+        },
+        "expected": {
+          "type": "object"
+        },
+        "observed": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "capability",
+        "state",
+        "expected",
+        "observed",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "enum": [
+            "parallel-analysis",
+            "peer-review",
+            "red-team",
+            "structured-debate",
+            "clarification",
+            "delphi-panel"
+          ]
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "delta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pattern",
+        "eligible",
+        "delta",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "instrument": {
+          "type": "boolean"
+        },
+        "contracts": {
+          "type": "boolean"
+        },
+        "analysis": {
+          "type": "boolean"
+        },
+        "critique": {
+          "type": "boolean"
+        },
+        "interaction": {
+          "type": "boolean"
+        },
+        "comparison": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "instrument",
+        "contracts",
+        "analysis",
+        "critique",
+        "interaction",
+        "comparison",
+        "complete"
+      ],
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "inputId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "configRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "outputSchemaId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "humanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "scorer": {
+          "type": "string"
+        },
+        "caps": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "inputId",
+        "evidenceId",
+        "configRevision",
+        "outputSchemaId",
+        "humanId",
+        "provider",
+        "model",
+        "profile",
+        "scorer",
+        "caps"
+      ],
+      "additionalProperties": false
+    },
+    "ablation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "serial",
+            "one-round",
+            "no-peer-history"
+          ]
+        },
+        "pattern": {
+          "enum": [
+            "parallel-analysis",
+            "peer-review",
+            "red-team",
+            "structured-debate",
+            "clarification",
+            "delphi-panel"
+          ]
+        },
+        "expectedRoles": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "receipt": {
+          "$ref": "#/$defs/receipt"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "pattern",
+        "expectedRoles",
+        "receipt"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          {
+            "$count": {
+              "$distinct": "$.rows[*].id"
+            }
+          },
+          12
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": {
+              "$distinct": "$.probes[*].id"
+            }
+          },
+          {
+            "$count": "$.probes[*].id"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.coverage.planned",
+          {
+            "$sum": "$.rows[*].counts.planned"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.coverage.missing",
+          {
+            "$sum": "$.rows[*].counts['not-implemented']"
+          }
+        ]
+      }
+    ]
+  },
+  "$id": "https://tangleai.dev/schemas/gmpl-conformance"
+}

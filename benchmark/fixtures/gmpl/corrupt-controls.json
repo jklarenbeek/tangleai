@@ -1,0 +1,99 @@
+[
+  {
+    "id": "swapped-speakers",
+    "expected": {
+      "speakers": [
+        "analyst-1",
+        "analyst-2"
+      ],
+      "citations": [
+        {
+          "id": "direct-fact-success-e1",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": [
+        "minority-1"
+      ]
+    },
+    "observed": {
+      "speakers": [
+        "analyst-2",
+        "analyst-1"
+      ],
+      "citations": [
+        {
+          "id": "direct-fact-success-e1",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": [
+        "minority-1"
+      ]
+    }
+  },
+  {
+    "id": "hidden-evidence-citation",
+    "expected": {
+      "speakers": [
+        "analyst-1",
+        "analyst-2"
+      ],
+      "citations": [
+        {
+          "id": "direct-fact-success-e1",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": [
+        "minority-1"
+      ]
+    },
+    "observed": {
+      "speakers": [
+        "analyst-1",
+        "analyst-2"
+      ],
+      "citations": [
+        {
+          "id": "hidden",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": [
+        "minority-1"
+      ]
+    }
+  },
+  {
+    "id": "dropped-supported-minority",
+    "expected": {
+      "speakers": [
+        "analyst-1",
+        "analyst-2"
+      ],
+      "citations": [
+        {
+          "id": "direct-fact-success-e1",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": [
+        "minority-1"
+      ]
+    },
+    "observed": {
+      "speakers": [
+        "analyst-1",
+        "analyst-2"
+      ],
+      "citations": [
+        {
+          "id": "direct-fact-success-e1",
+          "digest": "914435da6a3f8c0d324a6322802315a409b048c6acf3f752a1112cb8724fe1e9"
+        }
+      ],
+      "findings": []
+    }
+  }
+]

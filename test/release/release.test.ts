@@ -394,3 +394,9 @@ it('publishes converted TypeScript with colocated declarations and refuses legac
   assert.throws(() => distributionManifest({ ...source, exports: { '.': './src/index.js' } }), /match/);
   assert.throws(() => distributionManifest({ ...source, exports: { '.': { default: './src/index.js', types: './dist/types/index.d.ts' } } }), /point directly to TypeScript/);
 });
+
+it('distribution manifests retain compiled content artifacts and reject traversal',()=>{
+  const source=readJson(resolve(ROOT,'packages/gmpl/package.json'));
+  assert.equal(distributionManifest(source).exports!['./artifacts'],'./artifacts/catalog.json');
+  assert.throws(()=>distributionManifest({...source,exports:{'./artifacts':'./artifacts/../secret.json'}}),/traverse|match/);
+});

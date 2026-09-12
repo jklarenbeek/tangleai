@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "version": "0.25.0",
+  "baseVersion": "0.24.1",
+  "baseCommit": "272925e2a4b1d8db13a1c1b3dc460459c0284799",
+  "preparationCommit": "272925e2a4b1d8db13a1c1b3dc460459c0284799",
+  "initial": false,
+  "inputHash": "ab4f092860cb3ad5d0fd3e8b9250b658245e18f29e289fa76c3018cef9abd1ba",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add immutable schema-bound prompt artifacts, evidence-preserving pattern recipes and pure host bindings for the MAS runtime.",
+      "id": "gmpl-pattern-content"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Enforce semantic template binding targets, monotone caps and tool subsets at admission and instantiation. Pin and capture host message adapter versions, check child graph bindings, and preserve optional no-change instantiation.\n\nEnforce workflow concurrency through Jaren scheduling, retain failed physical request costs in durable receipts, restore switch outputs from committed branches, and preserve hierarchical message paths. Advance the runtime checkpoint ABI for the changed execution semantics.\n\nCompose durable human waits through nested graphs, switches and loop iterations.\nDerive interaction ids from full paths, reconcile the current reserved resume\nsegment, and reject conflicting response bytes under an existing key. Drain\nstarted host lifetimes before reporting failure or suspension.\n\nEnforce physical-request context and retained trace quotas, retain the shared\naccount's provider-total or estimated token charge, and claim-fence cumulative\nactive-time settlement across resumable segments. Quota refusals roll back the\nattempted payload while retaining actual failure costs.",
+      "id": "mas-specialization-boundaries"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.25.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.25.0"
+    }
+  ]
+}

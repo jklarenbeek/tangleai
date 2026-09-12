@@ -8,10 +8,27 @@ First-party source, tests, benchmarks and migration scripts use
 **strict TypeScript**. The JavaScript received from Jaren has been converted. Vendor submodules and generated browser bundles keep their
 upstream or output formats; `.mjs` browser/release harnesses remain JavaScript. Node 24 runs workspace source and tests directly;
 public packages are built as ESM JavaScript with strict TypeScript declarations
-and their JSON schemas. The fifteen public packages share one version,
+and their JSON schemas. The sixteen public packages share one version,
 starting at **0.20.0**. The major version remains zero during development.
 `npm run check` validates source; `npm run release:verify` also installs and tests
 the actual publication tarballs outside this checkout.
+
+GMPL's parallel analysis, peer review, red team, structured debate, clarification
+and Delphi patterns execute through MAS. The public host walkthrough demonstrates
+text and numeric domains plus durable typed clarification. These keyless commands
+use scripted clients or a plan with no transport:
+
+```sh
+npm run gmpl:smoke
+npm run benchmark:gmpl -- --require complete
+npm run benchmark:gmpl:locomo -- --plan
+```
+
+The [conformance report](docs/GMPL_BENCHMARK.md) retains all 288 comparisons,
+seven diagnostic ablations and their costs, including clarification's loss.
+The [LoCoMo plan](docs/GMPL_LOCOMO.md) freezes 64 questions and shared evidence;
+live pattern-versus-single-agent quality remains unmeasured. Domain learning,
+HERA and trading/research applications remain separate roadmap work.
 
 ## What runs today
 
@@ -78,6 +95,7 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/store` | persistence: the same 4-method `MemoryStore` contract over SQLite plus atomic outcome records/projection and transactional source/version/element/chunk activation, the run/event log, and the MAS host — eleven semantic collections, compare-and-swap activation, atomic node completion, and durable run segments over `@jarenjs/db`'s own job queue and flow checkpoints (never a queue or checkpoint twin) |
 | `@tangleai/pipeline` | the loop as an executable `jaren-dag` document (`@jarenjs/flow` runs it, `@jarenjs/mermaid` draws it FROM it), with `@tangleai/models`'s hash embedder (at a measured width) and the rule judge as injectable stand-ins |
 | `@tangleai/mas` | the durable typed multi-agent runtime: one closed content-addressed workflow IR (`agent`/`task`/`graph`/`loop`/`switch`/`interaction`), a pure nine-gate validator with stable `TMAS1xxx` refusals, LINQ-pen lowering to compile-proven `jaren-dag`/`jaren-fsm` documents, and the transactional node lifecycle over `createAgent`/`createToolbox`/`createStructuredOutput`/`createBudgetAccount` ([packages/mas/README.md](packages/mas/README.md)) |
+| `@tangleai/gmpl` | immutable schemas, fourteen compiled TOML/JTLT prompt artifacts and six multi-agent pattern recipes; pure domain/host bindings materialize the canonical MAS workflow and use its durable executor ([packages/gmpl/README.md](packages/gmpl/README.md)) |
 
 The MAS runtime is measured before it is claimed: the registered
 conformance instrument (`npm run benchmark:mas`,
@@ -379,7 +397,7 @@ draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Package releases
 
-Changesets records patch or minor intent for one fixed group of fifteen public
+Changesets records patch or minor intent for one fixed group of sixteen public
 packages. `npm run release:prepare` updates their versions, all private workspace
 versions and references, the lockfile, changelogs, and a checked release record
 **before** the release commit is pushed. Major release intent is refused while

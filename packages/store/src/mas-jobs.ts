@@ -178,7 +178,7 @@ export async function ensurePendingMasSegments(db: TangleDb, masStore: MasStore)
   for (const run of runs) {
     counts.examined += 1;
     const trace = await masStore.readTrace(run.id);
-    const responded = trace?.interactions.find((interaction) => interaction.status === 'responded' && interaction.resumeSegment !== null);
+    const responded = trace?.interactions.find((interaction) => interaction.status === 'responded' && interaction.resumeSegment === run.segment + 1);
     if (responded === undefined || responded.resumeSegment === null) {
       counts.skipped += 1;
       continue;

@@ -21,7 +21,8 @@
     "packages/search",
     "packages/pipeline",
     "packages/outcomes",
-    "packages/store"
+    "packages/store",
+    "packages/gmpl"
   ],
   "privateWorkspaces": [
     "apps/desktop",

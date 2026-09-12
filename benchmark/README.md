@@ -214,3 +214,41 @@ LoCoMo — *Evaluating Very Long-Term Conversational Memory of LLM Agents*,
 Maharana, Lee, Tulyakov, Bansal, Barbieri and Fang, ACL 2024
 ([arXiv:2402.17753](https://arxiv.org/abs/2402.17753)). Data and evaluation
 code © Snap Inc., CC BY-NC 4.0.
+
+## GMPL patterns and LoCoMo planning
+
+`npm run benchmark:gmpl -- --require complete` executes all six families and
+six paired single-agent controls through MAS with a trapping network binding.
+The frozen synthetic registration contains 24 cases per row (288 total), 30
+protocol probes, three corrupted safety controls and seven diagnostic ablations
+outside the primary denominator. Case receipts bind exact information/resources,
+show every completion/normalization/repair and preserve failures, waiting and
+unknown usage. The [generated report](../docs/GMPL_BENCHMARK.md) publishes ties
+and clarification's lower utility. Scripted responses measure conformance only.
+`--out-dir DIR` redirects JSON and Markdown; `--check` compares without writing.
+
+`npm run gmpl:smoke` and `bun scripts/gmpl-consumer-smoke.ts` qualify public
+text/numeric domain composition and a two-turn typed host response through the
+existing worker/store, including reopened zero-effect reconciliation. Packed
+consumers execute emitted JavaScript for each family outside the checkout.
+
+`npm run benchmark:gmpl:locomo` defaults to `--plan`: seed 17753, 16 questions in
+each category 1–4, category 5 excluded, with one shared near-raw offline evidence
+slice per question. Missing data is `dataset-unavailable`. The plan records
+source/dataset/sample/evidence/prompt/config/model identities, per-run caps and
+worst-case campaign requests. A model is unassigned until explicitly bound and
+prices remain null. No environment file or live transport is loaded.
+
+`--replay PATH` accepts the bundle contract in
+`schemas/gmpl-locomo.schema.json` (`$defs.bundle`). Its binding must reproduce
+the exact plan. Runs pin their original input/evidence/config/model identities;
+purchases carry the effective `@tangleai/models/replay` request key, request id,
+response digest, normalized wire entry or original failure, and original cost.
+The existing chat client consumes those entries with throwing cache misses and
+zero network fallback. Partial/mismatched rows retain the full denominator and
+are ineligible for a paired delta. All 64 planned answers, category scores,
+citation validity and original versus incremental costs appear separately.
+`scripted` receipts never become live evidence. `recorded-wire` is an operator
+provenance assertion, not cryptographic proof of purchase; exact hashes establish
+compatibility only. Live pattern-versus-single-agent LoCoMo quality remains
+unmeasured. The [generated plan](../docs/GMPL_LOCOMO.md) records these limits.

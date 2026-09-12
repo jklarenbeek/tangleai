@@ -1,0 +1,67 @@
+{
+  "id": "multi-source-conflict",
+  "group": "multi-source",
+  "variant": "conflict",
+  "input": {
+    "caseId": "multi-source-conflict",
+    "query": "Using only these records, answer the multi-source question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "multi-source-conflict-e1",
+        "digest": "2b484e2aeaac090fb650aeeec5f2c569e05da2e794386c1b18bba1df6031dab7",
+        "text": "The north office sends 3 crates."
+      },
+      {
+        "id": "multi-source-conflict-e2",
+        "digest": "8df5d2c2847c4960b047b9f0014b333cdd180b1e4b7e1287d0b46e762bc5d62e",
+        "text": "The south office sends 4 crates."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "7 crates",
+    "abstention": false,
+    "requiredFindings": [
+      "multi-source-conflict-minority"
+    ]
+  },
+  "script": {
+    "result": {
+      "answer": "7 crates",
+      "disposition": "completed",
+      "claims": [
+        {
+          "text": "7 crates",
+          "citations": [
+            {
+              "id": "multi-source-conflict-e1",
+              "digest": "2b484e2aeaac090fb650aeeec5f2c569e05da2e794386c1b18bba1df6031dab7"
+            },
+            {
+              "id": "multi-source-conflict-e2",
+              "digest": "8df5d2c2847c4960b047b9f0014b333cdd180b1e4b7e1287d0b46e762bc5d62e"
+            }
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "id": "multi-source-conflict-minority",
+          "origin": "source-review",
+          "disposition": "supported",
+          "reason": "Retain the conflicting source or critical risk in the decision.",
+          "citations": [
+            {
+              "id": "multi-source-conflict-e1",
+              "digest": "2b484e2aeaac090fb650aeeec5f2c569e05da2e794386c1b18bba1df6031dab7"
+            },
+            {
+              "id": "multi-source-conflict-e2",
+              "digest": "8df5d2c2847c4960b047b9f0014b333cdd180b1e4b7e1287d0b46e762bc5d62e"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

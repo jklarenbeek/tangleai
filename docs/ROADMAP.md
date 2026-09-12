@@ -243,20 +243,18 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Multi-agent patterns
 
-- [ ] **GMPL patterns as flow documents.** *Wanted:* debate, peer review, red
-  team, delphi as `@jarenjs/flow` DAG/FSM DOCUMENTS plus role schemas, executed by
-  the suite's agent under budget accounts; the pattern / role / domain contracts
-  as JSON Schema. *Stands on:* `parseToml` from `@jarenjs/josl` reads the packs —
-  it passes the official toml-test 1.0.0 suite in strict mode; writing a TOML
-  reader here would be the single most avoidable rewrite in the repo. The packs
-  themselves stay Tangle's (BOUNDARY: what must never migrate down). *Salvage:*
-  `attic/memflow-gmpl/` (types, the 11 roles, 6 pattern definitions),
-  `attic/memflow-modules/gmpl.md` (every default and the prompt-pack → module
-  map), `attic/memflow-workflows/sub/patterns/` (six topology JSONs whose stage
-  ids map 1:1 onto `prompts/`), `attic/memflow-GMPL_TUTORIAL.md` (the pack format:
-  `[meta]/[system]/[user]`, `{{var}}`, `{{#if}}`), HERA's reward weights and
-  merge-don't-overwrite rule in `attic/memflow-modules/hera.md`. *Closes on:*
-  pattern-vs-single-agent answer quality on the LoCoMo sample, cost beside it.
+- [ ] **Live quality of reusable multi-agent patterns.** Six GMPL families,
+  schemas, immutable prompt artifacts and domain binding mechanisms execute
+  through MAS. The remaining question is whether those patterns improve real
+  answers over matched single-agent controls. *Constraint:* scripted protocol
+  success and replay byte identity do not establish model-quality improvement;
+  each pair must retain equal evidence, model/configuration, output/scorer,
+  resources and human information access, with failed/waiting answers counted.
+  The keyless [LoCoMo plan](GMPL_LOCOMO.md) freezes 64 seeded category 1–4
+  questions and evidence slices and exposes a fail-closed wire replay seam.
+  *Closes on:* a separately approved live comparison publishing paired answer
+  quality, eligibility, original physical/token/latency costs and losses beside
+  gains. HERA learning and trading/research domain applications remain separate.
 - [ ] **Experience-guided orchestration and prompt evolution (HERA).** *Wanted:*
   an eight-role pool executing a validated query-specific serial/parallel
   topology under frozen, pinned models, prompts, tools, corpus and budgets;

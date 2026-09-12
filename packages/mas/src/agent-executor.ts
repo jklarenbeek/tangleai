@@ -20,7 +20,7 @@ import { masIssue, type MasIssue } from './errors.ts';
 import { compileEmbeddedSchema } from './schema.ts';
 import { schemaAccepts } from './compatibility.ts';
 import { classifyToolSteps } from './tools.ts';
-import type { MasChatClient } from './budget.ts';
+import { MasBudgetStop, type MasChatClient } from './budget.ts';
 import type { AgentNode, BoundedView, ContextRead, MasRegistry, ToolStep, UsageCounts } from './contracts.gen.ts';
 import type { MasContextOutcome } from './context.ts';
 import type { MasMessageAdapter, MasRenderableInput } from './messages.ts';
@@ -129,7 +129,7 @@ export async function runAgentNode(options: RunAgentOptions): Promise<AgentRunOu
   } catch (error) {
     return {
       ok: false,
-      issue: masIssue('TMAS2004', '/agent', `the agent loop failed: ${(error as Error).message}`),
+      issue: masIssue('TMAS2004', error instanceof MasBudgetStop ? '/agent/budget' : '/agent', `the agent loop failed: ${(error as Error).message}`),
       partial: partialOf([], [], null),
     };
   }

@@ -1,0 +1,318 @@
+{
+  "id": "gmpl-synthetic-v1",
+  "scorer": "fixture-answer-f1-and-evidence-v1",
+  "model": "scripted-v1",
+  "patterns": [
+    "parallel-analysis",
+    "peer-review",
+    "red-team",
+    "structured-debate",
+    "clarification",
+    "delphi-panel"
+  ],
+  "groups": [
+    "direct-fact",
+    "multi-source",
+    "minority-conflict",
+    "ambiguous-intent",
+    "adversarial-proposal",
+    "panel"
+  ],
+  "cases": [
+    "direct-fact-success",
+    "direct-fact-insufficient",
+    "direct-fact-conflict",
+    "direct-fact-misleading",
+    "multi-source-success",
+    "multi-source-insufficient",
+    "multi-source-conflict",
+    "multi-source-misleading",
+    "minority-conflict-success",
+    "minority-conflict-insufficient",
+    "minority-conflict-conflict",
+    "minority-conflict-misleading",
+    "ambiguous-intent-success",
+    "ambiguous-intent-insufficient",
+    "ambiguous-intent-conflict",
+    "ambiguous-intent-misleading",
+    "adversarial-proposal-success",
+    "adversarial-proposal-insufficient",
+    "adversarial-proposal-conflict",
+    "adversarial-proposal-misleading",
+    "panel-success",
+    "panel-insufficient",
+    "panel-conflict",
+    "panel-misleading"
+  ],
+  "planned": 288,
+  "caps": {
+    "calls": 128,
+    "tokens": 131072,
+    "ms": 120000,
+    "toolRounds": 1,
+    "fanOut": 20,
+    "concurrency": 4,
+    "iterations": 10,
+    "contextChars": 65536,
+    "traceBytes": 1048576
+  },
+  "primaryHumanResponses": [],
+  "probes": [
+    {
+      "id": "analysis-overlap",
+      "capability": "analysis",
+      "expected": {
+        "concurrency": 2
+      }
+    },
+    {
+      "id": "analysis-reverse-settle-order",
+      "capability": "analysis",
+      "expected": {
+        "speakers": [
+          "analyst-1",
+          "analyst-2"
+        ]
+      }
+    },
+    {
+      "id": "reviewer-current-cycle-isolation",
+      "capability": "critique",
+      "expected": {
+        "reviewers": 2,
+        "peerMessages": 0
+      }
+    },
+    {
+      "id": "review-accept-skips-revision",
+      "capability": "critique",
+      "expected": {
+        "revisions": 0
+      }
+    },
+    {
+      "id": "review-cap-returns-no-consensus",
+      "capability": "critique",
+      "expected": {
+        "disposition": "no-consensus",
+        "rounds": 3
+      }
+    },
+    {
+      "id": "red-defense-sees-current-attacks",
+      "capability": "critique",
+      "expected": {
+        "attacks": 1,
+        "defenses": 1
+      }
+    },
+    {
+      "id": "red-critical-finding-blocks-accept",
+      "capability": "critique",
+      "expected": {
+        "disposition": "no-consensus",
+        "criticalFindings": 1
+      }
+    },
+    {
+      "id": "red-cap-returns-no-consensus",
+      "capability": "critique",
+      "expected": {
+        "disposition": "no-consensus",
+        "rounds": 3
+      }
+    },
+    {
+      "id": "debate-position-before-rebuttal",
+      "capability": "critique",
+      "expected": {
+        "stages": [
+          "position",
+          "rebuttal",
+          "judge"
+        ]
+      }
+    },
+    {
+      "id": "debate-judge-before-next-round",
+      "capability": "critique",
+      "expected": {
+        "stages": [
+          "judge",
+          "position"
+        ]
+      }
+    },
+    {
+      "id": "debate-dissent-survives",
+      "capability": "critique",
+      "expected": {
+        "retainedFindings": 1
+      }
+    },
+    {
+      "id": "debate-last-round-stops",
+      "capability": "critique",
+      "expected": {
+        "disposition": "no-consensus",
+        "rounds": 3
+      }
+    },
+    {
+      "id": "clarification-clear-skips-human",
+      "capability": "interaction",
+      "expected": {
+        "interactions": 0
+      }
+    },
+    {
+      "id": "clarification-two-responses",
+      "capability": "interaction",
+      "expected": {
+        "interactions": 2,
+        "responses": 2
+      }
+    },
+    {
+      "id": "clarification-invalid-response",
+      "capability": "interaction",
+      "expected": {
+        "code": "TMAS2007",
+        "path": "/response",
+        "responses": 0
+      }
+    },
+    {
+      "id": "clarification-cancel-expire",
+      "capability": "interaction",
+      "expected": {
+        "statuses": [
+          "cancelled",
+          "expired"
+        ]
+      }
+    },
+    {
+      "id": "delphi-round-one-independent",
+      "capability": "interaction",
+      "expected": {
+        "panelists": 5,
+        "peerMessages": 0
+      }
+    },
+    {
+      "id": "delphi-peer-aliases-only",
+      "capability": "interaction",
+      "expected": {
+        "aliases": [
+          "panel-1",
+          "panel-2",
+          "panel-3",
+          "panel-4",
+          "panel-5"
+        ]
+      }
+    },
+    {
+      "id": "delphi-confidence-is-not-consensus",
+      "capability": "interaction",
+      "expected": {
+        "disposition": "no-consensus"
+      }
+    },
+    {
+      "id": "delphi-cap-returns-no-consensus",
+      "capability": "interaction",
+      "expected": {
+        "disposition": "no-consensus",
+        "rounds": 3
+      }
+    },
+    {
+      "id": "hidden-evidence-id",
+      "capability": "contracts",
+      "expected": {
+        "code": "TGMPL1005",
+        "path": "/claims/0/citations/0"
+      }
+    },
+    {
+      "id": "changed-evidence-digest",
+      "capability": "contracts",
+      "expected": {
+        "code": "TGMPL1005",
+        "path": "/claims/0/citations/0"
+      }
+    },
+    {
+      "id": "unsupported-final-citation",
+      "capability": "contracts",
+      "expected": {
+        "code": "TGMPL1005",
+        "path": "/claims/0/citations/0"
+      }
+    },
+    {
+      "id": "minority-findings-not-overwritten",
+      "capability": "contracts",
+      "expected": {
+        "code": "TGMPL1005",
+        "path": "/findings"
+      }
+    },
+    {
+      "id": "failed-member-counted",
+      "capability": "analysis",
+      "expected": {
+        "status": "failed",
+        "failedMembers": 1
+      }
+    },
+    {
+      "id": "normalization-and-repair-charged",
+      "capability": "instrument",
+      "expected": {
+        "completion": 1,
+        "normalization": 1,
+        "repair": 1,
+        "physical": 3
+      }
+    },
+    {
+      "id": "budget-exhaustion-no-extra-call",
+      "capability": "instrument",
+      "expected": {
+        "physical": 1,
+        "status": "failed"
+      }
+    },
+    {
+      "id": "committed-step-zero-spend-resume",
+      "capability": "analysis",
+      "expected": {
+        "additionalPhysical": 0
+      }
+    },
+    {
+      "id": "stale-artifact-refused",
+      "capability": "contracts",
+      "expected": {
+        "code": "TGMPL1002",
+        "path": "/revision"
+      }
+    },
+    {
+      "id": "mismatched-adapter-refused",
+      "capability": "contracts",
+      "expected": {
+        "code": "TMAS1009",
+        "path": "/messageAdapters/gmpl"
+      }
+    }
+  ],
+  "controls": [
+    "swapped-speakers",
+    "hidden-evidence-citation",
+    "dropped-supported-minority"
+  ]
+}

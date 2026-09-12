@@ -53,14 +53,14 @@
     "nonClaims": [
       "no natural-language workflow authoring: Role Assignment, Topology Design and Semantic Completion remain open roadmap work",
       "no desktop authoring or run-trace surface; the desktop live hub remains a single global latest-run slot",
-      "no GMPL production collaboration templates and no HERA experience learning",
+      "GMPL collaboration content belongs to @tangleai/gmpl; this MAS report establishes no live pattern-quality improvement or HERA experience learning",
       "no paper benchmark parity, cost or LOC reproduction from the MASFactory basis"
     ],
     "deploymentLimits": [
       "durable queue and checkpoints are same-machine SQLite through the suite jobs tables; not a cross-machine coordination substrate",
       "external effects are at-least-once with idempotency-key guards and an explicit uncertain state; exactly-once is never claimed",
       "shared budget token overshoot under concurrency is bounded only by the other in-flight calls' usage, exactly the suite's stated bound",
-      "interactions inside loop bodies or nested graphs refuse as a stated runtime limitation"
+      "nested graph, switch and loop interactions require host-supplied typed responses and resumed segments; waiting holds no worker and does not consume active time"
     ]
   }
 }

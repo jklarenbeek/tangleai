@@ -59,8 +59,8 @@ export function stateRevisionIdOf(runId: string, seq: number): string {
 export function artifactIdOf(runId: string, seq: number): string {
   return `${runId}:t:${pad(seq, 6)}`;
 }
-export function interactionIdOf(runId: string, node: string): string {
-  return `${runId}:i:${node}`;
+export function interactionIdOf(runId: string, path: string): string {
+  return `${runId}:i:${path}`;
 }
 
 /** The derived queue segment job id: `<masRunId>:<zero-padded segment>`. */
@@ -75,14 +75,15 @@ export function masJobKindOf(executableRevision: string): string {
 
 // -- run lifecycle -----------------------------------------------------------
 
-export type RunCommand =
+export type RunCommand = (
   | { kind: 'start' }
   | { kind: 'complete', output: unknown }
   | { kind: 'fail', failure: MasRun['failure'] }
   | { kind: 'wait' }
   | { kind: 'resume-pending' }
   | { kind: 'queue-segment' }
-  | { kind: 'cancel' };
+  | { kind: 'cancel' }
+) & { settlement?: { claimSeq: number; spent: { turns: number; tokens: number; ms: number } } };
 
 const RUN_TRANSITIONS: Record<RunCommand['kind'], { from: RunStatus[], to: RunStatus }> = {
   start: { from: ['queued'], to: 'running' },

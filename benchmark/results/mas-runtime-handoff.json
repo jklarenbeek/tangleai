@@ -1,8 +1,8 @@
 {
   "benchmark": "mas-runtime-handoff",
   "query": "queries/mas/runtime-handoff.json",
-  "queryRevision": "1b0864c641b058425fbba0774c94f34c6bc8962e6b67214d419b1cb9c4df5faa",
-  "reportId": "2dcf62ceb1a7fadcd48b2322496ece5912cfe5f4161c1c1df8b7260b31791da6",
+  "queryRevision": "7221519bef5fb34f99e2bdaa375c0233455701f4e99f6283fa9dc41d36ca0e62",
+  "reportId": "442de35c5107972b8f6e0e11aa6632d4b88400d12d9c42818ec74885d56deb96",
   "handoff": {
     "decision": "runtime-conformant",
     "clauses": {
@@ -14,7 +14,7 @@
       "persistenceIdentity": true,
       "hygiene": true
     },
-    "reportId": "2dcf62ceb1a7fadcd48b2322496ece5912cfe5f4161c1c1df8b7260b31791da6",
+    "reportId": "442de35c5107972b8f6e0e11aa6632d4b88400d12d9c42818ec74885d56deb96",
     "registration": {
       "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
@@ -32,7 +32,7 @@
     },
     "weeklyReport": {
       "workflowVersionId": "8f835f3a240bb51b8266fa7fd96d9c201f6341fe204f21398c1905b22ff42486",
-      "executableRevision": "3b866643e87769a30d9c855036119e8a425b91b9ab6aee56184dd5dbc62ab695",
+      "executableRevision": "7a7b690be834f00c26cb2311c6e186bb34ebd90ceb408bd342fd2c16241a240a",
       "maxObservedConcurrency": 3,
       "calls": 11,
       "state": "runtime-pass"
@@ -102,15 +102,15 @@
     "nonClaims": [
       "no natural-language workflow authoring: Role Assignment, Topology Design and Semantic Completion remain open roadmap work",
       "no desktop authoring or run-trace surface; the desktop live hub remains a single global latest-run slot",
-      "no GMPL production collaboration templates and no HERA experience learning",
+      "GMPL collaboration content belongs to @tangleai/gmpl; this MAS report establishes no live pattern-quality improvement or HERA experience learning",
       "no paper benchmark parity, cost or LOC reproduction from the MASFactory basis"
     ],
     "deploymentLimits": [
       "durable queue and checkpoints are same-machine SQLite through the suite jobs tables; not a cross-machine coordination substrate",
       "external effects are at-least-once with idempotency-key guards and an explicit uncertain state; exactly-once is never claimed",
       "shared budget token overshoot under concurrency is bounded only by the other in-flight calls' usage, exactly the suite's stated bound",
-      "interactions inside loop bodies or nested graphs refuse as a stated runtime limitation"
+      "nested graph, switch and loop interactions require host-supplied typed responses and resumed segments; waiting holds no worker and does not consume active time"
     ]
   },
-  "artifactId": "84b9058e973c3b5d9072026d1db6160d5f2cf9673da1234c4eea162fdb94a77d"
+  "artifactId": "85cf537d1507cec51a50e29fedb468c015ed5767e4e7beb34b91579152b1083c"
 }

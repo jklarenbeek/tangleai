@@ -1,0 +1,67 @@
+{
+  "id": "minority-conflict-success",
+  "group": "minority-conflict",
+  "variant": "success",
+  "input": {
+    "caseId": "minority-conflict-success",
+    "query": "Using only these records, answer the minority-conflict question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "minority-conflict-success-e1",
+        "digest": "70c0972fa4bc629d702ad79c0fb628ed6945a19ede6f0fce99d0fd5c4cd69d6b",
+        "text": "Case minority-conflict-success: The approved delivery day is Tuesday."
+      },
+      {
+        "id": "minority-conflict-success-e2",
+        "digest": "6345f75102f45ee676f6d960cf7b91b4173ce20ff9efd820fb99c4b837a170a2",
+        "text": "Case minority-conflict-success: A minority report records flooding on Tuesday; Wednesday remains available."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "Wednesday",
+    "abstention": false,
+    "requiredFindings": [
+      "minority-conflict-success-minority"
+    ]
+  },
+  "script": {
+    "result": {
+      "answer": "Wednesday",
+      "disposition": "completed",
+      "claims": [
+        {
+          "text": "Wednesday",
+          "citations": [
+            {
+              "id": "minority-conflict-success-e1",
+              "digest": "70c0972fa4bc629d702ad79c0fb628ed6945a19ede6f0fce99d0fd5c4cd69d6b"
+            },
+            {
+              "id": "minority-conflict-success-e2",
+              "digest": "6345f75102f45ee676f6d960cf7b91b4173ce20ff9efd820fb99c4b837a170a2"
+            }
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "id": "minority-conflict-success-minority",
+          "origin": "source-review",
+          "disposition": "supported",
+          "reason": "Retain the conflicting source or critical risk in the decision.",
+          "citations": [
+            {
+              "id": "minority-conflict-success-e1",
+              "digest": "70c0972fa4bc629d702ad79c0fb628ed6945a19ede6f0fce99d0fd5c4cd69d6b"
+            },
+            {
+              "id": "minority-conflict-success-e2",
+              "digest": "6345f75102f45ee676f6d960cf7b91b4173ce20ff9efd820fb99c4b837a170a2"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

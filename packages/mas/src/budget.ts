@@ -41,8 +41,9 @@ export class MasBudgetStop extends Error {
 }
 
 export interface SharedBudgetClientOptions {
-  /** Called once per completed provider call with its usage. */
-  onCall?: (record: { usage: unknown, replayed: boolean }) => void;
+  /** Called once per dispatched provider request, including rejected requests; absent usage stays unknown. */
+  maxContextChars?: number;
+  onCall?: (record: { usage: unknown, replayed: boolean, chargedTokens: number }) => void;
 }
 
 /**
@@ -57,14 +58,24 @@ export function createSharedBudgetClient(
   return {
     ...(client.endpoint !== undefined ? { endpoint: client.endpoint } : {}),
     async complete(request: unknown): Promise<MasChatCompletion> {
+      const messages = (request as { messages?: Array<{ content?: unknown }> }).messages ?? [];
+      const chars = messages.reduce((n, message) => n + (typeof message.content === 'string' ? message.content.length : JSON.stringify(message.content ?? '').length), 0);
+      if (options.maxContextChars !== undefined && chars > options.maxContextChars) throw new MasBudgetStop('contextChars');
       const stop = account.stop();
       if (stop !== null) throw new MasBudgetStop(stop);
       account.reserve();
-      const completion = await client.complete(request);
-      const text = `${JSON.stringify((request as { messages?: unknown }).messages ?? '')}${completion.message?.content ?? ''}`;
-      account.settle(completion.usage, text);
-      options.onCall?.({ usage: completion.usage, replayed: (completion as { replayed?: unknown }).replayed !== undefined });
-      return completion;
+      let completion: MasChatCompletion | undefined;
+      let chargedTokens = 0;
+      try {
+        completion = await client.complete(request);
+        const text = `${JSON.stringify((request as { messages?: unknown }).messages ?? '')}${completion.message?.content ?? ''}`;
+        const before = account.spent().tokens;
+        account.settle(completion.usage, text);
+        chargedTokens = account.spent().tokens - before;
+        return completion;
+      } finally {
+        options.onCall?.({ chargedTokens, usage: completion?.usage, replayed: completion !== undefined && (completion as { replayed?: unknown }).replayed !== undefined });
+      }
     },
   };
 }

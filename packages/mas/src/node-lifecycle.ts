@@ -47,6 +47,9 @@ export class MasNodeFailure extends Error {
 /** A process-level crash seam: rides the queue retry path, never the semantic trace. */
 export class MasInfrastructureCrash extends Error {}
 
+/** Internal suspension: a committed human wait leaves composition attempts open. */
+export class MasInteractionWait extends Error {}
+
 export interface MasTaskInput {
   value: Record<string, unknown>;
   state: Record<string, unknown>;
@@ -93,6 +96,7 @@ export interface NodeLifecycleDeps {
   taskHandlers: Record<string, MasTaskHandlerBinding>;
   clientFor?: (node: AgentNode) => MasChatClient;
   account?: MasBudgetAccount;
+  contextChars?: number;
   toolBindings: Record<string, MasToolBinding>;
   contextProviders: Record<string, MasContextProvider>;
   messageAdapters: ReadonlyMap<string, MasMessageAdapter>;
@@ -242,6 +246,11 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
     }
     const attempt = begun.attempt;
 
+    let failureReceipt: NonNullable<import('./store.ts').FailAttemptPlan['receipt']> = {
+      usage: { calls: 0, toolCalls: 0, contextReads: 0, promptTokens: 0, completionTokens: 0 },
+      spend: { turns: 0, tokens: 0, ms: 0 }, stopReason: null,
+      transcript: { state: 'not-configured', text: null, size: 0, artifact: null }, toolSteps: [], contextReads: [],
+    };
     const fail = async (status: 'failed' | 'aborted' | 'uncertain', error: RuntimeError): Promise<never> => {
       await deps.store.failNodeAttempt({
         runId: deps.runId,
@@ -249,6 +258,8 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         claimSeq: deps.claimSeq,
         status,
         error,
+        receipt: failureReceipt,
+        activeMs: deps.account?.spent().ms,
       });
       enter();
       deps.observer?.onNodeSettle?.(path, status);
@@ -303,6 +314,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
       }
 
       // 5-6. execute and validate
+      let chargedTokens = 0;
       let output: Record<string, unknown>;
       let usage = { calls: 0, toolCalls: 0, contextReads: 0, promptTokens: 0, completionTokens: 0 };
       let stopReason: string | null = null;
@@ -342,11 +354,15 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         }
         const callCounter = { calls: 0, promptTokens: 0, completionTokens: 0 };
         const client = createSharedBudgetClient(deps.clientFor(node), deps.account, {
-          onCall: ({ usage: callUsage }) => {
+          maxContextChars: Math.min(node.limits?.contextChars ?? Infinity, deps.workflow.limits.contextChars, deps.contextChars ?? Infinity),
+          onCall: ({ usage: callUsage, chargedTokens: charged }) => {
+            chargedTokens += charged;
             callCounter.calls += 1;
             const shaped = callUsage as { prompt_tokens?: number, completion_tokens?: number } | undefined;
             callCounter.promptTokens += shaped?.prompt_tokens ?? 0;
             callCounter.completionTokens += shaped?.completion_tokens ?? 0;
+            Object.assign(failureReceipt.usage, callCounter);
+            failureReceipt.spend = { turns: callCounter.calls, tokens: chargedTokens, ms: 0 };
           },
         });
         const built = buildEffectiveToolbox({
@@ -366,7 +382,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
             reads.push({ adapter: contextId, outcome: { outcome: 'unavailable', reason: 'no provider is bound for this adapter' } });
             continue;
           }
-          const maxChars = node.limits?.contextChars ?? deps.workflow.limits.contextChars;
+          const maxChars = Math.min(node.limits?.contextChars ?? Infinity, deps.workflow.limits.contextChars, deps.contextChars ?? Infinity);
           reads.push({
             adapter: contextId,
             outcome: await provider.read({ node: invocation.id, query: value }, { signal, maxUnits: 4, maxChars }),
@@ -389,6 +405,9 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
           transcriptChars: deps.transcriptChars ?? 4000,
           callCounter,
         });
+        const retained = run.ok ? run.value : run.partial;
+        failureReceipt = { usage: retained.usage, spend: { turns: retained.usage.calls, tokens: chargedTokens, ms: 0 },
+          stopReason: retained.stopReason, transcript: retained.transcript, toolSteps: retained.toolSteps, contextReads: retained.contextReads };
         if (built.value.uncertainty.value !== null) {
           return await fail('uncertain', {
             code: 'TMAS2006',
@@ -419,7 +438,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
       } else {
         return await fail('failed', {
           code: 'TMAS2003',
-          detail: `a '${invocation.kind}' node executes through the control host, which a later order supplies`,
+          detail: `a '${invocation.kind}' node requires the control host`,
           cause: null,
         });
       }
@@ -438,7 +457,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
       const messages: CompletionMessagePlan[] = outbound.map((plan) => ({
         edgeId: plan.edgeId,
         from: { path, port: plan.fromPort },
-        to: { path: plan.to.node, port: plan.to.port },
+        to: { path: path.slice(0, -invocation.id.length) + plan.to.node, port: plan.to.port },
         adapter: plan.adapter,
         aggregation: plan.aggregation,
         index: plan.index,
@@ -455,13 +474,14 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         statePlan = { namespace, value: nextState, members };
       }
       const committed = await deps.store.commitNodeCompletion({
+        activeMs: deps.account?.spent().ms,
         runId: deps.runId,
         attemptId: attempt.id,
         claimSeq: deps.claimSeq,
         output,
         messages,
         state: statePlan,
-        spend: { turns: usage.calls, tokens: usage.promptTokens + usage.completionTokens, ms: 0 },
+        spend: { turns: usage.calls, tokens: chargedTokens, ms: 0 },
         usage,
         stopReason,
         transcript,
@@ -479,6 +499,10 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
       return output;
     } catch (error) {
       if (error instanceof MasNodeFailure) throw error;
+      if (error instanceof MasInteractionWait) {
+        deps.observer?.onNodeSettle?.(path, 'waiting');
+        throw error;
+      }
       if (error instanceof MasInfrastructureCrash) {
         deps.observer?.onNodeCrash?.(path);
         throw error;

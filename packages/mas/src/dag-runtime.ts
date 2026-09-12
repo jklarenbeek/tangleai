@@ -16,7 +16,7 @@
 import { compileDag, FlowRuntimeError } from '@jarenjs/flow';
 import { equalsJson } from '@jarenjs/core/object';
 
-import { MasInfrastructureCrash, MasNodeFailure, type MasRuntimeObserver } from './node-lifecycle.ts';
+import { MasInfrastructureCrash, MasInteractionWait, MasNodeFailure, type MasRuntimeObserver } from './node-lifecycle.ts';
 import { invocationPathOf } from './runtime-state.ts';
 import type { RuntimeError } from './contracts.gen.ts';
 
@@ -41,11 +41,35 @@ export interface DagRegionRun {
 
 export type DagRegionOutcome =
   | { ok: true, exposed: Record<string, Record<string, unknown>> }
+  | { ok: false, waiting: true }
   | { ok: false, failure: { node: string, error: RuntimeError } };
 
 export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutcome> {
+  let suspending = false;
+  const active = new Set<Promise<unknown>>(), failures: unknown[] = [];
   const tasks = Object.fromEntries(Object.entries(run.handlers).map(([name, handler]) =>
-    [name, { run: handler, version: run.taskVersion }]));
+    [name, { version: run.taskVersion, run: (props: { with: unknown, input: unknown }, dagSignal: AbortSignal) => {
+      const forwarded = new AbortController();
+      const abortDag = () => { if (!suspending) forwarded.abort(dagSignal.reason); };
+      const abortHost = () => forwarded.abort(run.signal.reason);
+      dagSignal.addEventListener('abort', abortDag, { once: true });
+      run.signal.addEventListener('abort', abortHost, { once: true });
+      if (run.signal.aborted) abortHost(); else if (dagSignal.aborted) abortDag();
+      const pending = (async () => {
+        try { return await handler(props, forwarded.signal); }
+        catch (error) {
+          if (error instanceof MasInteractionWait) suspending = true;
+          else failures.push(error);
+          throw error;
+        } finally {
+          dagSignal.removeEventListener('abort', abortDag);
+          run.signal.removeEventListener('abort', abortHost);
+        }
+      })();
+      active.add(pending);
+      void pending.then(() => active.delete(pending), () => active.delete(pending));
+      return pending;
+    } }]));
   // Store the suite's provenance beside each value in the existing namespaced
   // checkpoint rows. A crash cannot publish a value without its identity.
   const checkpoint = {
@@ -91,18 +115,24 @@ export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutc
     }) as Record<string, Record<string, unknown>>;
     return { ok: true, exposed };
   } catch (error) {
-    // drainOnAbort ensures every started lifecycle settles before this branch.
+    // Jaren stops dispatch. Drain already started host lifetimes before the
+    // segment ends; a human pause lets siblings commit instead of cancelling
+    // paid work. Host cancellation and genuine failures still take precedence.
+    await Promise.allSettled([...active]);
+    if (failures.length > 0) error = failures.find(e => e instanceof MasInfrastructureCrash) ?? failures[0];
     const flowError = error as { code?: string, nodeId?: string, cause?: unknown };
     const cause = flowError.cause;
+    if (!run.signal.aborted && (error instanceof MasInteractionWait || cause instanceof MasInteractionWait)) return { ok: false, waiting: true };
     if (cause instanceof MasInfrastructureCrash) throw cause;
     if (error instanceof MasInfrastructureCrash) throw error;
     if (flowError.code === 'JF2009') throw new MasInfrastructureCrash((error as Error).message);
-    if (cause instanceof MasNodeFailure) {
+    const nodeFailure = error instanceof MasNodeFailure ? error : cause instanceof MasNodeFailure ? cause : null;
+    if (nodeFailure !== null) {
       return {
         ok: false,
         failure: {
-          node: cause.node,
-          error: { code: cause.issue.code, detail: cause.issue.detail, cause: null },
+          node: nodeFailure.node,
+          error: { code: nodeFailure.issue.code, detail: nodeFailure.issue.detail, cause: null },
         },
       };
     }

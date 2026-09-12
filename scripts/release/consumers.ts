@@ -5,6 +5,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import vm from 'node:vm';
+import ts from 'typescript';
 import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, isMain } from './common.ts';
 import type { Artifacts } from './build.ts';
 import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
@@ -55,6 +56,12 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     const migrationPath = resolve(root, 'docs/migrations/jaren-ai/manifest.json');
     const migration = existsSync(migrationPath) ? readJson<{ declarations: Array<{ symbols: Array<{ name: string; destination: { entry: string } }> }>; rootSymbols: Array<{ name: string; destination: { entry: string } }> }>(migrationPath) : null;
     if (migration) writeJson(resolve(directory, 'migration.json'), migration);
+    const exampleSource = readFileSync(resolve(root, 'examples/gmpl.ts'), 'utf8');
+    writeFileSync(resolve(directory, 'gmpl-example.mjs'), ts.transpileModule(exampleSource, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
+    cpSync(resolve(root, 'examples/fixtures/gmpl-domains.json'), resolve(directory, 'fixtures/gmpl-domains.json'));
+    cpSync(resolve(root, 'test/release/fixtures/gmpl-consumer.mjs'), resolve(directory, 'gmpl-consumer.mjs'));
+    execFileSync(process.execPath, ['--no-experimental-strip-types', 'gmpl-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    execFileSync('bun', ['gmpl-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
     cpSync(resolve(root, 'examples/outcomes.ts'), resolve(directory, 'outcomes-example.ts'));
     writeFileSync(resolve(directory, 'supervised-store.ts'), readFileSync(resolve(root, 'examples/supervised-store.ts'), 'utf8')
       .replace("from './outcomes.ts'", "from './outcomes-example.ts'"));
@@ -82,6 +89,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         imports.push(`import ${json ? '' : '* as '}entry${count} from ${JSON.stringify(name)}${json ? ' with { type: "json" }' : ''};\nexport type Entry${count} = typeof entry${count};`);
         count++;
       }
+      cpSync(resolve(root, 'test/release/fixtures/gmpl-types.ts'), resolve(directory, 'gmpl-types.ts'));
+      imports.push("import './gmpl-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/outcomes-types.ts'), resolve(directory, 'outcomes-types.ts'));
       imports.push("import './outcomes-types.js';");
       imports.push("import './supervised-store.ts';");
@@ -107,10 +116,16 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
         noEmit: true, skipLibCheck: false, resolveJsonModule: true, types: ['node'], allowImportingTsExtensions: true,
       }, files: ['consumer.mts'] });
       execFileSync(process.execPath, [resolve(directory, 'node_modules/typescript/bin/tsc'), '-p', 'tsconfig.json'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+      cpSync(resolve(root, 'test/release/fixtures/gmpl-browser.mjs'), resolve(directory, 'gmpl-browser.mjs'));
       cpSync(resolve(root, 'test/release/fixtures/browser.mjs'), resolve(directory, 'browser.mjs'));
       execFileSync('bun', ['build', 'browser.mjs', '--target=browser', '--format=iife', '--outfile=browser.js'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
       const browser = { crypto: globalThis.crypto, console, TextEncoder, TextDecoder, URL, URLSearchParams, AbortController, performance, setTimeout, clearTimeout, tangleConsumer: undefined as any };
+      Object.assign(browser, { window: browser, self: browser });
       vm.runInNewContext(readFileSync(resolve(directory, 'browser.js'), 'utf8'), browser, { timeout: 30_000 });
+      const gmplBrowser = await browser.tangleConsumer.gmpl;
+      assert.equal(gmplBrowser.packs, 14);
+      assert.ok(gmplBrowser.nodes > 3);
+      assert.match(gmplBrowser.rendered, /Literal \{\{text\}\}/);
       assert.equal(browser.tangleConsumer.tokens, 2);
       assert.equal(JSON.stringify(browser.tangleConsumer.program), JSON.stringify({ steps: [{ op: 'stat', from: 'data', as: 'meta' }, { op: 'answer', from: 'meta' }] }));
       assert.equal(browser.tangleConsumer.adapters.every((adapter: unknown) => typeof adapter === 'function'), true);

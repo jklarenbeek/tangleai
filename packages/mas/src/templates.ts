@@ -15,22 +15,16 @@
  * compile metadata, outside the hashed semantic payload.
  */
 
+import { cloneJson } from '@jarenjs/core/object';
+import { JSONPOINTER_NOTHING } from '@jarenjs/json/pointer';
+import { validateTemplateBindings, validateTemplateBindingValue, templatePointerValue } from './template-bindings.ts';
+
 import { compileJSONPatch, createJSONPatch, type JsonPatchOperation } from '@jarenjs/json/patch';
 
 import { masIssue, refuse, type MasIssue, type MasValidated } from './errors.ts';
 import { masRevisionOf, masTemplateVersionIdOf, masWorkflowVersionIdOf } from './identity.ts';
 import { compileEmbeddedSchema, validateTemplateShape, validateWorkflowShape } from './schema.ts';
 import type { MasTemplate, MasWorkflow } from './contracts.gen.ts';
-
-function pointerValue(document: unknown, pointer: string): unknown {
-  if (pointer === '') return document;
-  let current: unknown = document;
-  for (const segment of pointer.slice(1).split('/')) {
-    if (current === null || typeof current !== 'object') return undefined;
-    current = (current as Record<string, unknown>)[segment.replaceAll('~1', '/').replaceAll('~0', '~')];
-  }
-  return current;
-}
 
 const IGNORED_CHANGES = ['/versionId'];
 
@@ -49,6 +43,9 @@ export async function instantiateMasTemplate(template: unknown, parameters: unkn
     return refuse([masIssue('TMAS1002', '/versionId', 'the template does not hash to its claimed version')]);
   }
 
+  const bindings = validateTemplateBindings(document);
+  if (!bindings.valid) return bindings;
+
   const parameterCheck = compileEmbeddedSchema(document.parameters.schema);
   if (parameterCheck === null || !parameterCheck(parameters).valid) {
     return refuse([masIssue('TMAS1001', '/parameters', 'the parameters do not validate against the template parameter schema')]);
@@ -58,15 +55,10 @@ export async function instantiateMasTemplate(template: unknown, parameters: unkn
   const issues: MasIssue[] = [];
   const operations: JsonPatchOperation[] = [];
   for (const [index, binding] of document.bindings.entries()) {
-    const value = pointerValue(parameters, binding.parameterPointer);
-    if (value === undefined) continue; // an optional parameter leaves its target as authored
-    if (binding.mode === 'caps') {
-      const current = pointerValue(document.fragment, binding.targetPointer);
-      if (typeof current === 'number' && typeof value === 'number' && value > current) {
-        issues.push(masIssue('TMAS1008', `/bindings/${index}`, `a parameter cannot raise the cap at '${binding.targetPointer}' (${current} -> ${value})`));
-        continue;
-      }
-    }
+    const value = templatePointerValue(parameters, binding.parameterPointer);
+    if (value === JSONPOINTER_NOTHING) continue;
+    const issue = validateTemplateBindingValue(document, index, value);
+    if (issue !== null) { issues.push(issue); continue; }
     operations.push({ op: 'replace', path: binding.targetPointer, value });
   }
   if (issues.length > 0) return refuse(issues);
@@ -74,7 +66,7 @@ export async function instantiateMasTemplate(template: unknown, parameters: unkn
   const apply = compileJSONPatch(operations, { values: 'fresh' }) as (document: unknown) => unknown;
   let instance: Record<string, unknown>;
   try {
-    instance = apply(document.fragment) as Record<string, unknown>;
+    instance = cloneJson(apply(document.fragment)) as Record<string, unknown>;
   } catch (error) {
     const cause = error as { code?: string, docPath?: string, message?: string };
     return refuse([{

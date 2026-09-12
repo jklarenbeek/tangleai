@@ -158,7 +158,7 @@ bottom, with the boundary each line keeps:
   commit, return for the flow checkpoint) runs inside `compileDag` task
   handlers; agents are `createAgent` + `createToolbox` +
   `createStructuredOutput` over ONE shared `createBudgetAccount` per
-  run; control regions run `compileFsm` sessions persisted through
+  active segment, seeded from the durable run budget; control regions run `compileFsm` sessions persisted through
   `snapshotFsm`/`resumeFsmSession` on the run row. Interactions complete
   their queue segment durably and resume through an idempotent outbox
   reconciler over the published queue.
@@ -175,14 +175,36 @@ The measured claim and its limits live in
 [MAS_RUNTIME_BENCHMARK.md](MAS_RUNTIME_BENCHMARK.md) and the handoff
 artifact (`benchmark/results/mas-runtime-handoff.json`).
 
+## Reusable collaboration content
+
+`@tangleai/gmpl` owns the schemas, fourteen compiled prompt packs and six recipes
+for parallel analysis, peer review, red team, structured debate, clarification and
+Delphi. Its root API performs no I/O. A catalog binds immutable roles, domain
+payload restrictions, evidence contracts and answer projector identities. A recipe
+materializes a MAS template; safe instantiation validates and plans the same MAS
+IR consumed by the existing runtime. There is no separate pattern executor,
+provider, store or mutable role registry.
+
+Jaren parses TOML, renders JTLT, hashes canonical data, validates/emits schemas,
+computes sample statistics and schedules admitted work. GMPL supplies the
+visibility and stopping policy: current peer findings cannot silently disappear,
+Delphi peer data excludes private attribution, and exhausted rounds report
+no-consensus or needs-information. Typed human responses become explicitly
+labelled host evidence. The [public example](../examples/gmpl.ts) runs both text
+and numeric domain data and resumes a two-turn clarification after SQLite reopens.
+
+[GMPL_BENCHMARK.md](GMPL_BENCHMARK.md) reports scripted protocol conformance and
+matched comparison costs; [GMPL_LOCOMO.md](GMPL_LOCOMO.md) describes the seeded
+plan and exact-request replay seam. Neither establishes live model improvement.
+
 ## What is deliberately absent (see ROADMAP.md)
 
 The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)
 comes before any further policy work —
 memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
-thing. Graph indexing of `relations`, the consolidation tiers and the GMPL
-multi-agent patterns all wait behind their roadmap entries.
+thing. Graph indexing of `relations` and the consolidation tiers remain roadmap
+work. GMPL mechanisms are shipped; live model-quality improvement remains open.
 
 ## The surfaces (added 2026-08-24)
 

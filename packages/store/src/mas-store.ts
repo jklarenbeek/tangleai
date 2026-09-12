@@ -8,7 +8,7 @@
  * worker claim epoch (`TMAS2005` for a zombie's stale commit), and node
  * completion as ONE transaction writing the terminal attempt, outbound
  * messages, next state revision, budget snapshot and artifact rows —
- * all or nothing, exactly D6. Every record validates against the
+ * all or nothing. Every record validates against the
  * generated runtime contracts before it is written; persistence never
  * invents a shape. Semantic idempotency: `beginNodeAttempt` returns the
  * stored completion for a key it has already committed and refuses an
@@ -96,6 +96,28 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
     } catch (error) {
       if (error instanceof MasRollback) return error.outcome as T;
       throw error;
+    }
+  }
+
+  async function readTraceFrom(reader: Pick<TransactionStore, 'collection'>, runId: string): Promise<TraceView | undefined> {
+    const run = await reader.collection<MasRun>('mas_runs').get(runId);
+    if (run === undefined) return undefined;
+    const view: TraceView = {
+      run: structuredClone(run),
+      attempts: asRows(await reader.collection<MasNodeAttempt>('mas_node_attempts').execute<MasNodeAttempt>(matching({ runId }))).map((row) => structuredClone(row)),
+      messages: asRows(await reader.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId }))).map((row) => structuredClone(row)),
+      stateRevisions: asRows(await reader.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId }))).map((row) => structuredClone(row)),
+      interactions: asRows(await reader.collection<MasInteraction>('mas_interactions').execute<MasInteraction>(matching({ runId }))).map((row) => structuredClone(row)),
+      artifacts: asRows(await reader.collection<MasTraceArtifact>('mas_trace_artifacts').execute<MasTraceArtifact>(matching({ runId }))).map((row) => structuredClone(row)),
+    };
+    return view;
+  }
+
+  async function enforceTraceLimit(txn: TransactionStore, runId: string): Promise<void> {
+    const trace = await readTraceFrom(txn, runId);
+    const limit = (trace?.run.budget.limits as { traceBytes?: number } | undefined)?.traceBytes;
+    if (limit !== undefined && new TextEncoder().encode(JSON.stringify(trace)).byteLength > limit) {
+      throw new MasRollback(refuse('TMAS2009', '/limits/traceBytes', 'the retained trace byte budget is spent; the completion was rolled back'));
     }
   }
 
@@ -286,10 +308,18 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const transition = planRunTransition(run.status, command);
         if (!transition.ok) return { ok: false as const, issue: transition.issue };
         const next: MasRun = { ...run, status: transition.status };
+        if (command.settlement) {
+          const receipt = command.settlement;
+          if (receipt.claimSeq !== run.claim.seq) return refuse<MasRun>('TMAS2005', '/claim', 'a stale segment cannot settle the budget');
+          if (Object.values(receipt.spent).some(n => !Number.isFinite(n) || n < 0)) return refuse<MasRun>('TMAS2009', '/budget/spent', 'invalid budget settlement');
+          next.budget = { limits: run.budget.limits, spent: { turns: Math.max(run.budget.spent.turns, receipt.spent.turns), tokens: Math.max(run.budget.spent.tokens, receipt.spent.tokens), ms: Math.max(run.budget.spent.ms, receipt.spent.ms) } };
+        }
         if (command.kind === 'complete') next.output = command.output;
         if (command.kind === 'fail') next.failure = command.failure;
         if (command.kind === 'queue-segment') next.segment = run.segment + 1;
-        return writeRun(txn, next);
+        const written = await writeRun(txn, next);
+        if (written.ok && (command.kind === 'complete' || command.kind === 'wait')) await enforceTraceLimit(txn, runId);
+        return written;
       });
     },
 
@@ -297,7 +327,9 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       return atomically(async (txn) => {
         const run = await readRun(txn, runId);
         if (run === undefined) return refuse<MasRun>('TMAS2002', '/id', `run '${runId}' does not exist`);
-        return writeRun(txn, { ...run, fsm: { ...run.fsm, [controlId]: snapshot } });
+        const written = await writeRun(txn, { ...run, fsm: { ...run.fsm, [controlId]: snapshot } });
+        if (written.ok) await enforceTraceLimit(txn, runId);
+        return written;
       });
     },
 
@@ -412,11 +444,12 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
             spent: {
               turns: spent.turns + plan.spend.turns,
               tokens: spent.tokens + plan.spend.tokens,
-              ms: spent.ms + plan.spend.ms,
+              ms: Math.max(spent.ms + plan.spend.ms, plan.activeMs ?? 0),
             },
           },
         });
         if (!written.ok) throw new MasRollback({ ok: false as const, issue: written.issue });
+        await enforceTraceLimit(txn, plan.runId);
         return {
           ok: true as const,
           value: {
@@ -441,12 +474,18 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         if (current.status !== 'running') {
           return refuse<MasNodeAttempt>('TMAS2003', '/status', `only a running attempt can move to '${plan.status}'; '${plan.attemptId}' is '${current.status}'`);
         }
-        const next: MasNodeAttempt = { ...current, status: plan.status, error: plan.error, finishedAt: now() };
+        const next: MasNodeAttempt = { ...current, ...plan.receipt, status: plan.status, error: plan.error, finishedAt: now() };
         const outcome = validateRuntimeRecord('masNodeAttempt', next);
         if (!outcome.valid) {
           return refuse<MasNodeAttempt>('TMAS2004', `/attempt${outcome.issues[0]?.path ?? ''}`, outcome.issues[0]?.detail ?? '');
         }
         await handle.put(next);
+        if (plan.receipt !== undefined) {
+          const charged = plan.receipt.spend, spent = run.budget.spent;
+          const written = await writeRun(txn, { ...run, budget: { limits: run.budget.limits,
+            spent: { turns: spent.turns + charged.turns, tokens: spent.tokens + charged.tokens, ms: Math.max(spent.ms + charged.ms, plan.activeMs ?? 0) } } });
+          if (!written.ok) throw new MasRollback({ ok: false as const, issue: written.issue });
+        }
         return { ok: true as const, value: structuredClone(next) };
       });
     },
@@ -455,7 +494,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       return atomically(async (txn) => {
         const run = await readRun(txn, plan.runId);
         if (run === undefined) return refuse<MasInteraction>('TMAS2002', '/id', `run '${plan.runId}' does not exist`);
-        const id = `${plan.runId}:i:${plan.node}`;
+        const id = `${plan.runId}:i:${plan.path}`;
         const handle = txn.collection<MasInteraction>('mas_interactions');
         const existing = await handle.get(id);
         if (existing !== undefined) return { ok: true as const, value: structuredClone(existing) };
@@ -481,6 +520,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
           return refuse<MasInteraction>('TMAS2004', `/interaction${outcome.issues[0]?.path ?? ''}`, outcome.issues[0]?.detail ?? '');
         }
         await handle.put(interaction);
+        await enforceTraceLimit(txn, plan.runId);
         return { ok: true as const, value: structuredClone(interaction) };
       });
     },
@@ -496,6 +536,7 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
         const current = await handle.get(id);
         if (current === undefined) return refuse<MasInteraction>('TMAS2007', '/id', `interaction '${id}' does not exist`);
         if (current.status === 'responded' && current.responseKey === responseKey) {
+          if (!equalsJson(current.response, response)) return refuse<MasInteraction>('TMAS2007', '/response', 'the response key already identifies different response bytes');
           return { ok: true as const, value: structuredClone(current) };
         }
         const transition = planInteractionTransition(current.status as 'waiting', 'responded');
@@ -563,18 +604,6 @@ export function createMasStore(db: TangleDb, options: MasStoreOptions = {}): Mas
       return latest === undefined ? undefined : { id: latest.id, value: structuredClone(latest.value) };
     },
 
-    async readTrace(runId) {
-      const run = await runs().get(runId);
-      if (run === undefined) return undefined;
-      const view: TraceView = {
-        run: structuredClone(run),
-        attempts: asRows(await attempts().execute<MasNodeAttempt>(matching({ runId }))).map((row) => structuredClone(row)),
-        messages: asRows(await db.collection<MasMessage>('mas_messages').execute<MasMessage>(matching({ runId }))).map((row) => structuredClone(row)),
-        stateRevisions: asRows(await db.collection<MasStateRevision>('mas_state_revisions').execute<MasStateRevision>(matching({ runId }))).map((row) => structuredClone(row)),
-        interactions: asRows(await db.collection<MasInteraction>('mas_interactions').execute<MasInteraction>(matching({ runId }))).map((row) => structuredClone(row)),
-        artifacts: asRows(await db.collection<MasTraceArtifact>('mas_trace_artifacts').execute<MasTraceArtifact>(matching({ runId }))).map((row) => structuredClone(row)),
-      };
-      return view;
-    },
+    async readTrace(runId) { return readTraceFrom(db, runId); },
   };
 }

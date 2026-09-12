@@ -49,6 +49,22 @@ contracts persistence implements.
   and absence is always an explicit state (`retained`, `redacted`,
   `truncated`, `expired`, `not-configured`, `not-run`).
 
+## Template and host binding boundaries
+
+Template bindings authorize specific semantic fields, including agent roles,
+profiles and representation adapters, tool subsets, existing numeric cap leaves,
+and boolean constants in declared switch guards. A binding cannot replace nodes,
+edges, schemas or registry pins, disguise a cap as a role field, overlap another
+binding target, add tools or increase a cap. The same validation runs when a
+template enters a registry and when it is instantiated. Optional absent
+parameters leave the source unchanged, including when all bindings are absent.
+
+Runtime compilation checks the id and version of each host message adapter
+against the pinned snapshot and validates capabilities of referenced child graphs.
+It captures the selected renderer, so later replacement of a map entry or adapter
+descriptor cannot change a compiled run. Renderer closure behavior remains the
+trusted host's responsibility.
+
 ## Executing a workflow
 
 The host composes three shipped layers (the consumer smoke in
@@ -137,3 +153,27 @@ workflows. External effects are at-least-once with idempotency-key
 guards (never claimed exactly-once); durable queues are same-machine
 SQLite through `@jarenjs/db`; shared budgets bound token overshoot only
 up to the suite's stated concurrent-call bound.
+
+Durable interactions compose inside graph invocations, switch branches and loop
+bodies. Interaction ids use the full invocation path, including iteration, while
+root ids retain their existing form. A wait ends the segment after already started
+sibling work settles; it holds no worker while awaiting the host. Reconciliation
+selects the response reserved for the next segment. Reusing a response key with
+different bytes refuses with `TMAS2007`. These semantics use checkpoint ABI
+`tangle-mas/5`; earlier executable identities cannot resume under this runtime.
+
+Runtime context limits apply to the combined content of every physical model
+request, including normalization and repair. Token spend persists the shared
+account's charge (provider totals when present, otherwise its estimate), while
+usage fields retain the separately reported prompt/completion counts. Role/control commits checkpoint cumulative active time so reclaim cannot reset
+committed elapsed work. Segment settlement is claim-fenced and preserves cumulative active elapsed time; waiting
+for a human does not consume active time. Cooperative provider deadlines remain
+the host's responsibility, and a late final result cannot pass an exhausted time
+cap.
+
+The SQLite adapter checks the UTF-8 size of the full retained public trace inside
+completion, FSM, interaction creation and terminal-success transactions. A write
+that exceeds `traceBytes` rolls back and fails with `TMAS2009`. Mandatory attempt,
+failure and budget receipts may exceed the quota so incurred work is never hidden;
+the quota is not a bound on SQLite pages, indexes, WAL or process memory. Already
+admitted concurrent calls still settle and retain their failure costs.

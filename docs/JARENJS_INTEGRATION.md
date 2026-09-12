@@ -3,7 +3,7 @@
 Tangle consumes **Jaren 0.86.0**, tag `v0.86.0`, source commit
 `ce489546f21a176a2574169b65b95f9dc15461f7`. Upstream `main`, the tag and npm's
 latest release agreed when checked on 2026-09-12. The submodule is the source
-reference; runtime imports resolve to the 23 published npm packages. All 99
+reference; runtime imports resolve to the 23 published npm packages. All 103
 direct dependency references are exact pins. The lock records registry URLs and
 integrities; the [registry receipt](integration/jaren-0.86.0-registry.json) checks
 all 23 downloaded archives against it. This receipt does not claim a source
@@ -40,6 +40,24 @@ Tangle. The [migration handoff](JAREN_AI_MIGRATION.md) describes that boundary.
 | Lightweight database imports and `compileEntityModel` | `/query`, `/model`, `/entity` and `/relational` serve existing-connection consumers. Tangle currently needs the full Store for collections, jobs, transactions and maintenance; it does not separately normalize entities or maintain duplicate mapping caches. |
 | LINQ provider iteration | A provider's optional `syncQuery` streams native synchronous cursors and closes them on early return. Existing Tangle history and outcome reads already use bounded database cursors/queries. There is no local provider materialization loop to remove. |
 | Collection drag | `createDragInteraction`, `mountCollectionDrag` and `createDraggableCollectionWidget` provide stable-key/revision intent, bounded pending authority and owned pointer/keyboard lifecycle. Current desktop and Pages hosts have no row move/copy command or mounted collection drag consumer. A future collection editor should use these surfaces and add its own authoritative revision-checked operation. |
+
+## Pattern content integration
+
+`@tangleai/gmpl` consumes `parseToml` for all fourteen in-scope source packs and
+`compileJtltStylesheet` for compiled, closed-variable rendering. Installed JSON
+artifacts remove any runtime dependency on checkout prompts. Jaren canonical
+hashing, validation and schema emission bind the immutable catalog, roles,
+recipes and domain contracts. Delphi consumes Jaren mean, median and sample
+standard deviation; confidence remains diagnostic. MAS owns lowering through
+Jaren flow documents, durable queue/checkpoint composition and bounded admission
+through `createScheduler`. Tangle adds the pattern policy, not another parser,
+statistics engine, scheduler or executor.
+
+The [pattern report](GMPL_BENCHMARK.md) measures all six families, fourteen packs,
+288 primary scripted executions and seven diagnostic ablations. The public
+consumer and packed qualification cover Node, Bun, strict declarations and the
+pure browser API. Synthetic conformance is separate from the unmeasured live
+LoCoMo quality criterion.
 
 ## Process host ownership
 

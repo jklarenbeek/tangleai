@@ -1,0 +1,48 @@
+{
+  "id": "panel-success",
+  "group": "panel",
+  "variant": "success",
+  "input": {
+    "caseId": "panel-success",
+    "query": "Using only these records, answer the panel question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "panel-success-e1",
+        "digest": "3cd8c21f037872d4dcc245ecef396092be306c102cc557d4a55e3e9724e62ac5",
+        "text": "Panel A measured 10 units."
+      },
+      {
+        "id": "panel-success-e2",
+        "digest": "c264ef65bc3f81d4d7b4026f3b701bc2b9ecfa04550222b4815e159db4bfc9d9",
+        "text": "Panel B measured 12 units."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "11 units",
+    "abstention": false,
+    "requiredFindings": []
+  },
+  "script": {
+    "result": {
+      "answer": "11 units",
+      "disposition": "completed",
+      "claims": [
+        {
+          "text": "11 units",
+          "citations": [
+            {
+              "id": "panel-success-e1",
+              "digest": "3cd8c21f037872d4dcc245ecef396092be306c102cc557d4a55e3e9724e62ac5"
+            },
+            {
+              "id": "panel-success-e2",
+              "digest": "c264ef65bc3f81d4d7b4026f3b701bc2b9ecfa04550222b4815e159db4bfc9d9"
+            }
+          ]
+        }
+      ],
+      "findings": []
+    }
+  }
+}

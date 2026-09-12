@@ -18,7 +18,8 @@
       "@tangleai/search",
       "@tangleai/pipeline",
       "@tangleai/outcomes",
-      "@tangleai/store"
+      "@tangleai/store",
+      "@tangleai/gmpl"
     ]
   ],
   "linked": [],

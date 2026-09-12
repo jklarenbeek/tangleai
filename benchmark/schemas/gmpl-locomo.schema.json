@@ -1,0 +1,1032 @@
+{
+  "type": "object",
+  "properties": {
+    "instrument": {
+      "const": "gmpl-locomo"
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan": {
+      "$ref": "#/$defs/plan"
+    },
+    "replay": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/replay"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "instrument",
+    "reportId",
+    "plan",
+    "replay",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "enum": [
+            "custom",
+            "openrouter",
+            "ollama",
+            "lmstudio"
+          ]
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        }
+      },
+      "required": [
+        "provider",
+        "baseUrl",
+        "model",
+        "maxTokens",
+        "temperature"
+      ],
+      "additionalProperties": false
+    },
+    "requests": {
+      "type": "object",
+      "properties": {
+        "completion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repair": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tools": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embedding": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "judgeSubset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "completion",
+        "normalization",
+        "repair",
+        "tools",
+        "embedding",
+        "judgeSubset",
+        "physical"
+      ],
+      "additionalProperties": false
+    },
+    "question": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "inputId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "inputId",
+        "evidenceId",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "row": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "pattern",
+            "single-agent"
+          ]
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxRoles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "$ref": "#/$defs/requests"
+        }
+      },
+      "required": [
+        "id",
+        "pattern",
+        "kind",
+        "eligible",
+        "reason",
+        "maxRoles",
+        "requests"
+      ],
+      "additionalProperties": false
+    },
+    "caps": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolRounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fanOut": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextChars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "toolRounds",
+        "fanOut",
+        "concurrency",
+        "iterations",
+        "contextChars",
+        "traceBytes"
+      ],
+      "additionalProperties": false
+    },
+    "plan": {
+      "type": "object",
+      "properties": {
+        "planId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "available",
+                "dataset-unavailable",
+                "invalid"
+              ]
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "sha256",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "sample": {
+          "type": "object",
+          "properties": {
+            "seed": {
+              "const": 17753
+            },
+            "perCategory": {
+              "const": 16
+            },
+            "adversarial": {
+              "const": 0
+            },
+            "planned": {
+              "const": 64
+            },
+            "selected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "missingByCategory": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ]
+                  },
+                  "missing": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "category",
+                  "missing"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "seed",
+            "perCategory",
+            "adversarial",
+            "planned",
+            "selected",
+            "missingByCategory"
+          ],
+          "additionalProperties": false
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/question"
+          }
+        },
+        "sampleId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/binding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "configId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "promptId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "retrieval": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "k": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minScore": {
+              "type": "number",
+              "minimum": 0
+            },
+            "policyId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "id",
+            "model",
+            "dims",
+            "k",
+            "minScore",
+            "policyId"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/row"
+          }
+        },
+        "caps": {
+          "$ref": "#/$defs/caps"
+        },
+        "campaign": {
+          "type": "object",
+          "properties": {
+            "plannedRuns": {
+              "const": 768
+            },
+            "requests": {
+              "$ref": "#/$defs/requests"
+            },
+            "physicalCap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "const": 4
+            },
+            "httpAttempts": {
+              "const": 1
+            },
+            "deadlineMs": {
+              "const": 120000
+            },
+            "money": {
+              "type": "null"
+            },
+            "moneyReason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "plannedRuns",
+            "requests",
+            "physicalCap",
+            "concurrency",
+            "httpAttempts",
+            "deadlineMs",
+            "money",
+            "moneyReason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "planId",
+        "sourceId",
+        "dataset",
+        "sample",
+        "questions",
+        "sampleId",
+        "evidenceId",
+        "binding",
+        "configId",
+        "promptId",
+        "retrieval",
+        "rows",
+        "caps",
+        "campaign"
+      ],
+      "additionalProperties": false
+    },
+    "wireEntry": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object"
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "value",
+        "ms"
+      ],
+      "additionalProperties": false
+    },
+    "purchase": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "requestKey": {
+          "type": "string"
+        },
+        "requestIdHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "request": {
+          "type": "object"
+        },
+        "phase": {
+          "enum": [
+            "completion",
+            "normalization",
+            "repair"
+          ]
+        },
+        "entry": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/wireEntry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "responseId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "physical": {
+          "const": 1
+        },
+        "money": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "requestId",
+        "requestKey",
+        "requestIdHash",
+        "request",
+        "phase",
+        "entry",
+        "failure",
+        "responseId",
+        "physical",
+        "money"
+      ],
+      "additionalProperties": false
+    },
+    "original": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "waiting_for_input"
+          ]
+        },
+        "outputId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "status",
+        "outputId"
+      ],
+      "additionalProperties": false
+    },
+    "runReceipt": {
+      "type": "object",
+      "properties": {
+        "receiptId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rowId": {
+          "type": "string"
+        },
+        "caseId": {
+          "type": "string"
+        },
+        "planId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "inputId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "configId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bindingId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "original": {
+          "$ref": "#/$defs/original"
+        },
+        "purchases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/purchase"
+          }
+        }
+      },
+      "required": [
+        "receiptId",
+        "rowId",
+        "caseId",
+        "planId",
+        "inputId",
+        "evidenceId",
+        "configId",
+        "bindingId",
+        "original",
+        "purchases"
+      ],
+      "additionalProperties": false
+    },
+    "bundle": {
+      "type": "object",
+      "properties": {
+        "bundleId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "tier": {
+          "enum": [
+            "scripted",
+            "recorded-wire"
+          ]
+        },
+        "binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "planId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/runReceipt"
+          }
+        }
+      },
+      "required": [
+        "bundleId",
+        "tier",
+        "binding",
+        "planId",
+        "runs"
+      ],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "physical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repair": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "number",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unknownMsRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "money": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "physical",
+        "completion",
+        "normalization",
+        "repair",
+        "promptTokens",
+        "completionTokens",
+        "unknownTokenRequests",
+        "ms",
+        "unknownMsRequests",
+        "money"
+      ],
+      "additionalProperties": false
+    },
+    "caseResult": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "waiting_for_input",
+            "missing",
+            "ineligible"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "f1": {
+          "type": "number",
+          "minimum": 0
+        },
+        "citationValidity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "receiptId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "originalCost": {
+          "$ref": "#/$defs/cost"
+        },
+        "replayRequests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "caseId",
+        "category",
+        "status",
+        "reason",
+        "f1",
+        "citationValidity",
+        "receiptId",
+        "requestIds",
+        "originalCost",
+        "replayRequests"
+      ],
+      "additionalProperties": false
+    },
+    "replayRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "planned": {
+          "const": 64
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "f1": {
+          "type": "number",
+          "minimum": 0
+        },
+        "conditionalF1": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "planned": {
+                "const": 16
+              },
+              "completed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "f1": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "category",
+              "planned",
+              "completed",
+              "f1"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/caseResult"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "planned",
+        "completed",
+        "eligible",
+        "f1",
+        "conditionalF1",
+        "categories",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "properties": {
+        "bundleId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "tier": {
+          "enum": [
+            "scripted",
+            "recorded-wire"
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/replayRow"
+          }
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "eligible": {
+                "type": "boolean"
+              },
+              "delta": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "pattern",
+              "eligible",
+              "delta"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "originalCost": {
+          "$ref": "#/$defs/cost"
+        },
+        "incrementalCost": {
+          "type": "object",
+          "properties": {
+            "physical": {
+              "const": 0
+            },
+            "money": {
+              "const": 0
+            }
+          },
+          "required": [
+            "physical",
+            "money"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "bundleId",
+        "tier",
+        "rows",
+        "pairs",
+        "originalCost",
+        "incrementalCost"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "title": "GmplLocomo"
+}

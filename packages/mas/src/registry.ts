@@ -14,6 +14,7 @@
 
 import { deepFreeze, cloneJson } from '@jarenjs/core/object';
 
+import { validateTemplateBindings } from './template-bindings.ts';
 import { masIssue, refuse, type MasValidated } from './errors.ts';
 import { masRegistryRevisionOf, masRevisionOf, masTemplateVersionIdOf, masWorkflowVersionIdOf } from './identity.ts';
 import { validateRegistryShape, validateTemplateShape, validateWorkflowShape } from './schema.ts';
@@ -85,6 +86,11 @@ export async function createMasRegistrySnapshot(value: unknown): Promise<MasVali
       for (const issue of templateShape.issues) {
         issues.push(masIssue('TMAS1001', `/templates/${index}/template${issue.path}`, issue.detail));
       }
+      continue;
+    }
+    const bindings = validateTemplateBindings(templateShape.value);
+    if (!bindings.valid) {
+      for (const issue of bindings.issues) issues.push({ ...issue, path: `/templates/${index}/template${issue.path}` });
       continue;
     }
     const recomputed = await masTemplateVersionIdOf(templateShape.value as unknown as Record<string, unknown>);

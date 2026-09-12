@@ -1,0 +1,29 @@
+{
+  "id": "panel-insufficient",
+  "group": "panel",
+  "variant": "insufficient",
+  "input": {
+    "caseId": "panel-insufficient",
+    "query": "Using only these records, answer the panel question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "panel-insufficient-e1",
+        "digest": "b04e339ee4af9f59a0a5423eaf24fc84ce4df5c14b9faf8d1df87591abc4e918",
+        "text": "The relevant record is unavailable."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "insufficient information",
+    "abstention": true,
+    "requiredFindings": []
+  },
+  "script": {
+    "result": {
+      "answer": "insufficient information",
+      "disposition": "needs-information",
+      "claims": [],
+      "findings": []
+    }
+  }
+}

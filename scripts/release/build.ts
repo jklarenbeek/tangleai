@@ -31,7 +31,7 @@ export function distributionManifest(pkg: Manifest): Manifest {
   const exports = Object.fromEntries(Object.entries(pkg.exports ?? {}).map(([name, target]) => {
     assert.equal(typeof target, 'string', `${pkg.name}: workspace exports must point directly to TypeScript or assets`);
     const path = target as string;
-    assert.match(path, /^\.\/(?:src\/[\w/.-]+\.ts|schemas\/[\w.-]+\.json|styles\/[\w/.-]+\.css|package\.json)$/);
+    assert.match(path, /^\.\/(?:src\/[\w/.-]+\.ts|(?:schemas|artifacts)\/[\w.-]+\.json|styles\/[\w/.-]+\.css|package\.json)$/);
     assert.ok(!path.includes('..'), 'Export paths cannot traverse outside the package');
     return [name, path.endsWith('.ts') ? { types: path.replace(/\.ts$/, '.d.ts'), import: path.replace(/\.ts$/, '.js'), default: path.replace(/\.ts$/, '.js') } : path];
   }));
@@ -79,6 +79,7 @@ export async function buildPackages(root = ROOT) {
       assert.ok(existsSync(resolve(source, file)), `${dir}: missing ${file}`);
       cpSync(resolve(source, file), resolve(output, file));
     }
+    if (existsSync(resolve(source, 'artifacts'))) cpSync(resolve(source, 'artifacts'), resolve(output, 'artifacts'), { recursive: true });
     if (existsSync(resolve(source, 'schemas'))) cpSync(resolve(source, 'schemas'), resolve(output, 'schemas'), { recursive: true });
     writeJson(resolve(output, 'package.json'), pkg);
     const packed = JSON.parse(npm(['pack', '--ignore-scripts', '--json', '--pack-destination', releaseDir], { root, cwd: output, capture: true }));
@@ -90,7 +91,7 @@ export async function buildPackages(root = ROOT) {
     for (const required of ['README.md', 'LICENSE', 'CHANGELOG.md', 'package.json']) assert.ok(files.has(required), `${pkg.name}: ${required} missing from tarball`);
     for (const file of files) {
       assert.ok(!file.endsWith('.ts') || file.endsWith('.d.ts'), `${pkg.name}: raw TypeScript leaked into npm package`);
-      assert.ok(file === 'package.json' || ['README.md', 'LICENSE', 'CHANGELOG.md'].includes(file) || /^src\/.+\.(js|d\.ts)$/.test(file) || /^schemas\/.+\.json$/.test(file) || /^styles\/.+\.css$/.test(file) || /^docs\/.+\.md$/.test(file), `${pkg.name}: unexpected packed file ${file}`);
+      assert.ok(file === 'package.json' || ['README.md', 'LICENSE', 'CHANGELOG.md'].includes(file) || /^src\/.+\.(js|d\.ts)$/.test(file) || /^(?:schemas|artifacts)\/.+\.json$/.test(file) || /^styles\/.+\.css$/.test(file) || /^docs\/.+\.md$/.test(file), `${pkg.name}: unexpected packed file ${file}`);
     }
     for (const target of Object.values(pkg.exports ?? {})) {
       for (const file of typeof target === 'string' ? [target] : Object.values(target)) assert.ok(files.has(file.slice(2)), `${pkg.name}: missing export ${file}`);

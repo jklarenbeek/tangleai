@@ -16,11 +16,11 @@
  * shared budget account (stop/reserve before every call, seeded from
  * the run's durable spend), completes the run's output against its
  * declared schema, and ends every runnable segment in exactly one
- * terminal outcome: completed, failed, or (with the control order)
- * durably waiting. Control regions refuse until that order lands —
- * a workflow cannot execute on a path that says "future node".
+ * terminal outcome: completed, failed, or durably waiting. Nested graph capabilities are
+ * checked against the same pinned snapshot before a segment can execute.
  */
 
+import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
 import { createBudgetAccount } from '@tangleai/agents/recursive';
 
 import { masIssue, refuse, type MasIssue, type MasValidated } from './errors.ts';
@@ -90,6 +90,19 @@ export function compileMasRuntime(
     return refuse([masIssue('TMAS1009', '/plan', 'the executable plan, validated workflow and registry must share the same pinned identities')]);
   }
 
+  const adapters = new Map<string, MasMessageAdapter>();
+  const declaredAdapters = new Map(snapshot.document.messageAdapters.map(a => [a.id, a]));
+  for (const [id, adapter] of bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS) {
+    const declared = declaredAdapters.get(id);
+    if (bindings.messageAdapters === undefined && declared === undefined) continue;
+    if (declared === undefined || adapter === null || typeof adapter !== 'object'
+      || adapter.id !== id || adapter.version !== declared.version || typeof adapter.render !== 'function') {
+      issues.push(masIssue('TMAS1009', `/messageAdapters/${encodeJSONPointerSegment(id)}`, 'the host adapter must match the registered id and version and bind a renderer'));
+    } else {
+      adapters.set(id, Object.freeze({ id, version: adapter.version, render: adapter.render }));
+    }
+  }
+
   const walkNodes = (nodes: readonly Invocation[]): void => {
     for (const [index, node] of nodes.entries()) {
       if (node.kind === 'task') {
@@ -111,9 +124,8 @@ export function compileMasRuntime(
             issues.push(masIssue('TMAS1009', `/nodes/${index}/context/${contextIndex}`, `no context provider is bound for '${contextId}'`));
           }
         }
-        const adapters = bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS;
         if (adapters.get(node.messageAdapter) === undefined) {
-          issues.push(masIssue('TMAS1009', `/nodes/${index}/messageAdapter`, `no message adapter is bound for '${node.messageAdapter}'`));
+          issues.push(masIssue('TMAS1009', `/messageAdapters/${encodeJSONPointerSegment(node.messageAdapter)}`, `no message adapter is bound for '${node.messageAdapter}'`));
         }
         if (Object.keys(node.output.ports).length !== 1) {
           issues.push(masIssue('TMAS1004', `/nodes/${index}/output`, 'an agent node declares exactly one output port'));
@@ -121,16 +133,16 @@ export function compileMasRuntime(
       }
     }
   };
-  walkNodes(workflow.nodes);
-  const declaredAdapters = new Set(snapshot.document.messageAdapters.map((adapter) => adapter.id));
-  for (const [id] of bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS) {
-    if (!declaredAdapters.has(id)) {
-      issues.push(masIssue('TMAS1009', '/messageAdapters', `adapter '${id}' is bound but not declared by the pinned snapshot`));
-    }
-  }
+  const visited = new Set<string>();
+  const walkValidated = (value: ValidatedMasWorkflow): void => {
+    if (visited.has(value.versionId)) return;
+    visited.add(value.versionId);
+    walkNodes(value.workflow.nodes);
+    for (const child of value.subgraphs.values()) walkValidated(child);
+  };
+  walkValidated(validated);
   if (issues.length > 0) return refuse(issues);
 
-  const adapters = bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS;
   const outputCheck = compileEmbeddedSchema(workflow.output.schema);
 
   const executeSegment = async (host: MasSegmentHost): Promise<void> => {
@@ -143,11 +155,20 @@ export function compileMasRuntime(
       spent: host.run.budget.spent,
     }, bindings.clock);
 
+    const settlement = () => ({ claimSeq: host.claimSeq, spent: account.spent() });
     const failRun = async (node: string | null, error: RuntimeError): Promise<void> => {
-      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'fail', failure: { node, error } });
+      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'fail', failure: { node, error }, settlement: settlement() });
       if (!transitioned.ok) throw new MasInfrastructureCrash(`the failure transition refused: ${transitioned.issue.code}`);
       await host.completeSegment({ status: 'failed', failure: { node, error } });
     };
+
+    for (const [name, ceiling] of Object.entries(workflow.limits)) {
+      const requested = limits[name];
+      if (requested !== undefined && (typeof requested !== 'number' || !Number.isFinite(requested) || requested < 0 || requested > ceiling)) {
+        await failRun(null, { code: 'TMAS2009', detail: `run limit '${name}' cannot widen the compiled workflow`, cause: null });
+        return;
+      }
+    }
 
     // Rebuild the region scope from committed attempts — the durable truth.
     const trace = await bindings.store.readTrace(host.run.id);
@@ -159,7 +180,14 @@ export function compileMasRuntime(
       }
     }
 
+    const concurrency = Math.min(cap('concurrency') ?? workflow.limits.concurrency, workflow.limits.concurrency);
+    if (!Number.isSafeInteger(concurrency) || concurrency < 1) {
+      await failRun(null, { code: 'TMAS2009', detail: 'no workflow concurrency is available', cause: null });
+      return;
+    }
     const context: RunContext = {
+      concurrency,
+      contextChars: Math.min(cap('contextChars') ?? workflow.limits.contextChars, workflow.limits.contextChars),
       runId: host.run.id,
       claimSeq: host.claimSeq,
       signal: host.signal,
@@ -194,9 +222,13 @@ export function compileMasRuntime(
       await failRun(outcome.failure.node, outcome.failure.error);
       return;
     }
+    if (cap('ms') !== undefined && account.spent().ms > cap('ms')!) {
+      await failRun(null, { code: 'TMAS2009', detail: 'the active workflow time budget is spent', cause: null });
+      return;
+    }
     if (outcome.kind === 'waiting') {
-      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'wait' });
-      if (!transitioned.ok) throw new MasInfrastructureCrash(`the wait transition refused: ${transitioned.issue.code}`);
+      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'wait', settlement: settlement() });
+      if (!transitioned.ok) { await failRun(null, { code: transitioned.issue.code as RuntimeError['code'], detail: transitioned.issue.detail, cause: null }); return; }
       await host.completeSegment({ status: 'waiting_for_input' });
       return;
     }
@@ -210,8 +242,8 @@ export function compileMasRuntime(
       await failRun(null, { code: 'TMAS2004', detail: 'the assembled workflow output does not validate against its declared schema', cause: null });
       return;
     }
-    const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'complete', output });
-    if (!transitioned.ok) throw new MasInfrastructureCrash(`the completion transition refused: ${transitioned.issue.code}`);
+    const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'complete', output, settlement: settlement() });
+    if (!transitioned.ok) { await failRun(null, { code: transitioned.issue.code as RuntimeError['code'], detail: transitioned.issue.detail, cause: null }); return; }
     await host.completeSegment({ status: 'completed', output });
   };
 

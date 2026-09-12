@@ -1,5 +1,5 @@
 /**
- * One control host over suite effects — D4 executed.
+ * One control host over suite effects.
  *
  * The host loop's only responsibilities: resume or create the suite
  * `CompiledFsm` session for the current control descriptor, send a
@@ -26,12 +26,13 @@
  */
 
 import { compileFsm, createFsmSession, resumeFsmSession, snapshotFsm } from '@jarenjs/flow';
+import { createScheduler } from '@jarenjs/core/schedule';
 import { compileJsonQuery } from '@jarenjs/json/query';
 
 import { compileEmbeddedSchema } from './schema.ts';
 import { interactionIdOf, invocationPathOf, semanticKeyOf } from './runtime-state.ts';
 import { nodeFeeds, masTaskVersionOf } from './lower.ts';
-import { createNodeLifecycle, MasInfrastructureCrash, type MasRuntimeObserver, type MasTaskHandlerBinding } from './node-lifecycle.ts';
+import { createNodeLifecycle, MasInfrastructureCrash, MasInteractionWait, type MasRuntimeObserver, type MasTaskHandlerBinding } from './node-lifecycle.ts';
 import { type MasToolBinding } from './tools.ts';
 import { executeDagRegion } from './dag-runtime.ts';
 import type { MasBudgetAccount, MasChatClient } from './budget.ts';
@@ -49,6 +50,9 @@ export interface RunContext {
   signal: AbortSignal;
   store: MasStore;
   account: MasBudgetAccount;
+  concurrency: number;
+  contextChars: number;
+  admit?: <T>(worker: () => Promise<T>, signal: AbortSignal) => Promise<T>;
   snapshot: MasRegistrySnapshot;
   observer?: MasRuntimeObserver;
   now: () => string;
@@ -144,7 +148,10 @@ async function controlMachine(ctx: RunContext, controlId: string, document: unkn
     async persist() {
       const snapshot = snapshotFsm(session);
       const written = await ctx.store.putRunFsm(ctx.runId, controlId, { state: snapshot.state, context: machine.context });
-      if (!written.ok) throw new MasInfrastructureCrash(`the FSM snapshot did not persist: ${written.issue.code}`);
+      if (!written.ok) {
+        if (written.issue.code === 'TMAS2009') throw new MasControlFailure(node, { code: 'TMAS2009', detail: written.issue.detail, cause: null });
+        throw new MasInfrastructureCrash(`the FSM snapshot did not persist: ${written.issue.code}`);
+      }
     },
   };
   return machine;
@@ -169,10 +176,10 @@ async function beginControlAttempt(ctx: RunContext, frame: RegionFrame, regionId
   const path = invocationPathOf({
     ...(frame.pathPrefix !== undefined ? { prefix: frame.pathPrefix } : {}),
     branch: '',
-    iteration: 0,
+    iteration: frame.iteration,
     node: invocation.id,
   });
-  const key = semanticKeyOf({ runId: ctx.runId, region: `${frame.keyPrefix}${regionId}`, branch: '', iteration: 0, node: invocation.id });
+  const key = semanticKeyOf({ runId: ctx.runId, region: `${frame.keyPrefix}${regionId}`, branch: '', iteration: frame.iteration, node: invocation.id });
   const begun = await ctx.store.beginNodeAttempt({
     runId: ctx.runId,
     idempotencyKey: key,
@@ -217,7 +224,7 @@ async function commitControlAttempt(
     messages.push({
       edgeId: edge.id,
       from: { path: started.path, port: edge.from.port },
-      to: { path: edge.to.node, port: edge.to.port },
+      to: { path: started.path.slice(0, -invocation.id.length) + edge.to.node, port: edge.to.port },
       adapter: edge.adapter,
       aggregation: edge.aggregation,
       index,
@@ -225,6 +232,7 @@ async function commitControlAttempt(
     });
   }
   const committed = await ctx.store.commitNodeCompletion({
+    activeMs: ctx.account.spent().ms,
     runId: ctx.runId,
     attemptId: started.attemptId,
     claimSeq: ctx.claimSeq,
@@ -271,7 +279,13 @@ export interface WalkTarget {
 
 export async function walkRegions(target: WalkTarget, ctx: RunContext, frame: RegionFrame): Promise<RegionsOutcome> {
   const { plan } = target;
-
+  const ceiling = Math.min(ctx.concurrency, target.validated.workflow.limits.concurrency);
+  const scheduler = ctx.admit === undefined || ceiling < ctx.concurrency
+    ? createScheduler({ concurrency: ceiling, maxQueue: Math.max(1, admittedLeafCount(target.validated)), maxScopes: 1 }) : null;
+  const parent = ctx.admit;
+  if (scheduler !== null) ctx = { ...ctx, concurrency: ceiling, admit: (worker, signal) =>
+    parent === undefined ? scheduler.run(worker, { signal }) : parent(() => scheduler.run(worker, { signal }), signal) };
+  try {
   for (const region of plan.regions) {
     if (region.kind === 'subgraph') continue; // executes inside its dag region
     let outcome: RegionsOutcome;
@@ -287,6 +301,16 @@ export async function walkRegions(target: WalkTarget, ctx: RunContext, frame: Re
     if (outcome.kind !== 'completed') return outcome;
   }
   return { kind: 'completed' };
+  } finally { if (scheduler !== null) await scheduler.close(); }
+}
+
+/** A finite queue bound from the validated expansion; loop iterations are sequential. */
+function admittedLeafCount(validated: ValidatedMasWorkflow): number {
+  return validated.workflow.nodes.reduce((sum, node) => {
+    const ref = node.kind === 'graph' ? node.subgraph : node.kind === 'loop' ? node.body : null;
+    const child = ref === null ? undefined : validated.subgraphs.get(ref);
+    return sum + (child === undefined ? 1 : admittedLeafCount(child));
+  }, 0);
 }
 
 async function runDagRegion(
@@ -303,7 +327,7 @@ async function runDagRegion(
   const handlers: Record<string, (props: { with: unknown, input: unknown }, signal: AbortSignal) => Promise<unknown>> = {};
   for (const invocationId of region.invocations) {
     const invocation = byId.get(invocationId) as Invocation;
-    handlers[invocationId] = createNodeLifecycle({
+    const lifecycle = createNodeLifecycle({
       workflow,
       registry: ctx.snapshot.document,
       invocation,
@@ -326,11 +350,15 @@ async function runDagRegion(
       taskHandlers: ctx.taskHandlers,
       ...(ctx.clientFor !== undefined ? { clientFor: ctx.clientFor } : {}),
       account: ctx.account,
+      contextChars: ctx.contextChars,
       toolBindings: ctx.toolBindings,
       contextProviders: ctx.contextProviders,
       messageAdapters: ctx.messageAdapters,
       ...(ctx.transcriptChars !== undefined ? { transcriptChars: ctx.transcriptChars } : {}),
     });
+    // Composition never holds a leaf admission slot while waiting for children.
+    handlers[invocationId] = invocation.kind === 'graph' ? lifecycle
+      : (props, signal) => ctx.admit!(() => lifecycle(props, signal), signal);
   }
   const namespace = `${frame.keyPrefix}${region.id}//${frame.iteration}`;
   const outcome = await executeDagRegion({
@@ -351,7 +379,7 @@ async function runDagRegion(
       ...(frame.pathPrefix !== undefined ? { pathPrefix: frame.pathPrefix } : {}),
     },
   });
-  if (!outcome.ok) return { kind: 'failed', failure: outcome.failure };
+  if (!outcome.ok) return 'waiting' in outcome ? { kind: 'waiting' } : { kind: 'failed', failure: outcome.failure };
   for (const [invocationId, ported] of Object.entries(outcome.exposed)) {
     frame.nodes[invocationId] = ported;
   }
@@ -398,7 +426,7 @@ async function runGraphChild(
   };
   const walked = await walkRegions({ validated: child, plan: childPlan }, ctx, childFrame);
   if (walked.kind === 'waiting') {
-    return { ok: false, error: { code: 'TMAS2003', detail: 'an interaction inside a nested graph is not supported by this runtime', cause: null } };
+    throw new MasInteractionWait(`subgraph '${invocation.subgraph}' is waiting for input`);
   }
   if (walked.kind === 'failed') {
     return {
@@ -486,51 +514,44 @@ async function runSwitchRegion(
   try {
     const machine = await controlMachine(ctx, controlId, target.plan.documents[region.documentKey], invocation.id);
 
-    // Branch selection: the declared Jaren Query guards, evaluated in
-    // declaration order by the host — never a display label.
-    const selected: string[] = [];
-    for (const branch of region.branches) {
-      const guard = compileJsonQuery(branch.when as Record<string, unknown>);
-      if (guard.ebv(input)) {
-        selected.push(branch.id);
-        if (invocation.mode === 'one-of') break;
+    // Selection is committed control state. On resume, recover the selected
+    // branch outputs through ordinary DAG checkpoints/semantic replay instead
+    // of sending 'select' again to an already running or merged machine.
+    let selected: string[];
+    if (machine.state === 'ready') {
+      selected = [];
+      for (const branch of region.branches) {
+        const guard = compileJsonQuery(branch.when as Record<string, unknown>);
+        if (guard.ebv(input)) { selected.push(branch.id); if (invocation.mode === 'one-of') break; }
       }
-    }
-    if (selected.length === 0 && region.default !== null) selected.push(region.default);
-
-    machine.context = { selected };
-    const results = new Map<string, unknown>();
-    if (invocation.mode === 'one-of') {
-      const step = await machine.send('select', { selected: selected[0] });
-      await machine.persist();
-      const dispatched = step.effects.filter((effect) => effect.run === 'run-branch');
-      for (const effect of dispatched) {
-        const branchId = (effect.with as { branch: string }).branch;
-        const outcome = await runBranch(target, region, branchId, ctx, frame, input, results);
-        if (outcome !== null) {
-          await machine.send('branch-failed');
-          await machine.persist();
-          await failControlAttempt(ctx, attempt, outcome.error);
-          return { kind: 'failed', failure: { node: outcome.node, error: outcome.error } };
-        }
+      if (selected.length === 0 && region.default !== null) selected.push(region.default);
+      machine.context = { selected };
+      const step = await machine.send('select', { selected: invocation.mode === 'one-of' ? selected[0] : selected });
+      if (!step.effects.some(effect => effect.run === (invocation.mode === 'one-of' ? 'run-branch' : 'run-branches'))) {
+        throw new MasControlFailure(invocation.id, { code: 'TMAS2004', detail: 'the switch did not dispatch its selected branch', cause: null });
       }
-      await machine.send('branch-committed');
       await machine.persist();
     } else {
-      const step = await machine.send('select', { selected });
-      await machine.persist();
-      const dispatched = step.effects.some((effect) => effect.run === 'run-branches');
-      if (dispatched) {
-        const outcomes = await Promise.all(selected.map((branchId) => runBranch(target, region, branchId, ctx, frame, input, results)));
-        const failed = outcomes.find((outcome) => outcome !== null);
-        if (failed !== undefined && failed !== null) {
-          await machine.send('branch-failed');
-          await machine.persist();
-          await failControlAttempt(ctx, attempt, failed.error);
-          return { kind: 'failed', failure: { node: failed.node, error: failed.error } };
-        }
+      selected = machine.context.selected as string[];
+      if (!Array.isArray(selected) || selected.some(id => !region.branches.some(branch => branch.id === id))) {
+        throw new MasControlFailure(invocation.id, { code: 'TMAS2004', detail: 'the persisted switch selection is invalid', cause: null });
       }
-      await machine.send('branches-committed');
+    }
+    const results = new Map<string, unknown>();
+    const outcomes = invocation.mode === 'one-of'
+      ? [await runBranch(target, region, selected[0], ctx, frame, input, results)]
+      : await Promise.all(selected.map(id => runBranch(target, region, id, ctx, frame, input, results)));
+    const failed = outcomes.find(outcome => outcome !== null && !('waiting' in outcome));
+    if (failed !== undefined && failed !== null) {
+      if ('waiting' in failed) return { kind: 'waiting' };
+      await machine.send('branch-failed');
+      await machine.persist();
+      await failControlAttempt(ctx, attempt, failed.error);
+      return { kind: 'failed', failure: { node: failed.node, error: failed.error } };
+    }
+    if (outcomes.some(outcome => outcome !== null && 'waiting' in outcome)) return { kind: 'waiting' };
+    if (machine.state !== 'merged') {
+      await machine.send(invocation.mode === 'one-of' ? 'branch-committed' : 'branches-committed');
       await machine.persist();
     }
 
@@ -546,8 +567,8 @@ async function runSwitchRegion(
       : selectedBranches.map((branch) => results.get(branch.id));
     const mergeMessages: CommitCompletionPlan['messages'] = selectedBranches.map((branch, index) => ({
       edgeId: `merge-${branch.id}`,
-      from: { path: branch.result.node, port: branch.result.port },
-      to: { path: invocation.id, port: outputPort },
+      from: { path: attempt.path.slice(0, -invocation.id.length) + branch.result.node, port: branch.result.port },
+      to: { path: attempt.path, port: outputPort },
       adapter: 'json-schema',
       aggregation: invocation.mode === 'one-of' ? 'one' : 'ordered-list',
       index,
@@ -578,7 +599,7 @@ async function runBranch(
   frame: RegionFrame,
   switchInput: Record<string, unknown>,
   results: Map<string, unknown>,
-): Promise<{ node: string, error: RuntimeError } | null> {
+): Promise<{ node: string, error: RuntimeError } | { waiting: true } | null> {
   const branch = region.branches.find((candidate) => candidate.id === branchId);
   if (branch === undefined) {
     return { node: region.invocation, error: { code: 'TMAS2003', detail: `'${branchId}' names no planned branch`, cause: null } };
@@ -602,6 +623,7 @@ async function runBranch(
   if (outcome.kind === 'failed') {
     return { node: outcome.failure.node ?? region.invocation, error: outcome.failure.error };
   }
+  if (outcome.kind === 'waiting') return { waiting: true };
   const resultNode = branchFrame.nodes[branch.result.node] as Record<string, unknown> | undefined;
   results.set(branchId, resultNode?.[branch.result.port]);
   // branch member outputs surface into the parent frame for trace/topology,
@@ -664,7 +686,7 @@ async function runLoopRegion(
 
     const loopPath = invocationPathOf({
       ...(frame.pathPrefix !== undefined ? { prefix: frame.pathPrefix } : {}),
-      branch: '', iteration: 0, node: invocation.id,
+      branch: '', iteration: frame.iteration, node: invocation.id,
     });
     for (;;) {
       if (machine.state === 'body') {
@@ -679,7 +701,7 @@ async function runLoopRegion(
         };
         const walked = await walkRegions({ validated: child, plan: childPlan }, ctx, bodyFrame);
         if (walked.kind === 'waiting') {
-          return { kind: 'failed', failure: { node: invocation.id, error: { code: 'TMAS2003', detail: 'an interaction inside a loop body is not supported by this runtime', cause: null } } };
+          return { kind: 'waiting' };
         }
         if (walked.kind === 'failed') {
           await machine.send('failed');
@@ -762,7 +784,6 @@ async function runInteractionRegion(
   const workflow = target.validated.workflow;
   const invocation = workflow.nodes.find((node) => node.id === region.invocation) as InteractionNode;
   const controlId = `${frame.keyPrefix}${region.id}`;
-  const interactionId = interactionIdOf(ctx.runId, invocation.id);
 
   const attempt = await beginControlAttempt(ctx, frame, region.id, invocation);
   if (attempt.kind === 'replayed') {
@@ -772,6 +793,8 @@ async function runInteractionRegion(
   if (attempt.kind === 'failed') {
     return { kind: 'failed', failure: { node: invocation.id, error: attempt.error } };
   }
+
+  const interactionId = interactionIdOf(ctx.runId, attempt.path);
 
   const input = controlNodeInput(workflow, invocation, frame);
   const ports = Object.keys(invocation.input.ports);

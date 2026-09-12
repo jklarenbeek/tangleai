@@ -1,0 +1,34 @@
+{
+  "id": "ambiguous-intent-success",
+  "group": "ambiguous-intent",
+  "variant": "success",
+  "input": {
+    "caseId": "ambiguous-intent-success",
+    "query": "Using only these records, answer the ambiguous-intent question and preserve disagreements.",
+    "evidence": [
+      {
+        "id": "ambiguous-intent-success-e1",
+        "digest": "d4e7cbcfa1e8686a63510b962b1644aae4906b159082625c1b7a0fdf9a3e6742",
+        "text": "The request says \"schedule it\" without naming an event."
+      },
+      {
+        "id": "ambiguous-intent-success-e2",
+        "digest": "b45d1d38acb7c837e20f77eff830959ba3c861aa0506583df80e6faac5271a74",
+        "text": "No event name or desired date has been supplied."
+      }
+    ]
+  },
+  "oracle": {
+    "answer": "insufficient information",
+    "abstention": true,
+    "requiredFindings": []
+  },
+  "script": {
+    "result": {
+      "answer": "insufficient information",
+      "disposition": "needs-information",
+      "claims": [],
+      "findings": []
+    }
+  }
+}
