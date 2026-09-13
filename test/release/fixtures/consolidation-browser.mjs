@@ -41,6 +41,24 @@ export async function qualifyConsolidation(store = createConsolidationMemoryStor
   const synthesizedReplay = await executor.execute(synthesisRequest);
   ensure(synthesizedReplay.status === 'success' && synthesizedReplay.accounting.invoked === 0, 'installed staged replay is zero-call');
   ensure(calls === (delivery.admitted === 0 ? 0 : 2), 'reopen preserves completed callbacks');
+  const rejectedSource = must(await createConsolidationSource({ scope: 'installed-duplicate-claims', key: 'event', sequence: 0, snapshot }));
+  must(await store.enqueue([rejectedSource], { maxPending: 1 }));
+  const rejectedExecutor = createConsolidationExecutor({ store,
+    synthesizer: { id: 'installed-duplicate/1', async run(request) {
+      const claim = { text: request.sources[0].text, sourceIds: [request.sources[0].id] };
+      return { status: 'ok', claims: [claim, { sourceIds: [...claim.sourceIds], text: claim.text }] };
+    } },
+    verifier: { id: 'installed-never-support/1', async run() { throw Error('duplicate claims must not reach support'); } },
+  });
+  const rejected = await rejectedExecutor.execute({ scope: rejectedSource.scope, key: 'duplicate', sourceIds: [rejectedSource.id], expectedGeneration: 0, completedAt: 1000 });
+  ensure(rejected.status === 'refused' && rejected.reason === 'invalid-artifact', 'duplicate claims refuse before support');
+  const rejectedState = must(await store.snapshot(rejectedSource.scope));
+  ensure(rejectedState.operations[0].phase === 'failed' && rejectedState.artifacts.length === 0
+    && rejectedState.buffer.pending.length === 1 && rejectedState.sources.length === 1, 'known failure retains evidence without a prepared hold');
+  ensure(rejected.accounting.invoked === (delivery.admitted === 0 ? 0 : 1), 'failed duplicate replay never dispatches');
+  const beforeInvalid = store.stats().writes, invalidRequest = await rejectedExecutor.execute(null);
+  ensure(invalidRequest.status === 'refused' && invalidRequest.reason === 'invalid-operation'
+    && store.stats().writes === beforeInvalid, 'malformed direct request has zero writes');
   const queuedSource = must(await createConsolidationSource({ scope: 'installed-trigger', key: 'arrival', sequence: 0, snapshot }));
   const runner = createConsolidationRunner({ store, policy: { enabled: true }, now: () => 2000 });
   const operations = createConsolidationOperations(runner);

@@ -87,7 +87,7 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/jaren` | Jaren grammar authors and revision-checked Studio/Data/Flow AI adapters ([API](packages/jaren/README.md)) |
 | `@tangleai/assistant` | reusable headless assistant controller and scoped visual component ([API](components/assistant/README.md)) |
 | `@tangleai/core` | coded errors, zero-dep k-means, token heuristics, and the memory-unit JSON Schema (a strict superset of the jarenjs ledger memory — evidence stays mandatory, and a vector never travels without its `embeddedBy` identity). Vector arithmetic is `@jarenjs/core/vector`'s, not ours |
-| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, per-report confidence adjustment, `recallByEmbedding` (identity-gated, skip-reporting) |
+| `@tangleai/memory` | the policy layer over an injected store: novelty gating, plan/apply crystallization, judge-injected contradiction resolution, per-report confidence adjustment, `recallByEmbedding` (identity-gated, skip-reporting), evidenced temporal projections and immutable consolidation tiers with host-driven operations ([API](packages/memory/README.md)) |
 | `@tangleai/outcomes` | independently resolved decisions, deterministic scores, atomic confidence projection, bounded artifact proposals, held-out checks and explicit CAS promotion/rollback ([API](packages/outcomes/README.md)) |
 | `@tangleai/config` | the capability-profile registry and effective-run-identity contract: schema-generated types, a pure resolver (single-parent RFC 7396 inheritance, stable `TCFG1xxx` refusals), canonical content-addressed identities — every host resolves through it and every new result references the exact stack that ran ([docs/CONFIGURATION.md](docs/CONFIGURATION.md)) |
 | `@tangleai/search` | zero-dependency SearxNG JSON client; `compose/searxng/` holds the docker settings |
@@ -165,6 +165,25 @@ scripted providers establish correctness, not live QA gain. Temporal routing
 remains opt-in/off while held-out quality and deployment costs are unmeasured.
 LoCoMo retains its original scorer and canonical reports; its session dates do
 not supply missing question anchors.
+
+## Immutable consolidation
+
+`@tangleai/memory/consolidation` provides deterministic previews, supported
+semantic claims and a combined tier over retained original evidence. Durable
+reservations, staged results and atomic activation prevent completed work from
+being repeated; uncertain callbacks require explicit host resolution. Manual,
+count and time triggers use Jaren scheduling and a validated local contract.
+See the [API guide](packages/memory/docs/CONSOLIDATION.md) and run
+`node examples/consolidation.ts` for a keyless example with replay and exact-source
+expansion.
+
+The [fixed LoCoMo comparison](docs/CONSOLIDATE_BENCHMARK.md) measures evidence
+recall of 50.62% for native Jaren lexical routing and 55.20% for scripted combined
+routing, against the unchanged 35.96% hash control. Each uses at most ten complete
+source lines and 6,000 UTF-16 characters. These are retrieval diagnostics;
+scripted quote/support callbacks do not establish live synthesis or answer-quality
+gains. All losses remain in the report, live QA/cost is unmeasured, and
+consolidation stays disabled by default.
 
 ## Measurement
 
@@ -485,4 +504,5 @@ are excluded from every public distribution.
   a machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
   the gated design for running these workflows as evolvable DAGs
 - `prompts/` — memflow's TOML prompt packs, carried as data for the
-  consolidation, skill-loop, outcome and pattern entries of the roadmap
+  shipped mechanisms and remaining research; package guides identify the packs
+  actually compiled and used

@@ -3,7 +3,7 @@
 Tangle consumes **Jaren 0.87.0**, tag `v0.87.0`, source commit
 `9b67ed8cb88d2dbe95cb3eb5fe0ac88cfb70f347`. Upstream `main`, the tag and npm's
 latest release agreed when checked on 2026-09-12. The submodule is the source
-reference; runtime imports resolve to the 23 published npm packages. All 103
+reference; runtime imports resolve to the 23 published npm packages. All 107
 direct dependency references are exact pins. The lock records registry URLs and
 integrities; the [registry receipt](integration/jaren-0.87.0-registry.json) checks
 all 23 downloaded archives against it. This receipt does not claim a source
@@ -21,6 +21,19 @@ The source pin, direct references, lock and installed versions are checked
 together. Source initialization is optional for package consumers and Pages;
 the repository gitlink is always checked. Do not recursively initialize
 upstream benchmark datasets for an application build.
+
+## Consolidation ownership
+
+The opt-in [consolidation API](../packages/memory/docs/CONSOLIDATION.md) reuses
+existing public Jaren foundations: `core/search` owns lexical postings and
+scoring, `core/schedule` owns admission/drain, `contract/local` owns validated
+operation dispatch, and canonical JSON, validation, emission, vector/chunk
+primitives and database transactions retain their suite owners. These surfaces
+were available before 0.87.0; consolidation does not attribute them to that
+release's database changes. Tangle owns evidence identity, complete-batch
+activation, claim support policy, callback reservations and host trigger
+eligibility. The frozen standard-BM25 comparison lives only in the benchmark;
+production lexical routing delegates to `compileLexical`.
 
 ## What changed and how Tangle uses it
 

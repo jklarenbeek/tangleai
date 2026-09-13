@@ -161,3 +161,57 @@ it('validates explicit uncertainty resolution before effects and permits a separ
   const state = must(await f.store.snapshot(f.input.scope));
   assert.ok(state.artifacts.every(artifact => artifact.tier === 'deterministic')); assert.equal(state.sources.length, 2);
 });
+
+it('rejects duplicate claims before support and releases known failed evidence for explicit fallback', async () => {
+  for (const reordered of [false, true]) {
+    const f = await fixture();
+    const claim = f.claims[0];
+    const duplicate = reordered ? { sourceIds: [...claim.sourceIds], text: claim.text } : structuredClone(claim);
+    const executor = createConsolidationExecutor({ store: f.store, ...f.seams,
+      synthesizer: { id: 'duplicate-claims', async run() { return { status: 'ok', claims: [claim, duplicate] }; } } });
+    const result = await executor.execute(f.input);
+    assert.equal(result.status, 'refused');
+    if (result.status === 'refused') assert.equal(result.reason, 'invalid-artifact');
+    assert.equal(result.accounting.invoked, 1);
+    assert.equal(result.accounting.failedCalls, 1);
+    assert.equal(f.counts().support, 0); assert.equal(f.counts().embedding, 0);
+    const state = must(await f.store.snapshot(f.input.scope));
+    assert.equal(state.operations[0].phase, 'failed');
+    assert.equal(state.artifacts.length, 0); assert.deepEqual(state.buffer.pending, f.input.sourceIds);
+    const retry = await executor.execute(f.input); assert.equal(retry.accounting.invoked, 0);
+    must(await applyDeterministicConsolidation(f.store, f.sources,
+      { key: 'duplicate-fallback', expectedGeneration: 0, completedAt: 1000 }));
+    assert.equal(must(await f.store.snapshot(f.input.scope)).sources.length, 2);
+  }
+});
+it('keeps equal claim text with distinct occurrence citations and distinct claims sharing citations', async () => {
+  for (const sharedSources of [false, true]) {
+    const f = await fixture();
+    const claims = sharedSources
+      ? [f.claims[0], { text: 'Sam was living in Paris when Alex visited.', sourceIds: f.input.sourceIds }]
+      : f.sources.map(source => ({ text: 'This event takes place in Paris.', sourceIds: [source.id] }));
+    const executor = createConsolidationExecutor({ store: f.store, ...f.seams,
+      synthesizer: { id: 'distinct-claims', async run() { return { status: 'ok', claims }; } } });
+    must(await executor.execute(f.input));
+    const state = must(await f.store.snapshot(f.input.scope));
+    assert.equal(state.artifacts.length, 2); assert.equal(state.sources.length, 2);
+    assert.deepEqual(f.counts(), { synthesis: 0, support: 1, embedding: 2 });
+  }
+});
+it('refuses malformed direct executor requests before writes or callbacks', async () => {
+  const f = await fixture(), executor = createConsolidationExecutor({ store: f.store, ...f.seams });
+  const before = must(await f.store.snapshot(f.input.scope)), writes = f.store.stats().writes;
+  for (const input of [null, undefined, [], 42, 'request', {}]) {
+    const result = await executor.execute(input as never);
+    assert.equal(result.status, 'refused');
+    if (result.status === 'refused') assert.equal(result.reason, 'invalid-operation');
+    assert.equal(result.accounting.invoked, 0);
+    const resolved = await executor.resolve(input as never,
+      { stopped: true, revision: 0, requestHash: 'a'.repeat(64), failure: 'refusal' });
+    assert.equal(resolved.status, 'refused');
+    if (resolved.status === 'refused') assert.equal(resolved.reason, 'invalid-operation');
+  }
+  assert.deepEqual(must(await f.store.snapshot(f.input.scope)), before);
+  assert.equal(f.store.stats().writes, writes);
+  assert.deepEqual(f.counts(), { synthesis: 0, support: 0, embedding: 0 });
+});

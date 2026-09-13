@@ -25,7 +25,7 @@ export const CONSOLIDATION_SCHEMA = {
       'persistence', 'invalid-operation', 'budget', 'unsupported', 'refusal', 'embedding', 'unknown', 'disabled',
       'empty', 'below-count', 'not-due', 'cooldown', 'clock-skew', 'backpressure', 'closed', 'cancelled'] },
     consolidationClaim: object({ text: id, sourceIds }),
-    consolidationSynthesis: { anyOf: [object({ status: { enum: ['ok'] }, claims: array(ref('consolidationClaim'), 1) }),
+    consolidationSynthesis: { anyOf: [object({ status: { enum: ['ok'] }, claims: { ...array(ref('consolidationClaim'), 1), uniqueItems: true } }),
       object({ status: { enum: ['refused'] }, detail: id })] },
     consolidationSupport: { anyOf: [object({ status: { enum: ['ok'] }, supported: array({ type: 'boolean' }, 1) }),
       object({ status: { enum: ['refused'] }, detail: id })] },

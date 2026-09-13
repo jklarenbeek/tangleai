@@ -223,7 +223,8 @@
               "items": {
                 "$ref": "#/$defs/consolidationClaim"
               },
-              "minItems": 1
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [

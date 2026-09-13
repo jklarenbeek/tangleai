@@ -1,8 +1,13 @@
-# Immutable consolidation storage
+# Immutable consolidation
 
 `@tangleai/memory/consolidation` stores exact source occurrences, immutable
 artifacts, pending buffers and pass receipts. It is an explicit API: importing
 it starts no work. The artifact store does not alter ordinary memory records.
+Deterministic previews, explicitly supported semantic claims and combined
+artifacts share the same source-preserving activation protocol. The complete
+[runnable example](../../../examples/consolidation.ts) demonstrates host count
+triggers, scripted support, replay and final-budget expansion of exact source
+text; run it with `node examples/consolidation.ts` or Bun from the repository.
 
 ```ts
 import {
@@ -210,6 +215,13 @@ measure physical HTTP, model tokens, USD or provider latency. Stable seam IDs,
 instructions, tier, embedding identity and bounds enter the recipe/pass identity.
 Change an ID when changing its prompt, model or semantic policy.
 
+Exact duplicate claims (the same text and ordered source references) are rejected
+as `invalid-artifact` before support or embedding. The pass becomes a known
+terminal failure and retains its pending evidence for an explicitly keyed
+fallback. Equal text with distinct occurrence references and different claims
+sharing evidence remain valid. Direct malformed executor requests also return
+refusals before reservation or callbacks.
+
 ## Recovery and accounting
 
 A durable reservation precedes each callback. Completed responses are validated
@@ -269,7 +281,12 @@ const runner = createConsolidationRunner({
   now: Date.now,
 });
 try {
-  await runner.enqueue([source.value]); // explicit admission; inspect refusals
+  const next = await createConsolidationSource({
+    ...source.value, key: 'conversation-1/turn-4', sequence: 3,
+  });
+  if (next.status === 'refused') throw new Error(next.detail);
+  const queued = await runner.enqueue([next.value]);
+  if (queued.status === 'refused') throw new Error(queued.detail);
   const result = await runner.run({ scope: 'project', key: 'host-pass-1', trigger: 'count' });
   // below-count is an observable zero-effect outcome; manual is an explicit choice.
   if (result.status === 'refused') console.log(result.reason, result.detail);

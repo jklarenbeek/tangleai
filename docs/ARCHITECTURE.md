@@ -226,15 +226,46 @@ provider ownership. [Strict conformance](TEMPORAL_BENCHMARK.md) and the
 source-only roundtrips, retrieval diagnostics and unmeasured live QA. The lane
 stays opt-in/off; no temporal UI or default pipeline routing is added.
 
+## Immutable consolidation
+
+Core owns the closed consolidation schemas and emitted declarations. The
+explicit `@tangleai/memory/consolidation` API owns exact occurrence identities,
+immutable artifact tiers, pending buffers, bounded synthesis/support/embedding
+seams and pass receipts. Deterministic segmentation and previews, supported
+semantic claims and their combined tier retain every original source. An artifact
+citation is a reference; a reader receives evidence only when the host expands
+and supplies the complete original text within its final context budget.
+
+Jaren owns canonical JSON, schema validation/emission, vector/chunk primitives,
+lexical index/scoring, scheduling and local contract dispatch. Tangle's store
+adapter uses Jaren SQLite transactions for reservation/CAS and atomic activation;
+the same protocol is qualified in memory, Node and Bun. Results are staged before
+activation. An uncertain callback remains held until an explicit stopped-host
+resolution; changing the pass key cannot repurchase overlapping work. Completed
+replay adds no callbacks, artifacts or writes.
+
+A host creates the runner, injects its clock and calls manual/count/time triggers.
+The default is disabled. Persisted arrival/completion timestamps drive eligibility
+and cooldown, without changing fact validity. Closing drains admitted work;
+there is no polling timer or import-time worker. Bounds constrain each pass and
+runtime queue, while snapshot validation still scans retained scope history;
+this is not a storage-size or whole-query latency bound.
+
+See the [API guide](../packages/memory/docs/CONSOLIDATION.md),
+[runnable example](../examples/consolidation.ts) and
+[registered LoCoMo ablations](CONSOLIDATE_BENCHMARK.md). Native lexical and scripted
+combined retrieval gains coexist with artifact-only losses. Live synthesis QA,
+provider cost and default enablement remain unqualified.
+
 ## What is deliberately absent (see ROADMAP.md)
 
 The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)
 comes before any further policy work —
 memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
-thing. Graph indexing of `relations` and the consolidation tiers remain roadmap
-work. GMPL and temporal mechanisms are shipped; live model-quality improvement
-and temporal deployment-scale qualification remain open.
+thing. Graph indexing of `relations` remains roadmap work. GMPL, temporal and
+consolidation mechanisms are shipped; live model-quality improvement, deployment
+cost qualification and explicit host/default adoption remain open.
 
 ## The surfaces (added 2026-08-24)
 

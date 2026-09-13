@@ -71,6 +71,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['temporal-browser.mjs', 'temporal-consumer.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'temporal-consumer.mjs']);
     await sqliteFixture('bun', ['temporal-consumer.mjs']);
+    writeFileSync(resolve(directory, 'consolidation-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/consolidation.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['consolidation-browser.mjs', 'consolidation-consumer.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'consolidation-consumer.mjs']);
     await sqliteFixture('bun', ['consolidation-consumer.mjs']);

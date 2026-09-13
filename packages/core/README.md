@@ -17,6 +17,7 @@ See the [temporal API guide](https://github.com/jklarenbeek/tangleai/blob/main/p
 
 
 `@tangleai/core/schemas/consolidation` exposes the closed consolidation schema,
-`validateConsolidationShape` and generated source/artifact/buffer/operation types.
+`validateConsolidationShape` and generated source/artifact/buffer/operation,
+structured synthesis/support/embedding, trigger and execution-result types.
 The authored definition composes the existing MemoryUnit schema; `npm run emit:consolidation` derives both its JSON document and declarations. Evidence
 identity and activation policy belong to `@tangleai/memory/consolidation`.

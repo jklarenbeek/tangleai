@@ -129,3 +129,11 @@ Node and Bun share the [memory contract](../memory/docs/CONSOLIDATION.md).
 Sources remain stored after activation, and identical completed passes write
 nothing after close/reopen. Snapshot reads validate a whole scope; this is not
 a claim of bounded historical storage or large-corpus query latency.
+
+Reservation/CAS records each dispatch before a host callback. Known returned
+results and prepared artifacts survive reopen; activation stores the complete
+artifact set, pending-buffer update and receipt in one transaction. Unknown
+external outcomes remain held until explicit stopped-host resolution. The store
+never invokes a provider or retries work. Host runners persist pending arrival
+and successful completion for count/time/manual eligibility; close a runner and
+await its active work before closing its database.

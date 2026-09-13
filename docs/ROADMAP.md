@@ -53,28 +53,22 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   width comparison using a provider that supports variable dimensions, with
   held-out answer F1, evidence recall, latency and token/call cost beside each
   width. Existing policy and lexical-width identities remain the baselines.
-- [ ] **Consolidation tiers** (LightMem / SimpleMem / StructMem). *Wanted:*
-  sleep-time consolidation as a Tangle-scheduled pass — STM buffer, topic
-  segmentation, cross-event synthesis behind a purpose-specific injected judge — where memflow's 22 memory modules either earn their port or
-  stay unported. *Constraint:* the suite's own history compaction plus ledger
-  archiving IS a consolidation tier (a dropped round is content-addressed into a
-  slot and reachable through `recall`, never destroyed), and jarenjs measured its
-  ceiling honestly: ledger recall recovers archived values, while compressed
-  late-fact contexts lose pairwise determinacy. Uncompressed contexts, the
-  front-fact ledger at 20,000 characters and compiled full-corpus programs retain
-  that relation. A summary alone does not establish that every value survived.
-  A tier that only compresses buys a curve already plotted; what must be justified
-  is the part compaction provably cannot do. Failures must be counted values — the
-  predecessor's tiers silently dropped memories on persistence and embedding
-  failure. `excerpt`/`truncate`/`sizeOf` from `@jarenjs/core/chunk` are the text
-  primitives; the buffer never needs its own. *Salvage:*
-  `docs/attic/memflow-modules/{lightmem,simplemem,structmem}.md` — every default
-  (sensory 512, STM 2048, StructMem's 10-entries-or-60 s trigger, LightMem's
-  buffer > 50 % → gate-else-passthrough routing, the newer-timestamp update queue)
-  and the pure-logic candidates (TopicSegmenter B1∩B2, SemanticSynthesis's
-  union-find, PreCompression's order-preserving heuristic, StructuredIndex TF
-  keywords). *Closes on:* LoCoMo delta against the measured-policy baseline; token
-  cost of the sleep pass.
+- [ ] **Consolidation live qualification and host adoption.** The opt-in
+  deterministic, supported semantic and combined tiers now preserve immutable
+  evidence, stage callbacks durably and expose host-driven count/time/manual
+  operations. See the [API guide](../packages/memory/docs/CONSOLIDATION.md) and
+  [registered ablations](CONSOLIDATE_BENCHMARK.md). Native Jaren lexical routing
+  and scripted combined routing improve exact-source recall on the fixed LoCoMo
+  corpus; artifact-only routes also have measured losses. Those diagnostics do
+  not establish live answer quality or the token/call cost of synthesis.
+  *Closes on:* a separately authorized, registered paired reader/judge comparison
+  on fixed development/confirmation partitions: answer-quality 95% bootstrap
+  lower bound above zero, no category delta below -0.05, token ratio at most 1.1
+  and physical-request ratio at most 1.0, followed by an explicit host/default
+  decision. Until eligible evidence exists, live quality/cost is unmeasured and
+  the default stays off. Hosts own actual provider budgets, cadence and lifecycle;
+  no desktop timer or automatic pipeline integration is shipped. Historical
+  predecessor policies are not a blanket commitment to port all 22 modules.
 - [ ] **Atomic contradiction resolution.** The current resolver supersedes a
   loser before storing a synthesized resolution. A persistence failure can leave
   that operation partially applied. Qualify a shared atomic mutation contract

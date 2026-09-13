@@ -41,6 +41,7 @@ export function createConsolidationExecutor(options: ConsolidationSynthesisSeams
     verifier: options.verifier.id, embedder: embedder ?? null,
     synthesisInstruction: CONSOLIDATION_SYNTHESIS_INSTRUCTION, supportInstruction: CONSOLIDATION_SUPPORT_INSTRUCTION };
   async function prepare(input: ConsolidationExecuteInput) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) return refuse('invalid-operation', 'execution requires a request object');
     const { signal: _, ...data } = input;
     const checked = checkConsolidation<ConsolidationRunRequest>('consolidationRunRequest', data, 'invalid-operation');
     if (checked.status !== 'success') return checked;
@@ -62,7 +63,7 @@ export function createConsolidationExecutor(options: ConsolidationSynthesisSeams
     let operation: ConsolidationOperation | null = null, invoked = 0;
     const answer = (result: ConsolidationResult<ConsolidationReceipt>): ConsolidationExecutionResult =>
       ({ ...result, operationId: operation?.id ?? null, accounting: callAccounting(operation, invoked) });
-    if (input.signal?.aborted) return answer(refuse('cancelled', 'cancelled before reservation'));
+    if (input?.signal?.aborted) return answer(refuse('cancelled', 'cancelled before reservation'));
     const preparedInput = await prepare(input); if (preparedInput.status !== 'success') return answer(preparedInput);
     const { request, sources, evidence, synthesisRequest, recipeHash, requestHash } = preparedInput.value;
     if (bounds.maxLogicalCalls < (embed ? 3 : 2)) return answer(refuse('budget', 'logical-call ceiling cannot fund the whole supported pass'));

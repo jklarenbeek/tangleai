@@ -119,7 +119,7 @@ export interface ConsolidationClaim {
 export interface ConsolidationSynthesisAnyOf1 {
   status: "ok";
   /**
-   * Schema constraints this type cannot express: minItems=1
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
   claims: Array<ConsolidationClaim>;
 }
