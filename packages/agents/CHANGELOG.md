@@ -1,5 +1,12 @@
 # @tangleai/agents
 
+## 0.26.0
+
+### Patch Changes
+
+- @tangleai/context@0.26.0
+  - @tangleai/models@0.26.0
+
 ## 0.25.1
 
 ### Patch Changes

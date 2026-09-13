@@ -1,5 +1,15 @@
 # @tangleai/core
 
+## 0.26.0
+
+### Minor Changes
+
+- 6e0f5be: Add opt-in evidenced temporal memory with distinct occurrence, observation, knowledge and validity semantics, bounded structured preparation, immutable SQLite projections and cited calendar answers. Qualify public Node, Bun and browser consumers, strict temporal fixtures and both full LongMemEval source profiles. Preserve ordinary recall defaults; live temporal QA gains and deployment costs remain unmeasured.
+
+### Patch Changes
+
+- @tangleai/context@0.26.0
+
 ## 0.25.1
 
 ### Patch Changes

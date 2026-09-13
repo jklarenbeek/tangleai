@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "0.26.0",
+  "baseVersion": "0.25.1",
+  "baseCommit": "1b9ece3b44b9a323f5219acaf359d70b6a9b0692",
+  "preparationCommit": "6e0f5beec3b46bf7b0eb14363c68c95219396462",
+  "initial": false,
+  "inputHash": "5db70c54167a24c81945ccae225efaeaf483c8fd928071de15b3a2b442dab6ab",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add opt-in evidenced temporal memory with distinct occurrence, observation, knowledge and validity semantics, bounded structured preparation, immutable SQLite projections and cited calendar answers. Qualify public Node, Bun and browser consumers, strict temporal fixtures and both full LongMemEval source profiles. Preserve ordinary recall defaults; live temporal QA gains and deployment costs remain unmeasured.",
+      "id": "evidenced-temporal-memory"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.26.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.26.0"
+    }
+  ]
+}
