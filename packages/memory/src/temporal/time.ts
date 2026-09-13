@@ -57,19 +57,23 @@ export function checkClaimTime(value: unknown): TemporalResult<ClaimTime> {
 export function claimContains(time: ClaimTime, at: number): TemporalResult<boolean> {
   if (!Number.isSafeInteger(at)) return refuse('invalid-time', 'membership needs a finite integer epoch');
   const checked = checkClaimTime(time); if (checked.status !== 'success') return checked;
-  if (time.kind === 'unknown' || time.kind === 'period' || (time.kind === 'state' && time.until.kind === 'unknown')) return refuse('unknown-validity', 'exact membership is not evidenced');
+  if (time.kind === 'unknown') return refuse('unknown-validity', 'exact membership is not evidenced');
   if (time.kind === 'point') {
-    if (time.precision !== 'millisecond') return refuse('unknown-validity', 'event precision cannot establish an exact instant');
-    return success(getEpochOfDateTimeRFC3339(time.at)! === at);
+    const start = getEpochOfDateTimeRFC3339(time.at)!;
+    if (time.precision === 'millisecond') return success(start === at);
+    const end = epochOfRFC3339Parts(addToParts(parseRFC3339Parts(time.at)!, 1, time.precision) as Parts);
+    return containsInstant({ start, end }, at) ? refuse('unknown-validity', 'event precision cannot establish an exact instant') : success(false);
   }
   const from = getEpochOfDateTimeRFC3339(time.from)!;
+  if (at < from) return success(false);
+  if (time.kind === 'period') return at >= getEpochOfDateTimeRFC3339(time.until)! ? success(false) : refuse('unknown-validity', 'exact membership is not evidenced');
   if (time.until.kind === 'unknown') return refuse('unknown-validity', 'state end is unknown');
   return success(time.until.kind === 'open' ? at >= from : containsInstant({ start: from, end: getEpochOfDateTimeRFC3339(time.until.at)! }, at));
 }
 export function claimOverlaps(time: ClaimTime, from: number, until: number): TemporalResult<boolean> {
   if (!Number.isSafeInteger(from) || !Number.isSafeInteger(until) || from >= until) return refuse('invalid-time', 'overlap needs increasing finite integer epochs');
   const checked = checkClaimTime(time); if (checked.status !== 'success') return checked;
-  if (time.kind === 'unknown' || (time.kind === 'state' && time.until.kind === 'unknown')) return refuse('unknown-validity', 'event or validity window is unknown');
+  if (time.kind === 'unknown') return refuse('unknown-validity', 'event or validity window is unknown');
   if (time.kind === 'point') {
     const at = getEpochOfDateTimeRFC3339(time.at)!;
     if (time.precision === 'millisecond') return success(containsInstant({ start: from, end: until }, at));
@@ -84,7 +88,7 @@ export function claimOverlaps(time: ClaimTime, from: number, until: number): Tem
     if (from <= start && end <= until) return success(true);
     return overlapsInterval({ start, end }, { start: from, end: until }) ? refuse('unknown-validity', 'query cuts through event uncertainty') : success(false);
   }
-  if (time.until.kind === 'unknown') return refuse('unknown-validity', 'state end is unknown');
+  if (time.until.kind === 'unknown') return until <= start ? success(false) : refuse('unknown-validity', 'state end is unknown');
   return success(time.until.kind === 'open' ? until > start : overlapsInterval({ start, end: getEpochOfDateTimeRFC3339(time.until.at)! }, { start: from, end: until }));
 }
 export function relativeTemporalWindow(operand: string, anchor?: Stamp | null): TemporalResult<CalendarWindow> {

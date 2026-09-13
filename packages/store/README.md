@@ -46,6 +46,45 @@ host's durable migration receipt. The current Tangle model needs no schema
 change for this update. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
 for ownership, compatibility and available mechanisms.
 
+## Temporal projections
+
+`createTemporalDbStore(db)` implements `@tangleai/memory/temporal`'s transactional
+protocol through Jaren immediate transactions. `TANGLE_DB_MODEL` adds
+`temporal_occurrences`, `temporal_claims`, `temporal_heads` and
+`temporal_operations`. Projection envelopes share the claim collection with an
+explicit record kind. Existing databases acquire these collections through the
+Jaren model owner; the legacy memory schema and timestamps keep their meanings.
+
+Sources, claims and projections are immutable. Activation compares head version
+and revision, then stores the new head and completion receipt atomically.
+Same-key replay after reopening writes zero records; failures leave the previous
+projection active. Unknown provider effects remain uncertain and cannot be
+automatically retried. Raw database writes are trusted-host administration.
+
+Numeric mirrors have distinct names: `observedAtEpochMs`, `knownAtEpochMs`,
+`validFromEpochMs` and `validUntilEpochMs`. Unknown bounds have no invented numeric
+sentinel. `inspectTemporalSeek` exposes scoped observed-range and claim-as-of
+candidate queries with actual Jaren `explain`/`stats` and possible truncation.
+`selectTemporalDbAsOf` probes one extra candidate, refuses incomplete coverage,
+and refines validity/conflicts before selecting evidence. An expired latest row
+cannot hide an earlier valid assertion. The 10,000-claim native benchmark
+also reports the companion scoped unknown-bound probe: numeric seeks alone
+cannot establish absence of unknown-time evidence. This probe's plan and stats
+are returned as `uncertaintyCheck`; candidate-seek timings exclude that refinement.
+The benchmark
+qualifies these simple seeks on Node and Bun; general semantic retrieval still
+validates and ranks a snapshot in memory. Native seek evidence does not qualify
+million-token scale or the entire query as SQL execution.
+
+`legacyTemporalProjection` from memory and `backfillTemporalBatch` from store offer
+explicit backfill. The database variant stages bounded batches with a durable
+cursor before atomic activation. It preserves legacy text, IDs, embeddings,
+timestamps and supersession; claims begin with unknown validity and report
+`unrecoverableHistory: true` because overwritten occurrences cannot be recovered.
+No backfill runs automatically. See the
+[public temporal guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/TEMPORAL.md)
+and [SQLite example](https://github.com/jklarenbeek/tangleai/blob/main/examples/temporal.ts).
+
 ## Atomic outcome storage
 
 `createOutcomeStore(db)` implements `@tangleai/outcomes`' atomic owner over Jaren

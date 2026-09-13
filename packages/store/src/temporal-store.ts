@@ -91,9 +91,21 @@ export async function selectTemporalDbAsOf(db: TangleDb, seek: Extract<TemporalS
   if (!Number.isSafeInteger(seek.limit) || seek.limit < 1 || seek.limit > 10000) return refuse('incomplete-index', 'candidate limit must be 1..10000');
   const candidates = await inspectTemporalSeek(db, { ...seek, limit: seek.limit + 1 });
   if (candidates.status !== 'success') return candidates;
+  // A numeric range cannot see unknown bounds. Probe that disjoint set in the
+  // same immutable scope/version before claiming that its candidates are complete.
+  const where: object[] = [{ $eq: ['$r.recordType', { $const: 'claims' }] }, { $empty: '$r.validFromEpochMs' }];
+  for (const key of ['scope', 'versionId', 'subject', 'series'] as const) where.push({ $eq: [`$r.${key}`, { $const: seek[key] }] });
+  if (seek.knownBefore !== undefined) where.push({ $le: ['$r.knownAtEpochMs', seek.knownBefore] });
+  const query = { $subsequence: [{ $for: { r: '$[*]' }, $where: { $and: where }, $return: '$r.id' }, 0, 1] };
+  let uncertaintyCheck: { explain: unknown; stats: unknown };
+  try {
+    const collection = db.collection(names.claims), unknown = asRows(await collection.execute<string>(query));
+    if (unknown.length) return refuse('unknown-validity', 'qualified series contains an unknown-time assertion outside the numeric seek');
+    uncertaintyCheck = { explain: await collection.explain(query), stats: collection.stats() };
+  } catch (cause) { return refuse('storage-failure', cause instanceof Error ? cause.message : String(cause)); }
   if (candidates.value.rows.length > seek.limit) return refuse('incomplete-index', 'as-of candidate bound is incomplete');
   const rows = candidates.value.rows as TemporalClaimRow[];
   const selected = selectTemporalAt(rows.map(r => r.claim), seek.at);
   return selected.status === 'success' ? success({ claims: selected.value, candidates: rows.length,
-    refined: rows.length - selected.value.length, explain: candidates.value.explain, stats: candidates.value.stats }) : selected;
+    refined: rows.length - selected.value.length, explain: candidates.value.explain, stats: candidates.value.stats, uncertaintyCheck }) : selected;
 }

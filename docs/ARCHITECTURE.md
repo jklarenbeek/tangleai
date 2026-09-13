@@ -23,6 +23,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                         contradiction — plan pairs / injected judge / supersede
                         outcome     — ground-truth confidence adjustment
                         retrieval   — recallByEmbedding (identity-gated ranker)
+                        temporal    — explicit occurrences/claims, cutoffs,
+                                      immutable projections and cited kernels
 @tangleai/outcomes    immutable decisions, trusted resolution, scores and projection
                       bounded proposals, held-out evaluation, host approval,
                       version/revision CAS promotion, rollback and audit reads
@@ -197,6 +199,33 @@ and numeric domain data and resumes a two-turn clarification after SQLite reopen
 matched comparison costs; [GMPL_LOCOMO.md](GMPL_LOCOMO.md) describes the seeded
 plan and exact-request replay seam. Neither establishes live model improvement.
 
+## Evidenced temporal memory
+
+Core owns closed temporal schemas and emitted declarations. The explicit
+`@tangleai/memory/temporal` entry owns occurrence identity, source-span integrity,
+claim validity, immutable projection activation, bounded preparation and cited
+answers. Observation time, knowledge cutoff and event/state validity are separate
+axes. Models owns structured proposals and provider wires; Jaren owns canonical
+JSON, validation, calendar/interval/vector kernels, locale names and database
+transactions/indexes. `@tangleai/store` adapts the shared memory protocol to the
+same Jaren Node/Bun SQLite owner as ordinary memory and outcomes.
+
+The query takes a declared semantic source pool before temporal filtering. It
+reports truncation, missing vectors, conflicts and refusal/fallback counts.
+The kernel computes exact elapsed time and ordering; model text cannot replace
+those results. Durable reservations fence duplicate physical requests and
+activation is atomic with the completion receipt; uncertain external effects
+remain uncertain. Observation indexes are cached per immutable projection.
+Qualified native SQLite candidate seeks are separate from general snapshot
+validation and in-memory semantic ranking.
+
+The [API guide](../packages/memory/docs/TEMPORAL.md) and
+[public example](../examples/temporal.ts) describe supported semantics and
+provider ownership. [Strict conformance](TEMPORAL_BENCHMARK.md) and the
+[LongMemEval matrix](TEMPORAL_EVALUATION.md) distinguish exact fixtures,
+source-only roundtrips, retrieval diagnostics and unmeasured live QA. The lane
+stays opt-in/off; no temporal UI or default pipeline routing is added.
+
 ## What is deliberately absent (see ROADMAP.md)
 
 The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)
@@ -204,7 +233,8 @@ comes before any further policy work —
 memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
 thing. Graph indexing of `relations` and the consolidation tiers remain roadmap
-work. GMPL mechanisms are shipped; live model-quality improvement remains open.
+work. GMPL and temporal mechanisms are shipped; live model-quality improvement
+and temporal deployment-scale qualification remain open.
 
 ## The surfaces (added 2026-08-24)
 

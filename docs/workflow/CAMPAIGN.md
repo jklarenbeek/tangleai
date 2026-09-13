@@ -32,9 +32,11 @@ retired or narrowed to what is still genuinely open — that is the campaign's
 last order, not an afterthought.
 
 Nothing decides which entry is next except the operator. A drafted campaign —
-a router written, orders written, nothing executed — is a proposal until the
-operator ratifies it, and what happens after any order lands (commit, re-scope,
-park, abandon) is the operator's call, every time.
+a router written, orders written, nothing executed — needs execution
+authorization. Existing authorization to author and execute the chosen scope
+permits proceeding after the concrete plan is written. Commit each green work
+order locally and continue that authorized scope; re-scoping, parking or
+abandoning remains the operator's decision.
 
 ## When a campaign is the right shape
 

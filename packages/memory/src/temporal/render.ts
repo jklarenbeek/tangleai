@@ -13,7 +13,9 @@ export function renderTemporalAnswer(answer: TemporalAnswer): string {
     const value = answer.value as unknown as ElapsedValue;
     return `${value.whole} ${value.unit}${value.whole === 1 ? '' : 's'} and ${value.remainder} ${value.remainderUnit}${value.remainder === 1 ? '' : 's'}. ${citations}`;
   }
-  return answer.recall.claims.map(claim => {
+  const byId = new Map(answer.recall.claims.map(claim => [claim.id, claim]));
+  const claims = answer.operation === 'order' ? (answer.value as { claimId: string }[]).map(row => byId.get(row.claimId)!) : answer.recall.claims;
+  return claims.map(claim => {
     const time = claim.time;
     if (time.kind === 'unknown') return `${claim.series.subject}: ${claim.value} (time unknown)`;
     const format = dates[time.precision], at = format(parseRFC3339Parts(time.kind === 'point' ? time.at : time.from)!);

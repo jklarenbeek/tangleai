@@ -71,10 +71,9 @@ export async function createTemporalProjection(input: TemporalProjectionInput): 
     return validateTemporalBundle(bundle);
   } catch (cause) { return refuse('identity-mismatch', `invalid projection input: ${String(cause)}`); }
 }
-export async function validateTemporalBundle(bundle: TemporalBundle): Promise<TemporalResult<TemporalBundle>> {
-  if (!bundle || !Array.isArray(bundle.sources) || !Array.isArray(bundle.claims)) return refuse('identity-mismatch', 'projection bundle needs explicit source and claim arrays');
-  const shape = checkTemporal<TemporalProjection>('temporalProjection', bundle.projection); if (shape.status !== 'success') return shape;
-  const p = shape.value, knowledge = validateKnowledge(p.knowledge); if (knowledge.status !== 'success') return knowledge;
+export async function validateTemporalBundle(input: unknown): Promise<TemporalResult<TemporalBundle>> {
+  const shape = checkTemporal<TemporalBundle>('temporalBundle', input); if (shape.status !== 'success') return shape;
+  const bundle = shape.value, p = bundle.projection, knowledge = validateKnowledge(p.knowledge); if (knowledge.status !== 'success') return knowledge;
   const { versionId, ...content } = p;
   if (versionId !== await temporalIdentity(content) || p.contractIdentity !== await temporalContractIdentity()) return refuse('identity-mismatch', 'projection version or contract identity differs');
   const sources: SourceOccurrence[] = [], claims: TemporalClaim[] = [];

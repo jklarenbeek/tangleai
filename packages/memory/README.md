@@ -47,6 +47,21 @@ npm run emit:policy -- --check
 
 The drift check validates the immutable live evidence, regenerates the expected artifact in memory, checks the registry reference and probes the public runtime behavior. `npm run policy:generate` writes a default only from a complete eligible confirmation; regenerate declarations with `npm run emit:policy` after a contract change. Contract compatibility is checked against the committed v1 fixture.
 
+## Temporal memory
+
+`@tangleai/memory/temporal` adds explicit occurrence and claim identity, cited
+preparation, knowledge cutoffs, historical retrieval and deterministic calendar
+answers over an injected transactional store. Equal-text occurrences retain
+their own evidence; observation time, knowledge time and claim validity are
+distinct. Unknown or conflicting evidence produces typed refusals.
+
+The [temporal API guide](docs/TEMPORAL.md) documents contracts, supported time
+operations, provider budgets, fallback, immutable projections and reopen replay.
+Run `npm run temporal:smoke` from the checkout for the public SQLite example.
+The lane remains opt-in/off: strict fixtures and full LongMemEval source
+qualification pass, while live QA improvement and deployment cost remain
+unmeasured. Ordinary recall and the selected policy above remain the default.
+
 ## Outcome confidence
 
 `applyOutcome(store, report, {options}?)` adjusts confidence once per cited entry

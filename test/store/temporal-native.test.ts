@@ -34,3 +34,21 @@ test('scoped native seeks refine expired latest candidates before selection and 
     assert.equal(must(await inspectTemporalSeek(db, { kind: 'observed-range', scope: seek.scope, from: 1, until: 2, limit: 10 })).rows.length, 0);
   } finally { await db.close(); }
 });
+
+test('native as-of selection retains unknown-time claims outside the numeric candidate index', async () => {
+  const db = await openTangleDb();
+  try {
+    const { expected: _, ...fixture } = TEMPORAL_FIXTURES.find(f => f.id === 'T17')!;
+    const { bundle } = must(await buildTemporalFixture(fixture));
+    must(await createTemporalDbStore(db).apply(bundle, { key: 'unknown', expectedHead: null }));
+    const seek = { kind: 'claim-asof' as const, scope: bundle.projection.scope, versionId: bundle.projection.versionId,
+      subject: 'alex', series: 'address', at: 5, limit: 100 };
+    const result = await selectTemporalDbAsOf(db, seek);
+    assert.equal(result.status, 'refused');
+    assert.equal(result.reason, 'unknown-validity');
+    const excluded = await selectTemporalDbAsOf(db, { ...seek, knownBefore: -1 });
+    assert.equal(excluded.status, 'refused'); assert.equal(excluded.reason, 'no-match');
+    const foreign = await selectTemporalDbAsOf(db, { ...seek, scope: 'other' });
+    assert.equal(foreign.status, 'refused'); assert.equal(foreign.reason, 'no-match');
+  } finally { await db.close(); }
+});

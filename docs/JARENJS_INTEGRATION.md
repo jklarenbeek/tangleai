@@ -80,6 +80,23 @@ consumer and packed qualification cover Node, Bun, strict declarations and the
 pure browser API. Synthetic conformance is separate from the unmeasured live
 LoCoMo quality criterion.
 
+## Temporal integration
+
+The explicit temporal API consumes published Jaren calendar/interval/vector
+kernels, locale names, canonical JSON, validation and SQLite transactions/indexes.
+Tangle core owns closed temporal schemas and emitted types; memory owns exact
+source citations, knowledge/validity policy, bounded preparation, immutable
+projections and cited answers. Structured provider clients remain in
+`@tangleai/models`. Store adapts the shared protocol to the existing Jaren owner
+with separately named numeric epoch mirrors. No Jaren source is copied or patched.
+
+[Public usage](../packages/memory/docs/TEMPORAL.md),
+[strict runtime evidence](TEMPORAL_BENCHMARK.md) and the
+[LongMemEval comparison](TEMPORAL_EVALUATION.md) state the limits: observation
+indexes are not validity, native candidate seeks are not full SQL semantic
+retrieval, and keyless/source-only qualification is not a live QA gain. The
+ordinary pipeline retains its selected default with temporal routing off.
+
 ## Process host ownership
 
 One process driver should be shared across one host ownership domain. Retain the

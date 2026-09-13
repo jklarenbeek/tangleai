@@ -94,55 +94,41 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Time and place
 
-- [ ] **The temporal lane: time as an answerable structure.** *Wanted:* LoCoMo
-  category 2 (temporal) is where every published memory system scores worst, for
-  a structural reason — a cosine ranker has no way to express *when*. Tangle gets
-  one. *Stands on:* `@jarenjs/core/series` at the pinned version — the half-open
-  interval algebra (`containsInstant`, `overlapsInterval`, `mergeIntervals`,
-  `subtractIntervals`, `gapsWithin`, `coverageOf`, `findSlots`),
-  `createIntervalIndex`, `asOfJoin`, five query operators with LINQ parity, a
-  `(series, at)` database plan with `explain().series`, and the calendar names in
-  eleven locale packs — plain data throughout, so it crosses the store boundary
-  unchanged. The seam was exercised against the tree when this was written:
-  session date → instant → validity interval → `containsInstant`, and a backward
-  `asOfJoin` from a May anchor over April/June facts returns the April one with its
-  `distance` and the record's own members intact. *Decisions already taken, so a
-  campaign need not re-litigate them:*
-  - a memory's validity is the half-open interval `[at, supersededAt)` and Tangle
-    already stores both ends — a superseded record answers for the window it was
-    true in instead of vanishing; no `supersededAt` runs to the query's own upper
-    bound, never a sentinel instant;
-  - the model proposes a window, the kernel decides membership: "last summer"
-    resolves through `@jarenjs/ai/structured` against a closed
-    `{ start, end } | null` schema anchored on the ASKING session's instant, never
-    `Date.now()`; a refused or `null` window falls back to unscoped recall and is
-    COUNTED;
-  - `asOfJoin` is the retrieval primitive cosine cannot fake — left the anchor
-    event's instant, right the candidate fact series from the identity-gated
-    ranked recall, `direction: 'backward'`, unmatched rows kept as `right: null`;
-    meaning first, then time, both counts reported;
-  - `createIntervalIndex` over session spans, built once per conversation at
-    ingest; no linear scan of spans in the hot path;
-  - `memories` declares `{ name: 'by_series_at', path: ['$.series', '$.at'] }`
-    with `at` the epoch mirror of the RFC 3339 field (the string is the record's
-    contract, the number the index's); the test asserts
-    `explain().series.index !== null` AND that the in-memory store answers
-    identically, and records `stats().series.diverted`;
-  - elapsed time is computed, never generated — subtraction over instants,
-    rendered by the locale pack, with each recalled memory's offset from the
-    asking session in the prompt;
-  - no clock anywhere in the lane; the gate is byte-identical reports;
-  - `resampleSeries`/`rollingSeries`/`downsampleSeries` answer questions LoCoMo
-    does not ask and stay out of the retrieval path (`downsampleSeries` may feed a
-    timeline surface, sampling metadata visible — a SHOW, not a claim).
-  *Salvage:* the recall report schema is extended, not forked — a `temporal`
-  block beside `qa` with window counts (proposed / refused / fallback), as-of
-  match and miss counts, index mode from `explain()`, added calls. *Closes on:*
-  category-2 F1, lane on vs off, over the same corpus and embedder — categories
-  1/3/4 and overall published beside it as non-regression evidence, category-2
-  evidence-recall@k as the retrieval sub-metric, cost (extra calls, p50/p95 ms) in
-  the same table. A lane that moves category 2 and costs category 1 is a loss and
-  is published as one.
+- [ ] **Temporal quality and scale qualification.** The explicit temporal API is
+  implemented: occurrence-preserving sources, exact cited claims, independent
+  observation/knowledge/validity axes, immutable memory/SQLite projections,
+  scoped numeric candidate indexes, bounded structured proposals, semantic-pool
+  retrieval, refusal/fallback accounting and deterministic cited calendar answers.
+  [The API guide](../packages/memory/docs/TEMPORAL.md) defines its supported
+  semantics. Jaren owns dates, intervals, locales, validation and persistence;
+  structured models belong to `@tangleai/models`. Legacy `MemoryUnit.at` and
+  `supersededAt` are not event validity. Numeric mirrors use distinct names.
+
+  [Strict conformance](TEMPORAL_BENCHMARK.md) runs 46 independent cases on memory,
+  Node SQLite and Bun SQLite. [LongMemEval](LONGMEMEVAL_BENCHMARK.md) supplies
+  question and session timestamps; both provided-history and strict-as-of views
+  retain all 500 questions, including 44 with future gold sessions. Full source
+  roundtrips pass on all three backends; they use empty claims and are not QA
+  measurements. LoCoMo supplies session dates but no question anchors, and its
+  temporal category is not always the lowest local score. Its canonical reports
+  retain their original scorer, denominators and bytes.
+
+  *Still open:* held-out live QA gains and comparable deployment costs. The
+  [registered matrix](TEMPORAL_EVALUATION.md) keeps model-dependent rows explicitly
+  unmeasured, reports the strict-cutoff evidence ceiling loss, and leaves the
+  shipped lane opt-in/off. A default change requires a positive paired 95% lower
+  bound on LongMemEval provided-history temporal accuracy, lower bounds at least
+  -0.05 for each other LME type and LoCoMo category 1–4, zero strict violations,
+  and the registered cold/amortized/warm-p95 plus absolute cost gates. Missing
+  evidence cannot pass. Scripted or oracle gains do not establish production gain.
+
+  General retrieval still validates a snapshot and ranks its semantic candidates
+  in memory. The 10,000-claim native-seek receipt does not qualify million-token
+  deployment scale. Further work includes bounded projection loading, host-owned
+  named-zone data, ambiguous seasons/date conventions and richer uncertain event
+  periods; unsupported inputs currently refuse. BEAM, RealMem and HaluMem remain
+  researched future options, not implemented adapters. No resampling, timeline
+  UI or spatial inference is implied by the temporal API.
 - [ ] **The place lane: spatial, and honest about what it cannot score.**
   *Wanted:* `@jarenjs/core/geo` and `@jarenjs/ai`'s spatial profile have sat unused
   inside the pin since the suite's geo campaign; LoCoMo's personas move, and

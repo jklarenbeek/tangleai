@@ -234,6 +234,14 @@ suite's one home for it.
 
 ## Structured output
 
+Temporal extraction and query proposals are consumers of this package's
+structured-output and chat/embedding clients through `@tangleai/memory/temporal`.
+Memory supplies the closed schemas, evidence validation, durable operation
+receipts and one-attempt transport budget. Models does not decide event validity
+or compute cited calendar answers. The host injects provider configuration and
+fetch; temporal preparation does not discover credentials. See the
+[temporal API guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/TEMPORAL.md).
+
 ```js
 import { createStructuredOutput } from '@tangleai/models/structured';
 import schema from '@jarenjs/json/schemas/jaren-query.llm-profile.schema.json' with { type: 'json' };

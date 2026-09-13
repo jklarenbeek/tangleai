@@ -171,6 +171,8 @@ export function createTemporalStoreAdapter(persistence: TemporalPersistence): Te
         if (['completed', 'failed', 'unknown'].includes(prior.phase)) return refuse('provider-refusal', 'terminal operations are immutable');
         if (next.phase === 'reserved' || next.attempts.length < prior.attempts.length || next.attempts.length > next.maxPhysicalRequests) return refuse('budget-exhausted', 'invalid operation phase or physical request count');
         if (next.phase === 'completed' && (next.receipt === null || next.attempts.some(a => a.phase !== 'completed'))) return refuse('provider-refusal', 'completed operations require a receipt and completed physical attempts');
+        if (next.attempts.some(a => a.phase === 'in-flight' && (a.reply !== null || a.outputTokens !== null))) return refuse('provider-refusal', 'in-flight attempts cannot contain response receipts');
+        if (next.phase === 'failed' && next.attempts.some(a => a.phase === 'in-flight' || a.phase === 'unknown') || next.phase === 'unknown' && next.attempts.some(a => a.phase === 'in-flight')) return refuse('provider-refusal', 'terminal operations must preserve uncertain physical outcomes explicitly');
         if (next.attempts.length > prior.attempts.length + 1 || next.attempts.slice(prior.attempts.length).some(a => a.phase !== 'in-flight') || next.attempts.filter(a => a.phase === 'in-flight').length > 1) return refuse('provider-refusal', 'physical attempts must be reserved one at a time before transport');
         for (let i = 0; i < prior.attempts.length; i++) {
           const before = prior.attempts[i], after = next.attempts[i];

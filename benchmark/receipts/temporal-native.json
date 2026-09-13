@@ -6,7 +6,7 @@
       "occurrences": 10000,
       "claims": 10000,
       "series": 100,
-      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+      "versionId": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
     },
     "rows": [
       {
@@ -46,7 +46,8 @@
         },
         "returnedCandidates": 100,
         "refined": 0,
-        "finalResults": 100
+        "finalResults": 100,
+        "uncertaintyCheck": null
       },
       {
         "shape": "claim-asof",
@@ -88,7 +89,106 @@
         },
         "returnedCandidates": 100,
         "refined": 99,
-        "finalResults": 1
+        "finalResults": 1,
+        "uncertaintyCheck": {
+          "explain": {
+            "mode": "native",
+            "streaming": "row",
+            "barrier": null,
+            "budget": {
+              "profile": null,
+              "rows": null,
+              "includedRows": null,
+              "depth": null,
+              "bytes": null,
+              "limits": null,
+              "scan": "unbounded",
+              "time": "unavailable",
+              "estimatedRows": "unavailable"
+            },
+            "order": [
+              {
+                "source": "identity",
+                "binding": null,
+                "column": null,
+                "path": null,
+                "desc": false,
+                "nullsFirst": null,
+                "tieBreaker": true
+              }
+            ],
+            "projection": {
+              "path": [
+                "id"
+              ]
+            },
+            "residualProjection": null,
+            "group": null,
+            "wrapped": false,
+            "externals": [],
+            "operators": [
+              "$and",
+              "$const",
+              "$empty",
+              "$eq",
+              "$subsequence"
+            ],
+            "functions": [],
+            "collations": [],
+            "limits": null,
+            "sql": "SELECT CASE WHEN json_type(\"doc\", '$.\"id\"') IN ('object', 'array') THEN json(jsonb_extract(\"doc\", '$.\"id\"')) ELSE jsonb_extract(\"doc\", '$.\"id\"') END AS \"v\", json_type(\"doc\", '$.\"id\"') AS \"t\" FROM \"temporal_claims\" WHERE ((json_type(\"doc\", '$.\"recordType\"') IS NOT NULL AND json_type(\"doc\", '$.\"recordType\"') = 'text' AND jsonb_extract(\"doc\", '$.\"recordType\"') = ?) AND json_type(\"doc\", '$.\"validFromEpochMs\"') IS NULL AND (json_type(\"doc\", '$.\"scope\"') IS NOT NULL AND json_type(\"doc\", '$.\"scope\"') = 'text' AND \"gx_scope\" = ?) AND (json_type(\"doc\", '$.\"versionId\"') IS NOT NULL AND json_type(\"doc\", '$.\"versionId\"') = 'text' AND \"gx_versionId\" = ?) AND (json_type(\"doc\", '$.\"subject\"') IS NOT NULL AND json_type(\"doc\", '$.\"subject\"') = 'text' AND \"gx_subject\" = ?) AND (json_type(\"doc\", '$.\"series\"') IS NOT NULL AND json_type(\"doc\", '$.\"series\"') = 'text' AND \"gx_series\" = ?) AND json_type(\"doc\", '$.\"id\"') IS NOT NULL) ORDER BY \"rowid\" LIMIT 1",
+            "params": [
+              {
+                "literal": "claims"
+              },
+              {
+                "literal": "synthetic-native-v1"
+              },
+              {
+                "literal": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
+              },
+              {
+                "literal": "synthetic"
+              },
+              {
+                "literal": "0"
+              }
+            ],
+            "indexes": [
+              "temporal_claims_by_scope_version",
+              "temporal_claims_by_scope_version_series_at"
+            ],
+            "prefilters": [],
+            "rank": null,
+            "residual": null,
+            "barriers": [],
+            "udfs": [],
+            "fallback": null,
+            "series": null,
+            "scanNarrative": "SEARCH temporal_claims USING INDEX temporal_claims_by_scope_version (gx_scope=? AND gx_versionId=?)"
+          },
+          "stats": {
+            "patchTranslated": 0,
+            "patchFallback": 0,
+            "knn": {
+              "queries": 0,
+              "rows": 0,
+              "candidates": 0,
+              "fullFetches": 0,
+              "diverted": 0
+            },
+            "series": {
+              "queries": 27,
+              "statements": 27,
+              "candidates": 2700,
+              "results": 2700,
+              "diverted": 0
+            },
+            "bind": {
+              "diverted": 0
+            }
+          }
+        }
       }
     ]
   },
@@ -99,7 +199,7 @@
       "occurrences": 10000,
       "claims": 10000,
       "series": 100,
-      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+      "versionId": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
     },
     "rows": [
       {
@@ -139,7 +239,8 @@
         },
         "returnedCandidates": 100,
         "refined": 0,
-        "finalResults": 100
+        "finalResults": 100,
+        "uncertaintyCheck": null
       },
       {
         "shape": "claim-asof",
@@ -181,7 +282,106 @@
         },
         "returnedCandidates": 100,
         "refined": 99,
-        "finalResults": 1
+        "finalResults": 1,
+        "uncertaintyCheck": {
+          "explain": {
+            "mode": "native",
+            "streaming": "row",
+            "barrier": null,
+            "budget": {
+              "profile": null,
+              "rows": null,
+              "includedRows": null,
+              "depth": null,
+              "bytes": null,
+              "limits": null,
+              "scan": "unbounded",
+              "time": "unavailable",
+              "estimatedRows": "unavailable"
+            },
+            "order": [
+              {
+                "source": "identity",
+                "binding": null,
+                "column": null,
+                "path": null,
+                "desc": false,
+                "nullsFirst": null,
+                "tieBreaker": true
+              }
+            ],
+            "projection": {
+              "path": [
+                "id"
+              ]
+            },
+            "residualProjection": null,
+            "group": null,
+            "wrapped": false,
+            "externals": [],
+            "operators": [
+              "$and",
+              "$const",
+              "$empty",
+              "$eq",
+              "$subsequence"
+            ],
+            "functions": [],
+            "collations": [],
+            "limits": null,
+            "sql": "SELECT CASE WHEN json_type(\"doc\", '$.\"id\"') IN ('object', 'array') THEN json(jsonb_extract(\"doc\", '$.\"id\"')) ELSE jsonb_extract(\"doc\", '$.\"id\"') END AS \"v\", json_type(\"doc\", '$.\"id\"') AS \"t\" FROM \"temporal_claims\" WHERE ((json_type(\"doc\", '$.\"recordType\"') IS NOT NULL AND json_type(\"doc\", '$.\"recordType\"') = 'text' AND jsonb_extract(\"doc\", '$.\"recordType\"') = ?) AND json_type(\"doc\", '$.\"validFromEpochMs\"') IS NULL AND (json_type(\"doc\", '$.\"scope\"') IS NOT NULL AND json_type(\"doc\", '$.\"scope\"') = 'text' AND \"gx_scope\" = ?) AND (json_type(\"doc\", '$.\"versionId\"') IS NOT NULL AND json_type(\"doc\", '$.\"versionId\"') = 'text' AND \"gx_versionId\" = ?) AND (json_type(\"doc\", '$.\"subject\"') IS NOT NULL AND json_type(\"doc\", '$.\"subject\"') = 'text' AND \"gx_subject\" = ?) AND (json_type(\"doc\", '$.\"series\"') IS NOT NULL AND json_type(\"doc\", '$.\"series\"') = 'text' AND \"gx_series\" = ?) AND json_type(\"doc\", '$.\"id\"') IS NOT NULL) ORDER BY \"rowid\" LIMIT 1",
+            "params": [
+              {
+                "literal": "claims"
+              },
+              {
+                "literal": "synthetic-native-v1"
+              },
+              {
+                "literal": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
+              },
+              {
+                "literal": "synthetic"
+              },
+              {
+                "literal": "0"
+              }
+            ],
+            "indexes": [
+              "temporal_claims_by_scope_version",
+              "temporal_claims_by_scope_version_series_at"
+            ],
+            "prefilters": [],
+            "rank": null,
+            "residual": null,
+            "barriers": [],
+            "udfs": [],
+            "fallback": null,
+            "series": null,
+            "scanNarrative": "SEARCH temporal_claims USING INDEX temporal_claims_by_scope_version (gx_scope=? AND gx_versionId=?)"
+          },
+          "stats": {
+            "patchTranslated": 0,
+            "patchFallback": 0,
+            "knn": {
+              "queries": 0,
+              "rows": 0,
+              "candidates": 0,
+              "fullFetches": 0,
+              "diverted": 0
+            },
+            "series": {
+              "queries": 27,
+              "statements": 27,
+              "candidates": 2700,
+              "results": 2700,
+              "diverted": 0
+            },
+            "bind": {
+              "diverted": 0
+            }
+          }
+        }
       }
     ]
   }

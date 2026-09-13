@@ -21,6 +21,14 @@ export function temporalClaimsConflict(claims: readonly TemporalClaim[]): boolea
       if (left.status !== 'success' || right.status !== 'success') return true;
       const at = Math.max(left.value, right.value), l = claimContains(x, at), r = claimContains(y, at);
       if (l.status === 'success' && r.status === 'success' && l.value && r.value) return true;
+    } else if (x.kind === 'state' || y.kind === 'state') {
+      const state = x.kind === 'state' ? x : y, event = x.kind === 'state' ? y : x;
+      if (state.kind !== 'state' || state.until.kind === 'unknown' || event.kind === 'unknown') continue;
+      const start = temporalInstant(state.from), end = state.until.kind === 'open' ? success(Number.MAX_SAFE_INTEGER) : temporalInstant(state.until.at);
+      if (start.status !== 'success' || end.status !== 'success') continue;
+      // Only a fully contained uncertainty bucket proves incompatibility with a continuous state.
+      const overlap = claimOverlaps(event, start.value, end.value);
+      if (overlap.status === 'success' && overlap.value) return true;
     }
   }
   return false;

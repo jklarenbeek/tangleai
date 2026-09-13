@@ -7,31 +7,31 @@
       "occurrences": 10000,
       "claims": 10000,
       "series": 100,
-      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+      "versionId": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
     },
     "setup": {
-      "corpusPreparationMs": 3990.235477,
-      "openMs": 16.595197999999982,
-      "activationMs": 2902.3031730000002,
+      "corpusPreparationMs": 4669.43621,
+      "openMs": 15.47857600000043,
+      "activationMs": 2958.4343200000003,
       "writes": 20003
     },
     "queries": [
       {
         "shape": "observed-range",
-        "coldQueryMs": 6.321234000000004,
+        "coldQueryMs": 6.31570499999998,
         "warm": {
           "repetitions": 25,
-          "p50Ms": 0.49088300000039453,
-          "p95Ms": 0.6851239999996324
+          "p50Ms": 0.5998249999993277,
+          "p95Ms": 1.1149239999995189
         }
       },
       {
         "shape": "claim-asof",
-        "coldQueryMs": 1.536576999999852,
+        "coldQueryMs": 1.4748829999998634,
         "warm": {
           "repetitions": 25,
-          "p50Ms": 0.86821400000008,
-          "p95Ms": 0.9668879999999263
+          "p50Ms": 0.8170390000004772,
+          "p95Ms": 0.8992319999997562
         }
       }
     ],
@@ -45,31 +45,31 @@
       "occurrences": 10000,
       "claims": 10000,
       "series": 100,
-      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+      "versionId": "f76eb5c3bdd50041b07a17614cc5c69b04cc56142d1dc0cd538a66c16ee571e3"
     },
     "setup": {
-      "corpusPreparationMs": 5581.957068,
-      "openMs": 14.815488000000187,
-      "activationMs": 4935.398327999999,
+      "corpusPreparationMs": 3991.4126120000005,
+      "openMs": 11.066850999999588,
+      "activationMs": 3194.579004,
       "writes": 20003
     },
     "queries": [
       {
         "shape": "observed-range",
-        "coldQueryMs": 8.233659999999873,
+        "coldQueryMs": 7.136261000000559,
         "warm": {
           "repetitions": 25,
-          "p50Ms": 0.836966000000757,
-          "p95Ms": 1.5142560000003868
+          "p50Ms": 0.5874919999996564,
+          "p95Ms": 0.753592000000026
         }
       },
       {
         "shape": "claim-asof",
-        "coldQueryMs": 1.953401999999187,
+        "coldQueryMs": 1.5598900000004505,
         "warm": {
           "repetitions": 25,
-          "p50Ms": 1.1687629999996716,
-          "p95Ms": 1.7137260000017704
+          "p50Ms": 0.8931409999995594,
+          "p95Ms": 1.1357319999997344
         }
       }
     ],

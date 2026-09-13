@@ -221,12 +221,18 @@ in [TEMPORAL_BENCHMARK.md](../docs/TEMPORAL_BENCHMARK.md).
 
 `npm run benchmark:temporal:eval -- --require` runs the full cleaned-S keyless
 matrix in both knowledge profiles. Use `--json /tmp/temporal-eval.json --md
-docs/TEMPORAL_EVALUATION.md` to reproduce the [matched report](../docs/TEMPORAL_EVALUATION.md),
+docs/TEMPORAL_EVALUATION.md --receipt benchmark/receipts/temporal-keyless.json`
+to reproduce the [matched report](../docs/TEMPORAL_EVALUATION.md),
 or `--dry --json /tmp/temporal-plan.json` for the complete cold request plan.
 `--check` compares generated files. Reference embeddings are local hash-trigram-512;
 no key or environment file is loaded. The temporal default remains off while
 live quality or deployment costs are unmeasured. All rows retain failures and
 the original question denominator; whole-turn context trimming is counted.
+The shared context cap is 12,000 serialized UTF-8 bytes, a conservative token
+bound rather than measured tokenizer usage. The committed compact receipt pins
+the full per-question rows by hash; it contains no raw source or model text.
+Effective source-byte hashes exclude commit HEAD, so committing identical bytes
+does not invalidate a measurement. Source or manifest changes require regeneration.
 
 `npm run benchmark:longmemeval:roundtrip -- --require --backend sqlite --json
 /tmp/longmemeval-roundtrip.json` qualifies all 500 questions and both source views

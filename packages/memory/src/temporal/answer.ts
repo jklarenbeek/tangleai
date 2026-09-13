@@ -44,8 +44,9 @@ export async function answerTemporal(store: TemporalStore, query: TemporalQuery)
   const recall = await recallTemporal(store, query);
   if (recall.status !== 'success') return recall;
   const answer = computeTemporalAnswer(recall.value, query);
-  if (answer.status !== 'success') return { ...answer,
-    ...(answer.reason === 'no-match' && !recall.value.coverage.complete ? { reason: 'incomplete-index' as const, detail: 'bounded evidence cannot establish a missing arithmetic operand' } : {}),
-    coverage: { ...recall.value.coverage, refusals: { [answer.reason]: 1 } } };
+  if (answer.status !== 'success') {
+    const failure = answer.reason === 'no-match' && !recall.value.coverage.complete ? refuse('incomplete-index', 'bounded evidence cannot establish a missing arithmetic operand') : answer;
+    return { ...failure, coverage: { ...recall.value.coverage, refusals: { [failure.reason]: 1 } } };
+  }
   return answer;
 }

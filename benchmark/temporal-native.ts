@@ -38,6 +38,7 @@ try {
     const refinement = seek.kind === 'claim-asof' ? must(await selectTemporalDbAsOf(db, seek)) : null;
     rows.push({ shape: seek.kind, explain: cold.explain, stats: cold.stats, returnedCandidates: cold.rows.length,
       refined: refinement?.refined ?? 0, finalResults: refinement?.claims.length ?? cold.rows.length,
+      uncertaintyCheck: refinement?.uncertaintyCheck ?? null,
       coldQueryMs, warm: { repetitions, p50Ms: quantile(timings, .5, { method: 'nearest-rank' }), p95Ms: quantile(timings, .95, { method: 'nearest-rank' }) } });
   }
   const report = { instrument: 'temporal-native-v1', runtime: process.versions.bun ? 'bun' : 'node', version: process.versions.bun ?? process.version,

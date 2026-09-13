@@ -148,6 +148,24 @@ the checked mechanism on this fixture; real-domain quality and automatic learnin
 remain open work. Its predictor does not consume confidence, so its projection
 ablation cannot establish confidence's effect on decisions.
 
+## Evidenced temporal memory
+
+The explicit `@tangleai/memory/temporal` API preserves repeated source
+occurrences, separates observation/knowledge/validity, prepares immutable cited
+projections and computes historical answers and calendar arithmetic. Its memory
+and Jaren SQLite stores share atomic activation and zero-write reopen replay.
+See the [API guide](packages/memory/docs/TEMPORAL.md); run
+`npm run temporal:smoke` for the keyless public SQLite example.
+
+[Strict conformance](docs/TEMPORAL_BENCHMARK.md) covers 46 independent cases on
+memory, Node SQLite and Bun SQLite. The [LongMemEval companion](docs/LONGMEMEVAL_BENCHMARK.md)
+has session and question timestamps; the [matched matrix](docs/TEMPORAL_EVALUATION.md)
+qualifies both source profiles over all 500 questions. Source roundtrips and
+scripted providers establish correctness, not live QA gain. Temporal routing
+remains opt-in/off while held-out quality and deployment costs are unmeasured.
+LoCoMo retains its original scorer and canonical reports; its session dates do
+not supply missing question anchors.
+
 ## Measurement
 
 Every published number names the command that produced it, and the

@@ -80,7 +80,7 @@ otherwise write.
 | Running the eval as a document, and drawing it | `@jarenjs/flow` jaren-dag, and `@jarenjs/mermaid`'s `dag-to-flowchart` stylesheet | Already correct — `@tangleai/pipeline` uses both, and `packages/pipeline/src/mermaid.ts` derives the drawing from the executable document rather than hand-drawing it. |
 | A benchmark run as an operation, live progress, and a CI gate on its shape | `@jarenjs/contract`: a `subscribe` operation streamed as a `@jarenjs/db` live query (SSE over http, frames over port, resumable by seq), `contract.revision()`, and `diffContracts --fail-on breaking` | The desktop's open ends (the benchmark reaching the surface). |
 | Excerpting, truncating, sizing text | `excerpt`, `truncate`, `sizeOf`, `chunkText` in `@jarenjs/core/chunk` | Everywhere. Note the standing exception: this is NOT the document chunker — it has no element or heading model, which the document lane needs. |
-| Time as an answerable structure | `@jarenjs/core/series` | The temporal lane. |
+| Time as an answerable structure | `@jarenjs/core/dates`, `@jarenjs/core/series`, `@jarenjs/locales`; Jaren SQLite transactions and scoped numeric indexes | Core owns closed temporal contracts; `@tangleai/memory/temporal` owns evidenced claims, explicit cutoffs, bounded semantic pools, refusal policy and cited answers. Models supplies structured proposals; store supplies the Jaren adapter. Observation timestamps never establish claim validity. See [the API guide](../packages/memory/docs/TEMPORAL.md). |
 | Geography | `@jarenjs/core/geo`, `@jarenjs/ai/spatial` (the gates), `@jarenjs/ai/geo-tools` | The place lane. |
 
 Consumed by the MAS runtime at 0.56.0 (audited again at close-out): the
