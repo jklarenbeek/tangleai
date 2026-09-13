@@ -1,5 +1,12 @@
 # @tangleai/core
 
+## 0.27.3
+
+### Patch Changes
+
+- 9f7d8c8: Limit active release CI to Linux and the minimum supported Node consumer gate. Preserve the complete Windows workflow outside the active Actions directory for the future 1.0.0 release, with restoration instructions. Package runtime behavior is unchanged.
+- @tangleai/context@0.27.3
+
 ## 0.27.2
 
 ### Patch Changes

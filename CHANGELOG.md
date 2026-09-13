@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.27.3
+
+Limit active release CI to Linux and the minimum supported Node consumer gate. Preserve the complete Windows workflow outside the active Actions directory for the future 1.0.0 release, with restoration instructions. Package runtime behavior is unchanged.
+
 ## 0.27.2
 
 Integrate the Jaren 0.89.0 registry foundation and source pin. Qualify guarded host migrations with preserved Tangle evidence, durable replay and failure isolation, and native Markdown page breaks through the existing assistant renderer. Preserve the selected memory policy and requalify current benchmark evidence.

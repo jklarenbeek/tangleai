@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "version": "0.27.3",
+  "baseVersion": "0.27.2",
+  "baseCommit": "482f5bd876af5a141c092fb125080402f875185e",
+  "preparationCommit": "9f7d8c84a4c6802bfd5dfec8168c2f16b3cb78b7",
+  "initial": false,
+  "inputHash": "697ce0b605836e66cd8a49f48876162917c29704cac4285ba59976d1afa08c83",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        }
+      ],
+      "summary": "Limit active release CI to Linux and the minimum supported Node consumer gate. Preserve the complete Windows workflow outside the active Actions directory for the future 1.0.0 release, with restoration instructions. Package runtime behavior is unchanged.",
+      "id": "preserve-windows-release-gate"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.27.3"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.27.3"
+    }
+  ]
+}
