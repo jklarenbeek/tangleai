@@ -29,7 +29,7 @@ Use the Node version in `.nvmrc`, npm from the root `packageManager`, and Bun fr
 initialize `vendor/jarenjs` and run `node scripts/jaren-artifacts.ts --bootstrap`
 with the Node/npm pins in `docs/migrations/jaren-ai/foundations.json`, then
 restore Tangle's toolchain before `npm ci --ignore-scripts`. CI performs these
-steps in the same order, including its minimum-Node and Windows jobs. The source
+steps in the same order, including its minimum-Node job. The source
 patch is applied only in a disposable build checkout; no installed package is
 patched. When the source state is `committed`, the gitlink names that exact
 revision and the patch must be empty; bootstrap builds the commit directly.
@@ -137,7 +137,13 @@ all declared exports in Node and Bun, schema imports, cited memory validation,
 SQLite persistence and HTML extraction. A TypeScript consumer checks declarations
 with `skipLibCheck: false`; a browser bundle exercises the supported core, memory
 and pipeline surface. JSON import attributes are preserved in emitted declarations.
-The CI matrix includes Linux, Windows and the minimum supported Node 24 runtime.
+The active CI gate runs on Linux, with a separate minimum-supported Node 24
+consumer job. Windows build and test jobs are disabled to control runtime and
+CI cost. The [saved workflow](archives/ci-with-windows.yml) preserves the exact
+configuration from before their removal; see the [restoration notes](archives/README.md)
+when preparing the future 1.0.0 release. It is outside `.github/workflows/` and
+cannot run as a GitHub Actions workflow. Current green CI does not qualify
+Windows execution. Keep the portable runtime and cleanup behavior below intact.
 Development prompt discovery normalizes native path separators before excluding
 unsupported packs or selecting stage schemas. Artifact generation and GMPL
 source receipts share that inventory; benchmark manifests hash canonical

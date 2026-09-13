@@ -34,6 +34,7 @@ Read in this order:
 | [`templates/`](templates/) | The work-order and session-record shapes — each the template followed by a filled-in one against this repository. The router's shape is specified in `CAMPAIGN.md` §"The router". |
 | [`HEALTH.md`](HEALTH.md) | **Tidy & hunt** — the idempotent duplicate/drift/quirk pass. |
 | [`RELEASE.md`](RELEASE.md) | **Ship** — Changesets preparation, checked npm tarballs, manual author publication, recovery and verified Pages deployment. |
+| [`archives/`](archives/) | Inactive CI backup and restoration notes for Windows validation when preparing the future 1.0.0 release. |
 | [`EVOLVE.md`](EVOLVE.md) | The experiment — workflows as executable, measurable, evolvable DAGs. Design, explicitly gated. |
 
 Campaign files are gitignored scratch — `TODO.md` (the local index),
