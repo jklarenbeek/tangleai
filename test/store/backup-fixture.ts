@@ -1,13 +1,13 @@
 /** Runtime consumer: a native snapshot retains outcome audit and replay state. */
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openTangleDb, createOutcomeStore } from '@tangleai/store';
 import { runOutcomeExample } from '../../examples/outcomes.ts';
 
-const dir = await mkdtemp(join(tmpdir(), 'tangle-backup-'));
-try {
+// The test parent owns filesystem teardown after this runtime exits.
+const dir = process.argv[2];
+assert.ok(dir, 'backup fixture requires its parent-owned temporary directory');
+{
   const source = await openTangleDb({ path: join(dir, 'source.db'), walAutocheckpoint: 0 });
   let first;
   const target = join(dir, 'backup.db');
@@ -30,4 +30,4 @@ try {
     assert.equal(replay.sourceReads, 0);
     console.log(JSON.stringify({ runtime: process.versions.bun ? 'bun' : 'node', domains: replay.domains, writes: replay.writes, sourceReads: replay.sourceReads }));
   } finally { await restored.close(); }
-} finally { await rm(dir, { recursive: true, force: true }); }
+}
