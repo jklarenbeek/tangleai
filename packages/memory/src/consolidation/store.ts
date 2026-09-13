@@ -40,6 +40,15 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
     }
     return true;
   }
+  async function overlappingOperation(tx: ConsolidationTransaction, scope: string, sourceIds: string[], ownId: string) {
+    const selected = new Set(sourceIds);
+    const overlap = (await tx.list('operations', scope)).filter(operation => operation.id !== ownId
+      && operation.phase !== 'completed' && operation.phase !== 'failed' && operation.sourceIds.some(id => selected.has(id)));
+    if (!overlap.length) return null;
+    return overlap.some(operation => operation.steps.some(step => step.phase === 'unknown' || step.phase === 'dispatched'))
+      ? refuse('unknown', 'overlapping evidence has an unresolved dispatch')
+      : refuse('backpressure', 'overlapping evidence is reserved by another pass');
+  }
   const store: ConsolidationStore = {
     stats: () => ({ ...stats }),
     snapshot(scope) {
@@ -138,6 +147,8 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
             || !equal(prior.artifacts, artifacts) || prior.steps.some(step => step.phase !== 'completed'))
             return refuse('invalid-operation', 'activation requires the exact completely prepared operation');
         } else if (input.operation) return refuse('invalid-operation', 'prepared operation is missing');
+        const overlap = await overlappingOperation(tx, scope, sourceIds, id);
+        if (overlap) return overlap;
         const buffer = await tx.get('buffers', scope) ?? emptyBuffer(scope);
         if (buffer.generation !== expectedGeneration) return refuse('stale-generation', 'an intervening activation changed the generation');
         if (buffer.completedAt !== null && completedAt < buffer.completedAt) return refuse('clock-skew', 'completion time precedes the previous activation');
@@ -180,6 +191,8 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
         const old = await tx.get('operations', operation.id);
         if (old) return equal(immutableOperation(old), immutableOperation(operation))
           ? success({ operation: old, replayed: true }) : refuse('identity-conflict', 'operation key reserves different inputs or budgets');
+        const overlap = await overlappingOperation(tx, operation.scope, operation.sourceIds, operation.id);
+        if (overlap) return overlap;
         const buffer = await tx.get('buffers', operation.scope) ?? emptyBuffer(operation.scope);
         if (buffer.generation !== operation.expectedGeneration) return refuse('stale-generation', 'operation parent changed');
         if (operation.sourceIds.some(id => !buffer.pending.includes(id)) || !await verifyReferences(tx, operation.scope, operation.sourceIds))

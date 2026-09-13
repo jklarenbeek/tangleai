@@ -97,13 +97,276 @@ export type ConsolidationJsonAnyOf2 = Array<ConsolidationJson>;
 
 export type ConsolidationJson = string | number | boolean | null | ConsolidationJsonAnyOf2 | { [key: string]: ConsolidationJson; };
 
-export type ConsolidationReason = "invalid-source" | "invalid-artifact" | "identity-conflict" | "capacity" | "stale-generation" | "persistence" | "invalid-operation" | "budget" | "unsupported" | "refusal" | "embedding" | "unknown" | "disabled" | "empty" | "below-count" | "not-due" | "cooldown" | "clock-skew" | "backpressure" | "closed";
+export type ConsolidationReason = "invalid-source" | "invalid-artifact" | "identity-conflict" | "capacity" | "stale-generation" | "persistence" | "invalid-operation" | "budget" | "unsupported" | "refusal" | "embedding" | "unknown" | "disabled" | "empty" | "below-count" | "not-due" | "cooldown" | "clock-skew" | "backpressure" | "closed" | "cancelled";
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ConsolidationClaimSourceIdsItem = string;
+
+export interface ConsolidationClaim {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  sourceIds: Array<ConsolidationClaimSourceIdsItem>;
+}
+
+
+export interface ConsolidationSynthesisAnyOf1 {
+  status: "ok";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claims: Array<ConsolidationClaim>;
+}
+
+
+export interface ConsolidationSynthesisAnyOf2 {
+  status: "refused";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+export type ConsolidationSynthesis = ConsolidationSynthesisAnyOf1 | ConsolidationSynthesisAnyOf2;
+
+export interface ConsolidationSupportAnyOf1 {
+  status: "ok";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  supported: Array<boolean>;
+}
+
+
+export interface ConsolidationSupportAnyOf2 {
+  status: "refused";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+export type ConsolidationSupport = ConsolidationSupportAnyOf1 | ConsolidationSupportAnyOf2;
+
+/**
+ * Schema constraints this type cannot express: minItems=1
+ */
+export type ConsolidationEmbeddingVectorsItem = Array<number>;
+
+export interface ConsolidationEmbedding {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  dims: number;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  vectors: Array<ConsolidationEmbeddingVectorsItem>;
+}
+
+
+export interface ConsolidationSynthesisBounds {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxSources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxInputChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxOutputChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxClaimChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  maxLogicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  maxEmbeddingItems: number;
+}
+
+
+export interface ConsolidationRunRequest {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  key: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  sourceIds: Array<ConsolidationClaimSourceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  expectedGeneration: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  completedAt: number;
+  tier?: "semantic" | "combined";
+}
+
+
+export interface ConsolidationResolutionAnyOf1 {
+  stopped: true;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  requestHash: ConsolidationClaimSourceIdsItem;
+  result: ConsolidationJson;
+}
+
+
+export interface ConsolidationResolutionAnyOf2 {
+  stopped: true;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  requestHash: ConsolidationClaimSourceIdsItem;
+  failure: "refusal" | "unsupported" | "embedding" | "invalid-artifact" | "cancelled";
+}
+
+
+export type ConsolidationResolution = ConsolidationResolutionAnyOf1 | ConsolidationResolutionAnyOf2;
+
+export interface ConsolidationCallAccounting {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  reservedCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  completedCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  refusedCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  failedCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  unknownCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  invoked: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  embeddingItems: number;
+}
+
+
+export interface ConsolidationReceipt {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  passId: ConsolidationClaimSourceIdsItem;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  generation: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  sourceCount: number;
+  /**
+   * Schema constraints this type cannot express: minItems=0, uniqueItems=true
+   */
+  artifactIds: Array<ConsolidationClaimSourceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  writes: number;
+  replayed: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  logicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  embeddingItems: number;
+}
+
+
+export interface ConsolidationExecutionResultAnyOf1 {
+  status: "success";
+  value: ConsolidationReceipt;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  operationId: string | null;
+  accounting: ConsolidationCallAccounting;
+}
+
+
+export interface ConsolidationExecutionResultAnyOf2 {
+  status: "refused";
+  reason: ConsolidationReason;
+  detail: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  operationId: string | null;
+  accounting: ConsolidationCallAccounting;
+}
+
+
+export type ConsolidationExecutionResult = ConsolidationExecutionResultAnyOf1 | ConsolidationExecutionResultAnyOf2;
 
 export interface ConsolidationSource {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  id: string;
+  id: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -121,11 +384,6 @@ export interface ConsolidationSource {
 
 
 /**
- * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
- */
-export type ConsolidationArtifactSourceIdsItem = string;
-
-/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type ConsolidationArtifactKeywordsItem = string;
@@ -137,7 +395,7 @@ export interface ConsolidationArtifact {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  id: string;
+  id: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -146,7 +404,7 @@ export interface ConsolidationArtifact {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  recipeHash: string;
+  recipeHash: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -154,7 +412,7 @@ export interface ConsolidationArtifact {
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
-  sourceIds: Array<ConsolidationArtifactSourceIdsItem>;
+  sourceIds: Array<ConsolidationClaimSourceIdsItem>;
   /**
    * Schema constraints this type cannot express: minItems=0, uniqueItems=true
    */
@@ -183,52 +441,11 @@ export interface ConsolidationBuffer {
   /**
    * Schema constraints this type cannot express: minItems=0, uniqueItems=true
    */
-  pending: Array<ConsolidationArtifactSourceIdsItem>;
+  pending: Array<ConsolidationClaimSourceIdsItem>;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
   completedAt: number | null;
-}
-
-
-export interface ConsolidationReceipt {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  passId: ConsolidationArtifactSourceIdsItem;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  scope: ConsolidationArtifactKeywordsItem;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  revision: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  generation: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  sourceCount: number;
-  /**
-   * Schema constraints this type cannot express: minItems=0, uniqueItems=true
-   */
-  artifactIds: Array<ConsolidationArtifactSourceIdsItem>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  writes: number;
-  replayed: boolean;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  logicalCalls: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
-   */
-  embeddingItems: number;
 }
 
 
@@ -241,7 +458,7 @@ export interface ConsolidationStep {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  requestHash: ConsolidationArtifactSourceIdsItem;
+  requestHash: ConsolidationClaimSourceIdsItem;
   phase: "dispatched" | "completed" | "failed" | "unknown";
   result: ConsolidationJson;
   detail: string | null;
@@ -252,7 +469,7 @@ export interface ConsolidationOperation {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  id: ConsolidationArtifactSourceIdsItem;
+  id: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -264,7 +481,7 @@ export interface ConsolidationOperation {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  requestHash: ConsolidationArtifactSourceIdsItem;
+  requestHash: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
@@ -277,11 +494,11 @@ export interface ConsolidationOperation {
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
-  sourceIds: Array<ConsolidationArtifactSourceIdsItem>;
+  sourceIds: Array<ConsolidationClaimSourceIdsItem>;
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
-  recipeHash: ConsolidationArtifactSourceIdsItem;
+  recipeHash: ConsolidationClaimSourceIdsItem;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */

@@ -13,9 +13,13 @@ export interface DeterministicConsolidationOptions {
   maxSources: number; maxInputChars: number; maxArtifactChars: number; maxKeywords: number;
   topicThreshold: number; minSegmentSources: number;
 }
+export function consolidationEvidence(sources: readonly ConsolidationSource[]) {
+  return sources.map(source => ({ id: source.id, key: source.key, text: source.snapshot.text,
+    evidence: source.snapshot.evidence, at: source.snapshot.at, tags: source.snapshot.tags }));
+}
+export type ConsolidationEvidence = ReturnType<typeof consolidationEvidence>[number];
 export function consolidationSourceText(sources: readonly ConsolidationSource[]): string {
-  return JSON.stringify(sources.map(source => ({ id: source.id, key: source.key, text: source.snapshot.text,
-    evidence: source.snapshot.evidence, at: source.snapshot.at, tags: source.snapshot.tags })));
+  return JSON.stringify(consolidationEvidence(sources));
 }
 export interface DeterministicConsolidationPlan {
   recipeHash: string; sourceIds: string[]; artifacts: ConsolidationArtifact[];

@@ -181,7 +181,434 @@
         "cooldown",
         "clock-skew",
         "backpressure",
-        "closed"
+        "closed",
+        "cancelled"
+      ]
+    },
+    "consolidationClaim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "sourceIds"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationSynthesis": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "ok"
+              ]
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/consolidationClaim"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "status",
+            "claims"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "refused"
+              ]
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "detail"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "consolidationSupport": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "ok"
+              ]
+            },
+            "supported": {
+              "type": "array",
+              "items": {
+                "type": "boolean"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "status",
+            "supported"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "refused"
+              ]
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "status",
+            "detail"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "consolidationEmbedding": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "vectors": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "model",
+        "dims",
+        "vectors"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationSynthesisBounds": {
+      "type": "object",
+      "properties": {
+        "maxSources": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxInputChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxOutputChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxClaimChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxClaims": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "maxLogicalCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "maxEmbeddingItems": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "maxSources",
+        "maxInputChars",
+        "maxOutputChars",
+        "maxClaimChars",
+        "maxClaims",
+        "maxLogicalCalls",
+        "maxEmbeddingItems"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationRunRequest": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "expectedGeneration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "completedAt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "tier": {
+          "enum": [
+            "semantic",
+            "combined"
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "key",
+        "sourceIds",
+        "expectedGeneration",
+        "completedAt"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationResolution": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "stopped": {
+              "enum": [
+                true
+              ]
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "requestHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "result": {
+              "$ref": "#/$defs/consolidationJson"
+            }
+          },
+          "required": [
+            "stopped",
+            "revision",
+            "requestHash",
+            "result"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "stopped": {
+              "enum": [
+                true
+              ]
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "requestHash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "failure": {
+              "enum": [
+                "refusal",
+                "unsupported",
+                "embedding",
+                "invalid-artifact",
+                "cancelled"
+              ]
+            }
+          },
+          "required": [
+            "stopped",
+            "revision",
+            "requestHash",
+            "failure"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "consolidationCallAccounting": {
+      "type": "object",
+      "properties": {
+        "reservedCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "completedCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "refusedCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "failedCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unknownCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "invoked": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "embeddingItems": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "reservedCalls",
+        "completedCalls",
+        "refusedCalls",
+        "failedCalls",
+        "unknownCalls",
+        "invoked",
+        "embeddingItems"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationExecutionResult": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "success"
+              ]
+            },
+            "value": {
+              "$ref": "#/$defs/consolidationReceipt"
+            },
+            "operationId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "accounting": {
+              "$ref": "#/$defs/consolidationCallAccounting"
+            }
+          },
+          "required": [
+            "status",
+            "value",
+            "operationId",
+            "accounting"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "refused"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/consolidationReason"
+            },
+            "detail": {
+              "type": "string"
+            },
+            "operationId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "accounting": {
+              "$ref": "#/$defs/consolidationCallAccounting"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "detail",
+            "operationId",
+            "accounting"
+          ],
+          "additionalProperties": false
+        }
       ]
     },
     "consolidationSource": {

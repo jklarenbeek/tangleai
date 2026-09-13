@@ -159,3 +159,92 @@ These functions return IDs: hosts must resolve the original source text and appl
 the final answer-context budget. A preview's citations alone are not supplied
 evidence. The generated benchmark separates raw lexical gains from artifact
 routing and publishes confirmation losses as well as gains.
+
+## Supported synthesis
+
+`createConsolidationExecutor({ store, synthesizer, verifier, embedder?, bounds? })`
+creates an explicit `execute(request)` and `resolve(request, resolution)` surface.
+A request names the scope, pass key, exact source IDs, captured generation,
+completion time and optional `tier: 'semantic' | 'combined'`. The default tier is
+semantic. Constructing an executor invokes nothing; hosts choose when to execute.
+
+The synthesizer has a stable `id` and `run({ instruction, sources }, { signal })`.
+It returns either `{ status: 'ok', claims: [{ text, sourceIds }] }` or
+`{ status: 'refused', detail }`. Each claim needs unique, nonempty references to
+supplied evidence; the claim union must cover the entire selected batch. Foreign
+references, missing coverage, malformed JSON shapes and text/count overflows
+refuse before support verification or embedding. Each callback receives its own
+copy of the exact evidence projection: ID, occurrence key, original text,
+evidence, date and tags. Source vectors are not sent as evidence text.
+
+The verifier also has a stable `id` and receives `{ instruction, sources, claims }`.
+It returns `{ status: 'ok', supported: boolean[] }`, in claim order, or a refusal.
+Every claim must be approved. This injected judgment is the semantic trust
+boundary: shape and citation validation do not establish truth, and a verifier
+that always approves provides no entailment assurance. Exact-quote fixtures in
+the benchmark measure transport/provenance, not live cross-event reasoning.
+
+An optional fresh embedder supplies `{ model, dims, embed(texts, { signal }) }` and
+returns `{ model, dims, vectors }`. It runs only after all claims are approved.
+There must be exactly one finite vector of the declared width for every claim,
+with the requested model identity. Source vectors are never averaged or reused
+for new text. Without this seam, artifacts carry no embedding. Combined mode
+adds bounded deterministic previews to the approved claims; all artifacts and
+all source removals from the pending buffer activate in one transaction.
+
+The defaults are 10 sources, 8000 input characters per callback request, 8000
+characters per structured response and aggregate artifact text, 2048 characters
+per claim, 10 claims, three logical callbacks and 10 embedding items. Character
+units are UTF-16 and include the rendered instruction/evidence/claim payload;
+provider-specific wire framing is outside this contract. Combined previews add
+at most one artifact per source beyond the claim bound. The whole-pass logical
+ceiling must fund synthesis, support and optional embedding before reservation.
+Input and output limits refuse instead of silently truncating semantic claims.
+
+Seams return already structured JSON. A host using a chat provider should use
+`@tangleai/models/structured` for wire/schema parsing and explicitly configure
+its repair policy (for example `maxRepairs: 0`). The executor invokes each seam
+at most once per durable step and implements no provider retry. An arbitrary
+seam can itself make multiple HTTP requests; logical callback budgets do not
+measure physical HTTP, model tokens, USD or provider latency. Stable seam IDs,
+instructions, tier, embedding identity and bounds enter the recipe/pass identity.
+Change an ID when changing its prompt, model or semantic policy.
+
+## Recovery and accounting
+
+A durable reservation precedes each callback. Completed responses are validated
+and stored before the next dispatch. Preparation persists the full artifact set;
+activation failure can resume that set after reopen without repeating synthesis,
+support or embedding. A completed pass replays with zero receipt writes, calls
+and embedding items. New keys cannot overlap active reservations: uncertain
+work returns `unknown`, other active work returns `backpressure`. Deterministic
+activation obeys this same exclusion. A disjoint activation that advances the
+parent makes a prepared pass terminally stale, retaining its still-pending
+sources and call history for an explicit later pass.
+
+A throw after dispatch, or failure to persist a callback's returned result, is
+`unknown`. Re-executing does not invoke that seam again. First stop the original
+host work, then call `resolve` with `stopped: true`, the exact operation revision
+and last step's request hash, plus either `result` or a terminal `failure`.
+Resolution validates the same result/citation/embedding bounds and uses revision
+CAS. The stopped assertion is host authority, not a process lease or proof that
+an external provider stopped. Unknown work cannot expire into an automatic retry.
+Invalid or stale resolutions have no effects. A known terminal failure can be
+followed by a separately keyed deterministic pass; that remains a deterministic
+result and never counts as successful semantic synthesis.
+
+`execute` returns the ordinary success/refusal outcome plus `operationId` and
+`accounting`. `reservedCalls` is the durable dispatch count, split exactly into
+completed, refused, failed and unknown calls. A dispatched but unconfirmed step
+counts as unknown; it may or may not have reached the provider. `invoked` counts
+callbacks actually entered by this invocation. `embeddingItems` records items
+reserved by a durable embedding step. These historical operation counters remain
+visible on replay; the replay receipt and `invoked` report zero new effects.
+Inspect the persisted operation to distinguish callback refusal from unsupported
+content, malformed output, storage failure and uncertainty.
+
+Cancellation prevents new dispatch and activation. An admitted callback is
+awaited, including one that ignores its signal; a returned valid result is staged
+before cancellation is reported. A thrown result remains unknown. The executor
+creates no detached callback or background retry and claims no hard deadline for
+an uncooperative injected function. Hosts retain resources until execution drains.

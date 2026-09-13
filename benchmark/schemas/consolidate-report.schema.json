@@ -558,7 +558,8 @@
               "passed",
               "failed",
               "physicalRequests",
-              "legacyMemoriesPreserved"
+              "legacyMemoriesPreserved",
+              "execution"
             ],
             "additionalProperties": false,
             "properties": {
@@ -591,6 +592,67 @@
                   1,
                   null
                 ]
+              },
+              "execution": {
+                "type": "object",
+                "required": [
+                  "rows",
+                  "passed",
+                  "failed",
+                  "physicalRequests"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "rows": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "initial",
+                        "initialCalls",
+                        "resumedCalls",
+                        "retainedSources",
+                        "finalArtifacts"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "initial": {
+                          "type": "string"
+                        },
+                        "initialCalls": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "resumedCalls": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "retainedSources": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "finalArtifacts": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  },
+                  "passed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "failed": {
+                    "const": 0
+                  },
+                  "physicalRequests": {
+                    "const": 0
+                  }
+                }
               }
             }
           }
@@ -680,6 +742,27 @@
         "maxResults": 100000,
         "frozenBeforeNativeEvaluation": true
       }
+    },
+    "scriptedRegistration": {
+      "const": {
+        "origin": "scripted",
+        "synthesizer": "extractive-transport-control/1",
+        "verifier": "exact-quote-equality/1",
+        "semanticMeaning": "Transport/provenance ablation only: copies each supplied source into one claim; no live cross-event synthesis quality claim",
+        "combined": "Supported quoted claims plus deterministic topic previews; original source expansion under the same final budget",
+        "retrievalOwner": "@jarenjs/core/search@0.87.0",
+        "bounds": {
+          "maxSources": 10,
+          "maxInputChars": 16000,
+          "maxOutputChars": 12000,
+          "maxClaimChars": 4096,
+          "maxClaims": 10,
+          "maxLogicalCalls": 2,
+          "maxEmbeddingItems": 0
+        },
+        "physicalRequests": 0,
+        "frozenBeforeEvaluation": true
+      }
     }
   },
   "required": [
@@ -704,7 +787,8 @@
     "tierRegistration",
     "tierRegistrationHash",
     "comparisons",
-    "lexicalOwner"
+    "lexicalOwner",
+    "scriptedRegistration"
   ],
   "additionalProperties": false
 }

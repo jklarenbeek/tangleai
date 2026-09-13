@@ -1,5 +1,5 @@
 import { createConsolidationMemoryStore, createConsolidationSource, planDeterministicConsolidation,
-  createConsolidationLexicalIndex } from '@tangleai/memory/consolidation';
+  createConsolidationLexicalIndex, createConsolidationExecutor } from '@tangleai/memory/consolidation';
 import { validateConsolidationShape } from '@tangleai/core/schemas/consolidation';
 const ensure = (condition, message) => { if (!condition) throw new Error(message); };
 const must = result => { if (result.status !== 'success') throw new Error(`${result.reason}: ${result.detail}`); return result.value; };
@@ -28,5 +28,18 @@ export async function qualifyConsolidation(store = createConsolidationMemoryStor
   ensure(must(await store.snapshot(scope)).sources[0].snapshot.text === snapshot.text, 'stored evidence is isolated');
   const overflow = await store.enqueue([must(await createConsolidationSource({ scope, sequence: 2, key: 'turn-2', snapshot }))], { maxPending: 0 });
   ensure(overflow.status === 'refused' && overflow.reason === 'capacity', 'invalid bound refuses');
+  const semantic = must(await createConsolidationSource({ scope: 'installed-synthesis', key: 'event', sequence: 0, snapshot }));
+  must(await store.enqueue([semantic], { maxPending: 1 }));
+  let calls = 0;
+  const executor = createConsolidationExecutor({ store,
+    synthesizer: { id: 'installed-quote/1', async run(request) { calls++; return { status: 'ok', claims: [{ text: request.sources[0].text, sourceIds: [request.sources[0].id] }] }; } },
+    verifier: { id: 'installed-support/1', async run(request) { calls++; return { status: 'ok', supported: [request.claims[0].text === request.sources[0].text] }; } },
+  });
+  const synthesisRequest = { scope: semantic.scope, key: 'supported', expectedGeneration: 0, sourceIds: [semantic.id], completedAt: 1000 };
+  const synthesized = await executor.execute(synthesisRequest);
+  ensure(synthesized.status === 'success' && validateConsolidationShape('consolidationExecutionResult', synthesized).valid, 'installed supported execution and result schema');
+  const synthesizedReplay = await executor.execute(synthesisRequest);
+  ensure(synthesizedReplay.status === 'success' && synthesizedReplay.accounting.invoked === 0, 'installed staged replay is zero-call');
+  ensure(calls === (delivery.admitted === 0 ? 0 : 2), 'reopen preserves completed callbacks');
   return { sources: 2, artifacts: 1, replayWrites: replay.writes, reopened: delivery.admitted === 0 && first.replayed };
 }

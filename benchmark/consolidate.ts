@@ -1,3 +1,4 @@
+import { scriptedConsolidationCandidate } from './lib/consolidate-scripted.ts';
 /** Keyless evidence controls; this entry point never loads provider credentials. */
 import { writeFile } from 'node:fs/promises';
 import { parseArgs } from './lib/args.ts';
@@ -13,7 +14,7 @@ if (!dataset.available) {
   process.exit(args.flags.has('require') ? 1 : 0);
 }
 if (!dataset.valid || dataset.sha256 !== CONSOLIDATE_REGISTRATION.corpusSha256) throw new Error('registered consolidation corpus moved');
-const report = await runConsolidate(dataset, { sourceHash: await consolidateSourceHash(), candidates: [hashControl(), lexicalControl(), deterministicCandidate(), deterministicCandidate(true), lexicalControl(true), deterministicCandidate(false, true), deterministicCandidate(true, true)] });
+const report = await runConsolidate(dataset, { sourceHash: await consolidateSourceHash(), candidates: [hashControl(), lexicalControl(), deterministicCandidate(), deterministicCandidate(true), lexicalControl(true), deterministicCandidate(false, true), deterministicCandidate(true, true), scriptedConsolidationCandidate(), scriptedConsolidationCandidate(true)] });
 const markdown = renderConsolidate(report);
 if (args.values.has('json')) await writeFile(args.values.get('json')!, JSON.stringify(report, null, 2) + '\n');
 if (args.values.has('md')) await writeFile(args.values.get('md')!, markdown);

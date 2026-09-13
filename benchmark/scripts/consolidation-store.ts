@@ -1,4 +1,5 @@
 /** SQLite lifetime belongs to the Node parent, including under Bun on Windows. */
+import { runConsolidationExecutionProbes } from '../lib/consolidate-execution-probes.ts';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import { openStore } from '@jarenjs/db';
@@ -19,9 +20,10 @@ try {
   consolidationMust(await createConsolidationDbStore(upgraded).enqueue([source], { maxPending: 1 }));
   assert.equal((await upgraded.integrityCheck()).ok, true);
 } finally { await upgraded.close(); }
+const fixtureDirectory: string = directory;
 let sequence = 0;
-const report = await runConsolidationStoreProbes(async () => {
-  const path = join(directory, `consolidation-${sequence++}.db`);
+async function createHost(): Promise<ConsolidationProbeHost> {
+  const path = join(fixtureDirectory, `consolidation-${sequence++}.db`);
   let host: ConsolidationProbeHost;
   const applyProbe = (step: string) => { if (host?.failAt === step) throw new Error(`injected ${step}`); };
   let db = await openTangleDb({ path });
@@ -30,5 +32,7 @@ const report = await runConsolidationStoreProbes(async () => {
     async close() { await db.close(); },
   };
   return host;
-});
-console.log(JSON.stringify({ backend: process.versions.bun ? 'bun-sqlite' : 'node-sqlite', legacyMemoriesPreserved: 1, ...report }));
+}
+const report = await runConsolidationStoreProbes(createHost);
+const execution = await runConsolidationExecutionProbes(createHost);
+console.log(JSON.stringify({ backend: process.versions.bun ? 'bun-sqlite' : 'node-sqlite', legacyMemoriesPreserved: 1, ...report, execution }));

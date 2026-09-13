@@ -1,3 +1,4 @@
+import { scriptedConsolidationCandidate } from '../../benchmark/lib/consolidate-scripted.ts';
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -95,8 +96,8 @@ it('publishes exactly the full current corpus report', async t => {
   const doc = await readFile(new URL('../../docs/CONSOLIDATE_BENCHMARK.md', import.meta.url), 'utf8');
   const sourceHash = /Effective source: `([a-f0-9]{64})`/.exec(doc)![1];
   assert.equal(sourceHash, await consolidateSourceHash(), 'regenerate the source-bound consolidation report');
-  const report = await runConsolidate(corpus, { sourceHash, candidates: [hashControl(), lexicalControl(), deterministicCandidate(), deterministicCandidate(true), lexicalControl(true), deterministicCandidate(false, true), deterministicCandidate(true, true)] });
-  assert.equal(report.questionRows.length, 1540 * 7);
+  const report = await runConsolidate(corpus, { sourceHash, candidates: [hashControl(), lexicalControl(), deterministicCandidate(), deterministicCandidate(true), lexicalControl(true), deterministicCandidate(false, true), deterministicCandidate(true, true), scriptedConsolidationCandidate(), scriptedConsolidationCandidate(true)] });
+  assert.equal(report.questionRows.length, 1540 * 9);
   assert.equal(report.dataset.sources, 5882);
   assert.equal(renderConsolidate(report), doc);
 });

@@ -17,6 +17,7 @@ import { officialScore } from './locomo-parity.ts';
 import { DEFAULTS, makeCorpus, probe, ceilingFor, programProbe, pairwiseProgram, scorePairwise } from './horizon.ts';
 import type { LocomoSample } from './locomo.ts';
 import { table, score } from './table.ts';
+import SCRIPTED_REGISTRATION from '../registrations/consolidate-scripted.json' with { type: 'json' };
 import JAREN_REGISTRATION from '../registrations/consolidate-jaren.json' with { type: 'json' };
 import TIER_REGISTRATION from '../registrations/consolidate-deterministic.json' with { type: 'json' };
 import { bootstrapInterval } from './locomo-policy.ts';
@@ -179,7 +180,7 @@ export async function runConsolidate(dataset: { samples: LocomoSample[]; sha256:
   const report = {
     instrument: 'consolidation-evidence', revision: 1, registration: REGISTRATION,
     registrationHash: await canonicalSha256(REGISTRATION), tierRegistration: TIER_REGISTRATION,
-    tierRegistrationHash: await canonicalSha256(TIER_REGISTRATION), lexicalOwner: JAREN_REGISTRATION, sourceHash: options.sourceHash,
+    tierRegistrationHash: await canonicalSha256(TIER_REGISTRATION), lexicalOwner: JAREN_REGISTRATION, scriptedRegistration: SCRIPTED_REGISTRATION, sourceHash: options.sourceHash,
     dataset: { sha256: dataset.sha256, conversations: dataset.samples.length, sources, sourceChars, questions: questionCount, excluded, emptyGold, unresolvedGold, refusedSessions, confirmation },
     candidates: candidates.map(candidate => ({ key: candidate.key, origin: candidate.origin,
       statistics: statistics.get(candidate.key)!, summary: summarizeRows(rows.filter(row => row.candidate === candidate.key)) })),
@@ -202,7 +203,8 @@ export function validateConsolidate(value: unknown): boolean {
   const report = value as ConsolidateReport;
   if (report.candidates.length === 0 || new Set(report.candidates.map(candidate => candidate.key)).size !== report.candidates.length) return false;
   if (report.storage && (new Set(report.storage.map(row => row.backend)).size !== 3
-    || report.storage.some(row => row.passed !== row.cases.length || JSON.stringify(row.cases) !== JSON.stringify(report.storage![0].cases)))) return false;
+    || report.storage.some(row => row.passed !== row.cases.length || row.execution.passed !== row.execution.rows.length
+      || JSON.stringify(row.execution) !== JSON.stringify(report.storage![0].execution) || JSON.stringify(row.cases) !== JSON.stringify(report.storage![0].cases)))) return false;
   for (const candidate of report.candidates) {
     const rows = report.questionRows.filter(row => row.candidate === candidate.key);
     if (rows.length !== report.dataset.questions || new Set(rows.map(row => row.id)).size !== rows.length) return false;
@@ -229,6 +231,7 @@ export function renderConsolidate(report: ConsolidateReport): string {
     '## Matched retrieval and verbatim floor', '',
     'The shipped lexical API consumes the public Jaren search owner. Native rows carry `jaren` in their key. The original raw-lexical/deterministic/deterministic-hybrid BM25 rows remain frozen benchmark references, with their scorer confined to the benchmark. The native scoring profile differs and is separately registered; this architecture correction was fixed before native evaluation and was not selected by confirmation performance.', '',
     `Native registration: ${JSON.stringify(report.lexicalOwner)}.`, '',
+    `Scripted registration: ${JSON.stringify(report.scriptedRegistration)}. Semantic and combined rows copy exact sources through actual synthesis/support/store stages. They qualify transport and provenance only; live cross-event synthesis quality is unmeasured. The separate hand-authored failure and relation fixtures qualify the executor's support boundary.`, '',
     'Recall uses the official fractional evidence scorer. Verbatim F1 copies supplied source text through the official answer scorer; it does not measure a model reader or judge. A retrieval gain alone does not qualify a default.', '',
     table({ head: ['Candidate', 'Partition', 'Category', 'Questions', 'Recall', 'Verbatim F1', 'Mean context chars'],
       rows: report.candidates.flatMap(candidate => candidate.summary.map(row => [candidate.key, row.partition, row.category || 'all', row.questions, score(row.recall), score(row.verbatimF1), row.meanChars?.toFixed(1) ?? null])) }), '',
@@ -246,6 +249,9 @@ export function renderConsolidate(report: ConsolidateReport): string {
   if (report.storage) lines.push('## Atomic storage qualification', '',
     'The same independently asserted protocol runs in memory, Node SQLite and Bun SQLite. It covers immutable occurrence identity, capacity, evidence membership, rollback at every write boundary, independent-adapter contention, durable operation reservations and actual reopen/replay. Failed activation retains every pending source; completed replay has zero writes or callback invocations.', '',
     table({ head: ['Backend', 'Cases passed', 'Failures', 'Physical requests', 'Legacy memories preserved'], rows: report.storage.map(row => [row.backend, row.passed, row.failed, row.physicalRequests, row.legacyMemoriesPreserved]) }), '',
+    '### Staged synthesis and restart', '',
+    'Scripted callbacks make zero physical requests. Every backend checks durable dispatch/result faults, explicit stopped-host resolution, prepared activation recovery and independent-handle contention. Recovery rows retain two exact sources and end with one supported artifact; negative rows retain both pending sources and activate zero artifacts. All completed replays additionally invoke and write zero.', '',
+    table({ head: ['Backend', 'Case', 'Initial outcome', 'Initial callbacks', 'Resume callbacks', 'Sources retained', 'Artifacts'], rows: report.storage.flatMap(backend => backend.execution.rows.map(row => [backend.backend, row.name, row.initial, row.initialCalls, row.resumedCalls, row.retainedSources, row.finalArtifacts])) }), '',
     ...report.storage[0].cases.map(name => `- ${name}`), '');
   if (report.compaction) lines.push('## Existing history compaction and full-corpus program', '',
     'These run the public agent and ledger. Direct pairwise is determinacy from every value, not a bound on lucky answers. Recoverable values require archive reads. Character counts here serialize the whole message array; the agent budget sums individual message sizes, excluding array punctuation.', '',
