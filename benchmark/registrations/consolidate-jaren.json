@@ -1,0 +1,13 @@
+{
+  "reason": "Architecture correction: use the already pinned public Jaren search owner; retain the original BM25 experiment separately without retuning it",
+  "owner": "@jarenjs/core/search@0.87.0",
+  "profile": "lexical-key/1",
+  "prefix": false,
+  "fuzzy": 0,
+  "combineWith": "OR",
+  "normalization": "NFKC lowercase Unicode letter/number terms; unique query terms",
+  "tie": "source input order through public compare option",
+  "score": "Jaren compatibility score: k1=1.2, b=0.7, delta=0.5, unique-term document length, query-quality multiplier",
+  "maxResults": 100000,
+  "frozenBeforeNativeEvaluation": true
+}

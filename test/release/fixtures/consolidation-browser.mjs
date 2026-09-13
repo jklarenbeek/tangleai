@@ -1,4 +1,5 @@
-import { createConsolidationMemoryStore, createConsolidationSource, createConsolidationArtifact } from '@tangleai/memory/consolidation';
+import { createConsolidationMemoryStore, createConsolidationSource, planDeterministicConsolidation,
+  createConsolidationLexicalIndex } from '@tangleai/memory/consolidation';
 import { validateConsolidationShape } from '@tangleai/core/schemas/consolidation';
 const ensure = (condition, message) => { if (!condition) throw new Error(message); };
 const must = result => { if (result.status !== 'success') throw new Error(`${result.reason}: ${result.detail}`); return result.value; };
@@ -12,9 +13,10 @@ export async function qualifyConsolidation(store = createConsolidationMemoryStor
   const delivery = must(await store.enqueue(sources, { maxPending: 2 }));
   const duplicate = must(await store.enqueue(sources, { maxPending: 2 }));
   ensure(duplicate.writes === 0 && duplicate.admitted === 0, 'delivery replay changes nothing');
-  const recipeHash = 'a'.repeat(64);
-  const artifact = must(await createConsolidationArtifact({ scope, tier: 'deterministic', recipeHash,
-    text: snapshot.text, sourceIds: sources.map(source => source.id), keywords: ['paris'] }));
+  const plan = must(await planDeterministicConsolidation(sources));
+  const recipeHash = plan.recipeHash, artifact = plan.artifacts[0];
+  ensure(plan.artifacts.length === 1 && artifact.sourceIds.length === 2, 'pure tier preserves both occurrences');
+  ensure(createConsolidationLexicalIndex([{ id: artifact.id, text: artifact.text }]).rank('Paris')[0]?.id === artifact.id, 'installed lexical routing');
   const input = { scope, key: 'installed-pass', expectedGeneration: 0, sourceIds: sources.map(source => source.id), recipeHash, artifacts: [artifact], completedAt: 1000 };
   const first = must(await store.apply(input)), beforeReplay = store.stats().writes;
   const replay = must(await store.apply(input));

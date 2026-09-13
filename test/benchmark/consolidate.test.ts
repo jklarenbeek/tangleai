@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { runConsolidate, suppliedEvidence, compactionControls, validateConsolidate, renderConsolidate,
   emptyFailures, CONSOLIDATE_REGISTRATION, type Candidate, type EvidenceSource } from '../../benchmark/lib/consolidate.ts';
+import { lexicalControl, deterministicCandidate } from '../../benchmark/lib/consolidate-candidates.ts';
+import { hashControl } from '../../benchmark/lib/consolidate.ts';
 import { consolidateSourceHash } from '../../benchmark/lib/consolidate-source.ts';
 import { loadLocomo } from '../../benchmark/lib/locomo.ts';
 
@@ -53,6 +55,14 @@ it('produces byte-identical hand-fixture reports with honest unresolved, exclude
   assert.equal(first.registrationHash, await canonicalSha256(CONSOLIDATE_REGISTRATION));
 });
 
+it('rejects paired diagnostics that do not match the actual question results', async () => {
+  const report = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, storage: false,
+    candidates: [hashControl(), lexicalControl()] });
+  assert.ok(validateConsolidate(report));
+  report.comparisons[0].meanDelta += 0.1;
+  assert.equal(validateConsolidate(report), false);
+});
+
 it('does not let candidate preparation mutate the source text being credited or hide invalid counters', async () => {
   const candidate: Candidate = { key: 'scripted-refusal', origin: 'scripted', async prepare(input) {
     input[0].unit.text = 'forged Paris answer';
@@ -85,8 +95,8 @@ it('publishes exactly the full current corpus report', async t => {
   const doc = await readFile(new URL('../../docs/CONSOLIDATE_BENCHMARK.md', import.meta.url), 'utf8');
   const sourceHash = /Effective source: `([a-f0-9]{64})`/.exec(doc)![1];
   assert.equal(sourceHash, await consolidateSourceHash(), 'regenerate the source-bound consolidation report');
-  const report = await runConsolidate(corpus, { sourceHash });
-  assert.equal(report.questionRows.length, 1540);
+  const report = await runConsolidate(corpus, { sourceHash, candidates: [hashControl(), lexicalControl(), deterministicCandidate(), deterministicCandidate(true), lexicalControl(true), deterministicCandidate(false, true), deterministicCandidate(true, true)] });
+  assert.equal(report.questionRows.length, 1540 * 7);
   assert.equal(report.dataset.sources, 5882);
   assert.equal(renderConsolidate(report), doc);
 });

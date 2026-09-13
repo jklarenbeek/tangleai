@@ -1,0 +1,11 @@
+{
+  "method": "contiguous-extractive-v1",
+  "maxSources": 10,
+  "maxInputChars": 8000,
+  "maxArtifactChars": 512,
+  "maxKeywords": 8,
+  "topicThreshold": 0.2,
+  "minSegmentSources": 2,
+  "ranking": "positive BM25 hits; artifact references expand in source order; hybrid RRF k=60",
+  "frozenBeforeConfirmation": true
+}

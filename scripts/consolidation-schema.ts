@@ -4,7 +4,7 @@ import { emitTypeScript } from '@jarenjs/emit';
 import { CONSOLIDATION_SCHEMA } from '../packages/core/src/schemas/consolidation-definition.ts';
 const outputs = new Map([
   ['packages/core/schemas/consolidation.schema.json', JSON.stringify(CONSOLIDATION_SCHEMA, null, 2) + '\n'],
-  ['packages/core/src/schemas/consolidation.gen.ts', emitTypeScript(CONSOLIDATION_SCHEMA, { name: 'ConsolidationContracts' })],
+  ['packages/core/src/schemas/consolidation.gen.ts', emitTypeScript(CONSOLIDATION_SCHEMA, { name: 'ConsolidationContracts' }).trimEnd() + '\n'],
 ]);
 for (const [path, content] of outputs) {
   if (process.argv.includes('--check')) {

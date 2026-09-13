@@ -119,3 +119,43 @@ failed admission or activation must not be counted as successful consolidation.
 The [benchmark guide](../../../docs/CONSOLIDATE_BENCHMARK.md) records matched
 source-delivery controls and actual storage qualification. Live synthesis quality
 and cost remain unmeasured; no consolidation tier is enabled by default.
+
+## Deterministic previews and lexical routing
+
+`planDeterministicConsolidation(sources, options)` validates exact snapshots,
+orders them by sequence then occurrence key, and returns an immutable artifact
+plan. Adjacent topic similarity uses Jaren cosine on equal, known embedding
+identities; otherwise it uses local term frequencies. Low local minima define
+contiguous boundaries; small segments join a neighbor without reordering evidence.
+No vector averaging, model call or implicit source deletion occurs.
+
+The default opt-in plan accepts at most 10 sources and 8000 UTF-16 input
+characters, including serialized source identity, evidence, date and tags. Each
+preview is at most 512 characters with at most eight keywords; the topic threshold
+is 0.2 and minimum segment size is two. Options can change these explicit bounds.
+Input overflow refuses the whole plan. Jaren excerpts receive a final length and
+surrogate-boundary check. Original snapshots remain intact even when previews
+are truncated. Total preview output is bounded by source count times the per-artifact
+limit; retained source and reference storage is additional.
+
+`applyDeterministicConsolidation(store, sources, { key, expectedGeneration,
+completedAt, options })` applies that plan atomically. An identical original
+request replays with zero writes and calls. The pure planner can also be used
+without persistence; its recipe hash binds all parameters.
+
+`createConsolidationLexicalIndex([{ id, text }], { limits })` consumes
+`@jarenjs/core/search`'s public `compileLexical` owner. Host normalization supplies
+NFKC-normalized, lowercase Unicode letter/number terms and unique query terms.
+The registered `lexical-key/1` compatibility profile uses exact terms, OR matching,
+no prefix/fuzzy expansion and input-order ties through the public comparator.
+Its score uses k1=1.2, b=0.7, additive delta=0.5, unique-term document length and
+the owner's query-quality multiplier. These are Jaren profile semantics, not
+configurable BM25 parameters in Tangle. Public Jaren limits bound indexing/search;
+`limits` may configure them explicitly. Default output is capped at 1000 hits.
+Budget exhaustion throws rather than returning a partial ranking as complete.
+The earlier k1=1.2,b=.75 BM25 experiment remains a benchmark-only reference.
+`fuseConsolidationRanks(rankings, k=60)` provides optional reciprocal-rank fusion.
+These functions return IDs: hosts must resolve the original source text and apply
+the final answer-context budget. A preview's citations alone are not supplied
+evidence. The generated benchmark separates raw lexical gains from artifact
+routing and publishes confirmation losses as well as gains.

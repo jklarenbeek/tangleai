@@ -17,6 +17,9 @@ import { officialScore } from './locomo-parity.ts';
 import { DEFAULTS, makeCorpus, probe, ceilingFor, programProbe, pairwiseProgram, scorePairwise } from './horizon.ts';
 import type { LocomoSample } from './locomo.ts';
 import { table, score } from './table.ts';
+import JAREN_REGISTRATION from '../registrations/consolidate-jaren.json' with { type: 'json' };
+import TIER_REGISTRATION from '../registrations/consolidate-deterministic.json' with { type: 'json' };
+import { bootstrapInterval } from './locomo-policy.ts';
 import REGISTRATION from '../registrations/consolidate.json' with { type: 'json' };
 
 export { REGISTRATION as CONSOLIDATE_REGISTRATION };
@@ -98,6 +101,17 @@ export function summarizeRows(rows: readonly ConsolidateQuestionRow[]) {
   }));
 }
 
+export function pairedComparisons(keys: readonly string[], rows: readonly ConsolidateQuestionRow[]) {
+  return keys.flatMap(key => ['raw-hash', 'raw-lexical', 'raw-jaren'].flatMap(control =>
+      key === control || !keys.includes(control) ? [] : ['development', 'confirmation'].map(partition => {
+        const treatment = rows.filter(row => row.candidate === key && row.partition === partition);
+        const baseline = new Map(rows.filter(row => row.candidate === control && row.partition === partition).map(row => [row.id, row]));
+        const deltas = treatment.map(row => row.recall - baseline.get(row.id)!.recall);
+        return { candidate: key, control, partition, questions: deltas.length,
+          meanDelta: deltas.length ? average(deltas) : 0, interval: bootstrapInterval(deltas, { resamples: 10000, seed: 17753, level: 0.95 }) };
+      })));
+}
+
 export async function compactionControls() {
   const corpus = makeCorpus();
   const rows = [];
@@ -126,12 +140,12 @@ export async function runConsolidate(dataset: { samples: LocomoSample[]; sha256:
   const statistics = new Map(candidates.map(candidate => [candidate.key, {
     artifacts: 0, retainedSources: 0, outputChars: 0, logicalCalls: 0, embeddingItems: 0, failures: emptyFailures(),
   }]));
-  let questionCount = 0;
+  let questionCount = 0, sourceChars = 0;
   let sources = 0, excluded = 0, emptyGold = 0, unresolvedGold = 0, refusedSessions = 0;
   for (const sample of dataset.samples) {
     const corpus = conversationCorpus(sample);
     const evidence = transcriptUnits(corpus).map((unit, sequence) => ({ key: unit.evidence, unit, sequence }));
-    sources += evidence.length; refusedSessions += corpus.refused;
+    sources += evidence.length; sourceChars += evidence.reduce((sum, source) => sum + source.unit.text.length, 0); refusedSessions += corpus.refused;
     const questions = questionsOf(sample, corpus).filter(question => {
       if (question.category === 5) { excluded++; return false; }
       if (!question.gold.length) emptyGold++;
@@ -164,12 +178,14 @@ export async function runConsolidate(dataset: { samples: LocomoSample[]; sha256:
   }
   const report = {
     instrument: 'consolidation-evidence', revision: 1, registration: REGISTRATION,
-    registrationHash: await canonicalSha256(REGISTRATION), sourceHash: options.sourceHash,
-    dataset: { sha256: dataset.sha256, conversations: dataset.samples.length, sources, questions: questionCount, excluded, emptyGold, unresolvedGold, refusedSessions, confirmation },
+    registrationHash: await canonicalSha256(REGISTRATION), tierRegistration: TIER_REGISTRATION,
+    tierRegistrationHash: await canonicalSha256(TIER_REGISTRATION), lexicalOwner: JAREN_REGISTRATION, sourceHash: options.sourceHash,
+    dataset: { sha256: dataset.sha256, conversations: dataset.samples.length, sources, sourceChars, questions: questionCount, excluded, emptyGold, unresolvedGold, refusedSessions, confirmation },
     candidates: candidates.map(candidate => ({ key: candidate.key, origin: candidate.origin,
       statistics: statistics.get(candidate.key)!, summary: summarizeRows(rows.filter(row => row.candidate === candidate.key)) })),
     unmeasured: REGISTRATION.tiers.filter(tier => !candidates.some(candidate => candidate.key === tier)),
     storage: options.storage === false ? null : await consolidationStorageControls(),
+    comparisons: pairedComparisons(candidates.map(candidate => candidate.key), rows),
     questionRows: rows, compaction: options.compaction === false ? null : await compactionControls(),
     physicalRequests: 0, liveQuality: null, liveTokens: null, liveCostUsd: null, liveLatencyMs: null,
     default: { enabled: false, reason: 'No registered paired live reader/judge quality and cost evidence' },
@@ -196,6 +212,7 @@ export function validateConsolidate(value: unknown): boolean {
     if (JSON.stringify(candidate.summary) !== JSON.stringify(summarizeRows(rows))) return false;
     if (candidate.statistics.retainedSources > report.dataset.sources) return false;
   }
+  if (JSON.stringify(report.comparisons) !== JSON.stringify(pairedComparisons(report.candidates.map(row => row.key), report.questionRows))) return false;
   return report.questionRows.every(row => report.candidates.some(candidate => candidate.key === row.candidate)
     && row.chars <= report.registration.retrieval.contextChars && row.supplied <= report.registration.retrieval.k);
 }
@@ -210,13 +227,19 @@ export function renderConsolidate(report: ConsolidateReport): string {
     `Matched context: at most ${REGISTRATION.retrieval.k} complete source lines and ${REGISTRATION.retrieval.contextChars} UTF-16 characters, including rendered dates, speakers, ids and separators. Oversized lines are skipped whole. Artifact references earn credit only after their original source text is supplied within this same budget.`, '',
     'The canonical selected policy is measured separately by [LoCoMo recall](LOCOMO_RECALL.md). These matched rows preserve equal-text source occurrences separately and apply a final context budget, so their identity differs from that historical control.', '',
     '## Matched retrieval and verbatim floor', '',
+    'The shipped lexical API consumes the public Jaren search owner. Native rows carry `jaren` in their key. The original raw-lexical/deterministic/deterministic-hybrid BM25 rows remain frozen benchmark references, with their scorer confined to the benchmark. The native scoring profile differs and is separately registered; this architecture correction was fixed before native evaluation and was not selected by confirmation performance.', '',
+    `Native registration: ${JSON.stringify(report.lexicalOwner)}.`, '',
     'Recall uses the official fractional evidence scorer. Verbatim F1 copies supplied source text through the official answer scorer; it does not measure a model reader or judge. A retrieval gain alone does not qualify a default.', '',
     table({ head: ['Candidate', 'Partition', 'Category', 'Questions', 'Recall', 'Verbatim F1', 'Mean context chars'],
       rows: report.candidates.flatMap(candidate => candidate.summary.map(row => [candidate.key, row.partition, row.category || 'all', row.questions, score(row.recall), score(row.verbatimF1), row.meanChars?.toFixed(1) ?? null])) }), '',
+    '## Paired retrieval diagnostics', '',
+    'Configuration and tier parameters were fixed before confirmation. Intervals resample paired questions, using the existing policy bootstrap (10,000 resamples, seed 17753). Questions within a conversation are correlated; the three confirmation conversations limit generalization. These retrieval intervals do not qualify the live QA default gate.', '',
+    table({ head: ['Candidate', 'Control', 'Partition', 'Questions', 'Recall delta', '95% question-bootstrap interval'], rows: report.comparisons.map(row => [row.candidate, row.control, row.partition, row.questions, score(row.meanDelta), `${score(row.interval.low)} to ${score(row.interval.high)}`]) }), '',
     '## Preparation and failures', '',
     table({ head: ['Candidate', 'Origin', 'Artifacts', 'Sources retained', 'Output chars', 'Logical calls', 'Local embedding items', 'Failures'],
       rows: report.candidates.map(candidate => [candidate.key, candidate.origin, candidate.statistics.artifacts, candidate.statistics.retainedSources,
         candidate.statistics.outputChars, candidate.statistics.logicalCalls, candidate.statistics.embeddingItems, JSON.stringify(candidate.statistics.failures)]) }), '',
+    `Exact source text totals ${report.dataset.sourceChars} UTF-16 characters. Artifact output counts preview text only: the original sources and artifact references remain stored, so shorter previews do not mean reduced total storage. Tier registration: \`${report.tierRegistrationHash}\`; parameters \`${JSON.stringify(report.tierRegistration)}\`.`, '',
     `Unmeasured tiers: ${report.unmeasured.join(', ') || 'none'}. Physical requests: ${report.physicalRequests} (keyless/scripted only). Live quality, model tokens, USD and latency: unmeasured. Opaque callback counts must not be relabeled physical requests.`, '',
     '**Default: off.** ' + report.default.reason + '. The registered gate requires a positive paired live QA bootstrap lower bound, category delta ≥ -0.05, token ratio ≤ 1.1 and physical-request ratio ≤ 1.0.', '',
   ];

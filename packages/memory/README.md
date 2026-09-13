@@ -83,9 +83,9 @@ a completed projection never reapplies after the id is restored. See the
 [outcome adapter kit](../outcomes/docs/ADAPTERS.md).
 
 
-## Immutable consolidation storage
+## Immutable consolidation and routing
 
-`@tangleai/memory/consolidation` supplies qualified source snapshots, immutable
+`@tangleai/memory/consolidation` supplies bounded deterministic topic previews, Jaren lexical routing, qualified source snapshots, immutable
 artifacts, bounded pending admission, atomic activation and durable operation
 receipts. Equal-text occurrences remain distinct and failed passes retain their
 evidence. The [API guide](docs/CONSOLIDATION.md) documents identity, replay,

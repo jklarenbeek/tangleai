@@ -300,4 +300,3 @@ export interface ConsolidationOperation {
 
 
 export type ConsolidationContracts = ConsolidationSource;
-
