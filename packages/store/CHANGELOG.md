@@ -1,5 +1,17 @@
 # @tangleai/store
 
+## 0.27.1
+
+### Patch Changes
+
+- Updated dependencies [422afcd]
+  - @tangleai/memory@0.27.1
+  - @tangleai/config@0.27.1
+  - @tangleai/core@0.27.1
+  - @tangleai/documents@0.27.1
+  - @tangleai/mas@0.27.1
+  - @tangleai/outcomes@0.27.1
+
 ## 0.27.0
 
 ### Minor Changes

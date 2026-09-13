@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/desktop",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "private": true,
   "description": "Tangle AI desktop — a single self-hosting binary for chat over curated memory and ingested documents, with live pipeline observability.",
   "license": "MIT",
@@ -11,12 +11,12 @@
     "bun": ">=1.4.0"
   },
   "dependencies": {
-    "@tangleai/core": "0.27.0",
-    "@tangleai/documents": "0.27.0",
-    "@tangleai/memory": "0.27.0",
-    "@tangleai/pipeline": "0.27.0",
-    "@tangleai/search": "0.27.0",
-    "@tangleai/store": "0.27.0",
+    "@tangleai/core": "0.27.1",
+    "@tangleai/documents": "0.27.1",
+    "@tangleai/memory": "0.27.1",
+    "@tangleai/pipeline": "0.27.1",
+    "@tangleai/search": "0.27.1",
+    "@tangleai/store": "0.27.1",
     "@jarenjs/app": "0.87.0",
     "@jarenjs/charts": "0.87.0",
     "@jarenjs/contract": "0.87.0",
@@ -26,9 +26,9 @@
     "@jarenjs/view": "0.87.0",
     "@jarenjs/core": "0.87.0",
     "@jarenjs/validate": "0.87.0",
-    "@tangleai/config": "0.27.0",
-    "@tangleai/models": "0.27.0",
-    "@tangleai/context": "0.27.0",
-    "@tangleai/agents": "0.27.0"
+    "@tangleai/config": "0.27.1",
+    "@tangleai/models": "0.27.1",
+    "@tangleai/context": "0.27.1",
+    "@tangleai/agents": "0.27.1"
   }
 }

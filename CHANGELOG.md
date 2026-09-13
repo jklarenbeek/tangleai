@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.27.1
+
+Keep consolidation source receipts portable across fresh and working checkouts by excluding ignored build outputs while preserving effective source edits and explicitly named inputs. Requalify the fixed consolidation and temporal measurements against clean-checkout source identities.
+
 ## 0.27.0
 
 Add opt-in bounded extractive consolidation plans and Jaren lexical evidence routing, with atomic replay and matched LoCoMo attribution.

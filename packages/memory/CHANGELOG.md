@@ -1,5 +1,14 @@
 # @tangleai/memory
 
+## 0.27.1
+
+### Patch Changes
+
+- 422afcd: Keep consolidation source receipts portable across fresh and working checkouts by excluding ignored build outputs while preserving effective source edits and explicitly named inputs. Requalify the fixed consolidation and temporal measurements against clean-checkout source identities.
+- @tangleai/context@0.27.1
+  - @tangleai/core@0.27.1
+  - @tangleai/models@0.27.1
+
 ## 0.27.0
 
 ### Minor Changes
