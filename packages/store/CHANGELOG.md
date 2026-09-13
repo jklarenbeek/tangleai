@@ -1,5 +1,16 @@
 # @tangleai/store
 
+## 0.26.1
+
+### Patch Changes
+
+- @tangleai/config@0.26.1
+  - @tangleai/core@0.26.1
+  - @tangleai/documents@0.26.1
+  - @tangleai/mas@0.26.1
+  - @tangleai/memory@0.26.1
+  - @tangleai/outcomes@0.26.1
+
 ## 0.26.0
 
 ### Minor Changes

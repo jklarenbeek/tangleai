@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/linq",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "description": "Typed, immutable document pens for Tangle AI, using the shared Jaren authoring primitives.",
   "license": "MIT",
   "type": "module",
