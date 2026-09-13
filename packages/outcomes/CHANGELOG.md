@@ -1,5 +1,17 @@
 # @tangleai/outcomes
 
+## 0.26.3
+
+### Patch Changes
+
+- 36b6a1d: Qualify concurrent outcome promotions without assuming which request wins, and replay the actual winning receipt while retaining every stale-head assertion.
+- Updated dependencies [9cc91c1]
+  - @tangleai/memory@0.26.3
+  - @tangleai/agents@0.26.3
+  - @tangleai/config@0.26.3
+  - @tangleai/core@0.26.3
+  - @tangleai/models@0.26.3
+
 ## 0.26.2
 
 ### Patch Changes

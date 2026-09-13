@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "version": "0.26.3",
+  "baseVersion": "0.26.2",
+  "baseCommit": "e01aced79b025664c97bdce80ed03568d75ad187",
+  "preparationCommit": "9cc91c1dac75c9a306c71ecd2e8d64eb24db2089",
+  "initial": false,
+  "inputHash": "5def1d808d62d02dbf0b01ad033d8f2d981807a0b5eb009c1eada938e60f4b58",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/outcomes",
+          "type": "patch"
+        }
+      ],
+      "summary": "Qualify concurrent outcome promotions without assuming which request wins, and replay the actual winning receipt while retaining every stale-head assertion.",
+      "id": "observed-promotion-winner"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Keep SQLite verification scratch owned by the Node parent until each tested runtime exits, preserving close/reopen checks and failing persistent cleanup errors.",
+      "id": "parent-runtime-fixtures"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.26.3"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.26.3"
+    }
+  ]
+}

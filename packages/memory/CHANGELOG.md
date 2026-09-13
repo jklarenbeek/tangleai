@@ -1,5 +1,14 @@
 # @tangleai/memory
 
+## 0.26.3
+
+### Patch Changes
+
+- 9cc91c1: Keep SQLite verification scratch owned by the Node parent until each tested runtime exits, preserving close/reopen checks and failing persistent cleanup errors.
+- @tangleai/context@0.26.3
+  - @tangleai/core@0.26.3
+  - @tangleai/models@0.26.3
+
 ## 0.26.2
 
 ### Patch Changes

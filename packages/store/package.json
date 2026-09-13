@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/store",
-  "version": "0.26.2",
+  "version": "0.26.3",
   "description": "Tangle AI persistence — the MemoryStore contract over SQLite via @jarenjs/db, plus the run/event log the DAG surface reads",
   "license": "MIT",
   "type": "module",
@@ -23,15 +23,15 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/documents": "^0.26.2",
-    "@tangleai/core": "^0.26.2",
-    "@tangleai/config": "^0.26.2",
+    "@tangleai/documents": "^0.26.3",
+    "@tangleai/core": "^0.26.3",
+    "@tangleai/config": "^0.26.3",
     "@jarenjs/db": "0.87.0",
     "@jarenjs/validate": "0.87.0",
-    "@tangleai/mas": "^0.26.2",
+    "@tangleai/mas": "^0.26.3",
     "@jarenjs/core": "0.87.0",
-    "@tangleai/memory": "^0.26.2",
-    "@tangleai/outcomes": "^0.26.2"
+    "@tangleai/memory": "^0.26.3",
+    "@tangleai/outcomes": "^0.26.3"
   },
   "private": false,
   "types": "./src/index.ts",

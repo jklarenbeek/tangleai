@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.26.3
+
+Qualify concurrent outcome promotions without assuming which request wins, and replay the actual winning receipt while retaining every stale-head assertion.
+
+Keep SQLite verification scratch owned by the Node parent until each tested runtime exits, preserving close/reopen checks and failing persistent cleanup errors.
+
 ## 0.26.2
 
 Include the temporal memory and Jaren authoring guides linked by the package READMEs in npm distributions. Verify every package-owned Markdown guide against the actual npm archive inventory and read the installed temporal guide in both Node and Bun consumers.
