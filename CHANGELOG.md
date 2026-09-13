@@ -1,5 +1,11 @@
 # Tangle releases
 
+## 0.26.2
+
+Include the temporal memory and Jaren authoring guides linked by the package READMEs in npm distributions. Verify every package-owned Markdown guide against the actual npm archive inventory and read the installed temporal guide in both Node and Bun consumers.
+
+Correct package ownership checks for native and escaped filesystem paths. Let the backup probe parent clean its temporary directory after the Node or Bun child exits, retaining every WAL snapshot, integrity, cancellation and zero-effect replay assertion and failing on persistent cleanup errors.
+
 ## 0.26.1
 
 Normalize native repository paths before discovering GMPL prompt packs, selecting stage schemas and hashing benchmark source manifests. Share one development inventory across artifact and benchmark builds so Windows excludes the outcome pack consistently with POSIX hosts. Preserve the fourteen shipped prompt artifacts and existing benchmark controls.

@@ -1,5 +1,18 @@
 # @tangleai/store
 
+## 0.26.2
+
+### Patch Changes
+
+- b03ca31: Correct package ownership checks for native and escaped filesystem paths. Let the backup probe parent clean its temporary directory after the Node or Bun child exits, retaining every WAL snapshot, integrity, cancellation and zero-effect replay assertion and failing on persistent cleanup errors.
+- Updated dependencies [4c42ba1]
+  - @tangleai/memory@0.26.2
+  - @tangleai/config@0.26.2
+  - @tangleai/core@0.26.2
+  - @tangleai/documents@0.26.2
+  - @tangleai/mas@0.26.2
+  - @tangleai/outcomes@0.26.2
+
 ## 0.26.1
 
 ### Patch Changes

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "version": "0.26.2",
+  "baseVersion": "0.26.1",
+  "baseCommit": "972a27e39c7ccbc869b3dc0e61be02610471bc5e",
+  "preparationCommit": "4c42ba17ae31d0eb9fc013c66a7f8ebf43069b31",
+  "initial": false,
+  "inputHash": "86809ee91ce973e17f545fe3d8caed29dd4ea36cdf9db5fdbffee054c4511800",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "patch"
+        }
+      ],
+      "summary": "Include the temporal memory and Jaren authoring guides linked by the package READMEs in npm distributions. Verify every package-owned Markdown guide against the actual npm archive inventory and read the installed temporal guide in both Node and Bun consumers.",
+      "id": "packaged-api-guides"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Correct package ownership checks for native and escaped filesystem paths. Let the backup probe parent clean its temporary directory after the Node or Bun child exits, retaining every WAL snapshot, integrity, cancellation and zero-effect replay assertion and failing on persistent cleanup errors.",
+      "id": "windows-consumer-qualification"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.26.2"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.26.2"
+    }
+  ]
+}

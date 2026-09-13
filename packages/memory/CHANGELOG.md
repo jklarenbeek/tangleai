@@ -1,5 +1,14 @@
 # @tangleai/memory
 
+## 0.26.2
+
+### Patch Changes
+
+- 4c42ba1: Include the temporal memory and Jaren authoring guides linked by the package READMEs in npm distributions. Verify every package-owned Markdown guide against the actual npm archive inventory and read the installed temporal guide in both Node and Bun consumers.
+- @tangleai/context@0.26.2
+  - @tangleai/core@0.26.2
+  - @tangleai/models@0.26.2
+
 ## 0.26.1
 
 ### Patch Changes
