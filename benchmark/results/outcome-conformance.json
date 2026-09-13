@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "c87e32bb095e7c28cef28ff3b7a713f5fd028758",
+    "head": "1a1cf01d8525e576e0bd2a91e66780c23ff4119b",
     "clean": false,
     "files": [
       {
@@ -107,15 +107,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "4069f1b972d7d6b49466075c1fc218dd0aece00d3888538142f41bd6ab213c4e"
+        "sha256": "71ace1adebd3bc5379aa3530c691db3a56f151f9554d55ea1f622766c394eaa0"
       },
       {
         "path": "package.json",
-        "sha256": "81b42cb2a68f31db4eb8728d50a34332c9354e01e26323fa905ee3021b53bd59"
+        "sha256": "decd41dbc15920fc622c27c8acf7b6ca5796138de12b5cfe9aaecbfa197d68e7"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "bafa3ee501250fdc92dc9360646ac0e1f38ac2e017148a476a1ca6bd9e3b1e73"
+        "sha256": "017357dcaf4b39b974af6c07157886e4598ef3f7f615c8092294914a2efd24db"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -159,7 +159,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "53de4f8e47cf443a1507b8a5d5291e893557ce9f37a11558b19bfaeb5bbb6db7"
+        "sha256": "6fb3c3ebb2147ba26f55befcd37f83bc0561b36df22eaa6f5c153d553ef672f8"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -195,7 +195,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "c4c220d6fc17422549650e84b4b43cb9f07631e4f211faccef2b82e55b09ba07"
+        "sha256": "a7ef5440335c1c8b597c057b3b5e1544bd80f0b458566252c841dfb7f1b4a110"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -251,7 +251,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "317703a1ba0ccea05a0057b48675e7d1681ddef4c047fa2ea6b574b46b24e961"
+        "sha256": "623cc2140ed93e5aae99c9d5aeed51f10afd07ca2e4a2f162b1b51ebe49bb584"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -303,7 +303,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "8b7a3b8f8f8180dbd6a750b31366e3561cb24d45976d029e2dde61c857b3f110"
+        "sha256": "3ca9aaa708aa9da43b5ea004e3515e3592aff5f307c64423597572e112472ae8"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "b8736da37c0b59525c078d362563dbdc415678d0c988a3bb803812d41f2b2ec9"
+        "sha256": "238858804dbaa7fec7d5e20cd379fa037e3a64cecb878bc63b4d206e0c418d22"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -459,7 +459,7 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "2877ddb6214554e3f1c7f8c75f6f613c8983b876a568478a61ca95fd99f8961c"
+        "sha256": "4452d8a84e3a9c0718ef35e0f97e05ac31e492a7c428eb8bdb448f5c4558810b"
       },
       {
         "path": "packages/jaren/src/data.ts",
@@ -495,7 +495,7 @@
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "305d90f65afd309092dafa52404d8aa298a1171b39166e069db3a32cd7480216"
+        "sha256": "1d7cc3687f8c081affdffe44e8431ad33c115a19e8648cb1083c18df5d1807f7"
       },
       {
         "path": "packages/linq/src/errors.ts",
@@ -511,7 +511,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "5183af49b9ddb62598a34a7a22005f6bfc8bd97fa59d11a9374341ff9db0149f"
+        "sha256": "67edf891c2432c17f7dd272714a53e7fb088f02ddc9cde035f178e792570eef0"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -639,7 +639,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "d9f17ffc9320aa9820a990db89418816c792c2a29519b2632b547777bdc33769"
+        "sha256": "456e549ae21a20ac9bffe6a3849c7d0173153e2d27986946003b39147d72a389"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -803,7 +803,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "f25108a2bb65600e223f368701167ccbb80d98592ea927adca55221f7b05e7de"
+        "sha256": "2947c294d004d35a39b3740fbb9ba0e11a18186ea220c1c37c74928772da5e11"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -859,7 +859,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "69ab5db8ee742d5ae0f74adffc1efbb6acc5f0665a2fff67fdf68bb0947aa31e"
+        "sha256": "af98a33f24b3786fbb368dca92fcf48588da56936fc551978e1b400f742199da"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -991,7 +991,7 @@
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "a622d8ae359088ffa4a4f9f212780933ce1b2c398dbe5178430454f0798fbac3"
+        "sha256": "395688d5a05d0fa826a392d3d030b41c4f613695a5746f1c63c13040cfcd3577"
       },
       {
         "path": "packages/pipeline/src/dag.ts",
@@ -1015,7 +1015,7 @@
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "b3936e105d58c2965a171b464022af6a0f2529a222f1a62c0133241035b9c0b6"
+        "sha256": "4d5f5f5b4d92e30bf012d05a7768e36751690a3a3040e36a530c67bd267fad45"
       },
       {
         "path": "packages/search/src/index.ts",
@@ -1027,7 +1027,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "39d9fe07267b2e83c6c3eb907a60041458dc62493d2c94da2e373d9d0b4efb77"
+        "sha256": "5f6b0fb4c1ad57089b066b04efe2b75be12f6c7e2e6fca82688590dbbca003c6"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1098,7 +1098,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "480d22eb93f477674748c47576e0d44773bfbb45dfda3cb370c027c498ce0446"
+    "sha256": "3edee024b8c8f75255631273802742b514a91c1b9e98bc50b02bab5b73f5efa8"
   },
   "registration": {
     "schemaVersion": 1,
@@ -1146,7 +1146,7 @@
   "runtime": {
     "node": "24.20.0",
     "bun": null,
-    "tangle": "0.27.1",
+    "tangle": "0.27.2",
     "jaren": "0.89.0"
   },
   "rows": [
@@ -84284,5 +84284,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "703706252199a2d94d2151bc7a84568a79f3df6578922a1fd19f5902f029f59f"
+  "reportId": "ead94a127f7eed0d3a6b8022242a140e189b8ba742caa2a74134531733901feb"
 }

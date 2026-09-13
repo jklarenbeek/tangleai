@@ -1,5 +1,17 @@
 # @tangleai/store
 
+## 0.27.2
+
+### Patch Changes
+
+- 1a1cf01: Integrate the Jaren 0.89.0 registry foundation and source pin. Qualify guarded host migrations with preserved Tangle evidence, durable replay and failure isolation, and native Markdown page breaks through the existing assistant renderer. Preserve the selected memory policy and requalify current benchmark evidence.
+- @tangleai/config@0.27.2
+  - @tangleai/core@0.27.2
+  - @tangleai/documents@0.27.2
+  - @tangleai/mas@0.27.2
+  - @tangleai/memory@0.27.2
+  - @tangleai/outcomes@0.27.2
+
 ## 0.27.1
 
 ### Patch Changes

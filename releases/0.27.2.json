@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "version": "0.27.2",
+  "baseVersion": "0.27.1",
+  "baseCommit": "c87e32bb095e7c28cef28ff3b7a713f5fd028758",
+  "preparationCommit": "1a1cf01d8525e576e0bd2a91e66780c23ff4119b",
+  "initial": false,
+  "inputHash": "ec2d0ee51d7fbf2bc369430a95b5c9442c59baec81c267bd2f60646042280b5a",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/assistant",
+          "type": "patch"
+        }
+      ],
+      "summary": "Integrate the Jaren 0.89.0 registry foundation and source pin. Qualify guarded host migrations with preserved Tangle evidence, durable replay and failure isolation, and native Markdown page breaks through the existing assistant renderer. Preserve the selected memory policy and requalify current benchmark evidence.",
+      "id": "guarded-jaren-foundation"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.27.2"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.27.2"
+    }
+  ]
+}
