@@ -37,3 +37,6 @@ export { createTemporalDbStore, createTemporalDbPersistence, inspectTemporalSeek
 export type { TemporalDbOptions, TemporalSeek } from './temporal-store.ts';
 export { backfillTemporalBatch } from './temporal-backfill.ts';
 export type { TemporalBackfillOptions } from './temporal-backfill.ts';
+
+export { createConsolidationDbStore, createConsolidationDbPersistence } from './consolidation-store.ts';
+export type { ConsolidationDbOptions } from './consolidation-store.ts';

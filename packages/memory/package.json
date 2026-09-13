@@ -18,7 +18,8 @@
     "./policy": "./src/policy.ts",
     "./schemas/policy.schema.json": "./schemas/policy.schema.json",
     "./schemas/policy.contract.json": "./schemas/policy.contract.json",
-    "./temporal": "./src/temporal/index.ts"
+    "./temporal": "./src/temporal/index.ts",
+    "./consolidation": "./src/consolidation/index.ts"
   },
   "engines": {
     "node": ">=24"

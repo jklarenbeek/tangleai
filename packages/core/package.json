@@ -13,7 +13,9 @@
     "./schemas/memory": "./src/schemas/memory.ts",
     "./package.json": "./package.json",
     "./schemas/temporal": "./src/schemas/temporal.ts",
-    "./schemas/temporal.schema.json": "./schemas/temporal.schema.json"
+    "./schemas/temporal.schema.json": "./schemas/temporal.schema.json",
+    "./schemas/consolidation": "./src/schemas/consolidation.ts",
+    "./schemas/consolidation.schema.json": "./schemas/consolidation.schema.json"
   },
   "engines": {
     "node": ">=24"

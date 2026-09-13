@@ -14,3 +14,9 @@ source spans, claims, projections, queries, answers and durable operations.
 Shape validation does not establish calendar validity or evidence truth; use
 `@tangleai/memory/temporal`'s semantic constructors and validators for that.
 See the [temporal API guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/TEMPORAL.md).
+
+
+`@tangleai/core/schemas/consolidation` exposes the closed consolidation schema,
+`validateConsolidationShape` and generated source/artifact/buffer/operation types.
+The authored definition composes the existing MemoryUnit schema; `npm run emit:consolidation` derives both its JSON document and declarations. Evidence
+identity and activation policy belong to `@tangleai/memory/consolidation`.

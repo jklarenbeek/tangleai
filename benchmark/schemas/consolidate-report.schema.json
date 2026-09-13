@@ -535,6 +535,62 @@
     "sha256": {
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
+    },
+    "storage": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "backend",
+              "cases",
+              "passed",
+              "failed",
+              "physicalRequests",
+              "legacyMemoriesPreserved"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "backend": {
+                "enum": [
+                  "memory",
+                  "node-sqlite",
+                  "bun-sqlite"
+                ]
+              },
+              "cases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "passed": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "failed": {
+                "const": 0
+              },
+              "physicalRequests": {
+                "const": 0
+              },
+              "legacyMemoriesPreserved": {
+                "enum": [
+                  1,
+                  null
+                ]
+              }
+            }
+          }
+        }
+      ]
     }
   },
   "required": [
@@ -554,7 +610,8 @@
     "liveCostUsd",
     "liveLatencyMs",
     "default",
-    "sha256"
+    "sha256",
+    "storage"
   ],
   "additionalProperties": false
 }

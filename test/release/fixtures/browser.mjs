@@ -1,3 +1,4 @@
+import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
 import { createMemoryOutcomeStore, createOutcomeContract } from '@tangleai/outcomes';
@@ -9,6 +10,7 @@ import { createOfflineEmbedder, dagToMermaid, PIPELINE_DAG } from '@tangleai/pip
 
 globalThis.tangleConsumer = {
   gmpl: qualifyGmplBrowser(),
+  consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
   outcomeStore: createMemoryOutcomeStore(),
   outcomeContract: createOutcomeContract(),

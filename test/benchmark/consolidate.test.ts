@@ -34,8 +34,8 @@ it('credits only complete delivered source text, rejects foreign references and 
 });
 
 it('produces byte-identical hand-fixture reports with honest unresolved, excluded and unmeasured rows', async () => {
-  const first = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false });
-  const second = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false });
+  const first = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, storage: false });
+  const second = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, storage: false });
   assert.equal(JSON.stringify(first), JSON.stringify(second));
   assert.deepEqual(first.questionRows.map(row => row.recall), [1, 0, 1]);
   assert.equal(first.dataset.unresolvedGold, 1);
@@ -59,13 +59,13 @@ it('does not let candidate preparation mutate the source text being credited or 
     return { rank: async () => [input[0].key], statistics: { artifacts: 0, retainedSources: input.length,
       outputChars: 0, logicalCalls: 1, embeddingItems: 0, failures: { ...emptyFailures(), refusal: 1 } } };
   } };
-  const report = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, candidates: [candidate] });
+  const report = await runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, storage: false, candidates: [candidate] });
   assert.equal(report.questionRows[0].verbatimF1, 0);
   assert.equal(report.candidates[0].statistics.failures.refusal, 1);
   const broken: Candidate = { ...candidate, async prepare(input) {
     const prepared = await candidate.prepare(input); prepared.statistics.logicalCalls = -1; return prepared;
   } };
-  await assert.rejects(runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, candidates: [broken] }), /accounting/);
+  await assert.rejects(runConsolidate(dataset, { sourceHash: 'b'.repeat(64), compaction: false, storage: false, candidates: [broken] }), /accounting/);
 });
 
 it('measures compressed late pairwise losses beside surviving front, archive and program controls', async () => {

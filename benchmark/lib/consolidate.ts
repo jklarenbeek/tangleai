@@ -1,6 +1,7 @@
 /** Matched, source-delivery evidence before any consolidation quality claim. */
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { cloneJson } from '@jarenjs/core/object';
+import { consolidationStorageControls } from './consolidate-storage.ts';
 import { createReportValidator } from './validate.ts';
 import REPORT_SCHEMA from '../schemas/consolidate-report.schema.json' with { type: 'json' };
 import { sizeOf } from '@jarenjs/core/chunk';
@@ -117,7 +118,7 @@ export async function compactionControls() {
 
 /** Full question coverage; candidate registration is separate from its observed result. */
 export async function runConsolidate(dataset: { samples: LocomoSample[]; sha256: string },
-  options: { candidates?: Candidate[]; sourceHash: string; compaction?: boolean } ) {
+  options: { candidates?: Candidate[]; sourceHash: string; compaction?: boolean; storage?: boolean } ) {
   const candidates = options.candidates ?? [hashControl()];
   if (new Set(candidates.map(candidate => candidate.key)).size !== candidates.length) throw new Error('duplicate candidate identity');
   const confirmation = confirmationConversations(dataset.samples.map(sample => sample.sample_id));
@@ -168,6 +169,7 @@ export async function runConsolidate(dataset: { samples: LocomoSample[]; sha256:
     candidates: candidates.map(candidate => ({ key: candidate.key, origin: candidate.origin,
       statistics: statistics.get(candidate.key)!, summary: summarizeRows(rows.filter(row => row.candidate === candidate.key)) })),
     unmeasured: REGISTRATION.tiers.filter(tier => !candidates.some(candidate => candidate.key === tier)),
+    storage: options.storage === false ? null : await consolidationStorageControls(),
     questionRows: rows, compaction: options.compaction === false ? null : await compactionControls(),
     physicalRequests: 0, liveQuality: null, liveTokens: null, liveCostUsd: null, liveLatencyMs: null,
     default: { enabled: false, reason: 'No registered paired live reader/judge quality and cost evidence' },
@@ -183,6 +185,8 @@ export function validateConsolidate(value: unknown): boolean {
   if (!validateShape(value).valid) return false;
   const report = value as ConsolidateReport;
   if (report.candidates.length === 0 || new Set(report.candidates.map(candidate => candidate.key)).size !== report.candidates.length) return false;
+  if (report.storage && (new Set(report.storage.map(row => row.backend)).size !== 3
+    || report.storage.some(row => row.passed !== row.cases.length || JSON.stringify(row.cases) !== JSON.stringify(report.storage![0].cases)))) return false;
   for (const candidate of report.candidates) {
     const rows = report.questionRows.filter(row => row.candidate === candidate.key);
     if (rows.length !== report.dataset.questions || new Set(rows.map(row => row.id)).size !== rows.length) return false;
@@ -216,6 +220,10 @@ export function renderConsolidate(report: ConsolidateReport): string {
     `Unmeasured tiers: ${report.unmeasured.join(', ') || 'none'}. Physical requests: ${report.physicalRequests} (keyless/scripted only). Live quality, model tokens, USD and latency: unmeasured. Opaque callback counts must not be relabeled physical requests.`, '',
     '**Default: off.** ' + report.default.reason + '. The registered gate requires a positive paired live QA bootstrap lower bound, category delta ≥ -0.05, token ratio ≤ 1.1 and physical-request ratio ≤ 1.0.', '',
   ];
+  if (report.storage) lines.push('## Atomic storage qualification', '',
+    'The same independently asserted protocol runs in memory, Node SQLite and Bun SQLite. It covers immutable occurrence identity, capacity, evidence membership, rollback at every write boundary, independent-adapter contention, durable operation reservations and actual reopen/replay. Failed activation retains every pending source; completed replay has zero writes or callback invocations.', '',
+    table({ head: ['Backend', 'Cases passed', 'Failures', 'Physical requests', 'Legacy memories preserved'], rows: report.storage.map(row => [row.backend, row.passed, row.failed, row.physicalRequests, row.legacyMemoriesPreserved]) }), '',
+    ...report.storage[0].cases.map(name => `- ${name}`), '');
   if (report.compaction) lines.push('## Existing history compaction and full-corpus program', '',
     'These run the public agent and ledger. Direct pairwise is determinacy from every value, not a bound on lucky answers. Recoverable values require archive reads. Character counts here serialize the whole message array; the agent budget sums individual message sizes, excluding array punctuation.', '',
     table({ head: ['Shape', 'Budget', 'Variant', 'Direct values', 'Recoverable', 'Pairwise determinacy', 'Serialized chars', 'Compacted'],

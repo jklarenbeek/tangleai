@@ -1,0 +1,577 @@
+{
+  "$id": "https://tangleai.dev/schemas/consolidation.json",
+  "$ref": "#/$defs/consolidationSource",
+  "$defs": {
+    "memorySnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "kind": {
+          "enum": [
+            "fact",
+            "event",
+            "summary",
+            "relation"
+          ]
+        },
+        "embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
+        },
+        "embeddedBy": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "supersededBy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supersededAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "supersededReason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mergedFrom": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/memoryRelationSnapshot"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "evidence",
+        "tags",
+        "at",
+        "kind"
+      ],
+      "dependencies": {
+        "embedding": [
+          "embeddedBy"
+        ],
+        "embeddedBy": [
+          "embedding"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "memoryRelationSnapshot": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "target",
+        "relType"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationJson": {
+      "anyOf": [
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consolidationJson"
+          },
+          "minItems": 0
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/consolidationJson"
+          }
+        }
+      ]
+    },
+    "consolidationReason": {
+      "enum": [
+        "invalid-source",
+        "invalid-artifact",
+        "identity-conflict",
+        "capacity",
+        "stale-generation",
+        "persistence",
+        "invalid-operation",
+        "budget",
+        "unsupported",
+        "refusal",
+        "embedding",
+        "unknown",
+        "disabled",
+        "empty",
+        "below-count",
+        "not-due",
+        "cooldown",
+        "clock-skew",
+        "backpressure",
+        "closed"
+      ]
+    },
+    "consolidationSource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "snapshot": {
+          "$ref": "#/$defs/memorySnapshot"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "key",
+        "sequence",
+        "snapshot"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationArtifact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tier": {
+          "enum": [
+            "deterministic",
+            "semantic",
+            "combined"
+          ]
+        },
+        "recipeHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
+        },
+        "embeddedBy": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "tier",
+        "recipeHash",
+        "text",
+        "sourceIds",
+        "keywords"
+      ],
+      "additionalProperties": false,
+      "dependencies": {
+        "embedding": [
+          "embeddedBy"
+        ],
+        "embeddedBy": [
+          "embedding"
+        ]
+      }
+    },
+    "consolidationBuffer": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "completedAt": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "scope",
+        "revision",
+        "generation",
+        "pending",
+        "completedAt"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationReceipt": {
+      "type": "object",
+      "properties": {
+        "passId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sourceCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "logicalCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "embeddingItems": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "passId",
+        "scope",
+        "revision",
+        "generation",
+        "sourceCount",
+        "artifactIds",
+        "writes",
+        "replayed",
+        "logicalCalls",
+        "embeddingItems"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationStep": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "synthesis",
+            "support",
+            "embedding"
+          ]
+        },
+        "requestHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "phase": {
+          "enum": [
+            "dispatched",
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "result": {
+          "$ref": "#/$defs/consolidationJson"
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "kind",
+        "requestHash",
+        "phase",
+        "result",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "consolidationOperation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requestHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "phase": {
+          "enum": [
+            "reserved",
+            "working",
+            "prepared",
+            "completed",
+            "failed"
+          ]
+        },
+        "expectedGeneration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "recipeHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "maxLogicalCalls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consolidationStep"
+          },
+          "minItems": 0
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consolidationArtifact"
+          },
+          "minItems": 0
+        },
+        "receipt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/consolidationReceipt"
+            }
+          ]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/consolidationReason"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "key",
+        "requestHash",
+        "revision",
+        "phase",
+        "expectedGeneration",
+        "sourceIds",
+        "recipeHash",
+        "maxLogicalCalls",
+        "steps",
+        "artifacts",
+        "receipt",
+        "failure"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

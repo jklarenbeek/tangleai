@@ -16,7 +16,8 @@
     "./mas-jobs": "./src/mas-jobs.ts",
     "./ledger-storage": "./src/ledger-storage.ts",
     "./outcome-store": "./src/outcome-store.ts",
-    "./temporal-store": "./src/temporal-store.ts"
+    "./temporal-store": "./src/temporal-store.ts",
+    "./consolidation-store": "./src/consolidation-store.ts"
   },
   "engines": {
     "node": ">=24"

@@ -118,3 +118,14 @@ budget. The service caps ancestry traversal and detects corrupt immutable bytes.
 Raw database writes remain trusted-host administration, outside supported API
 authority guarantees. See [the outcome kit](../outcomes/docs/ADAPTERS.md) and the
 [measured replay](../../docs/OUTCOME_BENCHMARK.md).
+
+
+## Consolidation evidence
+
+`createConsolidationDbStore(db)` and `createConsolidationDbPersistence(db)` use
+Jaren transactions for immutable source/artifact records, pending buffers and
+operation receipts. The four additive collections preserve ordinary memories;
+Node and Bun share the [memory contract](../memory/docs/CONSOLIDATION.md).
+Sources remain stored after activation, and identical completed passes write
+nothing after close/reopen. Snapshot reads validate a whole scope; this is not
+a claim of bounded historical storage or large-corpus query latency.
