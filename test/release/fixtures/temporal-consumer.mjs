@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openTangleDb, createTemporalDbStore } from '@tangleai/store';
@@ -7,6 +7,9 @@ import schema from '@tangleai/core/schemas/temporal.schema.json' with { type: 'j
 import { temporalSchema } from '@tangleai/core/schemas/temporal';
 import { qualifyTemporal } from './temporal-browser.mjs';
 assert.deepEqual(schema, temporalSchema);
+const guide = await readFile(new URL('./docs/TEMPORAL.md', import.meta.resolve('@tangleai/memory/package.json')), 'utf8');
+assert.match(guide, /^# Evidenced temporal memory/m);
+assert.match(guide, /prepareTemporal/);
 assert.match(import.meta.resolve('@tangleai/memory/temporal'), /\.js$/);
 const oldFetch = globalThis.fetch;
 globalThis.fetch = async () => { throw Error('Installed temporal consumer forbids network'); };

@@ -127,7 +127,9 @@ Ordinary releases must use the version computed from their Changesets records.
 build, packed consumers and Pages build. `release:build` emits ESM JavaScript and
 TypeScript declarations into a staging directory, preserves public subpaths,
 copies JSON schemas and compiled content artifacts, and creates the configured tarballs with package documentation,
-license and changelog. Workspace manifests continue to serve TypeScript during
+license and changelog. Every package-owned Markdown guide must appear in npm's
+actual archive inventory; a missing guide fails the build. Installed temporal
+consumers also read the guide linked by the memory README. Workspace manifests continue to serve TypeScript during
 development. Their lifecycle guards refuse direct source publication.
 
 `release:test` installs the tarballs in a temporary external project. It exercises

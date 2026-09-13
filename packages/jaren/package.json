@@ -39,7 +39,8 @@
     "src/**/*.d.ts",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "docs/**/*.md"
   ],
   "publishConfig": {
     "access": "public",

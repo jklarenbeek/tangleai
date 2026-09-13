@@ -40,6 +40,17 @@ export function distributionManifest(pkg: Manifest): Manifest {
   delete result.devDependencies;
   return result;
 }
+/** Package-local guides linked by a shipped README must survive npm's files allowlist. */
+export function assertPackagedGuides(source: string, files: ReadonlySet<string>) {
+  const directory = resolve(source, 'docs');
+  if (!existsSync(directory)) return;
+  for (const file of readdirSync(directory, { recursive: true, encoding: 'utf8' })) {
+    if (file.endsWith('.md')) {
+      const path = 'docs/' + file.replaceAll('\\', '/');
+      assert.ok(files.has(path), `${basename(source)}: ${path} missing from tarball`);
+    }
+  }
+}
 export async function buildPackages(root = ROOT) {
   const cfg = config(root);
   const main = readJson(resolve(root, 'package.json'));
@@ -88,6 +99,7 @@ export async function buildPackages(root = ROOT) {
     assert.equal(pack.name, pkg.name);
     assert.equal(pack.version, main.version);
     const files = new Set<string>(pack.files.map((file: { path: string }) => file.path));
+    assertPackagedGuides(source, files);
     for (const required of ['README.md', 'LICENSE', 'CHANGELOG.md', 'package.json']) assert.ok(files.has(required), `${pkg.name}: ${required} missing from tarball`);
     for (const file of files) {
       assert.ok(!file.endsWith('.ts') || file.endsWith('.d.ts'), `${pkg.name}: raw TypeScript leaked into npm package`);
