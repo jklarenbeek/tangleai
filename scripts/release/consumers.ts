@@ -10,6 +10,7 @@ import { ROOT, config, npm, readJson, writeJson, inputHash, integrity, sha256, i
 import type { Artifacts } from './build.ts';
 import { readFoundationArtifacts, verifyFoundationArtifacts } from '../jaren-artifacts.ts';
 import { checkProgramBundle } from '../check-program-bundle.ts';
+import { runRuntimeFixture } from '../runtime-fixture.ts';
 
 export function readArtifacts(root = ROOT) {
   const directory = resolve(root, 'dist/release');
@@ -32,6 +33,10 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
   const bun = execFileSync('bun', ['--version'], { encoding: 'utf8' }).trim();
   assert.equal(bun, cfg.bun, 'Use the pinned Bun release for consumer verification');
   const directory = mkdtempSync(resolve(tmpdir(), 'tangle-npm-consumer-'));
+  async function sqliteFixture(runtime: string, args: string[]) {
+    const { stdout, stderr } = await runRuntimeFixture(runtime, args, { cwd: directory, timeout: 120_000 });
+    process.stdout.write(stdout); process.stderr.write(stderr);
+  }
   try {
     const dependencies = Object.fromEntries(artifacts.packages.map(pkg => [pkg.name, options.registry ? pkg.version : `file:${resolve(root, 'dist/release', pkg.filename)}`]));
     const foundations = options.registry ? null : readFoundationArtifacts(root);
@@ -60,20 +65,20 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     writeFileSync(resolve(directory, 'gmpl-example.mjs'), ts.transpileModule(exampleSource, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     cpSync(resolve(root, 'examples/fixtures/gmpl-domains.json'), resolve(directory, 'fixtures/gmpl-domains.json'));
     cpSync(resolve(root, 'test/release/fixtures/gmpl-consumer.mjs'), resolve(directory, 'gmpl-consumer.mjs'));
-    execFileSync(process.execPath, ['--no-experimental-strip-types', 'gmpl-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    execFileSync('bun', ['gmpl-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'gmpl-consumer.mjs']);
+    await sqliteFixture('bun', ['gmpl-consumer.mjs']);
     writeFileSync(resolve(directory, 'temporal-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/temporal.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['temporal-browser.mjs', 'temporal-consumer.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
-    execFileSync(process.execPath, ['--no-experimental-strip-types', 'temporal-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    execFileSync('bun', ['temporal-consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'temporal-consumer.mjs']);
+    await sqliteFixture('bun', ['temporal-consumer.mjs']);
     cpSync(resolve(root, 'examples/outcomes.ts'), resolve(directory, 'outcomes-example.ts'));
     writeFileSync(resolve(directory, 'supervised-store.ts'), readFileSync(resolve(root, 'examples/supervised-store.ts'), 'utf8')
       .replace("from './outcomes.ts'", "from './outcomes-example.ts'"));
     cpSync(resolve(root, 'test/release/fixtures/consumer.mjs'), resolve(directory, 'consumer.mjs'));
     for (const command of [process.execPath, 'bun']) execFileSync(command, ['consumer.mjs'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
     cpSync(resolve(root, 'test/store/native-foundation.test.ts'), resolve(directory, 'native-foundation.test.ts'));
-    execFileSync(process.execPath, ['--test', 'native-foundation.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
-    execFileSync('bun', ['test', 'native-foundation.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
+    await sqliteFixture(process.execPath, ['--test', 'native-foundation.test.ts']);
+    await sqliteFixture('bun', ['test', 'native-foundation.test.ts']);
     cpSync(resolve(root, 'test/assert-result.ts'), resolve(directory, 'assert-result.ts'));
     writeFileSync(resolve(directory, 'editor-adapters.test.ts'), readFileSync(resolve(root, 'test/jaren/editor-adapters.test.ts'), 'utf8').replace("from '../assert-result.ts'", "from './assert-result.ts'"));
     execFileSync(process.execPath, ['--test', 'editor-adapters.test.ts'], { cwd: directory, stdio: 'inherit', timeout: 120_000 });
@@ -162,7 +167,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     if (!options.registry && !options.runtimeOnly) writeJson(resolve(root, 'dist/release/verification.json'), verification);
     console.log(`Verified ${options.registry ? 'registry' : 'packed'} consumers: Node, Bun${options.runtimeOnly ? '' : ', declarations and browser'}.`);
     return verification;
-  } finally { rmSync(directory, { recursive: true, force: true }); }
+  } finally { rmSync(directory, { recursive: true, force: true, maxRetries: 8, retryDelay: 50 }); }
 }
 if (isMain(import.meta.url)) {
   assert.ok(process.argv.slice(2).every(arg => ['--registry', '--runtime-only'].includes(arg)), 'Unknown consumer check option');

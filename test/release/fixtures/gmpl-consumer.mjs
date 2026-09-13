@@ -1,6 +1,4 @@
 import assert from 'node:assert/strict';
-import {mkdtemp,rm} from 'node:fs/promises';
-import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createGmplCatalog,gmplArtifacts,renderGmplPrompt} from '@tangleai/gmpl';
 import schema from '@tangleai/gmpl/schemas/gmpl' with {type:'json'};
@@ -12,7 +10,8 @@ assert.equal(artifacts.prompts.length,14);
 assert.equal(artifacts.revision,gmplArtifacts.revision);
 const catalog=await createGmplCatalog(artifacts);assert.ok(catalog.valid);
 const rendered=renderGmplPrompt(catalog.value.prompt('analysis-analyst'),{query:'Installed fixture',evidence:[],context:{participant:'analyst-1'}});assert.ok(rendered.valid);
-const dir=await mkdtemp(join(tmpdir(),'gmpl-installed-'));
+const dir=process.env.TANGLE_FIXTURE_DIRECTORY;
+assert.ok(dir,'installed GMPL fixture requires parent-owned scratch');
 const old=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Installed GMPL consumer forbids network access');};
 try{
   const rows=[];
@@ -24,4 +23,4 @@ try{
   }
   const numeric=await runGmplExample(join(dir,'numeric.db'),'estimate-panel');assert.equal(numeric.trace.run.status,'completed');assert.equal(numeric.result.result.answer,'0.5');
   console.log(JSON.stringify({gmplInstalled:true,tier:'scripted',families:rows,numericDomain:true,duplicateCalls:0}));
-}finally{globalThis.fetch=old;await rm(dir,{recursive:true,force:true});}
+}finally{globalThis.fetch=old;}

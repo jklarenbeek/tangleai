@@ -47,8 +47,9 @@ async function open(path = ':memory:', create = true) {
 }
 
 it('native additive migrations preserve Tangle evidence and commit their own receipt atomically across reopen', async t => {
-  const directory = await mkdtemp(join(tmpdir(), 'tangle-native-upgrade-'));
-  t.after(() => rm(directory, { recursive: true, force: true }));
+  const supplied = process.env.TANGLE_FIXTURE_DIRECTORY;
+  const directory = supplied ?? await mkdtemp(join(tmpdir(), 'tangle-native-upgrade-'));
+  if (!supplied) t.after(() => rm(directory, { recursive: true, force: true, maxRetries: 8, retryDelay: 50 }));
   const path = join(directory, 'state.db');
   const unit = createMemoryUnit({ text: 'Retain the original evidence.', evidence: 'native integration fixture', at: '2026-09-12T00:00:00Z' });
   const first = await open(path);

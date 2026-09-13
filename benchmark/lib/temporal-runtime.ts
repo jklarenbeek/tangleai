@@ -6,8 +6,7 @@ import type { TemporalAdapters, TemporalAdapter, TemporalRuntimeScenario } from 
 import { buildTemporalFixture, rebuildTemporalFixture, completeTemporalFixtureInput, fixtureTime, type BuiltTemporalFixture } from './temporal-runtime-fixtures.ts';
 import { scriptedTemporalPreparation } from './temporal-scripted.ts';
 import { lmeStamp } from './longmemeval.ts';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { runRuntimeFixture } from '../../scripts/runtime-fixture.ts';
 import { fileURLToPath } from 'node:url';
 
 export function fixtureRefusal(result: Exclude<TemporalResult<unknown>, { status: 'success' }>): StrictTemporalOutcome {
@@ -102,7 +101,7 @@ export async function temporalRuntimeAdapters(): Promise<TemporalAdapters> {
   const adapters: TemporalAdapters = { memory: s => { const persistence = createTemporalMemoryPersistence(); return runTemporalFixture(s, createTemporalStoreAdapter(persistence), async () => createTemporalMemoryStore({ state: persistence.exportState() })); } };
   for (const runtime of ['node', 'bun'] as const) {
     const backend = runtime === 'node' ? 'node-sqlite' : 'bun-sqlite';
-    const { stdout } = await promisify(execFile)(runtime, [fileURLToPath(new URL('../scripts/temporal-backend.ts', import.meta.url))], { timeout: 60000, maxBuffer: 4 * 1024 * 1024 });
+    const { stdout } = await runRuntimeFixture(runtime, [fileURLToPath(new URL('../scripts/temporal-backend.ts', import.meta.url))]);
     const receipt = JSON.parse(stdout) as { backend: string; rows: { id: string; result: Awaited<ReturnType<TemporalAdapter>> }[] };
     if (receipt.backend !== backend || new Set(receipt.rows.map(r => r.id)).size !== receipt.rows.length) throw new Error('temporal backend receipt identity differs');
     adapters[backend] = async s => {

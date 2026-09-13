@@ -5,7 +5,7 @@ import { openTangleDb, createOutcomeStore } from '@tangleai/store';
 import { runOutcomeExample } from '../../examples/outcomes.ts';
 
 // The test parent owns filesystem teardown after this runtime exits.
-const dir = process.argv[2];
+const dir = process.env.TANGLE_FIXTURE_DIRECTORY;
 assert.ok(dir, 'backup fixture requires its parent-owned temporary directory');
 {
   const source = await openTangleDb({ path: join(dir, 'source.db'), walAutocheckpoint: 0 });

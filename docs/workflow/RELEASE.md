@@ -142,10 +142,16 @@ Development prompt discovery normalizes native path separators before excluding
 unsupported packs or selecting stage schemas. Artifact generation and GMPL
 source receipts share that inventory; benchmark manifests hash canonical
 repository paths independently of the host filesystem separator. Ownership
-checks decode file URLs before reading native paths. The backup probe parent
-owns its temporary directory and removes it after the tested runtime exits,
-with bounded filesystem retries and an explicit absence check; backup, close,
-replay and persistent cleanup failures remain gate failures.
+checks decode file URLs before reading native paths. The Node verification
+parent uses `scripts/runtime-fixture.ts` to give each temporal backend, backup,
+installed temporal/GMPL and native migration child its own temporary directory
+through `TANGLE_FIXTURE_DIRECTORY`. The child closes its databases; the parent
+waits for process exit before removing the directory, including failure and
+timeout paths. Bounded filesystem retries tolerate transient Windows locks;
+persistent cleanup errors remain gate failures. Lifetime tests verify late child
+writes, Unicode paths, actual temporal disk reopen and final directory absence.
+The temporal example also accepts an explicit database path for this installed
+qualification; its standalone CLI keeps the temporary demonstration default.
 
 The publisher requires these exact verified tarballs. A modified archive or stale
 verification receipt is refused. Generated files remain uncommitted; the tracked

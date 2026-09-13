@@ -8,7 +8,7 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 import type { TemporalConformanceContext } from './temporal-conformance.ts';
 
 export async function temporalConformanceContext(root: string): Promise<TemporalConformanceContext> {
-  const source = await sourceManifest(root, ['package.json', 'package-lock.json', 'test/fixtures/temporal.ts', 'benchmark/temporal-conformance.ts', 'benchmark/temporal-eval.ts', 'benchmark/longmemeval-qa.ts', 'benchmark/longmemeval-roundtrip.ts', 'benchmark/temporal-native.ts', 'benchmark/receipts/temporal-native.json', 'benchmark/scripts/longmemeval-parity-fixtures.py'],
+  const source = await sourceManifest(root, ['package.json', 'package-lock.json', 'test/fixtures/temporal.ts', 'scripts/runtime-fixture.ts', 'benchmark/temporal-conformance.ts', 'benchmark/temporal-eval.ts', 'benchmark/longmemeval-qa.ts', 'benchmark/longmemeval-roundtrip.ts', 'benchmark/temporal-native.ts', 'benchmark/receipts/temporal-native.json', 'benchmark/scripts/longmemeval-parity-fixtures.py'],
     ['benchmark/lib', 'benchmark/schemas', 'benchmark/scripts', 'packages/core', 'packages/memory', 'packages/store', 'packages/models']);
   const locomo = await loadLocomo(root), lme = await loadLongMemEval(root), code = await qualifyLongMemEvalCode(root);
   if (lme.status === 'failed' || code.status === 'failed') throw new Error(lme.status === 'failed' ? lme.reason : code.status === 'failed' ? code.reason : 'source failure');
