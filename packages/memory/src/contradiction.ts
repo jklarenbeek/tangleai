@@ -32,6 +32,7 @@
  * summary, which is how the winner disappears from ranked recall.
  */
 
+import { sameIdentity } from '@tangleai/context/ledger';
 import { cosineSimilarity } from '@jarenjs/core/vector';
 import type { JsonSchema, MemoryUnit } from '@tangleai/core/schemas/memory';
 import { createMemoryUnit } from './ingest.ts';
@@ -114,7 +115,7 @@ export function planContradictionPairs(
     for (let j = i + 1; j < live.length; j++) {
       const a = live[i];
       const b = live[j];
-      if (!a.embedding || !b.embedding) continue;
+      if (!a.embedding || !b.embedding || !sameIdentity(a.embeddedBy, b.embeddedBy)) continue;
       const sim = cosineSimilarity(a.embedding, b.embedding);
       if (sim >= threshold) candidates.push({ a, b, similarity: sim });
     }

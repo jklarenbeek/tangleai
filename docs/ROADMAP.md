@@ -55,25 +55,31 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   width. Existing policy and lexical-width identities remain the baselines.
 - [ ] **Consolidation tiers** (LightMem / SimpleMem / StructMem). *Wanted:*
   sleep-time consolidation as a Tangle-scheduled pass — STM buffer, topic
-  segmentation, cross-event synthesis behind the same injected-judge seam as
-  contradiction — where memflow's 22 memory modules either earn their port or
+  segmentation, cross-event synthesis behind a purpose-specific injected judge — where memflow's 22 memory modules either earn their port or
   stay unported. *Constraint:* the suite's own history compaction plus ledger
   archiving IS a consolidation tier (a dropped round is content-addressed into a
   slot and reachable through `recall`, never destroyed), and jarenjs measured its
-  ceiling honestly: needle 17.5 % → 100 %, pairwise **0 % at every budget**,
-  because a relation over every fact cannot be summarized into a smaller context.
+  ceiling honestly: ledger recall recovers archived values, while compressed
+  late-fact contexts lose pairwise determinacy. Uncompressed contexts, the
+  front-fact ledger at 20,000 characters and compiled full-corpus programs retain
+  that relation. A summary alone does not establish that every value survived.
   A tier that only compresses buys a curve already plotted; what must be justified
   is the part compaction provably cannot do. Failures must be counted values — the
   predecessor's tiers silently dropped memories on persistence and embedding
   failure. `excerpt`/`truncate`/`sizeOf` from `@jarenjs/core/chunk` are the text
   primitives; the buffer never needs its own. *Salvage:*
-  `attic/memflow-modules/{lightmem,simplemem,structmem}.md` — every default
+  `docs/attic/memflow-modules/{lightmem,simplemem,structmem}.md` — every default
   (sensory 512, STM 2048, StructMem's 10-entries-or-60 s trigger, LightMem's
   buffer > 50 % → gate-else-passthrough routing, the newer-timestamp update queue)
   and the pure-logic candidates (TopicSegmenter B1∩B2, SemanticSynthesis's
   union-find, PreCompression's order-preserving heuristic, StructuredIndex TF
   keywords). *Closes on:* LoCoMo delta against the measured-policy baseline; token
   cost of the sleep pass.
+- [ ] **Atomic contradiction resolution.** The current resolver supersedes a
+  loser before storing a synthesized resolution. A persistence failure can leave
+  that operation partially applied. Qualify a shared atomic mutation contract
+  with rollback, concurrent winner and replay tests before exposing transactional
+  guarantees; consolidation uses its own immutable batch activation.
 - [ ] **Experiential memory beyond the memo.** *Wanted:* the co-existence
   architecture the "memo, not true memory" argument asks for — keep the fast
   episodic half Tangle already has (evidenced records, supersession,
@@ -185,7 +191,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   (`@tangleai/core/clustering` records why it does not reach for
   `@jarenjs/core/vector`; it takes an options object, so a positional port of
   memflow's `kMeans(vectors, k, maxIterations)` silently ignores `maxIterations`).
-  *Salvage:* `attic/memflow-modules/evolution.md` — the artifact shape
+  *Salvage:* `docs/attic/memflow-modules/evolution.md` — the artifact shape
   (`applicableWhen` / `doPatterns` / `dontPatterns`, `sourceTraceCount`, version)
   and knobs (k 5, maxSkillsPerCluster 3, inject topK 5 / minSimilarity 0.4).
   *Closes on:* repeat-task success with skills on vs off on a held-out set; skill
@@ -330,8 +336,8 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   and promotes atomically. *Constraint:* `MemoryUnit.relations` is an optional
   document-shaped field nothing extracts, indexes or traverses, and the desktop's
   two lanes are not LightRAG's two levels. *Salvage:* what the predecessor's
-  graph layer looked like and cost — `attic/memflow-ARCHITECTURE.md` (the
-  ~25-label data model) and `attic/memflow-modules/graph.md`; the two ideas worth
+  graph layer looked like and cost — `docs/attic/memflow-ARCHITECTURE.md` (the
+  ~25-label data model) and `docs/attic/memflow-modules/graph.md`; the two ideas worth
   keeping are query-before-dedup incremental indexing and LLM-summarized
   community nodes as a high-level corpus. The flat row to beat is the immutable
   measured grounding handoff (`benchmark/results/grounding-handoff.json`); a

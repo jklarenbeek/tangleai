@@ -1,0 +1,560 @@
+{
+  "$id": "https://tangleai.dev/schemas/consolidate-report.json",
+  "type": "object",
+  "properties": {
+    "instrument": {
+      "const": "consolidation-evidence"
+    },
+    "revision": {
+      "const": 1
+    },
+    "registration": {
+      "const": {
+        "revision": "consolidation-evidence-v1",
+        "corpusSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+        "split": {
+          "seed": 17753,
+          "confirmationConversations": 3,
+          "owner": "locomo-policy.confirmationConversations"
+        },
+        "retrieval": {
+          "k": 10,
+          "contextChars": 6000,
+          "units": "UTF-16 characters",
+          "oversizedSource": "skip-whole",
+          "credit": "complete original source text supplied in context",
+          "hashDimensions": 512
+        },
+        "lexical": {
+          "tokenization": "NFKC lowercase Unicode letters and numbers",
+          "bm25": {
+            "k1": 1.2,
+            "b": 0.75
+          },
+          "rrfK": 60
+        },
+        "tiers": [
+          "deterministic",
+          "semantic",
+          "combined"
+        ],
+        "defaultGate": {
+          "metric": "paired live reader/judge QA",
+          "resamples": 10000,
+          "level": 0.95,
+          "minimumLowerBoundExclusive": 0,
+          "minimumCategoryDelta": -0.05,
+          "maximumTokenRatio": 1.1,
+          "maximumPhysicalRequestRatio": 1
+        },
+        "authorization": "keyless and scripted only; no paid provider calls"
+      }
+    },
+    "registrationHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "dataset": {
+      "type": "object",
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "conversations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "emptyGold": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolvedGold": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "confirmation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "sha256",
+        "conversations",
+        "sources",
+        "excluded",
+        "emptyGold",
+        "unresolvedGold",
+        "refusedSessions",
+        "confirmation",
+        "questions"
+      ],
+      "additionalProperties": false
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "keyless",
+              "scripted"
+            ]
+          },
+          "statistics": {
+            "type": "object",
+            "properties": {
+              "artifacts": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "retainedSources": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "outputChars": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "logicalCalls": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "embeddingItems": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failures": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unsupported": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "refusal": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "budget": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "embedding": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "persistence": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "conflict": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unknown": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "source",
+                  "unsupported",
+                  "refusal",
+                  "budget",
+                  "embedding",
+                  "persistence",
+                  "conflict",
+                  "unknown"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "artifacts",
+              "retainedSources",
+              "outputChars",
+              "logicalCalls",
+              "embeddingItems",
+              "failures"
+            ],
+            "additionalProperties": false
+          },
+          "summary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "partition": {
+                  "enum": [
+                    "all",
+                    "development",
+                    "confirmation"
+                  ]
+                },
+                "category": {
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                },
+                "questions": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "recall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "verbatimF1": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "meanChars": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "partition",
+                "category",
+                "questions",
+                "recall",
+                "verbatimF1",
+                "meanChars"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "key",
+          "origin",
+          "statistics",
+          "summary"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unmeasured": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "questionRows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "partition": {
+            "enum": [
+              "development",
+              "confirmation"
+            ]
+          },
+          "category": {
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "recall": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "verbatimF1": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "supplied": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "chars": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "missing": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "trimmed": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "candidate",
+          "id",
+          "partition",
+          "category",
+          "recall",
+          "verbatimF1",
+          "supplied",
+          "chars",
+          "missing",
+          "trimmed"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "compaction": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "rounds": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "padding": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "budgets": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              "required": [
+                "rounds",
+                "padding",
+                "seed",
+                "budgets"
+              ],
+              "additionalProperties": false
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "shape": {
+                    "enum": [
+                      "front",
+                      "late"
+                    ]
+                  },
+                  "budget": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "variant": {
+                    "enum": [
+                      "synopsis",
+                      "ledger"
+                    ]
+                  },
+                  "values": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "recoverable": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "pairwise": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "chars": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "compacted": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "shape",
+                  "budget",
+                  "variant",
+                  "values",
+                  "recoverable",
+                  "pairwise",
+                  "chars",
+                  "compacted"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "program": {
+              "type": "object",
+              "properties": {
+                "values": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "pairwise": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "correct": {
+                  "type": "boolean"
+                },
+                "rootChars": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "corpusChars": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "origin": {
+                  "const": "scripted"
+                },
+                "physicalRequests": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "values",
+                "pairwise",
+                "correct",
+                "rootChars",
+                "corpusChars",
+                "origin",
+                "physicalRequests"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "parameters",
+            "rows",
+            "program"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "physicalRequests": {
+      "const": 0
+    },
+    "liveQuality": {
+      "type": "null"
+    },
+    "liveTokens": {
+      "type": "null"
+    },
+    "liveCostUsd": {
+      "type": "null"
+    },
+    "liveLatencyMs": {
+      "type": "null"
+    },
+    "default": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "const": false
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "enabled",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "instrument",
+    "revision",
+    "registration",
+    "registrationHash",
+    "sourceHash",
+    "dataset",
+    "candidates",
+    "unmeasured",
+    "questionRows",
+    "compaction",
+    "physicalRequests",
+    "liveQuality",
+    "liveTokens",
+    "liveCostUsd",
+    "liveLatencyMs",
+    "default",
+    "sha256"
+  ],
+  "additionalProperties": false
+}

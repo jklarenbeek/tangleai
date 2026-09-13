@@ -1,0 +1,10 @@
+{
+  "revision": "consolidation-evidence-v1",
+  "corpusSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "split": { "seed": 17753, "confirmationConversations": 3, "owner": "locomo-policy.confirmationConversations" },
+  "retrieval": { "k": 10, "contextChars": 6000, "units": "UTF-16 characters", "oversizedSource": "skip-whole", "credit": "complete original source text supplied in context", "hashDimensions": 512 },
+  "lexical": { "tokenization": "NFKC lowercase Unicode letters and numbers", "bm25": { "k1": 1.2, "b": 0.75 }, "rrfK": 60 },
+  "tiers": ["deterministic", "semantic", "combined"],
+  "defaultGate": { "metric": "paired live reader/judge QA", "resamples": 10000, "level": 0.95, "minimumLowerBoundExclusive": 0, "minimumCategoryDelta": -0.05, "maximumTokenRatio": 1.1, "maximumPhysicalRequestRatio": 1 },
+  "authorization": "keyless and scripted only; no paid provider calls"
+}

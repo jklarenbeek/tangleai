@@ -72,10 +72,10 @@ export function slotRef(name: string): string {
 /**
  * The address as it appears in a synopsis line. Short on purpose: it is
  * paid for out of the same character budget the rounds were cut to fit.
- * @param size - the archived round's size in characters
+ * @param size - the archived round's size in UTF-16 characters
  */
 export function slotAddress(name: string, size: number): string {
-  return `[${slotRef(name)} · ${size}B]`;
+  return `[${slotRef(name)} · ${size} chars]`;
 }
 
 /**

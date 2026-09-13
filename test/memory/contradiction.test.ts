@@ -24,6 +24,16 @@ function unit(id: string, text: string, at: string, embedding: number[]): Memory
 }
 
 describe('planContradictionPairs', () => {
+  it('never compares vectors from different or unknown embedding spaces', () => {
+    const a = unit('a', 'office in Arnhem', EARLY, [1, 0]);
+    const b = unit('b', 'office in Nijmegen', LATE, [1, 0]);
+    assert.equal(planContradictionPairs([a, b], { threshold: 0.75 }).length, 1);
+    b.embeddedBy = { model: 'another-model', dims: 2 };
+    assert.equal(planContradictionPairs([a, b], { threshold: 0.75 }).length, 0);
+    delete b.embeddedBy;
+    assert.equal(planContradictionPairs([a, b], { threshold: 0.75 }).length, 0);
+  });
+
   it('selects only similar-enough live pairs, most similar first, capped', () => {
     const units = [
       unit('a', 'office is in Arnhem', EARLY, [1, 0, 0]),
