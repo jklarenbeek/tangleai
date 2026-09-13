@@ -1,5 +1,5 @@
 /** Source receipts hash effective bytes, including reviewed uncommitted work. */
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -9,14 +9,19 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 const exec = promisify(execFile);
 export async function sourceManifest(root: string, paths: readonly string[], roots: readonly string[] = []) {
   const names = new Set(paths.map(path => path.replaceAll('\\', '/')));
-  async function scan(dir: string): Promise<void> {
-    for (const entry of await readdir(join(root, dir), { withFileTypes: true })) {
-      const path = `${dir}/${entry.name}`;
-      if (entry.isDirectory()) await scan(path);
-      else if (/\.(ts|json)$/.test(entry.name)) names.add(path);
-    }
+  const directories = [...new Set(roots.map(path => path.replaceAll('\\', '/')))];
+  await Promise.all(directories.map(async dir => {
+    if (!(await stat(join(root, dir))).isDirectory()) throw new TypeError(`source root must be a directory: ${dir}`);
+  }));
+  if (directories.length) {
+    // Include reviewed source edits while excluding ignored build/cache outputs.
+    // Tracked files remain inputs even when an ignore rule matches their names.
+    const list = (flags: string[]) => exec('git', ['--literal-pathspecs', 'ls-files', ...flags, '-z', '--', ...directories],
+      { cwd: root, maxBuffer: 16 * 1024 * 1024 });
+    const [inventory, missing] = await Promise.all([list(['--cached', '--others', '--exclude-standard']), list(['--deleted'])]);
+    const deleted = new Set(missing.stdout.split('\0'));
+    for (const path of inventory.stdout.split('\0')) if (/\.(ts|json)$/.test(path) && !deleted.has(path)) names.add(path);
   }
-  for (const dir of roots) await scan(dir.replaceAll('\\', '/'));
   const head = (await exec('git', ['rev-parse', 'HEAD'], { cwd: root })).stdout.trim();
   const clean = (await exec('git', ['status', '--porcelain'], { cwd: root })).stdout.trim() === '';
   const files = await Promise.all([...names].sort().map(async path => ({ path,

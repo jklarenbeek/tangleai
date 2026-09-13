@@ -9,6 +9,13 @@ suites arrive as git submodules, tools are plain scripts run from the
 repository root, and a shared `lib/` holds host-specific instruments, report
 shaping and adapters around the primitives the suite publishes.
 
+Directory source receipts include tracked files and unignored new TypeScript/JSON
+source, hashing their effective working-tree bytes. Ignored build/cache outputs
+are excluded; tracked files remain included even if an ignore rule matches them.
+Explicitly named inputs are always bound. This keeps a fresh checkout and a
+working checkout comparable without hiding reviewed source edits or depending
+on leftover compiled declarations.
+
 ## Why this is a workspace of its own
 
 `package.json` here is private and separate on purpose. CONVENTIONS §1 binds

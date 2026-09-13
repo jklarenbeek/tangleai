@@ -124,6 +124,9 @@ failed admission or activation must not be counted as successful consolidation.
 The [benchmark guide](../../../docs/CONSOLIDATE_BENCHMARK.md) records matched
 source-delivery controls and actual storage qualification. Live synthesis quality
 and cost remain unmeasured; no consolidation tier is enabled by default.
+Its source receipt binds effective source files and explicit inputs, excluding
+ignored build outputs. Compiling local declarations does not change the measured
+source identity; changing tracked or unignored new source does.
 
 ## Deterministic previews and lexical routing
 
