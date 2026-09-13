@@ -20,9 +20,9 @@
   "dependencies": {
     "@tangleai/core": "^0.27.1",
     "@tangleai/memory": "^0.27.1",
-    "@jarenjs/flow": "0.87.0",
-    "@jarenjs/json": "0.87.0",
-    "@jarenjs/mermaid": "0.87.0",
+    "@jarenjs/flow": "0.89.0",
+    "@jarenjs/json": "0.89.0",
+    "@jarenjs/mermaid": "0.89.0",
     "@tangleai/models": "^0.27.1"
   },
   "private": false,

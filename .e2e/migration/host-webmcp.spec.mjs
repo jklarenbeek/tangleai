@@ -140,3 +140,26 @@ test('two visual assistant hosts retain independent drafts, focus and request cl
   await expect(first).toHaveCount(0); await expect(second).toBeVisible();
   await page.evaluate(() => window.assistants[1].dispose());
 });
+
+test('assistant Markdown uses native page-break screen and print styles without interpreting code markers', async ({ page }) => {
+  await boot(page);
+  await page.evaluate(() => {
+    const node = document.createElement('div'); node.id = 'page-break-assistant'; document.body.append(node);
+    window.pageBreakAssistant = window.hostApi.mountAssistant(node, {
+      open: true, transcript: { messages: [{ role: 'assistant', content:
+        'First page\n<!-- pagebreak -->\nSecond page\n\n```md\n<!-- pagebreak -->\n```\n\nInline <!-- pagebreak --> marker.' }] },
+    });
+  });
+  const host = page.locator('#page-break-assistant');
+  const separator = host.getByRole('separator', { name: 'Page break' });
+  await expect(separator).toHaveCount(1);
+  await expect(separator).toHaveCSS('border-top-style', 'dashed');
+  await expect(host.locator('pre')).toContainText('<!-- pagebreak -->');
+  await expect(host).toContainText('Second page');
+  await page.emulateMedia({ media: 'print' });
+  await expect(separator).toHaveCSS('break-after', 'page');
+  await expect(separator).toHaveCSS('border-top-width', '0px');
+  await page.emulateMedia({ media: 'screen' });
+  await page.evaluate(() => window.pageBreakAssistant.dispose());
+  await expect(host).toBeEmpty();
+});

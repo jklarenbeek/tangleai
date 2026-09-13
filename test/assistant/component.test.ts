@@ -83,3 +83,14 @@ it('assistant reply heading ids remain outside the host page namespace', async t
   assert.match(html, /id="user-content-tangle-assistant-\d+-md"/, 'foreign reply headings carry the instance prefix');
   assert.doesNotMatch(html, /id="md"/, 'a reply never claims the host page heading id');
 });
+
+it('assistant replies render native page breaks while code and inline markers remain content', async t => {
+  const source = 'Before\n<!-- pagebreak -->\nAfter\n\n```md\n<!-- pagebreak -->\n```\n\nInline <!-- pagebreak --> text.';
+  const { container } = host(t, { open: true, transcript: { messages: [{ role: 'assistant', content: source }] } });
+  const html = serialize(container);
+  assert.equal((html.match(/class="md-page-break"/g) ?? []).length, 1);
+  assert.match(html, /role="separator" aria-label="Page break"/);
+  assert.match(html, /Before/); assert.match(html, /After/);
+  assert.match(html, /<pre[\s\S]*pagebreak[\s\S]*<\/pre>/);
+  assert.match(html, /Inline[\s\S]*text\./);
+});

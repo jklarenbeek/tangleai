@@ -26,11 +26,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/contract": "0.87.0",
-    "@jarenjs/core": "0.87.0",
-    "@jarenjs/json": "0.87.0",
-    "@jarenjs/locales": "0.87.0",
-    "@jarenjs/validate": "0.87.0",
+    "@jarenjs/contract": "0.89.0",
+    "@jarenjs/core": "0.89.0",
+    "@jarenjs/json": "0.89.0",
+    "@jarenjs/locales": "0.89.0",
+    "@jarenjs/validate": "0.89.0",
     "@tangleai/context": "^0.27.1",
     "@tangleai/core": "^0.27.1",
     "@tangleai/models": "^0.27.1"

@@ -23,15 +23,15 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.87.0",
-    "@jarenjs/json": "0.87.0",
-    "@jarenjs/validate": "0.87.0",
+    "@jarenjs/core": "0.89.0",
+    "@jarenjs/json": "0.89.0",
+    "@jarenjs/validate": "0.89.0",
     "@tangleai/core": "^0.27.1",
     "@tangleai/memory": "^0.27.1",
     "@tangleai/models": "^0.27.1",
     "@tangleai/agents": "^0.27.1",
     "@tangleai/config": "^0.27.1",
-    "@jarenjs/contract": "0.87.0"
+    "@jarenjs/contract": "0.89.0"
   },
   "private": false,
   "types": "./src/index.ts",

@@ -27,10 +27,10 @@
     "@tangleai/documents": "^0.27.1",
     "@tangleai/core": "^0.27.1",
     "@tangleai/config": "^0.27.1",
-    "@jarenjs/db": "0.87.0",
-    "@jarenjs/validate": "0.87.0",
+    "@jarenjs/db": "0.89.0",
+    "@jarenjs/validate": "0.89.0",
     "@tangleai/mas": "^0.27.1",
-    "@jarenjs/core": "0.87.0",
+    "@jarenjs/core": "0.89.0",
     "@tangleai/memory": "^0.27.1",
     "@tangleai/outcomes": "^0.27.1"
   },

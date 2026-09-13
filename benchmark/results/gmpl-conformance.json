@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "422afcda395141afa62c675f15c5a018183098dd",
+    "head": "c87e32bb095e7c28cef28ff3b7a713f5fd028758",
     "clean": false,
     "files": [
       {
@@ -203,15 +203,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "4f42bc64aa33a2c0a0cea6b82a61f82804185e95c428038519c49833c35a2f5b"
+        "sha256": "4069f1b972d7d6b49466075c1fc218dd0aece00d3888538142f41bd6ab213c4e"
       },
       {
         "path": "package.json",
-        "sha256": "2cdb1f2f1b1ad87aba6986a1a90168f6635446e00b2d9a65752d51ca39f4076e"
+        "sha256": "81b42cb2a68f31db4eb8728d50a34332c9354e01e26323fa905ee3021b53bd59"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "cc2024396b9d53387c18fa59ddf145e8afbb3b614716fa4b8ad4edf41643a278"
+        "sha256": "bafa3ee501250fdc92dc9360646ac0e1f38ac2e017148a476a1ca6bd9e3b1e73"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -255,7 +255,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "9cbdd59c1343dab33c35f3b160d88796d537d6dfbc9492bb70685fa453552ecb"
+        "sha256": "53de4f8e47cf443a1507b8a5d5291e893557ce9f37a11558b19bfaeb5bbb6db7"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -291,7 +291,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "fd9048a7927107b7a755fcc55ef87456203a86b29c4a3b7355a5646e742b3483"
+        "sha256": "c4c220d6fc17422549650e84b4b43cb9f07631e4f211faccef2b82e55b09ba07"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "a3850397ff5d3b23ba96aac76c6546e4ae706cb880088a140f8ce836f2f5d935"
+        "sha256": "317703a1ba0ccea05a0057b48675e7d1681ddef4c047fa2ea6b574b46b24e961"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -391,7 +391,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "1b11c484fe8339438c957b71e9f2d27cac57a26adbc83922e9bc70fd399b163b"
+        "sha256": "8b7a3b8f8f8180dbd6a750b31366e3561cb24d45976d029e2dde61c857b3f110"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -399,7 +399,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "e0c11c38fd74851924f925e2e74ded7e96c715619f35441e9568c979591e54c5"
+        "sha256": "b8736da37c0b59525c078d362563dbdc415678d0c988a3bb803812d41f2b2ec9"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -511,15 +511,15 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "7118dba8197b0fcb7cd98be5be9cef14ba3aa913cba876599a416670fdccb747"
+        "sha256": "2877ddb6214554e3f1c7f8c75f6f613c8983b876a568478a61ca95fd99f8961c"
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "7f25a006017ebe9c9a323fbb0b0de1971dc9c80473a6df2c33e3a365f1a5ee38"
+        "sha256": "305d90f65afd309092dafa52404d8aa298a1171b39166e069db3a32cd7480216"
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "9e115a23d94fbf9f44d07d176f9c4891e2b6a7b18eac583037d96c78ea827e5c"
+        "sha256": "5183af49b9ddb62598a34a7a22005f6bfc8bd97fa59d11a9374341ff9db0149f"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -647,11 +647,11 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "a8e9fdf32f8781be9d8bc24bf57598eb8ad46a0c6901a85fd518f31b5d5cc294"
+        "sha256": "d9f17ffc9320aa9820a990db89418816c792c2a29519b2632b547777bdc33769"
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "10c269bd6a05121f509288fbc924268e7914cad316913b3fec0e0490bc8c054c"
+        "sha256": "f25108a2bb65600e223f368701167ccbb80d98592ea927adca55221f7b05e7de"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -707,11 +707,11 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "6c27569fa6b91442b7546686d8df3f755330ab05f8305dcfd378e744f0dff734"
+        "sha256": "69ab5db8ee742d5ae0f74adffc1efbb6acc5f0665a2fff67fdf68bb0947aa31e"
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "6bb9b0771d41a3adecb5dbd61b27d6df5b45bde36c92b56b65ad4c9262ddd16e"
+        "sha256": "a622d8ae359088ffa4a4f9f212780933ce1b2c398dbe5178430454f0798fbac3"
       },
       {
         "path": "packages/search/package.json",
@@ -719,7 +719,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "7903310b0e2286951ed8d217a5ec0de47c99cb157027e6cfce0dc5fab74aa0bf"
+        "sha256": "39d9fe07267b2e83c6c3eb907a60041458dc62493d2c94da2e373d9d0b4efb77"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -863,7 +863,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "24a6ae92e6daab47691610eb845eaf4ab9b840ee6186856d9fcd8e5b3d8d5ba3"
+        "sha256": "42b1cfab611ee255e098a84645d87c35f8b04037e2a199d3a1e93aa51734b9fb"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -970,7 +970,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "ff50dea2e52e9557847d0880e556ecb70caf5bf168511939e70d6622606cc559"
+    "sha256": "544ad4e7da95f13e2667faa77ddf88776656457661a5346d693fb66090d7b986"
   },
   "ablations": [
     {
@@ -3453,7 +3453,7 @@
   },
   "suite": {
     "tangle": "0.27.1",
-    "jaren": "0.87.0"
+    "jaren": "0.89.0"
   },
   "registrationId": "7eabacf078c23663d796bc6ac2438fce7ec241cf467751deb30707d511306873",
   "corpusId": "e940c356582c89839aa4e771e39a4d627d7974aab4de62ed2b45b5f3a2c89527",
@@ -76524,5 +76524,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "87325eccd4478f761371f82da90717b16f095c4933b67ef0fe1b7f35853c7b3a"
+  "reportId": "84c872dfe49eed47ee53f077257991d7795aa585ce4eef045f668a660c2669f9"
 }

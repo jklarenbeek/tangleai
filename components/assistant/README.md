@@ -8,6 +8,7 @@ optional owned storage; cancel prevents late stream results from reappearing.
 ```js
 import { mountAssistant } from '@tangleai/assistant/component';
 import '@tangleai/assistant/styles/assistant.css';
+import '@jarenjs/md/styles/md.css';
 const assistant = mountAssistant(document.querySelector('#assistant'), {
   title: 'My workspace', capabilities: ['Inspect a document'], toolbox,
   system: 'Help with the tools this workspace provides.',
@@ -39,3 +40,10 @@ input nodes and do not reset selection or the active request.
 The controller exposes its current request `signal`. Hosts can combine it with
 their own lifetime signal for child authoring requests. Cancellation fences
 later tool calls and Pages refuses late authoring results before publication.
+
+Markdown replies use Jaren's native page-break marker: a standalone
+`<!-- pagebreak -->` line renders as an accessible separator. Import the Jaren
+Markdown stylesheet for its dashed screen divider and print boundary. Code and
+inline markers retain their ordinary Markdown meaning. Print pagination follows
+the host layout; the assistant's fixed, scrolling panel is not a document export
+service. Hosts may provide `renderMarkdown` for a different presentation.

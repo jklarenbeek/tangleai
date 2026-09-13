@@ -130,7 +130,7 @@ function view(state: any): any {
       ['h2', {}, `Tangle ${manifest.version} · JarenJS ${manifest.dependencies['@jarenjs/app']}`],
       ['p', {}, `${release.packages.length} coordinated packages with JavaScript and TypeScript declarations. `, ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/CHANGELOG.md' }, 'Release notes']],
       ['p', {}, 'Verified workflow checkpoints, lease-aware jobs, atomic agent memory and scheduled document fetching run on the suite. Provider token limits are part of each run’s configuration identity.'],
-      ['p', { class: 'note' }, `Measurements below were collected on JarenJS ${integration.jaren}. Keyless checks refreshed ${integration.measuredAt}; paid answers are dated ${integration.paid.qa.at.slice(0, 10)}. Earlier attempts remain available.`],
+      ['p', { class: 'note' }, `History measurements use JarenJS ${integration.jaren}, measured ${integration.measuredAt}. Historical paid answers are dated ${integration.paid.qa.at.slice(0, 10)} and retain their original execution identities.`],
       ['div', { class: 'report' },
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.integrated.runtimePass}/11`], ' workflow oracles'],
         ['div', { class: 'stat' }, ['b', {}, `${integration.mas.durability.passed}/${integration.mas.durability.total}`], ' durability checks'],
@@ -158,7 +158,7 @@ function view(state: any): any {
         + `The earlier attempt produced ${integration.bounded.baseline.valid} usable answers; its one completed program returned empty text. `
         + `The repair covers the corpus within the same call cap; ${integration.bounded.current.subcalls.failed} chunk request failed. `
         + 'Valid citations do not guarantee a correct answer.'],
-      ['p', { class: 'note' }, 'These are current-stack measurements, with different coverage for the agent. They do not isolate an upgrade effect. Full reports include failures, adversarial judgments, grounding, citation outcomes and cost.'],
+      ['p', { class: 'note' }, 'These historical answer measurements use different coverage for the agent. They do not establish current-stack answer quality or isolate an upgrade effect. Full reports include failures, adversarial judgments, grounding, citation outcomes and cost.'],
       ['nav', { class: 'links' },
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/BOUNDED_AGENT_BENCHMARK.md' }, 'Bounded-agent repair and comparison'],
         ['a', { href: 'https://github.com/jklarenbeek/tangleai/blob/main/docs/PAID_REFRESH.md' }, 'Paid checks and limitations'],

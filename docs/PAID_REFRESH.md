@@ -1,15 +1,16 @@
 # Paid integration verification
 
-JarenJS 0.83.2; answers by OpenRouter `z-ai/glm-5.3-flash`, adversarial
+Historical paid attempts; answers by OpenRouter `z-ai/glm-5.3-flash`, adversarial
 judgments by `qwen/qwen3.8-27b`, embeddings by
 `baai/bge-m3`/1024. Thinking stays at the model's
 default. Each benchmark run checks its own configured 200-request ceiling
 before purchasing calls, with at most four concurrent calls per run.
 
-These are fresh dated attempts; the August/September baseline reports remain
-unchanged. This is a current-stack verification, not a controlled attribution
-of model-quality changes to the dependency upgrade. Reused embeddings and
-completion replays are recorded separately in each raw run.
+The dates and identities below belong to the retained attempts. Regenerating
+this summary against a newer foundation does not rerun them or establish
+current-stack answer quality. Reused embeddings and completion replays are
+recorded separately in each raw run. These results do not isolate the effect
+of a dependency upgrade.
 
 ## Answer comparisons
 
@@ -85,7 +86,7 @@ the suite's supplied-reference/unique-claim gate and one bounded repair.
 
 ## Desktop smoke
 
-2026-09-11T09:06:19.765Z: the actual desktop dispatcher ingested
+2026-09-11T09:06:19.765Z, JarenJS 0.83.2: the actual desktop dispatcher ingested
 [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html), extracted 1840 elements into
 319 chunks, made 10 ingest embedding requests
 and returned an answer with 1 document citation(s), using
@@ -95,7 +96,7 @@ the benchmark above supplies the quality measurements.
 
 ## Durable agent smoke
 
-2026-09-11T09:11:47.131Z: a real `openrouter/z-ai/glm-5.3-flash`
+2026-09-11T09:11:47.131Z, JarenJS 0.83.2: a real `openrouter/z-ai/glm-5.3-flash`
 completion passed through the public MAS agent, SQLite job worker, typed review
 pause, outbox reconciliation and resumed task. All three invocations completed
 across 2 segments using 1 model call(s)

@@ -1,6 +1,10 @@
 /** Published paid evidence validates offline, including in a clone without datasets. */
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { createGroundingValidator, renderGroundingMarkdown } from '../../benchmark/lib/grounding.ts';
@@ -16,6 +20,24 @@ import IDENTITY_SCHEMA from '../../packages/config/schemas/run-identity.schema.j
 const read = async (name: string) => JSON.parse(await readFile(`benchmark/results/${name}.json`, 'utf8'));
 
 describe('the dated paid refresh', () => {
+  it('regenerates current history without attributing old paid attempts to the installed foundation', async t => {
+    const directory = await mkdtemp(join(tmpdir(), 'tangle-paid-summary-'));
+    t.after(() => rm(directory, { recursive: true, force: true }));
+    await mkdir(join(directory, 'docs'));
+    await cp('benchmark/results', join(directory, 'benchmark/results'), { recursive: true });
+    execFileSync(process.execPath, [fileURLToPath(new URL('../../benchmark/jaren-summary.ts', import.meta.url))], {
+      cwd: directory, stdio: 'pipe', timeout: 30_000,
+    });
+    const document = await readFile(join(directory, 'docs/PAID_REFRESH.md'), 'utf8');
+    assert.match(document, /Historical paid attempts/);
+    assert.doesNotMatch(document, /fresh dated attempts|current-stack verification/);
+    const smoke = await read('documents-live-jaren-0832');
+    assert.ok(document.includes(`JarenJS ${smoke.jaren}`));
+    for (const name of ['locomo-qa-live-jaren-0832', 'grounding-live-jaren-0832', 'documents-live-jaren-0832', 'mas-live-jaren-0832']) {
+      assert.deepEqual(await readFile(join(directory, `benchmark/results/${name}.json`)),
+        await readFile(`benchmark/results/${name}.json`), `${name}: paid evidence stays byte-identical`);
+    }
+  });
   it('keeps the previous attempt immutable and derives the repaired agent comparison', async () => {
     const before = await read('locomo-qa-live-jaren-0832');
     const after = await read('locomo-qa-live-horizon-fixed');
@@ -54,12 +76,12 @@ describe('the dated paid refresh', () => {
     assert.deepEqual(summary.paid, summarizePaidRefresh(await read('locomo-qa-live-jaren-0832'), await read('grounding-live-jaren-0832')));
     const smoke = await read('documents-live-jaren-0832');
     assert.deepEqual(summary.smoke, smoke);
-    assert.equal(smoke.jaren, summary.jaren);
+    assert.equal(summary.jaren, (await read('jaren-strategies-node')).jaren);
     assert.equal(smoke.ok, true);
     assert.ok(smoke.chunks > 0 && smoke.embeddingCalls > 0 && smoke.citations > 0);
     const masSmoke = await read('mas-live-jaren-0832');
     assert.deepEqual(summary.masSmoke, masSmoke);
-    assert.equal(masSmoke.jaren, summary.jaren);
+    assert.equal(summary.jaren, (await read('jaren-strategies-bun')).jaren);
     assert.equal(masSmoke.status, 'completed');
     assert.equal(masSmoke.completedSegments, 2);
     assert.deepEqual([...masSmoke.completedInvocations].sort(), ['apply', 'drafter', 'review']);

@@ -45,7 +45,7 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 
 ## What the suite already has — read before building
 
-Current Jaren 0.87.0 adoption: [integration audit](JARENJS_INTEGRATION.md).
+Current Jaren 0.89.0 adoption: [integration audit](JARENJS_INTEGRATION.md).
 Current ownership: [migration handoff](JAREN_AI_MIGRATION.md).
 The [0.83.3 integration audit](jaren-integration-0.83.3.md) retains its historical measurements.
 The following historical baseline retains its original `@jarenjs/ai` names

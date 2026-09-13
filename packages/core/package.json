@@ -23,7 +23,7 @@
   "sideEffects": false,
   "dependencies": {
     "@tangleai/context": "^0.27.1",
-    "@jarenjs/validate": "0.87.0"
+    "@jarenjs/validate": "0.89.0"
   },
   "private": false,
   "types": "./src/index.ts",

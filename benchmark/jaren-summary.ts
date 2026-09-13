@@ -93,16 +93,17 @@ const paidQaTable = paid.qa.rows.map((row) => `| ${row.key} | ${row.answered - r
 const paidGroundingTable = paid.grounding.strata.flatMap((stratum) => stratum.rows.map((row) => `| ${stratum.key} / ${row.key} | ${row.answered}/${row.planned} | ${f1(row.answerF1)} | ${f1(row.claimMicroF1)} | ${row.invalid} | ${row.unanswered.wire}/${row.unanswered.budget} |`)).join('\n');
 await writeFile('docs/PAID_REFRESH.md', `# Paid integration verification
 
-JarenJS ${jaren.version}; answers by OpenRouter \`${paid.model}\`, adversarial
+Historical paid attempts; answers by OpenRouter \`${paid.model}\`, adversarial
 judgments by \`${paid.judge}\`, embeddings by
 \`${paid.embedder.model}\`/${paid.embedder.dims}. Thinking stays at the model's
 default. Each benchmark run checks its own configured 200-request ceiling
 before purchasing calls, with at most four concurrent calls per run.
 
-These are fresh dated attempts; the August/September baseline reports remain
-unchanged. This is a current-stack verification, not a controlled attribution
-of model-quality changes to the dependency upgrade. Reused embeddings and
-completion replays are recorded separately in each raw run.
+The dates and identities below belong to the retained attempts. Regenerating
+this summary against a newer foundation does not rerun them or establish
+current-stack answer quality. Reused embeddings and completion replays are
+recorded separately in each raw run. These results do not isolate the effect
+of a dependency upgrade.
 
 ## Answer comparisons
 
@@ -170,7 +171,7 @@ the suite's supplied-reference/unique-claim gate and one bounded repair.
 
 ## Desktop smoke
 
-${smoke.measuredAt}: the actual desktop dispatcher ingested
+${smoke.measuredAt}, JarenJS ${smoke.jaren}: the actual desktop dispatcher ingested
 [RFC 9110](${smoke.source}), extracted ${smoke.elements} elements into
 ${smoke.chunks} chunks, made ${smoke.embeddingCalls} ingest embedding requests
 and returned an answer with ${smoke.citations} document citation(s), using
@@ -180,7 +181,7 @@ the benchmark above supplies the quality measurements.
 
 ## Durable agent smoke
 
-${masSmoke.measuredAt}: a real \`${masSmoke.provider}/${masSmoke.model}\`
+${masSmoke.measuredAt}, JarenJS ${masSmoke.jaren}: a real \`${masSmoke.provider}/${masSmoke.model}\`
 completion passed through the public MAS agent, SQLite job worker, typed review
 pause, outbox reconciliation and resumed task. All three invocations completed
 across ${masSmoke.completedSegments} segments using ${masSmoke.calls} model call(s)

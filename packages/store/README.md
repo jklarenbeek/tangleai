@@ -43,8 +43,30 @@ native JSON type inspection. A host can extend `TANGLE_DB_MODEL` for `openStore`
 and pass the resulting Store to these adapters. Schema operations require an
 available synchronous connection; their source-bound plans do not replace a
 host's durable migration receipt. The current Tangle model needs no schema
-change for this update. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
+change for the foundation update. See the [integration audit](../../docs/JARENJS_INTEGRATION.md)
 for ownership, compatibility and available mechanisms.
+
+## Reviewed host migrations
+
+Jaren 0.89.0 provides a complete migration lifecycle over an existing native
+connection. Use `planPhysicalMigration` and `@jarenjs/linq/migration` directly;
+Tangle's adapters keep using the same Store. The
+[disposable example](../../examples/physical-migration.ts) runs with
+`npm run store:migration:smoke` on Node, or `bun examples/physical-migration.ts`.
+It previews a populated synthetic shadow, applies a saved guarded table plan,
+checks the receipt after reopening, and preserves exact original memories and
+activated consolidation records. It never opens an existing application path.
+
+An application must persist and review its complete plan, retain every applied
+migration in order, quiesce Store/worker users before DDL, and reopen with the
+new model afterward. Enable foreign keys explicitly on raw connections. Jaren's
+`migrate({ connection }, chain, options)` borrows that handle; it does not close
+it. Saved per-step mappings describe the row shape at each transform/assertion.
+The complete physical target records every table/index/trigger/view in its owned
+scope. Repeated startup validates it and refuses drift, even with no pending work.
+Do not replace guarded table steps with their printed SQL or grant raw migration
+access through outcome/MAS service contracts. Shadow fixtures are separately
+owned synthetic inputs, not user-row snapshots embedded in a shared plan.
 
 ## Temporal projections
 
