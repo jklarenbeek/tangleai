@@ -16,3 +16,5 @@ benchmark/lib/outcome-conformance.types.ts whitespace=-blank-at-eof
 packages/gmpl/src/contracts.gen.ts whitespace=-blank-at-eof
 benchmark/lib/gmpl-conformance.types.ts whitespace=-blank-at-eof
 benchmark/lib/gmpl-locomo.types.ts whitespace=-blank-at-eof
+packages/core/src/schemas/temporal.gen.ts whitespace=-blank-at-eof
+benchmark/lib/temporal-report.types.ts whitespace=-blank-at-eof

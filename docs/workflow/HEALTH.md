@@ -48,7 +48,11 @@ the second time, and "found nothing" is a valid, reportable outcome.
    disposition, checked-and-dropped with the reason — so no executor
    re-investigates the same guard.
 
-Close out per CONVENTIONS §5, one commit for the pass.
+Within a campaign, include this pass in its work order's local green commit
+under CONVENTIONS §5. A phase or health pass does not independently trigger a
+version bump, tag or push. Run authorized release closeout only after the full
+campaign is implemented and green. A separately requested standalone health
+closeout follows the same release protocol after that pass is complete.
 
 ```json
 {
@@ -63,7 +67,7 @@ Close out per CONVENTIONS §5, one commit for the pass.
     { "id": "fix-quirks", "needs": ["sweep-quirks"], "run": "reproduction test first, then fix" },
     { "id": "gate", "needs": ["fix-tidy", "fix-quirks"], "run": "npm run check", "pass": "exit==0" },
     { "id": "report", "needs": ["gate"], "run": "moved/fixed/left + idempotency check" },
-    { "id": "commit", "needs": ["report"], "run": "CONVENTIONS close-out" }
+    { "id": "commit", "needs": ["report"], "run": "CONVENTIONS §5: local green work-order commit; authorized release closeout only at full campaign completion or standalone pass completion" }
   ]
 }
 ```

@@ -1,0 +1,3858 @@
+{
+  "instrument": "temporal-experiment-v1",
+  "origin": "keyless",
+  "context": {
+    "sourceHash": "207d61e880f88926c3b29bf1f669c74ec2b61c771d92a13fe736fd2af88025dd",
+    "registrationHash": "1c0e8030e0b99e898f86c6da99ff62384c313612a6aeca9d49ac09b66adf9849",
+    "lme": {
+      "status": "available",
+      "qa": 500,
+      "retrieval": 470,
+      "futureGoldQuestions": 44
+    },
+    "locomo": {
+      "status": "available",
+      "scorable": 1540,
+      "adversarial": 446,
+      "anchoredQuestions": 0
+    }
+  },
+  "registrationHash": "1c0e8030e0b99e898f86c6da99ff62384c313612a6aeca9d49ac09b66adf9849",
+  "summaries": [
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "legacy-default",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 952,
+      "contextBytes": 5219412,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8297872340425532,
+        "recallAll": 0.5787234042553191,
+        "sessionFractionRecall": 0.7017375886524824
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9107142857142857,
+          "recallAll": 0.9107142857142857,
+          "sessionFractionRecall": 0.9107142857142857
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8760330578512396,
+          "recallAll": 0.3305785123966942,
+          "sessionFractionRecall": 0.6045454545454546
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.7401574803149606,
+          "recallAll": 0.3858267716535433,
+          "sessionFractionRecall": 0.55249343832021
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.9236111111111112
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "timestamp-context-only",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 1034,
+      "contextBytes": 5281741,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8297872340425532,
+        "recallAll": 0.5702127659574469,
+        "sessionFractionRecall": 0.6971631205673761
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9285714285714286,
+          "recallAll": 0.9285714285714286,
+          "sessionFractionRecall": 0.9285714285714286
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8842975206611571,
+          "recallAll": 0.30578512396694213,
+          "sessionFractionRecall": 0.5950413223140496
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.7244094488188977,
+          "recallAll": 0.3700787401574803,
+          "sessionFractionRecall": 0.5367454068241471
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.9236111111111112
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 1037,
+      "contextBytes": 5279386,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8297872340425532,
+        "recallAll": 0.5723404255319149,
+        "sessionFractionRecall": 0.6975886524822696
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9285714285714286,
+          "recallAll": 0.9285714285714286,
+          "sessionFractionRecall": 0.9285714285714286
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8842975206611571,
+          "recallAll": 0.3140495867768595,
+          "sessionFractionRecall": 0.5966942148760329
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.7244094488188977,
+          "recallAll": 0.3700787401574803,
+          "sessionFractionRecall": 0.5367454068241471
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.9236111111111112
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "observed-session-filter",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "validity-asof-on",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "full-kernel",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "oracle-evidence",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 38,
+      "contextBytes": 2566248,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 1,
+        "recallAll": 1,
+        "sessionFractionRecall": 1
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "all",
+      "row": "oracle-window",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 246750,
+      "emptyTurns": 12,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "legacy-default",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 204,
+      "contextBytes": 1063881,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8829787234042553,
+        "recallAll": 0.5425531914893617,
+        "sessionFractionRecall": 0.7083333333333333
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5166666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.9230769230769231,
+          "recallAll": 0.38461538461538464,
+          "sessionFractionRecall": 0.6217948717948717
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "timestamp-context-only",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 228,
+      "contextBytes": 1069806,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8723404255319149,
+        "recallAll": 0.5425531914893617,
+        "sessionFractionRecall": 0.7003546099290779
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5066666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.8846153846153846,
+          "recallAll": 0.38461538461538464,
+          "sessionFractionRecall": 0.6025641025641025
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 229,
+      "contextBytes": 1069417,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8723404255319149,
+        "recallAll": 0.5425531914893617,
+        "sessionFractionRecall": 0.7003546099290779
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5066666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.8846153846153846,
+          "recallAll": 0.38461538461538464,
+          "sessionFractionRecall": 0.6025641025641025
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "observed-session-filter",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "validity-asof-on",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "full-kernel",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "oracle-evidence",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 12,
+      "contextBytes": 510595,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 1,
+        "recallAll": 1,
+        "sessionFractionRecall": 1
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "development",
+      "row": "oracle-window",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 50169,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "legacy-default",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 748,
+      "contextBytes": 4155531,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8164893617021277,
+        "recallAll": 0.5877659574468085,
+        "sessionFractionRecall": 0.7000886524822696
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.9,
+          "recallAll": 0.9,
+          "sessionFractionRecall": 0.9
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8854166666666666,
+          "recallAll": 0.375,
+          "sessionFractionRecall": 0.6274305555555556
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.693069306930693,
+          "recallAll": 0.38613861386138615,
+          "sessionFractionRecall": 0.5346534653465346
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.873015873015873,
+          "sessionFractionRecall": 0.9206349206349206
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "timestamp-context-only",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 806,
+      "contextBytes": 4211935,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8191489361702128,
+        "recallAll": 0.5771276595744681,
+        "sessionFractionRecall": 0.6963652482269503
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.925,
+          "recallAll": 0.925,
+          "sessionFractionRecall": 0.925
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8958333333333334,
+          "recallAll": 0.34375,
+          "sessionFractionRecall": 0.6180555555555555
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.6831683168316832,
+          "recallAll": 0.36633663366336633,
+          "sessionFractionRecall": 0.5198019801980197
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.873015873015873,
+          "sessionFractionRecall": 0.9206349206349206
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 808,
+      "contextBytes": 4209969,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8191489361702128,
+        "recallAll": 0.5797872340425532,
+        "sessionFractionRecall": 0.6968971631205673
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.925,
+          "recallAll": 0.925,
+          "sessionFractionRecall": 0.925
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8958333333333334,
+          "recallAll": 0.3541666666666667,
+          "sessionFractionRecall": 0.6201388888888889
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.6831683168316832,
+          "recallAll": 0.36633663366336633,
+          "sessionFractionRecall": 0.5198019801980197
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.873015873015873,
+          "sessionFractionRecall": 0.9206349206349206
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "observed-session-filter",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "validity-asof-on",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "full-kernel",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "oracle-evidence",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 26,
+      "contextBytes": 2055653,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 1,
+        "recallAll": 1,
+        "sessionFractionRecall": 1
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "provided-history",
+      "fold": "confirmation",
+      "row": "oracle-window",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 196581,
+      "emptyTurns": 11,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "legacy-default",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 947,
+      "contextBytes": 5209013,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8106382978723404,
+        "recallAll": 0.5446808510638298,
+        "sessionFractionRecall": 0.6735815602836881
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9107142857142857,
+          "recallAll": 0.9107142857142857,
+          "sessionFractionRecall": 0.9107142857142857
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8760330578512396,
+          "recallAll": 0.3305785123966942,
+          "sessionFractionRecall": 0.6045454545454546
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.6692913385826772,
+          "recallAll": 0.2677165354330709,
+          "sessionFractionRecall": 0.45223097112860894
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.8611111111111112,
+          "sessionFractionRecall": 0.9166666666666666
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "timestamp-context-only",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 1028,
+      "contextBytes": 5285899,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8106382978723404,
+        "recallAll": 0.5361702127659574,
+        "sessionFractionRecall": 0.6690070921985817
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9285714285714286,
+          "recallAll": 0.9285714285714286,
+          "sessionFractionRecall": 0.9285714285714286
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8842975206611571,
+          "recallAll": 0.30578512396694213,
+          "sessionFractionRecall": 0.5950413223140496
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.6535433070866141,
+          "recallAll": 0.25196850393700787,
+          "sessionFractionRecall": 0.436482939632546
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.8611111111111112,
+          "sessionFractionRecall": 0.9166666666666666
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 1031,
+      "contextBytes": 5283544,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.8106382978723404,
+        "recallAll": 0.5382978723404256,
+        "sessionFractionRecall": 0.6694326241134754
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 0.875,
+          "recallAll": 0.875,
+          "sessionFractionRecall": 0.875
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 0.9285714285714286,
+          "recallAll": 0.9285714285714286,
+          "sessionFractionRecall": 0.9285714285714286
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 0.43333333333333335,
+          "recallAll": 0.43333333333333335,
+          "sessionFractionRecall": 0.43333333333333335
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 0.8842975206611571,
+          "recallAll": 0.3140495867768595,
+          "sessionFractionRecall": 0.5966942148760329
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.6535433070866141,
+          "recallAll": 0.25196850393700787,
+          "sessionFractionRecall": 0.436482939632546
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 0.9722222222222222,
+          "recallAll": 0.8611111111111112,
+          "sessionFractionRecall": 0.9166666666666666
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "observed-session-filter",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "validity-asof-on",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "full-kernel",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "oracle-evidence",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 500,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 49,
+      "contextBytes": 2624443,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 470,
+        "recallAny": 0.9617021276595744,
+        "recallAll": 0.9127659574468086,
+        "sessionFractionRecall": 0.9372340425531915
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 64,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 56,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 30,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 121,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 127,
+          "recallAny": 0.8582677165354331,
+          "recallAll": 0.6850393700787402,
+          "sessionFractionRecall": 0.7716535433070866
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 72,
+          "recallAny": 1,
+          "recallAll": 0.9861111111111112,
+          "sessionFractionRecall": 0.9930555555555556
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "all",
+      "row": "oracle-window",
+      "questionIdentity": "9b3e057133549765229279fef30d3f59adfea976fffd73b968a2d0a1c0bbd939",
+      "groups": 466,
+      "questions": 500,
+      "abstentions": 30,
+      "futureGoldQuestions": 44,
+      "occurrences": 231575,
+      "emptyTurns": 10,
+      "measured": 0,
+      "unmeasured": 500,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 500,
+        "retrievalQuestions": 470,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 70,
+          "retrievalQuestions": 64,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 56,
+          "retrievalQuestions": 56,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 30,
+          "retrievalQuestions": 30,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 121,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 133,
+          "retrievalQuestions": 127,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 78,
+          "retrievalQuestions": 72,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 500
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "legacy-default",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 201,
+      "contextBytes": 1061018,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8404255319148937,
+        "recallAll": 0.5,
+        "sessionFractionRecall": 0.6675531914893617
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5166666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.7692307692307693,
+          "recallAll": 0.23076923076923078,
+          "sessionFractionRecall": 0.47435897435897434
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "timestamp-context-only",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 224,
+      "contextBytes": 1075745,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8297872340425532,
+        "recallAll": 0.5,
+        "sessionFractionRecall": 0.6595744680851063
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5066666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.7307692307692307,
+          "recallAll": 0.23076923076923078,
+          "sessionFractionRecall": 0.45512820512820507
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 225,
+      "contextBytes": 1075356,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.8297872340425532,
+        "recallAll": 0.5,
+        "sessionFractionRecall": 0.6595744680851063
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 0.8666666666666667,
+          "recallAll": 0.8666666666666667,
+          "sessionFractionRecall": 0.8666666666666667
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 0.9375,
+          "recallAll": 0.9375,
+          "sessionFractionRecall": 0.9375
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 0.3333333333333333,
+          "recallAll": 0.3333333333333333,
+          "sessionFractionRecall": 0.3333333333333333
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 0.84,
+          "recallAll": 0.16,
+          "sessionFractionRecall": 0.5066666666666667
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.7307692307692307,
+          "recallAll": 0.23076923076923078,
+          "sessionFractionRecall": 0.45512820512820507
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 0.8888888888888888,
+          "sessionFractionRecall": 0.9444444444444444
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "observed-session-filter",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "validity-asof-on",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "full-kernel",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "oracle-evidence",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 101,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 15,
+      "contextBytes": 511225,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 94,
+        "recallAny": 0.9468085106382979,
+        "recallAll": 0.9148936170212766,
+        "sessionFractionRecall": 0.9326241134751772
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 15,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 16,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 3,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 25,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 26,
+          "recallAny": 0.8076923076923077,
+          "recallAll": 0.6923076923076923,
+          "sessionFractionRecall": 0.7564102564102565
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 9,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "development",
+      "row": "oracle-window",
+      "questionIdentity": "c6e77bb1dbde1c70bdbb357a00a395b69089485fda1b555686a98d6a916c894c",
+      "groups": 94,
+      "questions": 101,
+      "abstentions": 7,
+      "futureGoldQuestions": 9,
+      "occurrences": 47371,
+      "emptyTurns": 1,
+      "measured": 0,
+      "unmeasured": 101,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 101,
+        "retrievalQuestions": 94,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 17,
+          "retrievalQuestions": 15,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 16,
+          "retrievalQuestions": 16,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 3,
+          "retrievalQuestions": 3,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 26,
+          "retrievalQuestions": 25,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 28,
+          "retrievalQuestions": 26,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 11,
+          "retrievalQuestions": 9,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 101
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "legacy-default",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 746,
+      "contextBytes": 4147995,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8031914893617021,
+        "recallAll": 0.5558510638297872,
+        "sessionFractionRecall": 0.6750886524822696
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.9,
+          "recallAll": 0.9,
+          "sessionFractionRecall": 0.9
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8854166666666666,
+          "recallAll": 0.375,
+          "sessionFractionRecall": 0.6274305555555556
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.6435643564356436,
+          "recallAll": 0.27722772277227725,
+          "sessionFractionRecall": 0.44653465346534654
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.8571428571428571,
+          "sessionFractionRecall": 0.9126984126984127
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "timestamp-context-only",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 804,
+      "contextBytes": 4210154,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8058510638297872,
+        "recallAll": 0.5452127659574468,
+        "sessionFractionRecall": 0.6713652482269504
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.925,
+          "recallAll": 0.925,
+          "sessionFractionRecall": 0.925
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8958333333333334,
+          "recallAll": 0.34375,
+          "sessionFractionRecall": 0.6180555555555555
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.6336633663366337,
+          "recallAll": 0.25742574257425743,
+          "sessionFractionRecall": 0.4316831683168317
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.8571428571428571,
+          "sessionFractionRecall": 0.9126984126984127
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "matched-pool-lane-off",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 806,
+      "contextBytes": 4208188,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.8058510638297872,
+        "recallAll": 0.5478723404255319,
+        "sessionFractionRecall": 0.6718971631205675
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 0.8775510204081632,
+          "recallAll": 0.8775510204081632,
+          "sessionFractionRecall": 0.8775510204081632
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 0.925,
+          "recallAll": 0.925,
+          "sessionFractionRecall": 0.925
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 0.4444444444444444,
+          "recallAll": 0.4444444444444444,
+          "sessionFractionRecall": 0.4444444444444444
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 0.8958333333333334,
+          "recallAll": 0.3541666666666667,
+          "sessionFractionRecall": 0.6201388888888889
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.6336633663366337,
+          "recallAll": 0.25742574257425743,
+          "sessionFractionRecall": 0.4316831683168317
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 0.9682539682539683,
+          "recallAll": 0.8571428571428571,
+          "sessionFractionRecall": 0.9126984126984127
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "observed-session-filter",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "validity-asof-on",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "full-kernel",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "model-derived-query-and-claims-unmeasured": 399
+      },
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "oracle-evidence",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 399,
+      "unmeasured": 0,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 34,
+      "contextBytes": 2113218,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 376,
+        "recallAny": 0.9654255319148937,
+        "recallAll": 0.9122340425531915,
+        "sessionFractionRecall": 0.9383865248226951
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 49,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 40,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 27,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 96,
+          "recallAny": 1,
+          "recallAll": 1,
+          "sessionFractionRecall": 1
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 101,
+          "recallAny": 0.8712871287128713,
+          "recallAll": 0.6831683168316832,
+          "sessionFractionRecall": 0.7755775577557756
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 63,
+          "recallAny": 1,
+          "recallAll": 0.9841269841269841,
+          "sessionFractionRecall": 0.9920634920634921
+        }
+      },
+      "failures": {},
+      "qaAccuracy": null
+    },
+    {
+      "profile": "strict-as-of",
+      "fold": "confirmation",
+      "row": "oracle-window",
+      "questionIdentity": "3556a5d7d2f44dfcd5f42530728457869474040081aaf93d4792755afd7b6969",
+      "groups": 372,
+      "questions": 399,
+      "abstentions": 23,
+      "futureGoldQuestions": 35,
+      "occurrences": 184204,
+      "emptyTurns": 9,
+      "measured": 0,
+      "unmeasured": 399,
+      "refused": 0,
+      "fallback": 0,
+      "trimmed": 0,
+      "contextBytes": 0,
+      "retrieval": {
+        "qaQuestions": 399,
+        "retrievalQuestions": 376,
+        "measuredRetrieval": 0,
+        "recallAny": null,
+        "recallAll": null,
+        "sessionFractionRecall": null
+      },
+      "byType": {
+        "single-session-user": {
+          "qaQuestions": 53,
+          "retrievalQuestions": 49,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-assistant": {
+          "qaQuestions": 40,
+          "retrievalQuestions": 40,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "single-session-preference": {
+          "qaQuestions": 27,
+          "retrievalQuestions": 27,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "multi-session": {
+          "qaQuestions": 107,
+          "retrievalQuestions": 96,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "temporal-reasoning": {
+          "qaQuestions": 105,
+          "retrievalQuestions": 101,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        },
+        "knowledge-update": {
+          "qaQuestions": 67,
+          "retrievalQuestions": 63,
+          "measuredRetrieval": 0,
+          "recallAny": null,
+          "recallAll": null,
+          "sessionFractionRecall": null
+        }
+      },
+      "failures": {
+        "independently-certified-window-unavailable": 399
+      },
+      "qaAccuracy": null
+    }
+  ],
+  "plan": {
+    "sha256": "877a3b51ed4529e0054474bf24d915dcb091b9962349c4a22c8aa68c837327a8",
+    "questions": 500,
+    "profileCases": 1000,
+    "sourceOccurrences": 478325,
+    "physicalRequestsMaximum": 53874,
+    "inputByteTokenCeiling": 14122745856,
+    "outputTokenCeiling": 141889904,
+    "embeddingLogicalItems": 479325,
+    "embeddingPhysicalBatches": 0,
+    "blockedSources": 0,
+    "roleRequests": {
+      "extract": 30874,
+      "resolve": 2000,
+      "answer": 14000,
+      "judge": 7000,
+      "embedding": 0
+    },
+    "worstCaseUsd": null,
+    "eligibleForApproval": false
+  },
+  "strict": {
+    "planned": 138,
+    "passed": 138,
+    "failed": 0,
+    "notImplemented": 0,
+    "unavailable": 0
+  },
+  "counts": {
+    "questions": 500,
+    "profileCases": 1000,
+    "plannedRows": 8000,
+    "measuredRows": 4000,
+    "unmeasuredRows": 4000,
+    "refusedRows": 0,
+    "fallbackRows": 0
+  },
+  "physicalRequests": 0,
+  "default": "off",
+  "liveQuality": "unmeasured",
+  "liveCost": "unmeasured",
+  "questionRowsHash": "bf783d72f1040629084b44ee2f58092625f017ca3e71d3463992fee4f64aaca7",
+  "sha256": "3f5b507c9ecaf54ea5ebee16500f633dd3b7fffd689b9db934cfb4bb721cf49f"
+}

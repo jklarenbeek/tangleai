@@ -34,3 +34,6 @@ benchmark/cache/
 
 # Browser migration traces and screenshots are generated qualification output.
 .e2e/migration-results/
+
+# Downloaded LongMemEval corpora are separate from the pinned source submodule.
+benchmark/data/longmemeval/

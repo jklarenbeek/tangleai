@@ -54,6 +54,7 @@ import {
   type PipelineThresholds,
 } from '@tangleai/pipeline';
 import { createHashEmbedder } from '@tangleai/models/embed';
+import { renderTemporalLocomo } from './temporal-locomo.ts';
 
 import {
   CATEGORY_NAMES,
@@ -113,6 +114,7 @@ export interface RecallRow {
 }
 
 export interface RecallReport {
+  temporal?: import('./temporal-locomo.ts').TemporalLocomoBlock;
   benchmark: 'locomo';
   instrument: 'locomo-recall';
   /** The shared config-identity envelope: every recall row is not-run analysis. */
@@ -562,5 +564,5 @@ export function renderMarkdown(report: RecallReport): string {
   out.push('---');
   out.push('');
   out.push('LoCoMo is CC BY-NC 4.0 (Maharana et al., ACL 2024, arXiv:2402.17753). This repository does not redistribute it; `git submodule update --init benchmark/locomo` fetches it.');
-  return out.join('\n');
+  return out.join('\n') + (report.temporal ? renderTemporalLocomo(report.temporal, report.dataset.sha256) : '');
 }

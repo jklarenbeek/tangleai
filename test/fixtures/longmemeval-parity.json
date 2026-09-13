@@ -1,0 +1,389 @@
+{
+  "generated": {
+    "mode": "pinned-offline-official-code",
+    "python": "3.14.7",
+    "numpy": "2.4.6",
+    "evaluatorSha256": "ecce9c4c79dc89d99534ac17b383a5cbb5b9f0c69ee98adaf0684742e3d95251",
+    "aggregationSha256": "e9283933a0cefb7a0ded7365e436ae3d1be5aac41853325e6155d83bf07607f0"
+  },
+  "prompts": [
+    {
+      "task": "single-session-user",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-user",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-user",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "single-session-user",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "single-session-assistant",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-assistant",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-assistant",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "single-session-assistant",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "single-session-preference",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a rubric for desired personalized response, and a response from a model. Please answer yes if the response satisfies the desired response. Otherwise, answer no. The model does not need to reflect all the points in the rubric. The response is correct as long as it recalls and utilizes the user's personal information correctly.\n\nQuestion: Tangle fixture question?\n\nRubric: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-preference",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a rubric for desired personalized response, and a response from a model. Please answer yes if the response satisfies the desired response. Otherwise, answer no. The model does not need to reflect all the points in the rubric. The response is correct as long as it recalls and utilizes the user's personal information correctly.\n\nQuestion: Tangle fixture question?\n\nRubric: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "single-session-preference",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "single-session-preference",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "multi-session",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "multi-session",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "multi-session",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "multi-session",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "temporal-reasoning",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. In addition, do not penalize off-by-one errors for the number of days. If the question asks for the number of days/weeks/months, etc., and the model makes off-by-one errors (e.g., predicting 19 days when the answer is 18), the model's response is still correct. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "temporal-reasoning",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response is equivalent to the correct answer or contains all the intermediate steps to get the correct answer, you should also answer yes. If the response only contains a subset of the information required by the answer, answer no. In addition, do not penalize off-by-one errors for the number of days. If the question asks for the number of days/weeks/months, etc., and the model makes off-by-one errors (e.g., predicting 19 days when the answer is 18), the model's response is still correct. \n\nQuestion: Tangle fixture question?\n\nCorrect Answer: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "temporal-reasoning",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "temporal-reasoning",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "knowledge-update",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response contains some previous information along with an updated answer, the response should be considered as correct as long as the updated answer is the required answer.\n\nQuestion: Tangle fixture question?\n\nCorrect Answer: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "knowledge-update",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": false,
+      "expected": "I will give you a question, a correct answer, and a response from a model. Please answer yes if the response contains the correct answer. Otherwise, answer no. If the response contains some previous information along with an updated answer, the response should be considered as correct as long as the updated answer is the required answer.\n\nQuestion: Tangle fixture question?\n\nCorrect Answer: 11\n\nModel Response: Tangle fixture prediction.\n\nIs the model response correct? Answer yes or no only."
+    },
+    {
+      "task": "knowledge-update",
+      "question": "Tangle fixture question?",
+      "answer": "Tangle fixture answer.",
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: Tangle fixture answer.\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    },
+    {
+      "task": "knowledge-update",
+      "question": "Tangle fixture question?",
+      "answer": 11,
+      "response": "Tangle fixture prediction.",
+      "abstention": true,
+      "expected": "I will give you an unanswerable question, an explanation, and a response from a model. Please answer yes if the model correctly identifies the question as unanswerable. The model could say that the information is incomplete, or some other information is given but the asked information is not.\n\nQuestion: Tangle fixture question?\n\nExplanation: 11\n\nModel Response: Tangle fixture prediction.\n\nDoes the model correctly identify the question as unanswerable? Answer yes or no only."
+    }
+  ],
+  "labels": [
+    {
+      "response": "yes",
+      "expected": true
+    },
+    {
+      "response": "YES",
+      "expected": true
+    },
+    {
+      "response": " no ",
+      "expected": false
+    },
+    {
+      "response": "",
+      "expected": false
+    },
+    {
+      "response": "yesterday",
+      "expected": true
+    },
+    {
+      "response": "no, yes",
+      "expected": true
+    },
+    {
+      "response": "unknown",
+      "expected": false
+    },
+    {
+      "response": "no.",
+      "expected": false
+    }
+  ],
+  "aggregation": {
+    "references": [
+      {
+        "question_id": "q0",
+        "question_type": "single-session-user"
+      },
+      {
+        "question_id": "q1_abs",
+        "question_type": "single-session-assistant"
+      },
+      {
+        "question_id": "q2",
+        "question_type": "single-session-preference"
+      },
+      {
+        "question_id": "q3_abs",
+        "question_type": "multi-session"
+      },
+      {
+        "question_id": "q4",
+        "question_type": "temporal-reasoning"
+      },
+      {
+        "question_id": "q5_abs",
+        "question_type": "knowledge-update"
+      },
+      {
+        "question_id": "q6",
+        "question_type": "single-session-user"
+      },
+      {
+        "question_id": "q7_abs",
+        "question_type": "single-session-assistant"
+      },
+      {
+        "question_id": "q8",
+        "question_type": "single-session-preference"
+      },
+      {
+        "question_id": "q9_abs",
+        "question_type": "multi-session"
+      },
+      {
+        "question_id": "q10",
+        "question_type": "temporal-reasoning"
+      },
+      {
+        "question_id": "q11_abs",
+        "question_type": "knowledge-update"
+      }
+    ],
+    "answers": [
+      {
+        "question_id": "q0",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": true
+        }
+      },
+      {
+        "question_id": "q1_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q2",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q3_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": true
+        }
+      },
+      {
+        "question_id": "q4",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q5_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q6",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": true
+        }
+      },
+      {
+        "question_id": "q7_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q8",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q9_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": true
+        }
+      },
+      {
+        "question_id": "q10",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      },
+      {
+        "question_id": "q11_abs",
+        "autoeval_label": {
+          "model": "gpt-4o-2024-08-06",
+          "label": false
+        }
+      }
+    ],
+    "officialOutput": "\nEvaluation results by task:\n\tsingle-session-user: 1.0 (2)\n\tsingle-session-preference: 0.0 (2)\n\tsingle-session-assistant: 0.0 (2)\n\tmulti-session: 1.0 (2)\n\ttemporal-reasoning: 0.0 (2)\n\tknowledge-update: 0.0 (2)\n\nTask-averaged Accuracy: 0.3333\nOverall Accuracy: 0.3333\nAbstention Accuracy: 0.3333 (6)\n",
+    "expected": {
+      "micro": 0.3333,
+      "macro": 0.3333,
+      "abstention": 0.3333,
+      "byType": {
+        "single-session-user": 1.0,
+        "single-session-assistant": 0.0,
+        "single-session-preference": 0.0,
+        "multi-session": 1.0,
+        "temporal-reasoning": 0.0,
+        "knowledge-update": 0.0
+      }
+    }
+  }
+}

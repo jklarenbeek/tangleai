@@ -1,0 +1,1584 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/temporal",
+  "$ref": "#/$defs/sourceOccurrence",
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        }
+      ]
+    },
+    "reason": {
+      "enum": [
+        "invalid-time",
+        "unknown-validity",
+        "unanchored-relative",
+        "ambiguous-series",
+        "conflicting-claims",
+        "future-source",
+        "identity-mismatch",
+        "no-match",
+        "stale-projection",
+        "incomplete-index",
+        "provider-refusal",
+        "budget-exhausted",
+        "storage-failure",
+        "ordinary-query"
+      ]
+    },
+    "refusal": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "refused",
+            "fallback"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/reason"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "value": {
+              "$ref": "#/$defs/json"
+            }
+          },
+          "required": [
+            "status",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/refusal"
+        }
+      ]
+    },
+    "stamp": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "raw": {
+          "type": "string"
+        },
+        "precision": {
+          "enum": [
+            "millisecond",
+            "second",
+            "minute",
+            "day",
+            "month",
+            "year"
+          ]
+        },
+        "offsetMinutes": {
+          "type": "integer",
+          "minimum": -1439,
+          "maximum": 1439
+        },
+        "provenance": {
+          "enum": [
+            "explicit-offset",
+            "synthetic-UTC",
+            "host-asserted"
+          ]
+        }
+      },
+      "required": [
+        "at",
+        "raw",
+        "precision",
+        "offsetMinutes",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "embeddedBy": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "model",
+        "dims"
+      ],
+      "additionalProperties": false
+    },
+    "sourceOccurrence": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionOrdinal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turnOrdinal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "role": {
+          "enum": [
+            "user",
+            "assistant",
+            "host"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "sourceHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceLocator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observedAt": {
+          "$ref": "#/$defs/stamp"
+        },
+        "knownAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+        },
+        "legacyMemoryId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "sessionOrdinal",
+        "turnOrdinal",
+        "role",
+        "text",
+        "sourceHash",
+        "sourceLocator",
+        "observedAt",
+        "knownAt"
+      ],
+      "additionalProperties": false
+    },
+    "sourceSpan": {
+      "type": "object",
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "sourceId",
+        "sourceHash",
+        "start",
+        "end",
+        "quote"
+      ],
+      "additionalProperties": false
+    },
+    "seriesIdentity": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "subject",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "stateEnd": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "at"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            }
+          },
+          "required": [
+            "kind",
+            "at"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "open"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "unknown"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "claimTime": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "unknown"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "point"
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "precision": {
+              "enum": [
+                "millisecond",
+                "second",
+                "minute",
+                "day"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "at",
+            "precision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "period"
+            },
+            "from": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "until": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "precision": {
+              "enum": [
+                "day",
+                "month",
+                "year"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "from",
+            "until",
+            "precision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "state"
+            },
+            "from": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "until": {
+              "$ref": "#/$defs/stateEnd"
+            },
+            "precision": {
+              "enum": [
+                "millisecond",
+                "second",
+                "minute",
+                "day"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "from",
+            "until",
+            "precision"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "derivation": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "host-asserted",
+            "model",
+            "legacy-backfill"
+          ]
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "method",
+        "identity"
+      ],
+      "additionalProperties": false
+    },
+    "temporalClaim": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "series": {
+          "$ref": "#/$defs/seriesIdentity"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "$ref": "#/$defs/claimTime"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "unknown",
+            "conflicting"
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          },
+          "minItems": 1
+        },
+        "derivation": {
+          "$ref": "#/$defs/derivation"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "series",
+        "value",
+        "time",
+        "status",
+        "citations",
+        "derivation"
+      ],
+      "additionalProperties": false
+    },
+    "knowledge": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "provided-history"
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "strict-as-of"
+            },
+            "cutoff": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            }
+          },
+          "required": [
+            "mode",
+            "cutoff"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "projectionEmbedding": {
+      "type": "object",
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "vector": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "sourceId",
+        "vector"
+      ],
+      "additionalProperties": false
+    },
+    "temporalProjection": {
+      "type": "object",
+      "properties": {
+        "versionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "viewIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contractIdentity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "policyIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modelIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promptIdentity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "embeddedBy": {
+          "$ref": "#/$defs/embeddedBy"
+        },
+        "knowledge": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "occurrenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "embeddings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/projectionEmbedding"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "versionId",
+        "scope",
+        "sourceIdentity",
+        "viewIdentity",
+        "contractIdentity",
+        "policyIdentity",
+        "modelIdentity",
+        "promptIdentity",
+        "embeddedBy",
+        "knowledge",
+        "occurrenceIds",
+        "claimIds",
+        "embeddings",
+        "complete"
+      ],
+      "additionalProperties": false
+    },
+    "temporalHead": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "scope",
+        "versionId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "queryOperation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "none"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "at",
+                "as-of"
+              ]
+            },
+            "at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            }
+          },
+          "required": [
+            "kind",
+            "at"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "overlaps"
+            },
+            "from": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            },
+            "until": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?(Z|[+-]\\d{2}:\\d{2})$"
+            }
+          },
+          "required": [
+            "kind",
+            "from",
+            "until"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "elapsed"
+            },
+            "fromSeries": {
+              "$ref": "#/$defs/seriesIdentity"
+            },
+            "toSeries": {
+              "$ref": "#/$defs/seriesIdentity"
+            },
+            "unit": {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "fromSeries",
+            "toSeries",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "order"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "temporalQuery": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/stamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledge": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "operation": {
+          "$ref": "#/$defs/queryOperation"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "embeddedBy": {
+          "$ref": "#/$defs/embeddedBy"
+        },
+        "embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
+        },
+        "candidatePool": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "minScore": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "expectedHead": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/temporalHead"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "text",
+        "anchor",
+        "knowledge",
+        "operation",
+        "subject",
+        "series",
+        "embeddedBy",
+        "embedding",
+        "candidatePool",
+        "k",
+        "minScore",
+        "expectedHead"
+      ],
+      "additionalProperties": false
+    },
+    "projectionReceipt": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "$ref": "#/$defs/temporalHead"
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "head",
+        "replayed",
+        "writes",
+        "activations"
+      ],
+      "additionalProperties": false
+    },
+    "physicalAttempt": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "enum": [
+            "extract",
+            "resolve",
+            "embedding",
+            "repair",
+            "answer",
+            "judge"
+          ]
+        },
+        "phase": {
+          "enum": [
+            "in-flight",
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "inputTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outputTokens": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requestHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reply": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "phase",
+        "inputTokens",
+        "outputTokens",
+        "requestHash",
+        "reply"
+      ],
+      "additionalProperties": false
+    },
+    "temporalOperation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requestIdentity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "phase": {
+          "enum": [
+            "reserved",
+            "in-flight",
+            "completed",
+            "failed",
+            "unknown"
+          ]
+        },
+        "maxPhysicalRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/physicalAttempt"
+          }
+        },
+        "receipt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "key",
+        "requestIdentity",
+        "revision",
+        "phase",
+        "maxPhysicalRequests",
+        "attempts",
+        "receipt"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "occurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "comparable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semanticCandidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligibleClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "poolTruncated": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "refusals": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "occurrences",
+        "comparable",
+        "semanticCandidates",
+        "eligibleClaims",
+        "selected",
+        "poolTruncated",
+        "complete",
+        "refusals"
+      ],
+      "additionalProperties": false
+    },
+    "temporalRecall": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "$ref": "#/$defs/temporalHead"
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/temporalClaim"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceOccurrence"
+          }
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        }
+      },
+      "required": [
+        "head",
+        "claimIds",
+        "sourceIds",
+        "claims",
+        "sources",
+        "coverage"
+      ],
+      "additionalProperties": false
+    },
+    "temporalAnswer": {
+      "type": "object",
+      "properties": {
+        "recall": {
+          "$ref": "#/$defs/temporalRecall"
+        },
+        "operation": {
+          "enum": [
+            "at",
+            "as-of",
+            "overlaps",
+            "elapsed",
+            "order"
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/json"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          }
+        },
+        "rule": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "recall",
+        "operation",
+        "value",
+        "citations",
+        "rule"
+      ],
+      "additionalProperties": false
+    },
+    "calendarWindow": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "until": {
+          "type": "string"
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year"
+          ]
+        }
+      },
+      "required": [
+        "from",
+        "until",
+        "precision"
+      ],
+      "additionalProperties": false
+    },
+    "elapsedValue": {
+      "type": "object",
+      "properties": {
+        "whole": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remainder": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unit": {
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year"
+          ]
+        },
+        "remainderUnit": {
+          "enum": [
+            "millisecond",
+            "day"
+          ]
+        }
+      },
+      "required": [
+        "whole",
+        "remainder",
+        "unit",
+        "remainderUnit"
+      ],
+      "additionalProperties": false
+    },
+    "temporalBundle": {
+      "type": "object",
+      "properties": {
+        "projection": {
+          "$ref": "#/$defs/temporalProjection"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceOccurrence"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/temporalClaim"
+          }
+        }
+      },
+      "required": [
+        "projection",
+        "sources",
+        "claims"
+      ],
+      "additionalProperties": false
+    },
+    "temporalSnapshot": {
+      "type": "object",
+      "properties": {
+        "projection": {
+          "$ref": "#/$defs/temporalProjection"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceOccurrence"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/temporalClaim"
+          }
+        },
+        "head": {
+          "$ref": "#/$defs/temporalHead"
+        }
+      },
+      "required": [
+        "projection",
+        "sources",
+        "claims",
+        "head"
+      ],
+      "additionalProperties": false
+    },
+    "temporalClaimRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "series": {
+          "type": "string"
+        },
+        "knownAtEpochMs": {
+          "type": "integer"
+        },
+        "validFromEpochMs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validUntilEpochMs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claim": {
+          "$ref": "#/$defs/temporalClaim"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "versionId",
+        "subject",
+        "series",
+        "knownAtEpochMs",
+        "validFromEpochMs",
+        "validUntilEpochMs",
+        "claim"
+      ],
+      "additionalProperties": false
+    },
+    "temporalStoreStats": {
+      "type": "object",
+      "properties": {
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "transactions": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "writes",
+        "activations",
+        "transactions"
+      ],
+      "additionalProperties": false
+    },
+    "temporalLimits": {
+      "type": "object",
+      "properties": {
+        "maxInputTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "maxOutputTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "maxPhysicalRequests": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "maxSources": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "maxClaims": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "deadlineMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120000
+        },
+        "maxRepairs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "maxInputTokens",
+        "maxOutputTokens",
+        "maxPhysicalRequests",
+        "maxSources",
+        "maxClaims",
+        "concurrency",
+        "deadlineMs",
+        "maxRepairs"
+      ],
+      "additionalProperties": false
+    },
+    "relativeOperand": {
+      "enum": [
+        "yesterday",
+        "previous-week",
+        "previous-month",
+        "previous-year"
+      ]
+    },
+    "proposedTime": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/claimTime"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "relative"
+            },
+            "operand": {
+              "$ref": "#/$defs/relativeOperand"
+            },
+            "sourceId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "kind",
+            "operand",
+            "sourceId"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "claimProposal": {
+      "type": "object",
+      "properties": {
+        "series": {
+          "$ref": "#/$defs/seriesIdentity"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "$ref": "#/$defs/proposedTime"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "unknown",
+            "conflicting"
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceSpan"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "series",
+        "value",
+        "time",
+        "status",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "extractionProposal": {
+      "type": "object",
+      "properties": {
+        "coveredSourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claimProposal"
+          }
+        }
+      },
+      "required": [
+        "coveredSourceIds",
+        "claims"
+      ],
+      "additionalProperties": false
+    },
+    "querySpan": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "quote"
+      ],
+      "additionalProperties": false
+    },
+    "queryProposal": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/queryOperation"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "relative"
+                },
+                "operand": {
+                  "$ref": "#/$defs/relativeOperand"
+                }
+              },
+              "required": [
+                "kind",
+                "operand"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/querySpan"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "subject",
+        "series",
+        "operation",
+        "citations"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

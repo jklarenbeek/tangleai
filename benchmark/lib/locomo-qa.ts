@@ -96,6 +96,7 @@
  */
 
 import { createBudgetAccount, createLongHorizonAgent } from '@tangleai/agents/recursive';
+import { renderTemporalLocomo } from './temporal-locomo.ts';
 import { createEnvironment } from '@tangleai/context/environment';
 import { createProgramAuthor, createProgramRunner } from '@tangleai/agents/program';
 import { createStructuredOutput } from '@tangleai/models/structured';
@@ -565,6 +566,7 @@ export interface KeylessConfiguration {
 }
 
 export interface QaReport {
+  temporal?: import('./temporal-locomo.ts').TemporalLocomoBlock;
   benchmark: 'locomo';
   instrument: 'locomo-qa';
   /** The shared config-identity envelope: every keyless row is not-run analysis. */
@@ -2233,5 +2235,5 @@ export function renderMarkdown(report: QaReport, live: LiveReport | null, liveSk
   out.push('---');
   out.push('');
   out.push('LoCoMo is CC BY-NC 4.0 (Maharana et al., ACL 2024, arXiv:2402.17753). This repository does not redistribute it; `git submodule update --init benchmark/locomo` fetches it.');
-  return out.join('\n');
+  return out.join('\n') + (report.temporal ? renderTemporalLocomo(report.temporal, report.dataset.sha256) : '');
 }

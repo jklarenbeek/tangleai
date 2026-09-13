@@ -171,27 +171,99 @@ npm run emit:check
 | Path | Upstream | Licence |
 |---|---|---|
 | `locomo/` | [`snap-research/locomo`](https://github.com/snap-research/locomo) — the ACL 2024 benchmark, data and official evaluator | **CC BY-NC 4.0** |
+| `longmemeval/` | [`xiaowu0162/LongMemEval`](https://github.com/xiaowu0162/LongMemEval) — the ICLR 2025 benchmark code and official evaluator | **MIT** |
 
+```sh
+git submodule update --init benchmark/locomo benchmark/longmemeval
 ```
-git submodule update --init benchmark/locomo
+
+Each submodule keeps its upstream source and licence. The parent repository's
+Git tree pins the exact upstream commit; `.gitmodules` records its path and URL.
+LoCoMo includes `data/locomo10.json` in its source repository. Its sessions are
+dated, but its QA objects have no explicit question timestamp.
+
+LongMemEval is pinned to `9e0b455f4ef0e2ab8f2e582289761153549043fc`.
+Its [documented format](longmemeval/README.md) includes
+`question_date` and aligned `haystack_dates`, making it a temporal-evaluation
+companion. Its [cleaned datasets](https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned)
+are separate downloads; initializing the code submodule does not fetch them.
+Keep downloaded files in ignored `benchmark/data/longmemeval/`, outside the
+submodule, and pin dataset revision and checksums separately from the code.
+The LongMemEval adapter verifies raw bytes, separates evaluator labels from
+runtime inputs, preserves repeated occurrences and registers grouped development
+and confirmation folds. The [generated census](../docs/LONGMEMEVAL_BENCHMARK.md)
+records source defects and both provided-history and strict-as-of denominators.
+
+```sh
+npm run benchmark:longmemeval:census -- --download --require
+npm run benchmark:longmemeval:census -- --require --json /tmp/longmemeval-census.json --md docs/LONGMEMEVAL_BENCHMARK.md
+npm run benchmark:longmemeval:census -- --require --md docs/LONGMEMEVAL_BENCHMARK.md --check
 ```
 
-A submodule rather than a vendored copy, for three reasons that are all
-licence or honesty reasons:
+Acquisition downloads the pinned cleaned S and oracle files with atomic size and
+SHA-256 verification. Oracle inputs remain evaluator-only. Without the external
+data or submodule the census reports `unavailable`; `--require` fails. These
+commands make no model request, and a source census is not answer accuracy.
 
-- LoCoMo is **CC BY-NC 4.0** and this repository is MIT. A submodule is a
-  pointer; nothing here redistributes the data.
-- A submodule pins an exact upstream commit, so *which* LoCoMo produced a
-  number is a hash in `.gitmodules` rather than a sentence in a README.
-- The release ships `data/locomo10.json` in the repository itself, so there is
-  no dataset URL to guess and no checksum to compare against a typed number.
-
-**Every instrument degrades to a stated skip when its submodule is absent.**
-A plain `git clone` does not fetch one, and a contributor who never runs a
-benchmark should not meet a red gate. Pass `--require` to turn the skip into
-an exit 1 where a run genuinely must have the data.
+Existing LoCoMo instruments report a stated skip when the submodule is absent.
+A plain `git clone` does not fetch submodules. Pass `--require` to make missing
+required data a nonzero exit. New dataset instruments must retain that explicit
+availability contract and must not download data implicitly during tests.
 
 ## The rules an instrument here follows
+
+The strict temporal instrument is `npm run benchmark:temporal`. It registers
+46 Tangle-authored exact scenarios across memory, Node SQLite and Bun SQLite;
+missing adapters remain `not-implemented` rather than passing. Use `--require`
+to require both corpora, `--complete` to require every runtime case, and `--json`,
+`--md`, `--check` for deterministic artifacts. Its current results are generated
+in [TEMPORAL_BENCHMARK.md](../docs/TEMPORAL_BENCHMARK.md).
+
+`npm run benchmark:temporal:eval -- --require` runs the full cleaned-S keyless
+matrix in both knowledge profiles. Use `--json /tmp/temporal-eval.json --md
+docs/TEMPORAL_EVALUATION.md` to reproduce the [matched report](../docs/TEMPORAL_EVALUATION.md),
+or `--dry --json /tmp/temporal-plan.json` for the complete cold request plan.
+`--check` compares generated files. Reference embeddings are local hash-trigram-512;
+no key or environment file is loaded. The temporal default remains off while
+live quality or deployment costs are unmeasured. All rows retain failures and
+the original question denominator; whole-turn context trimming is counted.
+
+`npm run benchmark:longmemeval:roundtrip -- --require --backend sqlite --json
+/tmp/longmemeval-roundtrip.json` qualifies all 500 questions and both source views
+through actual SQLite; run the same script with Bun, or use `--backend memory`.
+The three normalized receipts must agree. Empty observed turns are preserved,
+but cannot provide a nonempty citation span. This source-persistence check has
+empty claim sets and no embeddings; it does not measure model QA quality.
+
+`npm run benchmark:longmemeval:qa` uses the keyless matrix by default. Its explicit
+`--live` and `--replay` modes require `--plan`, `--approval`, `--journal` and
+`--json` paths. First generate a dry plan with `--models <json>`: each extract,
+resolve, answer and judge role specifies its HTTPS chat-completions endpoint,
+model, input/output USD per million tokens and metadata identity. The approval
+document binds `planHash`, `runId`, `perRunRequests`, `campaignRequests` and
+`campaignUsd`. It represents a separately approved concrete spend plan; a plan
+file alone grants no authorization. Live execution also requires an explicit
+`--key-env NAME`. No `.env` file is loaded automatically. Journals and raw QA
+outputs must be ignored paths (such as `benchmark/cache/`) or temporary files.
+One exclusive journal lock covers the run; uncertain purchases are retained and
+never automatically rebought. Replay verifies request/reply hashes and refuses
+missing receipts without network. Scripted origin remains scripted. Paid evidence
+never changes the default without the complete registered statistical/cost gate.
+
+LoCoMo recall and QA envelopes optionally accept an independently registered
+`temporal` comparison created by `temporalLocomoComparison`. It binds dataset,
+source, metric, question/group pairs and bootstrap results. Canonical commands
+omit the block entirely and retain their original report bytes. The profile is
+`canonical-unanchored`: no evaluator annotation supplies a missing QA timestamp.
+
+`npm run benchmark:longmemeval:parity` runs the pinned official prompt and
+aggregation code over Tangle-authored fixtures with Python/numpy and no provider
+imports or requests. The QA scorer preserves upstream off-by-one tolerance and
+substring `yes` labels, with strict reply diagnostics reported separately.
+Retrieval exposes upstream any/all evidence recall and separately named session
+fraction/annotated-turn diagnostics. Abstentions are excluded from official
+retrieval, retained in QA, and overlap the six question types. Scripted labels
+qualify scorer semantics; they do not establish live judge accuracy.
 
 Inherited from jarenjs's harness, where each was learned by getting it wrong:
 

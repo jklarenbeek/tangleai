@@ -46,14 +46,16 @@ style.
    work is green — its Handoff section carries what a next session must
    know — under the gitignored name `CONVENTIONS.md` §3 fixes
    (`TODO_<PROGRAM>_NN_RECORD.md`), never a tracked path. Tick the order in
-   the router's status ledger.
+   the router's status ledger. Commit the reviewed, green work locally under
+   `CONVENTIONS.md` §5 and record the commit hash in both scratch artifacts.
 
 ## Operator conventions (binding)
 
-- Work lands on `main`, uncommitted, for human review. Never commit,
-  tag, push, or branch on your own initiative; the close-out protocol
-  in `CONVENTIONS.md` §5 runs only when the operator explicitly asks,
-  and what happens to an order after it lands is the operator's decision.
+- Each implemented, green work order lands as a local commit on `main`, using
+  the single-line message and author conventions in `CONVENTIONS.md` §5.
+  Continue subsequent orders within the operator's authorized campaign scope.
+  Version preparation, release closeout, tagging and pushing wait until the
+  entire campaign is implemented and green and closeout is authorized.
   Once closeout is requested, that protocol includes the version tag and both
   pushes by default; follow RELEASE.md through remote-ref confirmation without
   asking again. An explicit local-only request ends at the verified commit.

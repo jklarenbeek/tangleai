@@ -118,7 +118,26 @@ before it is believed.
   no "added in order 04". The source is the source of truth when prose
   disagrees; the prose is repaired, never the behavior invented.
 
-## 5. Close-out & commit protocol
+## 5. Work-order commits and campaign close-out
+
+Commit each implemented work order locally on `main` after its acceptance
+checklist, `npm run check` and applicable additional gates pass. Review the
+complete diff, update affected documentation, check whitespace and the desktop
+asset stub, and write the session record before committing. Stage only the
+reviewed changes; keep scratch files ignored and preserve unrelated author edits.
+Use the same author identity as release closeout (Joham
+`jklarenbeek@gmail.com`) and one single-line, present-tense message of at most
+72 characters, with
+no attribution footer, tool names, version numbers or scratch references.
+Record the resulting commit hash in the scratch record and router ledger.
+
+These local commits are checkpoints: they do not prepare a version, run release
+closeout, create tags or push any refs. Continue the next authorized order from
+the committed state. A failed gate leaves that order uncommitted until fixed and
+verified. Campaign release closeout starts only after the entire campaign is
+implemented and green, including its final documentation, measurements and
+scoped health review. Earlier authorization to close out when complete remains
+valid; do not request it again at each order or release step.
 
 The close-out protocol uses `npm run release:closeout` and the tag/push commands
 in [RELEASE.md](RELEASE.md). An operator request to run closeout authorizes the
@@ -129,7 +148,7 @@ requests a local-only closeout. Version preparation alone does not authorize
 tagging or pushing. Prepare a reviewable change, record its Changesets impact
 and update stale documentation first.
 
-1. Run `npm run release:prepare` before committing. The command updates every
+1. Run `npm run release:prepare` before the release commit. The command updates every
    workspace version and internal reference, the lockfile, changelogs and release
    record. Major release intent is refused. If fixes follow preparation, review
    them and run `npm run release:prepare -- --refresh` before closeout.
@@ -171,10 +190,15 @@ immutable for the life of the campaign: an executor who believes one is
 wrong records the conflict in the session record, and only the operator
 amends the router. Divergence from an order is recorded in the session
 record ("diverged: …why"). A conflict between an order and these
-conventions is a stop-and-ask, not a judgment call. Preflight is a clean
+conventions is recorded and resolved against the operator's existing instructions
+before asking for clarification; explicit operator instructions take precedence.
+Preflight is a clean
 tree: every pass and every order starts from `git status --porcelain`
 printing nothing (scratch does not count), so the work is one reviewable
-diff against a known commit. The standing rule — **no self-evolving
+diff against a known commit. If the operator has already authorized continuing
+an existing diff, record its starting state and ownership instead of asking to
+commit or stash it again. Never discard or silently include unrelated edits.
+The standing rule — **no self-evolving
 capability ships before the instrument that can call it an
 improvement** — outranks everything in this folder, including EVOLVE.md's
 ambitions; the instrument is the LoCoMo pair in `docs/`.

@@ -17,7 +17,8 @@
     "./package.json": "./package.json",
     "./policy": "./src/policy.ts",
     "./schemas/policy.schema.json": "./schemas/policy.schema.json",
-    "./schemas/policy.contract.json": "./schemas/policy.contract.json"
+    "./schemas/policy.contract.json": "./schemas/policy.contract.json",
+    "./temporal": "./src/temporal/index.ts"
   },
   "engines": {
     "node": ">=24"
@@ -27,7 +28,10 @@
     "@tangleai/core": "^0.25.1",
     "@jarenjs/core": "0.87.0",
     "@jarenjs/validate": "0.87.0",
-    "@tangleai/context": "^0.25.1"
+    "@tangleai/context": "^0.25.1",
+    "@jarenjs/json": "0.87.0",
+    "@tangleai/models": "^0.25.1",
+    "@jarenjs/locales": "0.87.0"
   },
   "private": false,
   "types": "./src/index.ts",

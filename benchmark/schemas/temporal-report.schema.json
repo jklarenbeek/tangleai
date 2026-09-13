@@ -1,0 +1,1327 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/temporal-report",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/conformance"
+    },
+    {
+      "$ref": "#/$defs/experiment"
+    },
+    {
+      "$ref": "#/$defs/experimentSummary"
+    }
+  ],
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        }
+      ]
+    },
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "success",
+            "refused",
+            "fallback"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "value": {
+          "$ref": "#/$defs/json"
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "claimIds",
+        "sourceIds",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "conformance": {
+      "type": "object",
+      "properties": {
+        "instrument": {
+          "const": "temporal-conformance-v1"
+        },
+        "fixtureHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fixtureCases": {
+          "type": "integer",
+          "minimum": 40
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "backend": {
+                "enum": [
+                  "memory",
+                  "node-sqlite",
+                  "bun-sqlite"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "measured",
+                  "not-implemented",
+                  "unavailable",
+                  "failed"
+                ]
+              },
+              "passed": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "expected": {
+                "$ref": "#/$defs/outcome"
+              },
+              "actual": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/outcome"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "detail": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "backend",
+              "id",
+              "description",
+              "status",
+              "passed",
+              "expected",
+              "actual",
+              "detail"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "notImplemented": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "planned",
+            "passed",
+            "failed",
+            "notImplemented",
+            "unavailable"
+          ],
+          "additionalProperties": false
+        },
+        "refusals": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "wrongControls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "caseId": {
+                "type": "string"
+              },
+              "rejected": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "caseId",
+              "rejected"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "liveRequests": {
+          "const": 0
+        },
+        "gate": {
+          "type": "object",
+          "properties": {
+            "instrumentPassed": {
+              "type": "boolean"
+            },
+            "implementationComplete": {
+              "type": "boolean"
+            },
+            "default": {
+              "const": "off"
+            }
+          },
+          "required": [
+            "instrumentPassed",
+            "implementationComplete",
+            "default"
+          ],
+          "additionalProperties": false
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "instrument",
+        "fixtureHash",
+        "fixtureCases",
+        "context",
+        "rows",
+        "counts",
+        "refusals",
+        "wrongControls",
+        "liveRequests",
+        "gate",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.counts.planned",
+              {
+                "$count": "$.rows[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.passed",
+              {
+                "$count": "$.rows[?(@.passed==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.failed",
+              {
+                "$count": "$.rows[?(@.passed==false)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.notImplemented",
+              {
+                "$count": "$.rows[?(@.status=='not-implemented')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.unavailable",
+              {
+                "$count": "$.rows[?(@.status=='unavailable')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gate.implementationComplete",
+              {
+                "$eq": [
+                  "$.counts.planned",
+                  "$.counts.passed"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.gate.instrumentPassed",
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.counts.failed",
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.wrongControls[?(@.rejected==true)]"
+                      },
+                      {
+                        "$count": "$.wrongControls[*]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "sourceHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "registrationHash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lme": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "available",
+                "unavailable"
+              ]
+            },
+            "qa": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "retrieval": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "futureGoldQuestions": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "qa",
+            "retrieval",
+            "futureGoldQuestions"
+          ],
+          "additionalProperties": false
+        },
+        "locomo": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "available",
+                "unavailable"
+              ]
+            },
+            "scorable": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "adversarial": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "anchoredQuestions": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "scorable",
+            "adversarial",
+            "anchoredQuestions"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "sourceHash",
+        "registrationHash",
+        "lme",
+        "locomo"
+      ],
+      "additionalProperties": false
+    },
+    "retrieval": {
+      "type": "object",
+      "properties": {
+        "eligible": {
+          "type": "boolean"
+        },
+        "recallAny": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recallAll": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sessionFractionRecall": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "annotatedTurnRecall": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "annotatedTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolvedCitations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "eligible",
+        "recallAny",
+        "recallAll",
+        "sessionFractionRecall",
+        "annotatedTurnRecall",
+        "annotatedTurns",
+        "unresolvedCitations"
+      ],
+      "additionalProperties": false
+    },
+    "matrixRow": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "enum": [
+            "legacy-default",
+            "timestamp-context-only",
+            "matched-pool-lane-off",
+            "observed-session-filter",
+            "validity-asof-on",
+            "full-kernel",
+            "oracle-evidence",
+            "oracle-window"
+          ]
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "unmeasured",
+            "refused",
+            "fallback"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selectedIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "poolIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trimmed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "retrieval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/retrieval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "row",
+        "status",
+        "reason",
+        "selectedIds",
+        "poolIds",
+        "bytes",
+        "trimmed",
+        "contextHash",
+        "retrieval"
+      ],
+      "additionalProperties": false
+    },
+    "keylessQuestion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "group": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fold": {
+          "enum": [
+            "development",
+            "confirmation"
+          ]
+        },
+        "type": {
+          "enum": [
+            "single-session-user",
+            "single-session-assistant",
+            "single-session-preference",
+            "multi-session",
+            "temporal-reasoning",
+            "knowledge-update"
+          ]
+        },
+        "abstention": {
+          "type": "boolean"
+        },
+        "profile": {
+          "enum": [
+            "provided-history",
+            "strict-as-of"
+          ]
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "emptyTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "futureGold": {
+          "type": "boolean"
+        },
+        "viewIdentity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/matrixRow"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "group",
+        "fold",
+        "type",
+        "abstention",
+        "profile",
+        "occurrences",
+        "emptyTurns",
+        "futureGold",
+        "viewIdentity",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "metric": {
+      "type": "object",
+      "properties": {
+        "qaQuestions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrievalQuestions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "measuredRetrieval": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recallAny": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recallAll": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sessionFractionRecall": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "qaQuestions",
+        "retrievalQuestions",
+        "measuredRetrieval",
+        "recallAny",
+        "recallAll",
+        "sessionFractionRecall"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "enum": [
+            "provided-history",
+            "strict-as-of"
+          ]
+        },
+        "fold": {
+          "enum": [
+            "all",
+            "development",
+            "confirmation"
+          ]
+        },
+        "row": {
+          "enum": [
+            "legacy-default",
+            "timestamp-context-only",
+            "matched-pool-lane-off",
+            "observed-session-filter",
+            "validity-asof-on",
+            "full-kernel",
+            "oracle-evidence",
+            "oracle-window"
+          ]
+        },
+        "questionIdentity": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "groups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "abstentions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "futureGoldQuestions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "emptyTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "measured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmeasured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fallback": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trimmed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrieval": {
+          "$ref": "#/$defs/metric"
+        },
+        "byType": {
+          "type": "object",
+          "properties": {
+            "single-session-user": {
+              "$ref": "#/$defs/metric"
+            },
+            "single-session-assistant": {
+              "$ref": "#/$defs/metric"
+            },
+            "single-session-preference": {
+              "$ref": "#/$defs/metric"
+            },
+            "multi-session": {
+              "$ref": "#/$defs/metric"
+            },
+            "temporal-reasoning": {
+              "$ref": "#/$defs/metric"
+            },
+            "knowledge-update": {
+              "$ref": "#/$defs/metric"
+            }
+          },
+          "required": [
+            "single-session-user",
+            "single-session-assistant",
+            "single-session-preference",
+            "multi-session",
+            "temporal-reasoning",
+            "knowledge-update"
+          ],
+          "additionalProperties": false
+        },
+        "failures": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "qaAccuracy": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "profile",
+        "fold",
+        "row",
+        "questionIdentity",
+        "groups",
+        "questions",
+        "abstentions",
+        "futureGoldQuestions",
+        "occurrences",
+        "emptyTurns",
+        "measured",
+        "unmeasured",
+        "refused",
+        "fallback",
+        "trimmed",
+        "contextBytes",
+        "retrieval",
+        "byType",
+        "failures",
+        "qaAccuracy"
+      ],
+      "additionalProperties": false
+    },
+    "planSummary": {
+      "type": "object",
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profileCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalRequestsMaximum": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputByteTokenCeiling": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outputTokenCeiling": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingLogicalItems": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingPhysicalBatches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blockedSources": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "roleRequests": {
+          "type": "object",
+          "properties": {
+            "extract": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resolve": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answer": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "judge": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "embedding": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "extract",
+            "resolve",
+            "answer",
+            "judge",
+            "embedding"
+          ],
+          "additionalProperties": false
+        },
+        "worstCaseUsd": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "eligibleForApproval": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sha256",
+        "questions",
+        "profileCases",
+        "sourceOccurrences",
+        "physicalRequestsMaximum",
+        "inputByteTokenCeiling",
+        "outputTokenCeiling",
+        "embeddingLogicalItems",
+        "embeddingPhysicalBatches",
+        "blockedSources",
+        "roleRequests",
+        "worstCaseUsd",
+        "eligibleForApproval"
+      ],
+      "additionalProperties": false
+    },
+    "experiment": {
+      "type": "object",
+      "properties": {
+        "instrument": {
+          "const": "temporal-experiment-v1"
+        },
+        "origin": {
+          "const": "keyless"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "registrationHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/keylessQuestion"
+          }
+        },
+        "summaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/summary"
+          }
+        },
+        "plan": {
+          "$ref": "#/$defs/planSummary"
+        },
+        "strict": {
+          "type": "object",
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "notImplemented": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "planned",
+            "passed",
+            "failed",
+            "unavailable",
+            "notImplemented"
+          ],
+          "additionalProperties": false
+        },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "questions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "profileCases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "plannedRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "measuredRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unmeasuredRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refusedRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fallbackRows": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "questions",
+            "profileCases",
+            "plannedRows",
+            "measuredRows",
+            "unmeasuredRows",
+            "refusedRows",
+            "fallbackRows"
+          ],
+          "additionalProperties": false
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "default": {
+          "const": "off"
+        },
+        "liveQuality": {
+          "const": "unmeasured"
+        },
+        "liveCost": {
+          "const": "unmeasured"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "instrument",
+        "origin",
+        "context",
+        "registrationHash",
+        "questionRows",
+        "summaries",
+        "plan",
+        "strict",
+        "counts",
+        "physicalRequests",
+        "default",
+        "liveQuality",
+        "liveCost",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "experimentSummary": {
+      "type": "object",
+      "properties": {
+        "instrument": {
+          "const": "temporal-experiment-v1"
+        },
+        "origin": {
+          "const": "keyless"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "registrationHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "summaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/summary"
+          }
+        },
+        "plan": {
+          "$ref": "#/$defs/planSummary"
+        },
+        "strict": {
+          "type": "object",
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unavailable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "notImplemented": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "planned",
+            "passed",
+            "failed",
+            "unavailable",
+            "notImplemented"
+          ],
+          "additionalProperties": false
+        },
+        "counts": {
+          "type": "object",
+          "properties": {
+            "questions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "profileCases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "plannedRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "measuredRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unmeasuredRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refusedRows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fallbackRows": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "questions",
+            "profileCases",
+            "plannedRows",
+            "measuredRows",
+            "unmeasuredRows",
+            "refusedRows",
+            "fallbackRows"
+          ],
+          "additionalProperties": false
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "default": {
+          "const": "off"
+        },
+        "liveQuality": {
+          "const": "unmeasured"
+        },
+        "liveCost": {
+          "const": "unmeasured"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionRowsHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "instrument",
+        "origin",
+        "context",
+        "registrationHash",
+        "summaries",
+        "plan",
+        "strict",
+        "counts",
+        "physicalRequests",
+        "default",
+        "liveQuality",
+        "liveCost",
+        "sha256",
+        "questionRowsHash"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

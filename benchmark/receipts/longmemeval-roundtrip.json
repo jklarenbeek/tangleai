@@ -1,0 +1,46 @@
+{
+  "backends": [
+    "memory",
+    "node-sqlite",
+    "bun-sqlite"
+  ],
+  "instrument": "longmemeval-source-roundtrip-v1",
+  "questions": 500,
+  "profileCases": 1000,
+  "passed": 1000,
+  "failed": 0,
+  "counts": {
+    "provided-history": {
+      "questions": 500,
+      "occurrences": 246750,
+      "claims": 0,
+      "scopeProbes": 500,
+      "types": {
+        "single-session-user": 70,
+        "single-session-assistant": 56,
+        "single-session-preference": 30,
+        "multi-session": 133,
+        "temporal-reasoning": 133,
+        "knowledge-update": 78
+      }
+    },
+    "strict-as-of": {
+      "questions": 500,
+      "occurrences": 231575,
+      "claims": 0,
+      "scopeProbes": 499,
+      "types": {
+        "single-session-user": 70,
+        "single-session-assistant": 56,
+        "single-session-preference": 30,
+        "multi-session": 133,
+        "temporal-reasoning": 133,
+        "knowledge-update": 78
+      }
+    }
+  },
+  "writes": 249750,
+  "activations": 1000,
+  "sha256": "621246b8ac3345c8e9605578e2e55af814c1bc554ec7107206049761bfe8ca52",
+  "limits": "Source occurrence, knowledge-view, immutable projection and scope qualification. Empty host-asserted claim sets and no embeddings are deliberate. This does not measure extraction, retrieval quality or model QA accuracy."
+}

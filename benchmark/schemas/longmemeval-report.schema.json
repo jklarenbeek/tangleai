@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/longmemeval-report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "instrument",
+    "source",
+    "files",
+    "census",
+    "registration",
+    "denominators",
+    "discrepancies"
+  ],
+  "properties": {
+    "status": {
+      "const": "measured"
+    },
+    "instrument": {
+      "const": "longmemeval-census-v1"
+    },
+    "source": {
+      "type": "object"
+    },
+    "files": {
+      "type": "object"
+    },
+    "registration": {
+      "type": "object",
+      "required": [
+        "sha256",
+        "groups",
+        "folds",
+        "controls"
+      ]
+    },
+    "census": {
+      "type": "object",
+      "required": [
+        "questions",
+        "uniqueQuestions",
+        "sessions",
+        "turns",
+        "types",
+        "abstentions",
+        "stringAnswers",
+        "integerAnswers",
+        "hasAnswerFields",
+        "hasAnswerTrue",
+        "hasAnswerFalse",
+        "emptyTurns"
+      ],
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "properties": {
+        "types": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "emptyTurns": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.questions",
+              "$.uniqueQuestions"
+            ]
+          },
+          {
+            "$eq": [
+              "$.questions",
+              {
+                "$add": [
+                  "$.stringAnswers",
+                  "$.integerAnswers"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.questions",
+              {
+                "$sum": "$.types.*"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.hasAnswerFields",
+              {
+                "$add": [
+                  "$.hasAnswerTrue",
+                  "$.hasAnswerFalse"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "denominators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qa",
+        "retrieval",
+        "profiles"
+      ],
+      "properties": {
+        "qa": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrieval": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "questions",
+              "sessions",
+              "inaccessibleGoldSessions",
+              "inaccessibleGoldQuestions"
+            ],
+            "properties": {
+              "name": {
+                "enum": [
+                  "provided-history",
+                  "strict-as-of"
+                ]
+              },
+              "questions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sessions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "inaccessibleGoldSessions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "inaccessibleGoldQuestions": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "discrepancies": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          "$.denominators.qa",
+          "$.census.questions"
+        ]
+      },
+      {
+        "$eq": [
+          "$.census.questions",
+          {
+            "$add": [
+              "$.denominators.retrieval",
+              "$.census.abstentions"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.census.questions",
+          {
+            "$sum": "$.registration.folds[*].questions"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.denominators.profiles[0].questions",
+          "$.census.questions"
+        ]
+      },
+      {
+        "$eq": [
+          "$.denominators.profiles[1].questions",
+          "$.census.questions"
+        ]
+      },
+      {
+        "$eq": [
+          "$.denominators.profiles[0].sessions",
+          "$.census.sessions"
+        ]
+      },
+      {
+        "$eq": [
+          "$.census.sessions",
+          {
+            "$add": [
+              "$.denominators.profiles[1].sessions",
+              "$.census.futureSessions"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.denominators.profiles[1].inaccessibleGoldQuestions",
+          "$.census.futureGoldQuestions"
+        ]
+      }
+    ]
+  }
+}

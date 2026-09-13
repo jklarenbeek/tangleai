@@ -7,8 +7,9 @@ acceptance names — plus what was decided, what was left, and what the next
 session must know. Campaigns keep it as the gitignored
 `TODO_<PROGRAM>_NN_RECORD.md` beside the order (`../CONVENTIONS.md` §3); the
 router's status ledger is updated in the same session. The record is not the
-commit message: the operator decides whether and when a commit happens, and
-writes that message from the record when it does.
+commit message: the executor commits each implemented, green order locally under
+`../CONVENTIONS.md` §5 and records that commit here. Versioned release closeout,
+tagging and pushing wait for the entire campaign to be implemented and green.
 
 ## The template
 
@@ -48,6 +49,13 @@ fail / skipped; `npm run skeleton` when the order named it; each
 instrument the order named with the figure it printed and whether the
 committed document was regenerated; the e2e or the binary smoke when
 the order touched a surface. Numbers, never "all green".>
+
+## Commit receipt
+
+<Local commit hash, author and single-line message; gate commands and exit codes
+above apply to its reviewed source. No version preparation, tag or push for an
+intermediate order. For final campaign release, also record the release commit,
+annotated tag, remote-ref verification and CI/deployment outcomes separately.>
 
 ## Open issues
 

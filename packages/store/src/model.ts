@@ -27,12 +27,14 @@
  */
 
 import type { JsonSchema } from '@tangleai/core/schemas/memory';
+import { TEMPORAL_COLLECTIONS } from './temporal-model.ts';
 
 const ID: JsonSchema = { type: 'string', minLength: 1 };
 
 export const TANGLE_DB_MODEL = {
   $model: '0.1',
   collections: {
+    ...TEMPORAL_COLLECTIONS,
     outcome_records: {
       schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
       key: '/id',

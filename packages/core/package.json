@@ -11,14 +11,17 @@
     "./clustering": "./src/clustering.ts",
     "./tokens": "./src/tokens.ts",
     "./schemas/memory": "./src/schemas/memory.ts",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./schemas/temporal": "./src/schemas/temporal.ts",
+    "./schemas/temporal.schema.json": "./schemas/temporal.schema.json"
   },
   "engines": {
     "node": ">=24"
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/context": "^0.25.1"
+    "@tangleai/context": "^0.25.1",
+    "@jarenjs/validate": "0.87.0"
   },
   "private": false,
   "types": "./src/index.ts",

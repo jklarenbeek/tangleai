@@ -1,0 +1,78 @@
+[
+  {
+    "runtime": "node",
+    "version": "v24.20.0",
+    "platform": "linux/x64",
+    "corpus": {
+      "occurrences": 10000,
+      "claims": 10000,
+      "series": 100,
+      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+    },
+    "setup": {
+      "corpusPreparationMs": 3990.235477,
+      "openMs": 16.595197999999982,
+      "activationMs": 2902.3031730000002,
+      "writes": 20003
+    },
+    "queries": [
+      {
+        "shape": "observed-range",
+        "coldQueryMs": 6.321234000000004,
+        "warm": {
+          "repetitions": 25,
+          "p50Ms": 0.49088300000039453,
+          "p95Ms": 0.6851239999996324
+        }
+      },
+      {
+        "shape": "claim-asof",
+        "coldQueryMs": 1.536576999999852,
+        "warm": {
+          "repetitions": 25,
+          "p50Ms": 0.86821400000008,
+          "p95Ms": 0.9668879999999263
+        }
+      }
+    ],
+    "limits": "Synthetic in-memory SQLite on this host; query timing includes explain and telemetry. Cold means first query on an already prepared store. No universal latency or model quality claim."
+  },
+  {
+    "runtime": "bun",
+    "version": "1.4.0",
+    "platform": "linux/x64",
+    "corpus": {
+      "occurrences": 10000,
+      "claims": 10000,
+      "series": 100,
+      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+    },
+    "setup": {
+      "corpusPreparationMs": 5581.957068,
+      "openMs": 14.815488000000187,
+      "activationMs": 4935.398327999999,
+      "writes": 20003
+    },
+    "queries": [
+      {
+        "shape": "observed-range",
+        "coldQueryMs": 8.233659999999873,
+        "warm": {
+          "repetitions": 25,
+          "p50Ms": 0.836966000000757,
+          "p95Ms": 1.5142560000003868
+        }
+      },
+      {
+        "shape": "claim-asof",
+        "coldQueryMs": 1.953401999999187,
+        "warm": {
+          "repetitions": 25,
+          "p50Ms": 1.1687629999996716,
+          "p95Ms": 1.7137260000017704
+        }
+      }
+    ],
+    "limits": "Synthetic in-memory SQLite on this host; query timing includes explain and telemetry. Cold means first query on an already prepared store. No universal latency or model quality claim."
+  }
+]

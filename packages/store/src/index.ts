@@ -32,3 +32,8 @@ export type {
   MasWorker,
   RegionCheckpointStore,
 } from './mas-jobs.ts';
+
+export { createTemporalDbStore, createTemporalDbPersistence, inspectTemporalSeek, temporalSeekDocument, selectTemporalDbAsOf } from './temporal-store.ts';
+export type { TemporalDbOptions, TemporalSeek } from './temporal-store.ts';
+export { backfillTemporalBatch } from './temporal-backfill.ts';
+export type { TemporalBackfillOptions } from './temporal-backfill.ts';

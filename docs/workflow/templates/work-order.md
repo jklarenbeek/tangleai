@@ -61,6 +61,9 @@ the expected-vs-actual output.>
       order names (`npm run skeleton`, an instrument, the e2e).
 - [ ] Session record written (`TODO_<PROGRAM>_NN_RECORD.md`); router
       ledger updated.
+- [ ] Reviewed green work committed locally on `main` under the single-line
+      conventions; commit hash recorded in the record and ledger. Version
+      preparation, release closeout, tag and push wait for full campaign completion.
 ```
 
 ## A real one, reconstructed

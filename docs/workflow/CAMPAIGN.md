@@ -86,8 +86,10 @@ router's ledger is checked for unexecuted orders whose intent must first move to
 
 1. **The working tree is clean** — `git status --porcelain` prints nothing. A
    campaign that begins on top of unrelated in-flight work cannot be reviewed as a
-   sequence of clean diffs. If the tree is dirty, say so and ask the operator to
-   commit or stash first. (Gitignored scratch does not count — the command already
+   sequence of clean diffs. If the operator has authorized continuing an existing
+   diff, record that starting state and preserve unrelated edits. Otherwise resolve
+   ownership before proceeding; never silently commit or stash another author's work.
+   (Gitignored scratch does not count — the command already
    ignores it. The `benchmark/locomo` submodule counts: a stray file inside it is
    dirt.)
 2. **No other campaign is in flight**, or the interaction is stated in the router.
@@ -218,8 +220,8 @@ Every answer becomes a **D-number** in the router. That is the point of asking.
    retiring or narrowing its roadmap entry, publishing measurements, and
    documenting capability.
 9. **The status ledger** — a checklist, one line per order, updated as records
-   land: `- [x] TODO_<PROGRAM>_01 — <title> (DONE <date>, commit <hash> |
-   uncommitted on master)`. The router is the single place progress lives.
+   land: `- [x] TODO_<PROGRAM>_01 — <title> (DONE <date>, local commit <hash>)`.
+   The router is the single place progress lives.
 
 An **append-only discoveries section** after the ledger is allowed, and
 recommended for a campaign that expects its premises to move: an order that
@@ -306,9 +308,10 @@ embedder or a threshold moves the baseline row it is measured against.
 - **Deliver something visible early.** The smallest order with a user-facing
   effect is a good `01`: it proves the campaign's plumbing and gives the operator
   something to review.
-- **Long campaigns take phases.** Group orders into phases with a **close-out
-  order at each boundary** that proves the phase whole — docs, benchmarks, gates
-  — rather than trailing loose ends into the next phase.
+- **Long campaigns take phases.** Group orders into phases with a checkpoint
+  that proves the phase whole — docs, benchmarks, gates and local commits.
+  Phase completion does not authorize a versioned closeout, tag or push; those
+  wait for the complete campaign to be implemented and green.
 - **A reserved order is allowed** — numbered, written, and explicitly marked not
   scheduled — when a campaign wants to prove its model generalizes without
   committing to build it now.
@@ -332,7 +335,7 @@ embedder or a threshold moves the baseline row it is measured against.
 
 Every order obeys [`CONVENTIONS.md`](CONVENTIONS.md) — the repo model (§1), the
 gates by exit code with numbers in the record (§2), the documentation rules (§4),
-the clean-tree preflight and the uncommitted-for-review rule (§5, §6) — and the
+the clean-tree preflight and local green work-order commits (§5, §6) — and the
 router says so once. Three rules are campaign-specific enough to state here:
 
 - **No redundancy, enforced during the campaign.** A campaign is where duplication
@@ -370,24 +373,30 @@ campaign that re-measures regenerates the documents through the instruments, and
 
 1. Author the router (§"The router") and every order (`templates/work-order.md`).
    Settle the D-numbers there, once. Register the campaign in the local `TODO.md`
-   index. Hand the campaign to the operator for review **before** executing.
+   index. Hand the campaign to the operator for review before executing unless
+   the operator has already authorized both authoring and execution. In that
+   case, publish the concrete plan and proceed within the authorized scope;
+   resolve only genuinely undecided constraints before dependent work.
 2. Per order: a fresh session holding [`BOOTSTRAP.md`](BOOTSTRAP.md), the router
    and that order. It executes, proves the gates, writes the session record,
    updates the router's status ledger; the record's Handoff section carries what
    must cross the session boundary.
-3. **Work lands on `master`, uncommitted, for review.** No executor commits, tags,
-   pushes or branches on its own initiative. No `PROGRESS*.md` is created for a
-   run — the session record and, later, the commit message carry the summary.
-4. The operator reviews and decides: run the close-out (CONVENTIONS §5), re-scope,
-   park, or abandon. Every one of those is a legitimate outcome of an order, and
-   only the operator picks.
+3. **Commit each implemented, green work order locally on `main`.** Review the
+   diff, use the author and single-line message conventions in CONVENTIONS §5,
+   and record the hash in the session record and ledger. Do not bump versions,
+   tag or push at intermediate orders. No `PROGRESS*.md` is created for a run.
+4. Continue the next order within the operator's authorized campaign scope.
+   Re-scoping, parking or abandoning remains the operator's decision. Once the
+   entire campaign is implemented and green, perform authorized release closeout
+   under CONVENTIONS §5; existing conditional authorization remains valid.
 
 ## Close-out & commit protocol
 
-Per order, and only when the operator explicitly asks, run
-[`CONVENTIONS.md`](CONVENTIONS.md) §5 unchanged. `git add -A` stages the work —
-confirm the gitignored campaign files are excluded, never force-add them. An order
-that releases follows [`RELEASE.md`](RELEASE.md) on top.
+Follow [`CONVENTIONS.md`](CONVENTIONS.md) §5 for each local green work-order
+commit. Stage the reviewed changes, confirm scratch files remain ignored and
+never force-add them. Only full campaign completion permits the authorized
+versioned closeout, annotated tag and remote pushes in [`RELEASE.md`](RELEASE.md).
+Record work-order commits separately from the final release receipt.
 
 ## Acceptance checklist — for the authoring pass
 
@@ -440,15 +449,15 @@ that releases follows [`RELEASE.md`](RELEASE.md) on top.
 
 ## Out of scope
 
-- Executing orders while authoring. Authoring produces the plan; the operator
-  reviews it before any code moves.
-- Committing, tagging, pushing or deploying on the campaign's own initiative.
+- Executing before the full campaign is authored or without execution authorization.
+- Version preparation, release closeout, tagging or pushing before the complete
+  campaign is implemented and green. Local green work-order commits are required.
 - Creating a `PROGRESS*.md`, or any scratch planning file beyond the index, the
   router, the orders and the session records.
 - Amending a D-number from inside an order.
 - Widening a campaign mid-flight. New work found while executing goes to the
   roadmap or to a new numbered order — never into an order already under way.
-- Deciding what happens after an order lands. That is the operator's.
+- Expanding the operator's authorized scope after an order lands.
 
 ```json
 {
@@ -459,10 +468,10 @@ that releases follows [`RELEASE.md`](RELEASE.md) on top.
     { "id": "measure", "needs": ["preflight"], "run": "re-derive every number from a run; audit the suite (BOUNDARY §what-the-suite-has); scoped HEALTH hunt", "pass": "baseline table dated + runtime + three quirk lists" },
     { "id": "forks", "needs": ["measure"], "run": "put every campaign-shaping fork to the operator", "pass": "each answer is a D-number" },
     { "id": "author", "needs": ["forks"], "run": "router (nine sections) + TODO_<PROGRAM>_NN.md orders per templates/work-order.md; register in local TODO.md", "pass": "authoring checklist all ticked" },
-    { "id": "review", "needs": ["author"], "run": "operator reviews the plan before any code moves" },
+    { "id": "review", "needs": ["author"], "run": "publish concrete plan; confirm execution falls within existing operator authorization or obtain missing authorization" },
     { "id": "execute", "needs": ["review"], "run": "per order: fresh session with BOOTSTRAP.md + router + order; npm run check between batches; measurement recorded; session record; ledger ticked", "pass": "acceptance checklist, gate exit==0, number recorded" },
-    { "id": "decide", "needs": ["execute"], "run": "operator: close-out (CONVENTIONS §5) | re-scope | park | abandon" },
-    { "id": "close-out", "needs": ["decide"], "run": "last order: ROADMAP entry retired/narrowed, docs, measurements regenerated, pins extended, scoped HEALTH hunt", "pass": "finished-campaign checklist all ticked" }
+    { "id": "commit-order", "needs": ["execute"], "run": "review and commit each green order locally on main; record hash; continue authorized orders", "pass": "single-line commit, no version preparation, tag or push" },
+    { "id": "close-out", "needs": ["commit-order"], "run": "after all orders: ROADMAP entry retired/narrowed, docs, measurements regenerated, pins extended, scoped HEALTH hunt; authorized CONVENTIONS §5 release closeout", "pass": "finished-campaign checklist all ticked; release commit/tag/remote refs and CI outcomes recorded" }
   ]
 }
 ```

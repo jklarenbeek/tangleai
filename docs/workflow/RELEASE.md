@@ -8,6 +8,15 @@ zero until an intentional, reviewed policy change enables a stable public API.
 
 ## Prepare before pushing
 
+During a campaign, commit each implemented and green work order locally under
+[CONVENTIONS.md §5](CONVENTIONS.md#5-work-order-commits-and-campaign-close-out).
+These checkpoints retain the current development version and stay local. Run
+the versioned release protocol below only after the complete campaign passes
+its acceptance checks, final measurements, documentation and health review.
+The release commit follows the work-order commits and the final push includes
+them together. Authorization to close out when the campaign is complete covers
+this sequence; npm publication remains a separate manual author action.
+
 The current checkout consumes Jaren 0.87.0 registry packages. The
 [registry receipt](../integration/jaren-0.87.0-registry.json) verifies downloaded
 archives against the exact lock. Archived 0.84.3 migration receipts retain their

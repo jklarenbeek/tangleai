@@ -1,0 +1,188 @@
+[
+  {
+    "runtime": "node",
+    "version": "v24.20.0",
+    "corpus": {
+      "occurrences": 10000,
+      "claims": 10000,
+      "series": 100,
+      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+    },
+    "rows": [
+      {
+        "shape": "observed-range",
+        "plan": {
+          "mode": "native",
+          "operation": "range",
+          "index": "temporal_occurrences_by_scope_observed",
+          "prefix": [
+            "gx_scope"
+          ],
+          "range": {
+            "column": "gx_observedAtEpochMs",
+            "from": 5000,
+            "fromOp": "ge",
+            "to": 5100,
+            "toOp": "lt"
+          },
+          "seeks": [],
+          "ladder": null,
+          "aggregates": [],
+          "refinement": null,
+          "reasons": [],
+          "counts": {
+            "statements": 1,
+            "candidates": 100,
+            "results": 100,
+            "partial": false
+          }
+        },
+        "stats": {
+          "queries": 1,
+          "statements": 1,
+          "candidates": 100,
+          "results": 100,
+          "diverted": 0
+        },
+        "returnedCandidates": 100,
+        "refined": 0,
+        "finalResults": 100
+      },
+      {
+        "shape": "claim-asof",
+        "plan": {
+          "mode": "native",
+          "operation": "asof",
+          "index": "temporal_claims_by_scope_version_series_at",
+          "prefix": [
+            "gx_scope",
+            "gx_versionId",
+            "gx_subject",
+            "gx_series"
+          ],
+          "range": {
+            "column": "gx_validFromEpochMs",
+            "from": null,
+            "fromOp": null,
+            "to": 9950,
+            "toOp": "le"
+          },
+          "seeks": [],
+          "ladder": null,
+          "aggregates": [],
+          "refinement": null,
+          "reasons": [],
+          "counts": {
+            "statements": 1,
+            "candidates": 100,
+            "results": 100,
+            "partial": false
+          }
+        },
+        "stats": {
+          "queries": 1,
+          "statements": 1,
+          "candidates": 100,
+          "results": 100,
+          "diverted": 0
+        },
+        "returnedCandidates": 100,
+        "refined": 99,
+        "finalResults": 1
+      }
+    ]
+  },
+  {
+    "runtime": "bun",
+    "version": "1.4.0",
+    "corpus": {
+      "occurrences": 10000,
+      "claims": 10000,
+      "series": 100,
+      "versionId": "18125adc81b9df606fe201667d1b68928e5d0d4b3cb3fb95cda5fac76f47ed73"
+    },
+    "rows": [
+      {
+        "shape": "observed-range",
+        "plan": {
+          "mode": "native",
+          "operation": "range",
+          "index": "temporal_occurrences_by_scope_observed",
+          "prefix": [
+            "gx_scope"
+          ],
+          "range": {
+            "column": "gx_observedAtEpochMs",
+            "from": 5000,
+            "fromOp": "ge",
+            "to": 5100,
+            "toOp": "lt"
+          },
+          "seeks": [],
+          "ladder": null,
+          "aggregates": [],
+          "refinement": null,
+          "reasons": [],
+          "counts": {
+            "statements": 1,
+            "candidates": 100,
+            "results": 100,
+            "partial": false
+          }
+        },
+        "stats": {
+          "queries": 1,
+          "statements": 1,
+          "candidates": 100,
+          "results": 100,
+          "diverted": 0
+        },
+        "returnedCandidates": 100,
+        "refined": 0,
+        "finalResults": 100
+      },
+      {
+        "shape": "claim-asof",
+        "plan": {
+          "mode": "native",
+          "operation": "asof",
+          "index": "temporal_claims_by_scope_version_series_at",
+          "prefix": [
+            "gx_scope",
+            "gx_versionId",
+            "gx_subject",
+            "gx_series"
+          ],
+          "range": {
+            "column": "gx_validFromEpochMs",
+            "from": null,
+            "fromOp": null,
+            "to": 9950,
+            "toOp": "le"
+          },
+          "seeks": [],
+          "ladder": null,
+          "aggregates": [],
+          "refinement": null,
+          "reasons": [],
+          "counts": {
+            "statements": 1,
+            "candidates": 100,
+            "results": 100,
+            "partial": false
+          }
+        },
+        "stats": {
+          "queries": 1,
+          "statements": 1,
+          "candidates": 100,
+          "results": 100,
+          "diverted": 0
+        },
+        "returnedCandidates": 100,
+        "refined": 99,
+        "finalResults": 1
+      }
+    ]
+  }
+]

@@ -4,6 +4,10 @@ Process lives here; product documentation lives one level up in `docs/`
 (`ARCHITECTURE.md`, `BOUNDARY.md`, `ROADMAP.md`, `PAPERS.md`, the benchmark
 documents).
 
+Each implemented, green work order receives a local commit. Versioned closeout,
+tagging and pushing wait for the complete campaign to be implemented and green;
+the authoritative sequence is [CONVENTIONS.md §5](CONVENTIONS.md#5-work-order-commits-and-campaign-close-out).
+
 This is jarenjs's `docs/workflow/` re-derived for a smaller, younger repo —
 the same spine (rules once → build → tidy → ship), the same campaign model
 (a gitignored router that settles decisions once, self-contained orders, a
