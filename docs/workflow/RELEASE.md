@@ -136,6 +136,10 @@ SQLite persistence and HTML extraction. A TypeScript consumer checks declaration
 with `skipLibCheck: false`; a browser bundle exercises the supported core, memory
 and pipeline surface. JSON import attributes are preserved in emitted declarations.
 The CI matrix includes Linux, Windows and the minimum supported Node 24 runtime.
+Development prompt discovery normalizes native path separators before excluding
+unsupported packs or selecting stage schemas. Artifact generation and GMPL
+source receipts share that inventory; benchmark manifests hash canonical
+repository paths independently of the host filesystem separator.
 
 The publisher requires these exact verified tarballs. A modified archive or stale
 verification receipt is refused. Generated files remain uncommitted; the tracked

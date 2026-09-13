@@ -8,7 +8,7 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 
 const exec = promisify(execFile);
 export async function sourceManifest(root: string, paths: readonly string[], roots: readonly string[] = []) {
-  const names = new Set(paths);
+  const names = new Set(paths.map(path => path.replaceAll('\\', '/')));
   async function scan(dir: string): Promise<void> {
     for (const entry of await readdir(join(root, dir), { withFileTypes: true })) {
       const path = `${dir}/${entry.name}`;
@@ -16,7 +16,7 @@ export async function sourceManifest(root: string, paths: readonly string[], roo
       else if (/\.(ts|json)$/.test(entry.name)) names.add(path);
     }
   }
-  for (const dir of roots) await scan(dir);
+  for (const dir of roots) await scan(dir.replaceAll('\\', '/'));
   const head = (await exec('git', ['rev-parse', 'HEAD'], { cwd: root })).stdout.trim();
   const clean = (await exec('git', ['status', '--porcelain'], { cwd: root })).stdout.trim() === '';
   const files = await Promise.all([...names].sort().map(async path => ({ path,
