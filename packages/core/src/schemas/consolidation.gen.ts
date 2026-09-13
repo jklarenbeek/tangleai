@@ -234,6 +234,53 @@ export interface ConsolidationRunRequest {
 }
 
 
+export interface ConsolidationTriggerPolicy {
+  enabled: boolean;
+  tier: "deterministic" | "semantic" | "combined";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  countThreshold: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  intervalMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  cooldownMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxPending: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxBatchSources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=9007199254740991
+   */
+  maxQueue: number;
+}
+
+
+export interface ConsolidationTriggerRequest {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  key: string;
+  trigger: "manual" | "count" | "time";
+}
+
+
 export interface ConsolidationResolutionAnyOf1 {
   stopped: true;
   /**
@@ -446,6 +493,10 @@ export interface ConsolidationBuffer {
    * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
    */
   completedAt: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=9007199254740991
+   */
+  pendingSince?: number | null;
 }
 
 

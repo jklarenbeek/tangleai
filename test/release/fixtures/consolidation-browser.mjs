@@ -1,5 +1,5 @@
 import { createConsolidationMemoryStore, createConsolidationSource, planDeterministicConsolidation,
-  createConsolidationLexicalIndex, createConsolidationExecutor } from '@tangleai/memory/consolidation';
+  createConsolidationLexicalIndex, createConsolidationExecutor, createConsolidationRunner, createConsolidationOperations } from '@tangleai/memory/consolidation';
 import { validateConsolidationShape } from '@tangleai/core/schemas/consolidation';
 const ensure = (condition, message) => { if (!condition) throw new Error(message); };
 const must = result => { if (result.status !== 'success') throw new Error(`${result.reason}: ${result.detail}`); return result.value; };
@@ -41,5 +41,19 @@ export async function qualifyConsolidation(store = createConsolidationMemoryStor
   const synthesizedReplay = await executor.execute(synthesisRequest);
   ensure(synthesizedReplay.status === 'success' && synthesizedReplay.accounting.invoked === 0, 'installed staged replay is zero-call');
   ensure(calls === (delivery.admitted === 0 ? 0 : 2), 'reopen preserves completed callbacks');
+  const queuedSource = must(await createConsolidationSource({ scope: 'installed-trigger', key: 'arrival', sequence: 0, snapshot }));
+  const runner = createConsolidationRunner({ store, policy: { enabled: true }, now: () => 2000 });
+  const operations = createConsolidationOperations(runner);
+  try {
+    const invalid = await operations.invoke('consolidation.run', { scope: queuedSource.scope, key: 'bad', trigger: 'manual', unexpected: 1 });
+    ensure(!invalid.ok && invalid.error.code === 'JC2050', 'installed contract rejects before effects');
+    const admitted = await operations.invoke('consolidation.enqueue', { sources: [queuedSource] });
+    ensure(admitted.ok && admitted.value.status === 'success', 'installed contract queues exact source');
+    const triggered = await operations.invoke('consolidation.run', { scope: queuedSource.scope, key: 'manual', trigger: 'manual' });
+    ensure(triggered.ok && triggered.value.status === 'success', 'installed host trigger activates');
+    const replayed = await operations.invoke('consolidation.run', { scope: queuedSource.scope, key: 'manual', trigger: 'count' });
+    ensure(replayed.ok && replayed.value.status === 'success' && replayed.value.value.writes === 0, 'installed trigger replay is zero-write');
+    ensure(must(await store.snapshot(queuedSource.scope)).buffer.completedAt === 2000, 'completion time is durable');
+  } finally { await operations.close(); }
   return { sources: 2, artifacts: 1, replayWrites: replay.writes, reopened: delivery.admitted === 0 && first.replayed };
 }

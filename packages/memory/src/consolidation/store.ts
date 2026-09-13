@@ -9,7 +9,7 @@ import { consolidationRowId, type ConsolidationTable, type ConsolidationTables, 
   type ConsolidationPersistence, type ConsolidationStore, type ConsolidationApply } from './types.ts';
 
 export const consolidationOperationId = (scope: string, key: string) => consolidationHash(['consolidation-operation', scope, key]);
-const emptyBuffer = (scope: string): ConsolidationBuffer => ({ scope, revision: 0, generation: 0, pending: [], completedAt: null });
+const emptyBuffer = (scope: string): ConsolidationBuffer => ({ scope, revision: 0, generation: 0, pending: [], completedAt: null, pendingSince: null });
 const validScope = (scope: string) => typeof scope === 'string' && scope.length > 0;
 const nonnegative = (value: number) => Number.isSafeInteger(value) && value >= 0;
 function immutableOperation(operation: ConsolidationOperation) {
@@ -81,6 +81,7 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
     async enqueue(input, options) {
       if (!Array.isArray(input) || !input.length) return refuse('empty', 'delivery needs source occurrences');
       if (!Number.isSafeInteger(options.maxPending) || options.maxPending < 1) return refuse('capacity', 'maxPending must be a positive integer');
+      if (options.enqueuedAt !== undefined && !nonnegative(options.enqueuedAt)) return refuse('clock-skew', 'admission time must be a nonnegative epoch integer');
       if (input.length > options.maxPending) return refuse('capacity', 'delivery exceeds pending capacity');
       const sources: ConsolidationSource[] = [];
       for (const row of input) {
@@ -92,6 +93,8 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
       if (sources.some(source => source.scope !== scope)) return refuse('invalid-source', 'one delivery must belong to one scope');
       return transaction(async tx => {
         const buffer = await tx.get('buffers', scope) ?? emptyBuffer(scope);
+        if (options.enqueuedAt !== undefined && (options.enqueuedAt < (buffer.completedAt ?? 0) || options.enqueuedAt < (buffer.pendingSince ?? 0)))
+          return refuse('clock-skew', 'admission time precedes durable timing state');
         const known = await tx.list('sources', scope);
         const keys = new Map(known.map(source => [source.key, source]));
         const added: ConsolidationSource[] = [];
@@ -107,7 +110,8 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
         if (!added.length) return success({ admitted: 0, replayed, writes: 0, buffer: cloneJson(buffer) });
         if (buffer.pending.length + added.length > options.maxPending) return refuse('capacity', 'pending capacity refuses the whole delivery');
         if (!nonnegative(buffer.revision + 1)) return refuse('budget', 'buffer revision exhausted');
-        const next = { ...buffer, revision: buffer.revision + 1, pending: [...buffer.pending, ...added.map(source => source.id)] };
+        const next = { ...buffer, revision: buffer.revision + 1, pending: [...buffer.pending, ...added.map(source => source.id)],
+          pendingSince: buffer.pending.length ? buffer.pendingSince ?? options.enqueuedAt ?? null : options.enqueuedAt ?? null };
         for (const source of added) await tx.put('sources', source);
         await tx.put('buffers', next);
         return success({ admitted: added.length, replayed, writes: added.length + 1, buffer: cloneJson(next) });
@@ -152,6 +156,7 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
         const buffer = await tx.get('buffers', scope) ?? emptyBuffer(scope);
         if (buffer.generation !== expectedGeneration) return refuse('stale-generation', 'an intervening activation changed the generation');
         if (buffer.completedAt !== null && completedAt < buffer.completedAt) return refuse('clock-skew', 'completion time precedes the previous activation');
+        if (buffer.pendingSince != null && completedAt < buffer.pendingSince) return refuse('clock-skew', 'completion time precedes pending evidence admission');
         if (sourceIds.some(id => !buffer.pending.includes(id)) || !await verifyReferences(tx, scope, sourceIds))
           return refuse('invalid-source', 'selected evidence is not pending in this scope');
         const added: ConsolidationArtifact[] = [];
@@ -163,7 +168,8 @@ export function createConsolidationStoreAdapter(persistence: ConsolidationPersis
         if (!nonnegative(buffer.revision + 1) || !nonnegative(buffer.generation + 1) || !nonnegative((prior?.revision ?? -1) + 1))
           return refuse('budget', 'activation revision exhausted');
         const next = { ...buffer, revision: buffer.revision + 1, generation: buffer.generation + 1,
-          pending: buffer.pending.filter(id => !selected.has(id)), completedAt };
+          pending: buffer.pending.filter(id => !selected.has(id)), completedAt,
+          pendingSince: buffer.pending.every(id => selected.has(id)) ? null : buffer.pendingSince ?? null };
         const receipt: ConsolidationReceipt = { passId: id, scope, revision: next.revision, generation: next.generation,
           sourceCount: sourceIds.length, artifactIds: artifacts.map(artifact => artifact.id), writes: added.length + 2,
           replayed: false, logicalCalls: prior?.steps.length ?? 0, embeddingItems: artifacts.filter(artifact => artifact.embedding !== undefined).length };

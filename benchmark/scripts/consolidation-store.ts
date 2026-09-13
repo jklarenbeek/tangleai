@@ -1,4 +1,5 @@
 /** SQLite lifetime belongs to the Node parent, including under Bun on Windows. */
+import { runConsolidationTriggerProbes } from '../lib/consolidate-trigger-probes.ts';
 import { runConsolidationExecutionProbes } from '../lib/consolidate-execution-probes.ts';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
@@ -35,4 +36,5 @@ async function createHost(): Promise<ConsolidationProbeHost> {
 }
 const report = await runConsolidationStoreProbes(createHost);
 const execution = await runConsolidationExecutionProbes(createHost);
-console.log(JSON.stringify({ backend: process.versions.bun ? 'bun-sqlite' : 'node-sqlite', legacyMemoriesPreserved: 1, ...report, execution }));
+const triggers = await runConsolidationTriggerProbes(createHost);
+console.log(JSON.stringify({ backend: process.versions.bun ? 'bun-sqlite' : 'node-sqlite', legacyMemoriesPreserved: 1, ...report, execution, triggers }));

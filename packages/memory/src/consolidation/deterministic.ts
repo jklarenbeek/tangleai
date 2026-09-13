@@ -3,7 +3,7 @@ import { sizeOf, excerpt } from '@jarenjs/core/chunk';
 import { cosineSimilarity } from '@jarenjs/core/vector';
 import { sameIdentity } from '@tangleai/context/ledger';
 import { consolidationHash, consolidationSuccess as success, consolidationRefusal as refuse,
-  createConsolidationArtifact, validateConsolidationSource, type ConsolidationSource,
+  createConsolidationArtifact, validateConsolidationSource, consolidationCompletionTime, type ConsolidationSource,
   type ConsolidationArtifact, type ConsolidationResult } from './contracts.ts';
 import type { ConsolidationStore } from './types.ts';
 import { consolidationTermCounts } from './lexical.ts';
@@ -89,9 +89,11 @@ export async function planDeterministicConsolidation(input: readonly Consolidati
     outputChars: artifacts.reduce((sum, artifact) => sum + sizeOf(artifact.text), 0), boundaries, unknownEmbeddingPairs });
 }
 export async function applyDeterministicConsolidation(store: ConsolidationStore, sources: readonly ConsolidationSource[],
-  input: { key: string; expectedGeneration: number; completedAt: number; options?: Partial<DeterministicConsolidationOptions> }) {
+  input: { key: string; expectedGeneration: number; completedAt: number; options?: Partial<DeterministicConsolidationOptions>; completionClock?: () => number }) {
   const plan = await planDeterministicConsolidation(sources, input.options);
   if (plan.status !== 'success') return plan;
+  const completion = consolidationCompletionTime(input.completedAt, input.completionClock);
+  if (completion.status !== 'success') return completion;
   return store.apply({ scope: sources[0].scope, key: input.key, expectedGeneration: input.expectedGeneration,
-    completedAt: input.completedAt, sourceIds: plan.value.sourceIds, recipeHash: plan.value.recipeHash, artifacts: plan.value.artifacts });
+    completedAt: completion.value, sourceIds: plan.value.sourceIds, recipeHash: plan.value.recipeHash, artifacts: plan.value.artifacts });
 }

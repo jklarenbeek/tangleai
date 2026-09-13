@@ -10,4 +10,5 @@ for (const runtime of [process.execPath, 'bun']) it(`${runtime === 'bun' ? 'Bun'
   assert.equal(report.legacyMemoriesPreserved, 1);
   assert.equal(report.execution.passed, 16); assert.equal(report.execution.failed, 0);
   assert.equal(report.execution.physicalRequests, 0);
+  assert.equal(report.triggers.passed, 27); assert.equal(report.triggers.failed, 0); assert.equal(report.triggers.physicalRequests, 0);
 });

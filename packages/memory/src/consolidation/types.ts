@@ -26,7 +26,7 @@ export interface ConsolidationApply {
 }
 export interface ConsolidationStore {
   snapshot(scope: string): Promise<ConsolidationResult<ConsolidationSnapshot>>;
-  enqueue(sources: ConsolidationSource[], options: { maxPending: number }): Promise<ConsolidationResult<{
+  enqueue(sources: ConsolidationSource[], options: { maxPending: number; enqueuedAt?: number }): Promise<ConsolidationResult<{
     admitted: number; replayed: number; writes: number; buffer: ConsolidationBuffer;
   }>>;
   apply(input: ConsolidationApply): Promise<ConsolidationResult<ConsolidationReceipt>>;

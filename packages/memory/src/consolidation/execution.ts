@@ -2,7 +2,7 @@
 import { cloneJson } from '@jarenjs/core/object';
 import { sizeOf } from '@jarenjs/core/chunk';
 import { consolidationHash, consolidationSuccess as success, consolidationRefusal as refuse,
-  checkConsolidation, createConsolidationArtifact, type ConsolidationOperation, type ConsolidationStep,
+  checkConsolidation, createConsolidationArtifact, consolidationCompletionTime, type ConsolidationOperation, type ConsolidationStep,
   type ConsolidationExecutionResult, type ConsolidationCallAccounting, type ConsolidationResult, type ConsolidationReceipt, type ConsolidationReason, type ConsolidationJson,
   type ConsolidationSynthesis, type ConsolidationSupport, type ConsolidationEmbedding,
   type ConsolidationSynthesisBounds, type ConsolidationRunRequest, type ConsolidationResolution } from './contracts.ts';
@@ -58,13 +58,13 @@ export function createConsolidationExecutor(options: ConsolidationSynthesisSeams
       sourceIds: request.sourceIds, expectedGeneration: request.expectedGeneration, recipeHash });
     return success({ request, sources, evidence, synthesisRequest, recipeHash, requestHash });
   }
-  async function execute(input: ConsolidationExecuteInput): Promise<ConsolidationExecutionResult> {
+  async function execute(input: ConsolidationExecuteInput, context: { completionClock?: () => number } = {}): Promise<ConsolidationExecutionResult> {
     let operation: ConsolidationOperation | null = null, invoked = 0;
     const answer = (result: ConsolidationResult<ConsolidationReceipt>): ConsolidationExecutionResult =>
       ({ ...result, operationId: operation?.id ?? null, accounting: callAccounting(operation, invoked) });
     if (input.signal?.aborted) return answer(refuse('cancelled', 'cancelled before reservation'));
-    const context = await prepare(input); if (context.status !== 'success') return answer(context);
-    const { request, sources, evidence, synthesisRequest, recipeHash, requestHash } = context.value;
+    const preparedInput = await prepare(input); if (preparedInput.status !== 'success') return answer(preparedInput);
+    const { request, sources, evidence, synthesisRequest, recipeHash, requestHash } = preparedInput.value;
     if (bounds.maxLogicalCalls < (embed ? 3 : 2)) return answer(refuse('budget', 'logical-call ceiling cannot fund the whole supported pass'));
     const reserved = await store.reserve({ scope: request.scope, key: request.key, requestHash,
       expectedGeneration: request.expectedGeneration, sourceIds: request.sourceIds, recipeHash, maxLogicalCalls: bounds.maxLogicalCalls });
@@ -157,7 +157,9 @@ export function createConsolidationExecutor(options: ConsolidationSynthesisSeams
       if (staged.status !== 'success') return answer(staged);
     }
     if (input.signal?.aborted) return answer(refuse('cancelled', 'cancelled before atomic activation'));
-    const activated = await store.apply({ ...request, recipeHash, artifacts: operation!.artifacts,
+    const completion = consolidationCompletionTime(request.completedAt, context.completionClock);
+    if (completion.status !== 'success') return answer(completion);
+    const activated = await store.apply({ ...request, completedAt: completion.value, recipeHash, artifacts: operation!.artifacts,
       operation: { revision: operation!.revision, requestHash } });
     if (activated.status === 'refused' && activated.reason === 'stale-generation')
       return answer(await fail('stale-generation', 'a disjoint activation advanced the parent; this prepared pass cannot activate'));
@@ -183,5 +185,5 @@ export function createConsolidationExecutor(options: ConsolidationSynthesisSeams
     return store.update({ ...operation, revision: operation.revision + 1,
       steps: [...operation.steps.slice(0, -1), { ...last, phase: 'completed', result: checked.value, detail: 'explicit stopped-host result' }] }, operation.revision);
   }
-  return Object.freeze({ execute, resolve, bounds });
+  return Object.freeze({ execute, resolve, bounds, store });
 }

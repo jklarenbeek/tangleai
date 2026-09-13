@@ -13,6 +13,14 @@ export function consolidationSuccess<T>(value: T): ConsolidationResult<T> { retu
 export function consolidationRefusal(reason: ConsolidationReason, detail: string): ConsolidationResult<never> {
   return { status: 'refused', reason, detail };
 }
+/** Completion clocks are host policy, separate from immutable fact timestamps. */
+export function consolidationCompletionTime(start: number, clock?: () => number): ConsolidationResult<number> {
+  try {
+    const value = clock ? clock() : start;
+    return Number.isSafeInteger(value) && value >= 0 && value >= start ? consolidationSuccess(value)
+      : consolidationRefusal('clock-skew', 'completion clock is invalid or precedes pass admission');
+  } catch (cause) { return consolidationRefusal('clock-skew', cause instanceof Error ? cause.message : String(cause)); }
+}
 export function checkConsolidation<T>(name: ConsolidationSchemaName, value: unknown,
   reason: ConsolidationReason): ConsolidationResult<T> {
   try {

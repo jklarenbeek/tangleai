@@ -248,3 +248,77 @@ awaited, including one that ignores its signal; a returned valid result is stage
 before cancellation is reported. A thrown result remains unknown. The executor
 creates no detached callback or background retry and claims no hard deadline for
 an uncooperative injected function. Hosts retain resources until execution drains.
+
+## Host-driven triggers and public operations
+
+`createConsolidationRunner({ store, executor?, policy?, deterministic?, now? })`
+uses Jaren's bounded scheduler. It creates no polling loop or desktop timer.
+`policy.enabled` defaults to false. The opt-in defaults are deterministic tier,
+count threshold 10, interval 60000 ms, cooldown 0 ms, pending capacity 100, batch
+size 10, concurrency 1 and queue capacity 32. Semantic/combined policies require
+an executor over the exact same store handle (checked at construction); its own logical and character budgets apply.
+The host retains ownership of authentication and scope access if exposing handlers
+outside its process.
+
+```ts
+import { createConsolidationRunner } from '@tangleai/memory/consolidation';
+
+const runner = createConsolidationRunner({
+  store,
+  policy: { enabled: true, countThreshold: 10, intervalMs: 60000, cooldownMs: 5000 },
+  now: Date.now,
+});
+try {
+  await runner.enqueue([source.value]); // explicit admission; inspect refusals
+  const result = await runner.run({ scope: 'project', key: 'host-pass-1', trigger: 'count' });
+  // below-count is an observable zero-effect outcome; manual is an explicit choice.
+  if (result.status === 'refused') console.log(result.reason, result.detail);
+} finally {
+  await runner.close();
+}
+```
+
+`enqueue` is explicit storage admission even while new runs are
+disabled. It supplies host epoch time as `enqueuedAt`; the store persists the
+first known pending arrival as `pendingSince`. Redelivery does not reset it.
+The optional field accepts earlier stored buffers. A legacy queue with neither
+an arrival anchor nor a successful completion returns `not-due` for a time
+trigger; manual/count requests still work. Fact timestamps are never used to
+invent an arrival time.
+
+`run({ scope, key, trigger }, { signal?, deadline? })` evaluates manual, count or
+time eligibility only when the host calls it. Manual bypasses count/time thresholds;
+disabled state, budgets, cooldown, clock skew and unresolved reservations still
+apply. Time eligibility uses the later of pending arrival and last successful
+completion. Completion time is read immediately before activation, after any
+callbacks, so slow work does not consume its cooldown while still running.
+The lower-level deterministic helper and executor expose an optional
+`completionClock` hook for this purpose; fixed-time callers keep their explicit
+completion epoch. A regressing or invalid clock refuses activation without
+losing staged results. Deadline admission belongs to Jaren; a deadline does not
+force an uncooperative callback to stop.
+
+Use a new key for a new pass; reuse the exact key to resume or replay an admitted
+pass. Completed replay has zero effects, including during cooldown. A prepared
+pass resumes its original immutable batch rather than rechecking fresh count/time
+thresholds; it still respects current enablement, clock, cooldown and generation.
+Known failed keys stay failed. Independent hosts contend through durable
+reservation/CAS, and uncertain work cannot be repurchased under another key.
+
+`inspect(scope)` returns validated source/artifact/buffer/operation state.
+`resolve(request, resolution)` records explicit stopped-host uncertainty resolution
+through the configured executor and may be used while new runs are disabled.
+`stats()` exposes Jaren's active/queued/closed state. `close()` rejects queued/new
+requests and waits for admitted work; keep database resources open until it settles.
+It preserves all durable state. No runner is created on import.
+
+`createConsolidationContract`, `createConsolidationHandlers(runner)` and
+`createConsolidationOperations(runner)` expose the same four operations:
+`consolidation.enqueue`, `consolidation.inspect`, `consolidation.run`, and
+`consolidation.resolve`. The contract reuses the core schemas, declares inspect
+as a read and the other operations as commands, and validates closed inputs and
+outputs through Jaren's local dispatcher. `operations.invoke(id, payload)` returns
+Jaren's outcome containing the domain result; malformed input is `JC2050` before
+effects. Local transport idempotency is not claimed: the durable domain pass key
+owns replay. `operations.close()` cancels its local client and then drains the
+runner, so callers can safely release resources afterward.

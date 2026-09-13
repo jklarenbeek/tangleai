@@ -204,6 +204,7 @@ export function validateConsolidate(value: unknown): boolean {
   if (report.candidates.length === 0 || new Set(report.candidates.map(candidate => candidate.key)).size !== report.candidates.length) return false;
   if (report.storage && (new Set(report.storage.map(row => row.backend)).size !== 3
     || report.storage.some(row => row.passed !== row.cases.length || row.execution.passed !== row.execution.rows.length
+      || row.triggers.passed !== row.triggers.rows.length || JSON.stringify(row.triggers) !== JSON.stringify(report.storage![0].triggers)
       || JSON.stringify(row.execution) !== JSON.stringify(report.storage![0].execution) || JSON.stringify(row.cases) !== JSON.stringify(report.storage![0].cases)))) return false;
   for (const candidate of report.candidates) {
     const rows = report.questionRows.filter(row => row.candidate === candidate.key);
@@ -249,6 +250,9 @@ export function renderConsolidate(report: ConsolidateReport): string {
   if (report.storage) lines.push('## Atomic storage qualification', '',
     'The same independently asserted protocol runs in memory, Node SQLite and Bun SQLite. It covers immutable occurrence identity, capacity, evidence membership, rollback at every write boundary, independent-adapter contention, durable operation reservations and actual reopen/replay. Failed activation retains every pending source; completed replay has zero writes or callback invocations.', '',
     table({ head: ['Backend', 'Cases passed', 'Failures', 'Physical requests', 'Legacy memories preserved'], rows: report.storage.map(row => [row.backend, row.passed, row.failed, row.physicalRequests, row.legacyMemoriesPreserved]) }), '',
+    '### Host-driven trigger qualification', '',
+    'Actual host-created Jaren schedulers and public contract operations exercise manual/count/time eligibility, persisted arrival/completion times, cooldown, restart, uncertainty resolution, bounded queue pressure, cancellation and drained close. Ineligible/replayed requests have zero forbidden writes and callbacks; explicitly recorded resolution and successful activation retain their actual effects. No background timer or desktop integration is enabled.', '',
+    table({ head: ['Backend', 'Case', 'Outcome', 'Writes', 'Callbacks', 'Pending', 'Sources'], rows: report.storage.flatMap(backend => backend.triggers.rows.map(row => [backend.backend, row.name, row.outcome, row.writes, row.callbacks, row.pending, row.sources])) }), '',
     '### Staged synthesis and restart', '',
     'Scripted callbacks make zero physical requests. Every backend checks durable dispatch/result faults, explicit stopped-host resolution, prepared activation recovery and independent-handle contention. Recovery rows retain two exact sources and end with one supported artifact; negative rows retain both pending sources and activate zero artifacts. All completed replays additionally invoke and write zero.', '',
     table({ head: ['Backend', 'Case', 'Initial outcome', 'Initial callbacks', 'Resume callbacks', 'Sources retained', 'Artifacts'], rows: report.storage.flatMap(backend => backend.execution.rows.map(row => [backend.backend, row.name, row.initial, row.initialCalls, row.resumedCalls, row.retainedSources, row.finalArtifacts])) }), '',

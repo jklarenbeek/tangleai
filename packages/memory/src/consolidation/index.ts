@@ -5,3 +5,5 @@ export * from './lexical.ts';
 export * from './deterministic.ts';
 export * from './synthesis.ts';
 export * from './execution.ts';
+export * from './runner.ts';
+export * from './contract.ts';

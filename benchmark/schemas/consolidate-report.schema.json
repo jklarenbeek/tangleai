@@ -559,7 +559,8 @@
               "failed",
               "physicalRequests",
               "legacyMemoriesPreserved",
-              "execution"
+              "execution",
+              "triggers"
             ],
             "additionalProperties": false,
             "properties": {
@@ -636,6 +637,67 @@
                           "minimum": 0
                         },
                         "finalArtifacts": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      }
+                    }
+                  },
+                  "passed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "failed": {
+                    "const": 0
+                  },
+                  "physicalRequests": {
+                    "const": 0
+                  }
+                }
+              },
+              "triggers": {
+                "type": "object",
+                "required": [
+                  "rows",
+                  "passed",
+                  "failed",
+                  "physicalRequests"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "rows": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "outcome",
+                        "writes",
+                        "callbacks",
+                        "pending",
+                        "sources"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "outcome": {
+                          "type": "string"
+                        },
+                        "writes": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "callbacks": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "pending": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "sources": {
                           "type": "integer",
                           "minimum": 0
                         }
