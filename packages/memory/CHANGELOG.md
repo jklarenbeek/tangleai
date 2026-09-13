@@ -1,5 +1,27 @@
 # @tangleai/memory
 
+## 0.27.0
+
+### Minor Changes
+
+- 84fe0a2: Add opt-in bounded extractive consolidation plans and Jaren lexical evidence routing, with atomic replay and matched LoCoMo attribution.
+- a6fa7f3: Add opt-in host-driven consolidation triggers and closed Jaren contract operations, with durable arrival/completion timing, restart-aware cooldown, bounded scheduling and drained close.
+- d4d8d0b: Add immutable consolidation source snapshots, artifacts, bounded pending buffers and atomic pass/operation receipts with memory and Node/Bun SQLite parity. Preserve source evidence and qualify replay, rollback, concurrent activation and installed consumers.
+- 63504f3: Add supported structured consolidation with durable callback reservations, staged restart, explicit unknown resolution, fresh embedding validation and atomic activation. Preserve overlapping evidence until active work is resolved, and expose logical-call accounting without claiming provider usage.
+
+### Patch Changes
+
+- 6dcfde9: Label archived sizes in UTF-16 characters and refuse contradiction comparisons across embedding identities. Add registered, source-delivery controls for measuring context consolidation.
+- 7f2e26f: Reject duplicate synthesis claims before support or embedding and refuse malformed direct executor requests before effects. Document the opt-in tiers, host operations, durable recovery and measured retrieval limits, with an installed Node/Bun example.
+- Updated dependencies [6dcfde9]
+- Updated dependencies [a6fa7f3]
+- Updated dependencies [d4d8d0b]
+- Updated dependencies [63504f3]
+- Updated dependencies [7f2e26f]
+  - @tangleai/context@0.27.0
+  - @tangleai/core@0.27.0
+  - @tangleai/models@0.27.0
+
 ## 0.26.3
 
 ### Patch Changes

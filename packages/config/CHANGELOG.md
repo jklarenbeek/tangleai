@@ -1,5 +1,12 @@
 # @tangleai/config
 
+## 0.27.0
+
+### Patch Changes
+
+- Updated dependencies [6dcfde9]
+  - @tangleai/context@0.27.0
+
 ## 0.26.3
 
 ### Patch Changes

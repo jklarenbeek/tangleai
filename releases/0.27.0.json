@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "version": "0.27.0",
+  "baseVersion": "0.26.3",
+  "baseCommit": "608607fd304d38382529350a8632763387615c14",
+  "preparationCommit": "7f2e26f7e1b362202264e772120c30c077d008ab",
+  "initial": false,
+  "inputHash": "24fa986c92a48c47bf4b46ae27efe3366acfad2aec57cbe563816c52ac3b49e2",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add opt-in bounded extractive consolidation plans and Jaren lexical evidence routing, with atomic replay and matched LoCoMo attribution.",
+      "id": "deterministic-consolidation-routing"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/context",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        }
+      ],
+      "summary": "Label archived sizes in UTF-16 characters and refuse contradiction comparisons across embedding identities. Add registered, source-delivery controls for measuring context consolidation.",
+      "id": "evidenced-consolidation-controls"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add opt-in host-driven consolidation triggers and closed Jaren contract operations, with durable arrival/completion timing, restart-aware cooldown, bounded scheduling and drained close.",
+      "id": "host-driven-consolidation-operations"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add immutable consolidation source snapshots, artifacts, bounded pending buffers and atomic pass/operation receipts with memory and Node/Bun SQLite parity. Preserve source evidence and qualify replay, rollback, concurrent activation and installed consumers.",
+      "id": "immutable-consolidation-evidence"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add supported structured consolidation with durable callback reservations, staged restart, explicit unknown resolution, fresh embedding validation and atomic activation. Preserve overlapping evidence until active work is resolved, and expose logical-call accounting without claiming provider usage.",
+      "id": "supported-consolidation-execution"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        }
+      ],
+      "summary": "Reject duplicate synthesis claims before support or embedding and refuse malformed direct executor requests before effects. Document the opt-in tiers, host operations, durable recovery and measured retrieval limits, with an installed Node/Bun example.",
+      "id": "validate-consolidation-claims"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.27.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.27.0"
+    }
+  ]
+}

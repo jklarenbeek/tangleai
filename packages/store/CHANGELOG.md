@@ -1,5 +1,26 @@
 # @tangleai/store
 
+## 0.27.0
+
+### Minor Changes
+
+- d4d8d0b: Add immutable consolidation source snapshots, artifacts, bounded pending buffers and atomic pass/operation receipts with memory and Node/Bun SQLite parity. Preserve source evidence and qualify replay, rollback, concurrent activation and installed consumers.
+
+### Patch Changes
+
+- Updated dependencies [84fe0a2]
+- Updated dependencies [6dcfde9]
+- Updated dependencies [a6fa7f3]
+- Updated dependencies [d4d8d0b]
+- Updated dependencies [63504f3]
+- Updated dependencies [7f2e26f]
+  - @tangleai/memory@0.27.0
+  - @tangleai/core@0.27.0
+  - @tangleai/outcomes@0.27.0
+  - @tangleai/documents@0.27.0
+  - @tangleai/config@0.27.0
+  - @tangleai/mas@0.27.0
+
 ## 0.26.3
 
 ### Patch Changes

@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "a6fa7f3964fe436bf12ec29d67efab9e34bbf62d",
+    "head": "7f2e26f7e1b362202264e772120c30c077d008ab",
     "clean": false,
     "files": [
       {
@@ -203,15 +203,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "3de1b7707c18336f1437b74023b26d34002366de43f27a5986ec062e52baeb1f"
+        "sha256": "8318238cac90264daf1cafa6ddff027e21c9be036db502827f18009388016262"
       },
       {
         "path": "package.json",
-        "sha256": "b0ea45339194cc23776fe2e09762901953755d877cbc2c15edb6818bed851929"
+        "sha256": "bd7f02a5b8dda0c7a6b37354c5849a9e7006ba0ebae8567206a36ae18745ccc5"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "a7ad4a01e0b27b0d842015e6df1c60cfcd0a53324d5bda193c2c029ec32fa856"
+        "sha256": "253b2b27be00d68805f0ff1f1b361a4bd47bceaacc948fde337d94d43b5eae07"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -255,7 +255,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "3972581b491e766f2407c15773e40074286019e26eb387b282aa92a6aa4851a6"
+        "sha256": "3fd7130733949b66544b4a5395579c1cff5d0cd1b0dd7905b5f072b57047cfa9"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -291,7 +291,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "d61081a662bf45fa110f65d91dc74da73e232cfae9cb1877680a0feb611f39df"
+        "sha256": "27724028d1910e329238d6481d05600077fd92f4cf5bffd3101f55cf587c6715"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "fe116eec771d40f14629bc292aea712bea3fda7b3f6373492b9782514459d972"
+        "sha256": "9420d6e21b4c8b54209029e50eb19546a1bdc02510a67c98c080393124c0d6b1"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -391,7 +391,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "65065f8eda2b2838465d647addc24b617bca9f40d4d49f4acbe432aff1b91c1b"
+        "sha256": "ac49a179e0a5c3f606409b5a24054e3d7f13123dd86da1b8e34485fcb82fadcf"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -399,7 +399,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "2dccdf69150207d4521ff8da1011833b88edd27a6d782ebc3359731da3cd8b78"
+        "sha256": "10eb624d61ccff5093bc383ee85b6bb0d6e0be9cca903f264c9bc643fccd3825"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -511,15 +511,15 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "144b2ca312b1b7ef60784324ae3b3eb6d3b26116e9e2bb71b5de108978942bf5"
+        "sha256": "22377cae4ebbbd1b43a714d5c1af8e5faf0c119627c700e7ee84d4da232b79ba"
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "0cf19929345bf6d565b1c97633546ad9947bb7758187e3f365f84ac8b5ca0ddc"
+        "sha256": "9da9d9342ca9ff011a166f064db0c5239c6402cafe1491e33ca255e1668a784c"
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "c7f86b202c47f9e6420bb69f3f4aa174a1928c1ae374238a2abb02a3687ea5ea"
+        "sha256": "41aab17f207896d5ffa5d4c3244b0f6b1528f8547d3924406412db0e3e2f11b1"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -647,11 +647,11 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "4660bf13ac36e3ff904fc6995ea2e3917be2d25d275918da727eedd86d8a7044"
+        "sha256": "11fdd07ad20d557137fa417bfef7a9906c1292d42598e652c398a43673823a2a"
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "f521845694f9428cd5b7109615661fbf241e30ba9e0c30c6927fc8086edd70ee"
+        "sha256": "a01b37db5c4950db28ee031573d21bee47c2f0440dadfe4828254bad138b75f9"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -707,19 +707,19 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "4fc54e5c46372b013b05c9529352982364e8723bcceb430405d215011cfb67e1"
+        "sha256": "53a4db6524202e013bc18f9547853a0f82c13c16be74f257b2a37a41ac2ea253"
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "bebc0ec0eede36be2b710accd820da3a6cf40758eeafc8e9a1b428342010d45c"
+        "sha256": "f1cd27a24117fdeea6e3c7e2dcd96972dca691c05db2b246a901f89dfa15b0a0"
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "3ea74291e2d3795c5c3dbf7674aa33c1473e86d6353d3597854addcf0f3b3408"
+        "sha256": "cd418c0467c135bac9fd402448d3e63d1dc814682a882cccd797e33e6f33729d"
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "44fdcb3dc99c76dff8c2e67585a86480754959ab7e5f392298c53c0d54458a31"
+        "sha256": "c244be59bdd5e44fb4834797a092cb9f481f64c29162148336535dae909163bb"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -970,7 +970,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "0ddd6d2eb69a3f2bd45310420699afea47aa38679ad3306fd7389d5f2474d1f2"
+    "sha256": "df2eda1f6c3daf63593fa794ea22e7632798c0a276ce3b2c581f835ed7bd3066"
   },
   "ablations": [
     {
@@ -3452,7 +3452,7 @@
     "catalogRevision": "fcd08dd3306f267d5719d79b3d832aecd42cb0aaa0aa7de66cb257460fb815ef"
   },
   "suite": {
-    "tangle": "0.26.3",
+    "tangle": "0.27.0",
     "jaren": "0.87.0"
   },
   "registrationId": "7eabacf078c23663d796bc6ac2438fce7ec241cf467751deb30707d511306873",
@@ -76524,5 +76524,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "595694abc29855bbd2c5bc418a1de20a4ac1b612fafdd4bb7dfadd2e768ff8b8"
+  "reportId": "450d52fda7a1904f60e00c5856a8619a25e6917de1c5212a407702691c4bae18"
 }

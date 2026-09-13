@@ -1,5 +1,12 @@
 # @tangleai/context
 
+## 0.27.0
+
+### Patch Changes
+
+- 6dcfde9: Label archived sizes in UTF-16 characters and refuse contradiction comparisons across embedding identities. Add registered, source-delivery controls for measuring context consolidation.
+- @tangleai/models@0.27.0
+
 ## 0.26.3
 
 ### Patch Changes
