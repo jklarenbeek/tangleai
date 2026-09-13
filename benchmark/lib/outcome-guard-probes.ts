@@ -5,20 +5,30 @@ import { probe } from './outcome-conformance.ts';
 import type { OutcomeFixtures } from './outcome-fixtures.ts';
 import type { OutcomeService, OutcomeServiceOptions, PromoteCommand, Result, Json } from '@tangleai/outcomes';
 const code = (result: Result) => result.ok ? null : result.issues[0].code;
-export async function measureOutcomeGuards(f: OutcomeFixtures) {
+type PromotionDispatch = (commands: PromoteCommand[], promote: (command: PromoteCommand) => Promise<Result>) => Promise<Result[]>;
+export async function measureOutcomeGuards(f: OutcomeFixtures, options: { dispatch?: PromotionDispatch } = {}) {
   const captures: Array<{ service: OutcomeService; host: OutcomeServiceOptions }> = [];
   const conflicts: Array<string | null> = [];
   const measured = await measureOutcomeReplay(f, { mode: 'checked-scripted', async serviceFactory(host) {
     const service = await createOutcomeService(host); captures.push({ service, host }); let competed = false;
+    let winningCommand: PromoteCommand | undefined, raceRequestKey: string | undefined;
     return { ...service, async promote(raw: unknown) {
+      const c = raw as PromoteCommand;
+      // This logical fixture step dispatches twenty distinct requests. Its
+      // completed replay must follow the request that actually activated.
+      if (winningCommand && c.requestKey === raceRequestKey) return service.promote(winningCommand);
       if (host.scope.domain !== 'exact-match' || competed) return service.promote(raw);
       competed = true;
-      const c = raw as PromoteCommand;
       const a = resultValue(await service.inspect({ scopeId: c.scopeId, artifactKey: c.artifactKey, input: { id: c.input.approvalId } }));
       const approvals = [c.input.approvalId];
       for (let i = 1; i < 20; i++) approvals.push(resultId(await service.approve({ ...c, requestKey: `competing-approval:${i}`, input: { action: 'promote', versionId: a.versionId, evaluationId: a.evaluationId, expectedHead: a.expectedHead, reason: 'Separately reviewed fixture approval.' } }), 'approvalId'));
-      const results = await Promise.all(approvals.map((approvalId, i) => service.promote({ ...c, requestKey: i === 0 ? c.requestKey : `competing-promotion:${i}`, input: { approvalId } })));
-      conflicts.push(...results.map(code)); return results[0];
+      const commands = approvals.map((approvalId, i) => ({ ...c, requestKey: i === 0 ? c.requestKey : `competing-promotion:${i}`, input: { approvalId } }));
+      const results = await (options.dispatch ?? ((commands, promote) => Promise.all(commands.map(promote))))(commands, service.promote);
+      const winners = results.flatMap((result, index) => result.ok ? [index] : []);
+      if (results.length !== commands.length || winners.length !== 1 || results.filter(result => code(result) === 'OUTC1013').length !== 19)
+        throw Error('Promotion race requires exactly one winner and nineteen stale-head refusals.');
+      winningCommand = commands[winners[0]]; raceRequestKey = c.requestKey;
+      conflicts.push(...results.map(code)); return results[winners[0]];
     } };
   } });
   const capture = captures.find(c => c.host.scope.domain === 'exact-match')!, { service, host } = capture;
