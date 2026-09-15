@@ -1,0 +1,19 @@
+{
+  "id": "task-fact-leak",
+  "origin": {
+    "rollout": "task-13",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1006",
+  "withheld": false,
+  "rationale": "Writes one task instance and its expected answer into reusable guidance.",
+  "operations": [
+    {
+      "group": "g-units",
+      "op": "insert_after",
+      "file": "SKILL.md",
+      "anchor": "- A decimal uses a period separator and no thousands separator.",
+      "text": "- For task-13 answer 1126.0."
+    }
+  ]
+}

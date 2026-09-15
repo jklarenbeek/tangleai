@@ -73,6 +73,13 @@ export interface SearchSettings {
 
 export interface Settings {
   folder: string | null;
+  /**
+   * The registry profile a run is resolved against by name. `null` asks
+   * for the generated projection of the wire settings below; a name asks
+   * the registry, and a name the registry cannot serve is refused with
+   * its issues rather than quietly answered by the wire settings.
+   */
+  profile: string | null;
   chat: ChatSettings;
   embed: EmbedSettings;
   documents: DocumentSettings;
@@ -82,6 +89,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   folder: null,
+  profile: null,
   chat: { provider: null, baseUrl: null, model: null, apiKey: null },
   embed: { provider: 'builtin', baseUrl: null, model: null, apiKey: null },
   documents: { chunker: 'recursive', maxTokens: 450, overlapTokens: 48 },
@@ -187,6 +195,7 @@ export function validateStoredSettings(stored: Partial<Settings>): ValidatedSett
   const issues: SettingsIssue[] = [];
   const settings: Settings = {
     folder: stored.folder ?? DEFAULT_SETTINGS.folder,
+    profile: stored.profile ?? DEFAULT_SETTINGS.profile,
     chat: { ...DEFAULT_SETTINGS.chat, ...stored.chat },
     embed: readEmbed(stored.embed, issues),
     documents: { ...DEFAULT_SETTINGS.documents, ...stored.documents },
@@ -251,6 +260,7 @@ export function createSettingsStore(db: TangleDb): SettingsStore {
       };
       const merged: Settings = {
         folder: next.folder !== undefined ? next.folder : current.folder,
+        profile: next.profile !== undefined ? next.profile : current.profile,
         chat: { ...current.chat, ...next.chat, apiKey: secret(next.chat?.apiKey, current.chat.apiKey, actions.clearChatKey) },
         embed: readEmbed({ ...current.embed, ...next.embed, apiKey: secret(next.embed?.apiKey, current.embed.apiKey, actions.clearEmbedKey) }),
         documents: { ...current.documents, ...next.documents },

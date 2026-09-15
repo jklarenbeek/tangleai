@@ -1,0 +1,18 @@
+{
+  "id": "improve-partial-select",
+  "strategyId": "S-partial-select",
+  "rationale": "Rank by bounded selection instead of ordering all 512 records to read the leading 8.",
+  "evidence": "The gate covers ranking, ties, over-long k, zero, a negative k and input immutability; all of it still holds, and the registered metric falls.",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/files/src~1rank.js",
+      "value": "/**\n * Top-k selection over score records, with the work it does made visible.\n *\n * `count` is an injected comparison counter: every comparison this module\n * makes goes through it, so the cost of an implementation is a property of\n * this file and not of the engine's built-in sort. That is what makes the\n * fitness number reproducible on any host and any runtime.\n */\n\n/** Descending by score, ascending by id — a total order over the records. */\nexport function compare(a, b, count) {\n  count();\n  if (a.score !== b.score) return b.score - a.score;\n  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;\n}\n\n/** Place one record in an already-ranked list, searching from the back. */\nfunction place(ranked, item, count) {\n  let index = ranked.length;\n  while (index > 0 && compare(item, ranked[index - 1], count) < 0) index -= 1;\n  ranked.splice(index, 0, item);\n}\n\n/**\n * The k highest-ranked records, in rank order. Only the leading k are ever\n * ordered: a record that cannot reach the running k-th place costs one\n * comparison and is dropped.\n */\nexport function topK(items, k, count = () => {}) {\n  if (!Number.isInteger(k) || k < 0) throw new TypeError('k must be a non-negative integer');\n  if (k === 0) return [];\n  const ranked = [];\n  for (const item of items) {\n    if (ranked.length < k) { place(ranked, item, count); continue; }\n    if (compare(item, ranked[k - 1], count) >= 0) continue;\n    ranked.pop();\n    place(ranked, item, count);\n  }\n  return ranked;\n}\n"
+    }
+  ],
+  "expect": {
+    "decision": "kept",
+    "reason": "improved",
+    "code": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "path-escape-dotdot",
+  "strategyId": "S-escape",
+  "rationale": "Share the comparison helper with the sibling project one directory up.",
+  "evidence": "The helper is needed by more than this repository.",
+  "patch": [
+    {
+      "op": "add",
+      "path": "/files/..~1escape.js",
+      "value": "export const compare = (a, b) => b.score - a.score;\n"
+    }
+  ],
+  "expect": {
+    "decision": "refused",
+    "reason": "escape",
+    "code": "TEVO1004"
+  }
+}

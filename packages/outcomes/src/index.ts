@@ -2,6 +2,7 @@
 export { outcomesSchema, DEFAULT_OUTCOME_POLICY } from './schema.ts';
 export { scopeIdOf, recordIdOf, validateRecord, outcomeRevision } from './identity.ts';
 export { createMemoryOutcomeStore, createOutcomeStoreAdapter } from './store.ts';
+export { adapterIdentity, domainValidator, checkedAdapter } from './domain.ts';
 export type { OutcomeStore, OutcomePersistence, OutcomeTransaction, Tables, Query, MemoryOutcomeStoreOptions } from './store.ts';
 export type { OutcomeAdapter, EvidenceResolver, EvaluationSlot, OutcomeHost, OutcomePrincipal, OutcomeProposer } from './adapters.ts';
 export type { OutcomeResult, OutcomeIssue } from './errors.ts';

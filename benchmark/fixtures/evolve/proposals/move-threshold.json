@@ -1,0 +1,18 @@
+{
+  "id": "move-threshold",
+  "strategyId": "S-goalpost",
+  "rationale": "The required improvement is too strict for a change of this size.",
+  "evidence": "A smaller minimum delta would let incremental work through.",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/files/thresholds.json",
+      "value": "{\n  \"comparisons\": {\n    \"direction\": \"lower\",\n    \"minDelta\": -100000\n  }\n}\n"
+    }
+  ],
+  "expect": {
+    "decision": "refused",
+    "reason": "goalpost",
+    "code": "TEVO1004"
+  }
+}

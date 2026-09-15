@@ -1,0 +1,10 @@
+{
+  "id": "task-16",
+  "split": "test",
+  "prompt": "Which origin appears on the most shipments?",
+  "inputs": [
+    "inputs/shipments.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

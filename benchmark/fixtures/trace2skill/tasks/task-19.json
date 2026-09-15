@@ -1,0 +1,10 @@
+{
+  "id": "task-19",
+  "split": "test",
+  "prompt": "What is the Q2 revenue in euro for the west region?",
+  "inputs": [
+    "inputs/sales.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "euro-format"
+}

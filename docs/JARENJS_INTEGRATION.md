@@ -1,12 +1,13 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.89.0**, tag `v0.89.0`, source commit
-`41f5a36eccd43591d7c04d9116a6d210617e9146`. Upstream `main`, the tag and all 23
-consumed npm latest releases agreed when checked on 2026-09-13. The submodule is the source
-reference; runtime imports resolve to the 23 published npm packages. All 107
+Tangle consumes **Jaren 0.90.6**, tag `v0.90.6`, source commit
+`37ba1676dab7868b168858b413a3ec647eebefdd`. Upstream `main`, the tag and all 23
+consumed npm latest releases agreed when checked on 2026-09-15. The submodule is the source
+reference; runtime imports resolve to the 23 published npm packages. All 111
 direct dependency references are exact pins. The lock records registry URLs and
-integrities; the [registry receipt](integration/jaren-0.89.0-registry.json) checks
-all 23 downloaded archives against it. This receipt does not claim a source
+integrities; the [registry receipt](integration/jaren-0.90.6-registry.json) checks
+all 23 downloaded archives against it. [The consumer gate](CONSUMER_GATE.md)
+describes these checks as a reusable pattern for other suite consumers. This receipt does not claim a source
 rebuild comparison. Installed packages are neither patched nor source-linked.
 
 ```sh
@@ -36,12 +37,17 @@ activation, claim support policy, callback reservations and host trigger
 eligibility. The frozen standard-BM25 comparison lives only in the benchmark;
 production lexical routing delegates to `compileLexical`.
 
-## Changes since 0.87.0 and current adoption
+## Changes since 0.89.0 and current adoption
 
-Three upstream commits cover this update: 0.88.0 adds Markdown page breaks,
-0.88.1 fixes validation, persistence, interaction and verification edge cases,
-and 0.89.0 adds the guarded physical migration lifecycle. The
-[upstream comparison](https://github.com/jklarenbeek/jarenjs/compare/v0.87.0...v0.89.0)
+Seven upstream commits cover this update. They add bounded host helpers and
+asynchronous SQLite integration, fix startup contention and Windows recovery
+checks, reuse bounded cleanup for shadow identity fixtures, stabilize native
+cleanup and browser input qualification, enforce portable native fixture
+cleanup, await child drainage in native qualification, and drain native Bun
+statements on connection close. Only `contract`, `db`, `josl`, `view` and `app`
+change source; `core`, `emit`, `flow`, `json`, `linq` and `validate` ship
+identical sources under new versions. The
+[upstream comparison](https://github.com/jklarenbeek/jarenjs/compare/v0.89.0...v0.90.6)
 and pinned submodule retain the exact implementation and tests.
 
 | Surface | Tangle use and boundary |
@@ -52,6 +58,10 @@ and pinned submodule retain the exact implementation and tests.
 | Markdown `pageBreak` | Assistant, desktop and Pages use the existing Jaren Markdown component. A standalone `<!-- pagebreak -->` becomes an accessible separator; Jaren's stylesheet supplies screen and print rules. Assistant tests retain code/inline marker behavior; browser qualification checks the native screen and print styles. Tangle adds no parser or page-break node. Text ingestion continues to preserve source Markdown; a marker does not create an inferred PDF page number. |
 | Validator fixes | Existing schema/content boundaries inherit corrected dynamic string-length and object equality checks, reference siblings, and browser-safe base64 JSON decoding. The normal source, emitted-contract and browser gates exercise the installed validator; no local validator or schema weakening is added. |
 | Flow, database and UI fixes | The dependency update carries Jaren's non-destructive provenance refusal, safe migration key preservation, SQLite ownership/cleanup fixes, collection/search interaction fixes, Forms rules, CSV and Mermaid roundtrip fixes. Tangle's MAS uses its own durable policy over Flow DAG checkpoints rather than `createDomainRun`; that upstream run-store fix is not represented as a new Tangle runtime. Existing consumers remain the qualification boundary. |
+| Native open contention and capture ordering | Adopted transparently through the existing `openStore` seam. A classified busy failure of the idempotent open sequence is retried within the configured busy timeout, bounded at 32 attempts, yielding so a competing opener can finish; capture's first-open transaction closes before the collection cores are constructed; Bun connections drain native statements on close. Tangle adds no retry, scheduler or open policy of its own, and the elapsed-time admission window is Jaren's, not Tangle's logical clock. |
+| Asynchronous worker, pool and process Stores | **Evaluated, not adopted.** These hosts declare `live` false and expose no sessions, selecting journal capture. Tangle's memory store reads through the synchronous live-query engine, so adopting them would trade a capability Tangle depends on for process isolation it does not need. The synchronous Node/Bun connections remain the ownership boundary for physical schema work. |
+| `@jarenjs/contract/continuation-node` | **Evaluated, not adopted.** Bounded HMAC page-cursor envelopes with injected scope, query/order identity, key lookup and clock. No Tangle surface hands a paging cursor across a trust boundary: the desktop control plane is loopback-only and the store publishes no `page` seam to an untrusted client. Recorded so a surface that later crosses that boundary consumes this rather than inventing a signature. |
+| Browser dialog, focus, route and file-token helpers | **Evaluated, not adopted.** `@jarenjs/view/helpers/{dialog,focus}` and `@jarenjs/app/{dialog,file-tokens,routes}` are new and additive; `createApp` and `formEventFields`, the surfaces the assistant component imports, are unchanged. Pages hand-wires three lines of hash routing into its own host contract, which `createHashRouteSubscription` would re-plumb rather than delete; its qualified browser proofs are not rewritten for a dependency update. |
 
 Jaren owns migration history, checksums, immediate transactions, complete target
 verification and shadow lifetime. The host owns the reviewed chain, table/data
@@ -183,7 +193,7 @@ process test qualifies Linux/Node behavior; it is not a universal scheduling or
 operating-system timing guarantee.
 
 MAS executable identities include the installed Flow version. Existing
-checkpoints from 0.87.0 or earlier must not silently resume as 0.89.0 executions; the identity
+checkpoints from 0.89.0 or earlier must not silently resume as 0.90.6 executions; the identity
 refusal is intentional. Resume with the matching historical execution environment
 or an explicitly reviewed migration. The typed versioned-task overload bridge in
 `packages/mas/src/jaren-flow.d.ts` and the LINQ coded-error constructor bridge in
@@ -191,8 +201,9 @@ or an explicitly reviewed migration. The typed versioned-task overload bridge in
 changed in this release. No new declaration workaround is introduced. The native test fixture names only
 the synchronous operations it observes on the intentionally opaque driver handle.
 
-The [0.86.0](integration/jaren-0.86.0-registry.json) and
-[0.87.0 registry receipts](integration/jaren-0.87.0-registry.json) remain
+The [0.86.0](integration/jaren-0.86.0-registry.json),
+[0.87.0](integration/jaren-0.87.0-registry.json) and
+[0.89.0 registry receipts](integration/jaren-0.89.0-registry.json) remain
 historical archive checks. Historical paid POLICY, QA and grounding reports retain their original bytes,
 identities and selected defaults. Keyless replays test compatibility; they do not
 establish new model quality. The [0.83.3 audit](jaren-integration-0.83.3.md),

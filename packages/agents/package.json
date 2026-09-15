@@ -23,11 +23,11 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.89.0",
-    "@jarenjs/validate": "0.89.0",
+    "@jarenjs/core": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
     "@tangleai/models": "^0.27.3",
     "@tangleai/context": "^0.27.3",
-    "@jarenjs/contract": "0.89.0"
+    "@jarenjs/contract": "0.90.6"
   },
   "private": false,
   "files": [

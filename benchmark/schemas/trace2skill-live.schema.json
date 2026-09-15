@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tangleai.dev/schemas/trace2skill-live",
+  "title": "Skill-evolution live registration",
+  "description": "The frozen, credential-free description of what a live skill-evolution tier WOULD spend, and the record that it was not spent. A key never reaches this document: it carries the NAME of the variable a key would be read from and nothing else. `status` is `not-run` in every committed copy, because executing the plan needs an explicit operator approval that names its `planId`.",
+  "$ref": "#/$defs/trace2skillLive",
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "livePlanRow": {
+      "description": "One measured row as a live tier would rerun it: the calls the keyless tier actually made are the ceiling a live rerun is planned against, because the wire answers the same registered units.",
+      "type": "object",
+      "required": ["id", "condition", "status", "units", "maxFreshCalls", "cacheHits"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^(deepening|creation):[a-z][a-z0-9-]*$" },
+        "condition": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "status": { "enum": ["run", "not-run", "implementation-missing"] },
+        "units": { "type": "integer", "minimum": 0 },
+        "maxFreshCalls": { "type": "integer", "minimum": 0 },
+        "cacheHits": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "livePlan": {
+      "description": "What an authorized run would do, hashed into `planId`. Everything in it is credential-free: a provider, a model name, a base URL without userinfo, the NAME of the key variable, the ceilings and the rows.",
+      "type": "object",
+      "required": ["planId", "authorized", "instrument", "mode", "fixtureId", "provider", "model", "baseUrl", "keySource", "maxCalls", "maxConcurrency", "promptVersions", "stages", "rows", "maxFreshTotal", "cacheHits", "skipped"],
+      "additionalProperties": false,
+      "$query": { "$and": [
+        { "$eq": ["$.authorized", false] },
+        { "$eq": ["$.maxFreshTotal", { "$sum": "$.rows[*].maxFreshCalls" }] },
+        { "$eq": ["$.cacheHits", { "$sum": "$.rows[*].cacheHits" }] }
+      ] },
+      "properties": {
+        "planId": { "$ref": "#/$defs/sha256" },
+        "authorized": { "const": false },
+        "instrument": { "const": "trace2skill" },
+        "mode": { "enum": ["deepening", "creation"] },
+        "fixtureId": { "$ref": "#/$defs/sha256" },
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "baseUrl": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] },
+        "keySource": { "description": "The NAME of the environment variable a key would be read from. Never a key.", "type": "string", "minLength": 1 },
+        "maxCalls": { "type": "integer", "minimum": 1 },
+        "maxConcurrency": { "type": "integer", "minimum": 1 },
+        "promptVersions": {
+          "type": "array",
+          "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "string", "minLength": 1 } }
+        },
+        "stages": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" } },
+        "rows": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/livePlanRow" } },
+        "maxFreshTotal": { "type": "integer", "minimum": 0 },
+        "cacheHits": { "type": "integer", "minimum": 0 },
+        "skipped": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "null" }] }
+      }
+    },
+    "trace2skillLive": {
+      "type": "object",
+      "required": ["instrument", "version", "status", "reason", "calls", "spend", "plan", "recordId"],
+      "additionalProperties": false,
+      "$query": { "$and": [
+        { "$eq": ["$.calls", 0] },
+        { "$eq": ["$.spend.calls", 0] },
+        { "$eq": ["$.spend.tokens", 0] }
+      ] },
+      "properties": {
+        "instrument": { "const": "trace2skill-live" },
+        "version": { "const": 1 },
+        "status": { "const": "not-run" },
+        "reason": { "type": "string", "minLength": 1 },
+        "calls": { "description": "Provider requests this record accounts for. Zero, by construction: a network trap counts every attempt and no attempt is made.", "const": 0 },
+        "spend": {
+          "type": "object",
+          "required": ["calls", "tokens"],
+          "additionalProperties": false,
+          "properties": { "calls": { "const": 0 }, "tokens": { "const": 0 } }
+        },
+        "plan": { "$ref": "#/$defs/livePlan" },
+        "recordId": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

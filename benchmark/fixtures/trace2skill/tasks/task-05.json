@@ -1,0 +1,10 @@
+{
+  "id": "task-05",
+  "split": "evolve",
+  "prompt": "Which sku has zero on-hand stock in warehouse dock-a?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

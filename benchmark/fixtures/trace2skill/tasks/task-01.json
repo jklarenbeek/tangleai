@@ -1,0 +1,10 @@
+{
+  "id": "task-01",
+  "split": "evolve",
+  "prompt": "What is the combined revenue in euro for the north region across both quarters?",
+  "inputs": [
+    "inputs/sales.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "euro-format"
+}

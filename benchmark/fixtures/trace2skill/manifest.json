@@ -1,0 +1,577 @@
+{
+  "document": "trace2skill-fixture",
+  "id": "trace2skill-tabular-v1",
+  "licence": "MIT",
+  "provenance": {
+    "author": "Tangle AI",
+    "date": "2026-09-13",
+    "statement": "Authored for this repository; no third-party corpus is vendored or derived."
+  },
+  "domain": "tabular-extract",
+  "evaluator": "exact-normalized-v1",
+  "seed": 17753,
+  "counts": {
+    "evolve": 16,
+    "test": 8
+  },
+  "splits": {
+    "evolve": [
+      "task-01",
+      "task-03",
+      "task-05",
+      "task-06",
+      "task-07",
+      "task-10",
+      "task-11",
+      "task-13",
+      "task-14",
+      "task-15",
+      "task-17",
+      "task-18",
+      "task-20",
+      "task-21",
+      "task-22",
+      "task-24"
+    ],
+    "test": [
+      "task-02",
+      "task-04",
+      "task-08",
+      "task-09",
+      "task-12",
+      "task-16",
+      "task-19",
+      "task-23"
+    ],
+    "evolveHash": "e2ad52067fbbfbe521bb9eacfb2417648619aa6e7b0832c96a6cc3a9b292f4ab",
+    "testHash": "6bccb5cbccc16ebfaa030248eb41884fee1151220b33e8f826b360c297bd3ddf"
+  },
+  "s0": {
+    "path": "skills/s0-human",
+    "bundleId": "ff8070b41b71060c008ce25988953b8f0f1d8f785c4f2db206341a6b9defb1db",
+    "rootHash": "3b5e38cee4312fb57004b84a4bf1b0d14a8658538c33328cbf5caee820c679ac",
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "3b5e38cee4312fb57004b84a4bf1b0d14a8658538c33328cbf5caee820c679ac"
+      },
+      {
+        "path": "references/csv-conventions.md",
+        "sha256": "c281b85c64f3c1a6d97aea3a2e7c6315cb122d569cf8f187835549cb77032625"
+      }
+    ]
+  },
+  "creationScope": "skills/scope.json",
+  "script": "scripts/responses.json",
+  "scriptId": "d9d4b6b4a0d81d348286dd40ac35f70a2d89cf44e058b3c32a4021e40edfc71c",
+  "merge": {
+    "bMerge": 4,
+    "lMax": 3
+  },
+  "budgets": {
+    "turns": 6,
+    "tokens": 16384,
+    "ms": 60000,
+    "concurrency": 4
+  },
+  "negativePatches": [
+    "broken-link",
+    "format-breaking",
+    "invalid-target",
+    "non-atomic-create",
+    "overlap-a",
+    "overlap-b",
+    "redundant-a",
+    "redundant-b",
+    "redundant-c",
+    "stale-base",
+    "task-fact-leak",
+    "units-a",
+    "units-b"
+  ],
+  "legacyPacks": [
+    "analyst",
+    "injection",
+    "merger"
+  ],
+  "rollouts": {
+    "repairable": [
+      "task-01",
+      "task-03",
+      "task-13",
+      "task-17",
+      "task-22"
+    ],
+    "unrepairable": [
+      "task-06"
+    ]
+  },
+  "tables": {
+    "deepening": [
+      "no-skill",
+      "frozen-s0",
+      "evolved-s-star",
+      "retrieval-bank",
+      "single-call-error",
+      "sequential-merge",
+      "cross-model",
+      "ood",
+      "oracle",
+      "random"
+    ],
+    "creation": [
+      "no-skill",
+      "draft-s0",
+      "evolved-s-star",
+      "oracle",
+      "random"
+    ]
+  },
+  "ablation": {
+    "id": "retrieval-bank",
+    "note": "The salvaged cluster-then-retrieve baseline's registered parameters; they belong to that row and to no evolve path.",
+    "parameters": {
+      "k": 5,
+      "maxSkillsPerCluster": 3,
+      "topK": 5,
+      "minSimilarity": 0.4
+    }
+  },
+  "probes": [
+    {
+      "id": "fixture-hashes-verified",
+      "capability": "instrument",
+      "expected": {
+        "drift": 0
+      }
+    },
+    {
+      "id": "splits-disjoint",
+      "capability": "instrument",
+      "expected": {
+        "disjoint": true,
+        "overlapRefused": 0
+      }
+    },
+    {
+      "id": "oracle-reaches-ceiling",
+      "capability": "instrument",
+      "expected": {
+        "score": 1,
+        "tasks": 8
+      }
+    },
+    {
+      "id": "seeded-random-in-band",
+      "capability": "instrument",
+      "expected": {
+        "inBand": true
+      }
+    },
+    {
+      "id": "truth-read-refused-outside-evaluation",
+      "capability": "instrument",
+      "expected": {
+        "code": "TT2S1006",
+        "refused": true,
+        "leakage": 1
+      }
+    },
+    {
+      "id": "missing-script-entry-counted",
+      "capability": "instrument",
+      "expected": {
+        "counted": true,
+        "scriptMissing": 1
+      }
+    },
+    {
+      "id": "no-provider-request-possible",
+      "capability": "instrument",
+      "expected": {
+        "calls": 0
+      }
+    },
+    {
+      "id": "immutable-skill-bundle-contract",
+      "capability": "contracts",
+      "expected": {
+        "bundles": 1,
+        "closed": true
+      }
+    },
+    {
+      "id": "directory-patch-compiler-refusals",
+      "capability": "contracts",
+      "expected": {
+        "refused": 8,
+        "withheld": 2
+      }
+    },
+    {
+      "id": "labeled-rollout-envelope",
+      "capability": "rollouts",
+      "expected": {
+        "rollouts": 16,
+        "reasoningCaptured": true
+      }
+    },
+    {
+      "id": "evolve-label-distribution",
+      "capability": "rollouts",
+      "expected": {
+        "success": 10,
+        "failure": 5,
+        "unanswered": 1
+      }
+    },
+    {
+      "id": "analyst-isolation",
+      "capability": "analysts",
+      "expected": {
+        "peerPatchesSeen": 0,
+        "baseHashMismatches": 0
+      }
+    },
+    {
+      "id": "evaluator-proven-repair",
+      "capability": "analysts",
+      "expected": {
+        "proven": 5,
+        "excluded": 1
+      }
+    },
+    {
+      "id": "hierarchical-merge-plan",
+      "capability": "consolidation",
+      "expected": {
+        "levels": 2,
+        "groups": 3
+      }
+    },
+    {
+      "id": "guarded-single-application",
+      "capability": "consolidation",
+      "expected": {
+        "applications": 1
+      }
+    },
+    {
+      "id": "held-out-activation",
+      "capability": "evaluation",
+      "expected": {
+        "candidates": 1,
+        "activations": 1
+      }
+    },
+    {
+      "id": "versioned-prompt-packs",
+      "capability": "packs",
+      "expected": {
+        "packs": 5
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "expected/labels.json",
+      "sha256": "275bae453b81d5d1ba3fa39d12eb1afdd77c79093c896ca4fd8f4c19a9cba3a5"
+    },
+    {
+      "path": "expected/oracle.json",
+      "sha256": "8dca74efeb3ece603168e1f343fe8d8f02a6c2d1e6bb87e04f5d448d907624ef"
+    },
+    {
+      "path": "inputs/inventory.csv",
+      "sha256": "ca2f3dddee4333dcda30e43c3c437226b43fcc49b98b6ea33aa2e0662cda9551"
+    },
+    {
+      "path": "inputs/readings.md",
+      "sha256": "17c6d673f047a82a6d89872331edbef1d0c735f616040a4da0ac68cfae1f96b6"
+    },
+    {
+      "path": "inputs/sales.csv",
+      "sha256": "dcedd25046fd71a3d80fe7b8527e05529b703e9720bc3ef92ba2053ae886d17b"
+    },
+    {
+      "path": "inputs/shipments.csv",
+      "sha256": "2791612f29283a69d6898ae502b789e58320f03cbc7a2a76a84edae264d8126d"
+    },
+    {
+      "path": "legacy-packs/analyst.toml",
+      "sha256": "928a92b5befe0b3329566b72de6a1a10e9149d552488e4c852f343828f9046e8"
+    },
+    {
+      "path": "legacy-packs/injection.toml",
+      "sha256": "de7a397218417836ae8c350e28e423ceb2f7b7490a13ace1497706a64e4e74d2"
+    },
+    {
+      "path": "legacy-packs/merger.toml",
+      "sha256": "a32bc4d6fdc0641a0e4335c3939aeceb03c9d8294dd1f5c10415ba1a854be913"
+    },
+    {
+      "path": "patches/broken-link.json",
+      "sha256": "0a13a8d5f783d2a91dac79ab5f78c83243b72dc7ba89bae9cfe259378eec4f5e"
+    },
+    {
+      "path": "patches/expected-merge-tree.json",
+      "sha256": "1433c709d13b112ec29710547b21df0d0d78180f338fc1d4b47f4c873c077517"
+    },
+    {
+      "path": "patches/format-breaking.json",
+      "sha256": "2780130c7bf20b0d7a6db2c65c4b192c2eb3df4ad67308a088bc3725fb59fe21"
+    },
+    {
+      "path": "patches/invalid-target.json",
+      "sha256": "9b13b4d710b3a30728ac8095c956320d958d1f8482d511b123c48c3b6403dceb"
+    },
+    {
+      "path": "patches/non-atomic-create.json",
+      "sha256": "7df08101736fb309b4ff028eb7617748e1841acf160f2fb9e48bfe0a52a47462"
+    },
+    {
+      "path": "patches/overlap-a.json",
+      "sha256": "eb0c05f814754a405cecab58fb40143fa21e10c4f728dda88dbb04eac1e6fe0d"
+    },
+    {
+      "path": "patches/overlap-b.json",
+      "sha256": "242a58734e4d399c7c1ccb0d2e77adbd1cfc034124b4dfb56f0e3ca3fef6faa6"
+    },
+    {
+      "path": "patches/redundant-a.json",
+      "sha256": "abee3690ce45980f7cab92fb0249a78327b5c5b64dc23f1398d9b519d6ce0ab8"
+    },
+    {
+      "path": "patches/redundant-b.json",
+      "sha256": "e47b8f651a9d20bcb8e6051879c70353e0c78b1aad40571f227aec17e8cd8b9b"
+    },
+    {
+      "path": "patches/redundant-c.json",
+      "sha256": "e42806f41aa4968c50111a906542c8f901be38acb88e26b3ade51544148a6ca9"
+    },
+    {
+      "path": "patches/stale-base.json",
+      "sha256": "2319b25485bbb25248325658c2ea8e884f6f497c4c272e973454dd12c38ff958"
+    },
+    {
+      "path": "patches/task-fact-leak.json",
+      "sha256": "1eb321ad688f6e3ad50ed1d7ade24b0e1c27ad9db2b683e98ac22be6986137c6"
+    },
+    {
+      "path": "patches/units-a.json",
+      "sha256": "5cb1703087519fa6fe75010caca3ac6178dbe600e77626665674508733f5f35c"
+    },
+    {
+      "path": "patches/units-b.json",
+      "sha256": "905b627d0de6859a8bbeaba38df541adea5e31d8c3088e52337ccfc878560b0e"
+    },
+    {
+      "path": "scripts/responses.json",
+      "sha256": "83937b6645cea48f5955c52c6c536509dc6aac92a650a09c34c39863629a2f69"
+    },
+    {
+      "path": "skills/s0-human/SKILL.md",
+      "sha256": "3b5e38cee4312fb57004b84a4bf1b0d14a8658538c33328cbf5caee820c679ac"
+    },
+    {
+      "path": "skills/s0-human/references/csv-conventions.md",
+      "sha256": "c281b85c64f3c1a6d97aea3a2e7c6315cb122d569cf8f187835549cb77032625"
+    },
+    {
+      "path": "skills/scope.json",
+      "sha256": "c6108d9ec6034ad16a6565eb6ac5c6ac761998840b238aeb2f52c0ca03b2af74"
+    },
+    {
+      "path": "tasks/task-01.json",
+      "sha256": "eccadb0c124be7c510bd0f44e08f88afc0dd01acec6b707e185de0a9a8d881a4"
+    },
+    {
+      "path": "tasks/task-02.json",
+      "sha256": "ddc72597c8675dd569bf536b8a0c9f78bff2f8aaaeaa344ee69051d124cd6763"
+    },
+    {
+      "path": "tasks/task-03.json",
+      "sha256": "b26018e8b18a04f6f30d8c0b8f83725c4246e97ad761740c07ac9406c41bdeb4"
+    },
+    {
+      "path": "tasks/task-04.json",
+      "sha256": "0759ea53b147d72dd52b8a44453c753c22be301f926f90b7ebfd1a094f0b2e6b"
+    },
+    {
+      "path": "tasks/task-05.json",
+      "sha256": "65562f0b8ae8657782ec5f0606af023b80a66a17d3e50130d156e0fb1bbc854a"
+    },
+    {
+      "path": "tasks/task-06.json",
+      "sha256": "840e514d418982ccce1bad69529eb972c277d8dc326b1d34005eb9a95a8254e7"
+    },
+    {
+      "path": "tasks/task-07.json",
+      "sha256": "f1762e576a69d296ab130ea2f70c79f16abfcead12b5a5fa0660feba8b255d69"
+    },
+    {
+      "path": "tasks/task-08.json",
+      "sha256": "ad1bdc2fd68425d4329b444ba2414b6c3dcdfd346656e3c2341d98aaebaa05b6"
+    },
+    {
+      "path": "tasks/task-09.json",
+      "sha256": "d4c5464d724e1ec988f07f8855ce2a5219ece0149f3d8d5b14a740afaaa1968a"
+    },
+    {
+      "path": "tasks/task-10.json",
+      "sha256": "ba412c2bd390997bbc01c2455f8207585ec026374a4af3fa420609825ab55014"
+    },
+    {
+      "path": "tasks/task-11.json",
+      "sha256": "be04e5685b7eb50fb3d3e971c8741b5f0df45f08bd7ac5fafd94f8cb7c30c120"
+    },
+    {
+      "path": "tasks/task-12.json",
+      "sha256": "0a785ca715bb83cc9b59b265c60931499162d4ec8f120d947a84efcf9d4e4f14"
+    },
+    {
+      "path": "tasks/task-13.json",
+      "sha256": "7e8c30370a8dbef476530ec52165c5f5a893ae22e5b49f3b48d3062166deee60"
+    },
+    {
+      "path": "tasks/task-14.json",
+      "sha256": "4c9fdb0bf7990bcaa5156c30e33aa3b8f50f56a937497dcce43a2c00f9d9dde2"
+    },
+    {
+      "path": "tasks/task-15.json",
+      "sha256": "e3ecda9aa16876d56cfeaae03da3aa5b41c2224d8090e866c9ad20d6c8ec26f2"
+    },
+    {
+      "path": "tasks/task-16.json",
+      "sha256": "96e627518cb7fddd596c5d00f290ef714b13ca707a9383f0ce4423b1c0e73c96"
+    },
+    {
+      "path": "tasks/task-17.json",
+      "sha256": "4f926270973f0c8665190072970f6414f6ea8627146a1948fbedad92a3d4f720"
+    },
+    {
+      "path": "tasks/task-18.json",
+      "sha256": "4773b3bfed2f55b8770b59e1a30d48e606961870cd935d6105fba7001c812097"
+    },
+    {
+      "path": "tasks/task-19.json",
+      "sha256": "5c715cdffd9b0898ac2d3b0f7b2d3730f67e99c72b6aa271741fcf7bff2cf371"
+    },
+    {
+      "path": "tasks/task-20.json",
+      "sha256": "7357aaad4e29a9390f881aeeb0ba5671c9bc49b8b02246ec15b8eb24e0b64257"
+    },
+    {
+      "path": "tasks/task-21.json",
+      "sha256": "4001be0d6fb9416a0091ad25bbbeb99265b121114212996e708764b2f0b53bf0"
+    },
+    {
+      "path": "tasks/task-22.json",
+      "sha256": "ac97639d8d593f0406eb6580b436d011813407cafa8afef5a46f9e0229134f3d"
+    },
+    {
+      "path": "tasks/task-23.json",
+      "sha256": "62f63518e6e077382e767203eda6825234333acd85103868b18b8687ff727856"
+    },
+    {
+      "path": "tasks/task-24.json",
+      "sha256": "f0ac158f55e762158558e1234b551df1a41c6c6cc690c5d2c9301b28e05efb9d"
+    },
+    {
+      "path": "truth/task-01.json",
+      "sha256": "61616dfbf6a25c30063dcded7a62fa3c042fcabadf95ead5d5be243a66f3f691"
+    },
+    {
+      "path": "truth/task-02.json",
+      "sha256": "bf49c6e6efa1dfd7577d6af97b71eaa1f18dff0d043f56a959314854fe0b0493"
+    },
+    {
+      "path": "truth/task-03.json",
+      "sha256": "8e2f5df55ed976356c005e97f0741d98b388d727b7c06d7c6d061c145e2104e8"
+    },
+    {
+      "path": "truth/task-04.json",
+      "sha256": "9bb71c6324c4386391b311a3455c91e71fce36f37ba2d019b857a488f01e0237"
+    },
+    {
+      "path": "truth/task-05.json",
+      "sha256": "3e0db11d586a0523663bb2ddb47c367103968d4d94717c386a82442938734409"
+    },
+    {
+      "path": "truth/task-06.json",
+      "sha256": "8aeed6e528308d27d54a1b47209cb8eb3bf6ed696520c87d1532a14f21782cb9"
+    },
+    {
+      "path": "truth/task-07.json",
+      "sha256": "0c127fae863beca2bbe34242ed490635c303281c7ff36ae220726d05c1122386"
+    },
+    {
+      "path": "truth/task-08.json",
+      "sha256": "b4256a17246bf225929af9acd218f9181e21aa18039ce41735f0cf23f005cd7b"
+    },
+    {
+      "path": "truth/task-09.json",
+      "sha256": "e40bbe592457d9de7e048ddcc4705e8d42a0ea476a0296331743c6fa4cd8312f"
+    },
+    {
+      "path": "truth/task-10.json",
+      "sha256": "d15de78c615227ec094d287f0657124f878c79fcaca7fcb99c437386c85d3380"
+    },
+    {
+      "path": "truth/task-11.json",
+      "sha256": "db1ea9ee786c55930d0f89f4ddb86a10e8108ff249b980397ca779086c2ff85d"
+    },
+    {
+      "path": "truth/task-12.json",
+      "sha256": "91eaada2e30f4bd708a58a91027eaad88911d8d5d0fcb4f1698e395ee371e4f5"
+    },
+    {
+      "path": "truth/task-13.json",
+      "sha256": "060cfaba35d035235770dceec104cfda2c8e75b634b0c36ed0d8f6c16c562d79"
+    },
+    {
+      "path": "truth/task-14.json",
+      "sha256": "dda5d1a9a7c82faa9479f820b400f495f2611322a89a924d76a2c285e5f82822"
+    },
+    {
+      "path": "truth/task-15.json",
+      "sha256": "e2c527fc63604ee0e80410f5c655e629e188a5661d62a490442d38e869318791"
+    },
+    {
+      "path": "truth/task-16.json",
+      "sha256": "0c373306114d8ff9811e9c4520607e4a24b2f0276d63805bc41c6b43b10007e0"
+    },
+    {
+      "path": "truth/task-17.json",
+      "sha256": "58ee8f2127e991ce484a806198cfe77efd4051880f716808b0559862f8362396"
+    },
+    {
+      "path": "truth/task-18.json",
+      "sha256": "cad8ceaded5a714c7fbff8027cc0614a592f95f1c8ac9554116bdd87dab36345"
+    },
+    {
+      "path": "truth/task-19.json",
+      "sha256": "146b213d98406a4e6c68a222e12fc243122d3cd3712f27db4580d14327406a87"
+    },
+    {
+      "path": "truth/task-20.json",
+      "sha256": "ec175afcb8e74c45c3e04e84aa576b0ee9350afc189e98ed092078fcea1814ad"
+    },
+    {
+      "path": "truth/task-21.json",
+      "sha256": "0b44ffed32b16ca7364721458a5aa8c7f54efe0d31cf5b53a8ca482f1a6d1e2f"
+    },
+    {
+      "path": "truth/task-22.json",
+      "sha256": "e8c37b16f331eae9ed8f52fc18a762c6a15b4646330ebbe93ab0ae62175c4195"
+    },
+    {
+      "path": "truth/task-23.json",
+      "sha256": "0b9b31825068140d5d1232f7515694d8efce4c741f3c4ac86b2332bee4953e5b"
+    },
+    {
+      "path": "truth/task-24.json",
+      "sha256": "e6ecb147deb7eecc300daca509509fe0541f251bc1e05593071b9db907876c15"
+    }
+  ]
+}

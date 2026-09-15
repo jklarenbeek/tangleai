@@ -3,13 +3,24 @@
  * configuration and the pure resolver.
  *
  * Everything secret-bearing happens here and only here: validated
- * settings or environment strings are projected into a generated
- * legacy request, credential values are bound to named slots IN MEMORY,
- * a credential-free host manifest is built from suite-normalized
- * endpoints (URL userinfo is refused as host policy BEFORE the suite
- * sees the base), the pure resolver produces an identity or issues, and
- * only an `ok` identity may construct clients — through the one
- * chat/embed factory pair, never a second wire.
+ * settings are projected into a request — the generated legacy one when
+ * no profile is named, the registry request when one is — credential
+ * values are bound to named slots IN MEMORY, a credential-free host
+ * manifest is built from suite-normalized endpoints (URL userinfo is
+ * refused as host policy BEFORE the suite sees the base), the pure
+ * resolver produces an identity or issues, and only an `ok` identity may
+ * construct clients — through the one chat/embed factory pair, never a
+ * second wire.
+ *
+ * The two projections differ in one place only: which credential slots
+ * and providers the manifest declares. A named selection declares the
+ * registry's slots — configured when this host holds a key for the
+ * PROVIDER a candidate of that slot names, never by matching a slot's
+ * spelling — and the providers its chat candidates name. Under a named
+ * selection the resolved identity IS the client specification: provider,
+ * base, model and inference controls come from the role, and only the
+ * key comes from the settings. A selection the registry refuses is
+ * issues, never the legacy projection and never the offline answer.
  *
  * Probes are explicit refresh operations: `refreshObservation` counts
  * every attempted call and failure and dates its manifest; ordinary
@@ -32,11 +43,11 @@ import {
   revisionOf,
   validateHostManifest,
   type ContentRevision,
+  type EffectiveRole,
   type HostManifest,
   type Issue,
   type ProfileRegistry,
   type ProfileRequest,
-  type Resolution,
   type RunIdentity,
 } from '@tangleai/config';
 
@@ -48,6 +59,7 @@ import {
   embedderFor,
   type AiReplayCache,
   type ChatClient,
+  type ChatSettings,
   type Settings,
 } from './settings.ts';
 
@@ -158,6 +170,19 @@ export async function legacyRequestOf(settings: Settings): Promise<ProfileReques
     },
     chatPrompt: chat.state === 'unconfigured' ? null : await chatPromptContentRevision(),
   } as ProfileRequest;
+}
+
+/**
+ * The request the validated settings ask for: the registry request when
+ * a profile is named, the generated legacy one otherwise. This is the
+ * ONLY branch between the two; nothing in the named branch calls
+ * `legacyRequestOf`, so a refused selection can never be answered by the
+ * wire settings.
+ */
+export async function requestOf(settings: Settings): Promise<ProfileRequest> {
+  return settings.profile === null
+    ? legacyRequestOf(settings)
+    : { kind: 'profile', profile: settings.profile, overrides: null } as ProfileRequest;
 }
 
 // ---------------------------------------------------------------------------
@@ -275,10 +300,15 @@ export interface FinalizingEmbedder extends Embedder {
   finalIdentity(): RunIdentity | null;
 }
 
+/**
+ * `display` names the wire a stack actually built — `provider/model` —
+ * so a surface labels a reply with what answered it instead of re-reading
+ * the settings, which say nothing about a named selection's choice.
+ */
 export type HostStack =
   | { state: 'refused', issues: Issue[] }
-  | { state: 'ready', identity: RunIdentity, chat: ChatClient | null, embedder: Embedder }
-  | { state: 'provisional', pending: 'embedding-width', chat: ChatClient | null, embedder: FinalizingEmbedder, issues: Issue[] };
+  | { state: 'ready', identity: RunIdentity, chat: ChatClient | null, display: string | null, embedder: Embedder }
+  | { state: 'provisional', pending: 'embedding-width', chat: ChatClient | null, display: string | null, embedder: FinalizingEmbedder, issues: Issue[] };
 
 const PROVISIONAL_WIDTH = (issues: Issue[]): boolean =>
   issues.length > 0 && issues.every((item) => item.code === 'TCFG1012' && item.detail.includes('width'));
@@ -300,11 +330,84 @@ export function settingsFactsOf(settings: Settings): ManifestFacts {
       { name: SLOT_NAMES.chat, configured: settings.chat.apiKey !== null, source: 'settings' },
       { name: SLOT_NAMES.embed, configured: settings.embed.apiKey !== null, source: 'settings' },
     ],
-    wireEmbeddings: legacyEmbedOf(settings).state === 'configured'
-      ? [{ provider: settings.embed.provider, baseUrl: settings.embed.baseUrl, model: settings.embed.model as string, dims: null }]
-      : [],
+    wireEmbeddings: wireEmbeddingFactsOf(settings),
     budget: { maxCalls: null, maxTokens: null, maxMs: null, maxConcurrency: null },
   };
+}
+
+function wireEmbeddingFactsOf(settings: Settings): ManifestFacts['wireEmbeddings'] {
+  return legacyEmbedOf(settings).state === 'configured'
+    ? [{ provider: settings.embed.provider, baseUrl: settings.embed.baseUrl, model: settings.embed.model as string, dims: null }]
+    : [];
+}
+
+/**
+ * The manifest facts a NAMED selection is resolved against.
+ *
+ * Slot binding is host policy, and it binds by PROVIDER: a registry slot
+ * is configured when this host holds a chat key and some chat candidate
+ * of that slot names the provider the key belongs to. Matching a slot's
+ * spelling binds nothing — the desktop's own slot names are not the
+ * registry's, and a key held for one provider is not authority on
+ * another. The desktop's own two slots stay declared, so a profile that
+ * names one still resolves.
+ *
+ * Providers are the ones the registry's chat candidates name, each at
+ * its suite-default base — except the one the stored chat settings also
+ * name, which keeps the operator's own base so a proxy survives the
+ * selection. The userinfo prohibition runs over every base here exactly
+ * as it does for the legacy projection.
+ */
+export function profileFactsOf(settings: Settings, registry: ProfileRegistry): ManifestFacts {
+  const chatCandidates = registry.candidates.filter((candidate) => candidate.kind === 'chat');
+  const holdsKeyFor = (provider: string): boolean =>
+    settings.chat.provider === provider && settings.chat.apiKey !== null;
+
+  const slots: ManifestFacts['slots'] = [];
+  const declared = new Set<string>();
+  for (const name of registry.credentialSlots) {
+    declared.add(name);
+    slots.push({
+      name,
+      configured: chatCandidates.some((candidate) => candidate.credentialSlot === name && holdsKeyFor(candidate.provider)),
+      source: 'settings',
+    });
+  }
+  for (const own of [
+    { name: SLOT_NAMES.chat, configured: settings.chat.apiKey !== null },
+    { name: SLOT_NAMES.embed, configured: settings.embed.apiKey !== null },
+  ]) {
+    if (declared.has(own.name)) continue;
+    declared.add(own.name);
+    slots.push({ ...own, source: 'settings' });
+  }
+
+  const wires: ManifestFacts['wires'] = [];
+  const seen = new Set<string>();
+  for (const candidate of chatCandidates) {
+    if (seen.has(candidate.provider)) continue;
+    seen.add(candidate.provider);
+    wires.push({
+      provider: candidate.provider,
+      baseUrl: settings.chat.provider === candidate.provider ? settings.chat.baseUrl : null,
+      path: '/chat/baseUrl',
+    });
+  }
+
+  return {
+    sourceClass: 'desktop-settings',
+    wires,
+    slots,
+    wireEmbeddings: wireEmbeddingFactsOf(settings),
+    budget: { maxCalls: null, maxTokens: null, maxMs: null, maxConcurrency: null },
+  };
+}
+
+/** The manifest facts the current settings imply, by which request they ask for. */
+export function factsOf(settings: Settings, registry: unknown = productionRegistry): ManifestFacts {
+  return settings.profile === null
+    ? settingsFactsOf(settings)
+    : profileFactsOf(settings, registry as ProfileRegistry);
 }
 
 export async function settingsStack(
@@ -312,8 +415,8 @@ export async function settingsStack(
   options: StackOptions = {},
   registry: unknown = productionRegistry,
 ): Promise<HostStack> {
-  const request = await legacyRequestOf(settings);
-  return resolveStack({ registry, request, facts: settingsFactsOf(settings), settings, options });
+  const request = await requestOf(settings);
+  return resolveStack({ registry, request, facts: factsOf(settings, registry), settings, options });
 }
 
 /** What a read-only inspection sees — no client, no probe, no secret. */
@@ -330,8 +433,8 @@ export interface StackInspection {
  * This is the desktop's inspection path — a read never probes.
  */
 export async function inspectStack(settings: Settings, registry: unknown = productionRegistry): Promise<StackInspection> {
-  const request = await legacyRequestOf(settings);
-  const built = await buildHostManifest(settingsFactsOf(settings));
+  const request = await requestOf(settings);
+  const built = await buildHostManifest(factsOf(settings, registry));
   if (!built.ok) return { request, state: 'refused', issues: built.issues, identity: null };
   const resolution = await resolveProfile({ registry, request, host: built.manifest });
   if (resolution.ok) return { request, state: 'ready', issues: [], identity: resolution.identity };
@@ -356,10 +459,12 @@ async function resolveStack(input: ResolveStackInput): Promise<HostStack> {
 
   const resolution = await resolveProfile({ registry, request, host: built.manifest });
   if (resolution.ok) {
+    const wire = chatWireOf(request, resolution.identity, settings);
     return {
       state: 'ready',
       identity: resolution.identity,
-      chat: chatClientOf(resolution, settings, options),
+      chat: chatClientOf(wire, options),
+      display: displayOf(wire),
       embedder: embedderOf(resolution.identity, settings, options),
     };
   }
@@ -372,9 +477,8 @@ async function resolveStack(input: ResolveStackInput): Promise<HostStack> {
   // any vector reaches a caller
   const wireEmbedder = embedderFor(settings, options.fetch, options.cache);
   let finalized: RunIdentity | null = null;
-  let chat: ChatClient | null = null;
-  const provisionalChat = chatClientOf(null, settings, options);
-  chat = provisionalChat;
+  const provisionalWire = chatWireOf(request, null, settings);
+  const chat: ChatClient | null = chatClientOf(provisionalWire, options);
   const finalizing: FinalizingEmbedder = {
     model: wireEmbedder.model,
     dims: wireEmbedder.dims,
@@ -399,13 +503,57 @@ async function resolveStack(input: ResolveStackInput): Promise<HostStack> {
     },
     finalIdentity: () => finalized,
   } as FinalizingEmbedder;
-  return { state: 'provisional', pending: 'embedding-width', chat, embedder: finalizing, issues: resolution.issues as Issue[] };
+  return { state: 'provisional', pending: 'embedding-width', chat, display: displayOf(provisionalWire), embedder: finalizing, issues: resolution.issues as Issue[] };
 }
 
-function chatClientOf(resolution: Resolution | null, settings: Settings, options: StackOptions): ChatClient | null {
-  if (!chatWireConfigured(settings.chat)) return null;
-  if (resolution !== null && resolution.ok && resolution.identity.roles.chat === undefined) return null;
-  return chatClientFor(settings.chat, {
+/**
+ * The chat wire a resolved role names, bound to the key this host holds
+ * for that role's provider. Provider, base, model and the inference
+ * controls come from the identity — it IS the client specification —
+ * and only the key comes from the settings. A role whose slot this host
+ * cannot bind builds nothing: the resolution already refused it, and a
+ * keyless call to a credentialed endpoint is not a fallback.
+ */
+export function chatSettingsOfRole(role: EffectiveRole, settings: Settings): ChatSettings | null {
+  const key = role.credentialSlot === null
+    ? null
+    : (settings.chat.provider === role.provider ? settings.chat.apiKey : null);
+  if (role.credentialSlot !== null && key === null) return null;
+  return {
+    provider: role.provider,
+    baseUrl: role.base,
+    model: role.model,
+    apiKey: key,
+    maxTokens: role.inference.maxTokens,
+    ...(role.inference.maxTokensField === undefined ? {} : { maxTokensField: role.inference.maxTokensField }),
+  };
+}
+
+/**
+ * Which wire a stack may build. The legacy branch builds from the
+ * settings verbatim, exactly as it always has; a named selection builds
+ * from the identity's chat role and from nothing else — no identity
+ * means no selection resolved, and the answer is no client rather than
+ * the settings' wire.
+ */
+function chatWireOf(request: ProfileRequest, identity: RunIdentity | null, settings: Settings): ChatSettings | null {
+  if (request.kind !== 'legacy') {
+    const role = identity?.roles.chat;
+    if (role === undefined) return null;
+    const chat = chatSettingsOfRole(role, settings);
+    return chat !== null && chatWireConfigured(chat) ? chat : null;
+  }
+  if (identity !== null && identity.roles.chat === undefined) return null;
+  return chatWireConfigured(settings.chat) ? settings.chat : null;
+}
+
+/** What a surface calls the wire that answered. */
+const displayOf = (chat: ChatSettings | null): string | null =>
+  chat === null ? null : `${chat.provider}/${chat.model}`;
+
+function chatClientOf(chat: ChatSettings | null, options: StackOptions): ChatClient | null {
+  if (chat === null) return null;
+  return chatClientFor(chat, {
     fetch: options.fetch,
     retry: options.retry,
     reasoning: options.reasoning,

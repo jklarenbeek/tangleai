@@ -17,8 +17,8 @@ The release commit follows the work-order commits and the final push includes
 them together. Authorization to close out when the campaign is complete covers
 this sequence; npm publication remains a separate manual author action.
 
-The current checkout consumes Jaren 0.89.0 registry packages. The
-[registry receipt](../integration/jaren-0.89.0-registry.json) verifies downloaded
+The current checkout consumes Jaren 0.90.6 registry packages. The
+[registry receipt](../integration/jaren-0.90.6-registry.json) verifies downloaded
 archives against the exact lock. Archived 0.84.3 migration receipts retain their
 historical source/archive comparison. Ordinary `npm ci --ignore-scripts` needs
 no foundation bootstrap. The candidate instructions below apply only to a

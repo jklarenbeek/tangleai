@@ -1,0 +1,9 @@
+sku,warehouse,on_hand,reorder_level
+AX-100,dock-a,42,20
+AX-100,dock-b,8,20
+BX-220,dock-a,15,25
+BX-220,dock-b,31,25
+CX-330,dock-a,0,10
+CX-330,dock-b,54,10
+DX-440,dock-a,27,30
+DX-440,dock-b,19,30

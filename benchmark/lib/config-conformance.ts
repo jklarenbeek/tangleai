@@ -37,6 +37,7 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { applyJSONPatch } from '@jarenjs/json';
 import { resolveEndpoint } from '@tangleai/models/providers';
 import { compileContract } from '@jarenjs/contract';
+import { createScheduler } from '@jarenjs/core/schedule';
 import { publicProjection } from '@jarenjs/contract/project';
 import {
   profileRegistrySchema,
@@ -199,6 +200,10 @@ export const CONSTRUCTION_CENSUS: ConfigConformance['census'] = {
     { file: 'apps/desktop/src/handlers.ts', operation: 'folder.sync', recordsIdentity: true },
     { file: 'apps/desktop/src/handlers.ts', operation: 'documents.ingest', recordsIdentity: true },
     { file: 'apps/desktop/src/handlers.ts', operation: 'documents.ingestbatch', recordsIdentity: true },
+    { file: 'apps/desktop/src/handlers.ts', operation: 'chat.start', recordsIdentity: true },
+    // a report runs a keyless child process and resolves no model
+    // stack, so it records no identity and is not asked for one
+    { file: 'apps/desktop/src/handlers.ts', operation: 'reports.run', recordsIdentity: false },
   ],
   reportArtifacts: [
     { path: 'benchmark/results/locomo-policy.json', identityDiscipline: 'complete', note: 'registration, cell, run and report identities over canonical JSON, plus the shared envelope stating its keyless screen rows analytic' },
@@ -209,8 +214,8 @@ export const CONSTRUCTION_CENSUS: ConfigConformance['census'] = {
   desktopContract: { operations: 0, revision: '0'.repeat(64) },
   summary: {
     hostInputs: 2,
-    runProducers: 3,
-    runProducersRecordingIdentity: 3,
+    runProducers: 5,
+    runProducersRecordingIdentity: 4,
     reportArtifacts: 4,
     reportArtifactsWithIdentities: 4,
   },
@@ -378,8 +383,11 @@ async function measureProbe(item: RegisteredCase, root: string): Promise<Measure
     case 'unconfigured-offline': {
       const stack = await settingsStack(DEFAULT_SETTINGS);
       if (stack.state !== 'ready') return { status: 'gap', observed: 'default settings did not resolve as the unconfigured legacy stack' };
+      // the property is the absence of a wire and the presence of the
+      // built-in identity; the built-in's width is a product default this
+      // case observes rather than decides
       const offline = stack.chat === null && stack.identity.embedding?.provider === 'builtin';
-      return offline && stack.embedder.model === 'hash-trigram-64'
+      return offline
         ? { status: 'holds', observed: `the unconfigured legacy request resolves to no chat wire and the built-in ${stack.identity.embedding?.model} identity at ${stack.identity.embedding?.dims} dimensions (identity ${stack.identity.identityId.slice(0, 12)}…)` }
         : { status: 'gap', observed: 'default settings unexpectedly resolve a wire' };
     }
@@ -520,6 +528,7 @@ async function measureProbe(item: RegisteredCase, root: string): Promise<Measure
       const documentStore = createDocumentStore(db);
       const identities = createIdentityRepository(db);
       let tick = 0;
+      const now = (): string => `2026-01-01T00:00:${String(tick++).padStart(2, '0')}.000Z`;
       const engine = createChatEngine({
         db,
         memoryStore,
@@ -527,7 +536,10 @@ async function measureProbe(item: RegisteredCase, root: string): Promise<Measure
         settings: async () => structuredClone(DEFAULT_SETTINGS),
         stackFor: (settings) => settingsStack(settings),
         identities,
-        now: () => `2026-01-01T00:00:${String(tick++).padStart(2, '0')}.000Z`,
+        runLog: createRunLog(db, { now }),
+        inflight: new Map(),
+        scheduler: createScheduler({ concurrency: 1, maxQueue: 1 }),
+        now,
       });
       const outcome = await engine.send('what does the store hold?');
       const reply = outcome.reply as { identityId?: string | null, usage?: unknown, provider?: string | null };

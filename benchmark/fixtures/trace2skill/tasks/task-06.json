@@ -1,0 +1,10 @@
+{
+  "id": "task-06",
+  "split": "evolve",
+  "prompt": "How many sku and warehouse rows hold less stock than their reorder level?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

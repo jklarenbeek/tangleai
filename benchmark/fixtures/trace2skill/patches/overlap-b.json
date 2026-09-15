@@ -1,0 +1,19 @@
+{
+  "id": "overlap-b",
+  "origin": {
+    "rollout": "task-13",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1004",
+  "withheld": true,
+  "rationale": "Rewrites the same answer-format section with a different wording.",
+  "operations": [
+    {
+      "group": "g-format",
+      "op": "replace_section",
+      "file": "SKILL.md",
+      "anchor": "## Answer format",
+      "text": "## Answer format\n\n- A count is a bare integer.\n- A name is the identifier exactly as the table spells it, lower-cased.\n- A decimal uses a period separator and no thousands separator.\n- Report a pound weight to one decimal."
+    }
+  ]
+}

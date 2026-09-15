@@ -1,0 +1,10 @@
+{
+  "id": "task-08",
+  "split": "test",
+  "prompt": "Which warehouse holds more units of sku DX-440?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

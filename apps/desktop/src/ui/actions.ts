@@ -16,21 +16,72 @@ export const INITIAL_STATE = {
     messages: [] as any[],
     citations: [] as any[],
     documentCitations: [] as any[],
+    /** The run answering the pending question: its addresses and what it has said so far. */
+    run: null as { runId: string, messageId: string, chars: number, degraded: any[], status: string } | null,
+    /**
+     * The verdict form, open on at most one reply. A thumb opens it; only
+     * an explicit submission with a reason and named evidence records
+     * anything, and what comes back is what the server stored.
+     */
+    feedback: {
+      messageId: null as string | null,
+      form: null as any,
+      verdict: 'success',
+      reason: '',
+      note: '',
+      refs: [] as string[],
+      error: null as string | null,
+      receipt: null as any,
+    },
   },
   loom: {
     mermaid: '',
     nodes: [] as string[],
-    live: { run: null as any, nodes: {} as Record<string, any>, seq: 0 },
-    runs: [] as any[],
+    /** The live run window, in the shape its subscription's snapshot carries. */
+    runs: { rows: [] as any[] },
+    /** The run the Loom is watching; a subscriber names its run. */
+    watch: null as string | null,
+    /** A fresh attempt number restarts the frame subscription at the seq the rows reached. */
+    frameAttempt: 0,
+    frames: { runId: null as string | null, rows: [] as any[], lastSeq: 0 },
     detail: null as any,
     syncing: false,
     syncError: null as string | null,
+    /** A refused slot is fixable by waiting, so it is a note and not a failure. */
+    syncNote: null as string | null,
+    /** What the host's watcher has observed, as `folder.watch.get` reports it. */
+    watcher: null as any,
+  },
+  /**
+   * What this host can measure, and what it kept. A build that
+   * registered nothing says so — that is the state of the build, not an
+   * error of the page.
+   */
+  reports: {
+    instruments: [] as any[],
+    issues: [] as any[],
+    rows: [] as any[],
+    detail: null as any,
+    /** The report run this page is watching, followed through the run window. */
+    runId: null as string | null,
+    busy: false,
+    error: null as string | null,
+    receipt: null as any,
   },
   memory: {
     q: '',
     superseded: false,
     items: [] as any[],
     detail: null as any,
+  },
+  skills: {
+    runs: [] as any[],
+    detail: null as any,
+    merges: null as any,
+    candidate: null as any,
+    evaluation: null as any,
+    head: null as any,
+    error: null as string | null,
   },
   documents: {
     url: '',
@@ -59,6 +110,8 @@ export const INITIAL_STATE = {
     saveCount: 0,
     /** The read-only config inspection: registry, request, resolution state, identity. */
     inspect: null as any,
+    /** What the selected-but-unsaved profile resolves to, or null when none is selected. */
+    preview: null as any,
   },
 };
 
@@ -76,8 +129,12 @@ export const ACTIONS: Record<string, any> = {
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
       invoke('documents.list', {}, 'documents/done', 'noop'),
       invoke('browser.status', {}, 'browser/done', 'noop'),
+      invoke('skills.runs.list', {}, 'skills/runs', 'noop'),
       invoke('settings.get', {}, 'settings/done', 'noop'),
       invoke('config.inspect', {}, 'config/done', 'noop'),
+      invoke('folder.watch.get', {}, 'watch/done', 'noop'),
+      invoke('reports.instruments', {}, 'reports/instruments', 'noop'),
+      invoke('reports.list', {}, 'reports/rows', 'noop'),
     ],
   },
   noop: {},
@@ -97,6 +154,26 @@ export const ACTIONS: Record<string, any> = {
   // -- chat -----------------------------------------------------------------
   'chat/input': { patch: [{ op: 'replace', path: '/chat/input', value: '$event.value' }] },
   'chat/history': { patch: [{ op: 'replace', path: '/chat/messages', value: '$payload' }] },
+  'chat/started': {
+    patch: [
+      { op: 'replace', path: '/chat/run', value: { runId: '$payload.runId', messageId: '$payload.messageId', chars: 0, degraded: [], status: 'running' } },
+      { op: 'replace', path: '/chat/citations', value: [] },
+      { op: 'replace', path: '/chat/documentCitations', value: [] },
+    ],
+  },
+  'chat/streamed': {
+    patch: [{ op: 'replace', path: '/chat/run', value: '$payload' }],
+  },
+  'chat/answered': {
+    effects: [invoke('chat.history', { limit: 200 }, 'chat/replied', 'chat/fail')],
+  },
+  'chat/replied': {
+    patch: [
+      { op: 'replace', path: '/chat/messages', value: '$payload' },
+      { op: 'replace', path: '/chat/busy', value: false },
+    ],
+    effects: [invoke('runs.list', {}, 'runs/done', 'noop')],
+  },
   'chat/send': {
     patch: [
       { op: 'add', path: '/chat/messages/-', value: { role: 'user', text: '$.chat.input', local: true } },
@@ -114,6 +191,10 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/chat/busy', value: false },
     ],
   },
+  /** End the run answering the pending question; its terminal frame says cancelled. */
+  'chat/stop': {
+    effects: [{ run: 'invoke', with: { op: 'runs.cancel', input: { runId: '$payload' }, done: 'noop', fail: 'noop' } }],
+  },
   'chat/fail': {
     patch: [
       { op: 'replace', path: '/chat/busy', value: false },
@@ -121,14 +202,64 @@ export const ACTIONS: Record<string, any> = {
     ],
   },
 
+  // -- feedback (an evidenced verdict, never a bare click) -------------------
+  /** A thumb OPENS the form, pre-selecting what it meant; it submits nothing. */
+  'feedback/open': {
+    patch: [{
+      op: 'replace',
+      path: '/chat/feedback',
+      value: {
+        messageId: '$payload.messageId', form: null, verdict: '$payload.verdict',
+        reason: '', note: '', refs: [], error: null, receipt: null,
+      },
+    }],
+    effects: [{ run: 'feedbackOpen', with: { messageId: '$payload.messageId' } }],
+  },
+  'feedback/form': { patch: [{ op: 'replace', path: '/chat/feedback/form', value: '$payload' }] },
+  'feedback/close': { patch: [{ op: 'replace', path: '/chat/feedback/messageId', value: null }] },
+  'feedback/verdict': { patch: [{ op: 'replace', path: '/chat/feedback/verdict', value: '$payload' }] },
+  'feedback/reason': { patch: [{ op: 'replace', path: '/chat/feedback/reason', value: '$event.value' }] },
+  'feedback/note': { patch: [{ op: 'replace', path: '/chat/feedback/note', value: '$event.value' }] },
+  /** Ticking is a set operation; the host effect computes it and hands back the whole set. */
+  'feedback/toggle': {
+    effects: [{ run: 'feedbackToggle', with: { refs: '$.chat.feedback.refs', ref: '$payload' } }],
+  },
+  'feedback/refs': { patch: [{ op: 'replace', path: '/chat/feedback/refs', value: '$payload' }] },
+  'feedback/submit': {
+    patch: [{ op: 'replace', path: '/chat/feedback/error', value: null }],
+    effects: [{
+      run: 'feedbackSubmit',
+      with: {
+        messageId: '$.chat.feedback.messageId',
+        verdict: '$.chat.feedback.verdict',
+        reason: '$.chat.feedback.reason',
+        note: '$.chat.feedback.note',
+        refs: '$.chat.feedback.refs',
+        options: '$.chat.feedback.form.evidence',
+      },
+    }],
+  },
+  /** What the server recorded, shown as the numbers it answered. */
+  'feedback/recorded': {
+    patch: [
+      { op: 'replace', path: '/chat/feedback/receipt', value: '$payload' },
+      { op: 'replace', path: '/chat/feedback/error', value: null },
+    ],
+    effects: [invoke('memories.list', { limit: 200 }, 'memory/done', 'noop')],
+  },
+  'feedback/fail': { patch: [{ op: 'replace', path: '/chat/feedback/error', value: '$payload' }] },
+
   // -- loom (DAG, runs, sync) ----------------------------------------------
-  // A delayed stream frame must not replace a newer snapshot read after sync.
-  'loom/live': { $if: [
-    { $ge: ['$payload.seq', '$.loom.live.seq'] },
-    { patch: [{ op: 'replace', path: '/loom/live', value: '$payload' }] },
-  ] },
-  'loom/snapshot': { patch: [{ op: 'replace', path: '/loom/live', value: '$payload' }] },
-  'loom/refresh': { effects: [invoke('dag.live', {}, 'loom/live', 'noop')] },
+  // The run window arrives as its subscription's own document; the
+  // patches are applied under this slot by the handler that receives
+  // them, so what the surface holds is what the server maintains.
+  'loom/runs': { patch: [{ op: 'replace', path: '/loom/runs', value: '$payload' }] },
+  /** Watch a named run — the only way frames are ever requested. The
+   * subscription that starts for it seeds the slot with its own id. */
+  'loom/follow': { patch: [{ op: 'replace', path: '/loom/watch', value: '$payload' }] },
+  'loom/frames': { patch: [{ op: 'replace', path: '/loom/frames', value: '$payload' }] },
+  /** A lost stream: a new attempt restarts the subscription from the seq the rows already reached. */
+  'loom/frameLost': { patch: [{ op: 'replace', path: '/loom/frameAttempt', value: '$payload' }] },
   'runs/refresh': {
     effects: [
       invoke('runs.list', {}, 'runs/done', 'noop'),
@@ -136,28 +267,77 @@ export const ACTIONS: Record<string, any> = {
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
     ],
   },
-  'runs/done': { patch: [{ op: 'replace', path: '/loom/runs', value: '$payload' }] },
+  'runs/done': { patch: [{ op: 'replace', path: '/loom/runs/rows', value: '$payload' }] },
   'run/select': {
-    effects: [{ run: 'invoke', with: { op: 'runs.get', input: { id: '$payload' }, done: 'run/detail', fail: 'noop' } }],
+    patch: [{ op: 'replace', path: '/loom/watch', value: '$payload' }],
+    effects: [
+      { run: 'invoke', with: { op: 'runs.get', input: { id: '$payload' }, done: 'run/detail', fail: 'noop' } },
+      { run: 'runFrames', with: { runId: '$payload' } },
+    ],
   },
   'run/detail': { patch: [{ op: 'replace', path: '/loom/detail', value: '$payload' }] },
   'run/close': { patch: [{ op: 'replace', path: '/loom/detail', value: null }] },
+
+  // -- skills (read only: this surface shows what a run did) ------------------
+  'skills/refresh': { effects: [invoke('skills.runs.list', {}, 'skills/runs', 'skills/fail')] },
+  'skills/runs': { patch: [{ op: 'replace', path: '/skills/runs', value: '$payload' }] },
+  'skills/select': {
+    patch: [
+      { op: 'replace', path: '/skills/error', value: null },
+      { op: 'replace', path: '/skills/candidate', value: null },
+      { op: 'replace', path: '/skills/evaluation', value: null },
+    ],
+    effects: [
+      { run: 'invoke', with: { op: 'skills.runs.get', input: { id: '$payload' }, done: 'skills/detail', fail: 'skills/fail' } },
+      { run: 'invoke', with: { op: 'skills.merges.get', input: { runId: '$payload' }, done: 'skills/merges', fail: 'noop' } },
+    ],
+  },
+  'skills/detail': {
+    patch: [{ op: 'replace', path: '/skills/detail', value: '$payload' }],
+    effects: [{ run: 'skillDetail', with: { detail: '$payload' } }],
+  },
+  'skills/merges': { patch: [{ op: 'replace', path: '/skills/merges', value: '$payload' }] },
+  'skills/candidate': { patch: [{ op: 'replace', path: '/skills/candidate', value: '$payload' }] },
+  'skills/evaluation': { patch: [{ op: 'replace', path: '/skills/evaluation', value: '$payload' }] },
+  'skills/head': { patch: [{ op: 'replace', path: '/skills/head', value: '$payload' }] },
+  'skills/fail': { patch: [{ op: 'replace', path: '/skills/error', value: '$payload' }] },
+  'skills/close': {
+    patch: [
+      { op: 'replace', path: '/skills/detail', value: null },
+      { op: 'replace', path: '/skills/merges', value: null },
+      { op: 'replace', path: '/skills/candidate', value: null },
+      { op: 'replace', path: '/skills/evaluation', value: null },
+    ],
+  },
 
   sync: {
     patch: [
       { op: 'replace', path: '/loom/syncing', value: true },
       { op: 'replace', path: '/loom/syncError', value: null },
+      { op: 'replace', path: '/loom/syncNote', value: null },
     ],
-    effects: [invoke('folder.sync', {}, 'sync/done', 'sync/fail')],
+    effects: [{ run: 'syncFolder' }],
   },
   'sync/done': {
-    patch: [{ op: 'replace', path: '/loom/syncing', value: false }],
+    patch: [
+      { op: 'replace', path: '/loom/syncing', value: false },
+      { op: 'replace', path: '/loom/watch', value: '$payload.runId' },
+    ],
     effects: [
-      invoke('dag.live', {}, 'loom/live', 'noop'),
+      { run: 'runFrames', with: { runId: '$payload.runId' } },
       invoke('runs.list', {}, 'runs/done', 'noop'),
       invoke('status.get', {}, 'status/done', 'noop'),
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
+      invoke('folder.watch.get', {}, 'watch/done', 'noop'),
     ],
+  },
+  /** The click found a pass already running: the work it asked for is being done. */
+  'sync/busy': {
+    patch: [
+      { op: 'replace', path: '/loom/syncing', value: false },
+      { op: 'replace', path: '/loom/syncNote', value: '$payload' },
+    ],
+    effects: [invoke('folder.watch.get', {}, 'watch/done', 'noop')],
   },
   'sync/fail': {
     patch: [
@@ -165,6 +345,8 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/loom/syncError', value: '$payload' },
     ],
   },
+  'watch/done': { patch: [{ op: 'replace', path: '/loom/watcher', value: '$payload' }] },
+  'watch/refresh': { effects: [invoke('folder.watch.get', {}, 'watch/done', 'noop')] },
 
   // -- memory ---------------------------------------------------------------
   'memory/q': {
@@ -180,6 +362,42 @@ export const ACTIONS: Record<string, any> = {
   'memory/close': { patch: [{ op: 'replace', path: '/memory/detail', value: null }] },
 
   // -- documents ------------------------------------------------------------
+  'reports/instruments': {
+    patch: [
+      { op: 'replace', path: '/reports/instruments', value: '$payload.instruments' },
+      { op: 'replace', path: '/reports/issues', value: '$payload.issues' },
+    ],
+  },
+  'reports/rows': { patch: [{ op: 'replace', path: '/reports/rows', value: '$payload.rows' }] },
+  'reports/run': {
+    patch: [
+      { op: 'replace', path: '/reports/busy', value: true },
+      { op: 'replace', path: '/reports/error', value: null },
+      { op: 'replace', path: '/reports/receipt', value: null },
+    ],
+    effects: [{ run: 'runReport', with: { id: '$payload' } }],
+  },
+  'reports/done': {
+    patch: [
+      { op: 'replace', path: '/reports/busy', value: false },
+      { op: 'replace', path: '/reports/receipt', value: '$payload' },
+      { op: 'replace', path: '/reports/runId', value: '$payload.runId' },
+    ],
+    effects: [
+      invoke('reports.list', {}, 'reports/rows', 'noop'),
+      invoke('runs.list', {}, 'runs/done', 'noop'),
+    ],
+  },
+  'reports/fail': {
+    patch: [
+      { op: 'replace', path: '/reports/busy', value: false },
+      { op: 'replace', path: '/reports/error', value: '$payload' },
+    ],
+  },
+  'reports/open': { effects: [{ run: 'invoke', with: { op: 'reports.get', input: { reportId: '$payload' }, done: 'reports/detail', fail: 'reports/fail' } }] },
+  'reports/detail': { patch: [{ op: 'replace', path: '/reports/detail', value: '$payload' }] },
+  'reports/close': { patch: [{ op: 'replace', path: '/reports/detail', value: null }] },
+
   'documents/url': { patch: [{ op: 'replace', path: '/documents/url', value: '$event.value' }] },
   'documents/q': {
     patch: [{ op: 'replace', path: '/documents/q', value: '$event.value' }],
@@ -293,6 +511,13 @@ export const ACTIONS: Record<string, any> = {
   'settings/browser-token': { patch: [{ op: 'replace', path: '/settings/draft/browser/token', value: '$event.value' }] },
   'settings/browser-unsafe': { patch: [{ op: 'replace', path: '/settings/draft/browser/allowUnsafeLocal', value: '$event.checked' }] },
   'settings/search-url': { patch: [{ op: 'replace', path: '/settings/draft/search/searxngUrl', value: '$event.value' }] },
+  // selecting a profile previews it at once: the operator sees the
+  // refusal a save would produce before saving it
+  'settings/profile': {
+    patch: [{ op: 'replace', path: '/settings/draft/profile', value: '$event.value' }],
+    effects: [{ run: 'previewProfile', with: { profile: '$event.value' } }],
+  },
+  'config/preview': { patch: [{ op: 'replace', path: '/settings/preview', value: '$payload' }] },
   'settings/save': {
     effects: [{ run: 'saveSettings', with: { settings: '$.settings.draft', clear: '$.settings.clear' } }],
   },
@@ -308,6 +533,9 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/settings/embedProbe', value: null },
       { op: 'replace', path: '/settings/clear', value: { chatKey: false, embedKey: false, browserToken: false } },
       { op: 'replace', path: '/settings/saveCount', value: { '$add': ['$.settings.saveCount', 1] } },
+      // the saved selection is now the effective one; the inspection below
+      // states it, so a stale preview beside it would say it twice
+      { op: 'replace', path: '/settings/preview', value: null },
     ],
     effects: [
       invoke('status.get', {}, 'status/done', 'noop'),

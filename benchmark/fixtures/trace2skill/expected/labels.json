@@ -1,0 +1,141 @@
+{
+  "evaluator": "exact-normalized-v1",
+  "incorrectAnswer": "unknown",
+  "turns": {
+    "correct": 2,
+    "incorrect": 3,
+    "budget": 6
+  },
+  "tokensPerTurn": 512,
+  "budgetTasks": [
+    "task-06"
+  ],
+  "modes": {
+    "deepening": {
+      "rolloutCondition": "frozen-s0",
+      "conditions": {
+        "no-skill": {
+          "incorrect": [
+            "task-01",
+            "task-02",
+            "task-03",
+            "task-06",
+            "task-07",
+            "task-10",
+            "task-11",
+            "task-13",
+            "task-15",
+            "task-17",
+            "task-18",
+            "task-19",
+            "task-20",
+            "task-21",
+            "task-22"
+          ]
+        },
+        "frozen-s0": {
+          "incorrect": [
+            "task-01",
+            "task-03",
+            "task-06",
+            "task-13",
+            "task-17",
+            "task-19",
+            "task-22"
+          ]
+        },
+        "evolved-s-star": {
+          "incorrect": [
+            "task-06"
+          ]
+        },
+        "retrieval-bank": {
+          "incorrect": [
+            "task-01",
+            "task-02",
+            "task-03",
+            "task-06",
+            "task-07",
+            "task-10",
+            "task-11",
+            "task-13",
+            "task-15",
+            "task-17",
+            "task-18",
+            "task-19",
+            "task-20",
+            "task-21",
+            "task-22"
+          ]
+        },
+        "single-call-error": {
+          "incorrect": [
+            "task-06"
+          ]
+        },
+        "sequential-merge": {
+          "incorrect": [
+            "task-06"
+          ]
+        }
+      }
+    },
+    "creation": {
+      "rolloutCondition": "draft-s0",
+      "conditions": {
+        "no-skill": {
+          "incorrect": [
+            "task-01",
+            "task-02",
+            "task-03",
+            "task-06",
+            "task-07",
+            "task-10",
+            "task-11",
+            "task-13",
+            "task-15",
+            "task-17",
+            "task-18",
+            "task-19",
+            "task-20",
+            "task-21",
+            "task-22"
+          ]
+        },
+        "draft-s0": {
+          "incorrect": [
+            "task-01",
+            "task-02",
+            "task-03",
+            "task-06",
+            "task-10",
+            "task-13",
+            "task-17",
+            "task-19",
+            "task-21",
+            "task-22"
+          ]
+        },
+        "evolved-s-star": {
+          "incorrect": [
+            "task-06",
+            "task-12"
+          ]
+        }
+      }
+    }
+  },
+  "analystPatches": {
+    "task-01": "redundant-a",
+    "task-03": "redundant-b",
+    "task-13": "units-a",
+    "task-17": "redundant-c",
+    "task-22": "units-b"
+  },
+  "exclusions": {
+    "task-06": "exhausted"
+  },
+  "ablationPatches": {
+    "task-06": "task-fact-leak"
+  }
+}

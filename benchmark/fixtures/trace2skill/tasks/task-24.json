@@ -1,0 +1,10 @@
+{
+  "id": "task-24",
+  "split": "evolve",
+  "prompt": "Which sensor recorded the lowest reading?",
+  "inputs": [
+    "inputs/readings.md"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

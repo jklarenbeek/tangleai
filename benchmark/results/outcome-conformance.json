@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "9f7d8c84a4c6802bfd5dfec8168c2f16b3cb78b7",
+    "head": "608b442e601833066807eb38a66b5b5bb9e47106",
     "clean": false,
     "files": [
       {
@@ -107,15 +107,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "0397976a54eeea11ea0d6e34b31230d9ad7924a0ce33147cb57512b949e49362"
+        "sha256": "cdcbb91898965dae396fcef756ea6ddc542fefa2d18187a597edf3ada381889c"
       },
       {
         "path": "package.json",
-        "sha256": "aec2cf6a27f90948249bb0544d612574d7640fcb2fa49e7f42ca0e7640a0c277"
+        "sha256": "2980da746f31afc47d09e220876684952096070aa8626b78e7a333851dd0c4f9"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "ed6cb7041ff9fe77c74c9d5f2f7ccc8eb59036a8f067dfed99195d5db0535082"
+        "sha256": "be55991a1785f8875c45eef3f5a5e579d019ef6eef705746d3ead0392f5adeaa"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -159,7 +159,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "79c5f4ed4309dc2e8b704062a88ea545d7f878a92c52a9d9acefcbe46547c51b"
+        "sha256": "cfac37ee96c486f4d21baaf0af5932a185a3bef86426043b734a1b4bf9a8cba6"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -195,7 +195,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "d614c230d36d004987ae3d392c78d4910c4a08ea51b65a871e96e273293cb00f"
+        "sha256": "cba653793017e22cae0cc80e703d8029d17fc42c552920c3e8e51a5cde34bb67"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -251,7 +251,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "1c5a269ea46db581d6b668638d7679ea935ab521f6572b190b70451e0d528508"
+        "sha256": "7bbfd9110652b8b101b5a8d8487fb92b32452f7b936d48f887c8f2a4d0af2559"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -303,7 +303,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "254f19e31c8c4c0cdc15d9cb1a90663d3775cb4e23cb958c0b1bcc75963a4447"
+        "sha256": "72e984e83c3a40407f3749e4d0ad73ed7186e2015e8df6ea30350a8f1c5d1481"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "47284edc71a02d00f9e80aaed492c2f4c641ff99896bbc3b3fc3cba25c5145c5"
+        "sha256": "8e674db6f4851a2e2b507a74c8405dc792e724a8c8818131672dbd5111bcde47"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -459,7 +459,7 @@
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "64a5466a254e1ffc86f757c4036d61af7330319455f3af689829f43e2d49cbdc"
+        "sha256": "4f0dea19c6c6c9ed21c00a24338367fb233a3a444dc9d6bd306c78f6c92b4e21"
       },
       {
         "path": "packages/jaren/src/data.ts",
@@ -495,7 +495,7 @@
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "c28a9196ce356cc25a61dde2c8e070815a96bbec285ab7e61937c341f7b4377a"
+        "sha256": "ed7665ae0d9db36b363e89268ace745ea47eebb02e97b1d3133fc6bd613636af"
       },
       {
         "path": "packages/linq/src/errors.ts",
@@ -511,7 +511,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "a2896bd261247c8afa7326f3152f7dd4390cceaf70e8def48affe1afde820c94"
+        "sha256": "bc0f86e4485553f61378b3b92b2fa1a32b56c56b34cf39762af6bbea70d1199a"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -639,7 +639,7 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "10ac29cdd6dc29c7ab04a1dd2fdf1d5cffdc41e315a92a7a3bb69ea62bf2a7e2"
+        "sha256": "97bfd3ce8ae879bd8be253eec43a0943639063f66e9e51848c885440bce30f57"
       },
       {
         "path": "packages/memory/schemas/policy.contract.json",
@@ -803,7 +803,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "15c47782072e51186dd774b307249cb6d44e3863987b7476716d6439950207ef"
+        "sha256": "28ec7f51eec851f0a7e310c0e4a7099183fe0e499f9bf44f4c596fd044489465"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -859,7 +859,7 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "4f8199382d81e35dd1ce874e153446dfd5f1d08e3919d68ceef16c84276c8892"
+        "sha256": "b5fdfcbd63260357acb4d5222abf93396f68e2cab2370d15546454572e9af754"
       },
       {
         "path": "packages/outcomes/schemas/direction-delta.schema.json",
@@ -927,7 +927,7 @@
       },
       {
         "path": "packages/outcomes/src/index.ts",
-        "sha256": "32cc3d1d4c890315353be15ae8e6fb3569112c869198170ed5f6ffc18d1d749d"
+        "sha256": "f6ae701989282559d2db33178b4dc521a5ce9d512aa61febea36ed08b3d55e20"
       },
       {
         "path": "packages/outcomes/src/operations.ts",
@@ -991,7 +991,7 @@
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "d0fdf66b136e2f596decb5ba85eb2732e5120fcf394f089683d5e0dfb369e1fb"
+        "sha256": "27721d8ffd6f9d4075ba374f2cbd6c4669dd0eaaa2701afe69b11c31d5bb28b1"
       },
       {
         "path": "packages/pipeline/src/dag.ts",
@@ -1027,7 +1027,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "bcfbc3b324f6cb8ba38d1802d624ebbb3fd6104dddad18db1d8b9d9f565b79b2"
+        "sha256": "0c9c895f7e3e39a568e33c46aa8f9994a3f9e5e2086049879c050f051aecba25"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1051,7 +1051,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "93b425c76d165987a38c342525b9c134ac7f521c1d0b7881440af2a8a5efcdce"
+        "sha256": "5341195f773affd5883555d5cfa55893eb02c75e5932a8272e82101736b7676b"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1071,7 +1071,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "d653a4d035348db9df086a1c337622cb935d30258c64f90214281bf60c7438b3"
+        "sha256": "a817ffdea3eb62ad1a4abc5a8e1139c3256e82ac2718db42c1d5bb30bef1eed6"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1079,7 +1079,7 @@
       },
       {
         "path": "packages/store/src/runs.ts",
-        "sha256": "e82f9952a8d438f07369d56d5c3934ddd13ef1d1a9ff4c17d53a6699b41368c4"
+        "sha256": "8423f75d14c39bf5f1e302140de01d51dbc2afb59d3427fcf87cb10e376baaf4"
       },
       {
         "path": "packages/store/src/temporal-backfill.ts",
@@ -1094,11 +1094,151 @@
         "sha256": "60250f282a68c61511e78b55f29b79e0d956bee493107b660d9d2e702a685bcc"
       },
       {
+        "path": "packages/store/src/trace2skill-model.ts",
+        "sha256": "be8ae8f55b6bfe3bc01beddc3c7355a1cece87325e21847c5e6bde0be8c71029"
+      },
+      {
+        "path": "packages/store/src/trace2skill-store.ts",
+        "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+      },
+      {
+        "path": "packages/trace2skill/artifacts/prompts.json",
+        "sha256": "0e8656c833e2935ce8beb5af3a3dee72f6cd4074405deb749344e7b401681d86"
+      },
+      {
+        "path": "packages/trace2skill/package.json",
+        "sha256": "d404f02c87d7e09f861f37fa73be6536fc2ec495c15e6c727e8782e049954578"
+      },
+      {
+        "path": "packages/trace2skill/schemas/trace2skill.schema.json",
+        "sha256": "5fd240e4ad91399efbef13b2be6ad24dc2cc49d8a773df2d238e722013828a90"
+      },
+      {
+        "path": "packages/trace2skill/src/activation.ts",
+        "sha256": "3ef0483a69cbe1a28c47ecf3a920cdbbc70296c9b7bdfee104d815b1c208b9db"
+      },
+      {
+        "path": "packages/trace2skill/src/adapter.ts",
+        "sha256": "b51df5d27b08d4d5e5f483e7105fa44178b173e038bb783c2dfc057964062d3d"
+      },
+      {
+        "path": "packages/trace2skill/src/analyst-tools.ts",
+        "sha256": "ef48df84a908794cc7a56cd992cbb3548cf3439d94d7013a6624a8b72abd37a2"
+      },
+      {
+        "path": "packages/trace2skill/src/analysts.ts",
+        "sha256": "16b88eeb030c665bad9e96ca5cb516b378694c7482c537f5a2d8670a6e2562e1"
+      },
+      {
+        "path": "packages/trace2skill/src/artifacts.ts",
+        "sha256": "b07eb982ed6141f5ff6dc1e702b878807de1c99a3d0b25cfc8c754cae77bf3cc"
+      },
+      {
+        "path": "packages/trace2skill/src/bundle.ts",
+        "sha256": "aacf1d8326a97f3a3a82e3ab5917af6b11b2cede72ac147268ddc329f2e6afd7"
+      },
+      {
+        "path": "packages/trace2skill/src/commit.ts",
+        "sha256": "cdf639f4090e346fa061d4c00887108cf70ba2e0506a5389b139ecf4571da07b"
+      },
+      {
+        "path": "packages/trace2skill/src/consume.ts",
+        "sha256": "412df28e2d25d7604e501dfe6f27b09810190b97419711c45e6dbb70a51d0833"
+      },
+      {
+        "path": "packages/trace2skill/src/contracts.gen.ts",
+        "sha256": "2300a40fa988a6a08923896d88b72733ddb25aea99797d9c227ebd5f8796f515"
+      },
+      {
+        "path": "packages/trace2skill/src/draft.ts",
+        "sha256": "9015fe2908180f23103ad063807e33907f901e752bcc452333ffa2b8c9b71303"
+      },
+      {
+        "path": "packages/trace2skill/src/errors.ts",
+        "sha256": "fead3b034bc17efe174a42fbdc03178260c0ad0ae504594825986c723b6d635f"
+      },
+      {
+        "path": "packages/trace2skill/src/evaluation.ts",
+        "sha256": "929dd94768f24419cc3b6bb87881363a211fbce801e01f6e8679fc9ee8ecc28c"
+      },
+      {
+        "path": "packages/trace2skill/src/executor.ts",
+        "sha256": "b895e1f97bf75513f22ffb82fe137a3f9d4f057da0bf695222ea1ddb87d41049"
+      },
+      {
+        "path": "packages/trace2skill/src/format.ts",
+        "sha256": "fbf99f791a4c5adc4ccaf007fb9feb18f9220002603a2f1f00b7dfcd9e3a503a"
+      },
+      {
+        "path": "packages/trace2skill/src/identity.ts",
+        "sha256": "414062c2a8715e30f8313da744f34631054662e9c0e866f5ec74407943c43769"
+      },
+      {
+        "path": "packages/trace2skill/src/index.ts",
+        "sha256": "953898d9890b67a7a571ad7d6c9d1780997a029c84cf6a977681135f84b445e2"
+      },
+      {
+        "path": "packages/trace2skill/src/init.ts",
+        "sha256": "d9b661880e99fcee0dd90f7d08c9dc404d75d35de7083dc375b9d24aacd8bc06"
+      },
+      {
+        "path": "packages/trace2skill/src/merge.ts",
+        "sha256": "dc4fad9f5e30977fa1c1353f34cd2aee1d7e63cfd2c07e6ca4d409947232afa7"
+      },
+      {
+        "path": "packages/trace2skill/src/node.ts",
+        "sha256": "07dfb7f1102fed419206c8c48fedffb5df3a5865643c352b4f9abbcd05ed219b"
+      },
+      {
+        "path": "packages/trace2skill/src/patch.ts",
+        "sha256": "ff78e1d525acc698a8bce2635adf6374df78bb1d13d3f05cdcd92ca4f074eb24"
+      },
+      {
+        "path": "packages/trace2skill/src/prompts.ts",
+        "sha256": "c90258309cf45b367a4c09a04a0c881e65dbfcada8f63c331ba8bc7da92bce95"
+      },
+      {
+        "path": "packages/trace2skill/src/resume.ts",
+        "sha256": "ad698744d2e8ebfb9e48880bf067ec6f8ee22056c7325bc6fd8b184fc09d99fa"
+      },
+      {
+        "path": "packages/trace2skill/src/rollouts.ts",
+        "sha256": "2273c81bb5f10f37a70e214ce7b217b44dc72701db3886290a5c1369390ed3ed"
+      },
+      {
+        "path": "packages/trace2skill/src/run.ts",
+        "sha256": "a18312c10ba40df46b52a433cbf7fe2a8ab9960dc57fe79b690ea04d0b81a48c"
+      },
+      {
+        "path": "packages/trace2skill/src/schema.ts",
+        "sha256": "e6055d08439fe4cf90229e949f120670387fb9b7ec7201a1717b6c35eedbd72f"
+      },
+      {
+        "path": "packages/trace2skill/src/schemas/analysis.ts",
+        "sha256": "d7a7a817ef6f9ad4dc9372fac2102d199ab2d2f8ae429c6ef3614b3db1de122e"
+      },
+      {
+        "path": "packages/trace2skill/src/schemas/draft.ts",
+        "sha256": "657adc96c239c8d9c63263d82ff11c65505ebc29a0d4b2cb57e5dcc0438de748"
+      },
+      {
+        "path": "packages/trace2skill/src/schemas/merge.ts",
+        "sha256": "3cfa5f7c6ce4f5bea5c6260d8a5910758d987595b97c36c7385d84ae98cc0485"
+      },
+      {
+        "path": "packages/trace2skill/src/store.ts",
+        "sha256": "a785172acc9782c13e6103ed1f6267c4b74612f87e9b8127c5a70b96ecffa249"
+      },
+      {
+        "path": "packages/trace2skill/src/transitions.ts",
+        "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
+      },
+      {
         "path": "scripts/outcomes-contract.ts",
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "10d41c4b8e87af3fd852d06d0a067563759348a2583a48e073afc31a9cf388da"
+    "sha256": "a5f075ed51d6ea3db0b40298bab81dcf94b279d228932f390c629f15980f9e85"
   },
   "registration": {
     "schemaVersion": 1,
@@ -1147,7 +1287,7 @@
     "node": "24.20.0",
     "bun": null,
     "tangle": "0.27.3",
-    "jaren": "0.89.0"
+    "jaren": "0.90.6"
   },
   "rows": [
     {
@@ -84284,5 +84424,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "58eee6c9c07baaccac1fefdd7738d9d9ec45f750b379334a28694c239224f295"
+  "reportId": "78689ef987d7c4ad60d29be2a1984b24c1504d7d7c26d899ff981374df185f93"
 }

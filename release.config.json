@@ -21,6 +21,7 @@
     "packages/search",
     "packages/pipeline",
     "packages/outcomes",
+    "packages/trace2skill",
     "packages/store",
     "packages/gmpl"
   ],

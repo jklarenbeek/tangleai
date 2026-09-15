@@ -1,0 +1,155 @@
+{
+  "instrument": "trace2skill-live",
+  "version": 1,
+  "status": "not-run",
+  "reason": "no live tier is authorized in this build: the plan is a registration, and executing it needs a separate operator approval naming its planId. Nothing was spent and no request was made.",
+  "calls": 0,
+  "spend": {
+    "calls": 0,
+    "tokens": 0
+  },
+  "plan": {
+    "planId": "1efe1786b5c9fb517bdfec3a7d1afc8b7e81878807ba8901801630f757c8e6a0",
+    "authorized": false,
+    "instrument": "trace2skill",
+    "mode": "deepening",
+    "fixtureId": "013a26091313deed32f532891a95b28b48f752621127df1c11c18211e1233f8e",
+    "provider": "openrouter",
+    "model": null,
+    "baseUrl": null,
+    "keySource": "OPENROUTER_AI_KEY",
+    "maxCalls": 200,
+    "maxConcurrency": 4,
+    "promptVersions": [
+      [
+        "draft",
+        "db2c9ad02afd614f89df3ab4751d7f9876b37e62b27ce5d7241d02c613da307b"
+      ],
+      [
+        "executor",
+        "bb23faa1f675d616b620405938e8404a643c3807c5f4c1a9febb9ddf3d0374a9"
+      ],
+      [
+        "success-analyst",
+        "5e497f6900bb936fc37ebbc6507bf65d29eee53ad82d232c54e09044dab23e88"
+      ],
+      [
+        "error-analyst",
+        "d4420e1d30eeaeacd14af0cd37fe1a410170bdc18ff5db3ed1697ab17f21d63a"
+      ],
+      [
+        "merge",
+        "797f2d6d89c39bdbb37fc41828e4385c1cc416a5c192f0d932a46830d30a081c"
+      ]
+    ],
+    "stages": [
+      "run-create",
+      "skill-snapshot-or-draft",
+      "split-validate",
+      "baseline-no-skill",
+      "baseline-s0",
+      "rollouts-generate",
+      "rollouts-evaluate-and-label",
+      "analysts-dispatch",
+      "patches-validate",
+      "merges-levels",
+      "candidate-compile-and-stage",
+      "heldout-evaluate",
+      "candidate-eligible-or-rejected"
+    ],
+    "rows": [
+      {
+        "id": "deepening:no-skill",
+        "condition": "no-skill",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 36,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:frozen-s0",
+        "condition": "frozen-s0",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 34,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:evolved-s-star",
+        "condition": "evolved-s-star",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 32,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:retrieval-bank",
+        "condition": "retrieval-bank",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 36,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:single-call-error",
+        "condition": "single-call-error",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 32,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:sequential-merge",
+        "condition": "sequential-merge",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 32,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:cross-model",
+        "condition": "cross-model",
+        "status": "not-run",
+        "units": 0,
+        "maxFreshCalls": 0,
+        "cacheHits": 0
+      },
+      {
+        "id": "deepening:ood",
+        "condition": "ood",
+        "status": "not-run",
+        "units": 0,
+        "maxFreshCalls": 0,
+        "cacheHits": 0
+      },
+      {
+        "id": "creation:no-skill",
+        "condition": "no-skill",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 36,
+        "cacheHits": 0
+      },
+      {
+        "id": "creation:draft-s0",
+        "condition": "draft-s0",
+        "status": "run",
+        "units": 8,
+        "maxFreshCalls": 36,
+        "cacheHits": 0
+      },
+      {
+        "id": "creation:evolved-s-star",
+        "condition": "evolved-s-star",
+        "status": "not-run",
+        "units": 0,
+        "maxFreshCalls": 0,
+        "cacheHits": 0
+      }
+    ],
+    "maxFreshTotal": 274,
+    "cacheHits": 0,
+    "skipped": "274 maximum fresh requests exceed TANGLE_AI_MAX_CALLS=200; nothing was spent"
+  },
+  "recordId": "a85150150678d1bf96c5e75c6d01253ff903f5534b3ea44e65fd7fede52ba0cd"
+}

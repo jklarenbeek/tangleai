@@ -1,10 +1,12 @@
 /**
  * The one effectful host boundary: validated settings project into the
- * generated legacy request, credential values stay in memory, the
- * manifest is suite-normalized and credential-free (userinfo refuses
- * BEFORE the suite), resolution states are honest — ready, refused,
- * provisional — and a provisional wire embedder finalizes its identity
- * from the FIRST reply, before any vector reaches a caller.
+ * generated legacy request or, when one is named, the registry request;
+ * credential values stay in memory, the manifest is suite-normalized and
+ * credential-free (userinfo refuses BEFORE the suite), resolution states
+ * are honest — ready, refused, provisional — a provisional wire embedder
+ * finalizes its identity from the FIRST reply, before any vector reaches
+ * a caller, and a named selection is built from the identity it resolved
+ * rather than from the wire settings beside it.
  */
 
 import { describe, it } from 'node:test';
@@ -16,8 +18,12 @@ import { openTangleDb } from '@tangleai/store';
 import {
   buildHostManifest,
   chatPromptContentRevision,
+  inspectStack,
   legacyRequestOf,
+  productionRegistry,
+  profileFactsOf,
   refreshObservation,
+  requestOf,
   settingsStack,
   SLOT_NAMES,
   type FinalizingEmbedder,
@@ -31,8 +37,9 @@ import {
   type Settings,
 } from '../../apps/desktop/src/settings.ts';
 import { SYSTEM_PROMPT } from '../../apps/desktop/src/chat.ts';
-import { revisionOf, type ProfileRequest } from '@tangleai/config';
+import { revisionOf, type ProfileRegistry, type ProfileRequest } from '@tangleai/config';
 import { scriptedFetch } from '../fixtures/scripted-wire.ts';
+import { readFile } from 'node:fs/promises';
 
 const SENTINEL = 'sk-adapter-sentinel-feedface';
 
@@ -84,6 +91,35 @@ describe('validated settings reads', () => {
     assert.equal((await store.read()).chat.apiKey, 'replaced', 'a non-empty string replaces');
     await store.write({}, { clearChatKey: true });
     assert.equal((await store.read()).chat.apiKey, null, 'only the explicit action clears');
+  });
+});
+
+describe('the profile setting', () => {
+  it('defaults to none, round-trips a name, and reverts a value the schema refuses', async () => {
+    assert.equal(DEFAULT_SETTINGS.profile, null, 'no selection is the default');
+    assert.equal(validateStoredSettings({}).settings.profile, null);
+    assert.equal(validateStoredSettings({ profile: 'desktop-default' }).settings.profile, 'desktop-default');
+
+    const refused = validateStoredSettings({ profile: '' } as never);
+    assert.equal(refused.settings.profile, null, 'a name of no length is not a selection');
+    assert.deepEqual(refused.issues.map((issue) => `${issue.code} ${issue.path}`), ['TCFG1007 /profile']);
+    assert.equal(validateStoredSettings({ profile: 7 } as never).settings.profile, null);
+
+    const db = await openTangleDb({ driver: nodeDriver() });
+    try {
+      const store = createSettingsStore(db);
+      await store.write({ profile: 'desktop-default' });
+      assert.equal((await store.read()).profile, 'desktop-default');
+      // the name is displayed, never redacted: it is not a credential
+      assert.equal((await store.readPublic()).settings.profile, 'desktop-default');
+      // an unrelated write leaves the selection alone
+      await store.write({ folder: '/tmp/elsewhere' });
+      assert.equal((await store.read()).profile, 'desktop-default');
+      await store.write({ profile: null });
+      assert.equal((await store.read()).profile, null);
+    } finally {
+      await db.close();
+    }
   });
 });
 
@@ -199,6 +235,135 @@ describe('the resolved stack', () => {
     const again = await embedder.embed(['second text']);
     assert.equal(again.length, 1);
     assert.equal(embedder.finalIdentity()?.identityId, identity?.identityId, 'the identity does not drift after finalization');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// named profile selection
+// ---------------------------------------------------------------------------
+
+/**
+ * The identity the unconfigured settings resolve to when no profile is
+ * named. Pinned as a literal so the legacy projection cannot drift while
+ * the selected one is being built beside it.
+ */
+const LEGACY_DEFAULT_IDENTITY = 'fd8f7a7df75a3719a541709e2abf6ecaed7d53cedfa33a48e446ef96aec49e47';
+
+/** The shipped selection, with a chat key merely HELD for the candidate's provider. */
+const selected = (over: Partial<Settings['chat']> = {}): Settings => wired({
+  profile: 'desktop-default',
+  chat: { provider: 'openrouter', baseUrl: null, model: null, apiKey: 'k', ...over },
+});
+
+describe('named profile selection', () => {
+  it('leaves the legacy projection byte-identical when no profile is named', async () => {
+    const request = await requestOf(DEFAULT_SETTINGS);
+    assert.deepEqual(request, await legacyRequestOf(DEFAULT_SETTINGS), 'no profile asks exactly what it always asked');
+    const inspection = await inspectStack(DEFAULT_SETTINGS);
+    assert.equal(inspection.state, 'ready');
+    assert.equal(inspection.identity?.requested.kind, 'legacy');
+    assert.equal(inspection.identity?.identityId, LEGACY_DEFAULT_IDENTITY);
+  });
+
+  it('a named selection is requested as a profile and resolves from the registry', async () => {
+    const request = await requestOf(selected()) as { kind: string, profile: string, overrides: unknown };
+    assert.deepEqual(request, { kind: 'profile', profile: 'desktop-default', overrides: null });
+    const stack = await settingsStack(selected(), { fetch: (() => { throw new Error('resolution must not call'); }) as never });
+    assert.equal(stack.state, 'ready');
+    if (stack.state !== 'ready') return;
+    assert.equal(stack.identity.requested.kind, 'profile');
+    assert.equal((stack.identity.requested as { profile: string }).profile, 'desktop-default');
+    assert.equal(stack.identity.roles.chat.model, 'z-ai/glm-5.3-flash');
+    assert.equal(stack.identity.roles.chat.provider, 'openrouter');
+    assert.equal(stack.identity.embedding?.provider, 'builtin');
+    assert.notEqual(stack.identity.identityId, LEGACY_DEFAULT_IDENTITY, 'a selection is a different identity from the projection');
+    assert.equal(stack.display, 'openrouter/z-ai/glm-5.3-flash', 'the surface names what answered');
+    assert.notEqual(stack.chat, null, 'the role that resolved builds its client');
+  });
+
+  it('builds the client from the identity, not from the wire settings beside it', async () => {
+    const bare = await inspectStack(selected());
+    const contradicting = await inspectStack(selected({ model: 'some/other-model', baseUrl: null }));
+    assert.equal(bare.identity?.identityId, contradicting.identity?.identityId,
+      'the settings model is not part of a named selection');
+    assert.equal(contradicting.identity?.roles.chat.model, 'z-ai/glm-5.3-flash');
+    const stack = await settingsStack(selected({ model: 'some/other-model' }));
+    assert.equal(stack.state === 'ready' ? stack.display : null, 'openrouter/z-ai/glm-5.3-flash');
+  });
+
+  it('binds a credential slot by provider, never by the slot name', async () => {
+    const facts = profileFactsOf(selected(), productionRegistry as unknown as ProfileRegistry);
+    assert.deepEqual(facts.slots.find((slot) => slot.name === 'openrouter-primary'),
+      { name: 'openrouter-primary', configured: true, source: 'settings' });
+    assert.equal(facts.slots.some((slot) => slot.name === SLOT_NAMES.chat), true, "the desktop's own slots stay declared");
+
+    // a key held for ANOTHER provider binds nothing, however the slot is spelled
+    const elsewhere = profileFactsOf(
+      wired({ profile: 'desktop-default', chat: { provider: 'ollama', baseUrl: null, model: null, apiKey: 'k' } }),
+      productionRegistry as unknown as ProfileRegistry,
+    );
+    assert.equal(elsewhere.slots.find((slot) => slot.name === 'openrouter-primary')?.configured, false);
+
+    for (const settings of [
+      wired({ profile: 'desktop-default', chat: { provider: 'ollama', baseUrl: null, model: null, apiKey: 'k' } }),
+      wired({ profile: 'desktop-default' }),
+    ]) {
+      const inspection = await inspectStack(settings);
+      assert.equal(inspection.state, 'refused');
+      assert.equal(inspection.identity, null);
+      assert.deepEqual(inspection.issues.map((issue) => `${issue.code} ${issue.path}`), ['TCFG1015 /roles/chat/capability']);
+      assert.match(inspection.issues[0].detail, /credential slot 'openrouter-primary' is not configured/);
+    }
+  });
+
+  it('refuses an unknown profile and an uninstalled component as fixable issues', async () => {
+    const unknown = await inspectStack(wired({ profile: 'no-such-profile' }));
+    assert.equal(unknown.state, 'refused');
+    assert.deepEqual(unknown.issues.map((issue) => `${issue.code} ${issue.path}`), ['TCFG1005 /profile']);
+
+    const mutated = structuredClone(productionRegistry) as unknown as ProfileRegistry;
+    mutated.components[0].revision = 'c'.repeat(64);
+    const stale = await inspectStack(selected(), mutated);
+    assert.equal(stale.state, 'refused');
+    assert.deepEqual(stale.issues.map((issue) => `${issue.code} ${issue.path}`), ['TCFG1017 /policyComponent']);
+    for (const issue of [...unknown.issues, ...stale.issues]) {
+      assert.equal(typeof issue.detail, 'string');
+      assert.notEqual(issue.detail, '', 'every refusal says what to fix');
+    }
+  });
+
+  it('a refused selection degrades to nothing: no legacy request, no offline client', async () => {
+    const stack = await settingsStack(wired({ profile: 'desktop-default' }));
+    assert.equal(stack.state, 'refused');
+    assert.equal('chat' in stack, false, 'a refusal carries no client at all');
+    assert.equal('identity' in stack, false);
+
+    // the legacy projection has exactly one caller, and it is the branch
+    // taken when no profile is named
+    const source = await readFile('apps/desktop/src/ai-host.ts', 'utf8');
+    const callSites = source.split('legacyRequestOf(').length - 1 - 1;
+    assert.equal(callSites, 1, 'the legacy projection is a branch, never a fallback');
+    assert.match(source, /settings\.profile === null\s*\n\s*\? legacyRequestOf\(settings\)/);
+  });
+
+  it('keeps the userinfo prohibition over the selected projection', async () => {
+    const facts = profileFactsOf(
+      selected({ baseUrl: 'https://user:secret@proxy.example.com/v1' }),
+      productionRegistry as unknown as ProfileRegistry,
+    );
+    assert.equal(facts.wires[0].baseUrl, 'https://user:secret@proxy.example.com/v1', 'the raw base reaches the manifest builder');
+    const built = await buildHostManifest(facts);
+    assert.equal(built.ok, false);
+    if (built.ok) return;
+    assert.deepEqual(built.issues.map((issue) => issue.code), ['TCFG1013']);
+  });
+
+  it("keeps the operator's own base for the provider the settings also name", () => {
+    const facts = profileFactsOf(
+      selected({ baseUrl: 'https://mirror.example.com/v1' }),
+      productionRegistry as unknown as ProfileRegistry,
+    );
+    assert.deepEqual(facts.wires, [{ provider: 'openrouter', baseUrl: 'https://mirror.example.com/v1', path: '/chat/baseUrl' }]);
   });
 });
 

@@ -3,8 +3,9 @@
  * frozen pre-campaign projection, settings reads expose slot status and
  * never a credential value, a read-save round trip retains, clearing
  * requires the explicit flag, the read-only inspection never probes or
- * creates a client, and no serialized contract value or rendered DOM
- * carries a secret byte.
+ * creates a client, a named profile previews exactly what saving it
+ * would produce without writing anything, and no serialized contract
+ * value or rendered DOM carries a secret byte.
  */
 
 import { describe, it, before, after } from 'node:test';
@@ -47,8 +48,10 @@ describe('the public contract moved compatibly', () => {
     assert.deepEqual(diff.breaking.map((change: { rule: string, docPath: string }) => ({ rule: change.rule, docPath: change.docPath })), [
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/chat/properties/maxTokens' },
       { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/chat/properties/maxTokensField' },
+      { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/profile' },
+      { rule: 'R1', docPath: '/operations/dag.live' },
       { rule: 'R8', docPath: '/operations/chat.send/output/properties/documentCitations/items/additionalProperties' },
-    ], `unexpected narrowing: ${JSON.stringify(diff.breaking.slice(0, 3))}`);
+    ], `unexpected narrowing: ${JSON.stringify(diff.breaking.slice(0, 5))}`);
     assert.equal(isCompatible(frozen, current), false, 'clients must negotiate the new release version');
     assert.equal(isCompatible({ ...frozen, version: DESKTOP_CONTRACT.version }, current), true, 'same-version negotiation is separate from the schema diff');
     assert.equal(diff.additive.length > 0, true, 'the campaigns added operations, errors and members');
@@ -64,9 +67,28 @@ describe('the public contract moved compatibly', () => {
     assert.deepEqual(diff.breaking.map((change: { rule: string, op: string }) => ({ rule: change.rule, op: change.op })), [
       { rule: 'R6', op: 'settings.set' },
       { rule: 'R6', op: 'settings.set' },
+      { rule: 'R6', op: 'settings.set' },
+      { rule: 'R1', op: 'dag.live' },
       { rule: 'R8', op: 'chat.send' },
     ]);
-    assert.ok(diff.additive.every((change: { op: string }) => change.op === 'chat.send' || change.op === 'settings.get' || change.op === 'settings.set'), 'only citation and optional public setting members are added');
+    // Members are added to three operations and nothing else; whole
+    // operations may also appear, and an operation nobody negotiated for
+    // is additive by construction, whatever kind it is.
+    // `runs.get` gained the count of frames the run recorded and the
+    // identity its row references, `folder.sync` the values a pass counts
+    // and the trigger that asked for it, and `config.inspect` an optional
+    // profile to preview plus the preview it answers with — added
+    // optional members, like the other three, plus one added declared error
+    const added = new Set(['chat.send', 'settings.get', 'settings.set', 'runs.get', 'folder.sync', 'config.inspect']);
+    const introduced = new Set(Object.keys(DESKTOP_CONTRACT.operations)
+      .filter((op) => !(op in (preGrounding as { operations: Record<string, unknown> }).operations)));
+    assert.ok(introduced.size > 0, 'the campaigns introduced operations');
+    for (const op of introduced) {
+      assert.ok(diff.additive.some((change: { op: string }) => change.op === op),
+        `${op} is an operation nobody negotiated for, whatever its kind`);
+    }
+    assert.ok(diff.additive.every((change: { op: string }) => added.has(change.op) || introduced.has(change.op)),
+      'only citation and optional public setting members are added to existing operations');
     assert.equal(isCompatible(preGrounding, current), false, 'the frozen client identifies an older release');
     assert.equal(isCompatible({ ...preGrounding, version: DESKTOP_CONTRACT.version }, current), true);
   });
@@ -157,6 +179,44 @@ describe('the read-only inspection', () => {
       assert.equal(refused.resolution.issues.some((issue: { code: string }) => issue.code === 'TCFG1021'), true);
       assert.equal(refused.identity, null);
       assert.equal(calls, 0, 'the inspection made zero network calls');
+    } finally {
+      await desktop.close();
+    }
+  });
+
+  it('previews a named profile without writing it, and the preview is the save', async () => {
+    let calls = 0;
+    const desktop = await createDesktop({
+      driver: nodeDriver(),
+      fetch: ((() => { calls += 1; throw new Error('a read never probes'); }) as never),
+    });
+    try {
+      const before = JSON.parse((await get(desktop, '/api/settings')).body);
+      assert.equal(before.profile, null);
+
+      const previewed = JSON.parse((await get(desktop, '/api/config?profile=desktop-default')).body);
+      assert.equal(previewed.request.kind, 'legacy', 'a preview does not change what the host is asking for');
+      assert.equal(previewed.resolution.state, 'ready');
+      assert.equal(previewed.preview.profile, 'desktop-default');
+      assert.equal(previewed.preview.state, 'refused');
+      assert.equal(previewed.preview.identity, null);
+      const previewIssues = previewed.preview.issues.map((issue: { code: string, path: string }) => `${issue.code} ${issue.path}`);
+      assert.deepEqual(previewIssues, ['TCFG1015 /roles/chat/capability']);
+      assert.match(previewed.preview.issues[0].detail, /openrouter-primary/, 'the issue says what to fix');
+
+      const after = JSON.parse((await get(desktop, '/api/settings')).body);
+      assert.deepEqual(after, before, 'a preview writes nothing');
+      assert.equal(JSON.parse((await get(desktop, '/api/config')).body).preview, null,
+        'no profile asked for means no preview claimed');
+
+      // what the preview said is what saving produces
+      await post(desktop, '/api/settings', { settings: { profile: 'desktop-default' } });
+      const saved = JSON.parse((await get(desktop, '/api/config')).body);
+      assert.equal(saved.request.kind, 'profile');
+      assert.equal(saved.resolution.state, 'refused');
+      assert.deepEqual(saved.resolution.issues.map((issue: { code: string, path: string }) => `${issue.code} ${issue.path}`), previewIssues);
+      assert.equal(saved.identity, null, 'a refused selection resolves no identity, and never the legacy one');
+      assert.equal(calls, 0, 'neither the preview nor the refusal called anything');
     } finally {
       await desktop.close();
     }

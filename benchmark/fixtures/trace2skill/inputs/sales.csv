@@ -1,0 +1,9 @@
+region,quarter,units,revenue_eur
+north,Q1,120,"14.250,00"
+north,Q2,140,"16.800,50"
+south,Q1,90,"10.125,00"
+south,Q2,110,"12.430,75"
+east,Q1,75,"8.900,25"
+east,Q2,80,"9.600,00"
+west,Q1,60,"7.200,00"
+west,Q2,95,"11.115,50"

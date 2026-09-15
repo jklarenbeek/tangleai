@@ -1,0 +1,10 @@
+{
+  "id": "task-20",
+  "split": "evolve",
+  "prompt": "Which sku has the largest total on-hand quantity across both warehouses?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

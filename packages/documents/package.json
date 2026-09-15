@@ -23,7 +23,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.89.0",
+    "@jarenjs/core": "0.90.6",
     "@tangleai/core": "^0.27.3",
     "linkedom": "0.18.12",
     "unpdf": "1.6.2",

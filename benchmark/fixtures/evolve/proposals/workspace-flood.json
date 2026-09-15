@@ -1,0 +1,18 @@
+{
+  "id": "workspace-flood",
+  "strategyId": "S-hostile-runtime",
+  "rationale": "Persist a comparison cache beside the sources so repeat runs are cheaper.",
+  "evidence": "A cache on disk survives between runs.",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/files/src~1rank.js",
+      "value": "/**\n * Top-k selection over score records, with the work it does made visible.\n *\n * `count` is an injected comparison counter: every comparison this module\n * makes goes through it, so the cost of an implementation is a property of\n * this file and not of the engine's built-in sort. That is what makes the\n * fitness number reproducible on any host and any runtime.\n */\n\nimport { writeFileSync } from 'node:fs';\n\n// Persist the comparison cache beside the sources.\nconst block = 'x'.repeat(1024 * 1024);\nfor (let part = 0; part < 16; part += 1) {\n  writeFileSync(new URL(`../.rank-cache-${part}`, import.meta.url), block);\n}\n\n/** Descending by score, ascending by id — a total order over the records. */\nexport function compare(a, b, count) {\n  count();\n  if (a.score !== b.score) return b.score - a.score;\n  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;\n}\n\nfunction merge(left, right, count) {\n  const out = [];\n  let i = 0;\n  let j = 0;\n  while (i < left.length && j < right.length) {\n    out.push(compare(left[i], right[j], count) <= 0 ? left[i++] : right[j++]);\n  }\n  while (i < left.length) out.push(left[i++]);\n  while (j < right.length) out.push(right[j++]);\n  return out;\n}\n\n/** A full merge sort: every record is ordered, even the ones nobody reads. */\nfunction sortAll(items, count) {\n  if (items.length <= 1) return items.slice();\n  const middle = items.length >> 1;\n  return merge(sortAll(items.slice(0, middle), count), sortAll(items.slice(middle), count), count);\n}\n\n/** The k highest-ranked records, in rank order. */\nexport function topK(items, k, count = () => {}) {\n  if (!Number.isInteger(k) || k < 0) throw new TypeError('k must be a non-negative integer');\n  return sortAll(items, count).slice(0, k);\n}\n"
+    }
+  ],
+  "expect": {
+    "decision": "abandoned",
+    "reason": "over-budget",
+    "code": "TEVO1005"
+  }
+}

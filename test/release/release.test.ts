@@ -15,6 +15,7 @@ import { verifyBuildIdentity } from '../../scripts/release/verify-site.ts';
 import type { Artifacts, Artifact } from '../../scripts/release/build.ts';
 import { verifyPageSources } from '../../apps/pages/source.ts';
 import { assertVerifiedGate } from '../../scripts/release/verify.ts';
+import { readFoundationArtifacts } from '../../scripts/jaren-artifacts.ts';
 
 function commit(root: string) {
   git(root, 'add', '--all');
@@ -349,8 +350,11 @@ it('a website with the right version but wrong commit or incomplete package set 
 it('the website resolves local Tangle source and identifies its installed foundation mode, refusing either fallback', async () => {
   const sources = await verifyPageSources(ROOT);
   assert.equal(sources.tangle, 'workspace');
-  assert.equal(sources.jarenjs, 'npm');
-  assert.equal(sources.foundation, undefined);
+  const candidate = readFoundationArtifacts(ROOT);
+  assert.equal(sources.jarenjs, candidate ? 'candidate-artifacts' : 'npm');
+  assert.deepEqual(sources.foundation, candidate ? {
+    commit: candidate.source.commit, patchSha256: candidate.source.patchSha256,
+  } : undefined);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@tangleai/core' ? '@jarenjs/core' : name)), /local Tangle source/);
   await assert.rejects(verifyPageSources(ROOT, name => import.meta.resolve(name === '@jarenjs/app' ? '@tangleai/core' : name)), /npm installation/);
 });
@@ -393,6 +397,22 @@ it('publishes converted TypeScript with colocated declarations and refuses legac
   assert.deepEqual(built.exports?.['./schemas/ledger'], { types: './src/schemas/ledger.d.ts', import: './src/schemas/ledger.js', default: './src/schemas/ledger.js' });
   assert.throws(() => distributionManifest({ ...source, exports: { '.': './src/index.js' } }), /match/);
   assert.throws(() => distributionManifest({ ...source, exports: { '.': { default: './src/index.js', types: './dist/types/index.d.ts' } } }), /point directly to TypeScript/);
+});
+
+it('the skill package publishes its JSON artifacts and its node half as compiled entries',()=>{
+  const source=readJson(resolve(ROOT,'packages/trace2skill/package.json')) as { exports: Record<string,string>, files: string[] };
+  const distributed=distributionManifest(source as never).exports as Record<string,unknown>;
+  // The JSON paths are preserved; the TypeScript entries become JavaScript
+  // beside the declarations an installed consumer type-checks against.
+  assert.equal(distributed['./artifacts'],'./artifacts/prompts.json');
+  assert.equal(distributed['./schemas/trace2skill'],'./schemas/trace2skill.schema.json');
+  assert.deepEqual(distributed['./node'],{types:'./src/node.d.ts',import:'./src/node.js',default:'./src/node.js'});
+  assert.deepEqual(distributed['.'],{types:'./src/index.d.ts',import:'./src/index.js',default:'./src/index.js'});
+  // A packed tarball carries the generated prompt artifacts and the schemas a
+  // consumer validates against, not the TypeScript they were emitted from.
+  assert.ok(source.files.includes('artifacts/**/*.json'));
+  assert.ok(source.files.includes('schemas/**/*.json'));
+  assert.ok(!source.files.some(pattern=>pattern.endsWith('.ts')&&!pattern.endsWith('.d.ts')));
 });
 
 it('distribution manifests retain compiled content artifacts and reject traversal',()=>{

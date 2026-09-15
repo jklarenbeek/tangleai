@@ -1,0 +1,19 @@
+{
+  "id": "redundant-c",
+  "origin": {
+    "rollout": "task-17",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": null,
+  "withheld": false,
+  "rationale": "A third revenue question failed on the same field convention.",
+  "operations": [
+    {
+      "group": "g-euro",
+      "op": "insert_after",
+      "file": "SKILL.md",
+      "anchor": "- A decimal uses a period separator and no thousands separator.",
+      "text": "- A euro amount uses a period for thousands and a comma for the decimal:\n  `14.250,00` is 14250.00. Convert it before any arithmetic."
+    }
+  ]
+}

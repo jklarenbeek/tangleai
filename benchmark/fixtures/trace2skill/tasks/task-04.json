@@ -1,0 +1,10 @@
+{
+  "id": "task-04",
+  "split": "test",
+  "prompt": "How many units did the east region sell in Q2?",
+  "inputs": [
+    "inputs/sales.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

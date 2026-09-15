@@ -19,12 +19,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.89.0",
-    "@jarenjs/flow": "0.89.0",
-    "@jarenjs/json": "0.89.0",
-    "@jarenjs/linq": "0.89.0",
-    "@jarenjs/validate": "0.89.0",
-    "@jarenjs/mermaid": "0.89.0",
+    "@jarenjs/core": "0.90.6",
+    "@jarenjs/flow": "0.90.6",
+    "@jarenjs/json": "0.90.6",
+    "@jarenjs/linq": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
+    "@jarenjs/mermaid": "0.90.6",
     "@tangleai/models": "^0.27.3",
     "@tangleai/context": "^0.27.3",
     "@tangleai/agents": "^0.27.3"

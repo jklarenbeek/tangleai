@@ -1,24 +1,24 @@
 {
-  "jaren": "0.89.0",
-  "measuredAt": "2026-09-13",
+  "jaren": "0.90.6",
+  "measuredAt": "2026-09-15",
   "history": [
     {
       "runtime": "node",
       "version": "24.20.0",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 14.769034999999917,
-      "boundedP95Ms": 8.551582999999937,
-      "p95Speedup": 1.72705275736668
+      "previousP95Ms": 16.16869200000008,
+      "boundedP95Ms": 9.209183999999823,
+      "p95Speedup": 1.7557138612932903
     },
     {
       "runtime": "bun",
       "version": "1.4.0",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 17.15052300000002,
-      "boundedP95Ms": 11.51829900000007,
-      "p95Speedup": 1.4889805343653535
+      "previousP95Ms": 14.289024999999981,
+      "boundedP95Ms": 11.528839999999946,
+      "p95Speedup": 1.2394156740834332
     }
   ],
   "mas": {
@@ -45,15 +45,15 @@
     "restores": 1
   },
   "config": {
-    "cases": 44,
+    "cases": 45,
     "byFamily": {
       "equivalence": 5,
-      "sensitivity": 12,
+      "sensitivity": 13,
       "refusal": 15,
       "legacy": 12
     },
     "byStatus": {
-      "holds": 44,
+      "holds": 45,
       "gap": 0,
       "pending": 0
     }

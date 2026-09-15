@@ -355,9 +355,33 @@ LangChain `Document`, no DOM type, and no `unpdf` type appears in
 
 **`apps/desktop`** — a self-hosting desktop app: point it at a folder,
 sync it (content-hash incremental) through the pipeline, watch the DAG
-run LIVE over an SSE stream and browse every past run's per-node story,
-search the curated memory (superseded chains included), ingest/search versioned web and
+run LIVE and browse every past run's per-node story, search the curated
+memory (superseded chains included), ingest/search versioned web and
 PDF sources on the Documents page, and chat over the two explicit retrieval lanes.
+
+Everything live on this surface is a RUN. A run's work is a persisted,
+append-only frame stream addressed by `(runId, seq)`: a subscriber names
+the run it watches and resumes at the sequence it reached, so a dropped
+connection loses and repeats nothing, and two runs in flight never share
+a frame. A configured folder is WATCHED — filesystem events are coalesced
+into one bounded full pass, a restart rescans rather than trusting a
+cursor, and each pass reports what it did not ingest as numbers: skipped,
+removed, truncated, and the memory units whose evidence names a removed
+file (counted, never deleted — curated memory is not a mirror of the
+folder). A reply can be given an EVIDENCED outcome: a thumb opens a form,
+and only a verdict carrying a reason and at least one thing the reply
+actually cited is recorded, idempotently, through the outcome lifecycle —
+a bare click writes nothing. A host running beside the measurement
+workspace can run a registered KEYLESS instrument from the surface and
+keep the document it produced under the identity that instrument computed,
+re-derived from the stored bytes on every read; the compiled binary
+registers none and says so. And the stack a run uses can be a NAMED
+registry profile instead of the projection of the wire settings: the
+registry's credential slot is bound from the provider this host holds a
+key for, clients are built from the resolved identity, and a selection
+the resolver refuses is rendered as fixable `TCFG` issues — never a
+silent fall back to the projection or to an offline answer.
+
 A configured model answers under a measured claims-with-citations contract
 (`createStructuredOutput` plus a supplied-reference gate that repairs a
 fabricated id), so a citation is an id the answer actually used — retrieved
@@ -374,6 +398,15 @@ npm run desktop            # dev (Node or Bun), http://127.0.0.1:4700
 npm run desktop:compile    # one self-contained executable → dist/tangle
 ./dist/tangle --folder ~/notes
 ```
+
+**What has been verified, and where.** On Linux x64: the complete gate,
+the desktop end-to-end script in Chromium and in WebKit, the compiled
+binary run from a foreign working directory, the compiled WebView smoke
+and the compiled document path. macOS and Windows builds are UNVERIFIED —
+including the compiled WebView lifecycle and the compiled document
+path — and are named here rather than claimed. The report runner
+registers keyless instruments only; a spend-capable tier does not exist,
+and a run that supplies a budget is refused before any child starts.
 
 Document ingestion defaults to recursive heading-aware chunks. Changed sources activate
 transactionally only after extraction, chunking, embedding, and persistence succeed;
@@ -409,9 +442,9 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.89.0** packages from npm. The source
-submodule at `vendor/jarenjs` pins `41f5a36eccd43591d7c04d9116a6d210617e9146`.
-The [registry receipt](docs/integration/jaren-0.89.0-registry.json) verifies all
+Tangle consumes 23 AI-free Jaren **0.90.6** packages from npm. The source
+submodule at `vendor/jarenjs` pins `37ba1676dab7868b168858b413a3ec647eebefdd`.
+The [registry receipt](docs/integration/jaren-0.90.6-registry.json) verifies all
 23 downloaded archives against the exact lockfile integrities.
 `npm ci --ignore-scripts` installs from npm without a foundation bootstrap;
 `npm run jaren:check` verifies source, manifests, installed versions and archive
@@ -428,6 +461,9 @@ author-owned.
 See [the integration audit](docs/JARENJS_INTEGRATION.md) for adopted APIs,
 compatibility details and benchmark-based strategy choices, and
 [the Node/Bun comparison](docs/JARENJS_BENCHMARK.md) for measured history reads.
+[The consumer gate](docs/CONSUMER_GATE.md) documents the exact-pin check, the
+packed-tarball consumer verification and the pinned CI toolchain as a pattern
+other applications consuming the suite can adopt, including the pnpm variant.
 The [paid refresh](docs/PAID_REFRESH.md) records fresh OpenRouter answer,
 grounding and desktop checks, with their losses, coverage and request counts.
 The [bounded-agent repair](docs/BOUNDED_AGENT_BENCHMARK.md) measures whole-corpus

@@ -1,0 +1,47 @@
+{
+  "bMerge": 4,
+  "lMax": 3,
+  "pool": [
+    "redundant-a",
+    "redundant-b",
+    "redundant-c",
+    "units-a",
+    "units-b"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "groups": [
+        {
+          "id": "merge-1-1",
+          "members": [
+            "redundant-a",
+            "redundant-b",
+            "redundant-c",
+            "units-a"
+          ]
+        },
+        {
+          "id": "merge-1-2",
+          "members": [
+            "units-b"
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "groups": [
+        {
+          "id": "merge-2-1",
+          "members": [
+            "merge-1-1",
+            "merge-1-2"
+          ]
+        }
+      ]
+    }
+  ],
+  "final": "merge-2-1",
+  "uniqueRolloutSupport": 5
+}

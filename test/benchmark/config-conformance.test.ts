@@ -207,8 +207,9 @@ describe('the construction census is re-derived, not trusted', () => {
   });
 
   it('states the stored-run and artifact discipline honestly', () => {
-    assert.equal(committedReport.census.summary.runProducers, 3);
-    assert.equal(committedReport.census.summary.runProducersRecordingIdentity, 3);
+    assert.equal(committedReport.census.summary.runProducers, 5);
+    assert.equal(committedReport.census.summary.runProducersRecordingIdentity, 4,
+      'a report resolves no model stack, so it honestly records no identity');
     assert.equal(committedReport.census.summary.reportArtifacts, 4);
     assert.equal(committedReport.census.summary.reportArtifactsWithIdentities, 4);
     assert.equal(committedReport.census.hostInputs.length, 2);
@@ -235,6 +236,7 @@ describe('the registered fixture is complete and mirrored', () => {
       'e-endpoint-default-base', 'e-endpoint-trailing-slash', 'e-endpoint-chat-path', 'e-reorder-members',
       's-model', 's-endpoint-base', 's-temperature', 's-reasoning', 's-response-schema', 's-prompt-revision',
       's-tool-manifest', 's-embedding-model', 's-embedding-dims', 's-component-revision', 's-budget-ceiling', 's-rate-card',
+      's-profile-request',
       'r-inheritance-cycle', 'r-request-unknown-tag', 'r-unavailable-slot', 'r-registry-secret-url',
       'r-feature-mismatch', 'r-registry-secret-member', 'r-dims-disagreement', 'r-dangling-identity-row',
       'l-unconfigured-offline', 'l-run-identity-absence',
@@ -309,7 +311,8 @@ describe('the frozen desktop contract snapshot', () => {
     assert.equal(await compiled.revision(), PRE_CONFIG_CONTRACT_REVISION, 'the frozen snapshot never moves during the campaign');
     assert.deepEqual(publicProjection(compiled), snapshot, 'the projection of the projection is the projection');
     assert.match(committedReport.census.desktopContract.revision, /^[0-9a-f]{64}$/);
-    assert.equal(committedReport.census.desktopContract.operations, 21, 'the twenty pre-campaign operations plus the read-only config inspection');
+    assert.equal(committedReport.census.desktopContract.operations, 37,
+      'the census counts the surface the tree compiles today, not the frozen snapshot beside it');
   });
 });
 

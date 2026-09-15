@@ -1,0 +1,1798 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/trace2skill",
+  "$ref": "#/$defs/skillBundle",
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skillPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[A-Za-z0-9._][A-Za-z0-9._/-]*$"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "trace2SkillIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "TT2S1001",
+            "TT2S1002",
+            "TT2S1003",
+            "TT2S1004",
+            "TT2S1005",
+            "TT2S1006",
+            "TT2S1007",
+            "TT2S1008",
+            "TT2S1009",
+            "TT2S1010",
+            "TT2S1011",
+            "TT2S1012",
+            "TT2S1013"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "docPath": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "docPath",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "spend": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "$ref": "#/$defs/count"
+        },
+        "tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "cost": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "cost"
+      ],
+      "additionalProperties": false
+    },
+    "fileDigest": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/skillPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "size"
+      ],
+      "additionalProperties": false
+    },
+    "skillFile": {
+      "type": "object",
+      "properties": {
+        "bundleId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "path": {
+          "$ref": "#/$defs/skillPath"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "encoding": {
+          "enum": [
+            "utf-8",
+            "binary"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size": {
+          "$ref": "#/$defs/count"
+        },
+        "executable": {
+          "type": "boolean"
+        },
+        "content": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "bundleId",
+        "path",
+        "mediaType",
+        "encoding",
+        "sha256",
+        "size",
+        "executable",
+        "content",
+        "address"
+      ],
+      "additionalProperties": false
+    },
+    "skillBundle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "parentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rootFile": {
+          "const": "SKILL.md"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fileDigest"
+          }
+        },
+        "origin": {
+          "enum": [
+            "human-import",
+            "parametric-draft",
+            "evolved"
+          ]
+        },
+        "status": {
+          "enum": [
+            "staged",
+            "eligible",
+            "active",
+            "rejected",
+            "archived"
+          ]
+        },
+        "formatProfile": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "id",
+        "scopeKey",
+        "mode",
+        "parentId",
+        "rootFile",
+        "files",
+        "origin",
+        "status",
+        "formatProfile"
+      ],
+      "additionalProperties": false
+    },
+    "skillHead": {
+      "type": "object",
+      "properties": {
+        "versionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "versionId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "evolutionTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "split": {
+          "enum": [
+            "evolve",
+            "test"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fileDigest"
+          }
+        },
+        "adapterId": {
+          "$ref": "#/$defs/id"
+        },
+        "adapterRevision": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "id",
+        "scopeKey",
+        "split",
+        "prompt",
+        "inputs",
+        "adapterId",
+        "adapterRevision"
+      ],
+      "additionalProperties": false
+    },
+    "roleIdentity": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "enum": [
+            "draft",
+            "executor",
+            "success-analyst",
+            "error-analyst",
+            "merge"
+          ]
+        },
+        "identityId": {
+          "$ref": "#/$defs/id"
+        },
+        "promptVersion": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "role",
+        "identityId",
+        "promptVersion"
+      ],
+      "additionalProperties": false
+    },
+    "evolutionRun": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "s0Id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "s0Hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "evolveHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "testHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/roleIdentity"
+          }
+        },
+        "toolManifestHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "budgets": {
+          "type": "object",
+          "properties": {
+            "turns": {
+              "$ref": "#/$defs/count"
+            },
+            "tokens": {
+              "$ref": "#/$defs/count"
+            },
+            "ms": {
+              "$ref": "#/$defs/count"
+            }
+          },
+          "required": [
+            "turns",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "bMerge": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "lMax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "supportThreshold": {
+          "$ref": "#/$defs/count"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "running",
+            "completed",
+            "refused"
+          ]
+        },
+        "spend": {
+          "$ref": "#/$defs/spend"
+        }
+      },
+      "required": [
+        "id",
+        "scopeKey",
+        "mode",
+        "s0Id",
+        "s0Hash",
+        "evolveHash",
+        "testHash",
+        "roles",
+        "toolManifestHash",
+        "budgets",
+        "concurrency",
+        "bMerge",
+        "lMax",
+        "seed",
+        "supportThreshold",
+        "status",
+        "spend"
+      ],
+      "additionalProperties": false
+    },
+    "rolloutMessage": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "rolloutReasoning": {
+      "type": "object",
+      "properties": {
+        "turn": {
+          "$ref": "#/$defs/count"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "rolloutStep": {
+      "type": "object",
+      "properties": {
+        "turn": {
+          "$ref": "#/$defs/count"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arguments": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "turn",
+        "name",
+        "arguments",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "rolloutArtifact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size": {
+          "$ref": "#/$defs/count"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "size",
+        "address"
+      ],
+      "additionalProperties": false
+    },
+    "taskEvaluation": {
+      "type": "object",
+      "properties": {
+        "evaluatorId": {
+          "$ref": "#/$defs/id"
+        },
+        "score": {
+          "type": "number"
+        },
+        "detail": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "evaluatorId",
+        "score",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "taskRollout": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "taskId": {
+          "$ref": "#/$defs/id"
+        },
+        "s0Hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "condition": {
+          "$ref": "#/$defs/id"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rolloutMessage"
+          }
+        },
+        "reasoning": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rolloutReasoning"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rolloutStep"
+          }
+        },
+        "finalAnswer": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rolloutArtifact"
+          }
+        },
+        "evaluation": {
+          "$ref": "#/$defs/taskEvaluation"
+        },
+        "label": {
+          "enum": [
+            "success",
+            "failure",
+            "unanswered"
+          ]
+        },
+        "stopReason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spend": {
+          "$ref": "#/$defs/spend"
+        },
+        "idempotencyKey": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "taskId",
+        "s0Hash",
+        "condition",
+        "attempt",
+        "messages",
+        "reasoning",
+        "steps",
+        "finalAnswer",
+        "artifacts",
+        "evaluation",
+        "label",
+        "stopReason",
+        "spend",
+        "idempotencyKey"
+      ],
+      "additionalProperties": false
+    },
+    "analystExclusion": {
+      "description": "Why an analyst emitted no patch. Every value is a counted outcome of the run, never a hidden failure: `exhausted` ran out of rounds or budget, `tool-failure` lost a host tool, `unsupported-artifacts` could not see the outputs it needed, `already-correct` found the untouched output already passing, `no-causal-explanation` repaired without citing the span that failed, and `evaluator-disagrees` claimed a repair the evaluator refused.",
+      "enum": [
+        "exhausted",
+        "tool-failure",
+        "unsupported-artifacts",
+        "already-correct",
+        "no-causal-explanation",
+        "evaluator-disagrees"
+      ]
+    },
+    "analystRepair": {
+      "type": "object",
+      "properties": {
+        "attempts": {
+          "$ref": "#/$defs/count"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/taskEvaluation"
+        }
+      },
+      "required": [
+        "attempts",
+        "evaluation"
+      ],
+      "additionalProperties": false
+    },
+    "analystResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "role": {
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "rolloutId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "s0Hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": [
+            "patch",
+            "excluded"
+          ]
+        },
+        "exclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/analystExclusion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnosis": {
+          "type": "string"
+        },
+        "repair": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/analystRepair"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "patchId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spend": {
+          "$ref": "#/$defs/spend"
+        },
+        "idempotencyKey": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "role",
+        "rolloutId",
+        "s0Hash",
+        "status",
+        "exclusion",
+        "diagnosis",
+        "repair",
+        "patchId",
+        "spend",
+        "idempotencyKey"
+      ],
+      "additionalProperties": false
+    },
+    "createFileOperation": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "const": "create_file"
+        },
+        "path": {
+          "$ref": "#/$defs/skillPath"
+        },
+        "group": {
+          "$ref": "#/$defs/id"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "path",
+        "group",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "insertOperation": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "insert_before",
+            "insert_after"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/skillPath"
+        },
+        "group": {
+          "$ref": "#/$defs/id"
+        },
+        "anchor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "op",
+        "path",
+        "group",
+        "anchor",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "sectionOperation": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "enum": [
+            "replace_section",
+            "delete_section"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/skillPath"
+        },
+        "group": {
+          "$ref": "#/$defs/id"
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "content": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "op",
+        "path",
+        "group",
+        "from",
+        "to",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "patchOperation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/createFileOperation"
+        },
+        {
+          "$ref": "#/$defs/insertOperation"
+        },
+        {
+          "$ref": "#/$defs/sectionOperation"
+        }
+      ]
+    },
+    "patchValidation": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": [
+            "pending",
+            "compiled",
+            "withheld",
+            "refused"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trace2SkillIssue"
+          }
+        }
+      },
+      "required": [
+        "state",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "authoredPatch": {
+      "description": "A directory patch as a role writes it: the edits and the reason for them. Identity, run, frozen base hash, provenance and support are sealed by the dispatcher from what it already knows, so nothing here asks a model for a receipt it cannot compute.",
+      "type": "object",
+      "properties": {
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          }
+        }
+      },
+      "required": [
+        "reasoning",
+        "operations"
+      ],
+      "additionalProperties": false
+    },
+    "skillPatch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "baseHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sourceRolloutIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "sourcePatchIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "supportCount": {
+          "$ref": "#/$defs/count"
+        },
+        "reasoning": {
+          "type": "string"
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          }
+        },
+        "changelog": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validation": {
+          "$ref": "#/$defs/patchValidation"
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "baseHash",
+        "sourceRolloutIds",
+        "sourcePatchIds",
+        "supportCount",
+        "reasoning",
+        "operations",
+        "changelog",
+        "validation"
+      ],
+      "additionalProperties": false
+    },
+    "successAnalysis": {
+      "description": "What one successful trajectory taught, in a single pass. The patterns cite the steps they were read from, so a claim with no step behind it is visible; a null patch says the directory already covers this trajectory.",
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "properties": {
+              "behavior": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidenceStepIndexes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/count"
+                }
+              }
+            },
+            "required": [
+              "behavior",
+              "evidenceStepIndexes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "patch": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/authoredPatch"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "patterns",
+        "patch",
+        "reasoning"
+      ],
+      "additionalProperties": false
+    },
+    "errorDiagnosis": {
+      "description": "An error analyst's terminal explanation of one failure. Every member is a claim the run can check against what it recorded: the trace spans that failed, the mismatch, the repair that was made in the sandbox, the evaluation attempt that passed over it, and why the guidance generalizes beyond this instance. An empty span list is storable on purpose \u2014 a repair nobody can trace to a failure is a counted exclusion, not a refused write.",
+      "type": "object",
+      "properties": {
+        "failingStepIndexes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/count"
+          }
+        },
+        "mismatch": {
+          "type": "string"
+        },
+        "repair": {
+          "type": "string"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/count"
+        },
+        "generalization": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "failingStepIndexes",
+        "mismatch",
+        "repair",
+        "evaluation",
+        "generalization"
+      ],
+      "additionalProperties": false
+    },
+    "errorProposal": {
+      "description": "The terminal call an error analyst makes: the patch it wants stored and the diagnosis that has to hold for it to be stored at all.",
+      "type": "object",
+      "properties": {
+        "patch": {
+          "$ref": "#/$defs/authoredPatch"
+        },
+        "diagnosis": {
+          "$ref": "#/$defs/errorDiagnosis"
+        }
+      },
+      "required": [
+        "patch",
+        "diagnosis"
+      ],
+      "additionalProperties": false
+    },
+    "mergeChangelogAction": {
+      "description": "What one merge decision did with a proposal. `kept` carries an edit through unchanged, `merged` folds several proposals of one insight into a single edit, `routed-to-references` moves guidance out of the root page into a reference file, and `discarded` drops a proposal that disagreed with the one that was kept. A decision is always one of these four, so a merge cannot quietly lose an edit.",
+      "enum": [
+        "kept",
+        "merged",
+        "routed-to-references",
+        "discarded"
+      ]
+    },
+    "mergeChangelogEntry": {
+      "description": "One decision of one merge group, naming the input patches it acted on. The named ids must belong to the group, so a merge cannot claim provenance it was never given.",
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/mergeChangelogAction"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourcePatchIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      },
+      "required": [
+        "action",
+        "detail",
+        "sourcePatchIds"
+      ],
+      "additionalProperties": false
+    },
+    "mergeOutput": {
+      "description": "What one merge group returns: a single directory patch over the frozen directory and the decision log that explains it. Identity, run, base hash, provenance and support are receipts the run computes from the group it dispatched, so nothing here asks the operator for a number it cannot know.",
+      "type": "object",
+      "properties": {
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          }
+        },
+        "changelog": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/mergeChangelogEntry"
+          }
+        }
+      },
+      "required": [
+        "reasoning",
+        "operations",
+        "changelog"
+      ],
+      "additionalProperties": false
+    },
+    "mergeReport": {
+      "type": "object",
+      "properties": {
+        "unique": {
+          "$ref": "#/$defs/count"
+        },
+        "duplicates": {
+          "$ref": "#/$defs/count"
+        },
+        "withheld": {
+          "$ref": "#/$defs/count"
+        },
+        "successSupport": {
+          "$ref": "#/$defs/count"
+        },
+        "errorSupport": {
+          "$ref": "#/$defs/count"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trace2SkillIssue"
+          }
+        }
+      },
+      "required": [
+        "unique",
+        "duplicates",
+        "withheld",
+        "successSupport",
+        "errorSupport",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "mergeNode": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "groupIndex": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inputPatchIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "outputPatchId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "baseHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "supportCount": {
+          "$ref": "#/$defs/count"
+        },
+        "report": {
+          "$ref": "#/$defs/mergeReport"
+        },
+        "spend": {
+          "$ref": "#/$defs/spend"
+        },
+        "idempotencyKey": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "level",
+        "groupIndex",
+        "inputPatchIds",
+        "outputPatchId",
+        "baseHash",
+        "supportCount",
+        "report",
+        "spend",
+        "idempotencyKey"
+      ],
+      "additionalProperties": false
+    },
+    "candidateCheck": {
+      "type": "object",
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trace2SkillIssue"
+          }
+        }
+      },
+      "required": [
+        "valid",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "skillCandidate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "finalPatchId": {
+          "$ref": "#/$defs/id"
+        },
+        "bundleId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "parentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "structural": {
+          "$ref": "#/$defs/candidateCheck"
+        },
+        "semantic": {
+          "$ref": "#/$defs/candidateCheck"
+        },
+        "diffSummary": {
+          "type": "object",
+          "properties": {
+            "filesAdded": {
+              "$ref": "#/$defs/count"
+            },
+            "filesChanged": {
+              "$ref": "#/$defs/count"
+            },
+            "linesAdded": {
+              "$ref": "#/$defs/count"
+            },
+            "linesRemoved": {
+              "$ref": "#/$defs/count"
+            }
+          },
+          "required": [
+            "filesAdded",
+            "filesChanged",
+            "linesAdded",
+            "linesRemoved"
+          ],
+          "additionalProperties": false
+        },
+        "churn": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "scopeKey",
+        "finalPatchId",
+        "bundleId",
+        "parentId",
+        "structural",
+        "semantic",
+        "diffSummary",
+        "churn"
+      ],
+      "additionalProperties": false
+    },
+    "heldOutResult": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "$ref": "#/$defs/id"
+        },
+        "baselineScore": {
+          "type": "number"
+        },
+        "candidateScore": {
+          "type": "number"
+        },
+        "label": {
+          "enum": [
+            "success",
+            "failure",
+            "unanswered"
+          ]
+        }
+      },
+      "required": [
+        "taskId",
+        "baselineScore",
+        "candidateScore",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "skillEvaluation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "baselineBundleId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "candidateBundleId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "executorIdentityId": {
+          "$ref": "#/$defs/id"
+        },
+        "split": {
+          "const": "test"
+        },
+        "testHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/heldOutResult"
+          }
+        },
+        "meanDelta": {
+          "type": "number"
+        },
+        "costDelta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "failures": {
+          "$ref": "#/$defs/count"
+        },
+        "skips": {
+          "$ref": "#/$defs/count"
+        },
+        "leakage": {
+          "$ref": "#/$defs/count"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "policyVersion": {
+          "$ref": "#/$defs/id"
+        },
+        "expectedHead": {
+          "$ref": "#/$defs/skillHead"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trace2SkillIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "runId",
+        "scopeKey",
+        "baselineBundleId",
+        "candidateBundleId",
+        "executorIdentityId",
+        "split",
+        "testHash",
+        "results",
+        "meanDelta",
+        "costDelta",
+        "failures",
+        "skips",
+        "leakage",
+        "eligible",
+        "policyVersion",
+        "expectedHead",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    "skillHeadRow": {
+      "type": "object",
+      "properties": {
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "head": {
+          "$ref": "#/$defs/skillHead"
+        }
+      },
+      "required": [
+        "scopeKey",
+        "head"
+      ],
+      "additionalProperties": false
+    },
+    "evaluationPolicy": {
+      "description": "The gate a held-out evaluation is judged against. Its canonical digest is the `policyVersion` an evaluation records and an activation registration must name, so a candidate evaluated under one gate can never be promoted under another.",
+      "type": "object",
+      "properties": {
+        "primaryMetric": {
+          "description": "The quantity eligibility is decided on. Mean paired score over the held-out split is the only one this package computes.",
+          "const": "mean-score"
+        },
+        "regressionTolerance": {
+          "description": "How far one held-out task may score below the baseline before the candidate is refused, whatever the mean says.",
+          "type": "number",
+          "minimum": 0
+        },
+        "minAnsweredCoverage": {
+          "description": "The share of held-out tasks the candidate must actually answer; a candidate that wins by refusing to answer is not an improvement.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "costCeiling": {
+          "description": "The token ceiling the candidate's held-out pass may not exceed, or null where the host sets no bound.",
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "primaryMetric",
+        "regressionTolerance",
+        "minAnsweredCoverage",
+        "costCeiling"
+      ],
+      "additionalProperties": false
+    },
+    "activationEvent": {
+      "description": "One attempt to move the active directory of a scope, recorded whether it applied or was refused. It is stored beside the evaluations of its scope and told apart from them by `kind`; a refusal carries the issues that stopped it and leaves the prior head exactly where it was. A `promote` names the candidate and the held-out evaluation that made it eligible; a `rollback` reinstates a directory that was active before and may name neither, because a starting directory a host imported was never a candidate.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "activation"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "scopeKey": {
+          "$ref": "#/$defs/id"
+        },
+        "candidateId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bundleId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "evaluationId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "action": {
+          "enum": [
+            "promote",
+            "rollback"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "activated",
+            "refused"
+          ]
+        },
+        "actor": {
+          "$ref": "#/$defs/id"
+        },
+        "previousHead": {
+          "$ref": "#/$defs/skillHead"
+        },
+        "nextHead": {
+          "$ref": "#/$defs/skillHead"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trace2SkillIssue"
+          }
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "scopeKey",
+        "candidateId",
+        "bundleId",
+        "evaluationId",
+        "action",
+        "outcome",
+        "actor",
+        "previousHead",
+        "nextHead",
+        "issues"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.action",
+                  "promote"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$ne": [
+                      "$.candidateId",
+                      null
+                    ]
+                  },
+                  {
+                    "$ne": [
+                      "$.evaluationId",
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "evaluationRow": {
+      "description": "What the evaluations collection holds: a held-out evaluation, or an activation event that names one. Both shapes are closed and only the event carries `kind`, so a reader tells them apart without a second collection.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/skillEvaluation"
+        },
+        {
+          "$ref": "#/$defs/activationEvent"
+        }
+      ]
+    },
+    "trace2SkillPromptRole": {
+      "description": "The five roles a run addresses. A pack that names anything else is not one of this package's prompts.",
+      "enum": [
+        "draft",
+        "executor",
+        "success-analyst",
+        "error-analyst",
+        "merge"
+      ]
+    },
+    "trace2SkillPromptVariable": {
+      "description": "One declared slot of a user template: the closed schema its value must satisfy, and whether it is substituted as text or as JSON.",
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "render": {
+          "enum": [
+            "text",
+            "json"
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "render"
+      ],
+      "additionalProperties": false
+    },
+    "trace2SkillPromptVariables": {
+      "description": "Every slot a pack may use, by name. A name the template uses and this map does not declare is refused, and so is a declaration the template never uses.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "not": {
+          "enum": [
+            "prototype",
+            "constructor",
+            "__proto__"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/trace2SkillPromptVariable"
+      }
+    },
+    "trace2SkillPromptPack": {
+      "description": "A role prompt as it is authored: static system instructions and one user template. The system half may carry no placeholder, so nothing a run substitutes can reach the instructions.",
+      "type": "object",
+      "properties": {
+        "meta": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "$ref": "#/$defs/trace2SkillPromptRole"
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "role"
+          ],
+          "additionalProperties": false
+        },
+        "system": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "meta",
+        "system",
+        "user"
+      ],
+      "additionalProperties": false
+    },
+    "trace2SkillPromptArtifact": {
+      "description": "A compiled pack: the source it was built from, the closed variable contract, the stylesheet the user half renders through, and the revision that IS the role's prompt version. Moving any source byte moves the revision, which moves every idempotency key that named it.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "$ref": "#/$defs/trace2SkillPromptRole"
+        },
+        "revision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "policyVersion": {
+          "const": "trace2skill-jtlt-v1"
+        },
+        "sourceDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "pack": {
+          "$ref": "#/$defs/trace2SkillPromptPack"
+        },
+        "variables": {
+          "$ref": "#/$defs/trace2SkillPromptVariables"
+        },
+        "variableSchema": {
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "outputSchema": {
+          "description": "What the role's answer must satisfy, or `true` where the role answers as an agent and no structured schema constrains it.",
+          "type": [
+            "object",
+            "boolean"
+          ]
+        },
+        "userStylesheet": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "revision",
+        "policyVersion",
+        "sourceDigest",
+        "pack",
+        "variables",
+        "variableSchema",
+        "outputSchema",
+        "userStylesheet"
+      ],
+      "additionalProperties": false
+    },
+    "trace2SkillPromptCatalog": {
+      "description": "The generated artifact set an installed consumer reads instead of a source directory: one compiled pack per role, in role order.",
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "trace2skill-prompts"
+        },
+        "policyVersion": {
+          "const": "trace2skill-jtlt-v1"
+        },
+        "revision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "prompts": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/trace2SkillPromptArtifact"
+          }
+        }
+      },
+      "required": [
+        "document",
+        "policyVersion",
+        "revision",
+        "prompts"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -33,7 +33,8 @@ const on = (action: string, withValue?: any, event?: string[]): any => {
 };
 
 const PAGES: Array<[string, string]> = [
-  ['chat', 'Chat'], ['loom', 'Loom'], ['memory', 'Memory'], ['documents', 'Documents'], ['settings', 'Settings'],
+  ['chat', 'Chat'], ['loom', 'Loom'], ['memory', 'Memory'], ['skills', 'Skills'], ['documents', 'Documents'],
+  ['reports', 'Reports'], ['settings', 'Settings'],
 ];
 
 function header(state: any): any {
@@ -53,30 +54,133 @@ function header(state: any): any {
 
 // -- chat -------------------------------------------------------------------
 
-function message(m: any, index: number): any {
+/**
+ * What was recorded against a reply. A verdict is the OPERATOR's
+ * assertion and says so; the memory count is the number the projection
+ * receipt answered, not a claim that anything got better.
+ */
+function recordedVerdict(verdict: string, reason: string | null, changed: number | null): any {
+  return ['div', { class: 'feedback-recorded' },
+    ['span', { class: 'verdict-recorded' }, `recorded: ${verdict}`],
+    ['span', { class: 'verdict-label' }, 'your assertion about this reply'],
+    reason === null || reason === '' ? null : ['span', { class: 'reason-recorded' }, reason],
+    changed === null ? null : ['span', { class: 'writes-recorded' }, `${changed} memory confidences changed`],
+  ];
+}
+
+/** The form a thumb opens. Nothing here submits until the bounds it publishes are met. */
+function feedbackForm(feedback: any): any {
+  if (feedback.receipt !== null) {
+    return recordedVerdict(feedback.receipt.outcome, feedback.reason, feedback.receipt.changedMemoryWrites);
+  }
+  const form = feedback.form;
+  if (form === null) return ['div', { class: 'feedback-form pending' }, '…'];
+  if (form.submitted !== null) return recordedVerdict(form.submitted.verdict, null, null);
+  if (form.eligible !== true) {
+    return ['div', { class: 'feedback-form ineligible' },
+      form.issues.map((issue: any) => ['span', { key: issue.code, class: 'issue' }, `${issue.code}: ${issue.detail}`])];
+  }
+  const reason = String(feedback.reason ?? '').trim();
+  const note = String(feedback.note ?? '').trim();
+  const named = feedback.refs.length + (note === '' ? 0 : 1);
+  const ready = reason.length >= form.constraints.reasonMinChars
+    && reason.length <= form.constraints.reasonMaxChars
+    && named > 0 && named <= form.constraints.maxEvidence;
+  return ['div', { class: 'feedback-form' },
+    ['div', { class: 'verdicts' },
+      form.verdicts.map((verdict: string) => ['button', {
+        key: verdict,
+        class: feedback.verdict === verdict ? 'verdict active' : 'verdict',
+        on: { click: on('feedback/verdict', verdict) },
+      }, verdict])],
+    ['textarea', {
+      class: 'feedback-reason', placeholder: 'what actually happened…', value: feedback.reason,
+      on: { input: on('feedback/reason', undefined, ['value']) },
+    }],
+    ['div', { class: 'feedback-count' }, `${reason.length}/${form.constraints.reasonMinChars} characters`],
+    form.evidence.length === 0
+      ? ['div', { class: 'feedback-count' }, 'this reply cited nothing; a typed note is the evidence']
+      : ['div', { class: 'feedback-evidence' },
+          form.evidence.map((option: any) => ['label', { key: option.sourceId, class: 'evidence-option' },
+            ['input', {
+              type: 'checkbox', checked: feedback.refs.includes(option.ref) ? true : null,
+              on: { change: on('feedback/toggle', option.ref) },
+            }],
+            ['span', {}, option.label]])],
+    form.noteAllowed
+      ? ['textarea', {
+          class: 'feedback-note', placeholder: 'a note, if what this is about is not listed…', value: feedback.note,
+          on: { input: on('feedback/note', undefined, ['value']) },
+        }]
+      : null,
+    feedback.error === null ? null : ['div', { class: 'error' }, String(feedback.error)],
+    ['div', { class: 'feedback-actions' },
+      ['button', { class: 'feedback-submit', disabled: ready ? null : true, on: { click: on('feedback/submit') } }, 'record verdict'],
+      ['button', { class: 'feedback-cancel', on: { click: on('feedback/close') } }, 'cancel'],
+    ],
+  ];
+}
+
+function message(m: any, index: number, feedback: any): any {
   const body = m.role === 'assistant' ? md.view(m.text) : ['p', {}, m.text];
+  const answered = m.role === 'assistant' && m.local !== true && typeof m.id === 'string';
   return ['div', { key: m.id ?? `local-${index}`, class: `msg ${m.role}` },
     ['div', { class: 'msg-body' }, body],
     m.provider ? ['div', { class: 'msg-meta' }, `via ${m.provider}`] : null,
+    answered
+      ? ['div', { class: 'feedback' },
+          ['button', { class: 'thumb up', title: 'this answered it', on: { click: on('feedback/open', { messageId: m.id, verdict: 'success' }) } }, '👍'],
+          ['button', { class: 'thumb down', title: 'this did not', on: { click: on('feedback/open', { messageId: m.id, verdict: 'failure' }) } }, '👎'],
+          feedback.messageId === m.id ? feedbackForm(feedback) : null]
+      : null,
   ];
+}
+
+/**
+ * What the last answer cited, as the surface can show it. The reply row
+ * names the ids the answer used; a cited memory the surface already
+ * holds renders with its text and evidence, and one it does not renders
+ * as the address itself — a citation is never dropped for want of a
+ * summary.
+ */
+function citedBy(state: any): any[] {
+  if (state.chat.citations.length > 0) return state.chat.citations;
+  const answered = [...state.chat.messages].reverse()
+    .find((message: any) => message.role === 'assistant' && message.local !== true);
+  const ids: string[] = answered?.citations ?? [];
+  const held = new Map<string, any>(state.memory.items.map((unit: any) => [unit.id, unit]));
+  return ids.map((id) => held.get(id) ?? { id, text: id, evidence: 'cited by the answer' });
 }
 
 function chatPage(state: any): any {
   const chat = state.chat;
+  const citations = citedBy(state);
+  const run = chat.run;
   return ['section', { class: 'page chat' },
     ['div', { class: 'messages' },
       chat.messages.length === 0
         ? ['div', { class: 'empty' },
             ['h2', {}, 'Ask your folder anything'],
             ['p', {}, 'Point Tangle at a folder in Settings, sync it on the Loom page, and chat over the curated memory. Without a model configured, answers are grounded recall — memories, cited.']]
-        : chat.messages.map(message),
-      chat.busy ? ['div', { class: 'msg assistant pending', key: 'pending' }, ['div', { class: 'msg-body' }, '…thinking']] : null,
+        : chat.messages.map((m: any, index: number) => message(m, index, chat.feedback)),
+      chat.busy
+        ? ['div', { class: 'msg assistant pending', key: 'pending' },
+            ['div', { class: 'msg-body' },
+              run === null ? '…thinking'
+                : `…answering${run.chars > 0 ? ` · ${run.chars} characters` : ''}${run.status === 'running' ? '' : ` · ${run.status}`}`],
+            run !== null && run.degraded.length > 0
+              ? ['div', { class: 'msg-meta' }, run.degraded.map((entry: any) => `degraded: ${entry.reason}`).join(' · ')]
+              : null,
+            run !== null && run.status === 'running'
+              ? ['button', { class: 'close', on: { click: on('chat/stop', run.runId) } }, 'stop']
+              : null]
+        : null,
     ],
     chat.error ? ['div', { class: 'error' }, String(chat.error)] : null,
-    chat.citations.length > 0
+    citations.length > 0
       ? ['div', { class: 'citations' },
           ['h3', {}, 'grounded on'],
-          chat.citations.map((c: any) => ['div', { key: c.id, class: 'citation', on: { click: on('memory/select', c) } },
+          citations.map((c: any) => ['div', { key: c.id, class: 'citation', on: { click: on('memory/select', c) } },
             ['span', { class: 'cite-text' }, c.text],
             ['span', { class: 'cite-evidence' }, c.evidence]])]
       : null,
@@ -158,10 +262,71 @@ function runRow(run: any, selected: boolean): any {
   ];
 }
 
+/** What a watched run's node frames say each stage did — the run's own record, not a remembered slot. */
+function nodeStatuses(frames: { rows: any[] }): Record<string, { status: string, ms: number }> {
+  const nodes: Record<string, { status: string, ms: number }> = {};
+  for (const row of frames.rows) {
+    if (row.kind !== 'node') continue;
+    nodes[row.body.node] = { status: row.body.status, ms: Math.round(row.body.ms * 100) / 100 };
+  }
+  return nodes;
+}
+
+/**
+ * What the host's watcher has observed, as numbers. Every value here is
+ * read from `folder.watch.get`; nothing is summarized into a verdict,
+ * and a watcher the host did not construct says so.
+ */
+function watchLine(watcher: any): any {
+  if (watcher === null || watcher === undefined) return null;
+  if (watcher.enabled !== true) {
+    return ['p', { class: 'hint watch-line' }, 'This host watches no folder — sync runs when you click.'];
+  }
+  const scans = watcher.scans ?? { start: 0, change: 0, overflow: 0, tick: 0 };
+  const where = watcher.folder === null ? 'no folder set' : String(watcher.folder);
+  return ['div', { class: 'watch-line' },
+    ['p', { class: 'hint' },
+      `watching ${where} · ${String(watcher.mode)} · scans: ${scans.start} start, ${scans.change} change, `
+      + `${scans.overflow} overflow, ${scans.tick} tick · ${watcher.overflows ?? 0} overflows`],
+    watcher.lastError === null || watcher.lastError === undefined
+      ? null
+      : ['p', { class: 'hint error-note' }, `last watch error: ${String(watcher.lastError)}`],
+    (watcher.issues ?? []).length === 0
+      ? null
+      : ['ul', { class: 'watch-issues' },
+          (watcher.issues ?? []).map((issue: any) => ['li', {}, `${String(issue.code)} ${String(issue.detail)}`])],
+  ];
+}
+
+/**
+ * What configuration a run resolved: how it was asked for, which chat
+ * role answered, and which embedding identity its vectors carry. A row
+ * from before identities were recorded says that, rather than nothing.
+ */
+function runIdentity(detail: any): any {
+  const identity = detail.identity ?? null;
+  if (identity === null) {
+    return ['p', { class: 'hint' }, detail.run.identityStatus === 'legacy-unrecorded'
+      ? 'no configuration identity was recorded for this run'
+      : 'the configuration identity this run names is not stored'];
+  }
+  const requested = identity.requested ?? {};
+  const asked = requested.kind === 'profile' ? `profile ${String(requested.profile)}`
+    : requested.kind === 'tag' ? `tag ${String(requested.tag)}`
+    : 'settings projection';
+  const chat = identity.roles?.chat;
+  return ['p', { class: 'hint run-identity' },
+    `requested ${String(requested.kind)} · ${asked}`
+    + ` · identity ${String(identity.identityId).slice(0, 12)}…`
+    + (chat === undefined ? ' · no chat wire' : ` · chat ${chat.provider}/${chat.model}`)
+    + (identity.embedding === null ? ' · no embedding identity' : ` · embeddings ${identity.embedding.provider}/${identity.embedding.model} @ ${identity.embedding.dims}`)];
+}
+
 function loomPage(state: any): any {
   const loom = state.loom;
-  const running = loom.live.run?.status === 'running';
-  const nodeIds = ['document', 'documents'].includes(loom.live.run?.kind)
+  const watched = loom.runs.rows.find((row: any) => row.id === loom.watch) ?? null;
+  const running = watched?.status === 'running';
+  const nodeIds = ['document', 'documents'].includes(watched?.kind)
     ? ['fetch', 'extract', 'chunk', 'embed', 'store']
     : loom.nodes;
   return ['section', { class: 'page loom' },
@@ -174,23 +339,28 @@ function loomPage(state: any): any {
       }, loom.syncing ? 'syncing…' : 'sync folder'],
     ],
     loom.syncError ? ['div', { class: 'error' }, String(loom.syncError)] : null,
+    loom.syncNote ? ['p', { class: 'hint sync-note' }, String(loom.syncNote)] : null,
     ['div', { class: 'dag-panel' },
       ['div', { class: 'dag-svg' }, mermaidSvg(loom.mermaid)],
-      nodeStrip(nodeIds, loom.live.nodes, running),
+      // the frames slot is addressed: a picture is only ever drawn from
+      // the run it belongs to
+      nodeStrip(nodeIds, nodeStatuses(loom.frames.runId === loom.watch ? loom.frames : { rows: [] }), running),
+      watchLine(loom.watcher),
     ],
-    memoryGrowthChart(loom.runs),
+    memoryGrowthChart(loom.runs.rows),
     stageChart(loom.detail),
     ['div', { class: 'runs-panel' },
       ['h3', {}, 'run history'],
-      loom.runs.length === 0
+      loom.runs.rows.length === 0
         ? ['p', { class: 'hint' }, 'No runs yet — set a folder in Settings and sync.']
         : ['table', { class: 'runs' },
-            ['tbody', {}, loom.runs.map((r: any) => runRow(r, loom.detail?.run?.id === r.id))]],
+            ['tbody', {}, loom.runs.rows.map((r: any) => runRow(r, loom.detail?.run?.id === r.id))]],
       loom.detail
         ? ['div', { class: 'run-detail' },
             ['div', { class: 'detail-head' },
               ['h4', {}, loom.detail.run.id],
               ['button', { class: 'close', on: { click: on('run/close') } }, '×']],
+            runIdentity(loom.detail),
             ['table', { class: 'events' },
               ['tbody', {},
                 loom.detail.events.map((e: any) => ['tr', { key: e.id },
@@ -253,6 +423,82 @@ function memoryPage(state: any): any {
       memory.items.length === 0
         ? ['p', { class: 'hint' }, 'Nothing here yet — sync a folder on the Loom page.']
         : memory.items.map(memoryRow)],
+  ];
+}
+
+// -- skills ----------------------------------------------------------------
+
+/**
+ * What a skill-evolution run did, read from stored rows. Nothing here claims
+ * an improvement: the only numbers it shows are the evaluation's own, and
+ * every write — evolving, activating, rolling back — stays a host action.
+ */
+function skillsPage(state: any): any {
+  const skills = state.skills;
+  const detail = skills.detail;
+  const evaluation = skills.evaluation;
+  const candidate = skills.candidate?.candidate;
+  const merges = skills.merges;
+  return ['section', { class: 'page skills' },
+    ['div', { class: 'group' },
+      ['h3', {}, 'Skill directories'],
+      ['button', { class: 'tab', on: { click: on('skills/refresh') } }, 'refresh'],
+      skills.error ? ['div', { class: 'error' }, String(skills.error)] : null,
+      skills.runs.length === 0
+        ? ['p', { class: 'empty skills-empty' }, 'No evolution run is stored. A run is driven outside this surface; this page shows what one did.']
+        : ['table', { class: 'skill-runs' },
+            ['tbody', {}, skills.runs.map((run: any) => ['tr', {
+              key: run.id, class: 'skill-run', on: { click: on('skills/select', run.id) },
+            },
+              ['td', {}, String(run.scopeKey)],
+              ['td', {}, String(run.mode)],
+              ['td', {}, String(run.status)],
+              ['td', { class: 'addr' }, String(run.id).slice(0, 12)],
+            ])]],
+    ],
+    detail === null ? null : ['div', { class: 'group skill-detail' },
+      ['h3', {}, `run ${String(detail.run.id).slice(0, 12)}`],
+      ['button', { class: 'tab', on: { click: on('skills/close') } }, 'close'],
+      ['p', { class: 'skill-counts' },
+        `${detail.counts.rollouts} rollouts · ${detail.counts.analyses} analyses · ${detail.counts.patches} patches `
+        + `· ${detail.counts.merges} merges · ${detail.counts.candidates} candidates · ${detail.counts.evaluations} evaluations`],
+      merges === null ? null : ['div', { class: 'skill-merges' },
+        ['h4', {}, `merge tree — ${merges.levels} level(s), ${merges.groups} group(s), ${merges.withheld} withheld`],
+        ['table', {}, ['tbody', {}, merges.nodes.map((node: any) => ['tr', { key: node.id, class: 'merge-node' },
+          ['td', {}, `L${node.level}G${node.groupIndex}`],
+          ['td', {}, `${node.inputPatchIds.length} in`],
+          ['td', {}, `${node.unique} unique`],
+          ['td', {}, `${node.withheld} withheld`],
+          ['td', { class: 'addr' }, String(node.outputPatchId ?? '—').slice(0, 12)],
+        ])]]],
+      candidate === undefined || candidate === null ? null : ['div', { class: 'skill-candidate' },
+        ['h4', {}, `candidate ${String(candidate.id).slice(0, 12)}`],
+        ['p', { class: 'skill-diff' },
+          `directory ${String(candidate.bundleId).slice(0, 12)} · +${candidate.diffSummary.filesAdded} file(s), `
+          + `${candidate.diffSummary.filesChanged} changed, +${candidate.diffSummary.linesAdded} −${candidate.diffSummary.linesRemoved} line(s)`],
+        ['p', {}, `structural ${candidate.structural.valid ? 'valid' : 'refused'} · semantic ${candidate.semantic.valid ? 'valid' : 'refused'}`],
+        ['ul', { class: 'skill-files' }, (skills.candidate.files ?? []).map((file: any) =>
+          ['li', { key: file.path }, `${file.path} · ${file.size} bytes`])]],
+      evaluation === null ? null : ['div', { class: 'skill-evaluation' },
+        ['h4', {}, `held-out evaluation ${String(evaluation.id).slice(0, 12)}`],
+        ['p', { class: 'skill-verdict' },
+          `mean delta ${evaluation.meanDelta.toFixed(3)} · eligible ${String(evaluation.eligible)} `
+          + `· ${evaluation.failures} failed · ${evaluation.skips} skipped · ${evaluation.leakage} leakage`],
+        ['table', {}, ['tbody', {}, evaluation.results.map((row: any) => ['tr', {
+          key: row.taskId,
+          class: row.candidateScore < row.baselineScore ? 'held-out regression' : 'held-out',
+        },
+          ['td', {}, row.taskId],
+          ['td', {}, row.baselineScore.toFixed(3)],
+          ['td', {}, row.candidateScore.toFixed(3)],
+          ['td', {}, (row.candidateScore - row.baselineScore).toFixed(3)],
+        ])]],
+        evaluation.issues.length === 0 ? null
+          : ['ul', { class: 'skill-clauses' }, evaluation.issues.map((issue: any, index: number) =>
+              ['li', { key: `${issue.code}-${index}` }, `${issue.code} ${issue.path}: ${issue.detail}`])]],
+      skills.head === null ? null : ['p', { class: 'skill-head' },
+        `active head ${String(skills.head.versionId ?? 'none').slice(0, 12)} at revision ${skills.head.revision}`],
+    ],
   ];
 }
 
@@ -352,6 +598,103 @@ function documentPage(state: any): any {
 
 // -- settings ---------------------------------------------------------------
 
+// -- reports ----------------------------------------------------------------
+
+/**
+ * What a running report is saying, read from the frames the run window
+ * is already subscribed to. No second stream exists for this page: a
+ * report is a run, and a run's frames have one address.
+ */
+function reportProgress(state: any): any {
+  const frames = state.loom.frames;
+  const watched = state.loom.runs.rows.find((row: any) => row.id === frames.runId) ?? null;
+  if (watched === null || watched.kind !== 'report') return null;
+  const lines = frames.rows
+    .filter((row: any) => row.kind === 'progress')
+    .flatMap((row: any) => (row.body.lines ?? []).map((line: string) => String(line)));
+  const dropped = frames.rows
+    .filter((row: any) => row.kind === 'progress')
+    .reduce((total: number, row: any) => total + Number(row.body.suppressed ?? 0), 0);
+  if (lines.length === 0 && watched.status !== 'running') return null;
+  return ['div', { class: 'report-progress' },
+    ['h3', {}, `${String(watched.id)} · ${String(watched.status)}`],
+    ['pre', { class: 'report-lines' }, lines.slice(-40).join('\n')],
+    dropped === 0 ? null : ['p', { class: 'hint' }, `${dropped} further lines were not kept`],
+  ];
+}
+
+/** A stored report, as a row: identity, where it came from, how big it is. */
+function reportRow(row: any, selected: boolean, comparable: boolean): any {
+  return ['tr', {
+    key: row.reportId,
+    class: selected ? 'selected' : null,
+    on: { click: on('reports/open', row.reportId) },
+  },
+    ['td', { class: 'mono' }, String(row.reportId).slice(0, 12)],
+    ['td', {}, String(row.instrument)],
+    ['td', { class: 'mono' }, String(row.bytes)],
+    ['td', { class: 'mono' }, String(row.at)],
+    ['td', { class: 'hint' }, comparable ? 'comparable' : ''],
+  ];
+}
+
+function reportsPage(state: any): any {
+  const reports = state.reports;
+  const chosen = reports.detail;
+  const comparableTo = (row: any): boolean => chosen !== null
+    && chosen.reportId !== row.reportId
+    && chosen.instrument === row.instrument
+    && chosen.schemaId === row.schemaId;
+  return ['section', { class: 'page reports' },
+    ['div', { class: 'reports-head' },
+      ['h2', {}, 'Reports'],
+      ['p', { class: 'hint' },
+        'An instrument\u2019s numbers are that instrument\u2019s claim. Two reports are comparable when their instrument and schema agree \u2014 nothing here says one is better.'],
+    ],
+    reports.error ? ['div', { class: 'error' }, String(reports.error)] : null,
+    (reports.issues ?? []).length === 0
+      ? null
+      : ['ul', { class: 'report-issues' },
+          reports.issues.map((issue: any) => ['li', { key: issue.code + issue.path }, `${String(issue.code)} ${String(issue.detail)}`])],
+    reports.instruments.length === 0
+      ? ['p', { class: 'hint' }, 'This build registers no instrument.']
+      : ['ul', { class: 'instruments' },
+          reports.instruments.map((entry: any) => ['li', { key: entry.id },
+            ['div', { class: 'instrument-name' }, String(entry.title)],
+            ['div', { class: 'hint mono' }, `${String(entry.entry)} \u00b7 ${String(entry.schemaId)}`],
+            ['button', {
+              class: 'send', disabled: reports.busy ? true : null,
+              on: { click: on('reports/run', entry.id) },
+            }, reports.busy ? 'running\u2026' : 'run'],
+          ])],
+    reports.receipt
+      ? ['p', { class: 'hint receipt' },
+          `run ${String(reports.runId)} \u00b7 ${String(reports.receipt.stored)} \u00b7 exit ${String(reports.receipt.exitCode)}`
+          + (reports.receipt.reportId === null ? '' : ` \u00b7 ${String(reports.receipt.reportId).slice(0, 12)}`)]
+      : null,
+    reportProgress(state),
+    ['div', { class: 'stored-reports' },
+      ['h3', {}, 'stored reports'],
+      reports.rows.length === 0
+        ? ['p', { class: 'hint' }, 'No report has been kept yet.']
+        : ['table', { class: 'runs' },
+            ['tbody', {}, reports.rows.map((row: any) => reportRow(row, chosen?.reportId === row.reportId, comparableTo(row)))]],
+      chosen
+        ? ['div', { class: 'run-detail' },
+            ['div', { class: 'detail-head' },
+              ['h4', {}, String(chosen.reportId)],
+              ['button', { class: 'close', on: { click: on('reports/close') } }, '\u00d7']],
+            ['p', { class: 'hint' },
+              `${String(chosen.instrument)} \u00b7 ${String(chosen.schemaId)} \u00b7 run ${String(chosen.runId)} \u00b7 `
+              + (chosen.verified === true
+                ? 'identity verified against the stored bytes'
+                : `identity DOES NOT match the stored bytes \u2014 they hash to ${String(chosen.recomputed).slice(0, 12)}`)],
+            ['pre', { class: 'report-document' }, JSON.stringify(chosen.document, null, 2)]]
+        : null,
+    ],
+  ];
+}
+
 function field(label: string, action: string, value: any, placeholder = ''): any {
   return ['label', { class: 'field' },
     ['span', {}, label],
@@ -387,6 +730,53 @@ function secretField(label: string, action: string, clearAction: string, configu
     ['span', { class: configured ? 'saved' : 'hint' }, configured ? 'configured' : 'not configured']];
 }
 
+/** Resolver issues, verbatim: the code to look up, the path to fix, the reason. */
+function issueList(issues: any[]): any {
+  return issues.length === 0 ? null : ['ul', { class: 'hint issues' }, issues.map((issue: any) =>
+    ['li', { key: `${issue.code}${issue.path}` }, `${issue.code} ${issue.path} — ${issue.detail}`])];
+}
+
+/**
+ * The profile selector and what the selection resolves to right now.
+ *
+ * The registry's own stated limitations are rendered beside it verbatim:
+ * its tag orderings are operator-declared and nothing here has measured
+ * that one profile answers better than another.
+ */
+function profileGroup(state: any): any {
+  const inspect = state.settings.inspect;
+  const draft = state.settings.draft;
+  if (inspect === null || inspect === undefined || draft === null) return null;
+  const profiles: any[] = inspect.registry.profiles ?? [];
+  const preview = state.settings.preview;
+  const selected = draft.profile ?? null;
+  const described = profiles.find((entry: any) => entry.id === selected) ?? null;
+  // a stored name the registry no longer declares stays VISIBLE and stays
+  // selected: showing "(none)" would say the host is projecting its settings
+  // while the resolver is refusing that name
+  const stale = selected !== null && described === null;
+  return ['div', { class: 'group profile' },
+    ['h3', {}, 'Profile'],
+    select('registry profile', 'settings/profile', selected,
+      [null, ...profiles.map((entry: any) => String(entry.id)), ...(stale ? [String(selected)] : [])]),
+    stale
+      ? ['p', { class: 'error-inline' }, `'${String(selected)}' names no profile in this registry — pick one below or clear the selection.`]
+      : described === null
+        ? ['p', { class: 'hint' }, 'No profile selected — the wire settings below are projected into the request.']
+        : ['p', { class: 'hint' }, String(described.description ?? '')],
+    preview === null || preview === undefined ? null : ['div', { class: 'preview' },
+      ['p', { class: preview.state === 'ready' ? 'saved' : preview.state === 'provisional' ? 'hint' : 'error-inline' },
+        `${String(preview.profile)} — ${preview.state === 'ready' ? 'resolves' : preview.state === 'provisional' ? 'provisional' : 'refused; fix the items below, then save'}`],
+      issueList(preview.issues ?? []),
+      preview.identity === null || preview.identity === undefined ? null : ['p', { class: 'hint' },
+        `identity ${String(preview.identity.identityId).slice(0, 12)}…`
+        + (preview.identity.roles.chat !== undefined ? ` · chat ${preview.identity.roles.chat.provider}/${preview.identity.roles.chat.model}` : ' · no chat wire')
+        + (preview.identity.embedding !== null ? ` · embeddings ${preview.identity.embedding.model} @ ${preview.identity.embedding.dims}` : '')]],
+    ['ul', { class: 'hint limitations' }, (inspect.registry.tags ?? []).map((tag: any) =>
+      ['li', { key: String(tag.tag) }, `${String(tag.tag)} — ${String(tag.limitations)}`])],
+  ];
+}
+
 /** The read-only config inspection — what the resolver says about the current stack. */
 function configPanel(state: any): any {
   const inspect = state.settings.inspect;
@@ -401,10 +791,7 @@ function configPanel(state: any): any {
       resolution.state === 'ready' ? 'resolved'
         : resolution.state === 'provisional' ? 'provisional — the embedding width is unproven until a reply confirms it'
         : 'refused'],
-    resolution.issues.length > 0
-      ? ['ul', { class: 'hint' }, resolution.issues.map((issue: any) =>
-          ['li', { key: `${issue.code}${issue.path}` }, `${issue.code} ${issue.path} — ${issue.detail}`])]
-      : null,
+    issueList(resolution.issues),
     identity !== null && identity !== undefined
       ? ['p', { class: 'hint' },
           `identity ${String(identity.identityId).slice(0, 12)}…`
@@ -424,6 +811,7 @@ function settingsPage(state: any): any {
   return ['section', { class: 'page settings' },
     ['h2', {}, 'Settings'],
     configPanel(state),
+    profileGroup(state),
     ['div', { class: 'group' },
       ['h3', {}, 'Folder'],
       field('path', 'settings/folder', draft.folder, '/path/to/your/notes'),
@@ -481,7 +869,9 @@ export function rootView(state: any): any {
   const page = state.page === 'chat' ? chatPage(state)
     : state.page === 'loom' ? loomPage(state)
     : state.page === 'memory' ? memoryPage(state)
+    : state.page === 'skills' ? skillsPage(state)
     : state.page === 'documents' ? documentPage(state)
+    : state.page === 'reports' ? reportsPage(state)
     : settingsPage(state);
   return ['div', { class: 'shell' }, header(state), page];
 }

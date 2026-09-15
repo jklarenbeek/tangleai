@@ -1,0 +1,953 @@
+{
+  "document": "trace2skill-prompts",
+  "policyVersion": "trace2skill-jtlt-v1",
+  "prompts": [
+    {
+      "id": "draft",
+      "role": "draft",
+      "policyVersion": "trace2skill-jtlt-v1",
+      "sourceDigest": "9b16936c63fb1bcab28fcdb09eea482cc7ba656c9166147ab8d0af4f8de9848d",
+      "pack": {
+        "meta": {
+          "id": "draft",
+          "version": "1.0.0",
+          "role": "draft"
+        },
+        "system": {
+          "content": "You write the first version of a skill directory for one bounded domain.\n\nReply with a root page `SKILL.md` and, if it helps, files under\n`references/`. Write only what is true of the DOMAIN: how its inputs are\nread, what shape an answer takes, which mistakes are easy to make. You have\nseen no example of the work and must not invent one — no sample question,\nno sample answer, no identifier. Every link you write must reach a file you\nalso return."
+        },
+        "user": {
+          "content": "{{scope}}"
+        }
+      },
+      "variables": {
+        "scope": {
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "render": "text"
+        }
+      },
+      "variableSchema": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "scope"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "files": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "content"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "match": "$",
+            "body": [
+              "$.variables.scope"
+            ]
+          }
+        ]
+      },
+      "revision": "db2c9ad02afd614f89df3ab4751d7f9876b37e62b27ce5d7241d02c613da307b"
+    },
+    {
+      "id": "executor",
+      "role": "executor",
+      "policyVersion": "trace2skill-jtlt-v1",
+      "sourceDigest": "c3208e1be8e58bf34eaecc0c5414773b9f95f190b4d7ada1199a4602b93d3da5",
+      "pack": {
+        "meta": {
+          "id": "executor",
+          "version": "1.0.0",
+          "role": "executor"
+        },
+        "system": {
+          "content": "You answer exactly one question about the files named in the task.\n\nRead the files you need with the tools you were given, then reply with the\nbare answer and nothing else — no sentence, no units, no restatement of the\nquestion. If a skill directory is present below, it is the authority on how\nthis domain is read and how an answer is written."
+        },
+        "user": {
+          "content": "{{task}}{{#if inputs}}\n\nFiles named by this task:\n{{inputs}}{{/if}}"
+        }
+      },
+      "variables": {
+        "task": {
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "render": "text"
+        },
+        "inputs": {
+          "schema": {
+            "type": "string",
+            "minLength": 0
+          },
+          "render": "text"
+        }
+      },
+      "variableSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inputs": {
+            "type": "string",
+            "minLength": 0
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": true,
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "match": "$",
+            "body": [
+              "$.variables.task",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ]
+          },
+          {
+            "mode": "condition-1",
+            "priority": 1,
+            "match": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "present"
+                ],
+                "properties": {
+                  "present": {
+                    "type": "object",
+                    "required": [
+                      "inputs"
+                    ],
+                    "properties": {
+                      "inputs": {
+                        "const": true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "body": [
+              "\n\nFiles named by this task:\n",
+              "$.variables.inputs"
+            ]
+          },
+          {
+            "mode": "condition-1",
+            "body": []
+          }
+        ]
+      },
+      "revision": "bb23faa1f675d616b620405938e8404a643c3807c5f4c1a9febb9ddf3d0374a9"
+    },
+    {
+      "id": "success-analyst",
+      "role": "success-analyst",
+      "policyVersion": "trace2skill-jtlt-v1",
+      "sourceDigest": "a9ea1d05e5024ee10a6787147a932d50dd3c0f4f6ed43a5e5b4e0a91a8f68bad",
+      "pack": {
+        "meta": {
+          "id": "success-analyst",
+          "version": "1.0.0",
+          "role": "success-analyst"
+        },
+        "system": {
+          "content": "You read ONE successful trajectory and say what a skill directory should\nrecord so the next attempt at this KIND of task goes the same way.\n\nName every reusable behaviour you can support from the steps, and cite the\nstep indexes each one is read from. Then either propose one directory patch\nthat writes those behaviours down, or return a null patch when the directory\nalready says everything this trajectory used. Write guidance about the\ndomain, never about this instance: no task identifier, no input path, no\nanswer, no copied span from the transcript."
+        },
+        "user": {
+          "content": "{{evidence}}"
+        }
+      },
+      "variables": {
+        "evidence": {
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "render": "text"
+        }
+      },
+      "variableSchema": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$id": "https://tangleai.dev/schemas/trace2skill/successAnalysis",
+        "description": "What one successful trajectory taught, in a single pass. The patterns cite the steps they were read from, so a claim with no step behind it is visible; a null patch says the directory already covers this trajectory.",
+        "type": "object",
+        "properties": {
+          "patterns": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "properties": {
+                "behavior": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidenceStepIndexes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/count"
+                  }
+                }
+              },
+              "required": [
+                "behavior",
+                "evidenceStepIndexes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "patch": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/authoredPatch"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reasoning": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "patterns",
+          "patch",
+          "reasoning"
+        ],
+        "additionalProperties": false,
+        "$defs": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "authoredPatch": {
+            "description": "A directory patch as a role writes it: the edits and the reason for them. Identity, run, frozen base hash, provenance and support are sealed by the dispatcher from what it already knows, so nothing here asks a model for a receipt it cannot compute.",
+            "type": "object",
+            "properties": {
+              "reasoning": {
+                "type": "string",
+                "minLength": 1
+              },
+              "operations": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "$ref": "#/$defs/patchOperation"
+                }
+              }
+            },
+            "required": [
+              "reasoning",
+              "operations"
+            ],
+            "additionalProperties": false
+          },
+          "patchOperation": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/createFileOperation"
+              },
+              {
+                "$ref": "#/$defs/insertOperation"
+              },
+              {
+                "$ref": "#/$defs/sectionOperation"
+              }
+            ]
+          },
+          "createFileOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "create_file"
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "skillPath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "pattern": "^[A-Za-z0-9._][A-Za-z0-9._/-]*$"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "insertOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "insert_before",
+                  "insert_after"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "anchor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "anchor",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "sectionOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "replace_section",
+                  "delete_section"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "from",
+              "to",
+              "content"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "match": "$",
+            "body": [
+              "$.variables.evidence"
+            ]
+          }
+        ]
+      },
+      "revision": "5e497f6900bb936fc37ebbc6507bf65d29eee53ad82d232c54e09044dab23e88"
+    },
+    {
+      "id": "error-analyst",
+      "role": "error-analyst",
+      "policyVersion": "trace2skill-jtlt-v1",
+      "sourceDigest": "c1a6d17cfb4800e9bfb8db70273151ac6196db764e12c3acd580f0cfc51f3d14",
+      "pack": {
+        "meta": {
+          "id": "error-analyst",
+          "version": "1.0.0",
+          "role": "error-analyst"
+        },
+        "system": {
+          "content": "You diagnose ONE failed trajectory and may propose a directory patch only\nafter you have proved a repair.\n\nRead the trace, read the registered answer, then rewrite the answer in the\noverlay and run `evaluate`. Propose only once `evaluate` has passed over\nyour rewrite: the proposal must cite the step indexes that failed, the\nmismatch, the repair you made, the evaluation attempt that passed and why\nthe guidance generalizes. Write guidance about the domain, never about this\ninstance: no task identifier, no input path, no answer, no copied span.\nIf you cannot find a repair the evaluator accepts, stop without proposing."
+        },
+        "user": {
+          "content": "{{evidence}}"
+        }
+      },
+      "variables": {
+        "evidence": {
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "render": "text"
+        }
+      },
+      "variableSchema": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$id": "https://tangleai.dev/schemas/trace2skill/errorProposal",
+        "description": "The terminal call an error analyst makes: the patch it wants stored and the diagnosis that has to hold for it to be stored at all.",
+        "type": "object",
+        "properties": {
+          "patch": {
+            "$ref": "#/$defs/authoredPatch"
+          },
+          "diagnosis": {
+            "$ref": "#/$defs/errorDiagnosis"
+          }
+        },
+        "required": [
+          "patch",
+          "diagnosis"
+        ],
+        "additionalProperties": false,
+        "$defs": {
+          "authoredPatch": {
+            "description": "A directory patch as a role writes it: the edits and the reason for them. Identity, run, frozen base hash, provenance and support are sealed by the dispatcher from what it already knows, so nothing here asks a model for a receipt it cannot compute.",
+            "type": "object",
+            "properties": {
+              "reasoning": {
+                "type": "string",
+                "minLength": 1
+              },
+              "operations": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {
+                  "$ref": "#/$defs/patchOperation"
+                }
+              }
+            },
+            "required": [
+              "reasoning",
+              "operations"
+            ],
+            "additionalProperties": false
+          },
+          "patchOperation": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/createFileOperation"
+              },
+              {
+                "$ref": "#/$defs/insertOperation"
+              },
+              {
+                "$ref": "#/$defs/sectionOperation"
+              }
+            ]
+          },
+          "createFileOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "create_file"
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "skillPath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "pattern": "^[A-Za-z0-9._][A-Za-z0-9._/-]*$"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "insertOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "insert_before",
+                  "insert_after"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "anchor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "anchor",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "sectionOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "replace_section",
+                  "delete_section"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "from",
+              "to",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "errorDiagnosis": {
+            "description": "An error analyst's terminal explanation of one failure. Every member is a claim the run can check against what it recorded: the trace spans that failed, the mismatch, the repair that was made in the sandbox, the evaluation attempt that passed over it, and why the guidance generalizes beyond this instance. An empty span list is storable on purpose — a repair nobody can trace to a failure is a counted exclusion, not a refused write.",
+            "type": "object",
+            "properties": {
+              "failingStepIndexes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/count"
+                }
+              },
+              "mismatch": {
+                "type": "string"
+              },
+              "repair": {
+                "type": "string"
+              },
+              "evaluation": {
+                "$ref": "#/$defs/count"
+              },
+              "generalization": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "failingStepIndexes",
+              "mismatch",
+              "repair",
+              "evaluation",
+              "generalization"
+            ],
+            "additionalProperties": false
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "match": "$",
+            "body": [
+              "$.variables.evidence"
+            ]
+          }
+        ]
+      },
+      "revision": "d4420e1d30eeaeacd14af0cd37fe1a410170bdc18ff5db3ed1697ab17f21d63a"
+    },
+    {
+      "id": "merge",
+      "role": "merge",
+      "policyVersion": "trace2skill-jtlt-v1",
+      "sourceDigest": "62dcc473480a96cdb96e0cf5f184edffaedce90a44209a5f766c498536eb55be",
+      "pack": {
+        "meta": {
+          "id": "merge",
+          "version": "1.0.0",
+          "role": "merge"
+        },
+        "system": {
+          "content": "You consolidate several directory patches, all written against the SAME\nfrozen skill directory, into ONE patch over that same directory.\n\nKeep every distinct insight the group supports. Fold proposals that say the\nsame thing into a single edit, and where two proposals of one insight\ndisagree, keep the one that states it best and discard the other. Never\nedit a directory a peer has already changed: every anchor you use is text\nof the frozen directory as it is given to you.\n\nReturn the merged patch and one changelog entry per decision, each naming\nthe patch identifiers it acted on. How many distinct trajectories support a\nproposal is evidence about how general it is, not a threshold: a lone\ninsight that is clearly reusable stays."
+        },
+        "user": {
+          "content": "{{evidence}}"
+        }
+      },
+      "variables": {
+        "evidence": {
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "render": "text"
+        }
+      },
+      "variableSchema": {
+        "type": "object",
+        "properties": {
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$id": "https://tangleai.dev/schemas/trace2skill/mergeOutput",
+        "description": "What one merge group returns: a single directory patch over the frozen directory and the decision log that explains it. Identity, run, base hash, provenance and support are receipts the run computes from the group it dispatched, so nothing here asks the operator for a number it cannot know.",
+        "type": "object",
+        "properties": {
+          "reasoning": {
+            "type": "string",
+            "minLength": 1
+          },
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/$defs/patchOperation"
+            }
+          },
+          "changelog": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/$defs/mergeChangelogEntry"
+            }
+          }
+        },
+        "required": [
+          "reasoning",
+          "operations",
+          "changelog"
+        ],
+        "additionalProperties": false,
+        "$defs": {
+          "patchOperation": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/createFileOperation"
+              },
+              {
+                "$ref": "#/$defs/insertOperation"
+              },
+              {
+                "$ref": "#/$defs/sectionOperation"
+              }
+            ]
+          },
+          "createFileOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "create_file"
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "skillPath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "pattern": "^[A-Za-z0-9._][A-Za-z0-9._/-]*$"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "insertOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "insert_before",
+                  "insert_after"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "anchor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "anchor",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "sectionOperation": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "replace_section",
+                  "delete_section"
+                ]
+              },
+              "path": {
+                "$ref": "#/$defs/skillPath"
+              },
+              "group": {
+                "$ref": "#/$defs/id"
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "to": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "group",
+              "from",
+              "to",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          "mergeChangelogEntry": {
+            "description": "One decision of one merge group, naming the input patches it acted on. The named ids must belong to the group, so a merge cannot claim provenance it was never given.",
+            "type": "object",
+            "properties": {
+              "action": {
+                "$ref": "#/$defs/mergeChangelogAction"
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourcePatchIds": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            "required": [
+              "action",
+              "detail",
+              "sourcePatchIds"
+            ],
+            "additionalProperties": false
+          },
+          "mergeChangelogAction": {
+            "description": "What one merge decision did with a proposal. `kept` carries an edit through unchanged, `merged` folds several proposals of one insight into a single edit, `routed-to-references` moves guidance out of the root page into a reference file, and `discarded` drops a proposal that disagreed with the one that was kept. A decision is always one of these four, so a merge cannot quietly lose an edit.",
+            "enum": [
+              "kept",
+              "merged",
+              "routed-to-references",
+              "discarded"
+            ]
+          }
+        }
+      },
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "match": "$",
+            "body": [
+              "$.variables.evidence"
+            ]
+          }
+        ]
+      },
+      "revision": "797f2d6d89c39bdbb37fc41828e4385c1cc416a5c192f0d932a46830d30a081c"
+    }
+  ],
+  "revision": "61b092ccf5449b433d49281f7dd14f702ce91767a6ecd93eb0a90512938bc85d"
+}

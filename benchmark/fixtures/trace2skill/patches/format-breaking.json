@@ -1,0 +1,18 @@
+{
+  "id": "format-breaking",
+  "origin": {
+    "rollout": "task-03",
+    "analyst": "success-analyst"
+  },
+  "expectedCode": "TT2S1005",
+  "withheld": false,
+  "rationale": "Deletes the root page down to nothing, leaving no entry point.",
+  "operations": [
+    {
+      "group": "g-root",
+      "op": "delete_section",
+      "file": "SKILL.md",
+      "anchor": "# Tabular extraction"
+    }
+  ]
+}

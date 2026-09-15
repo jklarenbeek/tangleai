@@ -1,0 +1,10 @@
+{
+  "id": "task-09",
+  "split": "test",
+  "prompt": "Which sensor recorded the highest reading?",
+  "inputs": [
+    "inputs/readings.md"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

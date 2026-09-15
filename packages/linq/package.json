@@ -15,7 +15,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/linq": "0.89.0"
+    "@jarenjs/linq": "0.90.6"
   },
   "private": false,
   "types": "./src/index.ts",

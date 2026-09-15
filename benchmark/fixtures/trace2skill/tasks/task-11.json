@@ -1,0 +1,10 @@
+{
+  "id": "task-11",
+  "split": "evolve",
+  "prompt": "How many readings are above 20.0 celsius?",
+  "inputs": [
+    "inputs/readings.md"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-15T04:08:29.232Z",
+  "source": {
+    "version": "0.90.6",
+    "tag": "v0.90.6",
+    "commit": "37ba1676dab7868b168858b413a3ec647eebefdd"
+  },
+  "verification": "Registry metadata and downloaded tarball integrity match the exact npm lock. No source rebuild comparison is claimed.",
+  "packages": [
+    {
+      "name": "@jarenjs/app",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/app/-/app-0.90.6.tgz",
+      "integrity": "sha512-VAUeAbbjiqna8dZWnw+8YtjyUxHjwldxSBIVkqhpSqo0gvljSYDX47Qt4v8zIbp10lHZlrrPpLfLOxBiTSrTYA==",
+      "sha256": "b4d995c360aa64ebada43a0e37d60914358041366b817673fac392f3973215e8",
+      "bytes": 109595
+    },
+    {
+      "name": "@jarenjs/calc",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/calc/-/calc-0.90.6.tgz",
+      "integrity": "sha512-RZU2sL0QTX2RFLAh2Zp7JxMznJmjasmJHSathd2RC8Q2VjlAu7TDC8WDM9+d+AnlALOdOnOScC83VLnOGd8+eA==",
+      "sha256": "af8527498b89414f4a0171b4511b11afb60b588c11e391b91d2a35883f113f32",
+      "bytes": 46408
+    },
+    {
+      "name": "@jarenjs/charts",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/charts/-/charts-0.90.6.tgz",
+      "integrity": "sha512-fANtnJXeoa27Eh5V71KbAeSyYfD63lA74XW7JGmtfwQQzHcSa7G6hK4HnvmNrsXTtM7Y6yMNh05V5EZ3gTGyBQ==",
+      "sha256": "4d92eda872cd1b5ee8586b4ab4ff11c9a7458407364996c27174befe28fde97f",
+      "bytes": 110637
+    },
+    {
+      "name": "@jarenjs/collection",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/collection/-/collection-0.90.6.tgz",
+      "integrity": "sha512-75WG592aULFTEyhyDo38/7cLI94Bov4g373OPdwro0Wxv6H2r2yqAuvTVlx7bkatDg8iwmcVFzzRpsqVr26Jiw==",
+      "sha256": "a6318d38901ddc6afdfc0d17b34fa9e8838ee8db25162b7173b21573e0f43c52",
+      "bytes": 33695
+    },
+    {
+      "name": "@jarenjs/contract",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/contract/-/contract-0.90.6.tgz",
+      "integrity": "sha512-cojcLccvAen4ht5fd6LVVr5zJuQhugw7DmPB7n9r1P+WJZLUktBM0YUjhUkwQb1b6lfiWTqdqnrPDMTiwuVILA==",
+      "sha256": "daa4dcbb70cef76a25c1dea85bc95cf58431821f58fba2d7764795d7242e8ec7",
+      "bytes": 340969
+    },
+    {
+      "name": "@jarenjs/core",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/core/-/core-0.90.6.tgz",
+      "integrity": "sha512-hFqiBJlpEtTDr1PJnjWFU8+sN0FJSCcHTJpXVO2DcEMh8OjKF7HRD84EeQPifLpSuHiOnpnmvaHDwQ6sEVGwlg==",
+      "sha256": "f9b9dc8f3fddd7c90cba1277fe00e263595a746ca842d49d2b64d2d1391a07d5",
+      "bytes": 338350
+    },
+    {
+      "name": "@jarenjs/db",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/db/-/db-0.90.6.tgz",
+      "integrity": "sha512-lfHsds4wKCU/C1wVWqvoNMDjKc+49qzSIdyiITW4GbRhnnzUzmOz2LB5m5DA6ZTb1N1dlmXnzNB20xOgedKGtg==",
+      "sha256": "c2490cf497495c8b50ac374403f6ef47ed4a6844ef44815950109d89321491fe",
+      "bytes": 694015
+    },
+    {
+      "name": "@jarenjs/emit",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/emit/-/emit-0.90.6.tgz",
+      "integrity": "sha512-zfa+Q4YCPDseieD4gMVMOv5mlVP0PKgZmAb7s37JZO4WzpWXywkjgCOr7OAu086mJCnsSFg/ws5QG2pSt3kf1A==",
+      "sha256": "3d46f33906873c4f9e755ef3e16b44454c843144fa5dbd43065826a430a8bfcb",
+      "bytes": 37691
+    },
+    {
+      "name": "@jarenjs/flow",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/flow/-/flow-0.90.6.tgz",
+      "integrity": "sha512-Jxh+6ofak9/lvzzzyikiGkcwf55pdZ5K2zTbEdKn4H2PKFUnIvEOR2RNeR88s+EYSTykrN39UrTtlk0RTF4j1A==",
+      "sha256": "110281107c53ed77dd95ea73d6260d305bb22c69522204f91799174440820169",
+      "bytes": 80374
+    },
+    {
+      "name": "@jarenjs/formats",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/formats/-/formats-0.90.6.tgz",
+      "integrity": "sha512-xNHFN9f61dTpqCZ6Ergy5GBRXAsca9ofNQH6bf1MJgXBZp11HFcOz2hpYQuH8p/DdEosgnxZxO/oFEyKI9iozw==",
+      "sha256": "a7b619e8155f872455e6ee601a2a642788e5885eeeb97885e31a89ee3d0dca65",
+      "bytes": 20252
+    },
+    {
+      "name": "@jarenjs/forms",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/forms/-/forms-0.90.6.tgz",
+      "integrity": "sha512-5tIAvoNiB4BeAX6JHkanGr+XRD9kJ/cPpJdPhwksNiSYiLf51+nMYcVHS4V6liric9RaBT1j+1wT69qqvRpBlA==",
+      "sha256": "cf10e6ad82ffc80082807129b9405b930702871dfba99791c0fd7cf363ce9366",
+      "bytes": 58061
+    },
+    {
+      "name": "@jarenjs/josl",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/josl/-/josl-0.90.6.tgz",
+      "integrity": "sha512-dxqgCKG4AcQxuyq/UoXyd6yeLwyYDM8gyizbLOxOnfAsU1EHUECD14ylL9G4o8UadwheIZzSTSryf5yNL5z95Q==",
+      "sha256": "ee1ff17961fab6e90e919e4648271c3bc44d762e3c3afcdad87d01d5a148e41b",
+      "bytes": 91739
+    },
+    {
+      "name": "@jarenjs/json",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/json/-/json-0.90.6.tgz",
+      "integrity": "sha512-sjMNIHxqol11cDtnhJJizKIERvovl8/n05Sr021nAxmepOZ/DfAw3b/n9ZEgjtKux4az7xT8JbZOAUVpAiCklg==",
+      "sha256": "8456267d492dd3d5360796051117d46ce422e61063b40508a904514e91b7a22a",
+      "bytes": 371526
+    },
+    {
+      "name": "@jarenjs/linq",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/linq/-/linq-0.90.6.tgz",
+      "integrity": "sha512-ms/PHIHNYwln8LJtU3RXGFUbDKgSVVPObePGazO9PA3ukK4fa80VAv2b3xh1ttsy72XolmNw2HHCNJU9Eh1B5Q==",
+      "sha256": "abc9483fa9fb7df30ac7833e4d4e98a4135d38d1ffb18474cbcc3f4fc9929c08",
+      "bytes": 483729
+    },
+    {
+      "name": "@jarenjs/locales",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/locales/-/locales-0.90.6.tgz",
+      "integrity": "sha512-GC/0GRXot+uEhUCTD6myooJ1enIm+bhEyg54XDEkrLgs5ZlW5+yTkVSpxZlKT0Ba7iJCcYycRCMwf9oRtRbn6A==",
+      "sha256": "175bfe6ae49fb0ae18dde8a803b1b48ef4032d9c7298ef85e9f24f3503b81bc2",
+      "bytes": 54801
+    },
+    {
+      "name": "@jarenjs/md",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/md/-/md-0.90.6.tgz",
+      "integrity": "sha512-rXjKcu3kZwZbnPHhSEzt6HOR6WYFn3T28cM9zXXhB/WtWQInAvy/r8vx6OEixXaBMktFDt8MvtDYVCy2k2V9zw==",
+      "sha256": "f026cf4466244316155fdd3e4d4a7eff40349b245bd84162ae8ba2ef84497b70",
+      "bytes": 149656
+    },
+    {
+      "name": "@jarenjs/mermaid",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/mermaid/-/mermaid-0.90.6.tgz",
+      "integrity": "sha512-i0y1QAjIiQiC56RqFC9BeZLRcPJmSdCdNoIj4B0HPckHAhqHljlbOM3AnDE1demTzeG7Vd7vrEkklI/FlL9r5Q==",
+      "sha256": "7294b55bde5f01a947ac218727fb2b88fb3f3703bb2cdec7fdff6e71733021c0",
+      "bytes": 98799
+    },
+    {
+      "name": "@jarenjs/play",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/play/-/play-0.90.6.tgz",
+      "integrity": "sha512-uGopR5VuQRbk89jS1KoDbqdJ7UVKpXJeFMfwSVKd555PYj4Ik+YGX2Sesqz9zmLK2GJd/ituvKnTRbDPxPhtTw==",
+      "sha256": "b48c9d3e7d5f8c273b51668e32dc637857074d336beff1caad99155a30b38344",
+      "bytes": 45066
+    },
+    {
+      "name": "@jarenjs/refs",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/refs/-/refs-0.90.6.tgz",
+      "integrity": "sha512-IjS8DZ/lq2hKU5wT8zx5ZgTvzn+Y52Y1zVO6aOuONdKALID9hfJDbB/kEsjzOw1krz5XOwkss6gTAgc67TxflQ==",
+      "sha256": "d752d93616903f9fa054b680d49dadbd48bacbae372767346e7729512d1984e8",
+      "bytes": 10106
+    },
+    {
+      "name": "@jarenjs/rules",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/rules/-/rules-0.90.6.tgz",
+      "integrity": "sha512-WpzEPvIs3njUDWxTT7ssIi3K12LHM6zM02t/E1pejhVxjSEAFqun6gXag5D8bNPsShiKvWuvjPvI5SNTTvx0+A==",
+      "sha256": "57fcd5bfb144933dcb5317e274a331baf50cb6faf2f558afc40dcf2076761825",
+      "bytes": 6876
+    },
+    {
+      "name": "@jarenjs/studio",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/studio/-/studio-0.90.6.tgz",
+      "integrity": "sha512-0+fQJBNGxp04jAzODLrfCIHfx3cwDKw3fMloWhdgdpQhv86GDuOJ00UmB/HTnjNyOHZFt+a1XDK0WAJ7JVvEuA==",
+      "sha256": "4d8d8d4d70a1acaaf804852a575ee7999cdb69287b33073b573071875373d156",
+      "bytes": 134916
+    },
+    {
+      "name": "@jarenjs/validate",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/validate/-/validate-0.90.6.tgz",
+      "integrity": "sha512-YMjMwMLu3omJCNAmmqFmyVh1SNwpcyN2BnOlr/8fJWNi/fBxowciCo3x14KTt4fIr1UqHAlGNlgZQj0Eq1V5/A==",
+      "sha256": "021dbd95942d474ec9ff81a6f0561ad63891554230bda3f53fcb77d7360642c3",
+      "bytes": 122039
+    },
+    {
+      "name": "@jarenjs/view",
+      "version": "0.90.6",
+      "tarball": "https://registry.npmjs.org/@jarenjs/view/-/view-0.90.6.tgz",
+      "integrity": "sha512-YfRuNFz5h5GGA8liNysPZ7SGna7Gg4z7YZo3iLdOABgFi7aTyIf+sgPlyuaB4G67HGjplwJJQ4qcY222LlqtUA==",
+      "sha256": "6e32f62fd72d269fadef2425bc83070301dd98aae47be18b2ad88760ce25e977",
+      "bytes": 71744
+    }
+  ]
+}

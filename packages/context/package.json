@@ -26,8 +26,8 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/core": "0.89.0",
-    "@jarenjs/validate": "0.89.0",
+    "@jarenjs/core": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
     "@tangleai/models": "^0.27.3"
   },
   "private": false,

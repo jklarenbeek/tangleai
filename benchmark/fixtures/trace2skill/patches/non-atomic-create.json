@@ -1,0 +1,25 @@
+{
+  "id": "non-atomic-create",
+  "origin": {
+    "rollout": "task-13",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1004",
+  "withheld": false,
+  "rationale": "Splits a created page and the link that reaches it across two groups.",
+  "operations": [
+    {
+      "group": "g-create",
+      "op": "create_file",
+      "file": "references/units.md",
+      "text": "# Units\n\n- A weight in kilograms converts to pounds with 1 kg = 2.20462 lb,\n  rounded to one decimal."
+    },
+    {
+      "group": "g-link",
+      "op": "insert_after",
+      "file": "SKILL.md",
+      "anchor": "- A decimal uses a period separator and no thousands separator.",
+      "text": "See [unit conversions](references/units.md)."
+    }
+  ]
+}

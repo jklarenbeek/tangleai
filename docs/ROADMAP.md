@@ -1,6 +1,6 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.89.0](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.90.6](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
@@ -130,7 +130,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   researched future options, not implemented adapters. No resampling, timeline
   UI or spatial inference is implied by the temporal API.
 - [ ] **The place lane: spatial, and honest about what it cannot score.**
-  *Wanted:* `@jarenjs/core/geo` and `@jarenjs/ai`'s spatial profile have sat unused
+  *Wanted:* `@jarenjs/core/geo` and `@tangleai/jaren`'s spatial profile have sat unused
   inside the pin since the suite's geo campaign; LoCoMo's personas move, and
   "where was she living when she started the job" is a spatiotemporal as-of join
   the temporal lane makes expressible. Test whether grounding place mentions buys
@@ -152,7 +152,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   actual claim, the only thing a vector ranker structurally cannot do; the
   database side is `derive: 'bbox'` or nothing, `physical: 'rtree'` only if a
   measurement asks. *Salvage:* none — memflow never had geography; the prior art
-  is `@jarenjs/ai/spatial`'s `SPATIAL_OPERATORS` table. *Closes on:* place-grounded
+  is `@tangleai/jaren`'s `SPATIAL_OPERATORS` table. *Closes on:* place-grounded
   recall against the temporal-lane baseline on the fixture set, with the
   gazetteer's coverage (mentions grounded / total) beside it; a hard
   non-regression gate on LoCoMo categories 1–4; the `spatialGates` refusal counts
@@ -167,30 +167,30 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Learning from outcomes and traces
 
-- [ ] **The skill loop.** *Wanted:* close the loop the suite names as open work —
-  trajectories → lessons → skills stored as `SKILL_SCHEMA` records → back into a
-  prompt — with every write PROPOSED through the suite's refine gates (RFC 6902,
-  evidence-mandatory), never direct. *Stands on:* `createTrajectory` and
-  `describeTrajectory` (the trajectory is published; do not invent a trace
-  record), `SKILL_SCHEMA`, `ledger.recallSkills({ near })`, the agent's
-  `retrieval.skills` slot, `createRefiner`. *Constraint — the design on file is
-  the wrong algorithm:* the salvaged prompt packs under `prompts/trace2skill/` and
-  the k-means-cluster-then-retrieve shape reproduce the paper's *retrieval-memory
-  baseline*, not its method. Trace2Skill assigns one frozen-skill trajectory to
-  each independent analyst, merges every trajectory-local patch hierarchically
-  and prevalence-aware into ONE skill directory, and uses that directory directly
-  with no retrieval index at test time; error diagnosis is evaluator-proven, and
-  a held-out comparison decides. Which of the two Tangle builds is the fork a
-  campaign puts to the operator first. k-means, if it stays, is Tangle's
-  (`@tangleai/core/clustering` records why it does not reach for
-  `@jarenjs/core/vector`; it takes an options object, so a positional port of
-  memflow's `kMeans(vectors, k, maxIterations)` silently ignores `maxIterations`).
-  *Salvage:* `docs/attic/memflow-modules/evolution.md` — the artifact shape
-  (`applicableWhen` / `doPatterns` / `dontPatterns`, `sourceTraceCount`, version)
-  and knobs (k 5, maxSkillsPerCluster 3, inject topK 5 / minSimilarity 0.4).
-  *Closes on:* repeat-task success with skills on vs off on a held-out set; skill
-  count stays bounded; the loss published if the mechanism does not beat the
-  retrieval baseline.
+- [ ] **The skill loop, live.** *Wanted:* the evolved skill directory measured
+  where it would be used. `@tangleai/trace2skill` ships the mechanism — frozen-skill
+  labeled rollouts, independent asymmetric analysts, evaluator-proven error
+  diagnosis, prevalence-aware hierarchical merge, one guarded application,
+  held-out comparison and a revision-fenced head — and every number it publishes
+  comes from a Tangle-authored scripted fixture, so what is proven is that the
+  instrument separates the conditions the corpus registers, not that a model
+  learns anything. *Stands on:* `SkillBundle`, the anchored directory-patch
+  compiler, `composeSkillSystem`/`skillReadTool` (no retrieval index at test
+  time), the five versioned prompt packs, `createGuardedRefiner`, the outcomes
+  head planner, and the frozen credential-free live plan the instrument already
+  prints — the door exists and nothing is behind it. *Constraint — three
+  different unmeasured things:* live quality needs a real domain adapter and an
+  authorized spend, and neither is a default; cross-model and out-of-distribution
+  transfer are evidence tiers, not permissions, and the instrument publishes both
+  rows as `not-run` because it builds no second executor identity and registers a
+  single domain; and the support threshold that decides when recurrence is
+  evidence is a configured number the corpus never varied, so nothing here says
+  what it should be. A claim of transfer while those rows are `not-run` is
+  marketing. *Closes on:* the same deepening and creation tables over a real
+  adapter with an authorized live tier, losses beside wins; a `cross-model` row
+  that ran under a second executor identity and an `ood` row that ran under a
+  second adapter; and a learned support threshold beating the configured one on
+  held-out results, with the regression count beside it.
 - [ ] **Real-domain outcome quality and policy.** The generic evidenced lifecycle,
   checked artifact promotion/rollback and adapter kit now ship in
   `@tangleai/outcomes` ([capability](../packages/outcomes/README.md),
@@ -265,9 +265,9 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   `composeChecks` compile gates, revised by text feedback or RFC 6902 direct
   edits over immutable design revisions, and emitting only the shipped
   canonical `MasWorkflowVersion`; plus the desktop surface the runtime
-  deliberately did not touch — schema-aware IR forms, run-addressed trace
-  subscriptions (the global `createLiveHub` latest-run slot is not run-safe;
-  a surface must subscribe by run id over the store's committed records),
+  deliberately did not touch — schema-aware IR forms, trace subscriptions
+  addressed by run id over the store's committed records (the desktop's
+  persisted frame stream is the shipped shape to consume, not to rebuild),
   Mermaid preview from the executable plan, and an interaction inbox for
   typed pause/resume. *Stands on:* the shipped `@tangleai/mas` runtime —
   its IR, validator, registries, lowering, durable store host, interactions
@@ -342,17 +342,6 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Configuration and persistence
 
-- [ ] **Desktop profile selection.** *Wanted:* the desktop selecting a NAMED
-  registry profile (`config/profiles.json` — shipped, resolved and inspected
-  read-only via [CONFIGURATION.md](CONFIGURATION.md)) instead of always running
-  the generated legacy projection of its settings: a settings control that
-  requests a profile, surfaces the resolver's refusals as fixable issues, and
-  never lets a named profile fall back to legacy or offline behavior. *Stands
-  on:* `@tangleai/config`'s resolver and the desktop host adapter, both
-  shipped; the read-only inspection operation showing what a selection would
-  resolve to. *Closes on:* a desktop run row whose identity carries
-  `requested.kind: "profile"`, produced from a control a user clicked, with a
-  refused selection rendering its `TCFG` issues.
 - [ ] **The vector column.** *Wanted:* `recallByEmbedding` and
   `recallDocumentChunks` over `@jarenjs/db`'s `derive: 'vector'` column and its
   k-nearest plan instead of `list()` plus a cosine sweep. *Constraint:* `dims` is
@@ -368,14 +357,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## Surfaces
 
-- [ ] **The desktop's open ends.** *Wanted:* chat streaming to the UI (`chat.send`
-  is non-streaming), outcome feedback from the chat surface (thumbs →
-  `applyOutcome`), a folder watcher (sync is manual), and the benchmark reaching
-  the surface as a `@jarenjs/contract` operation with live progress as a
-  `subscribe` operation streamed as a `@jarenjs/db` live query — a snapshot then
-  `{ patch, seq }` emissions, SSE over http, resumable by seq — so no polling loop
-  and no bespoke event channel is written; `contract.revision()` and
-  `diffContracts --fail-on breaking` as the CI gate on the report's shape.
+- [ ] **The desktop's open ends.** Streamed chat, run-addressed resumable
+  subscriptions, the watched folder, evidenced outcome feedback, the instrument
+  as an operation whose report is kept by identity, the breaking-change gate on
+  the surface's shape and named profile selection all shipped; what they do is
+  described in [ARCHITECTURE.md](ARCHITECTURE.md) §"The operator control plane"
+  and [CONFIGURATION.md](CONFIGURATION.md). *Wanted:* the two ends still open.
+  (1) **macOS and Windows verification of the compiled desktop.** The WebView
+  lifecycle and the compiled document path are Linux x64 facts; the other
+  platforms are unverified, not known broken, and the documentation names them
+  as unverified rather than ticking them. (2) **A report tier that may spend.**
+  The runner registers keyless instruments only, and a run supplying a budget is
+  refused before any child starts — the seam is declared with no spend path
+  behind it. A tier that may call a paid provider needs its own authorization,
+  its own ceiling and its own evidence before it exists.
   *Constraint — the content rule:* every surface shows only what a run actually
   did; no benchmark claim reaches a surface before the matrix above has put a
   number behind it. *Closes on:* n/a — surface work, held to the content rule.

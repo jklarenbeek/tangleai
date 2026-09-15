@@ -1,0 +1,9 @@
+{
+  "scopeKey": "tabular-extract",
+  "description": "Answer one question about one small delimited or Markdown table and return the bare value.",
+  "tools": [
+    { "name": "read_file", "description": "Read one UTF-8 file listed in the task's inputs. Paths outside inputs/ are refused." },
+    { "name": "skill_read", "description": "Read one file of the active skill directory under references/, scripts/ or assets/." }
+  ],
+  "answerShape": "A bare value: a count as an integer, an identifier lower-cased, a decimal with a period separator."
+}

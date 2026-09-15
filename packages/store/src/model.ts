@@ -10,9 +10,24 @@
  *               at the MemoryStore boundary (same rule as the in-memory
  *               store). Validating twice with two schemas invites drift.
  *   runs      — one record per pipeline run: kind, status, summary.
- *   events    — one record per DAG node record per run; this is the
- *               "historical DAG state" the desktop surface renders.
+ *   events    — one DAG node record per run, as runs recorded them
+ *               before frames existed; read-only, never written again.
+ *   run_frames — the append-only, per-run frame stream `(runId, seq)`
+ *               addresses: what a run did, in the order it did it, and
+ *               the source both the live subscription and its replay
+ *               read. A run's rows live in exactly one of the two.
  *   chats     — the conversation transcript with citations.
+ *   feedback_notes — the evidence snapshots a recorded verdict pinned,
+ *               one row per source, addressed by the source id the
+ *               resolution names. The row IS what the trusted resolver
+ *               supplies: a pinned snapshot is read back, never rebuilt,
+ *               so evidence that changed under a recorded outcome is
+ *               refused instead of silently re-agreeing with itself.
+ *   reports   — a produced measurement document kept under the identity
+ *               its own instrument computed, so the row is addressable
+ *               by that identity and re-verifiable against its bytes; an
+ *               instrument re-run over an unchanged tree recomputes the
+ *               same id and writes nothing.
  *   documents — folder-sync state: content hash per file, so an
  *               unchanged file is skipped on re-sync.
  *   sources / document_versions / document_elements / document_chunks —
@@ -29,6 +44,8 @@
 import type { JsonSchema } from '@tangleai/core/schemas/memory';
 import { CONSOLIDATION_COLLECTIONS } from './consolidation-model.ts';
 import { TEMPORAL_COLLECTIONS } from './temporal-model.ts';
+import { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
+import { FRAME_KINDS } from './runs.ts';
 
 const ID: JsonSchema = { type: 'string', minLength: 1 };
 
@@ -37,6 +54,7 @@ export const TANGLE_DB_MODEL = {
   collections: {
     ...TEMPORAL_COLLECTIONS,
     ...CONSOLIDATION_COLLECTIONS,
+    ...TRACE2SKILL_COLLECTIONS,
     outcome_records: {
       schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
       key: '/id',
@@ -70,7 +88,7 @@ export const TANGLE_DB_MODEL = {
           kind: { type: 'string' },
           startedAt: { type: 'string' },
           finishedAt: { type: ['string', 'null'] },
-          status: { enum: ['running', 'ok', 'error'] },
+          status: { enum: ['running', 'ok', 'error', 'cancelled'] },
           summary: {},
           identityId: { type: 'string', pattern: '^[0-9a-f]{64}$' },
         },
@@ -93,6 +111,22 @@ export const TANGLE_DB_MODEL = {
       },
       key: '/id',
     },
+    run_frames: {
+      schema: {
+        type: 'object',
+        required: ['id', 'runId', 'seq', 'at', 'kind', 'body'],
+        properties: {
+          id: ID,
+          runId: ID,
+          seq: { type: 'integer', minimum: 1 },
+          at: { type: 'string' },
+          kind: { enum: [...FRAME_KINDS] },
+          body: { type: 'object' },
+        },
+      },
+      key: '/id',
+      indexes: [{ name: 'by_run_seq', path: ['$.runId', '$.seq'] }],
+    },
     chats: {
       schema: {
         type: 'object',
@@ -106,9 +140,46 @@ export const TANGLE_DB_MODEL = {
           provider: { type: ['string', 'null'] },
           identityId: { type: ['string', 'null'] },
           usage: { type: ['object', 'null'] },
+          decisionId: { type: ['string', 'null'] },
+          feedback: { type: ['object', 'null'] },
         },
       },
       key: '/id',
+    },
+    feedback_notes: {
+      schema: {
+        type: 'object',
+        required: ['id', 'messageId', 'kind', 'digest', 'at', 'source'],
+        properties: {
+          id: ID,
+          messageId: ID,
+          kind: { enum: ['memory', 'chunk', 'note'] },
+          digest: { type: 'string', pattern: '^[a-f0-9]{64}$' },
+          at: { type: 'string' },
+          text: { type: ['string', 'null'] },
+          source: { type: 'object' },
+        },
+      },
+      key: '/id',
+      indexes: [{ name: 'by_message', path: ['$.messageId'] }],
+    },
+    reports: {
+      schema: {
+        type: 'object',
+        required: ['id', 'instrument', 'schemaId', 'at', 'runId', 'bytes', 'document'],
+        properties: {
+          id: { type: 'string', pattern: '^[0-9a-f]{64}$' },
+          instrument: { type: 'string' },
+          schemaId: { type: 'string' },
+          at: { type: 'string' },
+          runId: ID,
+          bytes: { type: 'integer' },
+          source: { type: ['object', 'null'] },
+          document: { type: 'object' },
+        },
+      },
+      key: '/id',
+      indexes: [{ name: 'by_instrument_at', path: ['$.instrument', '$.at'] }],
     },
     documents: {
       schema: {

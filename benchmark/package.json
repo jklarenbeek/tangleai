@@ -9,13 +9,13 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@jarenjs/contract": "0.89.0",
-    "@jarenjs/core": "0.89.0",
-    "@jarenjs/db": "0.89.0",
-    "@jarenjs/flow": "0.89.0",
-    "@jarenjs/json": "0.89.0",
-    "@jarenjs/linq": "0.89.0",
-    "@jarenjs/validate": "0.89.0",
+    "@jarenjs/contract": "0.90.6",
+    "@jarenjs/core": "0.90.6",
+    "@jarenjs/db": "0.90.6",
+    "@jarenjs/flow": "0.90.6",
+    "@jarenjs/json": "0.90.6",
+    "@jarenjs/linq": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
     "@tangleai/config": "0.27.3",
     "@tangleai/core": "0.27.3",
     "@tangleai/documents": "0.27.3",
@@ -29,7 +29,8 @@
     "@tangleai/agents": "0.27.3",
     "@tangleai/jaren": "0.27.3",
     "@tangleai/outcomes": "0.27.3",
-    "@tangleai/gmpl": "0.27.3"
+    "@tangleai/gmpl": "0.27.3",
+    "@tangleai/trace2skill": "0.27.3"
   },
   "scripts": {
     "gmpl": "node gmpl-conformance.ts"

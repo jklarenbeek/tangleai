@@ -186,6 +186,14 @@
       "expect": { "relation": "different-identity", "issueCodes": null, "detail": "cost provenance is identity: a stale price must not silently stand behind a fresh number" }
     },
     {
+      "id": "s-profile-request",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "The same host asked for a named profile and asked as the settings projection are different effective identities",
+      "input": { "kind": "edits", "registry": null, "request": [{ "op": "replace", "path": "", "value": { "kind": "legacy", "chat": { "state": "unconfigured" }, "embed": { "state": "unconfigured" }, "components": { "policy": null, "ranker": null }, "chatPrompt": null } }], "host": null },
+      "expect": { "relation": "different-identity", "issueCodes": null, "detail": "how a stack was ASKED for is part of what ran: a named selection and the generated projection of the same host cannot share one identity" }
+    },
+    {
       "id": "r-registry-duplicate-id",
       "family": "refusal",
       "scope": "resolver",
@@ -401,7 +409,7 @@
       "scope": "store",
       "title": "New runs must carry a config identity reference",
       "input": { "kind": "probe", "probe": "run-producer-identity", "args": {} },
-      "expect": { "relation": "observation", "issueCodes": null, "detail": "today zero of the three desktop run-producing handlers stores a config/profile identity; old rows stay honestly legacy-unrecorded and are never backfilled" }
+      "expect": { "relation": "observation", "issueCodes": null, "detail": "every desktop run-producing handler stores a config/profile identity reference before the work it authorizes; old rows stay honestly legacy-unrecorded and are never backfilled" }
     },
     {
       "id": "l-chat-provider-label",

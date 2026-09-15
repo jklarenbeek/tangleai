@@ -1,0 +1,10 @@
+{
+  "id": "task-14",
+  "split": "evolve",
+  "prompt": "How many shipments have status delivered?",
+  "inputs": [
+    "inputs/shipments.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

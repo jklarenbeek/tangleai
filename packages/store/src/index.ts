@@ -7,8 +7,11 @@ export { createDbMemoryStore, asRows } from './memory-store.ts';
 export { createOutcomeStore } from './outcome-store.ts';
 export type { OutcomeStoreOptions } from './outcome-store.ts';
 export type { DbMemoryStoreOptions } from './memory-store.ts';
-export { createRunLog } from './runs.ts';
-export type { RunLog, RunRecord, RunEvent, RunLogOptions, RunIdentityStatus, RunView } from './runs.ts';
+export { createRunLog, frameIdOf, FRAME_KINDS, FRAME_BODIES, MAX_FRAME_BODY_BYTES } from './runs.ts';
+export type {
+  RunLog, RunRecord, RunEvent, RunLogOptions, RunIdentityStatus, RunView,
+  RunFrame, FrameKind, FrameRefusalCode, AppendFrameOutcome, FrameReplayPage, RunSubscription,
+} from './runs.ts';
 export { createIdentityRepository } from './identities.ts';
 export type { IdentityRepository } from './identities.ts';
 export { createDocumentStore } from './document-store.ts';
@@ -40,3 +43,7 @@ export type { TemporalBackfillOptions } from './temporal-backfill.ts';
 
 export { createConsolidationDbStore, createConsolidationDbPersistence } from './consolidation-store.ts';
 export type { ConsolidationDbOptions } from './consolidation-store.ts';
+
+export { createTrace2SkillDbStore, createTrace2SkillDbPersistence } from './trace2skill-store.ts';
+export type { Trace2SkillDbOptions } from './trace2skill-store.ts';
+export { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';

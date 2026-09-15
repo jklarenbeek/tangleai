@@ -1,0 +1,19 @@
+{
+  "id": "invalid-target",
+  "origin": {
+    "rollout": "task-13",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1004",
+  "withheld": false,
+  "rationale": "Edits a reference file the frozen directory does not contain.",
+  "operations": [
+    {
+      "group": "g-units",
+      "op": "insert_after",
+      "file": "references/units.md",
+      "anchor": "# Units",
+      "text": "- A weight in kilograms converts to pounds with 1 kg = 2.20462 lb,\n  rounded to one decimal."
+    }
+  ]
+}

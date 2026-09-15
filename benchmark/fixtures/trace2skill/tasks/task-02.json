@@ -1,0 +1,10 @@
+{
+  "id": "task-02",
+  "split": "test",
+  "prompt": "Which region sold the most units across both quarters?",
+  "inputs": [
+    "inputs/sales.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

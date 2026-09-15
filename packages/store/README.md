@@ -48,7 +48,7 @@ for ownership, compatibility and available mechanisms.
 
 ## Reviewed host migrations
 
-Jaren 0.89.0 provides a complete migration lifecycle over an existing native
+Jaren 0.90.6 provides a complete migration lifecycle over an existing native
 connection. Use `planPhysicalMigration` and `@jarenjs/linq/migration` directly;
 Tangle's adapters keep using the same Store. The
 [disposable example](../../examples/physical-migration.ts) runs with

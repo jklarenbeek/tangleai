@@ -1,0 +1,10 @@
+{
+  "id": "task-15",
+  "split": "evolve",
+  "prompt": "What is the total weight in kilograms of every delayed shipment?",
+  "inputs": [
+    "inputs/shipments.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

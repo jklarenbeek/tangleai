@@ -1,0 +1,10 @@
+{
+  "id": "task-22",
+  "split": "evolve",
+  "prompt": "What is the weight of shipment shp-01 in pounds, rounded to one decimal?",
+  "inputs": [
+    "inputs/shipments.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "unit-conversion"
+}

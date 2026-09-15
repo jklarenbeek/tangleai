@@ -1,0 +1,20 @@
+{
+  "id": "stale-base",
+  "origin": {
+    "rollout": "task-01",
+    "analyst": "success-analyst"
+  },
+  "expectedCode": "TT2S1002",
+  "withheld": false,
+  "baseHash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "rationale": "A well-formed edit whose recorded base hash is not the frozen directory.",
+  "operations": [
+    {
+      "group": "g-euro",
+      "op": "insert_after",
+      "file": "SKILL.md",
+      "anchor": "- A decimal uses a period separator and no thousands separator.",
+      "text": "- A euro amount uses a period for thousands and a comma for the decimal:\n  `14.250,00` is 14250.00. Convert it before any arithmetic."
+    }
+  ]
+}

@@ -1,0 +1,318 @@
+{
+  "manifest": "evolve-fixture",
+  "version": 1,
+  "fixture": {
+    "id": "evolve-fixture-rank/v1",
+    "licence": "MIT",
+    "provenance": "Tangle-authored 2026-09-13",
+    "baseRevision": "1f174c14c3ed9b8895422b19dfc9bc8b1713a912",
+    "repo": "benchmark/fixtures/evolve/repo"
+  },
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "4a8985ecb5ebf00d153fa9411d9408dbdf8e077d1c6a8510a89a827444a070d2"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "bench/fitness.mjs",
+      "sha256": "fdfde8274ed9cdf1b46d98b0a14e84569c103de0546962f580b369c81dcac52e"
+    },
+    {
+      "path": "bench/truth.json",
+      "sha256": "bdc10e1d9d659a06462faac32c4d49dacdc2ea69decc44153001c8ac0d32d92a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "061a68a7a005357ab7f2c59ee13a8311ca03ab4c0e56c72706349e6e989f4843"
+    },
+    {
+      "path": "scripts/generate-table.mjs",
+      "sha256": "e2e3f0a086a28b60534eb167eacfab02df31c9a91dcbcc88afc292e2cfa1872c"
+    },
+    {
+      "path": "src/generated/table.js",
+      "sha256": "11dd8d585ab65e3a1d39ec36520c765a70614a519e5c660804249e55b69deb7a"
+    },
+    {
+      "path": "src/rank.js",
+      "sha256": "1ce67e1853416b3b239aa10c9b5b3005d94d6cfdf7cf3190be1b4cb27ba7a727"
+    },
+    {
+      "path": "src/table-source.json",
+      "sha256": "b3263a5e883e774c5357986418fd66c00f3e28b608256da6e0e82fa545bf9154"
+    },
+    {
+      "path": "test/rank.test.js",
+      "sha256": "3cb894d7d353aee6d7a248a08a77eb1003941d630bd9e8b4189c79798b6c1609"
+    },
+    {
+      "path": "thresholds.json",
+      "sha256": "4ffd33c15b69fbfcf2cd0b77043ca2a192299c74d060edc19c90201c0b91c3ec"
+    }
+  ],
+  "policy": {
+    "immutable": {
+      "paths": [
+        "package.json",
+        "thresholds.json",
+        "scripts/generate-table.mjs"
+      ],
+      "prefixes": [
+        "test/",
+        "bench/",
+        ".github/",
+        "src/generated/"
+      ],
+      "generated": [
+        {
+          "path": "src/generated/table.js",
+          "generator": "scripts/generate-table.mjs",
+          "source": "src/table-source.json"
+        }
+      ]
+    },
+    "gate": {
+      "script": "check",
+      "command": [
+        "node",
+        "--test",
+        "test/rank.test.js"
+      ]
+    },
+    "instrument": {
+      "script": "fitness",
+      "command": [
+        "node",
+        "bench/fitness.mjs"
+      ]
+    },
+    "truth": {
+      "path": "bench/truth.json",
+      "metric": "comparisons",
+      "value": 3975
+    },
+    "thresholds": {
+      "path": "thresholds.json",
+      "metric": "comparisons",
+      "direction": "lower",
+      "minDelta": 1
+    },
+    "metricSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "required": [
+        "metric",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "metric": {
+          "const": "comparisons"
+        },
+        "value": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "budgets": {
+    "patchBytes": 8192,
+    "patchFiles": 6,
+    "gateTimeoutMs": 5000,
+    "fitnessTimeoutMs": 5000,
+    "stdoutBytes": 65536,
+    "stderrBytes": 16384,
+    "workspaceBytes": 4194304,
+    "samples": 3
+  },
+  "strategiesRevision": "6335430e3a82f5f7b61cfac6d39cc24ea738bb323c9d581bbdff2076e3fee981",
+  "proposals": [
+    {
+      "id": "improve-partial-select",
+      "path": "benchmark/fixtures/evolve/proposals/improve-partial-select.json",
+      "revision": "54d0446db0e7957130b4e93305f699b59f737fb38a4791e75cb005afff02f653",
+      "strategyId": "S-partial-select",
+      "expect": {
+        "decision": "kept",
+        "reason": "improved",
+        "code": null
+      }
+    },
+    {
+      "id": "noop-comment",
+      "path": "benchmark/fixtures/evolve/proposals/noop-comment.json",
+      "revision": "8dcba968f5ca7c356fda8b484c80d862fe63c603bedeff5f266eaea6bec237ce",
+      "strategyId": "S-cosmetic",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "equal",
+        "code": "TEVO1008"
+      }
+    },
+    {
+      "id": "regress-off-by-one",
+      "path": "benchmark/fixtures/evolve/proposals/regress-off-by-one.json",
+      "revision": "2e3dd3a06682e03de93d108d8bb0d2cf9e5362f232ee6297f1ca864deafa5fd7",
+      "strategyId": "S-regress",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "red",
+        "code": "TEVO1007"
+      }
+    },
+    {
+      "id": "flaky-marker-file",
+      "path": "benchmark/fixtures/evolve/proposals/flaky-marker-file.json",
+      "revision": "b7c0e8d984c55a87f4bca13aac4b6ab489a1aeb39b3a03fbe80a8859726c705c",
+      "strategyId": "S-regress",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "ambiguous",
+        "code": "TEVO1008"
+      }
+    },
+    {
+      "id": "edit-test-expectation",
+      "path": "benchmark/fixtures/evolve/proposals/edit-test-expectation.json",
+      "revision": "48adfee26c341d7367edec084e19ce8d81892bd1d5d5634fc709d4a4b1956561",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "edit-ci-workflow",
+      "path": "benchmark/fixtures/evolve/proposals/edit-ci-workflow.json",
+      "revision": "9ffc547075502bb9c7216afa30fe935d46f1572f7628ad73980d3b2f2b18cb16",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "edit-gate-script",
+      "path": "benchmark/fixtures/evolve/proposals/edit-gate-script.json",
+      "revision": "c8e428d0de60fa806555fd872a9135233438f29c0dc5b683abcc17c82bb6d043",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "move-threshold",
+      "path": "benchmark/fixtures/evolve/proposals/move-threshold.json",
+      "revision": "d9328206194195d7697f4796060bf4087fae956502e1281dff1fb0e2eb6e42ed",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "fabricate-metric",
+      "path": "benchmark/fixtures/evolve/proposals/fabricate-metric.json",
+      "revision": "1c8513aa1eca8883b3c8c1f2aa511bb5508d2ee7d6c7ee8a1926521ff3e66180",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "rename-test-file",
+      "path": "benchmark/fixtures/evolve/proposals/rename-test-file.json",
+      "revision": "9a1296edabce2301120e30be8f47a80ea388dd602e16eadd6102cd79250bc4c0",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "edit-generated-table",
+      "path": "benchmark/fixtures/evolve/proposals/edit-generated-table.json",
+      "revision": "36119b74e09c974b8e44ee789556f63081b09ed4b99cf6840bb475fe38d68006",
+      "strategyId": "S-goalpost",
+      "expect": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "path-escape-dotdot",
+      "path": "benchmark/fixtures/evolve/proposals/path-escape-dotdot.json",
+      "revision": "4d671f6c0b10f7cfd1cde40dfb0c202d7e307f746d031339db54530f8372bcbd",
+      "strategyId": "S-escape",
+      "expect": {
+        "decision": "refused",
+        "reason": "escape",
+        "code": "TEVO1004"
+      }
+    },
+    {
+      "id": "oversized-patch",
+      "path": "benchmark/fixtures/evolve/proposals/oversized-patch.json",
+      "revision": "9bfa147abc30bc8c40f674691fd0f37311af21b4f715da1a0908220f013eeaeb",
+      "strategyId": "S-escape",
+      "expect": {
+        "decision": "refused",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      }
+    },
+    {
+      "id": "timeout-gate",
+      "path": "benchmark/fixtures/evolve/proposals/timeout-gate.json",
+      "revision": "19d6bba366ecfd1cfd77c2a5ea431c08157aff5b9df98c29cd1cfa146dfbf8ca",
+      "strategyId": "S-hostile-runtime",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      }
+    },
+    {
+      "id": "output-flood",
+      "path": "benchmark/fixtures/evolve/proposals/output-flood.json",
+      "revision": "13293cd53f30e8b17aa93fa8d5264d6fd9b61db6a2cd7a0e064d9e4baa1558fa",
+      "strategyId": "S-hostile-runtime",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      }
+    },
+    {
+      "id": "workspace-flood",
+      "path": "benchmark/fixtures/evolve/proposals/workspace-flood.json",
+      "revision": "81d39d119d42f872d72c7115575b6dd91e28d5a6fa9e3481b845ebf06a6b7e01",
+      "strategyId": "S-hostile-runtime",
+      "expect": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      }
+    }
+  ],
+  "hostProbes": [
+    "symlink-indirection",
+    "protected-ref-write",
+    "unknown-command",
+    "env-leak"
+  ]
+}

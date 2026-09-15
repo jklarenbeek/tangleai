@@ -1,0 +1,2737 @@
+{
+  "document": "trace2skill-script",
+  "entries": [
+    {
+      "key": "0432920a03a5e01ab53f863aaa119930b863733e830d688850d5ff57ffe0a7e0",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-24",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "051eca884847fb4142c6c621f3dec114a2feba9c587a6ee0e5c1dbfa0e4e5448",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-18",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "425",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "07b91b4188846a310d9bbc9bcaab5c7be2cd795cd91a68abc34579f8c342aa9f",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "07d130f7ed66882fd903ae57d00c1b3dfda7ff59d248245b9f36b6aa3e35cad0",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "08e3091d39b790633aa1914adb437f596cb2efea306afacc000c0b5fdd49d396",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "north",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "0923689069847bfb296d83a8aa67ae493bc358a1c6c4897501ad607e4e3a6e12",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-14",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "3",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "09a1fb20e97a75ae0d3e70525a4a48320320f5e480acfbbf292eb5767fdf2128",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-10",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "0a6f3fd30a8f02b5b1806341c0dfa61729226e85842c74f055ca4a530c8a1e7e",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-11",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "3",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "0bb813915d4c95658c3cbf9ba3bfb9643acbfb88874d63bfaf7d23c89d98e56a",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-21",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "19.9",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "0be1f36109f83014a0c73c4b4a140dae9cf954fc913438a8b08d38ca713967df",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-20",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "cx-330",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "1197abaeabe856280cffacfa2a5479c68a9194376bcab49044b08d1afee7ebaf",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "1645f0f30170607bc5e9d8c3ec9224c0cb468b922bd81b1bbaa24a8280afabaa",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "1ede9387ef1855b0e5114b53005f661be44c8272a14757cd69a2d25009c76c71",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "1ef1ecbf696aa566cb6f62f9957b67b40f4361a3ca2c4545e4ea229bf07d82d9",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "220a24f702102493d30180d22f7a24551229bb901a22a70f9111e82704bc01f8",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "2324e126c1ac126ee16d54985572ea123362433ced072d6b5a8dd862af9442e7",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "24d23fd0f816943c38858e6eea469cc1b50167f3fc108e3a4d182bb8d69bf0c5",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "north",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "26a94aad76cefdff49689509c8852b2aef69cc10e8ce65044b34f0b42f1fe062",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "271cf2d3a4a9e24956694ce06e6a76da963ea9ad1cd2ea1efbfcd2815d9917f5",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "29b0ecc1162875d23b3b2399d92e971e88f8f83f9d5360e8ed364005cf835a3e",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-06",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "exhausted"
+      }
+    },
+    {
+      "key": "29e2294061c166bf83b0e2f069a295a68874de373be526b95b34e2ee63ea5451",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "2b114dd1085c3f6ae96890421f098b04a0f3086aa3e07cb1f53717340b04fe1f",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "2c6c5ccb630529bf03ac9fcddac7ea34219c6538cac34067c405d2f736744ad1",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-05",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "cx-330",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "2c7f33af26fa1bcae3dec8e16aaeaee6899855ce1dee9e63764086cf9fb432a4",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "2f1bbf8edf30baa6c63a169d908844f28d1d7c40e238d844f01a80a3bdf3ccd7",
+      "unit": {
+        "role": "merge",
+        "stage": "merge",
+        "mode": "deepening",
+        "condition": null,
+        "taskId": null,
+        "groupId": "merge-2-1",
+        "turn": 1
+      },
+      "response": {
+        "kind": "merge",
+        "groupId": "merge-2-1",
+        "patchId": "merged-merge-2-1"
+      }
+    },
+    {
+      "key": "31acbbe78d59fafa6d5869a5718bcbf7adf77987bad364150e107065c5a6189c",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "32552f0e9fbe51bc521f530c8d59282ad9421b6160b0a4469ee45930e659e570",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-01",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-a",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "32ac9da2b0aba2a33645ffdd6ed1006e7d5592e423be40593a3930c912a18409",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "11115.50",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "335d6d947b59a301ba8bff3ed66b285b876b5fdb3e8fa8719bda468f2b43ddba",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "north",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "34015044a9cb4222c1d21dc436ffb247e2683b1e3e5fab0da62fba8813c27980",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-11",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "385858afbe4dcdb6372c4be3a31ea43b0968a7f2ed6e9b1e251c4efdd0af5e29",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-20",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "cx-330",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "3ba7221c6b418f2614cc0d5f1506974bb8b4af0140040d9a874a33f8e5172024",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-15",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "606.25",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "3e26b0b0747c70d1f6c2f00ecc36e5e0f31ad90ce4cc06507226ef9b533a97ff",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-10",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "no-causal-explanation"
+      }
+    },
+    {
+      "key": "3e62cdce174dadbe1a8361bcf2722e88ef8eba5bb27d87c6ed8139cc93c7efba",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-17",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-c",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "4171c3a0a22963d344d9fbff58749517bdfa6d0b0f4c6b8590570d83d093baba",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-03",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "46eda368a6563ce0f7c9dede417b96a6e9c8114eec845f841204a23206263b97",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-13",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-a",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "47a149e3c78361705b11e0a5ba9157b241c12295fc06833e6c438bc8cdf63c56",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "11115.50",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "4b66cddb67c93469a396d05f92900b84877be5f8f828e28957df7fbfc63aa6af",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "4bc50ad880546500202f4c9a8d26fc34cbc526eed5f61b9b0c4455ab9699b00b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "4d7ab9906b357f8d73222b687ccd1eeaa268c1c372db97594b2194901ff2fbd2",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-06",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "budget",
+        "turns": 6,
+        "tokens": 3072
+      }
+    },
+    {
+      "key": "4dcbf26e7e4110c5d07fbf790a90b470366edf8298fa5a7fed91f2f1705764a0",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-24",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-03",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "51155b4a2a10807bc78a32c90f0a23be0b8481a8099bdf72101fa2a85825e11d",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-21",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "51aca4b9478e236ce84c3a5c67c2c35bb0feee2025db19191fd889728ea50629",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-24",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-03",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "52095832880e12a4798f541d84dec654df843297b62fb44da7e512d32f5a2abf",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-03",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "53d3f6e6d30d34964e9330effeba16c7ebccc8c20b320c44934eee88faca9e2b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "550a2bf8617039fb5e917ab5db8f73e48a19e0365ee62eeceec6ac18351cd17d",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "5680abae7d54467a99c69aaf83facf8a24aee3fcd4572f8dd32db94f6bf4e731",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "57ae01a9af787ce4f5bff5e0b08ad0227d6e07c1682b14e7770a027274faa022",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "5872278b1536b9d040f69d80e5dfdff3e1457cc62c30c5490b897e0e3b4b7ac6",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "599b91249159f62193ab6aa7712414ee96f13f53e3b4e209a94d10c48cc09ff5",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-17",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "5ab06c2f3fe3e4dd0a3fef2a658bf74ef9a42c60aa2c27bb725cfa2abf5587f7",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "5be25815fc8988ef3d02143b80d23a9b6e6da086012b5bfa9cdf97e3615a23cc",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "5e0df545f03dc810444f70b2e774412001fe065b5e5396dc7b98d592950dafc1",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "5e4743f219cffe591813303472e0538619ba48a9ebdb39a96b1076bb37000d7c",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "5e9d72a51b42ac3ea2b54eda567523208d448e08e666ef14c8029df4b9720860",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "5f8949b335271ee23f993240263590fc29882b6dc593d72490b58cc197e71249",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "5fda6a94aef7cf92eb1282b30d6737b51cb2a5d9f92e6770c9d079d23b49dedf",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-22",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "600b731fe1a6828afec31203af9a830c294aa84231115158ea1e317d71b5120e",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-18",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "60f9801eb84ecb129407a1900d0fee99c5fd42690abe14260948a1cd63d1e4c6",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-03",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "6122915cee8991e51ffe937952273f6814b90adccba00cb789b975295f1a8d0b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "north",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "6202f010620706f9d8f3e3d89af289d08e211f91b6119d6db3c24feee939141c",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "624e9c0432b2d966c1921dac12e836114788960d039ba630d9aa26e9de0703c5",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "64be72ddcbf8536bbbb598d717450ff462aeba581d5f5d0e53e48e3e08aeae3b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "64e9074d027cecb7fe38a9afe4afb52260da4fcdef3a08d6b4fbefd5d79ba8e9",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-06",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "budget",
+        "turns": 6,
+        "tokens": 3072
+      }
+    },
+    {
+      "key": "65291fd91e43175f973eb787ee2439dbdaf85d9fe121635fe98863e0c63651c0",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "698f67bd189c6d0a0dea87941a74ba47777dfcf3e6fd864de44c2ba0fde4e476",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-06",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "task-fact-leak",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "6c1b62895b2ef2de9803be19ce02d733e321eb75847f9d5233b8e9d3440fca96",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "6c372f253a4bc6e452a387e6b57fff72398864ba11258d51c3c0a6435a67577a",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "6d29b9cda46ddbaad41f04e087a448ae78cae3d240a5d6840d0ea12c3548be9d",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-14",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "6e905284174449421703640b8d97a51d30e1034120e5c5a030af15819a7035e8",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-13",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-a",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "6f11c3acc770e75c47408afdf84d8aa714ed20da77de385dcb42ea5839124cdf",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "6f14a513330cc0a854084ba797cf97d67c0aa83a7e8ab3422c9018b2613f0c3d",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-21",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "no-causal-explanation"
+      }
+    },
+    {
+      "key": "6f6d22a6def11726ee261ecc57e8b74b09229bfa938fcef0a576bff68ec78265",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-18",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "70ed62d47fd8143eb6cbaab761008727c5864ab0e88cca089b4994d4c47357bc",
+      "unit": {
+        "role": "merge",
+        "stage": "merge",
+        "mode": "deepening",
+        "condition": null,
+        "taskId": null,
+        "groupId": "merge-1-2",
+        "turn": 1
+      },
+      "response": {
+        "kind": "merge",
+        "groupId": "merge-1-2",
+        "patchId": "merged-merge-1-2"
+      }
+    },
+    {
+      "key": "718c58ca5d84d7c2ad21c887ac4402d41ee39bc12cf7b6d5ec515b37d9e79ad0",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "743fc0f00a386e6de8a2f6ba55414801a6ad96903179e32051973bfe94a763c6",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-20",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "750dfb4732e54fc173b587f654769cee13756f1eba3d9e6318c952b42f099704",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "76b4dc62d2625c89831e1482ac70aae22ca7c706157a9f17c5ca16dc845c6f70",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "78f785a44a5a59312e061bbbc44dfea700e4eeef3cf5dbfb3d5c28835e08d90d",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-24",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "7a8a6df8100603f4360fdbf2ebc9e5821d73a09abbe47b4cafcfe1568c722f1a",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "7bdbf99f297c9631a169664ed786ce4234d9c31650bfa551ad1f81f6d371380d",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-01",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "7c6addcb50c11de9ba4126d44980f57da9ea15741b851f0c56ada7be908a0398",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "11115.50",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "7cf3c1c57f532b7e7044802408d3cf24c7929e34d1acbe8a7ed63717b2baea95",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-07",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "46",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "7f52189395db4a749267034d2cacb8bbef04070eff79a7725ee522b813201cc2",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-01",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "82ae41abcb6f24ab03c2582d8e891d0e9c3600abb0c43e94f409ec6535fe0987",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-03",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "850aa04d08c929e5a238e6e476acaf6aaaaafd3edf1ac0c99c1326ba026a5a61",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "86249a6f29dec629673965dd0029e1e62665f05ba3f8de73422ea7bcedcf5855",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "8753819f21c3b0d6eeab57bb939b13b8140283972a3021c302c219730c36b473",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "8c84b5214acea687234453c88a30657386dac038b4ddb1f0f3591c10d5001a26",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-11",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "3",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "8d5140eeec5fc1f43af8484c8fa00566af2b99d4a3aaabe4cccd6d771687cb9d",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-11",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "8e04f08cf28684ff8fc8ccc26b105daeb5449de83ca82b49e0a1f65c1a875f9e",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "8e746d1a391a1762254486257aa70b3879c55f7ba354113ccb8d1fd07bb1f8fd",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-22",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "90dcd518185d862e9138c24bc37b44fe9554c0e8eb766763f3563881ce4452e8",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-07",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "46",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "936f5e92da5c07a3316abbbf07bc5a6d890e4b5a81b9f1d342e706412bf5c830",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-14",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "3",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "95571556b77b7b8ce0c5a556b1bad70b5ca479a7faa45671d347c41992128090",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-18",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "425",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "973969eb29fb8edb5ad31644d82bcc797468c50e3e03b7cae673c911c3f2e6ca",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "98358523085da3e45c4f43fcc61896c026086c747cd1269dc465d2c6cab98f5a",
+      "unit": {
+        "role": "draft",
+        "stage": "draft",
+        "mode": "creation",
+        "condition": null,
+        "taskId": null,
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "draft",
+        "root": "SKILL.md",
+        "sections": [
+          "When to use",
+          "Reading the table",
+          "Answer format"
+        ]
+      }
+    },
+    {
+      "key": "989a7c1229896a11dc8a0f75d6a7f0bd4b85c5cecdb7963a65c7dad98c2ad5a5",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "9ab3cf59f33506cb99cc44bd4321374a60750dce0ced4db603937ba776155b53",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-17",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "9ac30ae093c28e7c0cbd0b1ebfce09d702ea0bda56d4e9907709d11e11ed9dba",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-22",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "9aea3041c0c7606f2718326930bcfecf1e5a5139cd47a3517776557817960b73",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "9d0153f57682f39f955a69495ea501e79b813642f99b5afbd707332acda9f54a",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-03",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "9da039c5fe08101c55fdf873e9f9355cd4e275e20c4b499f21043456b5db57ae",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-22",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-b",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "9e6b934a10b85f9410a01add2264cf9cfd2bb686f9eeef41945c1bd9a5d03f29",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "9ebe24083cb80d431593e9dc8565c65681029ce5e1b5717192dfdee42a60e79b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "a583f4b1293e976e7d89f9a8a8d16c96f4a6481f7978cb4936d3b8d7776988bc",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "a92dc29679fd210756a47b7a8c44fd547dfdb6396dad844780ef27212678e42b",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "evolved-s-star",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "north",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "ad2ee39b0497dac718332ba6560791a0e4df4f975caabe8570f9c26015b536e8",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "b444bebe19f2e55e6c4984a79bf03519ee94f107a6f2bfd3e7a8b83cdb848bea",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-13",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "b60dc78f2db4dc4f5ab4be7e31db0421718086fa83dc5b2b131c44f62783a5e6",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "b967223337a417c0ef8ba418c45ae64044986c5d8226c1054c1a09ed6e7eb4e4",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "evolved-s-star",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "c1064ab1b2cbb319bed54a49e43e462c1d8b8b491c8cff1537bc89d55dab754a",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-14",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "c2db8504698e37f20c3405339c3da1f6d218ee8ae38ca9f3e25cf1083fbeaa47",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-06",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "exhausted"
+      }
+    },
+    {
+      "key": "c4ce6503f9220560b98b35817b4d5669dcdaee5476e1b789cf5cb0f6affbd5db",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-13",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "c5ce8da6f61a3c90f32cd6e9b413c6590e74fd4935314f6ed72c6d93ec173cd5",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-07",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "c664a5057cf5d4f67d539e763d74bab15c0394679865628fe80762dab95e829d",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-01",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-a",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "c7ba112330cc9f38f0f82bd71bca948b97d5814058253fb1f6d2b644c147a4bb",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "cb60259dec891a114821d913b83aa5fcd3cf3b6426b2af289f4b533a1a3d52a9",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-15",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "cd13e18f9abe2ba0b53461183e7dfa03a1b2d6cb08df197144dda8ee444567bf",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-05",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "cf201acc53e24eed9765da7b5a54640c02549af67a5676b5bde0b9b3b5e17ffc",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-17",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-c",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "cff23ddf6bcaa9a1b17459b401900979ff22d5a825128443348c119f68268abe",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "d249d89f3efc821d2a858969c8e290e841ff1751a57e20503d9d578e53ca3344",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-12",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "yard",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "d4c7260f5622f7458eb53c2a7589c17426d309ab005757b3a03e28047a45f89f",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "retrieval-bank",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "d5455fff77e9078affd81b57b7ad4c28fe3148eb4dbceb05996d938614916a51",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-21",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "d664fe694a882cf94efb72d91739e2f8b719aec33f38557aadae495bf2d5ebae",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-20",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "d670e436488a0f3b7c7e1dd2c8ec53022c857be2ef7b2ec4b6506685a4c57a59",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-19",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "11115.50",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "d7f6b97164d3defdf441f4bbaff2a686628b5b0f2cda41a02139551980363705",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-10",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "20.1",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "d9a1c90fc69254c5a096c45f70e2276d16d0f6a1ca06ed0169c56d839d159cbd",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "no-skill",
+        "taskId": "task-23",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "4",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "d9aadf307fbde66860cfd12ca49edd9cd4a7c368c057bf32b78521858cf10656",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-09",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "s-04",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "dcb6c018e7c56ea1798ff9e4fe48dbe117c4808573ddb4c7516f86f8670c7766",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "sequential-merge",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "dfb1c8253c50a1881bdfaf60fe8b19085eda992069011af70dfce09d30c8bd6c",
+      "unit": {
+        "role": "merge",
+        "stage": "merge",
+        "mode": "deepening",
+        "condition": null,
+        "taskId": null,
+        "groupId": "merge-1-1",
+        "turn": 1
+      },
+      "response": {
+        "kind": "merge",
+        "groupId": "merge-1-1",
+        "patchId": "merged-merge-1-1"
+      }
+    },
+    {
+      "key": "e2f487e827bfbda08418b32db7a5bca65c95feb2e9d0dd5a115352a62c10ed0a",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "no-skill",
+        "taskId": "task-08",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "dock-a",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "e46b6a0759c279d61bf7ccb1baad27ca12fe813610ac1c2b8b7f1f6d1f8c18df",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-15",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "e59bc5fd33f665dcc9dc580fcb6bda892ccf451e45e866f72861f8712f282b1d",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-02",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "e92ea77631c907fcbfa94a1e75e67e472587a3efd31b4bc34db47c1fdca1acc9",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "ea4754d561a52703215daf9ee208696ce9a8e4d0f834ef6f37938d9ed7d91d35",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "single-call-error",
+        "taskId": "task-04",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "80",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "eb10f95ac52d1ffcac9457b5f43b47cc8375d78215a63e93e55e9a0aade8da13",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-05",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "ed5c95cd1b4ed4885fb6fd252d2aa04e9a5d53121df4905a62e837386f4e458a",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-17",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-c",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "f0331cd4307aaae0f1e04e71f50f8f704525361fe490c543f7b4b940c2af966f",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-22",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "f199ab44fcc4555eea0231c749c18fb1923c52e43eb01824f9fb54ecf9eca581",
+      "unit": {
+        "role": "success-analyst",
+        "stage": "analysis",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-07",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "no-patch",
+        "patchId": null,
+        "exclusion": "already-correct"
+      }
+    },
+    {
+      "key": "f54b2df34349c4c46105ec874a28cd65184a872d105a8700c9c338c7b5a10250",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-10",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "unknown",
+        "stopReason": "complete",
+        "turns": 3,
+        "tokens": 1536
+      }
+    },
+    {
+      "key": "f667a08824f6271a70ae5358a22f9d0dc935f6e2698bd014e8f5ed4dbe8a8f84",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-15",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "606.25",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "f85d8a7d780c6d34f258378fd0b431a66421869ea3f4af9465c949ffa22aa2ad",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-13",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "units-a",
+        "exclusion": null
+      }
+    },
+    {
+      "key": "f9cee8129c2473dca74ed0d4f04704ae18ee43828c8ba7e85fb5aba22762b1da",
+      "unit": {
+        "role": "executor",
+        "stage": "evaluation",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-16",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "oslo",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "fad2eb4f4713d078b607a4d42c005de5d87a240701a038de4147c14581878f18",
+      "unit": {
+        "role": "executor",
+        "stage": "rollout",
+        "mode": "deepening",
+        "condition": "frozen-s0",
+        "taskId": "task-05",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "executor",
+        "answer": "cx-330",
+        "stopReason": "complete",
+        "turns": 2,
+        "tokens": 1024
+      }
+    },
+    {
+      "key": "ffdc11bc1ecb2467b42a78859c1b14e71657268ae3245a6f85117dd2dc37e3b7",
+      "unit": {
+        "role": "error-analyst",
+        "stage": "analysis",
+        "mode": "creation",
+        "condition": "draft-s0",
+        "taskId": "task-01",
+        "groupId": null,
+        "turn": 1
+      },
+      "response": {
+        "kind": "analysis",
+        "outcome": "patch",
+        "patchId": "redundant-a",
+        "exclusion": null
+      }
+    }
+  ]
+}

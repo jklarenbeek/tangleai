@@ -1,0 +1,10 @@
+{
+  "id": "task-23",
+  "split": "test",
+  "prompt": "How many distinct skus are listed?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

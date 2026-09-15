@@ -4,28 +4,28 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "2fcb6b0dfbd3b5f390af8d8040e162d080653945",
+    "head": "608b442e601833066807eb38a66b5b5bb9e47106",
     "clean": false,
     "files": [
       {
         "path": "apps/desktop/src/ai-host.ts",
-        "sha256": "f9a8760f2a3e06d75120eae8ad5d92d13c96ac940d008c0665c1b8e5b418134f"
+        "sha256": "0f1629abf68d969457351623843300151f1d0b07f4e6924c1ad2403eba96da09"
       },
       {
         "path": "apps/desktop/src/chat.ts",
-        "sha256": "057845ae5b32675d76859366c36ce4de2e33fc574f48c1f346fc9ab23f8b3776"
+        "sha256": "8d837de4b475fc112f9e7c170ff287346751bbdfc78ff6ae6d449790b65613f3"
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "9cd128139be977c66cd3a1c3a2133112b0b69098b39e8f396efdb9c0868f23d6"
+        "sha256": "6ad6821f536c44f714a64dc668a8b4ffda132d9b6a0f5627a91dd732ab1b86df"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "68a75c8aca8401e3728cd0eebbac68be0c8a7f3c13d40f3e4e399ef113ef497c"
+        "sha256": "32adefb76f9e87863f5f33d3069441e48a2e697f928660cb2572b39ce7f5c3ba"
       },
       {
         "path": "apps/desktop/src/settings.ts",
-        "sha256": "cfe8492d70c506a9db17b52002282139b5bfe67d9487d2410ade473673761996"
+        "sha256": "8cab02b6ca8e8ff481ef4a3a57c92c7376f8d4b7eb792b7b9838a0814569f6f8"
       },
       {
         "path": "benchmark/config-conformance.ts",
@@ -33,11 +33,11 @@
       },
       {
         "path": "benchmark/lib/ai-env.ts",
-        "sha256": "bb1cf8848648abd8f7ad7f470c8325b4dc9d1e23b511927f895d21cb7c345fe6"
+        "sha256": "5b584540fdfe9b0a879d2b0476eb46ab0a9babc8d2a187a2811ba6cf1f332a2a"
       },
       {
         "path": "benchmark/lib/config-conformance.ts",
-        "sha256": "6c6aeb70b96c891874431af000dc72671b62b25d21eddd7499b0cee5563d463c"
+        "sha256": "9a27ce957cec7933c5ef5c27e37676893469ae803f2f52a1c45c2c960902ece5"
       },
       {
         "path": "benchmark/lib/config-conformance.types.ts",
@@ -53,7 +53,7 @@
       },
       {
         "path": "benchmark/results/locomo-policy.json",
-        "sha256": "0b334de16e01acd74b351dbafbe8f3f2c6fc3c49c40d96a9f9b039f59e5df261"
+        "sha256": "3641111f8d3dbd091fc20e7757955c778691e41fe859c177aa7750bb4f157f95"
       },
       {
         "path": "benchmark/results/locomo-qa-live.json",
@@ -61,11 +61,11 @@
       },
       {
         "path": "benchmark/results/locomo-qa.json",
-        "sha256": "fc7c28d7ad98ef1332c7bd33479bfed54d2aa023b918651ae684b90a05c04b90"
+        "sha256": "96cfde7a69f81175c508364dd125b58697a17c9057c47c7461cf9537b047a489"
       },
       {
         "path": "benchmark/results/locomo-recall.json",
-        "sha256": "af5f621eca074890785d1287cea2a9e39726199fd7755d265d3a4769f91bfd71"
+        "sha256": "31101cb189fca4550f0ddbe06510027e9f50d61dd3b8c44609c1da3c7ae7ae83"
       },
       {
         "path": "benchmark/schemas/config-conformance.schema.json",
@@ -109,124 +109,124 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "de3e5211a8724e75b9aec70e141f641c97c84ba72fb41029f0819b1f94a570e1"
+        "sha256": "a817ffdea3eb62ad1a4abc5a8e1139c3256e82ac2718db42c1d5bb30bef1eed6"
       },
       {
         "path": "packages/store/src/runs.ts",
-        "sha256": "e82f9952a8d438f07369d56d5c3934ddd13ef1d1a9ff4c17d53a6699b41368c4"
+        "sha256": "8423f75d14c39bf5f1e302140de01d51dbc2afb59d3427fcf87cb10e376baaf4"
       },
       {
         "path": "test/fixtures/config-conformance.json",
-        "sha256": "e70e79fe3fe6e426c46dcfdbb3cbbe63040749a6ec2db45ffeb4ebe8cce72dc4"
+        "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "9f1535c4eab07b4ad07909d4f92f1a805c9d8c463c7c423276d4f3fd0b7e9bd0"
+    "sha256": "e992676c7906dc597f2ca7f704519940652a15c01e6713075c65094dbd91f02d"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.84.3"
+        "version": "0.90.6"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.21.1"
+        "version": "0.27.3"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.21.1"
+        "version": "0.27.3"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.21.1"
+        "version": "0.27.3"
       }
     ]
   },
@@ -308,6 +308,16 @@
         "file": "apps/desktop/src/handlers.ts",
         "operation": "documents.ingestbatch",
         "recordsIdentity": true
+      },
+      {
+        "file": "apps/desktop/src/handlers.ts",
+        "operation": "chat.start",
+        "recordsIdentity": true
+      },
+      {
+        "file": "apps/desktop/src/handlers.ts",
+        "operation": "reports.run",
+        "recordsIdentity": false
       }
     ],
     "reportArtifacts": [
@@ -333,13 +343,13 @@
       }
     ],
     "desktopContract": {
-      "operations": 21,
-      "revision": "48f254774c0158745229eb9881c965508887b5eed47388448ab11bfcfdbf149f"
+      "operations": 37,
+      "revision": "436e5ebd917fb417f0ea8c3c53a9d1fc1e1f796110ebc9e131b02c3559703765"
     },
     "summary": {
       "hostInputs": 2,
-      "runProducers": 3,
-      "runProducersRecordingIdentity": 3,
+      "runProducers": 5,
+      "runProducersRecordingIdentity": 4,
       "reportArtifacts": 4,
       "reportArtifactsWithIdentities": 4
     }
@@ -562,6 +572,19 @@
         "relation": "different-identity",
         "issueCodes": null,
         "detail": "cost provenance is identity: a stale price must not silently stand behind a fresh number"
+      },
+      "status": "holds",
+      "observed": "the changed value produces a different effective identity"
+    },
+    {
+      "id": "s-profile-request",
+      "family": "sensitivity",
+      "scope": "resolver",
+      "title": "The same host asked for a named profile and asked as the settings projection are different effective identities",
+      "expect": {
+        "relation": "different-identity",
+        "issueCodes": null,
+        "detail": "how a stack was ASKED for is part of what ran: a named selection and the generated projection of the same host cannot share one identity"
       },
       "status": "holds",
       "observed": "the changed value produces a different effective identity"
@@ -802,7 +825,7 @@
         "detail": "default settings produce the built-in embedder identity and no chat wire; that fallback is intentional product behavior and only the unconfigured legacy request keeps it"
       },
       "status": "holds",
-      "observed": "the unconfigured legacy request resolves to no chat wire and the built-in hash-trigram-64 identity at 64 dimensions (identity 55239dafdc13…)"
+      "observed": "the unconfigured legacy request resolves to no chat wire and the built-in hash-trigram-512 identity at 512 dimensions (identity fd8f7a7df75a…)"
     },
     {
       "id": "l-custom-no-base",
@@ -920,7 +943,7 @@
       "expect": {
         "relation": "observation",
         "issueCodes": null,
-        "detail": "today zero of the three desktop run-producing handlers stores a config/profile identity; old rows stay honestly legacy-unrecorded and are never backfilled"
+        "detail": "every desktop run-producing handler stores a config/profile identity reference before the work it authorizes; old rows stay honestly legacy-unrecorded and are never backfilled"
       },
       "status": "holds",
       "observed": "a run stores its identity reference before work, a row without one reads as legacy-unrecorded and is never backfilled, and a config-aware run cannot finish without saying what stack produced it"
@@ -936,7 +959,7 @@
         "detail": "today a chat message stores only a 'provider/model' label; the campaign records the identity reference and provider-reported usage beside it"
       },
       "status": "holds",
-      "observed": "a chat answer stores its identity reference (55239dafdc13…) beside the display label, and the identity is retrievable from the repository"
+      "observed": "a chat answer stores its identity reference (fd8f7a7df75a…) beside the display label, and the identity is retrievable from the repository"
     },
     {
       "id": "l-report-identity-absence",
@@ -953,15 +976,15 @@
     }
   ],
   "counts": {
-    "cases": 44,
+    "cases": 45,
     "byFamily": {
       "equivalence": 5,
-      "sensitivity": 12,
+      "sensitivity": 13,
       "refusal": 15,
       "legacy": 12
     },
     "byStatus": {
-      "holds": 44,
+      "holds": 45,
       "gap": 0,
       "pending": 0
     }
@@ -972,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "d16bac98d6eecc0955febd89e18a801f5e41756c27962b6c7512e0a8805612db"
+  "reportId": "16247d3a8c5136894641715130e3517c08c49a47498985d8fb6ef888121fafa8"
 }

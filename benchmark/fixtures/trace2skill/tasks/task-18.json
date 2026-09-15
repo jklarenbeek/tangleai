@@ -1,0 +1,10 @@
+{
+  "id": "task-18",
+  "split": "evolve",
+  "prompt": "How many units in total were sold in Q2 across every region?",
+  "inputs": [
+    "inputs/sales.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

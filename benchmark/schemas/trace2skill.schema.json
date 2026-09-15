@@ -1,0 +1,3713 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/trace2skill",
+  "title": "Skill-evolution instrument \u2014 fixture and report documents",
+  "description": "The two closed documents `benchmark/trace2skill.ts` reads and writes: the Tangle-authored MIT fixture (tasks, disjoint evolve/test splits, the frozen human skill directory, the scripted wire, the registered patch pool and the oracle expectations) and the keyless report (split identities, run identity, the deepening and creation tables, the analytic oracle, the registered probes, every counted failure and the capability gates derived from rows and probes). TypeScript is generated from this document by `@jarenjs/emit`; the arithmetic an honest report depends on binds here through `$query` at validation time. Every object closes its properties, so credential material or an undeclared member cannot be carried, and no member anywhere holds a clock reading.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/trace2skillFixture"
+    },
+    {
+      "$ref": "#/$defs/taskDocument"
+    },
+    {
+      "$ref": "#/$defs/truthDocument"
+    },
+    {
+      "$ref": "#/$defs/patchDocument"
+    },
+    {
+      "$ref": "#/$defs/mergeTreeDocument"
+    },
+    {
+      "$ref": "#/$defs/labelsDocument"
+    },
+    {
+      "$ref": "#/$defs/oracleDocument"
+    },
+    {
+      "$ref": "#/$defs/scopeDocument"
+    },
+    {
+      "$ref": "#/$defs/scriptDocument"
+    },
+    {
+      "$ref": "#/$defs/trace2skillReport"
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "taskId": {
+      "type": "string",
+      "pattern": "^task-[0-9]{2}$"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "relativePath": {
+      "description": "A repository- or fixture-relative POSIX path. No leading slash, no parent segment.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$",
+      "not": {
+        "pattern": "(^|/)\\.\\.(/|$)"
+      }
+    },
+    "fileDigest": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "sourceManifest": {
+      "description": "The fixture's effective bytes, path-ordered. Deliberately free of a commit identity: the committed report is a `--check` gate, and a gate that went red because HEAD moved would measure the repository, not the instrument.",
+      "type": "object",
+      "required": [
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fileDigest"
+          }
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "condition": {
+      "description": "The skill condition a row measures. `no-skill` runs the executor with no directory; `frozen-s0` uses the human starting directory unchanged; `draft-s0` uses the trajectory-blind draft that creation mode starts from; `evolved-s-star` uses the merged candidate; `retrieval-bank`, `single-call-error` and `sequential-merge` are the named ablations; `cross-model` and `ood` are the transfer tiers, which need a second model or a second domain adapter; `oracle` and `random` are analytic controls that call no model.",
+      "enum": [
+        "no-skill",
+        "frozen-s0",
+        "draft-s0",
+        "evolved-s-star",
+        "retrieval-bank",
+        "single-call-error",
+        "sequential-merge",
+        "cross-model",
+        "ood",
+        "oracle",
+        "random"
+      ]
+    },
+    "rowStatus": {
+      "description": "`run` means every unit of the row executed and its numbers are measurements. `not-run` means the row was planned and deliberately not executed. `implementation-missing` means the mechanism the row measures does not exist yet \u2014 an honest skip, never a zero.",
+      "enum": [
+        "run",
+        "not-run",
+        "implementation-missing"
+      ]
+    },
+    "taskLabel": {
+      "description": "The evaluator's verdict for one task. `failed` is a unit that produced no answer at all (a missing script entry, a refused tool); `unanswered` is a unit that answered with nothing.",
+      "enum": [
+        "correct",
+        "incorrect",
+        "unanswered",
+        "failed"
+      ]
+    },
+    "stopReason": {
+      "enum": [
+        "complete",
+        "budget",
+        "tool-failure",
+        "script-missing",
+        "refused"
+      ]
+    },
+    "skillRef": {
+      "description": "The directory a row used, or null when it used none. `hash` is the root page digest; `bundleId` is the canonical identity over the ordered file manifest.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "bundleId",
+            "hash",
+            "mode"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "bundleId": {
+              "$ref": "#/$defs/sha256"
+            },
+            "hash": {
+              "$ref": "#/$defs/sha256"
+            },
+            "mode": {
+              "enum": [
+                "deepening",
+                "creation"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "taskResult": {
+      "type": "object",
+      "required": [
+        "taskId",
+        "label",
+        "score",
+        "stopReason",
+        "turns",
+        "tokens"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "taskId": {
+          "$ref": "#/$defs/taskId"
+        },
+        "label": {
+          "$ref": "#/$defs/taskLabel"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "stopReason": {
+          "$ref": "#/$defs/stopReason"
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "rowCounts": {
+      "description": "Every way a unit can fail to become a score, published whether or not it happened. A zero here is a measurement; an absent member would be a hidden failure.",
+      "type": "object",
+      "required": [
+        "unanswered",
+        "excluded",
+        "failed",
+        "leakage",
+        "withheld",
+        "scriptMissing"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "unanswered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leakage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "withheld": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scriptMissing": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "rowCost": {
+      "type": "object",
+      "required": [
+        "turns",
+        "tokens",
+        "calls",
+        "cached",
+        "live"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cached": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "live": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rowMetric": {
+      "type": "object",
+      "required": [
+        "answered",
+        "correct",
+        "score"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "answered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "correct": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "score": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "rowDeltas": {
+      "description": "Signed differences against the two baselines of the row's own table, or null when the baseline did not run. A regression is published with its sign, never dropped.",
+      "type": "object",
+      "required": [
+        "vsNoSkill",
+        "vsS0"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "vsNoSkill": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vsS0": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "required": [
+        "id",
+        "condition",
+        "status",
+        "reason",
+        "skill",
+        "tasks",
+        "metric",
+        "counts",
+        "cost",
+        "deltas"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.metric.correct",
+              {
+                "$count": "$.tasks[?(@.label=='correct')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.unanswered",
+              {
+                "$count": "$.tasks[?(@.label=='unanswered')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.failed",
+              {
+                "$count": "$.tasks[?(@.label=='failed')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metric.answered",
+              {
+                "$add": [
+                  {
+                    "$count": "$.tasks[?(@.label=='correct')]"
+                  },
+                  {
+                    "$count": "$.tasks[?(@.label=='incorrect')]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      "$.metric.answered",
+                      "$.counts.unanswered"
+                    ]
+                  },
+                  "$.counts.failed"
+                ]
+              },
+              {
+                "$count": "$.tasks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.tasks[*].taskId"
+                }
+              },
+              {
+                "$count": "$.tasks[*]"
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.status",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.tasks[*]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.metric.score",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.deltas.vsNoSkill",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.deltas.vsS0",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.cost.calls",
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.counts.leakage",
+                  0
+                ]
+              },
+              {
+                "$ne": [
+                  "$.status",
+                  "run"
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.status",
+                  "run"
+                ]
+              },
+              {
+                "$ne": [
+                  "$.metric.score",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.status",
+                  "run"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.condition",
+                  "no-skill"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.condition",
+                  "oracle"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.condition",
+                  "random"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.condition",
+                  "retrieval-bank"
+                ]
+              },
+              {
+                "$ne": [
+                  "$.skill",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.condition",
+                  "no-skill"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.skill",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.condition",
+                  "oracle"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.skill",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.condition",
+                  "random"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.skill",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.cost.live",
+                  false
+                ]
+              },
+              {
+                "$eq": [
+                  "$.status",
+                  "run"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(deepening|creation):[a-z][a-z0-9-]*$"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "status": {
+          "$ref": "#/$defs/rowStatus"
+        },
+        "reason": {
+          "description": "Why a row is not `run`, in the instrument's own words. A `run` row carries null.",
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "skill": {
+          "$ref": "#/$defs/skillRef"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taskResult"
+          }
+        },
+        "metric": {
+          "$ref": "#/$defs/rowMetric"
+        },
+        "counts": {
+          "$ref": "#/$defs/rowCounts"
+        },
+        "cost": {
+          "$ref": "#/$defs/rowCost"
+        },
+        "deltas": {
+          "$ref": "#/$defs/rowDeltas"
+        }
+      }
+    },
+    "probe": {
+      "description": "One registered mechanism observation. `expected` is authored with the fixture, before any implementation exists; `observed` is null exactly when the mechanism is missing.",
+      "type": "object",
+      "required": [
+        "id",
+        "capability",
+        "expected",
+        "observed",
+        "state",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.state",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.observed",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.state",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$ne": [
+                  "$.observed",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/name"
+        },
+        "capability": {
+          "enum": [
+            "instrument",
+            "contracts",
+            "rollouts",
+            "analysts",
+            "consolidation",
+            "evaluation",
+            "packs"
+          ]
+        },
+        "expected": {
+          "type": "object"
+        },
+        "observed": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "pass",
+            "fail",
+            "implementation-missing"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "analystRole": {
+      "description": "One analyst role's yield over the evolve split: trajectories read, patches proved, analyses excluded, and what the role spent doing it.",
+      "type": "object",
+      "required": [
+        "role",
+        "analyzed",
+        "patches",
+        "excluded",
+        "calls",
+        "tokens"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.analyzed",
+          {
+            "$add": [
+              "$.patches",
+              "$.excluded"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "role": {
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "analyzed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "analystExclusionCount": {
+      "type": "object",
+      "required": [
+        "reason",
+        "count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "enum": [
+            "exhausted",
+            "tool-failure",
+            "unsupported-artifacts",
+            "already-correct",
+            "no-causal-explanation",
+            "evaluator-disagrees"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "analystsBlock": {
+      "description": "The analyst stage, published beside the tables rather than inside them: analysts read the evolve split while every row scores the held-out one. Both roles are always listed and every exclusion reason carries its count, including the reasons no unit reached, so a run cannot publish only the analyses it liked.",
+      "type": "object",
+      "required": [
+        "mode",
+        "roles",
+        "exclusions",
+        "patches",
+        "refused",
+        "peerPatchesSeen",
+        "baseHashMismatches"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.roles[*].role"
+                }
+              },
+              2
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.exclusions[*].reason"
+                }
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              "$.patches",
+              {
+                "$sum": "$.roles[*].patches"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/analystRole"
+          }
+        },
+        "exclusions": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "$ref": "#/$defs/analystExclusionCount"
+          }
+        },
+        "patches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peerPatchesSeen": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "baseHashMismatches": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mergeNodeRow": {
+      "description": "One merge group as the report publishes it: where it sat in the tree, how many patches it was given, how many distinct edits it kept, how many proposals it folded away and how many it withheld as conflicting.",
+      "type": "object",
+      "required": [
+        "id",
+        "level",
+        "groupIndex",
+        "inputs",
+        "unique",
+        "duplicates",
+        "withheld",
+        "supportCount"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "groupIndex": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inputs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unique": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "withheld": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supportCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mergeChangelogCount": {
+      "type": "object",
+      "required": [
+        "action",
+        "count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "kept",
+            "merged",
+            "routed-to-references",
+            "discarded"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "consolidationBlock": {
+      "description": "The consolidation stage, published beside the tables: the tree the committed pool was cut into, every decision each group made, and the single application that produced the candidate. Every decision name carries its count, including the ones no group reached, so a run cannot publish only the merges it liked. `withheldHunks` counts what the compiler withheld from the applied patch and is zero by construction, because a merge whose hunks conflict never reaches the committer.",
+      "type": "object",
+      "required": [
+        "mode",
+        "terminal",
+        "bMerge",
+        "lMax",
+        "supportThreshold",
+        "levels",
+        "groups",
+        "nodes",
+        "changelog",
+        "discarded",
+        "withheldHunks",
+        "unattributed",
+        "applications",
+        "refused",
+        "supportCount",
+        "finalPatchId",
+        "candidateId",
+        "bundleId",
+        "diffSummary",
+        "calls",
+        "tokens"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.changelog[*].action"
+                }
+              },
+              4
+            ]
+          },
+          {
+            "$eq": [
+              "$.discarded",
+              {
+                "$sum": "$.nodes[*].withheld"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.nodes[*].id"
+                }
+              },
+              {
+                "$count": "$.nodes[*]"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "terminal": {
+          "enum": [
+            "empty",
+            "single",
+            "hierarchical"
+          ]
+        },
+        "bMerge": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "lMax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "supportThreshold": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "levels": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "groups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mergeNodeRow"
+          }
+        },
+        "changelog": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/mergeChangelogCount"
+          }
+        },
+        "discarded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "withheldHunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unattributed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "applications": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supportCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "finalPatchId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "candidateId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bundleId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "diffSummary": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "filesAdded",
+            "filesChanged",
+            "linesAdded",
+            "linesRemoved"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "filesAdded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "filesChanged": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "linesAdded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "linesRemoved": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "capabilities": {
+      "description": "Derived from rows and probes, never asserted. `complete` is true only when no mechanism row is still an honest skip.",
+      "type": "object",
+      "required": [
+        "instrument",
+        "contracts",
+        "rollouts",
+        "analysts",
+        "consolidation",
+        "evaluation",
+        "packs",
+        "complete"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "instrument": {
+          "type": "boolean"
+        },
+        "contracts": {
+          "type": "boolean"
+        },
+        "rollouts": {
+          "type": "boolean"
+        },
+        "analysts": {
+          "type": "boolean"
+        },
+        "consolidation": {
+          "type": "boolean"
+        },
+        "evaluation": {
+          "type": "boolean"
+        },
+        "packs": {
+          "type": "boolean"
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      }
+    },
+    "splits": {
+      "description": "The evolve/test division and the refusal counter that guards it. Only the evolve half may influence a directory; an id in both halves is refused and counted, and the instrument capability goes false.",
+      "type": "object",
+      "required": [
+        "evolve",
+        "test",
+        "evolveHash",
+        "testHash",
+        "disjoint",
+        "overlapRefused"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.disjoint",
+                  true
+                ]
+              },
+              {
+                "$lt": [
+                  0,
+                  "$.overlapRefused"
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.overlapRefused",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.disjoint",
+                  false
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "evolve": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "evolveHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "testHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "disjoint": {
+          "type": "boolean"
+        },
+        "overlapRefused": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "identity": {
+      "description": "Everything a row's number depends on besides the fixture. A run row that cannot name all of it is not a measurement.",
+      "type": "object",
+      "required": [
+        "model",
+        "promptVersions",
+        "toolManifestHash",
+        "budgets",
+        "concurrency",
+        "seed",
+        "evaluatorId",
+        "merge"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promptVersions": {
+          "type": "object",
+          "required": [
+            "draft",
+            "executor",
+            "successAnalyst",
+            "errorAnalyst",
+            "merge"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "draft": {
+              "type": "string",
+              "minLength": 1
+            },
+            "executor": {
+              "type": "string",
+              "minLength": 1
+            },
+            "successAnalyst": {
+              "type": "string",
+              "minLength": 1
+            },
+            "errorAnalyst": {
+              "type": "string",
+              "minLength": 1
+            },
+            "merge": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "toolManifestHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "budgets": {
+          "type": "object",
+          "required": [
+            "turns",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "turns": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "evaluatorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "merge": {
+          "type": "object",
+          "required": [
+            "bMerge",
+            "lMax"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "bMerge": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "lMax": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "randomBand": {
+      "description": "The analytic band a seeded uniform draw over the registered answer pool must land in: the expectation, plus and minus four standard errors and one task of slack.",
+      "type": "object",
+      "required": [
+        "floor",
+        "low",
+        "high"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "floor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "low": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "high": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "oracleBlock": {
+      "description": "The scorer proven before a table prints: the analytic ceiling over the held-out split, and the seeded random control with the band it has to land in.",
+      "type": "object",
+      "required": [
+        "evaluatorId",
+        "tasks",
+        "ceiling",
+        "randomPoolSize",
+        "randomScore",
+        "band",
+        "inBand"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.inBand",
+                  false
+                ]
+              },
+              {
+                "$not": {
+                  "$lt": [
+                    "$.randomScore",
+                    "$.band.low"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.inBand",
+                  false
+                ]
+              },
+              {
+                "$not": {
+                  "$lt": [
+                    "$.band.high",
+                    "$.randomScore"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "evaluatorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tasks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ceiling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "randomPoolSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "randomScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "band": {
+          "$ref": "#/$defs/randomBand"
+        },
+        "inBand": {
+          "type": "boolean"
+        }
+      }
+    },
+    "failureCount": {
+      "type": "object",
+      "required": [
+        "reason",
+        "count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "enum": [
+            "unanswered",
+            "excluded",
+            "failed",
+            "leakage",
+            "withheld",
+            "script-missing",
+            "fixture-issue"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "fixtureIssue": {
+      "description": "A refusal the instrument counted instead of throwing: the fixture moved, a split overlaps, a registered file is absent, a compiled patch was withheld, a unit stopped on the run budget. The code range is the whole reserved band, because a run now executes mechanisms that refuse outside the loader's own reasons.",
+      "type": "object",
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "TT2S1001",
+            "TT2S1002",
+            "TT2S1003",
+            "TT2S1004",
+            "TT2S1005",
+            "TT2S1006",
+            "TT2S1007",
+            "TT2S1008",
+            "TT2S1009",
+            "TT2S1010",
+            "TT2S1011",
+            "TT2S1012",
+            "TT2S1013"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "taskDocument": {
+      "description": "One evolution or held-out task. `inputs` names the files the executor may read; ground truth lives elsewhere and never appears here.",
+      "type": "object",
+      "required": [
+        "id",
+        "split",
+        "prompt",
+        "inputs",
+        "evaluatorId",
+        "convention"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/taskId"
+        },
+        "split": {
+          "enum": [
+            "evolve",
+            "test"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
+        "evaluatorId": {
+          "const": "exact-normalized-v1"
+        },
+        "convention": {
+          "enum": [
+            "lookup",
+            "aggregate",
+            "rounding",
+            "euro-format",
+            "unit-conversion"
+          ]
+        }
+      }
+    },
+    "truthDocument": {
+      "description": "One registered answer. Read only by the adapter's evaluation and the error analyst's post-failure boundary; any other read is a counted leakage.",
+      "type": "object",
+      "required": [
+        "id",
+        "answer",
+        "normalized"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/taskId"
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normalized": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "patchOperation": {
+      "type": "object",
+      "required": [
+        "group",
+        "op",
+        "file"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "type": "string",
+          "pattern": "^g-[a-z]+$"
+        },
+        "op": {
+          "enum": [
+            "create_file",
+            "insert_before",
+            "insert_after",
+            "replace_section",
+            "delete_section"
+          ]
+        },
+        "file": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "anchor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "patchDocument": {
+      "description": "One registered directory patch and the refusal it is expected to earn. This order registers them; compiling them belongs to the compiler that owns the patch language.",
+      "type": "object",
+      "required": [
+        "id",
+        "origin",
+        "expectedCode",
+        "withheld",
+        "rationale",
+        "operations"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/name"
+        },
+        "baseHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "origin": {
+          "type": "object",
+          "required": [
+            "rollout",
+            "analyst"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "rollout": {
+              "$ref": "#/$defs/taskId"
+            },
+            "analyst": {
+              "enum": [
+                "success-analyst",
+                "error-analyst"
+              ]
+            }
+          }
+        },
+        "expectedCode": {
+          "oneOf": [
+            {
+              "enum": [
+                "TT2S1002",
+                "TT2S1004",
+                "TT2S1005",
+                "TT2S1006"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "withheld": {
+          "type": "boolean"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          }
+        }
+      }
+    },
+    "mergeTreeDocument": {
+      "description": "The plan the valid pool is expected to produce: groups of at most `bMerge`, levels until one patch remains, nothing truncated.",
+      "type": "object",
+      "required": [
+        "bMerge",
+        "lMax",
+        "pool",
+        "levels",
+        "final",
+        "uniqueRolloutSupport"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.pool[*]"
+                }
+              },
+              {
+                "$count": "$.pool[*]"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "bMerge": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "lMax": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pool": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/name"
+          }
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "level",
+              "groups"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "groups": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "members"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "members": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/$defs/name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "final": {
+          "$ref": "#/$defs/name"
+        },
+        "uniqueRolloutSupport": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "conditionLabels": {
+      "type": "object",
+      "required": [
+        "incorrect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "incorrect": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taskId"
+          }
+        }
+      }
+    },
+    "labelsDocument": {
+      "description": "The registered verdict of every task under every condition, authored with the corpus. The scripted wire is derived from it, so an answer cannot disagree with the label it is supposed to earn.",
+      "type": "object",
+      "required": [
+        "evaluator",
+        "incorrectAnswer",
+        "turns",
+        "tokensPerTurn",
+        "budgetTasks",
+        "modes",
+        "analystPatches",
+        "exclusions",
+        "ablationPatches"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "evaluator": {
+          "const": "exact-normalized-v1"
+        },
+        "incorrectAnswer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "turns": {
+          "type": "object",
+          "required": [
+            "correct",
+            "incorrect",
+            "budget"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "correct": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "incorrect": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "budget": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "tokensPerTurn": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "budgetTasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taskId"
+          }
+        },
+        "modes": {
+          "type": "object",
+          "required": [
+            "deepening",
+            "creation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "deepening": {
+              "type": "object",
+              "required": [
+                "rolloutCondition",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "rolloutCondition": {
+                  "const": "frozen-s0"
+                },
+                "conditions": {
+                  "type": "object",
+                  "required": [
+                    "no-skill",
+                    "frozen-s0",
+                    "evolved-s-star"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "no-skill": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "frozen-s0": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "evolved-s-star": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "retrieval-bank": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "single-call-error": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "sequential-merge": {
+                      "$ref": "#/$defs/conditionLabels"
+                    }
+                  }
+                }
+              }
+            },
+            "creation": {
+              "type": "object",
+              "required": [
+                "rolloutCondition",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "rolloutCondition": {
+                  "const": "draft-s0"
+                },
+                "conditions": {
+                  "type": "object",
+                  "required": [
+                    "no-skill",
+                    "draft-s0",
+                    "evolved-s-star"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "no-skill": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "draft-s0": {
+                      "$ref": "#/$defs/conditionLabels"
+                    },
+                    "evolved-s-star": {
+                      "$ref": "#/$defs/conditionLabels"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "analystPatches": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/name"
+          }
+        },
+        "exclusions": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "exhausted",
+              "tool-failure",
+              "unsupported-artifacts",
+              "already-correct",
+              "no-causal-explanation",
+              "evaluator-disagrees"
+            ]
+          }
+        },
+        "ablationPatches": {
+          "description": "What the single-call diagnosis proposes on a trajectory the evaluator-proven role proposed nothing for. Registered rather than derived: an ablation that invented its own proposal would be measuring the fixture author, not the missing evaluator.",
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/taskId"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/name"
+          }
+        }
+      }
+    },
+    "heldOutScores": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "oracleDocument": {
+      "description": "What the scorer must reproduce before a table prints: the analytic ceiling, the registered answer pool, the seeded draw and its band, and the held-out score every condition is expected to earn.",
+      "type": "object",
+      "required": [
+        "document",
+        "evaluator",
+        "tasks",
+        "ceiling",
+        "randomPool",
+        "randomDraw",
+        "randomBand",
+        "heldOut"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document": {
+          "const": "trace2skill-oracle"
+        },
+        "evaluator": {
+          "const": "exact-normalized-v1"
+        },
+        "tasks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ceiling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "randomPool": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "randomDraw": {
+          "type": "object",
+          "required": [
+            "seed",
+            "correct",
+            "score"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "seed": {
+              "type": "integer"
+            },
+            "correct": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "randomBand": {
+          "$ref": "#/$defs/randomBand"
+        },
+        "heldOut": {
+          "type": "object",
+          "required": [
+            "deepening",
+            "creation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "deepening": {
+              "$ref": "#/$defs/heldOutScores"
+            },
+            "creation": {
+              "$ref": "#/$defs/heldOutScores"
+            }
+          }
+        }
+      }
+    },
+    "scopeDocument": {
+      "description": "What a trajectory-blind draft is allowed to see: the domain, the shape of an answer and the tools an executor will have. It carries no task, no input path and no registered answer, so a directory drafted from it cannot have been fitted to either half of the split.",
+      "type": "object",
+      "required": [
+        "scopeKey",
+        "description",
+        "tools",
+        "answerShape"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "scopeKey": {
+          "$ref": "#/$defs/name"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answerShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tools": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "description"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "scriptUnit": {
+      "description": "The logical descriptor a scripted response is keyed by. It deliberately carries no content hash: the wire is fixture-local, while directory identity is bound by the report's `identity` and the fixture's `s0` digests, so a later order can fill a row without renumbering the script.",
+      "type": "object",
+      "required": [
+        "role",
+        "stage",
+        "mode",
+        "condition",
+        "taskId",
+        "groupId",
+        "turn"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "executor",
+            "success-analyst",
+            "error-analyst",
+            "merge",
+            "draft"
+          ]
+        },
+        "stage": {
+          "enum": [
+            "rollout",
+            "evaluation",
+            "analysis",
+            "merge",
+            "draft"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "condition": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/condition"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "taskId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/taskId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "groupId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/name"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "turn": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "scriptEntry": {
+      "type": "object",
+      "required": [
+        "key",
+        "unit",
+        "response"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/sha256"
+        },
+        "unit": {
+          "$ref": "#/$defs/scriptUnit"
+        },
+        "response": {
+          "type": "object"
+        }
+      }
+    },
+    "scriptDocument": {
+      "type": "object",
+      "required": [
+        "document",
+        "entries"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.entries[*].key"
+                }
+              },
+              {
+                "$count": "$.entries[*]"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "document": {
+          "const": "trace2skill-script"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scriptEntry"
+          }
+        }
+      }
+    },
+    "trace2skillFixture": {
+      "title": "Skill-evolution fixture manifest",
+      "description": "The registered corpus. Every derived member here is recomputed by `benchmark/scripts/trace2skill-fixture.ts` and refused by the loader when it disagrees with the files on disk.",
+      "type": "object",
+      "required": [
+        "document",
+        "id",
+        "licence",
+        "provenance",
+        "domain",
+        "evaluator",
+        "seed",
+        "counts",
+        "splits",
+        "s0",
+        "creationScope",
+        "script",
+        "scriptId",
+        "merge",
+        "budgets",
+        "negativePatches",
+        "legacyPacks",
+        "rollouts",
+        "tables",
+        "ablation",
+        "probes",
+        "files"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.counts.evolve",
+              {
+                "$count": "$.splits.evolve[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.test",
+              {
+                "$count": "$.splits.test[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.splits.evolve[*]"
+                }
+              },
+              {
+                "$count": "$.splits.evolve[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.splits.test[*]"
+                }
+              },
+              {
+                "$count": "$.splits.test[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.negativePatches[*]"
+                }
+              },
+              {
+                "$count": "$.negativePatches[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.files[*].path"
+                }
+              },
+              {
+                "$count": "$.files[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.probes[*].id"
+                }
+              },
+              {
+                "$count": "$.probes[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.s0.files[*].path"
+                }
+              },
+              {
+                "$count": "$.s0.files[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.legacyPacks[*]"
+                }
+              },
+              {
+                "$count": "$.legacyPacks[*]"
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "document": {
+          "const": "trace2skill-fixture"
+        },
+        "id": {
+          "const": "trace2skill-tabular-v1"
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "description": "Authorship of the corpus. Its date describes the fixture and never reaches a report \u2014 a report that carried a clock reading would stop being byte-reproducible.",
+          "type": "object",
+          "required": [
+            "author",
+            "date",
+            "statement"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "author": {
+              "type": "string",
+              "minLength": 1
+            },
+            "date": {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            },
+            "statement": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "domain": {
+          "const": "tabular-extract"
+        },
+        "evaluator": {
+          "const": "exact-normalized-v1"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "counts": {
+          "type": "object",
+          "required": [
+            "evolve",
+            "test"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "evolve": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "test": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "splits": {
+          "type": "object",
+          "required": [
+            "evolve",
+            "test",
+            "evolveHash",
+            "testHash"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "evolve": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/taskId"
+              }
+            },
+            "test": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/taskId"
+              }
+            },
+            "evolveHash": {
+              "$ref": "#/$defs/sha256"
+            },
+            "testHash": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "s0": {
+          "type": "object",
+          "required": [
+            "path",
+            "bundleId",
+            "rootHash",
+            "files"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "const": "skills/s0-human"
+            },
+            "bundleId": {
+              "$ref": "#/$defs/sha256"
+            },
+            "rootHash": {
+              "$ref": "#/$defs/sha256"
+            },
+            "files": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/fileDigest"
+              }
+            }
+          }
+        },
+        "creationScope": {
+          "const": "skills/scope.json"
+        },
+        "script": {
+          "const": "scripts/responses.json"
+        },
+        "scriptId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "merge": {
+          "type": "object",
+          "required": [
+            "bMerge",
+            "lMax"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "bMerge": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "lMax": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "budgets": {
+          "type": "object",
+          "required": [
+            "turns",
+            "tokens",
+            "ms",
+            "concurrency"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "turns": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "negativePatches": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/name"
+          }
+        },
+        "legacyPacks": {
+          "description": "The salvaged retrieval-baseline prompt packs, kept as named fixtures so an ablation row can name exactly what it reproduces. Nothing compiles them into a package; they are the paper's baseline, not its method.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/name"
+          }
+        },
+        "rollouts": {
+          "description": "The failing evolve rollouts an error analyst is registered to reach a patch for, and the one it cannot: a directory edit does not repair an exhausted turn budget.",
+          "type": "object",
+          "required": [
+            "repairable",
+            "unrepairable"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "repairable": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/taskId"
+              }
+            },
+            "unrepairable": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/taskId"
+              }
+            }
+          }
+        },
+        "tables": {
+          "type": "object",
+          "required": [
+            "deepening",
+            "creation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "deepening": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            },
+            "creation": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          }
+        },
+        "ablation": {
+          "description": "The salvaged cluster-then-retrieve baseline's registered parameters. They belong to the named ablation row and to no path that evolves a directory.",
+          "type": "object",
+          "required": [
+            "id",
+            "note",
+            "parameters"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "retrieval-bank"
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            },
+            "parameters": {
+              "type": "object",
+              "required": [
+                "k",
+                "maxSkillsPerCluster",
+                "topK",
+                "minSimilarity"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "k": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxSkillsPerCluster": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "topK": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "minSimilarity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        },
+        "probes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "capability",
+              "expected"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/name"
+              },
+              "capability": {
+                "enum": [
+                  "instrument",
+                  "contracts",
+                  "rollouts",
+                  "analysts",
+                  "consolidation",
+                  "evaluation",
+                  "packs"
+                ]
+              },
+              "expected": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fileDigest"
+          }
+        }
+      }
+    },
+    "activationRefusal": {
+      "description": "One activation the instrument attempted and the gate refused, with the clause that stopped it. Published whether or not anybody expected it to fail: a refusal matrix that lists only the refusals it liked proves nothing about the fence.",
+      "type": "object",
+      "required": [
+        "scenario",
+        "code",
+        "clause",
+        "detail",
+        "refused",
+        "headUnchanged",
+        "priorReadable"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "scenario": {
+          "enum": [
+            "regressing",
+            "under-covered",
+            "over-budget",
+            "stale-parent",
+            "evaluation-failed"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clause": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refused": {
+          "type": "boolean"
+        },
+        "headUnchanged": {
+          "type": "boolean"
+        },
+        "priorReadable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evaluationBlock": {
+      "description": "The held-out evaluation and the activation that may follow it. Eligibility is computed only from held-out rows and is published beside every clause the gate applies, the per-task regressions, what a second drive of the same run spent, and the five refusals that must not move the head. `activated` can never exceed one: the fence applies a candidate once.",
+      "type": "object",
+      "required": [
+        "mode",
+        "policyVersion",
+        "policy",
+        "evaluationId",
+        "baselineBundleId",
+        "candidateBundleId",
+        "tasks",
+        "answered",
+        "meanDelta",
+        "costDelta",
+        "failures",
+        "skips",
+        "leakage",
+        "eligible",
+        "clauses",
+        "regressions",
+        "drives",
+        "resumedCalls",
+        "resumedWritten",
+        "candidateStable",
+        "activations",
+        "refusals"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.refusals[*].scenario"
+                }
+              },
+              {
+                "$count": "$.refusals[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.activations.refused",
+              {
+                "$count": "$.refusals[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.activations.attempted",
+              {
+                "$add": [
+                  "$.activations.activated",
+                  "$.activations.refused"
+                ]
+              }
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.refusals[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.headUnchanged",
+                true
+              ]
+            }
+          },
+          {
+            "$every": {
+              "r": "$.refusals[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.priorReadable",
+                true
+              ]
+            }
+          }
+        ]
+      },
+      "properties": {
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "policyVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "policy": {
+          "type": "object",
+          "required": [
+            "primaryMetric",
+            "regressionTolerance",
+            "minAnsweredCoverage",
+            "costCeiling"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "primaryMetric": {
+              "type": "string",
+              "minLength": 1
+            },
+            "regressionTolerance": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minAnsweredCoverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "costCeiling": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "evaluationId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "baselineBundleId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "candidateBundleId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tasks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "answered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "meanDelta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "costDelta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skips": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leakage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "clauses": {
+          "description": "Every gate clause the candidate failed, by the member it names.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "clause",
+              "detail"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "clause": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "regressions": {
+          "description": "Held-out tasks the candidate scores lower on than the directory it replaces.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "taskId",
+              "baseline",
+              "candidate"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "taskId": {
+                "$ref": "#/$defs/taskId"
+              },
+              "baseline": {
+                "type": "number"
+              },
+              "candidate": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "drives": {
+          "description": "How many times the same run was driven end to end; the second drive is the resume evidence.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "resumedCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resumedWritten": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidateStable": {
+          "description": "Whether the resumed drive produced the same candidate identity as the first.",
+          "type": "boolean"
+        },
+        "activations": {
+          "type": "object",
+          "required": [
+            "attempted",
+            "activated",
+            "refused",
+            "previousRevision",
+            "revision",
+            "previousVersionId",
+            "versionId"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "attempted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "activated": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "previousRevision": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "previousVersionId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "versionId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "refusals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/activationRefusal"
+          }
+        }
+      }
+    },
+    "trace2skillReport": {
+      "title": "Skill-evolution report",
+      "description": "What `npm run benchmark:trace2skill` writes. Clock-free and byte-reproducible: two builds over identical fixture bytes render the same document, and `reportId` is the canonical digest of everything else.",
+      "type": "object",
+      "required": [
+        "instrument",
+        "version",
+        "source",
+        "suite",
+        "fixtureId",
+        "registrationId",
+        "splits",
+        "identity",
+        "tables",
+        "analysts",
+        "consolidation",
+        "evaluation",
+        "ablations",
+        "oracle",
+        "probes",
+        "issues",
+        "failures",
+        "limitations",
+        "capabilities",
+        "envelope",
+        "reportId"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.tables.deepening[*].id"
+                }
+              },
+              {
+                "$count": "$.tables.deepening[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.tables.creation[*].id"
+                }
+              },
+              {
+                "$count": "$.tables.creation[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.failures[*].reason"
+                }
+              },
+              {
+                "$count": "$.failures[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.probes[*].id"
+                }
+              },
+              {
+                "$count": "$.probes[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.envelope.identities[*]"
+              },
+              0
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.envelope.rows[*]"
+              },
+              {
+                "$add": [
+                  {
+                    "$count": "$.tables.deepening[*]"
+                  },
+                  {
+                    "$count": "$.tables.creation[*]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.envelope.rows[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.identityStatus",
+                "not-run"
+              ]
+            }
+          },
+          {
+            "$every": {
+              "r": "$.tables.deepening[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.cost.live",
+                false
+              ]
+            }
+          },
+          {
+            "$every": {
+              "r": "$.tables.creation[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.cost.live",
+                false
+              ]
+            }
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.capabilities.complete",
+                  false
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.tables.deepening[?(@.status=='implementation-missing')]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.tables.creation[?(@.status=='implementation-missing')]"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.splits.overlapRefused",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.capabilities.instrument",
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.capabilities.instrument",
+                  true
+                ]
+              },
+              {
+                "$eq": [
+                  "$.capabilities.complete",
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.oracle.tasks",
+              "$.splits.test"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "instrument": {
+          "const": "trace2skill"
+        },
+        "version": {
+          "const": 1
+        },
+        "source": {
+          "$ref": "#/$defs/sourceManifest"
+        },
+        "suite": {
+          "type": "object",
+          "required": [
+            "tangle",
+            "jaren"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "tangle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "jaren": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "fixtureId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "registrationId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "splits": {
+          "$ref": "#/$defs/splits"
+        },
+        "identity": {
+          "$ref": "#/$defs/identity"
+        },
+        "tables": {
+          "description": "Deepening starts from the human directory, creation from the trajectory-blind draft. They keep separate denominators because they answer different questions; a row is never carried between them.",
+          "type": "object",
+          "required": [
+            "deepening",
+            "creation"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "deepening": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/row"
+              }
+            },
+            "creation": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/row"
+              }
+            }
+          }
+        },
+        "analysts": {
+          "$ref": "#/$defs/analystsBlock"
+        },
+        "consolidation": {
+          "$ref": "#/$defs/consolidationBlock"
+        },
+        "evaluation": {
+          "$ref": "#/$defs/evaluationBlock"
+        },
+        "ablations": {
+          "$ref": "#/$defs/ablationsBlock"
+        },
+        "oracle": {
+          "$ref": "#/$defs/oracleBlock"
+        },
+        "probes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/probe"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureIssue"
+          }
+        },
+        "failures": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "$ref": "#/$defs/failureCount"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "capabilities": {
+          "$ref": "#/$defs/capabilities"
+        },
+        "envelope": {
+          "description": "The shared config-identity envelope. Every row here is a not-run analytic row: nothing in this instrument runs a provider stack.",
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "reportId": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "ablationCounter": {
+      "description": "One counted fact about an ablation, named where it is published so a number never travels without its meaning.",
+      "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][A-Za-z0-9]*$"
+        },
+        "value": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ablationEntry": {
+      "description": "What one ablation removed from the method, the directory it produced instead, and every counted difference. A row here always has a table row of the same condition beside it.",
+      "type": "object",
+      "required": [
+        "condition",
+        "replaces",
+        "status",
+        "candidateId",
+        "candidateBundleId",
+        "sameDirectoryAsMethod",
+        "score",
+        "vsEvolved",
+        "cost",
+        "counters"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.counters[*].name"
+                }
+              },
+              {
+                "$count": "$.counters[*]"
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.candidateId",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.candidateBundleId",
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$ne": [
+                      "$.candidateId",
+                      null
+                    ]
+                  },
+                  {
+                    "$ne": [
+                      "$.candidateBundleId",
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.sameDirectoryAsMethod",
+                  false
+                ]
+              },
+              {
+                "$ne": [
+                  "$.candidateBundleId",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "replaces": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/rowStatus"
+        },
+        "candidateId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidateBundleId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sameDirectoryAsMethod": {
+          "type": "boolean"
+        },
+        "score": {
+          "description": "The held-out score of this ablation's own table row, or null where it did not run.",
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vsEvolved": {
+          "description": "Signed held-out delta against the evolved directory. Positive means the ablation beat the method, and is published as it stands.",
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost": {
+          "type": "object",
+          "required": [
+            "calls",
+            "tokens"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "counters": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ablationCounter"
+          }
+        }
+      }
+    },
+    "ablationsBlock": {
+      "description": "The diagnostic half of the report: the method's own consolidation beside every ablation of it, with each ablation's signed held-out delta against the evolved directory. A positive delta is an ablation that beat the method and is published as it stands.",
+      "type": "object",
+      "required": [
+        "mode",
+        "method",
+        "entries"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "deepening",
+            "creation"
+          ]
+        },
+        "method": {
+          "type": "object",
+          "required": [
+            "condition",
+            "candidateId",
+            "candidateBundleId",
+            "levels",
+            "groups",
+            "withheld"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "condition": {
+              "$ref": "#/$defs/condition"
+            },
+            "candidateId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "candidateBundleId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "levels": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "groups": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "withheld": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ablationEntry"
+          }
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": {
+                  "$distinct": "$.entries[*].condition"
+                }
+              },
+              {
+                "$count": "$.entries[*]"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

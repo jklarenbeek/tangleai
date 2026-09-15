@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/desktop/chat-answer",
+  "$ref": "#/$defs/artifact",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "questionDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "disposition": {
+          "enum": [
+            "answer",
+            "refusal"
+          ]
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "messageId",
+        "questionDigest",
+        "disposition",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "disposition": {
+          "enum": [
+            "answer",
+            "refusal"
+          ]
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "disposition",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "resolution": {
+      "type": "object",
+      "properties": {
+        "verdict": {
+          "enum": [
+            "success",
+            "partial",
+            "failure"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 12,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "verdict",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "const": "operator-verdict-is-the-outcome"
+        }
+      },
+      "required": [
+        "policy"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

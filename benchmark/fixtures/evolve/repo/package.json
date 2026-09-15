@@ -1,0 +1,12 @@
+{
+  "name": "evolve-fixture-rank",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A toolchain-free ranking project: a gate that runs its own tests and a fitness script that counts comparisons.",
+  "scripts": {
+    "check": "node --test test/rank.test.js",
+    "fitness": "node bench/fitness.mjs",
+    "generate": "node scripts/generate-table.mjs"
+  }
+}

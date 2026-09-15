@@ -5,10 +5,16 @@
  * actions (pure JSON, `actions.ts`); the HOST owns the view builders
  * (`views.ts`, plain vnodes computed in the viewModel), the effects
  * (each one calls the typed contract client and dispatches `done` or
- * `fail` — outcomes are values, so actions never branch), and one
- * subscription: the `dag.live` SSE stream, which repaints the Loom as
- * the server runs the pipeline and refreshes the lists when a run
- * settles.
+ * `fail` — outcomes are values, so actions never branch), and the
+ * subscriptions: the live run window, and one named run's frames for
+ * the Loom and one for the pending chat answer. A frame stream is
+ * addressed and resumable — the handler owns the document it applies
+ * patches to, remembers the seq it reached, and re-enters there when
+ * the stream is lost.
+ *
+ * A client with no streaming half still works: a subscribe operation
+ * answers its snapshot as plain JSON, so a finished run's frames are
+ * one read.
  *
  * The client is INJECTED, so the same app runs headless in node tests
  * against `toFetchHandler(serveHttp(...))` — the whole stack, no
@@ -16,6 +22,7 @@
  */
 
 import { createApp } from '@jarenjs/app';
+import { applyJSONPatch } from '@jarenjs/json';
 
 import { ACTIONS, INITIAL_STATE } from './actions.ts';
 import { rootView } from './views.ts';
@@ -35,6 +42,55 @@ function failText(outcome: any): string {
     : `${error.code ?? outcome.kind}: ${error.message ?? ''}`.trim();
 }
 
+/** The highest frame seq a row set carries — the cursor a resume names. */
+function seqOf(rows: readonly any[]): number {
+  let top = 0;
+  for (const row of rows) if (typeof row?.seq === 'number' && row.seq > top) top = row.seq;
+  return top;
+}
+
+/**
+ * Watch one run's frames. The handler owns the rows it holds and the
+ * seq it reached, and a frame already held is never taken twice — so a
+ * resume that re-delivers what the snapshot already carried changes
+ * nothing, however the cursor was negotiated.
+ */
+function watchRun(
+  client: TangleUiOptions['client'],
+  props: any,
+  publish: (rows: any[]) => void,
+  onLost: () => void,
+): () => void {
+  if (client.subscribe === undefined || typeof props?.runId !== 'string') return () => {};
+  let rows: any[] = [];
+  const held = new Set<string>();
+  // the slot belongs to THIS run from the moment the subscription
+  // starts, so a switch can never leave the previous run's frames
+  // showing under a new run's id
+  publish(rows);
+  const admit = (incoming: readonly any[]): any[] => incoming.filter((row) => {
+    if (typeof row?.id !== 'string' || held.has(row.id)) return false;
+    held.add(row.id);
+    return true;
+  });
+  const subscription = client.subscribe('run.live', { runId: props.runId }, {
+    ...(typeof props.lastSeq === 'number' && props.lastSeq > 0 ? { lastSeq: props.lastSeq } : {}),
+    reconnect: { max: 3 },
+    onError: onLost,
+    onSnapshot: (value: any) => {
+      rows = admit(value.rows ?? []);
+      publish(rows);
+    },
+    onPatch: ({ patch }: any) => {
+      const added = admit(patch.filter((op: any) => op.op !== 'remove').map((op: any) => op.value));
+      if (added.length === 0) return;
+      rows = [...rows, ...added];
+      publish(rows);
+    },
+  });
+  return () => subscription.stop();
+}
+
 export function createTangleUi(options: TangleUiOptions): any {
   const client = options.client;
 
@@ -47,10 +103,137 @@ export function createTangleUi(options: TangleUiOptions): any {
       });
     },
 
+    /**
+     * Ask for a folder pass. A refused slot is not a failure: a pass is
+     * already running and will do the work this click asked for, so it
+     * renders as a note beside the button rather than as an error.
+     */
+    syncFolder: (_props: any, dispatch: Dispatch): void => {
+      void client.invoke('folder.sync', {}).then((outcome: any) => {
+        if (outcome.ok) { dispatch('sync/done', outcome.value); return; }
+        if (outcome?.error?.code === 'sync-busy') {
+          const issue = outcome.error?.details?.issues?.[0];
+          dispatch('sync/busy', typeof issue?.detail === 'string' ? issue.detail : 'a folder sync is already running');
+          return;
+        }
+        dispatch('sync/fail', failText(outcome));
+      });
+    },
+
+    /**
+     * A run's own follow-ups. The run detail names its candidate and evaluation
+     * by address, so the surface reads exactly what that run produced instead of
+     * guessing an id or listing someone else's.
+     */
+    skillDetail: (props: any, dispatch: Dispatch): void => {
+      const detail = props.detail ?? {};
+      const candidateId = (detail.candidateIds ?? [])[0];
+      const evaluationId = (detail.evaluationIds ?? [])[0];
+      const scopeKey = detail.run?.scopeKey;
+      if (typeof candidateId === 'string') {
+        void client.invoke('skills.candidates.get', { id: candidateId }).then((outcome: any) => {
+          if (outcome.ok) dispatch('skills/candidate', outcome.value);
+        });
+      }
+      if (typeof evaluationId === 'string') {
+        void client.invoke('skills.evaluations.get', { id: evaluationId }).then((outcome: any) => {
+          if (outcome.ok) dispatch('skills/evaluation', outcome.value);
+        });
+      }
+      if (typeof scopeKey === 'string') {
+        void client.invoke('skills.head.get', { scopeKey }).then((outcome: any) => {
+          if (outcome.ok) dispatch('skills/head', outcome.value);
+        });
+      }
+    },
+
+    /**
+     * Ask. With a streaming client the answer is a RUN the surface
+     * watches; without one the same engine answers the request, so a
+     * question is never left with nowhere to arrive.
+     */
     chatSend: (props: any, dispatch: Dispatch): void => {
-      void client.invoke('chat.send', { text: props.text }).then((outcome: any) => {
-        if (outcome.ok) dispatch('chat/done', outcome.value);
+      if (client.subscribe === undefined) {
+        void client.invoke('chat.send', { text: props.text }).then((outcome: any) => {
+          if (outcome.ok) dispatch('chat/done', outcome.value);
+          else dispatch('chat/fail', failText(outcome));
+        });
+        return;
+      }
+      void client.invoke('chat.start', { text: props.text }).then((outcome: any) => {
+        if (outcome.ok) dispatch('chat/started', outcome.value);
         else dispatch('chat/fail', failText(outcome));
+      });
+    },
+
+    /**
+     * One run's frames as a plain read — what a client with no streaming
+     * half can have, and all a finished run needs.
+     */
+    runFrames: (props: any, dispatch: Dispatch): void => {
+      if (client.subscribe !== undefined || typeof props.runId !== 'string') return;
+      void client.invoke('run.live', { runId: props.runId }).then((outcome: any) => {
+        if (!outcome.ok) return;
+        const rows = outcome.value.rows ?? [];
+        dispatch('loom/frames', { runId: props.runId, rows, lastSeq: seqOf(rows) });
+      });
+    },
+
+    /** What a verdict on this reply may say, and what it can be about. */
+    feedbackOpen: (props: any, dispatch: Dispatch): void => {
+      void client.invoke('feedback.open', { messageId: props.messageId }).then((outcome: any) => {
+        if (outcome.ok) dispatch('feedback/form', outcome.value);
+        else dispatch('feedback/fail', failText(outcome));
+      });
+    },
+
+    /** Ticking a source is a set operation, so the branch lives here and the document takes the answer. */
+    feedbackToggle: (props: any, dispatch: Dispatch): void => {
+      const refs: string[] = props.refs ?? [];
+      dispatch('feedback/refs', refs.includes(props.ref) ? refs.filter((ref) => ref !== props.ref) : [...refs, props.ref]);
+    },
+
+    /**
+     * Record the verdict. The server re-checks every bound the form
+     * published, and a refusal arrives as the issues it counted — shown
+     * as they are, never flattened into "something went wrong".
+     */
+    feedbackSubmit: (props: any, dispatch: Dispatch): void => {
+      const options: any[] = props.options ?? [];
+      const refs: string[] = props.refs ?? [];
+      const note = String(props.note ?? '').trim();
+      const evidence = options
+        .filter((option) => refs.includes(option.ref))
+        .map((option) => ({ kind: option.kind, ref: option.ref }));
+      if (note !== '') evidence.push({ kind: 'note', ref: 'note' });
+      void client.invoke('feedback.submit', {
+        messageId: props.messageId,
+        verdict: props.verdict,
+        reason: props.reason,
+        evidence,
+        note: note === '' ? null : note,
+      }).then((outcome: any) => {
+        if (outcome.ok) { dispatch('feedback/recorded', outcome.value); return; }
+        const issues = outcome?.error?.details?.issues ?? [];
+        dispatch('feedback/fail', issues.length > 0
+          ? issues.map((issue: any) => `${issue.code}: ${issue.detail}`).join(' · ')
+          : failText(outcome));
+      });
+    },
+
+    /**
+     * Ask for a measurement. The request blocks until the instrument
+     * exits, and what comes back is an exit code and an identity —
+     * never a verdict. The run's own progress arrives meanwhile on the
+     * run window's frame subscription, so this opens no second stream.
+     */
+    runReport: (props: any, dispatch: Dispatch): void => {
+      void client.invoke('reports.run', { id: props.id }).then((outcome: any) => {
+        if (outcome.ok) { dispatch('reports/done', outcome.value); return; }
+        const issues = outcome?.error?.details?.issues ?? [];
+        dispatch('reports/fail', issues.length > 0
+          ? issues.map((issue: any) => `${issue.code}: ${issue.detail}`).join(' · ')
+          : failText(outcome));
       });
     },
 
@@ -93,9 +276,29 @@ export function createTangleUi(options: TangleUiOptions): any {
       });
     },
 
+    /**
+     * Resolve a selected-but-unsaved profile through the read-only
+     * inspection. Nothing is written: the operator sees the issues a save
+     * would produce, and clearing the selection clears the preview.
+     */
+    previewProfile: (props: any, dispatch: Dispatch): void => {
+      const profile = props.profile === '' || props.profile === null || props.profile === undefined
+        ? null : String(props.profile);
+      if (profile === null) {
+        dispatch('config/preview', null);
+        return;
+      }
+      void client.invoke('config.inspect', { profile }).then((outcome: any) => {
+        dispatch('config/preview', outcome.ok ? outcome.value.preview ?? null : null);
+      });
+    },
+
     saveSettings: (props: any, dispatch: Dispatch): void => {
       const settings = {
         ...props.settings,
+        // "(none)" is the absence of a selection, not a profile named ''
+        profile: props.settings.profile === '' || props.settings.profile === undefined
+          ? null : props.settings.profile,
         chat: {
           ...props.settings.chat,
           ...(props.settings.chat.maxTokens === undefined ? {} : {
@@ -122,30 +325,71 @@ export function createTangleUi(options: TangleUiOptions): any {
   };
 
   const subs = {
-    /** The live DAG stream. Emissions are root-replace patches; the
-     * value IS the state. When a run settles, the lists refresh. */
-    live: (_props: any, dispatch: Dispatch): (() => void) => {
+    /**
+     * The run window. Patches apply to the document the server
+     * maintains, so what the surface holds is what the subscription
+     * holds; the Loom follows whichever run is running.
+     */
+    runs: (_props: any, dispatch: Dispatch): (() => void) => {
       if (client.subscribe === undefined) return () => {};
-      let lastStatus: string | null = null;
-      const push = (value: any, snapshot = false): void => {
-        dispatch(snapshot ? 'loom/snapshot' : 'loom/live', value);
-        const status = value?.run?.status ?? null;
-        if (lastStatus === 'running' && (status === 'ok' || status === 'error')) {
-          dispatch('runs/refresh');
+      let document: any = { rows: [] };
+      let following: string | null = null;
+      const settled = new Set<string>();
+      let seeded = false;
+      const publish = (): void => {
+        dispatch('loom/runs', document);
+        // a run in flight is what a watcher wants shown; with nothing
+        // running the newest stored run is what the Loom last did, which
+        // a watched folder makes the common case
+        const target = document.rows.find((row: any) => row.status === 'running') ?? document.rows[0];
+        if (target !== undefined && target.id !== following) {
+          following = target.id;
+          dispatch('loom/follow', target.id);
         }
-        lastStatus = status;
+        // a run reaching a terminal state is what moved the counts the
+        // other pages show; the first snapshot is history, not news
+        let reached = false;
+        for (const row of document.rows) {
+          if (row.status === 'running') continue;
+          if (!settled.has(row.id)) { settled.add(row.id); reached = true; }
+        }
+        if (reached && seeded) dispatch('runs/refresh');
+        seeded = true;
       };
-      const subscription = client.subscribe('dag.live', {}, {
+      const subscription = client.subscribe('runs.live', { limit: 50 }, {
         reconnect: { max: 3 },
-        onError: () => dispatch('loom/refresh'),
-        onSnapshot: (value: any) => push(value, true),
-        onPatch: ({ patch }: any) => {
-          const root = patch.find((op: any) => op.path === '');
-          if (root !== undefined) push(root.value);
-        },
+        onError: () => dispatch('runs/refresh'),
+        onSnapshot: (value: any) => { document = value; publish(); },
+        onPatch: ({ patch }: any) => { document = applyJSONPatch(document, patch); publish(); },
       });
       return () => subscription.stop();
     },
+
+    /** The Loom's watched run, addressed and resumable. */
+    frames: (props: any, dispatch: Dispatch): (() => void) => {
+      let counted = 0;
+      return watchRun(client, props, (rows) => {
+        dispatch('loom/frames', { runId: props.runId, rows, lastSeq: seqOf(rows) });
+        // a pass that reported its counts is a pass the watcher's own
+        // numbers have moved for
+        const passes = rows.filter((row) => row.kind === 'sync').length;
+        if (passes > counted) { counted = passes; dispatch('watch/refresh'); }
+      }, () => dispatch('loom/frameLost', (props.attempt ?? 0) + 1));
+    },
+
+    /** The run answering the pending question: its progress, its degradations, its end. */
+    chatFrames: (props: any, dispatch: Dispatch): (() => void) =>
+      watchRun(client, props, (rows) => {
+        const terminal = rows.find((row) => row.kind === 'status');
+        dispatch('chat/streamed', {
+          runId: props.runId,
+          messageId: props.messageId,
+          chars: rows.reduce((total, row) => total + (row.kind === 'delta' ? Number(row.body.chars) : 0), 0),
+          degraded: rows.filter((row) => row.kind === 'degraded').map((row) => row.body),
+          status: terminal === undefined ? 'running' : String(terminal.body.status),
+        });
+        if (rows.some((row) => row.kind === 'answer') || terminal !== undefined) dispatch('chat/answered');
+      }, () => dispatch('chat/fail', 'the answer stream was lost')),
   };
 
   const app = createApp({
@@ -153,7 +397,21 @@ export function createTangleUi(options: TangleUiOptions): any {
     state: INITIAL_STATE,
     view: [{ match: '$', body: '$.ui' }],
     actions: ACTIONS,
-    subs: [{ run: 'live' }],
+    subs: [
+      { run: 'runs' },
+      {
+        run: 'frames',
+        when: '$.loom.watch',
+        key: { runId: '$.loom.watch', attempt: '$.loom.frameAttempt' },
+        withQuery: { runId: '$.loom.watch', attempt: '$.loom.frameAttempt', lastSeq: '$.loom.frames.lastSeq' },
+      },
+      {
+        run: 'chatFrames',
+        when: '$.chat.run.runId',
+        key: { runId: '$.chat.run.runId' },
+        withQuery: { runId: '$.chat.run.runId', messageId: '$.chat.run.messageId' },
+      },
+    ],
   }, {
     node: options.node,
     document: options.document,

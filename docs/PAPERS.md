@@ -27,6 +27,35 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
     Domain quality remains unqualified; the trading system is its own roadmap entry.
   - 📄 [`refs/2412.20138v7.pdf`](refs/2412.20138v7.pdf)
 
+- **Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills**
+  (arXiv:2603.25158v4, Chen et al., Mar 2026)
+  - `@tangleai/trace2skill` implements the method, not the retrieval baseline:
+    one frozen skill directory per bounded scope, labeled rollouts over a
+    disjoint evolve split, one independent analyst per trajectory (a single
+    structured pass for a success, a bounded agentic loop for a failure whose
+    proposal is admitted only after the host's real evaluator passed over a
+    repair), a trajectory-local patch pool merged hierarchically and
+    prevalence-aware into ONE patch, deterministic conflict and format gates
+    (anchors that resolve exactly once, base-hash line intervals, withheld
+    overlaps, atomic create/link groups), one guarded application to the frozen
+    directory, a held-out comparison against no directory and the frozen one,
+    and direct use of the evolved directory with no retrieval index at test
+    time. Both modes ship: deepening from a human directory and creation from a
+    trajectory-blind draft.
+  - Not implemented: the paper's datasets (SpreadsheetBench, WikiTQ, DAPO/AIME,
+    DocVQA), its GPU scale and its 128-way analyst fan-out, and its
+    cross-model and out-of-distribution transfer tiers — the instrument
+    publishes those two rows as `not-run` because it builds no second executor
+    identity and registers a single domain. Every number this repository
+    publishes comes from a Tangle-authored keyless fixture with a scripted
+    model wire ([measurement](TRACE2SKILL_BENCHMARK.md)), so what is
+    established is mechanism behavior and its cost, never model quality; live
+    quality is a roadmap entry. The salvaged cluster-then-retrieve design
+    reproduces the paper's retrieval-memory baseline and survives only as the
+    `retrieval-bank` ablation row, which loses to the evolved directory by
+    0.250 on the held-out split.
+  - 📄 [`refs/2603.25158v4.pdf`](refs/2603.25158v4.pdf)
+
 - **S2 Chunking** (arXiv:2501.05485v1, Verma, Jan 2025)
   - A corrected, capped experiment is `S2DocumentChunker` in `@tangleai/documents`:
     deterministic k-means, convergence diagnostics, atomic hard-limit fallback, and
@@ -56,11 +85,6 @@ implementing any single one.
 
 ## Planned — an open roadmap entry names each
 
-- **Trace2Skill** (arXiv:2603.25158v4, Chen et al., Mar 2026) — trajectory clustering →
-  skill merge → injection, through the @jarenjs/ai skill schema and refine gates. The skill
-  loop — whose entry records that the salvaged design reproduces the paper's retrieval
-  baseline, not its method.
-  - 📄 [`refs/2603.25158v4.pdf`](refs/2603.25158v4.pdf)
 - **Milkyway harness evolution** (arXiv:2604.15719v2, Xu et al., Apr 2026) — versioned
   prediction harnesses with retrospective validation. Harness evolution for forecasting.
   - 📄 [`refs/2604.15719v2.pdf`](refs/2604.15719v2.pdf)

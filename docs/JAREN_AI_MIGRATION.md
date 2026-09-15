@@ -3,7 +3,8 @@
 Jaren supplies independent generic engines, contracts and complete editors.
 Tangle owns the model, context and agent mechanisms, their Jaren integrations,
 the reusable assistant, and the Pages adventure. The current foundation is
-[Jaren 0.86.0](JARENJS_INTEGRATION.md); the qualification below retains the
+[Jaren 0.90.6](JARENJS_INTEGRATION.md), which that audit keeps authoritative;
+the qualification below retains the
 0.84.3 migration and TypeScript-conversion receipts. The original [close-out receipt](migrations/jaren-ai/closeout.json)
 records the committed 0.84.0 migration; its foundation-manifest hash describes
 the bytes at Tangle commit `2fcb6b0dfbd3b5f390af8d8040e162d080653945`.
@@ -15,13 +16,13 @@ author action.
 
 | Input | Identity |
 |---|---|
-| Current Jaren source | `ce489546f21a176a2574169b65b95f9dc15461f7`, version `0.86.0`; see the current integration audit |
+| Current Jaren source | `37ba1676dab7868b168858b413a3ec647eebefdd`, version `0.90.6`; see the current integration audit |
 | TypeScript-conversion foundation | `ac8749711f5d058251f72842ce7e0095b389403f`, version `0.84.3` |
 | Original migration source | `b111a633f6d35f00109902a16cc25776ccaaf4ea`, version `0.84.0` |
 | Foundation source state | Committed; empty patch SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | TypeScript-conversion release | `0.22.0`, prepared through the fourteen-package fixed Changesets group for the TypeScript conversion and pen ownership change; [release record](../releases/0.22.0.json) |
 | Source provenance | Original execution bases remain recoverable; the Jaren gitlink now names the committed AI-free source |
-| Foundation mode | 23 published AI-free Jaren packages; exact `0.86.0` dependencies and registry URLs/integrities in the lock |
+| Foundation mode | 23 published AI-free Jaren packages; exact pinned dependencies and registry URLs/integrities in the lock, at the version the [integration audit](JARENJS_INTEGRATION.md) states |
 | Toolchains | Jaren Node `24.20.0`, Bun `1.4.2`; Tangle Node `24.20.0`, Bun `1.4.0`; npm `11.12.1` |
 
 The [0.84.3 foundation manifest](migrations/jaren-ai/foundations-0.84.3.json)
@@ -30,8 +31,8 @@ AI-free dependency edges. The [registry receipt](migrations/jaren-ai/registry-0.
 records all 23 published tarball URLs: their downloaded bytes match those
 source-built archives exactly. The installed closure was checked against the
 same complete member inventories during that qualification. Current root and
-workspace dependencies use exact `0.86.0` registry versions; the checker refuses
-a stale `file:` lock entry. The current [registry receipt](integration/jaren-0.86.0-registry.json)
+workspace dependencies use exact `0.90.6` registry versions; the checker refuses
+a stale `file:` lock entry. The current [registry receipt](integration/jaren-0.90.6-registry.json)
 checks downloaded archive integrity without relabelling the old source rebuild.
 The active candidate `foundations.json` has been archived under its versioned
 name, so CI and ordinary installs use npm without an archive bootstrap.
@@ -213,10 +214,10 @@ access, credential migration or global transaction across localStorage writes
 is promised. Pages conservatively uses one ledger writer on every browser.
 
 MAS executable identity is
-`tangle-mas/3:flow/<version>:models/<version>:context/<version>:agents/<version>:<registry>`.
+`tangle-mas/5:flow/<version>:models/<version>:context/<version>:agents/<version>:<registry>`.
 Mismatched executable checkpoints are refused with `TMAS2002` before effects or
 writes; repeating the attempt leaves the checkpoint intact. This includes a
-0.84.3 Flow execution identity when the runtime now uses Flow 0.86.0, as well as
+0.84.3 Flow execution identity when the runtime now uses Flow 0.90.6, as well as
 legacy executable identity formats. Ordinary records
 remain readable. No automatic legacy executable conversion is claimed.
 

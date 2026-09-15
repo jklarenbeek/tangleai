@@ -1,0 +1,10 @@
+{
+  "id": "task-21",
+  "split": "evolve",
+  "prompt": "What is the mean reading in celsius at the yard site, rounded to one decimal?",
+  "inputs": [
+    "inputs/readings.md"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "rounding"
+}

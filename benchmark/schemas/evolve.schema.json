@@ -1,0 +1,1571 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/evolve",
+  "title": "Repository-experiment instrument report — registered before any executor exists",
+  "description": "What `benchmark/evolve.ts` writes. The registration is immutable input: a fixture repository pinned by file digests and one constant base revision, an immutable-surface policy and budget set held outside that repository, a hand-authored strategy library, and sixteen adversarial proposals each carrying the exact decision, reason and refusal code it must produce — true improvement, no-op, regression, flake, edits to tests, CI, the gate script, the registered threshold and the fitness instrument, a rename, a generated file, a path escape, an oversized patch, and three hostile runtimes. Rows are replaced by id as a mechanism lands and never change the registration or its denominators; `implementation-missing` is the honest state while no executor exists. Two analytic controls license every other number: an oracle that reads the registration back, and a seeded random selection. The census reconciles by `$query` at validation time, protected-ref writes and live model calls are literal zeros, and `reportId` is the canonical SHA-256 of the document with that field excluded. No clock, hostname, temporary path or duration has a representable member anywhere in this document.",
+  "type": "object",
+  "required": [
+    "benchmark",
+    "instrument",
+    "source",
+    "suite",
+    "fixture",
+    "registration",
+    "rows",
+    "controls",
+    "hostProbes",
+    "counts",
+    "identity",
+    "decision",
+    "reportId"
+  ],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.proposals[*].id"
+          },
+          {
+            "$count": {
+              "$distinct": "$.registration.proposals[*].id"
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.proposals[*]"
+          },
+          "$.registration.experiments"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[*]"
+          },
+          "$.registration.experiments"
+        ]
+      },
+      {
+        "$eq": [
+          [
+            {
+              "$for": {
+                "p": "$.registration.proposals[*]"
+              },
+              "$return": "$p.id"
+            }
+          ],
+          [
+            {
+              "$for": {
+                "r": "$.rows[*]"
+              },
+              "$return": "$r.proposalId"
+            }
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          [
+            {
+              "$for": {
+                "p": "$.registration.proposals[*]"
+              },
+              "$return": "$p.strategyId"
+            }
+          ],
+          [
+            {
+              "$for": {
+                "r": "$.rows[*]"
+              },
+              "$return": "$r.strategyId"
+            }
+          ]
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.hostProbes[*]"
+          },
+          {
+            "$count": "$.registration.hostProbes[*]"
+          }
+        ]
+      },
+      {
+        "$every": {
+          "r": "$.rows[?(@.state=='implementation-missing')]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$eq": [
+                "$r.actual",
+                null
+              ]
+            },
+            {
+              "$eq": [
+                "$r.matches",
+                null
+              ]
+            },
+            {
+              "$eq": [
+                "$r.effects.legs",
+                0
+              ]
+            },
+            {
+              "$eq": [
+                "$r.effects.unresolved",
+                0
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$every": {
+          "r": "$.rows[?(@.state=='run')]"
+        },
+        "$satisfies": {
+          "$and": [
+            {
+              "$ne": [
+                "$r.actual",
+                null
+              ]
+            },
+            {
+              "$ne": [
+                "$r.matches",
+                null
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[?(@.state=='run')]"
+          },
+          "$.counts.attempted"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[?(@.actual.decision=='kept')]"
+          },
+          "$.counts.kept"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[?(@.actual.decision=='abandoned')]"
+          },
+          "$.counts.abandoned.total"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[?(@.actual.decision=='refused')]"
+          },
+          "$.counts.refused.total"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.rows[?(@.actual.decision=='uncertain')]"
+          },
+          "$.counts.uncertain"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$sum": "$.counts.abandoned.byReason.*"
+          },
+          "$.counts.abandoned.total"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$sum": "$.counts.refused.byReason.*"
+          },
+          "$.counts.refused.total"
+        ]
+      },
+      {
+        "$eq": [
+          "$.counts.attempted",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.counts.kept",
+                  "$.counts.abandoned.total"
+                ]
+              },
+              {
+                "$add": [
+                  "$.counts.refused.total",
+                  "$.counts.uncertain"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$not": {
+          "$lt": [
+            "$.counts.worktreesCreated",
+            "$.counts.worktreesRemoved"
+          ]
+        }
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.proposals[*]"
+          },
+          "$.controls.oracle.attempted"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.registration.proposals[?(@.expect.decision=='kept')]"
+          },
+          "$.controls.oracle.kept"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.controls.oracle.strategies[*]"
+          },
+          {
+            "$count": "$.registration.strategies[*]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$sum": "$.controls.oracle.strategies[*].attempted"
+          },
+          "$.controls.oracle.attempted"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$sum": "$.controls.oracle.strategies[*].kept"
+          },
+          "$.controls.oracle.kept"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.controls.random.selected[*]"
+          },
+          "$.controls.random.selects"
+        ]
+      },
+      {
+        "$eq": [
+          "$.controls.random.attempted",
+          "$.controls.random.selects"
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[?(@.state=='implementation-missing')]"
+              },
+              0
+            ]
+          },
+          {
+            "$eq": [
+              "$.decision",
+              "implementation-missing"
+            ]
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.decision",
+              "implementation-missing"
+            ]
+          },
+          {
+            "$not": {
+              "$eq": [
+                {
+                  "$count": "$.rows[?(@.state=='implementation-missing')]"
+                },
+                0
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.decision",
+              "oracle-exact"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$every": {
+                  "r": "$.rows[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$r.matches",
+                    true
+                  ]
+                }
+              },
+              {
+                "$every": {
+                  "p": "$.hostProbes[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$p.state",
+                    "pass"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$or": [
+          {
+            "$ne": [
+              "$.decision",
+              "executor-conformant"
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.state",
+                "run"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "benchmark": {
+      "const": "evolve"
+    },
+    "instrument": {
+      "description": "Which report contract produced this document: the canonical digest of the schema it validates against.",
+      "type": "object",
+      "required": [
+        "name",
+        "entry",
+        "contractRevision"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "evolve"
+        },
+        "entry": {
+          "const": "benchmark/evolve.ts"
+        },
+        "contractRevision": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "source": {
+      "$ref": "#/$defs/sourceManifest"
+    },
+    "suite": {
+      "type": "object",
+      "required": [
+        "packages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "packages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "version"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^@(jarenjs|tangleai)/[a-z0-9-]+$"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "fixture": {
+      "description": "The fixture repository as this run verified it: every committed file digest recomputed, and the base revision confirmed by materializing the tree and reading HEAD back. `materializationRuns` counts the git processes that cost, which are not experiment processes.",
+      "type": "object",
+      "required": [
+        "id",
+        "licence",
+        "provenance",
+        "manifestRevision",
+        "policyRevision",
+        "strategiesRevision",
+        "baseRevision",
+        "files",
+        "materializationRuns"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "const": "evolve-fixture-rank/v1"
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifestRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "policyRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "strategiesRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "baseRevision": {
+          "$ref": "#/$defs/gitRevision"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "materializationRuns": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "registration": {
+      "description": "Immutable input. Editing any of it invalidates every measurement taken against it.",
+      "type": "object",
+      "required": [
+        "strategies",
+        "proposals",
+        "experiments",
+        "hostProbes",
+        "budgets"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "strategies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/strategy"
+          }
+        },
+        "proposals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "strategyId",
+              "revision",
+              "expect"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "strategyId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "$ref": "#/$defs/sha256"
+              },
+              "expect": {
+                "$ref": "#/$defs/expectation"
+              }
+            }
+          }
+        },
+        "experiments": {
+          "const": 16
+        },
+        "hostProbes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "symlink-indirection",
+              "protected-ref-write",
+              "unknown-command",
+              "env-leak"
+            ]
+          }
+        },
+        "budgets": {
+          "$ref": "#/$defs/budgets"
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/row"
+      }
+    },
+    "controls": {
+      "$ref": "#/$defs/controls"
+    },
+    "hostProbes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/hostProbe"
+      }
+    },
+    "counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "identity": {
+      "description": "The shared config-identity envelope. Every row here is analysis: no provider stack ran, so no row may reference one.",
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+    },
+    "decision": {
+      "description": "`implementation-missing` while any registered row has no executor to run it; `executor-conformant` when every row ran; `oracle-exact` only when every row also produced its registered decision and every host probe passed.",
+      "enum": [
+        "implementation-missing",
+        "executor-conformant",
+        "oracle-exact"
+      ]
+    },
+    "reportId": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gitRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "decision": {
+      "enum": [
+        "kept",
+        "abandoned",
+        "refused",
+        "uncertain"
+      ]
+    },
+    "reason": {
+      "enum": [
+        "improved",
+        "equal",
+        "regression",
+        "red",
+        "ambiguous",
+        "over-budget",
+        "unverifiable",
+        "goalpost",
+        "escape",
+        "command",
+        "uncertain-effect"
+      ]
+    },
+    "code": {
+      "oneOf": [
+        {
+          "enum": [
+            "TEVO1001",
+            "TEVO1002",
+            "TEVO1003",
+            "TEVO1004",
+            "TEVO1005",
+            "TEVO1006",
+            "TEVO1007",
+            "TEVO1008",
+            "TEVO1009",
+            "TEVO1010",
+            "TEVO1011"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reasonCounts": {
+      "description": "Every reason in the vocabulary, always present. A reason that did not happen is a zero, never a missing key: an absent column is how a losing row disappears.",
+      "type": "object",
+      "required": [
+        "improved",
+        "equal",
+        "regression",
+        "red",
+        "ambiguous",
+        "over-budget",
+        "unverifiable",
+        "goalpost",
+        "escape",
+        "command",
+        "uncertain-effect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "improved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "equal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "regression": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "red": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "over-budget": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unverifiable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "goalpost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "escape": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "command": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncertain-effect": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "expectation": {
+      "description": "What the registration says one proposal must produce. Written before any mechanism exists, and never edited to match a measurement.",
+      "type": "object",
+      "required": [
+        "decision",
+        "reason",
+        "code"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "reason": {
+          "$ref": "#/$defs/reason"
+        },
+        "code": {
+          "$ref": "#/$defs/code"
+        }
+      }
+    },
+    "strategy": {
+      "description": "A hand-authored strategy, shaped as the ledger's skill record plus the evidence that carries it. The ledger assigns `at` and any embedding when the record is inserted; a registration holds no clock.",
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "when",
+        "instructions",
+        "tools",
+        "evidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "patchOperation": {
+      "description": "One RFC 6902 operation over `{ files: { <relative path>: <utf-8 text> } }`. Nothing outside `/files/` is addressable, and the pointer is the only place a path is stated.",
+      "type": "object",
+      "required": [
+        "op",
+        "path"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "enum": [
+            "add",
+            "replace",
+            "remove"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/files/"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "proposal": {
+      "description": "A hand-authored candidate change and the decision the registration demands of it. Model-authored proposals are a separate, later, explicitly approved mode; nothing here is model output.",
+      "type": "object",
+      "required": [
+        "id",
+        "strategyId",
+        "rationale",
+        "evidence",
+        "patch",
+        "expect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strategyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "patch": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          }
+        },
+        "expect": {
+          "$ref": "#/$defs/expectation"
+        }
+      }
+    },
+    "command": {
+      "description": "A command as an argv array, beside the fixture package script that spells it. No shell string is ever registered, and the two must agree.",
+      "type": "object",
+      "required": [
+        "script",
+        "command"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "script": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "policy": {
+      "description": "The immutable surface and the registered commands, held outside the repository under experiment so a proposal cannot move a goalpost by editing the file that defines it.",
+      "type": "object",
+      "required": [
+        "immutable",
+        "gate",
+        "instrument",
+        "truth",
+        "thresholds",
+        "metricSchema"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "immutable": {
+          "description": "What a proposal may not reach: tests and their fixtures, the gate script, CI, the fitness instrument, the registered truth and thresholds, and every generated file together with the generator that owns it.",
+          "type": "object",
+          "required": [
+            "paths",
+            "prefixes",
+            "generated"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "paths": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "prefixes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "generated": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "generator",
+                  "source"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "generator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gate": {
+          "$ref": "#/$defs/command"
+        },
+        "instrument": {
+          "$ref": "#/$defs/command"
+        },
+        "truth": {
+          "description": "The registered base value of the fitness metric. A measured base that differs from it makes the experiment unverifiable rather than an improvement.",
+          "type": "object",
+          "required": [
+            "path",
+            "metric",
+            "value"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "metric": {
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "type": "integer"
+            }
+          }
+        },
+        "thresholds": {
+          "description": "Which way the metric must move and by how much. Registered here, outside the worktree, so no patch can reach it.",
+          "type": "object",
+          "required": [
+            "path",
+            "metric",
+            "direction",
+            "minDelta"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "metric": {
+              "type": "string",
+              "minLength": 1
+            },
+            "direction": {
+              "enum": [
+                "lower",
+                "higher"
+              ]
+            },
+            "minDelta": {
+              "type": "number"
+            }
+          }
+        },
+        "metricSchema": {
+          "type": "object",
+          "description": "The contract the fitness command's stdout must satisfy. Unparseable or schema-invalid output is a refused measurement, never a zero."
+        }
+      }
+    },
+    "budgets": {
+      "description": "Every bound an experiment runs under. Exhaustion abandons and is counted; nothing here may be raised from inside an experiment.",
+      "type": "object",
+      "required": [
+        "patchBytes",
+        "patchFiles",
+        "gateTimeoutMs",
+        "fitnessTimeoutMs",
+        "stdoutBytes",
+        "stderrBytes",
+        "workspaceBytes",
+        "samples"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "patchBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "patchFiles": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "gateTimeoutMs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fitnessTimeoutMs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stdoutBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stderrBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "workspaceBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sourceManifest": {
+      "description": "The ordered path/digest manifest of everything this instrument's behavior reads. Commit HEAD is deliberately absent: committing identical bytes does not invalidate a measurement.",
+      "type": "object",
+      "required": [
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "manifest": {
+      "description": "The registration: the fixture repository's identity and file digests, the immutable-surface policy, the budgets, the strategy library revision and every proposal with the decision it must produce.",
+      "type": "object",
+      "required": [
+        "manifest",
+        "version",
+        "fixture",
+        "files",
+        "policy",
+        "budgets",
+        "strategiesRevision",
+        "proposals",
+        "hostProbes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "manifest": {
+          "const": "evolve-fixture"
+        },
+        "version": {
+          "const": 1
+        },
+        "fixture": {
+          "type": "object",
+          "required": [
+            "id",
+            "licence",
+            "provenance",
+            "baseRevision",
+            "repo"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "evolve-fixture-rank/v1"
+            },
+            "licence": {
+              "const": "MIT"
+            },
+            "provenance": {
+              "type": "string",
+              "minLength": 1
+            },
+            "baseRevision": {
+              "$ref": "#/$defs/gitRevision"
+            },
+            "repo": {
+              "const": "benchmark/fixtures/evolve/repo"
+            }
+          }
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        },
+        "policy": {
+          "$ref": "#/$defs/policy"
+        },
+        "budgets": {
+          "$ref": "#/$defs/budgets"
+        },
+        "strategiesRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "proposals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "path",
+              "revision",
+              "strategyId",
+              "expect"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "$ref": "#/$defs/sha256"
+              },
+              "strategyId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expect": {
+                "$ref": "#/$defs/expectation"
+              }
+            }
+          }
+        },
+        "hostProbes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "symlink-indirection",
+              "protected-ref-write",
+              "unknown-command",
+              "env-leak"
+            ]
+          }
+        }
+      }
+    },
+    "row": {
+      "description": "One registered proposal's row. `implementation-missing` is the honest state while no executor exists: it carries no actual decision and claims no match.",
+      "type": "object",
+      "required": [
+        "proposalId",
+        "strategyId",
+        "state",
+        "actual",
+        "matches",
+        "budgets",
+        "effects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "proposalId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "strategyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "implementation-missing",
+            "run"
+          ]
+        },
+        "actual": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "decision",
+                "reason",
+                "code"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "decision": {
+                  "$ref": "#/$defs/decision"
+                },
+                "reason": {
+                  "$ref": "#/$defs/reason"
+                },
+                "code": {
+                  "$ref": "#/$defs/code"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matches": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "budgets": {
+          "description": "What the proposal costs before anything runs: the UTF-8 size of its canonical patch and the number of files it touches, each against the registered cap.",
+          "type": "object",
+          "required": [
+            "patchBytes",
+            "patchFiles",
+            "withinPatchBytes",
+            "withinPatchFiles"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "patchBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "patchFiles": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "withinPatchBytes": {
+              "type": "boolean"
+            },
+            "withinPatchFiles": {
+              "type": "boolean"
+            }
+          }
+        },
+        "effects": {
+          "description": "Fenced effect legs this row spawned, and how many settled unresolved. An unresolved leg stops for reconciliation; it is never retried into a number.",
+          "type": "object",
+          "required": [
+            "legs",
+            "unresolved"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "legs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolved": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "hostProbe": {
+      "description": "A refusal that cannot be expressed as a file-map patch and must be proven against the host instead.",
+      "type": "object",
+      "required": [
+        "id",
+        "state",
+        "detail"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            "symlink-indirection",
+            "protected-ref-write",
+            "unknown-command",
+            "env-leak"
+          ]
+        },
+        "state": {
+          "enum": [
+            "implementation-missing",
+            "pass",
+            "fail"
+          ]
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "strategyControl": {
+      "type": "object",
+      "required": [
+        "strategyId",
+        "attempted",
+        "kept",
+        "hitRate"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "strategyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kept": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hitRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "controls": {
+      "description": "The two rows that license every other number: an exact oracle and a seeded random draw.",
+      "type": "object",
+      "required": [
+        "oracle",
+        "random"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "oracle": {
+          "description": "The registration read back as a scorer: what the hit rate is if every proposal produces exactly the decision registered for it. It is a constant a mechanism must reproduce, never a quality claim.",
+          "type": "object",
+          "required": [
+            "strategies",
+            "attempted",
+            "kept",
+            "hitRate"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "strategies": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/strategyControl"
+              }
+            },
+            "attempted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kept": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hitRate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "random": {
+          "description": "A seeded shuffle picking proposals with no strategy at all. Ranked selection that cannot beat this row has not earned its cost.",
+          "type": "object",
+          "required": [
+            "seed",
+            "selects",
+            "selected",
+            "attempted",
+            "kept",
+            "hitRate"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "seed": {
+              "type": "integer"
+            },
+            "selects": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "selected": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "attempted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "kept": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hitRate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      }
+    },
+    "counts": {
+      "description": "The census over the rows. `protectedRefWrites` and `liveModelCalls` are literal zeros the schema asserts: a report of a run that wrote a protected ref or bought a completion cannot validate at all.",
+      "type": "object",
+      "required": [
+        "attempted",
+        "kept",
+        "abandoned",
+        "refused",
+        "uncertain",
+        "processRuns",
+        "worktreesCreated",
+        "worktreesRemoved",
+        "branchesLeft",
+        "protectedRefWrites",
+        "liveModelCalls"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kept": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "abandoned": {
+          "type": "object",
+          "required": [
+            "total",
+            "byReason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byReason": {
+              "$ref": "#/$defs/reasonCounts"
+            }
+          }
+        },
+        "refused": {
+          "type": "object",
+          "required": [
+            "total",
+            "byReason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byReason": {
+              "$ref": "#/$defs/reasonCounts"
+            }
+          }
+        },
+        "uncertain": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "processRuns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreesCreated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreesRemoved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "branchesLeft": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "protectedRefWrites": {
+          "const": 0
+        },
+        "liveModelCalls": {
+          "const": 0
+        }
+      }
+    }
+  }
+}

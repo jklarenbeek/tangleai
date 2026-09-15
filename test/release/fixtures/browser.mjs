@@ -1,6 +1,7 @@
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
+import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
 import { createMemoryOutcomeStore, createOutcomeContract } from '@tangleai/outcomes';
 import { program as pen, LinqBuildError } from '@tangleai/linq';
 import { createStudioFileAuthor, createDataAdapter, createFlowAdapter } from '@tangleai/jaren';
@@ -12,6 +13,7 @@ globalThis.tangleConsumer = {
   gmpl: qualifyGmplBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
+  trace2skill: qualifyTrace2SkillBrowser(),
   outcomeStore: createMemoryOutcomeStore(),
   outcomeContract: createOutcomeContract(),
   program: pen.program(['data']).stat('data', 'meta').answer('meta').toJSON(),

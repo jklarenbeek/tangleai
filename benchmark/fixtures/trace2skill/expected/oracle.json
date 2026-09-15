@@ -1,0 +1,41 @@
+{
+  "document": "trace2skill-oracle",
+  "evaluator": "exact-normalized-v1",
+  "tasks": 8,
+  "ceiling": 1,
+  "randomPool": [
+    "11115.50",
+    "4",
+    "80",
+    "dock-a",
+    "north",
+    "oslo",
+    "s-04",
+    "yard"
+  ],
+  "randomDraw": {
+    "seed": 17753,
+    "correct": 2,
+    "score": 0.25
+  },
+  "randomBand": {
+    "floor": 0.125,
+    "low": 0,
+    "high": 0.7177071733467426
+  },
+  "heldOut": {
+    "deepening": {
+      "no-skill": 0.75,
+      "frozen-s0": 0.875,
+      "evolved-s-star": 1,
+      "retrieval-bank": 0.75,
+      "single-call-error": 1,
+      "sequential-merge": 1
+    },
+    "creation": {
+      "no-skill": 0.75,
+      "draft-s0": 0.75,
+      "evolved-s-star": 0.875
+    }
+  }
+}

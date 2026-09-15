@@ -1,0 +1,7 @@
+shipment,origin,destination,weight_kg,status
+shp-01,oslo,bergen,120.5,delivered
+shp-02,oslo,tromso,340.0,in-transit
+shp-03,bergen,oslo,75.25,delivered
+shp-04,tromso,oslo,510.75,delayed
+shp-05,bergen,tromso,240.0,delivered
+shp-06,oslo,bergen,95.5,delayed

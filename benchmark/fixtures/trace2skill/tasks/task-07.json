@@ -1,0 +1,10 @@
+{
+  "id": "task-07",
+  "split": "evolve",
+  "prompt": "What is the total on-hand quantity of sku BX-220 across both warehouses?",
+  "inputs": [
+    "inputs/inventory.csv"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "aggregate"
+}

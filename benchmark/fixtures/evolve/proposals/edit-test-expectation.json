@@ -1,0 +1,18 @@
+{
+  "id": "edit-test-expectation",
+  "strategyId": "S-goalpost",
+  "rationale": "The tie-break assertion is over-specified; assert the shape of the result instead.",
+  "evidence": "Only the count of returned records is documented behaviour.",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/files/test~1rank.test.js",
+      "value": "/**\n * The gate. Correctness on hand-written inputs that the fitness script never\n * uses, plus the generated table's drift check — so an implementation cannot\n * buy a cheaper fitness number by getting the ranking wrong, and a generated\n * file cannot drift away from the source it claims to come from.\n */\n\nimport test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { readFile } from 'node:fs/promises';\n\nimport { topK } from '../src/rank.js';\nimport { renderTable } from '../scripts/generate-table.mjs';\nimport { TIERS, tierOf } from '../src/generated/table.js';\n\nconst RECORDS = [\n  { id: 'e', score: 12 },\n  { id: 'a', score: 41 },\n  { id: 'c', score: 41 },\n  { id: 'd', score: 7 },\n  { id: 'b', score: 33 },\n];\n\ntest('topK ranks by score and breaks ties by id', () => {\n  assert.equal(topK(RECORDS, 3).length, 3);\n});\n\ntest('topK returns every record when k exceeds the input', () => {\n  assert.deepEqual(topK(RECORDS, 99).map((record) => record.id), ['a', 'c', 'b', 'e', 'd']);\n});\n\ntest('topK returns nothing for k of zero and refuses a negative k', () => {\n  assert.deepEqual(topK(RECORDS, 0), []);\n  assert.throws(() => topK(RECORDS, -1), TypeError);\n});\n\ntest('topK leaves its input untouched', () => {\n  const input = RECORDS.map((record) => ({ ...record }));\n  topK(input, 2);\n  assert.deepEqual(input.map((record) => record.id), ['e', 'a', 'c', 'd', 'b']);\n});\n\ntest('every comparison reaches the injected counter', () => {\n  let comparisons = 0;\n  topK(RECORDS, 2, () => { comparisons += 1; });\n  assert.ok(comparisons > 0, 'a ranking that counts nothing cannot be measured');\n});\n\ntest('the generated tier table reproduces from its source', async () => {\n  const source = JSON.parse(await readFile(new URL('../src/table-source.json', import.meta.url), 'utf8'));\n  const current = await readFile(new URL('../src/generated/table.js', import.meta.url), 'utf8');\n  assert.equal(current, renderTable(source), 'src/generated/table.js drifted from src/table-source.json');\n  assert.deepEqual(TIERS.map((tier) => tier.id), source.tiers.map((tier) => tier.id));\n  assert.equal(tierOf(500), 'gold');\n  assert.equal(tierOf(0), 'plain');\n});\n"
+    }
+  ],
+  "expect": {
+    "decision": "refused",
+    "reason": "goalpost",
+    "code": "TEVO1004"
+  }
+}

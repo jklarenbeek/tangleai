@@ -1,0 +1,19 @@
+{
+  "id": "overlap-a",
+  "origin": {
+    "rollout": "task-22",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1004",
+  "withheld": true,
+  "rationale": "Rewrites the answer-format section to add the conversion rule.",
+  "operations": [
+    {
+      "group": "g-format",
+      "op": "replace_section",
+      "file": "SKILL.md",
+      "anchor": "## Answer format",
+      "text": "## Answer format\n\n- A count is a bare integer.\n- A name is the identifier exactly as the table spells it, lower-cased.\n- A decimal uses a period separator and no thousands separator.\n- A weight in kilograms converts to pounds with 1 kg = 2.20462 lb,\n  rounded to one decimal."
+    }
+  ]
+}

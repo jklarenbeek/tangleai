@@ -1,0 +1,10 @@
+{
+  "id": "task-12",
+  "split": "test",
+  "prompt": "Which site recorded the single lowest reading?",
+  "inputs": [
+    "inputs/readings.md"
+  ],
+  "evaluatorId": "exact-normalized-v1",
+  "convention": "lookup"
+}

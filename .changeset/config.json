@@ -18,6 +18,7 @@
       "@tangleai/search",
       "@tangleai/pipeline",
       "@tangleai/outcomes",
+      "@tangleai/trace2skill",
       "@tangleai/store",
       "@tangleai/gmpl"
     ]

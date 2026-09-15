@@ -17,7 +17,7 @@ stage ids, dependencies, run descriptions, pass conditions. That is a
 `jaren-dag` document wearing prose clothing. The desktop app already
 executes dag documents (`@tangleai/pipeline` → `@jarenjs/flow`), records
 every node of every run (`@tangleai/store` run log), streams them live
-(`dag.live`), and moves memory confidence on real outcomes
+(`run.live`), and moves memory confidence on real outcomes
 (`@tangleai/memory` `applyOutcome`).
 
 So: point the desktop's workspace folder at a REPOSITORY (this one, or
@@ -75,7 +75,7 @@ signal this repo insists on.
 | Piece | Status |
 |---|---|
 | dag execution with per-node records | exists (`@tangleai/pipeline`, `@jarenjs/flow`) |
-| run history + live streaming surface | exists (`@tangleai/store`, desktop `dag.live`) |
+| run history + live streaming surface | exists (`@tangleai/store`, desktop `runs.live`/`run.live`) |
 | outcome-driven strategy fitness | generic lifecycle and checked artifacts exist (`@tangleai/outcomes`); repository-specific evidence, scoring and measured fitness remain downstream |
 | proposal discipline | exists in the suite (`@tangleai/context` refine gates: RFC-6902, evidence-mandatory) — not yet wired here |
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |

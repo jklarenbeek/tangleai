@@ -54,10 +54,11 @@ Effectful work lives in the host adapter (`apps/desktop/src/ai-host.ts`),
 which both the desktop settings and the benchmark environment reader feed.
 It validates and normalizes input (a corrupt stored row reverts member by
 member with counted issues; environment integers are schema-normalized with
-explicit/defaulted/rejected states), projects it into the generated legacy
-request, builds a credential-free host manifest from suite-normalized
-endpoints, and constructs clients only from an `ok` identity — through the
-one `chatClientFor`/`embedderFor` pair. The suite owns providers, wires and
+explicit/defaulted/rejected states), projects it into a request — the
+generated legacy one, or the named registry profile the host selected —
+builds a credential-free host manifest from suite-normalized endpoints, and
+constructs clients only from an `ok` identity — through the one
+`chatClientFor`/`embedderFor` pair. The suite owns providers, wires and
 replay: `PROVIDERS`, `resolveEndpoint` (the only endpoint authority — Ollama
 and LM Studio with omitted bases get their suite defaults; custom without a
 base refuses), `probeProvider`/`probeEmbeddings`, `createChatClient`/
@@ -88,9 +89,47 @@ stays `configured-unproven`: the identity claims no embedding rather than
 guessing one. Changing an indexed corpus's identity is the vector-migration
 boundary in `ROADMAP.md` and does not happen here.
 
+## Selecting a named profile
+
+A host may ask for a profile by NAME instead of projecting its own wire
+settings: the desktop's settings carry `profile: string | null`, and a name
+becomes a `{ kind: 'profile', profile }` request against the shipped
+`config/profiles.json` registry. One function makes that choice, and one
+projection follows from it; there is no second resolver and no second
+settings reader.
+
+Which credential slots a named selection may use is HOST policy, decided by
+PROVIDER and never by a slot's spelling: a registry slot is declared
+configured when this host holds a chat key AND some chat candidate of that
+slot names that key's provider. Under a selection the resolved identity IS
+the client specification — provider, base, model and inference controls come
+from `roles.chat`, and only the key comes from the settings — so a stored
+model that contradicts the registry cannot change what runs, and the
+identity id is the same with or without it.
+
+A selection the resolver refuses is the resolver's `TCFG` issues, verbatim,
+as fixable items: an unknown name is `TCFG1005 /profile`, a tag whose
+candidates need a slot this host cannot bind is `TCFG1015
+/roles/chat/capability`, a policy component the host has not installed is
+`TCFG1017 /policyComponent`. A refusal never falls back — not to the legacy
+projection, not to an offline answer: every run producer refuses with those
+same issues, and a run started in the background records the refusal on its
+own row instead of answering something else. The read-only inspection
+operation accepts an optional profile so a surface can PREVIEW exactly what
+a save would resolve to, writing nothing and probing nothing, and a run row
+answers the identity it was produced under, so `requested.kind` is readable
+after the fact.
+
+The registry's own `limitations` strings travel to the surface verbatim.
+Its tag orderings are operator-declared, and nothing here has measured that
+one profile answers better than another.
+
 ## Legacy behavior
 
-Pre-profile settings project into a generated `legacy` request. Genuinely
+No profile selected IS the legacy projection: `profile: null` produces the
+same generated request it always did, byte for byte, and the identity id it
+resolves to is unchanged. Pre-profile settings project into that generated
+`legacy` request. Genuinely
 unconfigured chat stays grounded/offline and an unconfigured embedder stays
 the built-in — intentional product behavior. A *partial* remote configuration
 (a wire with no model, custom with no base) is `TCFG1021`, an issue the user

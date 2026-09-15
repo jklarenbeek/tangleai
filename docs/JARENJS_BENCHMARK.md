@@ -1,6 +1,6 @@
 # JarenJS host strategy benchmark
 
-Measured 2026-09-13 on linux/x64, JarenJS 0.89.0.
+Measured 2026-09-15 on linux/x64, JarenJS 0.90.6.
 Reproduce with `npm run benchmark:jaren`. Instrument:
 [benchmark/jaren-strategies.ts](../benchmark/jaren-strategies.ts).
 Raw reports: [Node](../benchmark/results/jaren-strategies-node.json),
@@ -14,8 +14,8 @@ The cursor reports row streaming. Payloads and unique timestamps are fixed.
 
 | Runtime | Previous p95 ms | Bounded p95 ms | p95 speedup | Host rows per read |
 |---|---:|---:|---:|---:|
-| node 24.20.0 | 14.769 | 8.552 | 1.73× | 5000 → 50 |
-| bun 1.4.0 | 17.151 | 11.518 | 1.49× | 5000 → 50 |
+| node 24.20.0 | 16.169 | 9.209 | 1.76× | 5000 → 50 |
+| bun 1.4.0 | 14.289 | 11.529 | 1.24× | 5000 → 50 |
 
 The main gain is bounded host materialization. SQLite may still scan and sort
 all rows: these are not visited-row counts or an index claim. Strategy order
@@ -27,7 +27,7 @@ The refreshed keyless MAS report records 11/11 runtime
 oracles, 7/7 registered refusals,
 7/7 suite probes and
 6/6 durability checks.
-CONFIG records 44/44 holding cases.
+CONFIG records 45/45 holding cases.
 See [MAS](MAS_RUNTIME_BENCHMARK.md), [grounding](GROUNDING_BENCHMARK.md),
 [document chunking](DOCUMENT_BENCHMARK.md) and [LoCoMo](LOCOMO_BENCHMARK.md)
 for their own definitions and denominators. The separately dated

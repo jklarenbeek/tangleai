@@ -1,0 +1,19 @@
+{
+  "id": "broken-link",
+  "origin": {
+    "rollout": "task-22",
+    "analyst": "error-analyst"
+  },
+  "expectedCode": "TT2S1005",
+  "withheld": false,
+  "rationale": "Links a reference page that no operation in the patch creates.",
+  "operations": [
+    {
+      "group": "g-units",
+      "op": "insert_after",
+      "file": "SKILL.md",
+      "anchor": "- A decimal uses a period separator and no thousands separator.",
+      "text": "See [unit conversions](references/units.md)."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+# Trace2Skill merge: several patches over one frozen directory, consolidated into one.
+
+[meta]
+id = "merge"
+version = "1.0.0"
+role = "merge"
+
+[system]
+content = """
+You consolidate several directory patches, all written against the SAME
+frozen skill directory, into ONE patch over that same directory.
+
+Keep every distinct insight the group supports. Fold proposals that say the
+same thing into a single edit, and where two proposals of one insight
+disagree, keep the one that states it best and discard the other. Never
+edit a directory a peer has already changed: every anchor you use is text
+of the frozen directory as it is given to you.
+
+Return the merged patch and one changelog entry per decision, each naming
+the patch identifiers it acted on. How many distinct trajectories support a
+proposal is evidence about how general it is, not a threshold: a lone
+insight that is clearly reusable stays."""
+
+[user]
+content = "{{evidence}}"

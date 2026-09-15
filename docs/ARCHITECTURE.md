@@ -28,6 +28,12 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 @tangleai/outcomes    immutable decisions, trusted resolution, scores and projection
                       bounded proposals, held-out evaluation, host approval,
                       version/revision CAS promotion, rollback and audit reads
+@tangleai/trace2skill immutable skill directories: bundle contracts and format
+                      profile, an anchored directory-patch compiler with
+                      base-hash hunks and withheld overlaps, the four model
+                      roles as versioned prompt packs, prevalence-aware
+                      hierarchical merge, guarded one-time application,
+                      held-out evaluation and a revision-fenced head
 @tangleai/search      SearxNG JSON client
 @tangleai/config      the capability-profile registry and run-identity
                       contract: JSON Schemas are the runtime truth (types
@@ -304,12 +310,78 @@ grounded recall — the sources themselves, quoted and cited, never invention.
 The paired measurement behind this behavior lives in
 [`GROUNDING_BENCHMARK.md`](GROUNDING_BENCHMARK.md).
 
+## The operator control plane (added 2026-09-14)
+
+Every live thing on the desktop is a run with an id and a sequence. A run's
+work is a persisted, append-only frame stream — `run_frames` in
+`@tangleai/store`, keyed `<runId>:<seq padded to 8>` and indexed by
+`(runId, seq)` — whose `seq` is read from the store inside the appending
+transaction, so a restart, a second process or two concurrent appends
+cannot mint the same address twice. Each frame's body is closed per kind by
+a validator at the write; a member nobody declared is refused rather than
+stored. `finishRun` writes the run row and the run's single terminal frame in
+one transaction, so "finished" and "said it finished" cannot disagree, and
+`cancelled` is a terminal state distinct from both success and failure.
+
+Two `kind: 'subscribe'` contract operations carry it: `runs.live` is the run
+table as a `@jarenjs/db` live query, `run.live` one named run's frames with
+replay by cursor. The live emission's store-wide capture sequence is
+re-emitted under the appended frame's own, and a replay page carries exactly
+the frames above a cursor and never asks for a reset — so `Last-Event-ID`
+means the same thing live and replayed, a resumed subscriber loses and
+repeats nothing, and no subscription can ask for "whatever is running now".
+The compiled surface is gated by shape: a frozen public projection of the
+released contract sits beside the tests, every difference the suite's rule
+table classifies as breaking or unclassifiable must be one the gate names,
+and a narrowing nobody declared fails by exit code.
+
+A configured folder is watched by the host (`node:fs` recursive watch), not
+by a corpus package: filesystem events are a signal, never a list, so a burst
+is debounced into ONE full pass admitted through a bounded scheduler, a
+restart rescans instead of trusting a cursor, and a window that overflows is
+counted and answered by a full scan. Where a recursive watch is refused the
+fallback is an explicit tick, never an implicit poll. Each pass publishes
+what it did not ingest — skipped, removed, truncated, and the memory units
+whose evidence names a removed file, counted and never deleted.
+
+Feedback is an outcome, not a click. Every reply produced under a real
+configuration identity records a decision the moment it is persisted; a
+verdict is accepted only when it carries a reason and names at least one
+thing the reply actually cited, and only then does the lifecycle in
+`@tangleai/outcomes` run resolve → score → project — moving the cited
+memories' confidence and nothing else. The evidence a verdict named is
+pinned as a stored snapshot the trusted resolver reads back rather than
+rebuilds, so evidence that moved under a recorded verdict is refused instead
+of silently re-agreeing with itself. A repeat submission replays: no second
+write.
+
+A measurement reaches the surface as a host-injected seam, never an import:
+the measurement workspace is private, carries dependencies that are not ours,
+and does not exist around a compiled binary at all. A host beside that
+workspace registers keyless instruments as child processes — entry path,
+output flag, schema — and the desktop streams their output as bounded
+progress frames, screens every line for credential shapes, and stores the
+one document carrying its own canonical identity under that identity. A read
+re-computes the digest from the stored bytes: a document whose bytes moved
+answers unverified rather than being hidden or repaired. A run that supplies
+a budget is refused before any child starts, and the compiled binary
+registers nothing and states why.
+
+**What has been verified, and where.** On Linux x64: the complete gate, the
+desktop end-to-end script in Chromium and in WebKit, the compiled binary run
+from a foreign working directory, the compiled WebView smoke and the compiled
+document path. macOS and Windows builds are UNVERIFIED — including the
+compiled WebView lifecycle and the compiled document path — and are named
+here rather than claimed. The report runner registers keyless instruments
+only; a spend-capable tier does not exist.
+
 ## Configuration identity (added 2026-08-31)
 
 Settings and environment strings reach clients through one path: the host
 adapter (`apps/desktop/src/ai-host.ts`) validates and normalizes them,
-projects a generated request, builds a credential-free manifest from
-suite-normalized endpoints, and hands the pure resolver in
+projects a request — the generated projection of the wire settings, or the
+named registry profile the surface selected — builds a credential-free
+manifest from suite-normalized endpoints, and hands the pure resolver in
 `@tangleai/config` the decision. Only an `ok` identity constructs clients —
 through the one `chatClientFor`/`embedderFor` pair — and runs, chats and
 benchmark rows store the content-addressed identity id, so "which exact
@@ -342,3 +414,57 @@ context ledger; the outcome package uses the generic engine directly. Hosts own
 domain schemas, evidence origin, configuration, authority, scheduling and UI.
 The [adapter kit](../packages/outcomes/docs/ADAPTERS.md) and
 [scripted measurement](OUTCOME_BENCHMARK.md) document the supported boundary.
+
+## Evaluated skill directories (added 2026-09-14)
+
+`@tangleai/trace2skill` evolves ONE skill directory for a bounded scope from
+labeled trajectories, and proves on a held-out split whether the evolved
+directory beats no directory and the frozen one it started from. A skill is a
+directory — a root `SKILL.md` plus optional `references/`, `scripts/` and
+`assets/` — sealed as an immutable `SkillBundle` whose id is the hash of its
+ordered file manifest. A flat ledger skill record may be derived for display
+and carries no authority.
+
+A run pins one frozen directory before any model call. Every rollout, analyst
+result, patch and merge node records that hash, and a unit whose base differs
+is refused rather than measured. One independent analyst reads one trajectory
+and never a peer's patch: a success is a single structured call, a failure is a
+bounded agent over an in-memory repair sandbox that may propose only after the
+host's real evaluator passed over the repaired output. Exclusions are typed
+values — `exhausted`, `tool-failure`, `unsupported-artifacts`,
+`already-correct`, `no-causal-explanation`, `evaluator-disagrees` — and every
+one is a number in the report.
+
+The patch language is Tangle-owned because the suite ships nothing anchored:
+`create_file`, `insert_before`, `insert_after`, `replace_section` and
+`delete_section` compile against the frozen directory into hunks carrying the
+file's base hash and its exact line interval. Anchors must resolve exactly
+once, overlapping same-file intervals are withheld with a report rather than
+stacked, and a `create_file` and the link that references it are one atomic
+group. The pool is merged hierarchically — sorted groups of at most `bMerge`,
+as many levels as that division needs, a refusal rather than a truncation when
+the run does not allow the depth — and the one surviving patch is applied
+exactly once through `createGuardedRefiner` from `@jarenjs/core/guarded`.
+Intermediate patches are never applied.
+
+Evolve and test ids are disjoint and both split hashes travel with the run. A
+read of held-out content, ground truth in executor input or a task-instance
+fact in reusable guidance is `TT2S1006` and a counted leakage violation.
+Eligibility comes only from held-out results; activation is an explicit host
+action through the outcomes head planner, and rolling back reinstates a
+previously active directory under the same revision fence. Superseded
+directories are archived, never deleted, because a rollout pins their hash.
+
+The stage graph is a `@tangleai/mas` workflow lowered through the shipped
+runtime; fan-out inside a stage is `mapConcurrent` recorded as domain rows.
+Every expensive unit carries an idempotency key over the run, stage, unit,
+attempt, input hashes, model identity and prompt version, so a resumed run
+reuses exactly the units it already paid for and a second drive spends nothing.
+Storage is `@tangleai/store`'s eleven collections over physical
+`{ id, scope, payload }` rows; the package's own validation is the write gate.
+
+The desktop shows what a run did through read operations only — runs,
+candidates, diffs, merge trees, evaluations and the active head — and claims no
+improvement beyond an evaluation row's own numbers. The measurement is
+[`TRACE2SKILL_BENCHMARK.md`](TRACE2SKILL_BENCHMARK.md), rendered from a keyless
+scripted fixture; live quality on a real domain adapter is unmeasured.

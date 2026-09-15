@@ -1,0 +1,8 @@
+{
+  "tiers": [
+    { "id": "gold", "floor": 480 },
+    { "id": "silver", "floor": 320 },
+    { "id": "bronze", "floor": 160 },
+    { "id": "plain", "floor": 0 }
+  ]
+}

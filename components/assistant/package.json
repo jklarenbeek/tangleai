@@ -22,10 +22,10 @@
     "@tangleai/models": "^0.27.3",
     "@tangleai/context": "^0.27.3",
     "@tangleai/agents": "^0.27.3",
-    "@jarenjs/json": "0.89.0",
-    "@jarenjs/app": "0.89.0",
-    "@jarenjs/md": "0.89.0",
-    "@jarenjs/mermaid": "0.89.0"
+    "@jarenjs/json": "0.90.6",
+    "@jarenjs/app": "0.90.6",
+    "@jarenjs/md": "0.90.6",
+    "@jarenjs/mermaid": "0.90.6"
   },
   "private": false,
   "files": [

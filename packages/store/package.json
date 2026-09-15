@@ -17,7 +17,8 @@
     "./ledger-storage": "./src/ledger-storage.ts",
     "./outcome-store": "./src/outcome-store.ts",
     "./temporal-store": "./src/temporal-store.ts",
-    "./consolidation-store": "./src/consolidation-store.ts"
+    "./consolidation-store": "./src/consolidation-store.ts",
+    "./trace2skill-store": "./src/trace2skill-store.ts"
   },
   "engines": {
     "node": ">=24"
@@ -27,12 +28,13 @@
     "@tangleai/documents": "^0.27.3",
     "@tangleai/core": "^0.27.3",
     "@tangleai/config": "^0.27.3",
-    "@jarenjs/db": "0.89.0",
-    "@jarenjs/validate": "0.89.0",
+    "@jarenjs/db": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
     "@tangleai/mas": "^0.27.3",
-    "@jarenjs/core": "0.89.0",
+    "@jarenjs/core": "0.90.6",
     "@tangleai/memory": "^0.27.3",
-    "@tangleai/outcomes": "^0.27.3"
+    "@tangleai/outcomes": "^0.27.3",
+    "@tangleai/trace2skill": "^0.27.3"
   },
   "private": false,
   "types": "./src/index.ts",
