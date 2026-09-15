@@ -114,7 +114,15 @@ export function validateGitArgs(argv: string[]): EvolveOutcome<true> {
     case 'diff':
       if (shape(rest, ['--cached', '--name-status', '-M', '-z'])) return accept();
       if (shape(rest, ['--cached', '--binary'])) return accept();
-      return rejectArg('diff reads the index in one of two accepted forms.');
+      // A review bundle needs the committed candidate against the base it
+      // started from — the staged forms above show nothing once a commit
+      // has happened. The left side must be a pinned revision so the range
+      // cannot be steered by a name something else controls.
+      if (shape(rest, ['--binary', null, 'HEAD'])) {
+        if (!isPinnedRevision(rest[1])) return rejectArg('A diff range starts at a pinned revision.');
+        return accept();
+      }
+      return rejectArg('diff reads the index or a pinned range, in one of three accepted forms.');
 
     case 'ls-files':
       if (shape(rest, ['-s', '-z'])) return accept();

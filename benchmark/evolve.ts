@@ -69,7 +69,8 @@ if (args.flags.has('check')) {
   console.log(`# Repository experiments — ${registration.experiments} registered proposals, ${registration.hostProbes.length} host probes`);
   console.log('');
   console.log(`registration: ${registration.strategies.length} strategies, fixture ${report.fixture.id} at base ${report.fixture.baseRevision.slice(0, 12)}… (${report.fixture.files} files)`);
-  console.log(`rows run: ${counts.attempted}/${registration.experiments}; host probes run: ${probesRun}/${registration.hostProbes.length}; hit rate: not measured — no executor`);
+  const exact = report.rows.filter((row) => row.matches === true).length;
+  console.log(`rows run: ${counts.attempted}/${registration.experiments}; host probes run: ${probesRun}/${registration.hostProbes.length}; as registered: ${exact}/${registration.experiments}; hit rate: ${counts.kept}/${counts.attempted}`);
   console.log(`oracle control: ${controls.oracle.kept}/${controls.oracle.attempted} kept; seeded control: ${controls.random.kept}/${controls.random.attempted} kept (seed ${controls.random.seed})`);
   console.log(`census: ${counts.kept} kept, ${counts.abandoned.total} abandoned, ${counts.refused.total} refused, ${counts.uncertain} uncertain, `
     + `${counts.processRuns} process runs, ${counts.protectedRefWrites} protected-ref writes, ${counts.liveModelCalls} live model calls`);

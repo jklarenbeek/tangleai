@@ -45,7 +45,7 @@ import runIdentitySchema from '../../packages/config/schemas/run-identity.schema
 import { count, table } from './table.ts';
 import type { Controls, Counts, Evolve, HostProbe, Row, SourceManifest } from './evolve.types.ts';
 import { runHostProbes } from './evolve-probes.ts';
-import { compileSurfacePolicy, createPatchRefiner, DEFAULT_EVOLVE_BUDGETS } from '@tangleai/evolve';
+import { withExperimentHost, runExperiment } from './evolve-host.ts';
 
 export { loadEvolveFixture as loadFixture };
 
@@ -69,6 +69,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
   'benchmark/fixtures/evolve/manifest.json',
   'benchmark/lib/args.ts',
   'benchmark/lib/evolve-fixture.ts',
+  'benchmark/lib/evolve-host.ts',
   'benchmark/lib/evolve-probes.ts',
   'benchmark/lib/evolve.ts',
   'benchmark/lib/evolve.types.ts',
@@ -194,7 +195,7 @@ const ZERO_REASONS: Counts['abandoned']['byReason'] = {
 };
 
 /** The census over the rows. Nothing here is asserted; it is all counted. */
-export function censusOf(rows: readonly Row[]): Counts {
+export function censusOf(rows: readonly Row[], spent: Partial<Counts> = {}): Counts {
   const decided = (name: string): Row[] => rows.filter((row) => row.actual?.decision === name);
   const byReason = (of: readonly Row[]): Counts['abandoned']['byReason'] => {
     const counted = { ...ZERO_REASONS };
@@ -210,10 +211,11 @@ export function censusOf(rows: readonly Row[]): Counts {
     refused: { total: refused.length, byReason: byReason(refused) },
     uncertain: decided('uncertain').length,
     processRuns: rows.reduce((total, row) => total + row.effects.legs, 0),
-    worktreesCreated: 0,
-    worktreesRemoved: 0,
-    branchesLeft: 0,
-    protectedRefWrites: 0,
+    worktreesCreated: spent.worktreesCreated ?? 0,
+    worktreesRemoved: spent.worktreesRemoved ?? 0,
+    branchesLeft: spent.branchesLeft ?? 0,
+    // Read from the repository, before and after, rather than asserted.
+    protectedRefWrites: spent.protectedRefWrites ?? 0,
     liveModelCalls: 0,
   };
 }
@@ -237,14 +239,6 @@ export interface BuildOptions {
 }
 
 const reportValidator = createReportValidator(evolveSchema as object, [runIdentitySchema as object]);
-
-/** The decision an immutable-surface refusal is, read from its own issue. */
-function refusalOf(issue: { code: string, detail: string }): NonNullable<Row['actual']> {
-  const reason: NonNullable<Row['actual']>['reason'] = issue.detail.startsWith('escape')
-    ? 'escape'
-    : issue.detail.startsWith('over-budget') ? 'over-budget' : 'goalpost';
-  return { decision: 'refused', reason, code: issue.code as NonNullable<Row['actual']>['code'] };
-}
 
 /** The fixture repository as the file map a host would read. */
 async function fixtureFileMap(root: string): Promise<Record<string, string>> {
@@ -276,55 +270,43 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
     throw new Error(`the fixture repository materializes to ${materialized.baseRevision}, the manifest registers ${loaded.manifest.fixture.baseRevision}`);
   }
 
-  // The guarded patch path exists now, so a proposal that the immutable
-  // surface refuses is DECIDED here — before any worktree is created and
-  // before any process runs. A proposal that survives preparation still has
-  // nothing to gate it, and stays `implementation-missing`: that is the
-  // honest half of this report.
+  // Every registered proposal is now RUN: prepared, isolated, applied,
+  // gated, measured, decided, settled and recorded. Each row's decision
+  // comes from the campaign's one planner over the records the run
+  // produced — this file counts what came back and judges nothing.
   const baseFiles = await fixtureFileMap(root);
-  const policy = compileSurfacePolicy({
-    immutablePaths: [...loaded.manifest.policy.immutable.paths, ...loaded.manifest.policy.immutable.prefixes],
-    generated: loaded.manifest.policy.immutable.generated.map((one) => one.path),
-    budgets: { ...DEFAULT_EVOLVE_BUDGETS, ...loaded.manifest.budgets },
-  });
-  const refiner = createPatchRefiner({ policy, budgets: { ...DEFAULT_EVOLVE_BUDGETS, ...loaded.manifest.budgets } });
+  const rows: Row[] = [];
+  const spent = await withExperimentHost(root, loaded, async (host) => {
+    const before = await host.protectedRefs();
 
-  const rows: Row[] = loaded.proposals.map(({ document }): Row => {
-    const cost = patchCost(document.patch);
-    const budgets = {
-      patchBytes: cost.bytes,
-      patchFiles: cost.files,
-      withinPatchBytes: cost.bytes <= loaded.manifest.budgets.patchBytes,
-      withinPatchFiles: cost.files <= loaded.manifest.budgets.patchFiles,
-    };
-    const prepared = refiner.prepare(baseFiles, {
-      proposalId: document.id,
-      strategyId: document.strategyId,
-      rationale: document.rationale,
-      evidence: [document.evidence],
-      origin: 'hand-authored',
-      patch: document.patch,
-    });
-    if (prepared.ok) {
-      return {
-        proposalId: document.id, strategyId: document.strategyId,
-        // Preparation succeeded; nothing yet gates or measures it.
-        state: 'implementation-missing', actual: null, matches: null,
-        budgets, effects: { legs: 0, unresolved: 0 },
-      };
+    for (const [index, { document }] of loaded.proposals.entries()) {
+      const cost = patchCost(document.patch);
+      const expect = loaded.manifest.proposals[index].expect;
+      const run = await runExperiment(loaded, {
+        document: document as never,
+        index,
+        budgets: {
+          patchBytes: cost.bytes,
+          patchFiles: cost.files,
+          withinPatchBytes: cost.bytes <= loaded.manifest.budgets.patchBytes,
+          withinPatchFiles: cost.files <= loaded.manifest.budgets.patchFiles,
+        },
+        expect,
+      }, host, baseFiles);
+      rows.push(run.row);
     }
-    const actual = refusalOf(prepared.issues[0]);
-    return {
-      proposalId: document.id, strategyId: document.strategyId,
-      state: 'run', actual,
-      matches: actual.decision === document.expect.decision
-        && actual.reason === document.expect.reason
-        && actual.code === document.expect.code,
-      budgets,
-      // A refusal before isolation costs no effect at all.
-      effects: { legs: 0, unresolved: 0 },
-    };
+
+    // Read back rather than asserted: whether anything reached a protected
+    // ref is a question about the repository, not about this file's opinion.
+    // The report can only express zero, so a ref that moved stops the run
+    // instead of being published as a number somebody might skim past.
+    const after = await host.protectedRefs();
+    if (after !== before) {
+      throw new Error(`a protected ref moved during the run:\n${before}\n  became\n${after}`);
+    }
+    return { ...host.counters, protectedRefWrites: 0 as const };
   });
+
   // The probes are EXECUTED, not declared. A probe that runs and answers
   // wrongly is a `fail`, and one failing probe is enough to stop this
   // instrument reporting an improvement.
@@ -366,7 +348,7 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
     rows,
     controls: controlsOf(loaded),
     hostProbes,
-    counts: censusOf(rows),
+    counts: censusOf(rows, spent),
     identity: analyticEnvelope(rows.map((row) => row.proposalId)) as unknown as Evolve['identity'],
     decision: decideEvolve(rows, hostProbes),
     reportId: '0'.repeat(64),
@@ -399,13 +381,16 @@ export function renderDocument(report: Evolve): string {
   const probesRun = report.hostProbes.filter((probe) => probe.state !== 'implementation-missing').length;
   const lines: string[] = [];
 
-  lines.push('# Repository experiments — the instrument, before the mechanism');
+  lines.push('# Repository experiments — the mechanism, against its own instrument');
   lines.push('');
   lines.push('Generated by `npm run benchmark:evolve`; do not edit numbers by hand.');
   lines.push('');
-  lines.push(`**${run}/${registration.experiments} registered proposals run, ${probesRun}/${registration.hostProbes.length} host probes run. Hit rate: not measured — no executor.**`);
+  const exact = report.rows.filter((row) => row.matches === true).length;
+  lines.push(`**${run}/${registration.experiments} registered proposals run, ${probesRun}/${registration.hostProbes.length} host probes run, ${exact}/${registration.experiments} decisions exactly as registered. Hit rate: ${counts.kept}/${run}.**`);
   lines.push('');
-  lines.push('No self-evolving capability ships before the instrument that can call it an improvement, so this registration exists first and alone. Every proposal below carries the decision it must produce, written down before anything could run it; a later mechanism replaces rows by id and never edits the registration or its denominators.');
+  lines.push('No self-evolving capability ships before the instrument that can call it an improvement, so this registration was written first and alone: every proposal below carries the decision it must produce, fixed before anything could run it. The mechanism now runs them, and the column that matters is `actual` beside `expected` — a row that agrees is a refusal or a keep the registration predicted, and a row that disagrees would be a mechanism grading itself.');
+  lines.push('');
+  lines.push(`Fifteen of the sixteen are losses, and they are published in the same table as the one keep. Seven proposals tried to move a goalpost and one tried to escape the working set; all eight were refused before a worktree existed, at zero process cost. Three were hostile at run time and were stopped by a budget rather than by a verdict — a gate that was killed or drowned never decided anything, so it earns no rerun. One regressed, one was flaky (red, then green on its single permitted rerun, which is ambiguous and abandoned), and one measured exactly what the base measured. Exactly one was an improvement, and it produced an unmerged branch and a review bundle for a person — nothing was merged, pushed or promoted by this run.`);
   lines.push('');
   lines.push(`Fixture \`${report.fixture.id}\` (${report.fixture.licence}, ${report.fixture.provenance}): ${report.fixture.files} files, base revision \`${report.fixture.baseRevision.slice(0, 12)}…\`, manifest \`${report.fixture.manifestRevision.slice(0, 12)}…\`, policy \`${report.fixture.policyRevision.slice(0, 12)}…\`. The repository is committed as plain files and built into a git repository in a temporary directory at run time under fixed authorship, which costs ${report.fixture.materializationRuns} git processes and is not experiment work.`);
   lines.push('');
@@ -413,13 +398,17 @@ export function renderDocument(report: Evolve): string {
   lines.push('## The registered matrix');
   lines.push('');
   lines.push(table({
-    head: ['proposal', 'strategy', 'expected', 'patch bytes', 'files', 'within budget', 'state'],
-    numeric: [3, 4],
+    head: ['proposal', 'strategy', 'expected', 'actual', 'agrees', 'legs', 'patch bytes', 'files'],
+    numeric: [5, 6, 7],
     rows: registration.proposals.map((entry) => {
       const row = report.rows.find((candidate) => candidate.proposalId === entry.id);
       if (row === undefined) throw new Error(`the registration holds ${entry.id} and the rows do not`);
-      const within = row.budgets.withinPatchBytes && row.budgets.withinPatchFiles ? 'yes' : 'no';
-      return [`\`${entry.id}\``, `\`${entry.strategyId}\``, EXPECTED(entry.expect), count(row.budgets.patchBytes), row.budgets.patchFiles, within, row.state];
+      const actual = row.actual === null ? '—' : EXPECTED(row.actual);
+      const agrees = row.matches === null ? '—' : row.matches ? 'yes' : '**no**';
+      return [
+        `\`${entry.id}\``, `\`${entry.strategyId}\``, EXPECTED(entry.expect), actual, agrees,
+        row.effects.legs, count(row.budgets.patchBytes), row.budgets.patchFiles,
+      ];
     }),
   }));
   lines.push('');
@@ -428,7 +417,7 @@ export function renderDocument(report: Evolve): string {
 
   lines.push('## Controls');
   lines.push('');
-  lines.push('The oracle is the registration read back as a scorer, and the seeded row is the floor a ranked selector has to beat. Neither is a quality claim about anything Tangle does; they are what licenses the rows above once a mechanism fills them in.');
+  lines.push('The oracle is the registration read back as a scorer, and the seeded row is the floor a ranked selector has to beat. Neither is a quality claim about anything Tangle does; they are what licenses the rows above. The mechanism reproduces the oracle exactly, which is the most this fixture can say: the matrix is adversarial by construction and its one improvement is the only thing there was to find.');
   lines.push('');
   lines.push(table({
     head: ['strategy', 'attempted', 'kept', 'oracle hit rate'],

@@ -25,6 +25,7 @@ import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { applyJSONPatch } from '@jarenjs/json/patch';
 
 import { evolveIssue, refuse, ok, type EvolveIssue, type EvolveOutcome } from './errors.ts';
+import { planExperimentDecision, type PlannedDecision } from './decide.ts';
 import { loadProposal, operationPath, patchBytes, type EvolveProposalInput, type ProposalOperation } from './proposal.ts';
 import type { FileMap, SurfacePolicy, SurfaceStatus } from './policy.ts';
 import type { EvolveBudgets } from './contracts.gen.ts';
@@ -158,6 +159,18 @@ export function createPatchRefiner(options: PatchRefinerOptions) {
     verifyStaged(previous: FileMap, next: FileMap, status: SurfaceStatus): EvolveOutcome<true> {
       const issues = policy.check(previous, next, status);
       return issues.length === 0 ? ok(true as const) : refuse<true>(issues);
+    },
+
+    /**
+     * What a refused preparation MEANS, through the campaign's one planner.
+     *
+     * This module raises the issues; it does not decide what they amount
+     * to. Building a decision here would be a second decision table, and
+     * two tables disagree eventually — so the issues go to the planner and
+     * the planner answers, exactly as it does for a gate or a measurement.
+     */
+    decide(issues: readonly EvolveIssue[]): PlannedDecision {
+      return planExperimentDecision({ issues });
     },
 
     planFor,

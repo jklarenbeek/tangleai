@@ -38,6 +38,12 @@ export type { EvolveProposalInput, ProposalOperation, PatchOp } from './proposal
 export { compileSurfacePolicy, policyFromRepository } from './policy.ts';
 export type { SurfacePolicy, SurfacePolicyInput, SurfaceStatus, FileMap } from './policy.ts';
 
+export { planExperimentDecision, DECISION_INPUT_SPACE } from './decide.ts';
+export type { DecisionInput, PlannedDecision, GateVerdict, FitnessVerdict } from './decide.ts';
+
+export { parseSample, summarize, compareFitness, collectSamples } from './fitness.ts';
+export type { Sample, SampleSet, Comparison, CompareInput, FitnessComparison } from './fitness.ts';
+
 export { createPatchRefiner } from './patch.ts';
 export type { PatchRefinerOptions, PreparedPatch, WritePlan } from './patch.ts';
 
@@ -45,3 +51,16 @@ export { EVOLVE_EXECUTOR_MANIFEST } from './manifest.ts';
 export type { EvolveExecutorManifest } from './manifest.ts';
 
 export type * from './contracts.gen.ts';
+
+export {
+  recordExperimentOutcome, resolveEvolveEvidence, createSourceRegistry, outcomeChronology,
+} from './outcome-binding.ts';
+export type {
+  RecordOutcomeOptions, RecordedOutcome, OutcomeServiceLike, OutcomeResult,
+  SourceRegistry, EvolveRecordReader, EvolveEvidenceSource,
+} from './outcome-binding.ts';
+
+export { createStrategyRefiner, evidenceOperation, STRATEGY_EVIDENCE_PATH } from './strategy-refiner.ts';
+export type {
+  StrategyRefinerOptions, RefinableLedger, LedgerSnapshot, EvidenceOperation, AppendEvidenceInput,
+} from './strategy-refiner.ts';

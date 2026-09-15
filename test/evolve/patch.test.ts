@@ -100,14 +100,23 @@ describe('the guarded patch path', () => {
       'the host applies the plan as a recorded effect instead');
   });
 
-  it('is the only consumer of the guarded editor in this package', async () => {
+  it('shares the guarded editor with exactly one other named consumer', async () => {
+    // Two guarded paths exist in this package and only two: the patch that
+    // edits a repository's files, and the refinement that appends a
+    // strategy's evidence. A third would be a third place the
+    // read-validate-apply-validate-plan sequence could be got subtly wrong.
     const { execFile } = await import('node:child_process');
     const { promisify } = await import('node:util');
     const run = promisify(execFile);
-    const found = await run('grep', ['-rln', 'createGuardedRefiner', 'packages/evolve'])
-      .then(result => result.stdout.trim().split('\n'))
+    // Scoped to source: the README documents the design and names the
+    // engine on purpose, which is not a third consumer of it.
+    const found = await run('grep', ['-rln', '--include=*.ts', 'createGuardedRefiner', 'packages/evolve/src'])
+      .then(result => result.stdout.trim().split('\n').sort())
       .catch(() => []);
-    assert.deepEqual(found, ['packages/evolve/src/patch.ts']);
+    assert.deepEqual(found, [
+      'packages/evolve/src/patch.ts',
+      'packages/evolve/src/strategy-refiner.ts',
+    ]);
   });
 
   it('refuses an over-budget patch before the engine ever applies it', () => {

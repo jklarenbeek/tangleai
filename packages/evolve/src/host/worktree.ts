@@ -19,7 +19,7 @@
  */
 
 import { mkdir, readFile, writeFile, realpath, lstat, readdir, rm } from 'node:fs/promises';
-import { dirname, join, resolve, sep, relative } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 
 import { refuseOne, ok, type EvolveOutcome } from '../errors.ts';
 import type { EvolveBase, EvolveRepository } from '../contracts.gen.ts';
@@ -53,9 +53,13 @@ export interface WorktreeHost {
   fileMap(path: string): Promise<EvolveOutcome<{ files: Record<string, string> }>>;
   writeFiles(path: string, plan: Record<string, string | null>): Promise<EvolveOutcome<{ written: string[] }>>;
   commit(path: string, options: { experimentId: string, message: string }): Promise<EvolveOutcome<{ revision: string }>>;
-  diff(path: string): Promise<EvolveOutcome<{ digest: string, bytes: number, text: string }>>;
+  diff(path: string, options?: { against?: string }): Promise<EvolveOutcome<{ digest: string, bytes: number, text: string }>>;
   workspaceBytes(path: string): Promise<number>;
-  remove(path: string, options: { deleteBranch: boolean }): Promise<EvolveOutcome<true>>;
+  /** What HEAD resolves to, read rather than remembered. */
+  head(path: string): Promise<EvolveOutcome<string>>;
+  /** Every tracked path, its staged inventory and its bytes, as one digest. */
+  trackedDigest(path: string): Promise<EvolveOutcome<string>>;
+  remove(path: string, options: { deleteBranch: boolean, experimentId: string }): Promise<EvolveOutcome<true>>;
 }
 
 const branchFor = (experimentId: string): string => 'exp/' + experimentId;
@@ -276,11 +280,22 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
       return ok({ revision: revision.value.stdout.trim() });
     },
 
-    async diff(path: string): Promise<EvolveOutcome<{ digest: string, bytes: number, text: string }>> {
-      const staged = green(await git(['add', '-A'], path), 'add');
-      if (!staged.ok) return staged as EvolveOutcome<{ digest: string, bytes: number, text: string }>;
-      const result = green(await git(['diff', '--cached', '--binary'], path), 'diff');
-      if (!result.ok) return result as EvolveOutcome<{ digest: string, bytes: number, text: string }>;
+    async diff(path: string, options: { against?: string } = {}): Promise<EvolveOutcome<{ digest: string, bytes: number, text: string }>> {
+      type Diff = EvolveOutcome<{ digest: string, bytes: number, text: string }>;
+      // Against a pinned base, the diff is of what was COMMITTED — which is
+      // what a reviewer is asked to read, and the only form that still
+      // answers after a commit or a resume. Without one it is the staged
+      // view, which is what the surface policy's second look wants.
+      let result: EvolveOutcome<RunResult>;
+      if (options.against !== undefined) {
+        result = green(await git(['diff', '--binary', options.against, 'HEAD'], path), 'diff');
+      }
+      else {
+        const staged = green(await git(['add', '-A'], path), 'add');
+        if (!staged.ok) return staged as Diff;
+        result = green(await git(['diff', '--cached', '--binary'], path), 'diff');
+      }
+      if (!result.ok) return result as Diff;
       const text = result.value.stdout;
       return ok({ digest: await evolveRevision({ diff: text }), bytes: Buffer.byteLength(text, 'utf8'), text });
     },
@@ -304,7 +319,35 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
       return total;
     },
 
-    async remove(path: string, { deleteBranch }): Promise<EvolveOutcome<true>> {
+    async head(path: string): Promise<EvolveOutcome<string>> {
+      const revision = green(await git(['rev-parse', 'HEAD'], path), 'rev-parse');
+      if (!revision.ok) return revision as EvolveOutcome<string>;
+      return ok(revision.value.stdout.trim());
+    },
+
+    async trackedDigest(path: string): Promise<EvolveOutcome<string>> {
+      // The staged inventory carries mode and object id; the bytes are read
+      // as well, because an index can agree with a file that has changed
+      // underneath it. Base64 so a binary file is covered like any other.
+      const inventory = green(await git(['ls-files', '-s', '-z'], path), 'ls-files -s');
+      if (!inventory.ok) return inventory as EvolveOutcome<string>;
+
+      // The staged inventory already names every path, so the digest costs
+      // ONE git call rather than two — and the vocabulary stays as narrow
+      // as it was, which is worth more than the convenience of a second verb.
+      const files: Record<string, string> = {};
+      for (const entry of inventory.value.stdout.split('\0')) {
+        if (entry.length === 0) continue;
+        const tab = entry.indexOf('\t');
+        if (tab < 0) continue;
+        const name = entry.slice(tab + 1);
+        const bytes = await readFile(join(path, name)).catch(() => null);
+        files[name] = bytes === null ? 'absent' : bytes.toString('base64');
+      }
+      return ok(await evolveRevision({ inventory: inventory.value.stdout, files }));
+    },
+
+    async remove(path: string, { deleteBranch, experimentId }): Promise<EvolveOutcome<true>> {
       const resolvedRepo = await realpath(resolve(repositoryRoot));
       const removed = await git(['worktree', 'remove', '--force', path], resolvedRepo);
       if (!removed.ok || removed.value.exitCode !== 0) {
@@ -318,8 +361,11 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
         return refuseOne<true>('TEVO1009', '/worktree', 'Pruning worktree metadata did not succeed.');
       }
       if (deleteBranch) {
-        const branch = relative(resolve(worktreeRoot), resolve(path));
-        const deleted = await git(['branch', '-D', branchFor(branch)], resolvedRepo);
+        // The branch is named by the experiment, never derived from where
+        // the worktree happened to sit: a path that is not directly under
+        // the worktree root would otherwise compute — and delete — a
+        // different branch than the one this experiment owns.
+        const deleted = await git(['branch', '-D', branchFor(experimentId)], resolvedRepo);
         if (!deleted.ok || deleted.value.exitCode !== 0) {
           return refuseOne<true>('TEVO1009', '/branch', 'Deleting the experiment branch did not succeed.');
         }

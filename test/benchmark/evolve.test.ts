@@ -346,26 +346,26 @@ describe('the report schema refuses what the campaign says it refuses', () => {
 
   it('refuses a match claimed by a row that never ran', () => {
     const forged = structuredClone(committedReport);
-    forged.rows[0].matches = true;
-    assert.equal(reportValidator(forged).valid, false, 'an implementation-missing row cannot match');
-    const withActual = structuredClone(committedReport);
-    withActual.rows[0].actual = { decision: 'kept', reason: 'improved', code: null };
-    assert.equal(reportValidator(withActual).valid, false, 'an implementation-missing row cannot carry a decision');
+    forged.rows[0].state = 'implementation-missing';
+    assert.equal(reportValidator(forged).valid, false, 'an unrun row cannot match or carry a decision');
     const blank = structuredClone(committedReport);
-    blank.rows[0].state = 'run';
-    assert.equal(reportValidator(blank).valid, false, 'a run row must carry its decision and its match');
+    blank.rows[0].actual = null;
+    assert.equal(reportValidator(blank).valid, false, 'a run row must carry its decision');
+    const unmatched = structuredClone(committedReport);
+    unmatched.rows[0].matches = null;
+    assert.equal(reportValidator(unmatched).valid, false, 'a run row must say whether it matched');
   });
 
   it('refuses a census that does not reconcile over the rows', () => {
     const kept = structuredClone(committedReport);
-    kept.counts.kept = 1;
-    assert.equal(reportValidator(kept).valid, false, 'a kept count with no kept row must refuse');
+    kept.counts.kept = 2;
+    assert.equal(reportValidator(kept).valid, false, 'a kept count above the kept rows must refuse');
     const abandoned = structuredClone(committedReport);
     abandoned.counts.abandoned.byReason.red = 2;
     assert.equal(reportValidator(abandoned).valid, false, 'a reason total that does not sum must refuse');
     const attempted = structuredClone(committedReport);
-    attempted.counts.attempted = 16;
-    assert.equal(reportValidator(attempted).valid, false, 'an attempted count with no run row must refuse');
+    attempted.counts.attempted = 15;
+    assert.equal(reportValidator(attempted).valid, false, 'an attempted count below the run rows must refuse');
   });
 
   it('refuses a protected-ref write and a live model call outright', () => {
@@ -376,18 +376,20 @@ describe('the report schema refuses what the campaign says it refuses', () => {
     bought.counts.liveModelCalls = 1;
     assert.equal(reportValidator(bought).valid, false, 'a live model call cannot be reported at all');
     const stranded = structuredClone(committedReport);
-    stranded.counts.worktreesRemoved = 1;
+    stranded.counts.worktreesRemoved = committedReport.counts.worktreesCreated + 1;
     assert.equal(reportValidator(stranded).valid, false, 'more worktrees removed than created must refuse');
   });
 
   it('refuses a decision that outruns its rows, in both directions', () => {
     const claimed = structuredClone(committedReport);
-    claimed.decision = 'oracle-exact';
-    assert.equal(reportValidator(claimed).valid, false, 'oracle-exact over unrun rows must refuse');
-    const conformant = structuredClone(committedReport);
-    conformant.decision = 'executor-conformant';
-    assert.equal(reportValidator(conformant).valid, false, 'executor-conformant over unrun rows must refuse');
-    assert.equal(decideEvolve(committedReport.rows, committedReport.hostProbes), 'implementation-missing');
+    claimed.rows[0].matches = false;
+    assert.equal(reportValidator(claimed).valid, false, 'oracle-exact over a row that disagrees must refuse');
+    const stalled = structuredClone(committedReport);
+    stalled.rows[0].state = 'implementation-missing';
+    stalled.rows[0].actual = null;
+    stalled.rows[0].matches = null;
+    assert.equal(reportValidator(stalled).valid, false, 'oracle-exact over an unrun row must refuse');
+    assert.equal(decideEvolve(committedReport.rows, committedReport.hostProbes), 'oracle-exact');
     const run = committedReport.rows.map((row) => ({ ...row, state: 'run' as const, matches: true }));
     // A probe that has not run cannot certify anything, even when every row
     // matched: the probes gate the oracle, so they are varied here rather
@@ -411,43 +413,63 @@ describe('the report schema refuses what the campaign says it refuses', () => {
   });
 });
 
-describe('the committed measurement claims nothing beyond the registration', () => {
-  it('states no executor, no hit rate and literal zeros', async () => {
-    // The guarded patch path decides a refusal; nothing yet gates a change.
-    // So the report is split, and says so: the proposals the immutable
-    // surface can refuse on its own are run, and the seven that need a gate
-    // to decide are still missing. A decision of anything but
-    // `implementation-missing` while ANY row is unrun is refused by the
-    // schema, which is what keeps this split honest rather than flattering.
-    assert.equal(committedReport.decision, 'implementation-missing');
-    const run = committedReport.rows.filter((row) => row.state === 'run');
-    const missing = committedReport.rows.filter((row) => row.state === 'implementation-missing');
-    assert.equal(run.length, 9, 'every refusal the surface can reach without running anything');
-    assert.equal(missing.length, 7, 'and exactly the rows a gate has to decide');
+describe('the committed measurement claims exactly what it measured', () => {
+  it('reproduces the registered oracle, and claims nothing more', async () => {
+    // The oracle was written before any of this could run, so `oracle-exact`
+    // is the strongest claim available and it is earned row by row: every
+    // registered proposal ran, and every one produced the decision the
+    // registration fixed for it. The schema recomputes the claim from the
+    // rows in both directions, so it cannot outrun them.
+    assert.equal(committedReport.decision, 'oracle-exact');
+    assert.equal(committedReport.rows.length, 16);
+    for (const row of committedReport.rows) {
+      assert.equal(row.state, 'run', `${row.proposalId} ran`);
+      assert.equal(row.matches, true, `${row.proposalId} decided as registered`);
+      assert.ok(row.actual !== null, `${row.proposalId} carries its decision`);
+    }
 
-    for (const row of run) {
-      assert.equal(row.actual?.decision, 'refused', `${row.proposalId} is refused before anything runs`);
-      assert.equal(row.matches, true, `${row.proposalId} must match its registration`);
-      assert.equal(row.effects.legs, 0, `${row.proposalId} cost no effect`);
+    // Fifteen losses to one keep. A mechanism that could only report wins
+    // would have nothing to say about the other fifteen.
+    assert.equal(committedReport.counts.kept, 1);
+    assert.equal(committedReport.counts.abandoned.total, 6);
+    assert.equal(committedReport.counts.refused.total, 9);
+    assert.equal(committedReport.counts.uncertain, 0);
+    assert.deepEqual(
+      { ...committedReport.counts.abandoned.byReason },
+      {
+        improved: 0, equal: 1, regression: 0, red: 1, ambiguous: 1, 'over-budget': 3,
+        unverifiable: 0, goalpost: 0, escape: 0, command: 0, 'uncertain-effect': 0,
+      },
+      'a killed or drowned gate is over-budget, never red');
+    assert.deepEqual(
+      { ...committedReport.counts.refused.byReason },
+      {
+        improved: 0, equal: 0, regression: 0, red: 0, ambiguous: 0, 'over-budget': 1,
+        unverifiable: 0, goalpost: 7, escape: 1, command: 0, 'uncertain-effect': 0,
+      },
+      'eight adversarial proposals refused on the surface, one on its size');
+
+    // The eight surface refusals cost nothing at all — no worktree, no spawn.
+    const refused = committedReport.rows.filter((row) => row.actual?.decision === 'refused');
+    for (const row of refused) {
+      assert.equal(row.effects.legs, 0, `${row.proposalId} was refused before anything ran`);
     }
-    for (const row of missing) {
-      assert.equal(row.matches, null, `${row.proposalId} claims no match`);
-      assert.equal(row.actual, null);
-      assert.equal(row.effects.legs, 0);
-    }
+    assert.equal(committedReport.counts.worktreesCreated, committedReport.rows.length - refused.length);
+
+    // Every worktree is accounted for, and exactly the keep leaves a branch.
+    assert.equal(committedReport.counts.worktreesRemoved, committedReport.counts.worktreesCreated);
+    assert.equal(committedReport.counts.branchesLeft, committedReport.counts.kept,
+      'a kept experiment is an unmerged branch; nothing else leaves one');
 
     for (const probe of committedReport.hostProbes) assert.equal(probe.state, 'pass', probe.id);
     assert.equal(committedReport.hostProbes.length, 4);
-    assert.equal(committedReport.counts.attempted, 9);
-    assert.equal(committedReport.counts.refused.total, 9);
-    assert.equal(committedReport.counts.kept, 0);
-    // The refusals cost nothing: no process, no worktree, no protected ref.
-    assert.equal(committedReport.counts.processRuns, 0);
-    assert.equal(committedReport.counts.worktreesCreated, 0);
+    assert.equal(committedReport.counts.attempted, 16);
+    // Nothing was merged, pushed or bought.
     assert.equal(committedReport.counts.protectedRefWrites, 0);
     assert.equal(committedReport.counts.liveModelCalls, 0);
+
     const document = await readFile(DOCUMENT_PATH, 'utf8');
-    assert.match(document, /\*\*9\/16 registered proposals run, 4\/4 host probes run\. Hit rate: not measured — no executor\.\*\*/);
+    assert.match(document, /\*\*16\/16 registered proposals run, 4\/4 host probes run, 16\/16 decisions exactly as registered\. Hit rate: 1\/16\.\*\*/);
     assert.match(document, /do not edit numbers by hand/);
   });
 

@@ -26,3 +26,18 @@ export type { EffectRequest, EffectResponse, EffectExecutorOptions, DispatchCont
 
 export { createEffectDriver } from './driver.ts';
 export type { EffectDriverOptions, EffectPlan, EffectPlanLeg, EffectRunResult, FencedEffectStore, ExternalEffects, JobQueue } from './driver.ts';
+
+export { createEvolveClassifier, createTranscript, sampleOf, SAMPLE_LEG } from './classify.ts';
+export type { Transcript, LegTranscript, EvolveClassifierOptions } from './classify.ts';
+
+export { runGate, gateVerdictOf, gatePlan, earnsRerun, GATE_COMMAND } from './gate.ts';
+export type { GateLeg, GateOutcome, RunGateOptions, SettledLeg, GateDriver, GateEffectStore } from './gate.ts';
+
+export { measureFitness, measurePlan, INSTRUMENT_COMMAND, BASE_INSTRUMENT_COMMAND } from './measure.ts';
+export type { MeasureOptions, MeasureOutcome, MeasureSide } from './measure.ts';
+
+export { applyProposal, isolatePlan, commitPlan } from './apply.ts';
+export type { ApplyOptions, ApplyOutcome } from './apply.ts';
+
+export { settleExperiment, dispositionOf } from './settle.ts';
+export type { SettleOptions, SettleOutcome, Disposition, ReviewBundleInput } from './settle.ts';

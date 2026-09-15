@@ -83,7 +83,10 @@ export function createEffectExecutor(options: EffectExecutorOptions) {
             result = await host.commit(input.path as string, input as unknown as { experimentId: string, message: string });
             break;
           case 'remove':
-            result = await host.remove(input.path as string, { deleteBranch: input.deleteBranch === true });
+            result = await host.remove(input.path as string, {
+              deleteBranch: input.deleteBranch === true,
+              experimentId: String(input.experimentId ?? ''),
+            });
             break;
           default:
             return { state: 'ok', response: refuseOne('TEVO1006', '/worktree/op', 'Unknown worktree operation.') };

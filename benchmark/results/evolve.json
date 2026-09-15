@@ -9,7 +9,7 @@
     "files": [
       {
         "path": "benchmark/evolve.ts",
-        "sha256": "dd3c086a3f1d8487ef1cc13e55a72d5a3590757e0ff3fa16aaaa409c39326647"
+        "sha256": "8b5d8745657e8b1ca9703db10f6e5c32388d1aa8023acac4db60d3829e35b739"
       },
       {
         "path": "benchmark/fixtures/evolve/manifest.json",
@@ -24,12 +24,16 @@
         "sha256": "3a75d927433926f987564b743aa786571af280734aed8d9ff61a928570a0fb82"
       },
       {
+        "path": "benchmark/lib/evolve-host.ts",
+        "sha256": "c427e346ad13682655486eb0cb2ca07532eee568f3d42835d0eaa2dda6841b04"
+      },
+      {
         "path": "benchmark/lib/evolve-probes.ts",
         "sha256": "2be05a7d37a84f9cc6778c4fd023632160b003a6b90576bb8ab338d240fc7f4d"
       },
       {
         "path": "benchmark/lib/evolve.ts",
-        "sha256": "24eea4267b5c17cbf4b3395a94d7a3584d2a7f2c86c0102ca2a7de20b4ddaf33"
+        "sha256": "af7f5afa4b335cb5c7343d869eae663ee07fc781a2e8638f1badf323e01b3848"
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
@@ -80,8 +84,24 @@
         "sha256": "446acad0f905566185d5de702dff87b95bed3c585e53184ee6a2e4fd6fe9c639"
       },
       {
+        "path": "packages/evolve/src/decide.ts",
+        "sha256": "1a86ad4491ff69ff924cdea8bd775c72c1b73bcc14d9f58e1ab9131fda6ea13d"
+      },
+      {
         "path": "packages/evolve/src/errors.ts",
         "sha256": "c8e42cc62e394e95f30491c7505d34c27ee3fa36b57bb7384f94d45c559d5d07"
+      },
+      {
+        "path": "packages/evolve/src/fitness.ts",
+        "sha256": "6dfb39b2e94203c05735ede4a7c4a63f19966207903ca0df730c33720132edac"
+      },
+      {
+        "path": "packages/evolve/src/host/apply.ts",
+        "sha256": "7856d295ec563b52da75ece93a0eb94c1bf5ab644639121a8ef235ef003e3ed7"
+      },
+      {
+        "path": "packages/evolve/src/host/classify.ts",
+        "sha256": "2e9840b378613ef5e1b678d31ffd090f3846c59e96e84a87bb8caeab3600b3aa"
       },
       {
         "path": "packages/evolve/src/host/driver.ts",
@@ -89,23 +109,35 @@
       },
       {
         "path": "packages/evolve/src/host/effects.ts",
-        "sha256": "048ce5d81f383536a131aabf086ad12032cb8ec47a8196058b3d4985cf8af626"
+        "sha256": "33fac419e1b38b13c1f464036d95c9915e657db19c7081b079603078b546899d"
+      },
+      {
+        "path": "packages/evolve/src/host/gate.ts",
+        "sha256": "d4943ed87fe0fe483f11ec5659beeda08be9f04ed4acb49e4f4d22e592b081d5"
       },
       {
         "path": "packages/evolve/src/host/git-allow.ts",
-        "sha256": "1db1a761ef003876bbfa25aadf55240c8df3ecc4651c0575338724ed2f0b17b7"
+        "sha256": "f0b14798b269070994a1b2fb4e5b832b0a1c868b0800abb92296a2312d240122"
       },
       {
         "path": "packages/evolve/src/host/index.ts",
-        "sha256": "a2756c030d2dc092912cd6d97b6982dc2b6e124ceb2e89ecbd3cb6c7dfdc37fa"
+        "sha256": "97bc0b48bb3adec1ae0c5fce3118c4c8168eca43d0540017171d2845837b507f"
+      },
+      {
+        "path": "packages/evolve/src/host/measure.ts",
+        "sha256": "28f7223420f5ab65626024e666d3ba59efac4552fb490294da2d6aff7566f581"
       },
       {
         "path": "packages/evolve/src/host/runner.ts",
         "sha256": "4d9e738219ca1e9cb832490c7654875f2454d91981c8376d947b3e30a99a6c19"
       },
       {
+        "path": "packages/evolve/src/host/settle.ts",
+        "sha256": "f33b0cd701eb0b3f90cf148635961fdb541ee113ec7cfab0c0c8ea73ce413c51"
+      },
+      {
         "path": "packages/evolve/src/host/worktree.ts",
-        "sha256": "2459b1bf469441d73784f19d3195ebb792945bd8cd055a4c98027bbfef7c6bae"
+        "sha256": "68390fe1fb46d7f53eb88cfd03aef3886790323d7275d46dd2c98cf37d4b0960"
       },
       {
         "path": "packages/evolve/src/identity.ts",
@@ -113,15 +145,19 @@
       },
       {
         "path": "packages/evolve/src/index.ts",
-        "sha256": "db955b8eba12392f52abe14a46fef70ae969ca4f725dfe8ceb6170faff186a94"
+        "sha256": "398272d95f0267ec73bd9801ac22b6b92a229d823d953d47a521aca19ac93be4"
       },
       {
         "path": "packages/evolve/src/manifest.ts",
         "sha256": "a5ddf2df4681de65414ba950530417a7014f664877c006da455ea07bd65e0230"
       },
       {
+        "path": "packages/evolve/src/outcome-binding.ts",
+        "sha256": "3e2788981ee4b092bf96d5b83316daecf143d0313a8e183801ecd1faaa9c19ae"
+      },
+      {
         "path": "packages/evolve/src/patch.ts",
-        "sha256": "c872a24b19861db2423981334095e3b72d268150a742feb7ae89b56e8ba4b9dc"
+        "sha256": "79bf963fccfefa908bd60bce2ca0649e8adcaca498e531ad755ee54ded943fd9"
       },
       {
         "path": "packages/evolve/src/policy.ts",
@@ -140,6 +176,10 @@
         "sha256": "98c50e3ca0fcd856c583e2d81f0061d8dae2baa8e2c5ba62232be14ef27b44df"
       },
       {
+        "path": "packages/evolve/src/strategy-refiner.ts",
+        "sha256": "9d6e8a4a9e46e5810df5143c2aca14b9c73d9408bec5a5b5d7f3bf16c4b77b5e"
+      },
+      {
         "path": "packages/evolve/src/strategy.ts",
         "sha256": "68dce8586a335120409544e8ab1511d10453b133eb98e423de39303dd9f0340c"
       },
@@ -149,10 +189,10 @@
       },
       {
         "path": "test/benchmark/evolve.test.ts",
-        "sha256": "611f38a2c634ded23671a8ad9a62bd49512b84dabfaa979048cea2850283c088"
+        "sha256": "39a76ba5aa66a73710d1c75a3e605280b8dc2764b2fb594b4805b5881ec0058a"
       }
     ],
-    "sha256": "84f809fd4118c32b6334cacdfe30572ae6347a10409f784e08f00ca556ed3eb3"
+    "sha256": "a59e4b45ff81015608037ab49a5274d9dfbe12988248a844c99c97d1761c47b0"
   },
   "suite": {
     "packages": [
@@ -524,9 +564,13 @@
     {
       "proposalId": "improve-partial-select",
       "strategyId": "S-partial-select",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "kept",
+        "reason": "improved",
+        "code": null
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1574,
         "patchFiles": 1,
@@ -534,16 +578,20 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 10,
         "unresolved": 0
       }
     },
     {
       "proposalId": "noop-comment",
       "strategyId": "S-cosmetic",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "equal",
+        "code": "TEVO1008"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1750,
         "patchFiles": 1,
@@ -551,16 +599,20 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 10,
         "unresolved": 0
       }
     },
     {
       "proposalId": "regress-off-by-one",
       "strategyId": "S-regress",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "red",
+        "code": "TEVO1007"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1576,
         "patchFiles": 1,
@@ -568,16 +620,20 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 5,
         "unresolved": 0
       }
     },
     {
       "proposalId": "flaky-marker-file",
       "strategyId": "S-regress",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "ambiguous",
+        "code": "TEVO1008"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1904,
         "patchFiles": 1,
@@ -585,7 +641,7 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 5,
         "unresolved": 0
       }
     },
@@ -781,9 +837,13 @@
     {
       "proposalId": "timeout-gate",
       "strategyId": "S-hostile-runtime",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1677,
         "patchFiles": 1,
@@ -791,16 +851,20 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 4,
         "unresolved": 0
       }
     },
     {
       "proposalId": "output-flood",
       "strategyId": "S-hostile-runtime",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1766,
         "patchFiles": 1,
@@ -808,16 +872,20 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 4,
         "unresolved": 0
       }
     },
     {
       "proposalId": "workspace-flood",
       "strategyId": "S-hostile-runtime",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "abandoned",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 1835,
         "patchFiles": 1,
@@ -825,7 +893,7 @@
         "withinPatchFiles": true
       },
       "effects": {
-        "legs": 0,
+        "legs": 4,
         "unresolved": 0
       }
     }
@@ -915,17 +983,17 @@
     }
   ],
   "counts": {
-    "attempted": 9,
-    "kept": 0,
+    "attempted": 16,
+    "kept": 1,
     "abandoned": {
-      "total": 0,
+      "total": 6,
       "byReason": {
         "improved": 0,
-        "equal": 0,
+        "equal": 1,
         "regression": 0,
-        "red": 0,
-        "ambiguous": 0,
-        "over-budget": 0,
+        "red": 1,
+        "ambiguous": 1,
+        "over-budget": 3,
         "unverifiable": 0,
         "goalpost": 0,
         "escape": 0,
@@ -950,10 +1018,10 @@
       }
     },
     "uncertain": 0,
-    "processRuns": 0,
-    "worktreesCreated": 0,
-    "worktreesRemoved": 0,
-    "branchesLeft": 0,
+    "processRuns": 42,
+    "worktreesCreated": 7,
+    "worktreesRemoved": 7,
+    "branchesLeft": 1,
     "protectedRefWrites": 0,
     "liveModelCalls": 0
   },
@@ -1026,6 +1094,6 @@
       }
     ]
   },
-  "decision": "implementation-missing",
-  "reportId": "2d272d3596fec5d34e3ee0774b4d79385261a18f1d5970be450e723efbb8e257"
+  "decision": "oracle-exact",
+  "reportId": "561b772ce2cc79c8f61454e86c12e34d999f23f044b0d9db0cdfef2357e58155"
 }

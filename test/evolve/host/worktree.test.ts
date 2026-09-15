@@ -121,7 +121,7 @@ describe('the worktree host', () => {
     assert.equal(committed.ok, true, JSON.stringify(committed));
     assert.match((committed as { value: { revision: string } }).value.revision, /^[a-f0-9]{40}$/);
 
-    const removed = await host.remove(path, { deleteBranch: true });
+    const removed = await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     assert.equal(removed.ok, true, JSON.stringify(removed));
 
     const branches = await rawGit(fixture.repositoryRoot, 'branch', '--list');
@@ -140,7 +140,7 @@ describe('the worktree host', () => {
     assert.equal(created.ok, true);
     const { path } = (created as { value: { path: string } }).value;
 
-    assert.equal((await host.remove(path, { deleteBranch: false })).ok, true);
+    assert.equal((await host.remove(path, { deleteBranch: false, experimentId: 'e1' })).ok, true);
     const branches = await rawGit(fixture.repositoryRoot, 'branch', '--list');
     assert.equal(branches.stdout.includes('exp/e2'), true, 'kept, so a review can still reach it');
     await rawGit(fixture.repositoryRoot, 'branch', '-D', 'exp/e2');
@@ -163,7 +163,7 @@ describe('the worktree host', () => {
       assert.equal(Object.hasOwn((mapped as { value: { files: Record<string, string> } }).value.files, 'sneaky.txt'), false);
     }
     finally {
-      await host.remove(path, { deleteBranch: true });
+      await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     }
   });
 
@@ -187,7 +187,7 @@ describe('the worktree host', () => {
       assert.equal((throughLink as { issues: Array<{ code: string }> }).issues[0].code, 'TEVO1004');
     }
     finally {
-      await host.remove(path, { deleteBranch: true });
+      await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     }
   });
 
@@ -204,7 +204,7 @@ describe('the worktree host', () => {
       assert.equal(issue.path, '/branch');
     }
     finally {
-      await host.remove(path, { deleteBranch: true });
+      await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     }
   });
 
@@ -220,7 +220,7 @@ describe('the worktree host', () => {
       assert.equal((mapped as { issues: Array<{ code: string }> }).issues[0].code, 'TEVO1001');
     }
     finally {
-      await host.remove(path, { deleteBranch: true });
+      await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     }
   });
 
@@ -235,7 +235,7 @@ describe('the worktree host', () => {
       assert.equal(await readFile(join(fixture.repositoryRoot, 'src', 'rank.js'), 'utf8'), original);
     }
     finally {
-      await host.remove(path, { deleteBranch: true });
+      await host.remove(path, { deleteBranch: true, experimentId: 'e1' });
     }
   });
 });
