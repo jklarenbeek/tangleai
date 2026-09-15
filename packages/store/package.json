@@ -18,7 +18,9 @@
     "./outcome-store": "./src/outcome-store.ts",
     "./temporal-store": "./src/temporal-store.ts",
     "./consolidation-store": "./src/consolidation-store.ts",
-    "./trace2skill-store": "./src/trace2skill-store.ts"
+    "./trace2skill-store": "./src/trace2skill-store.ts",
+    "./evolve-store": "./src/evolve-store.ts",
+    "./evolve-effects": "./src/evolve-effects.ts"
   },
   "engines": {
     "node": ">=24"
@@ -32,9 +34,11 @@
     "@jarenjs/validate": "0.90.6",
     "@tangleai/mas": "^0.28.0",
     "@jarenjs/core": "0.90.6",
+    "@jarenjs/linq": "0.90.6",
     "@tangleai/memory": "^0.28.0",
     "@tangleai/outcomes": "^0.28.0",
-    "@tangleai/trace2skill": "^0.28.0"
+    "@tangleai/trace2skill": "^0.28.0",
+    "@tangleai/evolve": "^0.28.0"
   },
   "private": false,
   "types": "./src/index.ts",

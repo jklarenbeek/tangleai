@@ -25,7 +25,7 @@
       },
       {
         "path": "benchmark/lib/evolve.ts",
-        "sha256": "b845f0982e5af9822170f2c1532f451e862d30a77114337faf1570f769d11893"
+        "sha256": "df1d1d0693727166088233bfa4b20f2c46d0c731418d2040cc3be2254ffbb82e"
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
@@ -57,10 +57,10 @@
       },
       {
         "path": "test/benchmark/evolve.test.ts",
-        "sha256": "196c71a6981abe6a9212c81b9795c2e02baf696bf6483426c8a5e0b8f13599f2"
+        "sha256": "4642fe6f7fc046a6d20efb27cd2539de04cb2c561a754a2731e1a14be5604c8e"
       }
     ],
-    "sha256": "6cc33494a5f242e55af56048daccd8d81058698244e1861ad981f3c61e4ce657"
+    "sha256": "dfa2aaafcad867d12d6855ce5720f30eb5a1c54c80b9bbed42cff978eb41c9c0"
   },
   "suite": {
     "packages": [
@@ -767,23 +767,23 @@
   "hostProbes": [
     {
       "id": "symlink-indirection",
-      "state": "implementation-missing",
-      "detail": null
+      "state": "pass",
+      "detail": "TEVO1006 before any spawn"
     },
     {
       "id": "protected-ref-write",
-      "state": "implementation-missing",
-      "detail": null
+      "state": "pass",
+      "detail": "4 spellings and 3 verbs refused"
     },
     {
       "id": "unknown-command",
-      "state": "implementation-missing",
-      "detail": null
+      "state": "pass",
+      "detail": "TEVO1006 with zero spawns"
     },
     {
       "id": "env-leak",
-      "state": "implementation-missing",
-      "detail": null
+      "state": "pass",
+      "detail": "2 variables, none of them the credential"
     }
   ],
   "counts": {
@@ -899,5 +899,5 @@
     ]
   },
   "decision": "implementation-missing",
-  "reportId": "9c328926039430a5864cf6b0c757153d806e8f50ce57c2ab51b0decf42b7aaf5"
+  "reportId": "de27b4722edc60223d63f5f4e42ffea372843a542cff7844225d51e3f8dd3f5f"
 }

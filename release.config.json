@@ -22,6 +22,7 @@
     "packages/pipeline",
     "packages/outcomes",
     "packages/trace2skill",
+    "packages/evolve",
     "packages/store",
     "packages/gmpl"
   ],

@@ -46,4 +46,8 @@ export type { ConsolidationDbOptions } from './consolidation-store.ts';
 
 export { createTrace2SkillDbStore, createTrace2SkillDbPersistence } from './trace2skill-store.ts';
 export type { Trace2SkillDbOptions } from './trace2skill-store.ts';
+export { createEvolveStore } from './evolve-store.ts';
+export { EVOLVE_COLLECTIONS } from './evolve-model.ts';
+export { createEvolveEffectStore } from './evolve-effects.ts';
+export type { EvolveEffectStoreOptions } from './evolve-effects.ts';
 export { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';

@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/evolve-experiment-adapter",
+  "$ref": "#/$defs/input",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "experimentId": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "strategyId": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "baseRevision": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "direction": { "enum": ["lower", "higher"] }
+      },
+      "required": ["experimentId", "strategyId", "baseRevision", "metric", "direction"],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": { "predicted": { "const": "improve" } },
+      "required": ["predicted"],
+      "additionalProperties": false
+    },
+    "resolution": {
+      "type": "object",
+      "properties": {
+        "decision": { "enum": ["kept", "abandoned", "refused", "uncertain"] },
+        "reason": {
+          "enum": ["improved", "equal", "regression", "red", "ambiguous", "over-budget",
+            "unverifiable", "goalpost", "escape", "command", "uncertain-effect"]
+        },
+        "delta": { "type": ["number", "null"] },
+        "decisionRecordId": { "type": "string", "minLength": 1, "maxLength": 512 }
+      },
+      "required": ["decision", "reason", "delta", "decisionRecordId"],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "weights": { "type": "object", "additionalProperties": { "type": "number" } },
+        "version": { "const": 1 }
+      },
+      "required": ["weights", "version"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -30,7 +30,8 @@
     "@tangleai/jaren": "0.28.0",
     "@tangleai/outcomes": "0.28.0",
     "@tangleai/gmpl": "0.28.0",
-    "@tangleai/trace2skill": "0.28.0"
+    "@tangleai/trace2skill": "0.28.0",
+    "@tangleai/evolve": "0.28.0"
   },
   "scripts": {
     "gmpl": "node gmpl-conformance.ts"

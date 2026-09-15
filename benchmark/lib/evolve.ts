@@ -44,6 +44,7 @@ import evolveSchema from '../schemas/evolve.schema.json' with { type: 'json' };
 import runIdentitySchema from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import { count, table } from './table.ts';
 import type { Controls, Counts, Evolve, HostProbe, Row, SourceManifest } from './evolve.types.ts';
+import { runHostProbes } from './evolve-probes.ts';
 
 export { loadEvolveFixture as loadFixture };
 
@@ -264,11 +265,11 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
       effects: { legs: 0, unresolved: 0 },
     };
   });
-  const hostProbes: HostProbe[] = loaded.manifest.hostProbes.map((id): HostProbe => ({
-    id,
-    state: 'implementation-missing',
-    detail: null,
-  }));
+  // The probes are EXECUTED, not declared. A probe that runs and answers
+  // wrongly is a `fail`, and one failing probe is enough to stop this
+  // instrument reporting an improvement.
+  const hostProbes: HostProbe[] = (await runHostProbes(loaded.manifest.hostProbes))
+    .map((probe): HostProbe => ({ id: probe.id as HostProbe['id'], state: probe.state, detail: probe.detail }));
 
   const report: Evolve = {
     benchmark: 'evolve',

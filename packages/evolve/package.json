@@ -1,0 +1,54 @@
+{
+  "name": "@tangleai/evolve",
+  "version": "0.28.0",
+  "description": "Isolated propose, apply, gate, measure and decide experiments over a repository, with human merge authority",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts.gen.ts",
+    "./schemas/evolve": "./schemas/evolve.schema.json",
+    "./host": "./src/host/index.ts",
+    "./adapters/experiment": "./src/adapters/experiment.ts",
+    "./schemas/experiment-adapter": "./schemas/experiment-adapter.schema.json",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/core": "0.90.6",
+    "@jarenjs/json": "0.90.6",
+    "@jarenjs/validate": "0.90.6",
+    "@tangleai/config": "^0.28.0",
+    "@tangleai/context": "^0.28.0",
+    "@tangleai/core": "^0.28.0",
+    "@tangleai/outcomes": "^0.28.0"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/**/*.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/evolve"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

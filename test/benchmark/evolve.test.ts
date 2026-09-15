@@ -389,7 +389,13 @@ describe('the report schema refuses what the campaign says it refuses', () => {
     assert.equal(reportValidator(conformant).valid, false, 'executor-conformant over unrun rows must refuse');
     assert.equal(decideEvolve(committedReport.rows, committedReport.hostProbes), 'implementation-missing');
     const run = committedReport.rows.map((row) => ({ ...row, state: 'run' as const, matches: true }));
-    assert.equal(decideEvolve(run, committedReport.hostProbes), 'executor-conformant', 'unrun probes are not an exact oracle');
+    // A probe that has not run cannot certify anything, even when every row
+    // matched: the probes gate the oracle, so they are varied here rather
+    // than taken from a committed report whose probes now pass.
+    const unrun = committedReport.hostProbes.map((probe) => ({ ...probe, state: 'implementation-missing' as const }));
+    assert.equal(decideEvolve(run, unrun), 'executor-conformant', 'unrun probes are not an exact oracle');
+    const failed = committedReport.hostProbes.map((probe) => ({ ...probe, state: 'fail' as const }));
+    assert.equal(decideEvolve(run, failed), 'executor-conformant', 'a failing probe is not an exact oracle either');
     const passed = committedReport.hostProbes.map((probe) => ({ ...probe, state: 'pass' as const }));
     assert.equal(decideEvolve(run, passed), 'oracle-exact');
     assert.equal(decideEvolve(run.map((row) => ({ ...row, matches: false })), passed), 'executor-conformant');
@@ -414,12 +420,16 @@ describe('the committed measurement claims nothing beyond the registration', () 
       assert.equal(row.actual, null);
       assert.equal(row.effects.legs, 0);
     }
-    for (const probe of committedReport.hostProbes) assert.equal(probe.state, 'implementation-missing', probe.id);
+    // The probes DO run now, and they pass: the isolation host exists even
+    // though nothing yet applies a proposal through it. Saying so is the
+    // honest state — the rows above are what is still missing.
+    for (const probe of committedReport.hostProbes) assert.equal(probe.state, 'pass', probe.id);
+    assert.equal(committedReport.hostProbes.length, 4);
     assert.equal(committedReport.counts.attempted, 0);
     assert.equal(committedReport.counts.protectedRefWrites, 0);
     assert.equal(committedReport.counts.liveModelCalls, 0);
     const document = await readFile(DOCUMENT_PATH, 'utf8');
-    assert.match(document, /\*\*0\/16 registered proposals run, 0\/4 host probes run\. Hit rate: not measured — no executor\.\*\*/);
+    assert.match(document, /\*\*0\/16 registered proposals run, 4\/4 host probes run\. Hit rate: not measured — no executor\.\*\*/);
     assert.match(document, /do not edit numbers by hand/);
   });
 
