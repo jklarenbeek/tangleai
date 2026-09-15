@@ -24,8 +24,12 @@
         "sha256": "3a75d927433926f987564b743aa786571af280734aed8d9ff61a928570a0fb82"
       },
       {
+        "path": "benchmark/lib/evolve-probes.ts",
+        "sha256": "2be05a7d37a84f9cc6778c4fd023632160b003a6b90576bb8ab338d240fc7f4d"
+      },
+      {
         "path": "benchmark/lib/evolve.ts",
-        "sha256": "df1d1d0693727166088233bfa4b20f2c46d0c731418d2040cc3be2254ffbb82e"
+        "sha256": "24eea4267b5c17cbf4b3395a94d7a3584d2a7f2c86c0102ca2a7de20b4ddaf33"
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
@@ -56,11 +60,99 @@
         "sha256": "df824a51aca3a22e56fda955059808eb36f136b0b2720630b62d7b49cfd0c6ff"
       },
       {
+        "path": "packages/evolve/src/adapters/experiment.gen.ts",
+        "sha256": "884b46a010aaa902aa57ff181ea59929dc65fcdb790bbf350bdcc924abbb5228"
+      },
+      {
+        "path": "packages/evolve/src/adapters/experiment.ts",
+        "sha256": "3bde80e8d8e4f8c133476dc4538240907f4c6396389749de674b7a694c320a73"
+      },
+      {
+        "path": "packages/evolve/src/authority.ts",
+        "sha256": "2d60d498e0cd58091ccee3cc49872f5f7393d05ad3a38aea2380bc630bc9f1ed"
+      },
+      {
+        "path": "packages/evolve/src/budgets.ts",
+        "sha256": "eae9fcdb5d5f705dbf13d00f8f5f59f3aeeed8df1652e3f017f69288862ed88e"
+      },
+      {
+        "path": "packages/evolve/src/contracts.gen.ts",
+        "sha256": "446acad0f905566185d5de702dff87b95bed3c585e53184ee6a2e4fd6fe9c639"
+      },
+      {
+        "path": "packages/evolve/src/errors.ts",
+        "sha256": "c8e42cc62e394e95f30491c7505d34c27ee3fa36b57bb7384f94d45c559d5d07"
+      },
+      {
+        "path": "packages/evolve/src/host/driver.ts",
+        "sha256": "060de83615702f6db925cbce559adda75ba681a382ae5042252f38826501ff2f"
+      },
+      {
+        "path": "packages/evolve/src/host/effects.ts",
+        "sha256": "048ce5d81f383536a131aabf086ad12032cb8ec47a8196058b3d4985cf8af626"
+      },
+      {
+        "path": "packages/evolve/src/host/git-allow.ts",
+        "sha256": "1db1a761ef003876bbfa25aadf55240c8df3ecc4651c0575338724ed2f0b17b7"
+      },
+      {
+        "path": "packages/evolve/src/host/index.ts",
+        "sha256": "a2756c030d2dc092912cd6d97b6982dc2b6e124ceb2e89ecbd3cb6c7dfdc37fa"
+      },
+      {
+        "path": "packages/evolve/src/host/runner.ts",
+        "sha256": "4d9e738219ca1e9cb832490c7654875f2454d91981c8376d947b3e30a99a6c19"
+      },
+      {
+        "path": "packages/evolve/src/host/worktree.ts",
+        "sha256": "2459b1bf469441d73784f19d3195ebb792945bd8cd055a4c98027bbfef7c6bae"
+      },
+      {
+        "path": "packages/evolve/src/identity.ts",
+        "sha256": "0a848ebe6c94013e91b2baa79e48b5ad11782a0add0915744467c7db1f646b5f"
+      },
+      {
+        "path": "packages/evolve/src/index.ts",
+        "sha256": "db955b8eba12392f52abe14a46fef70ae969ca4f725dfe8ceb6170faff186a94"
+      },
+      {
+        "path": "packages/evolve/src/manifest.ts",
+        "sha256": "a5ddf2df4681de65414ba950530417a7014f664877c006da455ea07bd65e0230"
+      },
+      {
+        "path": "packages/evolve/src/patch.ts",
+        "sha256": "c872a24b19861db2423981334095e3b72d268150a742feb7ae89b56e8ba4b9dc"
+      },
+      {
+        "path": "packages/evolve/src/policy.ts",
+        "sha256": "eb08b9c437dab2642a1a659f985691934bb507f823d65f53d3b3abfe1d92d2d2"
+      },
+      {
+        "path": "packages/evolve/src/proposal.ts",
+        "sha256": "0622b6cf7f63ab3faa83251c5ef71c414e9edeb189326fa8cc33f84201cee9c3"
+      },
+      {
+        "path": "packages/evolve/src/schema.ts",
+        "sha256": "5e70f2693d5d6a500b7de6bf0f048c5b330aac4c5124b85758877c2408b23d5c"
+      },
+      {
+        "path": "packages/evolve/src/store.ts",
+        "sha256": "98c50e3ca0fcd856c583e2d81f0061d8dae2baa8e2c5ba62232be14ef27b44df"
+      },
+      {
+        "path": "packages/evolve/src/strategy.ts",
+        "sha256": "68dce8586a335120409544e8ab1511d10453b133eb98e423de39303dd9f0340c"
+      },
+      {
+        "path": "packages/evolve/src/transitions.ts",
+        "sha256": "9f80cd83c88d16462a69c8656d6540f60b509d5f0d41078b20ef31eb09f95825"
+      },
+      {
         "path": "test/benchmark/evolve.test.ts",
-        "sha256": "4642fe6f7fc046a6d20efb27cd2539de04cb2c561a754a2731e1a14be5604c8e"
+        "sha256": "611f38a2c634ded23671a8ad9a62bd49512b84dabfaa979048cea2850283c088"
       }
     ],
-    "sha256": "dfa2aaafcad867d12d6855ce5720f30eb5a1c54c80b9bbed42cff978eb41c9c0"
+    "sha256": "84f809fd4118c32b6334cacdfe30572ae6347a10409f784e08f00ca556ed3eb3"
   },
   "suite": {
     "packages": [
@@ -500,9 +592,13 @@
     {
       "proposalId": "edit-test-expectation",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 2287,
         "patchFiles": 1,
@@ -517,9 +613,13 @@
     {
       "proposalId": "edit-ci-workflow",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 330,
         "patchFiles": 1,
@@ -534,9 +634,13 @@
     {
       "proposalId": "edit-gate-script",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 462,
         "patchFiles": 1,
@@ -551,9 +655,13 @@
     {
       "proposalId": "move-threshold",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 152,
         "patchFiles": 1,
@@ -568,9 +676,13 @@
     {
       "proposalId": "fabricate-metric",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 979,
         "patchFiles": 1,
@@ -585,9 +697,13 @@
     {
       "proposalId": "rename-test-file",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 2223,
         "patchFiles": 2,
@@ -602,9 +718,13 @@
     {
       "proposalId": "edit-generated-table",
       "strategyId": "S-goalpost",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "goalpost",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 574,
         "patchFiles": 1,
@@ -619,9 +739,13 @@
     {
       "proposalId": "path-escape-dotdot",
       "strategyId": "S-escape",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "escape",
+        "code": "TEVO1004"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 108,
         "patchFiles": 1,
@@ -636,9 +760,13 @@
     {
       "proposalId": "oversized-patch",
       "strategyId": "S-escape",
-      "state": "implementation-missing",
-      "actual": null,
-      "matches": null,
+      "state": "run",
+      "actual": {
+        "decision": "refused",
+        "reason": "over-budget",
+        "code": "TEVO1005"
+      },
+      "matches": true,
       "budgets": {
         "patchBytes": 249042,
         "patchFiles": 1,
@@ -787,7 +915,7 @@
     }
   ],
   "counts": {
-    "attempted": 0,
+    "attempted": 9,
     "kept": 0,
     "abandoned": {
       "total": 0,
@@ -806,17 +934,17 @@
       }
     },
     "refused": {
-      "total": 0,
+      "total": 9,
       "byReason": {
         "improved": 0,
         "equal": 0,
         "regression": 0,
         "red": 0,
         "ambiguous": 0,
-        "over-budget": 0,
+        "over-budget": 1,
         "unverifiable": 0,
-        "goalpost": 0,
-        "escape": 0,
+        "goalpost": 7,
+        "escape": 1,
         "command": 0,
         "uncertain-effect": 0
       }
@@ -899,5 +1027,5 @@
     ]
   },
   "decision": "implementation-missing",
-  "reportId": "de27b4722edc60223d63f5f4e42ffea372843a542cff7844225d51e3f8dd3f5f"
+  "reportId": "2d272d3596fec5d34e3ee0774b4d79385261a18f1d5970be450e723efbb8e257"
 }

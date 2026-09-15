@@ -413,23 +413,41 @@ describe('the report schema refuses what the campaign says it refuses', () => {
 
 describe('the committed measurement claims nothing beyond the registration', () => {
   it('states no executor, no hit rate and literal zeros', async () => {
+    // The guarded patch path decides a refusal; nothing yet gates a change.
+    // So the report is split, and says so: the proposals the immutable
+    // surface can refuse on its own are run, and the seven that need a gate
+    // to decide are still missing. A decision of anything but
+    // `implementation-missing` while ANY row is unrun is refused by the
+    // schema, which is what keeps this split honest rather than flattering.
     assert.equal(committedReport.decision, 'implementation-missing');
-    for (const row of committedReport.rows) {
-      assert.equal(row.state, 'implementation-missing', `${row.proposalId} has nothing to run it`);
-      assert.equal(row.matches, null);
+    const run = committedReport.rows.filter((row) => row.state === 'run');
+    const missing = committedReport.rows.filter((row) => row.state === 'implementation-missing');
+    assert.equal(run.length, 9, 'every refusal the surface can reach without running anything');
+    assert.equal(missing.length, 7, 'and exactly the rows a gate has to decide');
+
+    for (const row of run) {
+      assert.equal(row.actual?.decision, 'refused', `${row.proposalId} is refused before anything runs`);
+      assert.equal(row.matches, true, `${row.proposalId} must match its registration`);
+      assert.equal(row.effects.legs, 0, `${row.proposalId} cost no effect`);
+    }
+    for (const row of missing) {
+      assert.equal(row.matches, null, `${row.proposalId} claims no match`);
       assert.equal(row.actual, null);
       assert.equal(row.effects.legs, 0);
     }
-    // The probes DO run now, and they pass: the isolation host exists even
-    // though nothing yet applies a proposal through it. Saying so is the
-    // honest state — the rows above are what is still missing.
+
     for (const probe of committedReport.hostProbes) assert.equal(probe.state, 'pass', probe.id);
     assert.equal(committedReport.hostProbes.length, 4);
-    assert.equal(committedReport.counts.attempted, 0);
+    assert.equal(committedReport.counts.attempted, 9);
+    assert.equal(committedReport.counts.refused.total, 9);
+    assert.equal(committedReport.counts.kept, 0);
+    // The refusals cost nothing: no process, no worktree, no protected ref.
+    assert.equal(committedReport.counts.processRuns, 0);
+    assert.equal(committedReport.counts.worktreesCreated, 0);
     assert.equal(committedReport.counts.protectedRefWrites, 0);
     assert.equal(committedReport.counts.liveModelCalls, 0);
     const document = await readFile(DOCUMENT_PATH, 'utf8');
-    assert.match(document, /\*\*0\/16 registered proposals run, 4\/4 host probes run\. Hit rate: not measured — no executor\.\*\*/);
+    assert.match(document, /\*\*9\/16 registered proposals run, 4\/4 host probes run\. Hit rate: not measured — no executor\.\*\*/);
     assert.match(document, /do not edit numbers by hand/);
   });
 

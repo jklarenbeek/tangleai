@@ -32,6 +32,15 @@ export type { EvolveStore, ListQuery, StoredRecord, WriteReceipt } from './store
 export { createStrategyLibrary } from './strategy.ts';
 export type { StrategyLibrary, StrategyLedger, StrategyMemoryStore, StrategyRegistration, StrategyCarrier } from './strategy.ts';
 
+export { loadProposal, operationPath, patchIdOf, patchBytes, decodePointerSegment, EVOLVE_PROPOSAL_SCHEMA } from './proposal.ts';
+export type { EvolveProposalInput, ProposalOperation, PatchOp } from './proposal.ts';
+
+export { compileSurfacePolicy, policyFromRepository } from './policy.ts';
+export type { SurfacePolicy, SurfacePolicyInput, SurfaceStatus, FileMap } from './policy.ts';
+
+export { createPatchRefiner } from './patch.ts';
+export type { PatchRefinerOptions, PreparedPatch, WritePlan } from './patch.ts';
+
 export { EVOLVE_EXECUTOR_MANIFEST } from './manifest.ts';
 export type { EvolveExecutorManifest } from './manifest.ts';
 

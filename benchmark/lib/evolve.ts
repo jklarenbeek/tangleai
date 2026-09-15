@@ -45,6 +45,7 @@ import runIdentitySchema from '../../packages/config/schemas/run-identity.schema
 import { count, table } from './table.ts';
 import type { Controls, Counts, Evolve, HostProbe, Row, SourceManifest } from './evolve.types.ts';
 import { runHostProbes } from './evolve-probes.ts';
+import { compileSurfacePolicy, createPatchRefiner, DEFAULT_EVOLVE_BUDGETS } from '@tangleai/evolve';
 
 export { loadEvolveFixture as loadFixture };
 
@@ -68,6 +69,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
   'benchmark/fixtures/evolve/manifest.json',
   'benchmark/lib/args.ts',
   'benchmark/lib/evolve-fixture.ts',
+  'benchmark/lib/evolve-probes.ts',
   'benchmark/lib/evolve.ts',
   'benchmark/lib/evolve.types.ts',
   'benchmark/lib/report-envelope.ts',
@@ -87,7 +89,11 @@ export const SOURCE_MANIFEST: readonly string[] = [
  * digests instead, which is where tampering has to be caught anyway.
  */
 export async function evolveSource(root = process.cwd()): Promise<SourceManifest> {
-  const source = await sourceManifest(root, SOURCE_MANIFEST);
+  // `packages/evolve/src` is a ROOT, not a listed file: the instrument now
+  // runs that package's guarded patch path and host probes, so its bytes
+  // determine the report and must be bound to it. A flat list would go
+  // stale the first time a module is added.
+  const source = await sourceManifest(root, SOURCE_MANIFEST, ['packages/evolve/src']);
   const files = source.files;
   return { files, sha256: await canonicalSha256({ files }) };
 }
@@ -232,6 +238,29 @@ export interface BuildOptions {
 
 const reportValidator = createReportValidator(evolveSchema as object, [runIdentitySchema as object]);
 
+/** The decision an immutable-surface refusal is, read from its own issue. */
+function refusalOf(issue: { code: string, detail: string }): NonNullable<Row['actual']> {
+  const reason: NonNullable<Row['actual']>['reason'] = issue.detail.startsWith('escape')
+    ? 'escape'
+    : issue.detail.startsWith('over-budget') ? 'over-budget' : 'goalpost';
+  return { decision: 'refused', reason, code: issue.code as NonNullable<Row['actual']>['code'] };
+}
+
+/** The fixture repository as the file map a host would read. */
+async function fixtureFileMap(root: string): Promise<Record<string, string>> {
+  const base = join(root, 'benchmark/fixtures/evolve/repo');
+  const files: Record<string, string> = {};
+  const walk = async (dir: string, prefix: string): Promise<void> => {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const next = prefix === '' ? entry.name : prefix + '/' + entry.name;
+      if (entry.isDirectory()) await walk(join(dir, entry.name), next);
+      else files[next] = await readFile(join(dir, entry.name), 'utf8');
+    }
+  };
+  await walk(base, '');
+  return files;
+}
+
 export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
   const root = options.root ?? process.cwd();
   const loaded = await loadEvolveFixture(root);
@@ -247,21 +276,52 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
     throw new Error(`the fixture repository materializes to ${materialized.baseRevision}, the manifest registers ${loaded.manifest.fixture.baseRevision}`);
   }
 
+  // The guarded patch path exists now, so a proposal that the immutable
+  // surface refuses is DECIDED here — before any worktree is created and
+  // before any process runs. A proposal that survives preparation still has
+  // nothing to gate it, and stays `implementation-missing`: that is the
+  // honest half of this report.
+  const baseFiles = await fixtureFileMap(root);
+  const policy = compileSurfacePolicy({
+    immutablePaths: [...loaded.manifest.policy.immutable.paths, ...loaded.manifest.policy.immutable.prefixes],
+    generated: loaded.manifest.policy.immutable.generated.map((one) => one.path),
+    budgets: { ...DEFAULT_EVOLVE_BUDGETS, ...loaded.manifest.budgets },
+  });
+  const refiner = createPatchRefiner({ policy, budgets: { ...DEFAULT_EVOLVE_BUDGETS, ...loaded.manifest.budgets } });
+
   const rows: Row[] = loaded.proposals.map(({ document }): Row => {
     const cost = patchCost(document.patch);
-    return {
+    const budgets = {
+      patchBytes: cost.bytes,
+      patchFiles: cost.files,
+      withinPatchBytes: cost.bytes <= loaded.manifest.budgets.patchBytes,
+      withinPatchFiles: cost.files <= loaded.manifest.budgets.patchFiles,
+    };
+    const prepared = refiner.prepare(baseFiles, {
       proposalId: document.id,
       strategyId: document.strategyId,
-      // No executor exists yet. Saying so is the measurement.
-      state: 'implementation-missing',
-      actual: null,
-      matches: null,
-      budgets: {
-        patchBytes: cost.bytes,
-        patchFiles: cost.files,
-        withinPatchBytes: cost.bytes <= loaded.manifest.budgets.patchBytes,
-        withinPatchFiles: cost.files <= loaded.manifest.budgets.patchFiles,
-      },
+      rationale: document.rationale,
+      evidence: [document.evidence],
+      origin: 'hand-authored',
+      patch: document.patch,
+    });
+    if (prepared.ok) {
+      return {
+        proposalId: document.id, strategyId: document.strategyId,
+        // Preparation succeeded; nothing yet gates or measures it.
+        state: 'implementation-missing', actual: null, matches: null,
+        budgets, effects: { legs: 0, unresolved: 0 },
+      };
+    }
+    const actual = refusalOf(prepared.issues[0]);
+    return {
+      proposalId: document.id, strategyId: document.strategyId,
+      state: 'run', actual,
+      matches: actual.decision === document.expect.decision
+        && actual.reason === document.expect.reason
+        && actual.code === document.expect.code,
+      budgets,
+      // A refusal before isolation costs no effect at all.
       effects: { legs: 0, unresolved: 0 },
     };
   });
