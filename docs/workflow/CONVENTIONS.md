@@ -150,7 +150,11 @@ and update stale documentation first.
 
 1. Run `npm run release:prepare` before the release commit. The command updates every
    workspace version and internal reference, the lockfile, changelogs and release
-   record. Major release intent is refused. If fixes follow preparation, review
+   record. Major release intent is refused. A version bump moves every published
+   contract's `version`, so a surface that removed or narrowed nothing since the
+   frozen release must name that release in its `compat` list, and one that did
+   must not. The contract gate refuses a claim its own classified diff
+   contradicts, and its failure message names the edit to make. If fixes follow preparation, review
    them and run `npm run release:prepare -- --refresh` before closeout.
 2. Run `npm run release:closeout -- --message "Short present-tense message" --push`.
    It verifies the release, runs the complete gate and packed consumer checks,
