@@ -7,18 +7,18 @@
       "version": "24.20.0",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 16.16869200000008,
-      "boundedP95Ms": 9.209183999999823,
-      "p95Speedup": 1.7557138612932903
+      "previousP95Ms": 14.88065400000005,
+      "boundedP95Ms": 9.113906000000043,
+      "p95Speedup": 1.6327416587355608
     },
     {
       "runtime": "bun",
       "version": "1.4.0",
       "rows": 5000,
       "limit": 50,
-      "previousP95Ms": 14.289024999999981,
-      "boundedP95Ms": 11.528839999999946,
-      "p95Speedup": 1.2394156740834332
+      "previousP95Ms": 11.928922,
+      "boundedP95Ms": 10.98593900000003,
+      "p95Speedup": 1.0858354483854287
     }
   ],
   "mas": {

@@ -1,5 +1,38 @@
 # @tangleai/store
 
+## 0.28.0
+
+### Minor Changes
+
+- f2eb14d: Keep the evidence an accepted verdict was recorded against. The model gains `feedback_notes` — one row per evidence source, addressed by the source id the resolution names and indexed by the message it is about, holding the sealed snapshot with the digest that snapshot hashes to. A trusted evidence resolver reads that row back rather than rebuilding it, so a snapshot that is gone or whose bytes have moved is refused by the outcome lifecycle instead of quietly re-agreeing with itself. The transcript rows gain the decision a reply is and the verdict recorded against it, so a surface can show what was recorded without re-deriving it.
+- f2eb14d: Give every run a persisted, append-only frame stream addressed by `(runId, seq)`. The model gains `run_frames` — one row per thing a run did, its body closed per kind by a validator at the write and its sequence read from the store inside the appending transaction, so a restart, a second process or two concurrent appends can never mint the same address twice — and `runs.status` gains `cancelled`, a terminal state distinct from both success and failure. `createRunLog` adds `appendFrame`, `frames`, `replayPage`, `subscribeRun` and `subscribeRuns`: a subscriber names the run it watches and resumes by the sequence it reached, a replay page carries exactly the frames above a cursor and never asks for a reset, and the live emission's store-wide capture sequence is re-emitted under the appended frame's own, so a resume cursor means the same thing live and replayed. `finishRun` writes the run row and the run's single terminal frame in one transaction — including a refused finish — and `recordEvent` keeps its signature over the new stream. The existing `events` collection stays declared and is read-only: a run has rows in exactly one of the two, and `getRun` answers their union plus the run's frame count. Folder passes record what they counted: the `sync` frame kind carries the trigger that asked for a pass and the scanned, ingested, skipped, removed, truncated and orphaned-unit numbers it produced, closed like every other body so a member nobody declared is refused at the write.
+- f2eb14d: Add immutable skill directories, the anchored directory-patch compiler and revision-fenced activation, with in-memory and SQLite storage, plus starting-directory import, a trajectory-blind draft, a bounded executor that uses a directory directly, a resumable labeled-rollout fan-out, and one independent analyst per rollout whose failure path may propose a patch only after the host evaluator passes over a repair made in an in-memory sandbox, and hierarchical conflict-free consolidation of the whole patch population into one patch applied exactly once through a guarded editor into a staged immutable candidate. Role prompts ship as five versioned TOML packs compiled into an immutable artifact set published at `./artifacts`, whose revisions are the prompt versions a run's idempotency keys name, and a host can use an active directory directly — its root page composed into the request as data and one read-only tool over the rest — with no retrieval index between the directory and the task.
+- f2eb14d: Keep a produced measurement document under the identity its own instrument computed. The model gains `reports` — one row per document, keyed by that identity and indexed by instrument and instant, holding the document, its byte size, the run that produced it and the source manifest the document itself declares — so a host can address a report by identity, re-derive that identity from the stored bytes, and answer honestly when they no longer agree instead of repairing a row nobody is allowed to repair. Because an instrument re-run over an unchanged tree recomputes the same identity, the second write is a read: the row is already there, and the run that stored it keeps its name. Runs gain the two frame kinds a measurement needs: `progress`, a bounded batch of output lines from one stream with the number a producer had to drop rather than grow the stream without limit, and `report`, the identity, instrument, schema, byte size, file count and whether this run stored the document or found it already held. Both bodies are closed like every other frame body, so a member nobody declared is refused at the write.
+
+### Patch Changes
+
+- f2eb14d: Move the store onto the Jaren 0.90.6 registry foundation and source pin. The
+  underlying native store now retries a classified busy failure of its idempotent
+  open sequence, yielding between bounded attempts so a competing opener can
+  finish, and closes capture's first-open transaction before the collection cores
+  are constructed. Bun connections drain their native statements on close. Tangle
+  reads these through the existing `openStore` seam: no Tangle API changes, and
+  the synchronous live-query engine the memory store depends on is retained
+  rather than traded for the new asynchronous worker, pool and process hosts.
+  Every keyless benchmark document is requalified against the new foundation; the
+  executable identity a run records moves with the installed suite version, so
+  checkpoints written under the previous foundation are refused rather than
+  silently resumed.
+- Updated dependencies [f2eb14d]
+- Updated dependencies [f2eb14d]
+  - @tangleai/outcomes@0.28.0
+  - @tangleai/trace2skill@0.28.0
+  - @tangleai/config@0.28.0
+  - @tangleai/core@0.28.0
+  - @tangleai/documents@0.28.0
+  - @tangleai/mas@0.28.0
+  - @tangleai/memory@0.28.0
+
 ## 0.27.3
 
 ### Patch Changes

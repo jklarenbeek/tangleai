@@ -22,12 +22,20 @@ import { diffContracts, isCompatible } from '@jarenjs/contract/diff';
 
 import { DESKTOP_CONTRACT } from '../../apps/desktop/src/contract.ts';
 
-const FROZEN_PATH = 'test/fixtures/desktop-contract-0.27.3.json';
+const FROZEN_PATH = 'test/fixtures/desktop-contract-0.28.0.json';
 
 /**
  * Deliberate breaking changes since the frozen projection, one entry per
  * rule occurrence: `{ rule, docPath }`, in the order the classifier
  * reports them.
+ *
+ * Empty because the freeze beside this file is the surface this release
+ * ships: a release re-takes it, so the diff it guards is the one a later
+ * change makes against what was actually released. The previous freeze is
+ * retained as `desktop-contract-0.27.3.json`, and two rule occurrences
+ * separate it from this one — neither is negotiable away, and a client
+ * built against it cannot talk to this surface, because no `compat`
+ * window is declared for a release that removed an operation:
  *
  * R6 `settings.set … /settings/properties/profile`: the stored settings
  * gained the name of the registry profile a run is resolved against, and
@@ -42,10 +50,7 @@ const FROZEN_PATH = 'test/fixtures/desktop-contract-0.27.3.json';
  * named run's frames — and an alias answering "the latest run" would
  * reintroduce exactly the defect the removal exists to end.
  */
-const DOCUMENTED_BREAKING: Array<{ rule: string, docPath: string }> = [
-  { rule: 'R6', docPath: '/operations/settings.set/input/properties/settings/properties/profile' },
-  { rule: 'R1', docPath: '/operations/dag.live' },
-];
+const DOCUMENTED_BREAKING: Array<{ rule: string, docPath: string }> = [];
 
 /**
  * Constructs the rule table declines to classify (R15) — a moved external
@@ -62,12 +67,12 @@ const occurrences = (changes: ReadonlyArray<{ rule: string, docPath: string }>):
   changes.map((change) => ({ rule: change.rule, docPath: change.docPath }));
 
 describe('the desktop contract gate', () => {
-  it('freezes the released surface: every operation, and the one subscribe among them', async () => {
+  it('freezes the released surface: every operation, and the run-addressed subscribes among them', async () => {
     const frozen = await readFrozen() as { version: string, operations: Record<string, { kind: string }> };
     const operations = Object.entries(frozen.operations);
-    assert.equal(operations.length, 27, 'the frozen projection is the whole released surface');
-    assert.deepEqual(operations.filter(([, operation]) => operation.kind === 'subscribe').map(([id]) => id), ['dag.live'],
-      'the released surface had one live thing, and it was addressed by nothing');
+    assert.equal(operations.length, 37, 'the frozen projection is the whole released surface');
+    assert.deepEqual(operations.filter(([, operation]) => operation.kind === 'subscribe').map(([id]) => id), ['runs.live', 'run.live'],
+      'the released surface streams a collection and one named run, never a global slot');
     const live = Object.entries(DESKTOP_CONTRACT.operations as unknown as Record<string, { kind: string, input: { required?: readonly string[] } }>)
       .filter(([, operation]) => operation.kind === 'subscribe');
     assert.deepEqual(live.map(([id]) => id), ['runs.live', 'run.live'], 'today every live thing is a collection or a run');

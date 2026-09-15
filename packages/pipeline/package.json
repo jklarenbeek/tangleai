@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/pipeline",
-  "version": "0.27.3",
+  "version": "0.28.0",
   "description": "Tangle AI pipeline — the memory loop as a jaren-dag document, executed by @jarenjs/flow, projected to mermaid for display",
   "license": "MIT",
   "type": "module",
@@ -18,12 +18,12 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@tangleai/core": "^0.27.3",
-    "@tangleai/memory": "^0.27.3",
+    "@tangleai/core": "^0.28.0",
+    "@tangleai/memory": "^0.28.0",
     "@jarenjs/flow": "0.90.6",
     "@jarenjs/json": "0.90.6",
     "@jarenjs/mermaid": "0.90.6",
-    "@tangleai/models": "^0.27.3"
+    "@tangleai/models": "^0.28.0"
   },
   "private": false,
   "types": "./src/index.ts",

@@ -1,5 +1,19 @@
 # @tangleai/outcomes
 
+## 0.28.0
+
+### Minor Changes
+
+- f2eb14d: Publish the adapter-construction kit a host needs to register its own outcome domain: `adapterIdentity` builds the pinned schema-and-scorer identity the service re-hashes at registration, `domainValidator` compiles one domain schema into the validator that boundary uses, and `checkedAdapter` composes an adapter's four validators with its payload check. They were already the recipe every in-tree adapter follows; an out-of-tree host previously had to reimplement the identity hash to be accepted, and a reimplementation that drifted by one byte was refused as an unregistered revision rather than as the mistake it was.
+
+### Patch Changes
+
+- @tangleai/agents@0.28.0
+  - @tangleai/config@0.28.0
+  - @tangleai/core@0.28.0
+  - @tangleai/memory@0.28.0
+  - @tangleai/models@0.28.0
+
 ## 0.27.3
 
 ### Patch Changes

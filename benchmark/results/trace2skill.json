@@ -307,7 +307,7 @@
     "sha256": "8c5130289180e0310cfb6bdedcce3b9bca2359fab9a48a2b08ce277c9c09701b"
   },
   "suite": {
-    "tangle": "0.27.3",
+    "tangle": "0.28.0",
     "jaren": "0.90.6"
   },
   "fixtureId": "013a26091313deed32f532891a95b28b48f752621127df1c11c18211e1233f8e",
@@ -2380,5 +2380,5 @@
       }
     ]
   },
-  "reportId": "6961dba5c9732cc4f12cee8a032dd3d10f322928b770b0f7c79af6aa21e59918"
+  "reportId": "ea402d6af856798d91c68fe3ca84014ba8b16892e32f15ad9c7fcfeef92f8287"
 }

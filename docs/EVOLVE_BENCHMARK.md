@@ -90,4 +90,4 @@ Refusals that cannot be written as a patch over the worktree file map and must b
 
 Every reason keeps its column whether or not it happened: an absent column is how a losing row disappears. Protected-ref writes and live model calls are literal zeros the schema asserts, so a report of a run that wrote a protected ref or bought a completion cannot validate at all.
 
-Report `ff6cb570d51a…`, contract `ccaf181a694e…`, source `6cc33494a5f2…`, decision **implementation-missing**.
+Report `9c3289260394…`, contract `ccaf181a694e…`, source `6cc33494a5f2…`, decision **implementation-missing**.

@@ -1,7 +1,7 @@
 {
   "instrument": "tangle-jaren-strategies/1",
   "jaren": "0.90.6",
-  "generatedAt": "2026-09-15T04:10:19.719Z",
+  "generatedAt": "2026-09-15T04:48:24.980Z",
   "runtime": "bun",
   "runtimeVersion": "1.4.0",
   "platform": "linux/x64",
@@ -13,15 +13,15 @@
   "equivalence": true,
   "streaming": "row",
   "previous": {
-    "p50Ms": 10.502028999999993,
-    "p95Ms": 14.289024999999981,
+    "p50Ms": 10.006346000000008,
+    "p95Ms": 11.928922,
     "hostRowsPerRead": 5000
   },
   "bounded": {
-    "p50Ms": 9.802107000000092,
-    "p95Ms": 11.528839999999946,
+    "p50Ms": 8.870563000000061,
+    "p95Ms": 10.98593900000003,
     "hostRowsPerRead": 50
   },
-  "p95Speedup": 1.2394156740834332,
+  "p95Speedup": 1.0858354483854287,
   "limits": "Synthetic warm in-memory SQLite history, unique timestamps, fixed order of strategies. Host row counts exclude SQLite scanning and sorting. No claim about production disk latency, vector recall or model quality."
 }
