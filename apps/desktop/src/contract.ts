@@ -388,6 +388,10 @@ export const DESKTOP_CONTRACT = {
   $contract: '0.1',
   id: 'tangle-desktop',
   version: manifest.version,
+  // The releases whose clients this surface still accepts. Nothing was
+  // removed or narrowed since the freeze, so a client built at that
+  // release can still speak here and the gate refuses silence about it.
+  compat: ['0.28.0'],
   operations: {
     'status.get': {
       kind: 'read',

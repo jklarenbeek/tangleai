@@ -116,4 +116,4 @@ Of 15 failures, 14 belong to a group that recurs across distinct proposals and 1
 
 Round score 1/16 (0.0625). A candidate mechanism is accepted only on a strict improvement of that one number: per-instance acceptance cannot see a change that fixes the case in front of it and quietly breaks two others, and a tie is rejected because equal evidence is not a reason to move.
 
-Report `cd00b108a847…`, contract `4c0165dd3641…`, source `4d59bf55eb2f…`, decision **oracle-exact**.
+Report `cb76d867af78…`, contract `4c0165dd3641…`, source `4d59bf55eb2f…`, decision **oracle-exact**.

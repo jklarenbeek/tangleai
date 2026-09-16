@@ -1,5 +1,25 @@
 # @tangleai/store
 
+## 0.29.0
+
+### Patch Changes
+
+- c9fbe66: Add the contracts an isolated repository experiment is made of, as a zero-I/O package that cannot merge anything. Every record is closed and content-addressed — its id is the canonical hash of its own bytes without the id, and no clock enters that hash, so the same experiment re-derived later has the same address and a replay can prove it read what it claims to have read. The lifecycle is one pure exhaustive table: every status and command pair is either the single legal target or a refusal pointing at `/status`, and the four terminal statuses accept nothing, so a stopped experiment cannot be nudged back into motion by a second command. A principal carries `propose`, `execute` and `approve` and the schema refuses a `merge`, `push` or `promote` member: the authority to land a change is absent from the vocabulary rather than defended at a call site, and keeping a change produces a branch and a review bundle for a person to merge. Budgets name every bound an experiment can reach, with `attemptsPerLeg` pinned at one, because a process boundary that was lost is not evidence the effect did not happen. `EvolveStore` keeps immutable records apart from the one revision-fenced experiment row: writing the same bytes twice is a read, writing different bytes under an existing id is refused, and a status moves only under compare-and-swap — with an in-memory reference and a SQLite adapter whose answers are asserted identical over one recorded scenario. Strategies are written through the owners that already exist, one skill in the context ledger and one memory carrier in the outcome store, and a refusal from either is carried back with its own reason intact. The `evolve-experiment/v1` outcome adapter scores a kept change as success and an equal one as partial, and counts a refusal as a strategy failure rather than a neutral event.
+- c9fbe66: Add the Node-only host that runs an experiment without ever holding the authority to land one. A command is selected by name from a table the host wrote, so nothing that crossed a trust boundary can become an executable, an argument a validator did not accept, a working directory outside the declared root — checked after resolving both ends, so a symlink cannot walk out — or an environment variable the allow-list does not carry. The git vocabulary is an allow-list of whole argument vectors: `push`, `merge`, `switch`, `checkout`, `reset`, `rebase`, `remote` and `config` are not refused, they are absent, and so are the global options that would let git run something else or somewhere else. A ref is either an experiment branch or a pinned commit; every other spelling fails before a spawn. The worktree host refuses a root inside the repository, a dirty base, a second experiment on an existing branch, a write that traverses out through `..` or a symlinked parent, and a commit whose HEAD is read at the moment of committing rather than assumed. A removal that does not succeed is uncertain rather than failed, because a workspace that may still exist is a question for a person. Every effect is one leg of a fenced operation over the suite's external-effect store on the Tangle database: the intent is written before anything reaches the world, the outcome is classified from exit codes and never from what the child printed, a single-send leg is never retried, and a plan id is semantic — so a resumed experiment reads what happened instead of making it happen again. The instrument's four host probes now execute rather than declaring themselves missing.
+- Updated dependencies [c9fbe66]
+- Updated dependencies [97e0ae8]
+- Updated dependencies [3a58abf]
+- Updated dependencies [c9fbe66]
+- Updated dependencies [81c14e4]
+  - @tangleai/evolve@0.29.0
+  - @tangleai/config@0.29.0
+  - @tangleai/core@0.29.0
+  - @tangleai/documents@0.29.0
+  - @tangleai/mas@0.29.0
+  - @tangleai/memory@0.29.0
+  - @tangleai/outcomes@0.29.0
+  - @tangleai/trace2skill@0.29.0
+
 ## 0.28.0
 
 ### Minor Changes
