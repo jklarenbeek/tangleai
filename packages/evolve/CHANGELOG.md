@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.6
+
+### Patch Changes
+
+- A crash matrix over the durable path — seven boundaries, each killed once and driven to convergence against a real repository and the real queue — found four things no unit test could. `createEffectDriver` closed the operation's job the moment the effect finished, which is right when the driver claimed that job and wrong when a worker supplied a lease: the worker still has to answer a wait, and a job closed first leaves that wait standing with nothing claimable behind it, so the documented "a crash between running and answering costs nothing" was false for want of a next pass; whoever claims the job now closes it, and the worker closes it only once the answer has landed. The worker also called an ordinary race unresolved — a dispatch writes the intent and its job in one transaction and the run parks on the paired wait a moment later, so a worker claiming in between finds nothing waiting — which escalated a routine timing overlap to a person; `WorkerPass` gained `deferred` for it, and such a job is simply left for its lease to lapse. A worker answering a base sample batch from a replay was re-sealing a batch it had not taken, spending processes to compare the base root to itself and report a seal that held about work done in another process; it now reports `sealHeld: null`, and the readback reads anything but `true` as uncertain, because nobody can say whether the base held while a batch somebody else ran was running, and reading a missing seal as fine would excuse exactly the failure a seal exists for. The fourth finding is not fixed and is named rather than implied: an interaction node waits once a run reaches it whether or not its dispatch wrote anything for a worker to answer, so a run that skips a stage parks forever — which is nine of the sixteen registered proposals, refused before anything runs, plus every red-gate one; a switch cannot guard it, because the partitioner carves branch members into a dag subregion and an interaction needs the control host, and a test now pins the exact six waits that carry the defect so the fix can be checked against a list. `EvolveEffectWorkerOptions.jobs` requires `complete`, and the sixteen registered rows are unchanged throughout.
+- @tangleai/config@0.29.6
+  - @tangleai/context@0.29.6
+  - @tangleai/core@0.29.6
+  - @tangleai/mas@0.29.6
+  - @tangleai/outcomes@0.29.6
+
 ## 0.29.5
 
 ### Patch Changes

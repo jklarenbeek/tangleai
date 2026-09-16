@@ -80,9 +80,24 @@ export interface WorkerInteractionStore {
   ): Promise<{ ok: boolean } | unknown>;
 }
 
-/** The queue members the worker touches. */
+/**
+ * The queue members the worker touches.
+ *
+ * It CLOSES the jobs it claims, and closes them only once it has answered
+ * the wait — because the job is the only thing that can bring the worker
+ * back. A job closed at the moment the effect finished would leave a
+ * standing wait with no claimable identity behind it, which is exactly the
+ * crash this design is supposed to make free.
+ *
+ * There is no third verb, and none is wanted. A job this pass could not
+ * finish is simply left alone: its lease lapses and it becomes claimable
+ * again, which is the same path a worker that died would take. Failing it
+ * instead would spend one of the attempts that stand between the operation
+ * and the dead-letter queue, for a pass that found nothing wrong.
+ */
 export interface WorkerJobQueue {
   claim(options: { kinds: string[], owner: string, leaseMs: number }): Promise<unknown>;
+  complete(lease: unknown, result?: unknown): Promise<unknown>;
 }
 
 /** The effect record, which is where the plan actually lives. */
@@ -176,6 +191,17 @@ export interface EvolveEffectWorkerOptions {
 export interface WorkerPass {
   /** Plans this pass ran to a settlement. */
   settled: string[];
+  /**
+   * Plans nothing is waiting for YET, put back untouched.
+   *
+   * Not a failure and emphatically not `unresolved`: a dispatch writes the
+   * intent and its job in one transaction and the run parks on the paired
+   * wait a moment later, so a worker that claims in between has simply
+   * arrived early. Running the effect then would spend a process nobody
+   * could be told about, and calling it unresolved would escalate an
+   * ordinary race to a person.
+   */
+  deferred: string[];
   /** Plans left unanswered because nobody can account for them. */
   unresolved: string[];
   /** Legs that replayed rather than running. Duplicate spend, counted. */
@@ -197,10 +223,20 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
   ): Promise<EvolveOutcome<EvolveSettlementMessage>> {
     const { plan } = job;
 
+    // Will this pass actually run anything? A plan whose every leg already
+    // settled replays out of the record, and what replays must not be
+    // bracketed: sealing a batch this pass does not take would compare the
+    // base root to itself and report a seal about work that happened in
+    // another process, on another day.
+    const held = await effects.get(plan.id).catch(() => null) as
+      { legs?: Array<{ state: string }> } | null;
+    const legs = held?.legs ?? [];
+    const replays = legs.length > 0 && legs.every(one => one.state === 'confirmed' || one.state === 'rejected');
+
     // The base batch is bracketed. The seal is taken here, in the worker,
     // because taking it SPAWNS git and a workflow segment may not.
     let before: { revision: string, digest: string } | null = null;
-    if (job.seal !== undefined) {
+    if (job.seal !== undefined && !replays) {
       const sealed = await sealBaseRoot({ host, ...job.seal });
       if (!sealed.ok) return sealed as EvolveOutcome<EvolveSettlementMessage>;
       before = sealed.value;
@@ -219,11 +255,21 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
       return run as EvolveOutcome<EvolveSettlementMessage>;
     }
 
-    let sealHeld: boolean | undefined;
-    if (job.seal !== undefined && before !== null) {
-      const after = await sealBaseRoot({ host, ...job.seal });
-      if (!after.ok) return after as EvolveOutcome<EvolveSettlementMessage>;
-      sealHeld = baseSealHolds(before, after.value);
+    // `null`, not absent and certainly not `true`: this pass replayed a
+    // batch it did not take, so whether the base held while that batch ran
+    // is something NOBODY now knows. Saying so costs one experiment its
+    // certainty; saying nothing would let an instrument that wrote into
+    // the operator's own repository pass unnoticed, as long as the answer
+    // was lost — a rare pair of failures, and exactly the pair a seal is
+    // for. The readback reads anything but `true` as uncertain.
+    let sealHeld: boolean | null | undefined;
+    if (job.seal !== undefined) {
+      if (before === null) sealHeld = null;
+      else {
+        const after = await sealBaseRoot({ host, ...job.seal });
+        if (!after.ok) return after as EvolveOutcome<EvolveSettlementMessage>;
+        sealHeld = baseSealHolds(before, after.value);
+      }
     }
 
     const rejected = run.value.legs.some(leg => leg.state === 'rejected');
@@ -247,7 +293,7 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
 
     /** Claim and settle at most `limit` queued effects. No polling. */
     async drain(limit = 1): Promise<WorkerPass> {
-      const pass: WorkerPass = { settled: [], unresolved: [], replayed: 0 };
+      const pass: WorkerPass = { settled: [], deferred: [], unresolved: [], replayed: 0 };
 
       for (let taken = 0; taken < limit; taken++) {
         const claimed = await jobs.claim({ kinds: [EVOLVE_EFFECT_KIND], owner, leaseMs });
@@ -266,14 +312,19 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
         const plan = record?.plan;
         if (plan === undefined) { pass.unresolved.push(operationId); continue; }
 
+        // Nothing is waiting for this yet — or, just as possible, the wait
+        // was already answered and the job is a redelivery. Either way the
+        // work does not belong to this pass: put the job back unclaimed
+        // and leave the effect alone.
         const address = await addressing.address(operationId);
-        if (address === undefined) { pass.unresolved.push(operationId); continue; }
+        if (address === undefined) { pass.deferred.push(operationId); continue; }
         const job: EvolveEffectJob = { plan, ...address };
 
         const answer = await settle(job, lease);
         if (!answer.ok) {
-          // Unanswered on purpose. Nothing retries it and nothing removes
-          // the worktree; the experiment is reconciled by a person.
+          // Unanswered on purpose, and left claimable: an operation nobody
+          // can account for has to stay reachable, or the person
+          // reconciling it has nothing to reconcile with.
           pass.unresolved.push(job.plan.id);
           continue;
         }
@@ -281,16 +332,18 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
 
         const interactionId = interactionIdOf(job.runId, job.interactionPath);
         const waiting = await interactions.getInteraction(interactionId);
-        if (waiting === undefined) {
-          pass.unresolved.push(job.plan.id);
-          continue;
-        }
+        if (waiting === undefined) { pass.unresolved.push(job.plan.id); continue; }
         // A resolved interaction accepts nothing further; answering one
         // that already holds this exact key is the replay case and the
         // store settles it by key rather than by a second write.
         await interactions.respondInteraction(
           interactionId, answer.value, waiting.revision, answer.value.recordId,
         );
+
+        // Only now. Everything up to here is replayable from the record;
+        // closing the job is what says the answer actually landed.
+        await jobs.complete(lease, { operationId: job.plan.id, state: answer.value.state })
+          .catch(() => undefined);
         pass.settled.push(job.plan.id);
       }
 

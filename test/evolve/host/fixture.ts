@@ -161,6 +161,8 @@ export interface EvolveRepositoryFixture {
   transcript: Transcript;
   db: Awaited<ReturnType<typeof openTangleDb>>;
   repository: EvolveRepository;
+  /** The job queue's clock. Advance it to pass a retry backoff. */
+  clock: { value: number };
   /** The registered gate and instrument argv, read from the manifest. */
   gateArgs: string[];
   instrumentArgs: string[];
@@ -225,9 +227,13 @@ export async function withEvolveRepository<T>(
   } as EvolveRepository;
 
   const host = createWorktreeHost({ runner, repositoryRoot, worktreeRoot, repository });
+  // Injected, and advanceable. Every existing caller sees the same fixed
+  // instant it always did; a test that has to get past a retry backoff
+  // moves the clock rather than sleeping through it.
+  const clock = { value: 1767225600000 };
   const db = await openTangleDb({
     path: join(base, 'effects.sqlite'),
-    jobs: { now: () => 1767225600000, random: () => 0.5 },
+    jobs: { now: () => clock.value, random: () => 0.5 },
   });
   const store = createEvolveEffectStore(db, { maxLegs: loaded.manifest.budgets.samples });
   const transcript = createTranscript();
@@ -250,7 +256,7 @@ export async function withEvolveRepository<T>(
   try {
     return await body({
       base, repositoryRoot, worktreeRoot, baseRevision: materialized.baseRevision,
-      runner, host, store, driver, transcript, db, repository,
+      runner, host, store, driver, transcript, db, repository, clock,
       gateArgs, instrumentArgs, truth: loaded.manifest.policy.truth.value,
     });
   }

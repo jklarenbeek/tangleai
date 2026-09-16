@@ -18,7 +18,7 @@ import {
 import {
   buildEvolveLifecycle, EVOLVE_WORKFLOW_ID, EVOLVE_ENVELOPE_SCHEMA,
 } from '@tangleai/evolve/lifecycle';
-import { evolveRegistryDocument, EVOLVE_HANDLERS, EVOLVE_EFFECT_STAGES } from '@tangleai/evolve/lifecycle';
+import { evolveRegistryDocument, EVOLVE_HANDLERS, EVOLVE_EFFECT_STAGES, stageRuns } from '@tangleai/evolve/lifecycle';
 
 const EXPERIMENT_MS = 600000;
 
@@ -135,6 +135,39 @@ describe('the experiment lifecycle version', () => {
     const messages = workflow.messages as Array<{ from: { node: string }, to: { node: string } }>;
     assert.ok(messages.some(one => one.from.node === 'decide' && one.to.node === 'record'),
       'the planner hands the envelope to the record, with nothing in between');
+  });
+
+  it('names every wait that a skipped stage would park on forever', async () => {
+    // A wait is UNCONDITIONAL once a run reaches it: an interaction node
+    // parks until somebody answers, and only a dispatch that actually
+    // wrote an intent causes anybody to. So a pair whose dispatch may
+    // decline to run is a pair that can hang the run — and `stageRuns`
+    // says all five may decline.
+    //
+    // They cannot simply be put behind a switch: the partitioner carves a
+    // branch's members into a dag subregion, and an interaction needs the
+    // control host, so a branch that owns one fails `TMAS2003`. Which also
+    // means the `flake` branch below, which owns `await-gate-rerun`, has
+    // the same defect today and nothing exercises it. A SUBGRAPH does
+    // work — it gets its own region walk — and that is the fix.
+    //
+    // This test does not pretend the defect is gone. It pins the exact set
+    // of waits that carry it, so the fix can be checked against a list
+    // rather than against a memory.
+    const { workflow } = await authored();
+    const waits = workflow.nodes.filter(node => node.kind === 'interaction').map(node => node.id);
+    assert.deepEqual(waits.sort(), [
+      'await-apply', 'await-gate', 'await-gate-rerun',
+      'await-isolate', 'await-measure-base', 'await-measure-candidate',
+    ], 'the waits a run can park on; each needs its dispatch to have written an intent');
+
+    // Which of them a run can reach without their dispatch having written
+    // one — that is exactly the stages `stageRuns` can decline.
+    const refused = { experimentId: 'x', proposalId: 'p', strategyId: 's', decision: { decision: 'refused' }, gate: null, rerun: null, fitness: null, settled: [], legs: 0, unresolved: 0 };
+    const skipped = EVOLVE_EFFECT_STAGES.filter(stage => !stageRuns(stage, refused as never));
+    assert.deepEqual([...skipped], [
+      'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate',
+    ], 'a refused proposal skips every stage, and so parks on the first wait it reaches');
   });
 
   it('declares an envelope schema the first envelope actually validates against', async () => {

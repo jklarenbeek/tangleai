@@ -44,6 +44,10 @@ function interactionRig(revision = 3) {
 const oneJob = (job: EvolveEffectJob) => {
   let handed = false;
   return {
+    closed: [] as unknown[],
+    paused: [] as unknown[],
+    complete: async function (this: { closed: unknown[] }, lease: unknown) { this.closed.push(lease); },
+    pause: async function (this: { paused: unknown[] }, lease: unknown) { this.paused.push(lease); },
     claim: async () => {
       if (handed) return null;
       handed = true;
@@ -175,6 +179,43 @@ describe('the effect worker', () => {
     await worker.drain(4);
     const evidence = (interactions.responses[0].value as { evidence: { sealHeld: boolean } }).evidence;
     assert.equal(evidence.sealHeld, true);
+  });
+  it('reports an UNKNOWN seal when it answered from a replay', async () => {
+    // The case the crash matrix found. A worker that died after running
+    // the base batch and before answering loses the bracket it took: the
+    // replay retakes no samples — correctly — and cannot retake a seal
+    // around a batch it did not run.
+    //
+    // So it says `null`, and neither of the alternatives is acceptable.
+    // Sealing the replay would spend processes to compare the base root to
+    // itself and report a seal that held, about work done in another
+    // process. Reporting nothing would read as "fine", which would let an
+    // instrument that wrote into the operator's own repository pass
+    // unnoticed whenever the answer was lost — the one pair of failures
+    // the seal exists for.
+    let sealed = 0;
+    const countingHost = {
+      inspect: async () => { sealed += 1; return ok({ revision: 'base-rev', clean: true }); },
+      trackedDigest: async () => ok('same-bytes'),
+    } as never;
+
+    const job = jobFor('exp-7/measure-base', { repositoryRoot: '/repo', baseRevision: 'base-rev' });
+    const interactions = interactionRig();
+    const worker = createEvolveEffectWorker({
+      ...rigFor(job),
+      // Every leg already terminal: this is what a replay looks like from
+      // the record, and the worker reads the record rather than being told.
+      effects: { get: async () => ({ plan: job.plan, legs: [{ id: 'base-sample-0', state: 'confirmed' }] }) },
+      driver: { run: async () => ok({ planId: 'exp-7/measure-base', prepared: 0, state: 'complete', legs: [{ id: 'base-sample-0', state: 'confirmed' }] }) },
+      interactions, host: countingHost, owner: 'test', interactionIdOf,
+    });
+
+    await worker.drain(4);
+    const evidence = (interactions.responses[0].value as { evidence: { sealHeld: unknown, replayed: unknown } }).evidence;
+    assert.equal(evidence.sealHeld, null,
+      'nobody now knows whether the base held while that batch ran, and the settlement says so');
+    assert.equal(evidence.replayed, true);
+    assert.equal(sealed, 0, 'a replay spends no process bracketing work it did not do');
   });
 });
 

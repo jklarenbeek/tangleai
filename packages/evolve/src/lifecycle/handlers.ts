@@ -196,8 +196,15 @@ export function createEvolveLifecycleHandlers(
         // The seal is the worker's, taken on both sides of the base batch.
         // A base that moved voids every number in the run, so this is not
         // a measurement failure — it is an uncertain experiment.
+        //
+        // Anything but `true` is uncertain, and `null` is the case worth
+        // naming: a worker that answered from a REPLAY did not take the
+        // batch and so has no seal to report. That is not the same as a
+        // seal that held, and treating the two alike would mean a lost
+        // answer quietly excused the one check that protects the operator's
+        // own repository.
         const evidence = answer.evidence ?? {};
-        if (evidence.sealHeld === false) return { env: uncertain(next) };
+        if (evidence.sealHeld !== true) return { env: uncertain(next) };
         return { env: next };
       }
 

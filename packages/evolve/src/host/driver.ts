@@ -169,6 +169,13 @@ export function createEffectDriver(options: EffectDriverOptions) {
       if (!preparation.ok) return preparation as EvolveOutcome<EffectRunResult>;
       if (preparation.value.replayed !== null) return ok(preparation.value.replayed);
 
+      // Whoever CLAIMED the job closes it. A caller that arrived holding a
+      // lease has something left to do after this returns — the effect
+      // worker still has to answer the wait — and a job closed here would
+      // consume the operation's identity while that wait still stood, with
+      // nothing left to reclaim and nobody able to answer it. The claimant
+      // closes it once its own work is actually finished.
+      const claimedHere = resources.lease === undefined;
       let lease = resources.lease;
       if (lease === undefined) {
         const claimed = await claimFor(plan);
@@ -184,13 +191,13 @@ export function createEffectDriver(options: EffectDriverOptions) {
       const legs = result.legs ?? [];
 
       if (result.state === 'complete') {
-        await jobs.complete(lease, result).catch(() => undefined);
+        if (claimedHere) await jobs.complete(lease, result).catch(() => undefined);
         return ok({ planId: plan.id, prepared: preparation.value.prepared, state: result.state, legs });
       }
 
       // Anything else pauses rather than completing: a job whose identity is
       // consumed cannot be claimed again for reconciliation.
-      await jobs.pause?.(lease).catch(() => undefined);
+      if (claimedHere) await jobs.pause?.(lease).catch(() => undefined);
       if (result.state === 'unresolved') {
         return unresolvedRefusal(result.leg ?? plan.id) as EvolveOutcome<EffectRunResult>;
       }
