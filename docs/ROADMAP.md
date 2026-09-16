@@ -382,13 +382,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   strategy memory → git-worktree isolate → apply → gate by exit code → measure →
   commit-on-branch or abandon (the default) → record the outcome so `applyOutcome`
   moves the proposing strategy's confidence. Design, rails and the exists/missing
-  table: [`workflow/EVOLVE.md`](workflow/EVOLVE.md). *Constraint:* this is the
-  capability the standing rule was written for. The instrument exists now; the
-  skill loop and domain-specific outcome adapters are its prerequisites; the mutator may
-  never touch tests, gates or CI; `master` is never a write target. *Closes on:*
-  over N experiments on a fixed repo state, the strategy ledger's hit rate rises
-  while gate-red and goalpost-refusal counts are fully accounted, and zero writes
-  ever reach `master`.
+  table: [`workflow/EVOLVE.md`](workflow/EVOLVE.md). *Built so far:*
+  `@tangleai/evolve` runs that loop as a Node host over git worktrees and
+  reproduces a registered oracle exactly — sixteen of sixteen adversarial
+  proposals landing on the verdict written down before any of them could run
+  ([`EVOLVE_BENCHMARK.md`](EVOLVE_BENCHMARK.md)) — and a round of verdicts now
+  aggregates before anything is accepted, so a failure is read as evidence about
+  the mechanism only when unrelated instances produce it. *Still open:* proposals
+  are hand-authored rather than generated, an experiment is not yet a dag run,
+  and nothing has been measured against a repository that was not the fixture.
+  *Constraint:* this is the capability the standing rule was written for. The
+  skill loop is its remaining prerequisite; the mutator may never touch tests,
+  gates or CI; `main` is never a write target. *Closes on:* over N experiments on
+  a fixed repo state, the strategy ledger's hit rate rises while gate-red and
+  goalpost-refusal counts are fully accounted, and zero writes ever reach `main`.
 - [ ] **Verifiable autonomous research.** *Wanted:* a topic taken through
   literature discovery, hypothesis formation, executable experiments, analysis,
   review and a draft — with every important claim traceable to literature or

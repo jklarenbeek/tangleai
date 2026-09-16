@@ -1,14 +1,24 @@
 # EVOLVE.md — workflows as executable, measurable, evolvable DAGs
 
-**Status: DESIGN.** Nothing in this file is built. It is written down now
-because the pieces finally line up, and because the standing rule
-(CONVENTIONS §6) must be applied to it, not waved at: *no self-evolving
-capability ships before the instrument that can call it an improvement.*
-This is the capability that rule was written for. `docs/ROADMAP.md`
-carries it as the evolution-loop entry; the instrument now exists
-(`docs/LOCOMO_BENCHMARK.md`), and the skill loop and repository-specific outcome adapters remain prerequisites.
-The generic evidenced lifecycle now ships in `@tangleai/outcomes`; its scripted
-checks do not establish repository evolution quality.
+**Status: PARTLY BUILT.** The loop below ships as `@tangleai/evolve`:
+propose, isolate, apply, gate, measure, decide, settle, record, over git
+worktrees, with the authority to land a change absent from the vocabulary
+rather than defended at a call site. What it has been run against is an
+authored oracle — sixteen adversarial proposals whose verdicts were
+written down before any of them could run, published as
+`docs/EVOLVE_BENCHMARK.md`. That measures the mechanism; it does not
+measure a model, and it does not measure this repository. Still unbuilt:
+the prose-block → jaren-dag loader, the desktop wiring that would make an
+experiment a dag run, proposal operators that generate rather than
+replay, and any sequence of experiments against a real repository — which
+is why the standing rule (CONVENTIONS §6) still governs the rest: *no
+self-evolving capability ships before the instrument that can call it an
+improvement.* This is the capability that rule was written for.
+`docs/ROADMAP.md` carries it as the evolution-loop entry, still open; the
+skill loop remains its prerequisite. The generic evidenced lifecycle
+ships in `@tangleai/outcomes` and an experiment binds to it through the
+`evolve-experiment/v1` adapter; neither establishes repository evolution
+quality.
 
 ## The idea
 
@@ -76,11 +86,12 @@ signal this repo insists on.
 |---|---|
 | dag execution with per-node records | exists (`@tangleai/pipeline`, `@jarenjs/flow`) |
 | run history + live streaming surface | exists (`@tangleai/store`, desktop `runs.live`/`run.live`) |
-| outcome-driven strategy fitness | generic lifecycle and checked artifacts exist (`@tangleai/outcomes`); repository-specific evidence, scoring and measured fitness remain downstream |
-| proposal discipline | exists in the suite (`@tangleai/context` refine gates: RFC-6902, evidence-mandatory) — not yet wired here |
+| outcome-driven strategy fitness | exists for one experiment (`@tangleai/outcomes` + the `evolve-experiment/v1` adapter: a kept change scores success, an equal one partial, a refusal a strategy failure); measured fitness over a real repository remains downstream |
+| proposal discipline | exists and is wired here — an RFC 6902 patch over a file map with `move`, `copy` and `test` absent from the vocabulary, five ordered detections, and a second rename check over git's own staged view |
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |
-| worktree executor (add/apply/gate/measure/remove) | missing — `node:child_process` over git, no new dependencies |
-| mutation/proposal operators | missing — starts hand-authored; LLM-backed via `createStructuredOutput` later |
+| worktree executor (add/apply/gate/measure/remove) | exists (`@tangleai/evolve` host) — `node:child_process` over an allow-list of whole git argument vectors, each run one fenced leg of an external effect, no new dependencies |
+| mutation/proposal operators | missing — the sixteen registered proposals are hand-authored; LLM-backed via `createStructuredOutput` later |
+| round-level failure evidence | exists — failures group into patterns and read as systematic only on recurrence across distinct instances; a round reduces to one scalar and a candidate is accepted only on a strict improvement of it |
 | the fitness instrument for memory policies | exists — `benchmark/locomo-qa.ts`, published as `docs/LOCOMO_BENCHMARK.md`; the policy matrix over it is the open roadmap entry |
 
 ## The rails (non-negotiable, written before the first run)

@@ -28,9 +28,14 @@ test('HTTP failures have one attempt; response-before-persistence crashes become
     assert.equal(operation.phase, mode === 'http' ? 'failed' : 'unknown'); assert.equal(temporalValue(await store.head(input.scope)), null);
   }
 });
+// The deadline has to outlast the preparation that runs BEFORE the fetch,
+// or it fires during setup and `calls` is 0: a refusal, but not the one
+// under test. A 20ms deadline lost that race whenever the suite ran four
+// files wide, so the number is the fixtures' ordinary 1000ms — still two
+// orders of magnitude shorter than a fetch that never resolves.
 test('deadline aborts an uncooperative injected fetch and records uncertainty without activating', async () => {
   const bundle = await temporalTestBundle(), input = preparationInput(bundle), store = createTemporalMemoryStore(); let calls = 0;
-  const result = await prepareTemporal({ ...input, limits: { ...input.limits, deadlineMs: 20 } }, { store, model: TEMPORAL_TEST_MODEL,
+  const result = await prepareTemporal({ ...input, limits: { ...input.limits, deadlineMs: 1000 } }, { store, model: TEMPORAL_TEST_MODEL,
     fetch: async () => { calls++; return new Promise<Response>(() => {}); } });
   assert.equal(result.status, 'refused'); assert.equal(calls, 1);
   assert.equal(temporalValue(await store.operation(input.scope, input.key))!.phase, 'unknown');

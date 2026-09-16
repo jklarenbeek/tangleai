@@ -10,7 +10,12 @@ import { loadOutcomeFixtures } from '../../benchmark/lib/outcome-fixtures.ts';
 import { measureOutcomeReplay } from '../../benchmark/lib/outcome-runtime.ts';
 import { measureOutcomeTransports } from '../../benchmark/lib/outcome-transports.ts';
 
-it('public direct, local and HTTP handlers yield identical complete business traces and zero-effect replay', { timeout: 60000 }, async () => {
+// A hang guard, not a performance bound. This raises six transports and
+// replays one complete business trace: ~52s on an idle machine, and more
+// when the suite runs four files wide, where a 60s guard cancelled it.
+// Every collection added to the shared database model is paid again at
+// every open here — the four evolve collections measured ~7s of it.
+it('public direct, local and HTTP handlers yield identical complete business traces and zero-effect replay', { timeout: 180000 }, async () => {
   const f = await loadOutcomeFixtures(), expected = await measureOutcomeReplay(f, { mode: 'checked-scripted' });
   const { probes } = await measureOutcomeTransports(f, expected.trace); assert.equal(probes.length, 6);
   for (const p of probes) assert.ok(p.holds, JSON.stringify(p));
