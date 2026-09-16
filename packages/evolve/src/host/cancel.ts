@@ -102,6 +102,54 @@ export interface ReconcileOutcome {
   settled: number;
 }
 
+/** A run that has stopped, and the decision its experiment settles to. */
+export interface StoppedRun {
+  runId: string;
+  experimentId: string;
+  decision: EnvelopeDecision;
+}
+
+export interface ReconcileStoppedOptions {
+  /** Runs that have stopped and may still hold a worktree. */
+  stoppedRuns: () => Promise<StoppedRun[]>;
+  /** Whether this experiment still needs settling. False once terminal. */
+  needsSettling: (experimentId: string) => Promise<boolean>;
+  /** Remove the worktree, delete the branch, record the decision. */
+  settle: (input: { experimentId: string, decision: EnvelopeDecision }) => Promise<EvolveOutcome<unknown>>;
+}
+
+/**
+ * Settle every stopped experiment that still holds anything.
+ *
+ * This is the ONLY path that removes a workspace, and it is a reconciler
+ * rather than a stage for a reason that applies to both ways a run can
+ * stop. A cancelled run executes no further segment, so a cleanup node
+ * would never fire. A completed run executes no further segment either —
+ * and settling spawns git, which a segment may not do. Both therefore
+ * settle from outside, over runs that have already stopped.
+ *
+ * Idempotent through `needsSettling`, which reads the experiment's own
+ * status: once the experiment is terminal the second pass examines the
+ * same runs and settles none. That is the two-run/no-change surface.
+ */
+export async function reconcileStoppedExperiments(
+  options: ReconcileStoppedOptions,
+): Promise<ReconcileOutcome> {
+  const runs = await options.stoppedRuns();
+  let settled = 0;
+
+  for (const run of runs) {
+    if (!await options.needsSettling(run.experimentId)) continue;
+    const done = await options.settle({
+      experimentId: run.experimentId,
+      decision: run.decision,
+    });
+    if (done.ok) settled += 1;
+  }
+
+  return { examined: runs.length, settled };
+}
+
 export interface ReconcileOptions {
   /** Runs that were cancelled or expired and may still hold a worktree. */
   cancelledRuns: () => Promise<Array<{ runId: string, experimentId: string, as: 'cancelled' | 'expired' }>>;
@@ -114,24 +162,20 @@ export interface ReconcileOptions {
 /**
  * Settle every cancelled experiment that still holds anything.
  *
- * Idempotent through `needsSettling`, which reads the experiment's own
- * status: once the experiment is terminal the second pass examines the
- * same runs and settles none. That is the two-run/no-change surface.
+ * The cancelled case of `reconcileStoppedExperiments`, with the one thing
+ * that is specific to it applied here: a cancel settles to the decision
+ * `cancelDecision` names, and nothing else may name it.
  */
 export async function reconcileCancelledExperiments(
   options: ReconcileOptions,
 ): Promise<ReconcileOutcome> {
-  const runs = await options.cancelledRuns();
-  let settled = 0;
-
-  for (const run of runs) {
-    if (!await options.needsSettling(run.experimentId)) continue;
-    const done = await options.settle({
+  return reconcileStoppedExperiments({
+    stoppedRuns: async () => (await options.cancelledRuns()).map(run => ({
+      runId: run.runId,
       experimentId: run.experimentId,
       decision: cancelDecision(run.as),
-    });
-    if (done.ok) settled += 1;
-  }
-
-  return { examined: runs.length, settled };
+    })),
+    needsSettling: options.needsSettling,
+    settle: options.settle,
+  });
 }

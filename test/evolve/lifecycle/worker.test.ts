@@ -10,7 +10,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createEvolveEffectWorker, type EvolveEffectJob } from '@tangleai/evolve/host';
+import { createEvolveEffectWorker, createEffectAddressing, type EvolveEffectJob } from '@tangleai/evolve/host';
 import { ok, refuseOne } from '@tangleai/evolve';
 import type { EffectPlan } from '@tangleai/evolve/host';
 
@@ -47,10 +47,27 @@ const oneJob = (job: EvolveEffectJob) => {
     claim: async () => {
       if (handed) return null;
       handed = true;
-      return { lease: { jobId: job.plan.jobId }, payload: job };
+      // The payload the fenced store writes when it enqueues the
+      // operation's job: one field. Everything else the worker needs is
+      // read back from the record and the run, which is the point — a
+      // crash that lost the dispatching process loses nothing.
+      return { lease: { jobId: job.plan.jobId }, payload: { operationId: job.plan.id } };
     },
   };
 };
+
+/** Queue, record and address for one job, as the worker will find them. */
+const rigFor = (job: EvolveEffectJob) => ({
+  jobs: oneJob(job),
+  effects: { get: async (id: string) => (id === job.plan.id ? { plan: job.plan } : null) },
+  addressing: {
+    address: async () => ({
+      runId: job.runId,
+      interactionPath: job.interactionPath,
+      ...(job.seal === undefined ? {} : { seal: job.seal }),
+    }),
+  },
+});
 
 const hostStub = {} as never;
 
@@ -58,7 +75,7 @@ describe('the effect worker', () => {
   it('answers the wait under the effect record id, so a replay is the same response', async () => {
     const interactions = interactionRig(7);
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-1/gate')),
+      ...rigFor(jobFor('exp-1/gate')),
       driver: { run: async () => ok({ planId: 'exp-1/gate', prepared: 1, state: 'complete', legs: [{ id: 'gate', state: 'confirmed' }] }) },
       interactions, host: hostStub, owner: 'test', interactionIdOf,
     });
@@ -79,7 +96,7 @@ describe('the effect worker', () => {
   it('leaves an unresolved leg unanswered, because nobody can account for it', async () => {
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-2/gate')),
+      ...rigFor(jobFor('exp-2/gate')),
       driver: { run: async () => refuseOne('TEVO1009', '/effects', 'the leg did not resolve') },
       interactions, host: hostStub, owner: 'test', interactionIdOf,
     });
@@ -95,7 +112,7 @@ describe('the effect worker', () => {
   it('counts a replay rather than hiding it', async () => {
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-3/gate')),
+      ...rigFor(jobFor('exp-3/gate')),
       // `prepared: 0` is the store saying it already held this plan: the
       // legs replayed and nothing spawned.
       driver: { run: async () => ok({ planId: 'exp-3/gate', prepared: 0, state: 'complete', legs: [{ id: 'gate', state: 'confirmed' }] }) },
@@ -112,7 +129,7 @@ describe('the effect worker', () => {
   it('reports a rejected leg as rejected rather than as a failure to settle', async () => {
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-4/gate')),
+      ...rigFor(jobFor('exp-4/gate')),
       driver: { run: async () => ok({ planId: 'exp-4/gate', prepared: 1, state: 'complete', legs: [{ id: 'gate', state: 'rejected' }] }) },
       interactions, host: hostStub, owner: 'test', interactionIdOf,
     });
@@ -131,7 +148,7 @@ describe('the effect worker', () => {
 
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-5/measure-base', { repositoryRoot: '/repo', baseRevision: 'base-rev' })),
+      ...rigFor(jobFor('exp-5/measure-base', { repositoryRoot: '/repo', baseRevision: 'base-rev' })),
       driver: { run: async () => ok({ planId: 'exp-5/measure-base', prepared: 1, state: 'complete', legs: [{ id: 'base-sample-0', state: 'confirmed' }] }) },
       interactions, host: movingHost, owner: 'test', interactionIdOf,
     });
@@ -150,7 +167,7 @@ describe('the effect worker', () => {
 
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
-      jobs: oneJob(jobFor('exp-6/measure-base', { repositoryRoot: '/repo', baseRevision: 'base-rev' })),
+      ...rigFor(jobFor('exp-6/measure-base', { repositoryRoot: '/repo', baseRevision: 'base-rev' })),
       driver: { run: async () => ok({ planId: 'exp-6/measure-base', prepared: 1, state: 'complete', legs: [{ id: 'base-sample-0', state: 'confirmed' }] }) },
       interactions, host: steadyHost, owner: 'test', interactionIdOf,
     });
@@ -158,5 +175,45 @@ describe('the effect worker', () => {
     await worker.drain(4);
     const evidence = (interactions.responses[0].value as { evidence: { sealHeld: boolean } }).evidence;
     assert.equal(evidence.sealHeld, true);
+  });
+});
+
+describe('addressing an operation to the wait it answers', () => {
+  const seal = { repositoryRoot: '/repo', baseRevision: 'base-rev' };
+  const addressing = (waiting: string[]) => createEffectAddressing({
+    waitingPaths: async () => waiting,
+    runIdFor: async (experimentId) => (experimentId === 'exp-1' ? 'run-1' : undefined),
+    baseSealFor: async () => seal,
+  });
+
+  it('answers the path the run is parked on, not one built from the stage name', async () => {
+    // The rerun's wait lives inside the flake switch's branch, so its
+    // recorded path carries that region's prefix. An interaction id
+    // assembled from the bare node id would address nothing at all, and
+    // the run would park forever with an answer nobody delivered.
+    const found = await addressing(['flake/rerun/await-gate-rerun']).address('exp-1/gate-rerun');
+    assert.equal(found?.interactionPath, 'flake/rerun/await-gate-rerun');
+    assert.equal(found?.runId, 'run-1');
+    assert.equal(found?.seal, undefined, 'only the base batch is bracketed');
+  });
+
+  it('brackets the base batch and nothing else', async () => {
+    const base = await addressing(['await-measure-base']).address('exp-1/measure-base');
+    assert.deepEqual(base?.seal, seal,
+      'the base batch runs in the operator own root, so it is sealed on both sides');
+    const candidate = await addressing(['await-measure-candidate']).address('exp-1/measure-candidate');
+    assert.equal(candidate?.seal, undefined,
+      'a worktree is supposed to change; sealing one would refuse the experiment');
+  });
+
+  it('refuses to guess when the run is parked on more than one wait, or none', async () => {
+    assert.equal(await addressing([]).address('exp-1/gate'), undefined,
+      'nothing is waiting, so there is nothing to answer');
+    assert.equal(await addressing(['await-gate', 'await-apply']).address('exp-1/gate'), undefined,
+      'two waits cannot say which one this operation answers, and picking is a guess');
+    assert.equal(await addressing(['await-gate']).address('exp-9/gate'), undefined,
+      'no run is executing that experiment');
+    assert.equal(await addressing(['await-gate']).address('malformed'), undefined,
+      'an operation id that names no stage addresses nothing');
   });
 });

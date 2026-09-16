@@ -53,11 +53,16 @@ export const EVOLVE_ENVELOPE_SCHEMA = {
     experimentId: { type: 'string' },
     proposalId: { type: 'string' },
     strategyId: { type: 'string' },
+    // Nullable on purpose, and declared nullable rather than merely left
+    // open: an envelope that has not reached a stage yet carries `null`
+    // there, not an absent member, so the stages can treat "not yet" and
+    // "settled" as the same shape. A schema that forbade null would refuse
+    // the very first envelope any run is created with.
     /** Set as soon as any stage refuses; every later stage routes around. */
-    decision: { type: 'object' },
-    gate: { type: 'string' },
-    rerun: { type: 'string' },
-    fitness: { type: 'string' },
+    decision: { type: ['object', 'null'] },
+    gate: { type: ['string', 'null'] },
+    rerun: { type: ['string', 'null'] },
+    fitness: { type: ['string', 'null'] },
     /** Effect plan ids this experiment has settled, in order. */
     settled: { type: 'array', items: { type: 'string' } },
     /** Counted, not derived: the row census must reconcile with it. */
@@ -181,15 +186,15 @@ export async function buildEvolveLifecycle(options: EvolveLifecycleOptions): Pro
   const rerun = stage('gate-rerun', experimentMs);
   const measureBase = stage('measure-base', experimentMs);
   const measureCandidate = stage('measure-candidate', experimentMs);
-  const settle = stage('settle', experimentMs);
 
   return defineMasWorkflow({
     workflowId: EVOLVE_WORKFLOW_ID,
     title: 'Repository experiment lifecycle',
     description:
-      'Propose, isolate, apply, gate, measure, decide, settle and record one '
-      + 'isolated repository experiment. Every process effect is a typed wait '
-      + 'answered by the effect worker; nothing here spawns.',
+      'Propose, isolate, apply, gate, measure, decide and record one isolated '
+      + 'repository experiment. Every process effect is a typed wait answered '
+      + 'by the effect worker; nothing here spawns. Settling the workspace is '
+      + 'a reconciler over stopped runs, not a stage.',
     registryRevision: options.registryRevision,
     configRegistryRevision: options.configRegistryRevision,
     profile: options.profile,
@@ -259,8 +264,6 @@ export async function buildEvolveLifecycle(options: EvolveLifecycleOptions): Pro
       // nothing above decided what the evidence meant.
       pure('decide', 'evolve-decide'),
 
-      ...settle.nodes,
-
       // Idempotent because the outcome service reserves and replays every
       // command by key.
       taskInvocation({
@@ -278,7 +281,6 @@ export async function buildEvolveLifecycle(options: EvolveLifecycleOptions): Pro
       ...rerun.messages,
       ...measureBase.messages,
       ...measureCandidate.messages,
-      ...settle.messages,
 
       masMessage(['propose', 'env'], [isolate.entryId, 'env']),
       masMessage([isolate.exitId, 'env'], [apply.entryId, 'env']),
@@ -293,8 +295,15 @@ export async function buildEvolveLifecycle(options: EvolveLifecycleOptions): Pro
       masMessage([measureBase.exitId, 'env'], [measureCandidate.entryId, 'env']),
       masMessage([measureCandidate.exitId, 'env'], ['read-fitness', 'env']),
       masMessage(['read-fitness', 'env'], ['decide', 'env']),
-      masMessage(['decide', 'env'], [settle.entryId, 'env']),
-      masMessage([settle.exitId, 'env'], ['record', 'env']),
+
+      // Settling is NOT a stage. Removing a worktree and deleting a branch
+      // spawn git, and a segment may not spawn — so a settle task would
+      // break the same rule the pairs exist to keep, while a settle PAIR
+      // would stack the effect fence on top of the compare-and-swap that
+      // already makes settling idempotent. It is a reconciler over runs
+      // that have stopped, exactly as cancellation's cleanup is, and for
+      // the same reason: a stopped run executes no further segment.
+      masMessage(['decide', 'env'], ['record', 'env']),
     ],
   });
 }

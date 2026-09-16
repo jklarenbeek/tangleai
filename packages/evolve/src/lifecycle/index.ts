@@ -26,5 +26,5 @@ export {
   createEvolveLifecycleHandlers, planFor, legsFor, stageRuns,
 } from './handlers.ts';
 export type {
-  LifecycleContext, LifecycleJobQueue, LifecyclePreparer, LifecycleEffectReader,
+  LifecycleContext, LifecyclePreparer, LifecycleEffectReader,
 } from './handlers.ts';

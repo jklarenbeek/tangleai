@@ -213,8 +213,10 @@ individual experiment.
 spawn happens inside a workflow segment.** A segment is never handed the
 suite job lease, and the effect store asserts that a lease belongs to the
 plan it is running, so every stage that reaches a process is a pair — a task
-that writes the intent and enqueues it, and a typed wait that the effect
-worker answers from another process.
+that writes the intent, and a typed wait that the effect worker answers from
+another process. Writing the intent IS the enqueue: the fenced store creates
+the operation's job in the same transaction, under the plan's own id, with a
+payload of one field.
 
 Two consequences are worth knowing before reading the graph. A switch branch
 *owns* its nodes and has one result port, so the single rerun a red gate
@@ -223,13 +225,20 @@ settlement back into the envelope. And there is no seal node: sealing the base
 root spawns git, so the seal belongs to the worker running the base sample
 batch, which brackets that batch on both sides and reports whether the base
 held. A base that moved voids every number in the run, flattering ones
-included.
+included. There is no settle node either, for the same reason and one more:
+removing a worktree spawns git, and settling is already idempotent through
+the experiment's own compare-and-swap, so putting it behind the effect fence
+would give one operation two idempotency mechanisms that could disagree.
 
 Authoring is deterministic — no clock, no random source — so the same options
 produce the same version id, and the version is safe to store once and reuse.
 
-`createEvolveEffectWorker` claims those jobs and answers the waits. It uses
-the effect record id as the response key, which is what makes a crash cheap: a
+`createEvolveEffectWorker` claims those jobs and answers the waits. It reads
+the plan out of the effect record and the address out of the run rather than
+out of the message, so a crash that lost every process that knew them loses
+nothing; `createEffectAddressing` answers the path the run is actually parked
+on, and refuses to answer when it is parked on none or on more than one.
+It uses the effect record id as the response key, which is what makes a crash cheap: a
 worker that dies after running and before answering will, next pass, prepare
 the same semantic plan id, find every leg settled, replay without spawning,
 and answer with the same key — the same response, not a conflict. The one
@@ -240,11 +249,13 @@ for this" into a confident record.
 ## Stopping one, and cleaning up
 
 `cancelExperiment` is a host call and deliberately not a wire operation. A
-cancelled run executes no further segment, so the cleanup cannot be a node —
-it would never fire, and the worktree would outlive the cancel.
-`reconcileCancelledExperiments` does it instead, and is idempotent through
-the experiment's own compare-and-swap: the second pass examines the same runs
-and settles none.
+stopped run executes no further segment, so the cleanup cannot be a node — it
+would never fire, and the worktree would outlive the run.
+`reconcileStoppedExperiments` does it instead, for both ways a run can stop,
+and is idempotent through the experiment's own compare-and-swap: the second
+pass examines the same runs and settles none.
+`reconcileCancelledExperiments` is its cancelled case, and supplies the one
+thing specific to that case — the decision a cancel settles to.
 
 The decision vocabulary is not widened for it. An operator cancel is
 `abandoned` / `command` / `TEVO1006`; an expiry is `abandoned` /

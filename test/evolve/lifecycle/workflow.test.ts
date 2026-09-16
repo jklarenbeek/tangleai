@@ -16,7 +16,7 @@ import {
 } from '@tangleai/mas';
 
 import {
-  buildEvolveLifecycle, EVOLVE_WORKFLOW_ID,
+  buildEvolveLifecycle, EVOLVE_WORKFLOW_ID, EVOLVE_ENVELOPE_SCHEMA,
 } from '@tangleai/evolve/lifecycle';
 import { evolveRegistryDocument, EVOLVE_HANDLERS, EVOLVE_EFFECT_STAGES } from '@tangleai/evolve/lifecycle';
 
@@ -110,6 +110,43 @@ describe('the experiment lifecycle version', () => {
     assert.deepEqual(rerun.nodes, ['gate-rerun', 'await-gate-rerun', 'read-gate-rerun']);
     assert.equal(rerun.result.node, 'read-gate-rerun');
     assert.equal(branches.length, 2, 'red reruns; everything else does not');
+  });
+
+  it('has no settle node, because removing a worktree spawns git', async () => {
+    const { workflow } = await authored();
+    const ids = workflow.nodes.map(node => node.id);
+    assert.ok(!ids.some(id => id.includes('settle')),
+      'settling is a reconciler over stopped runs, not a stage');
+
+    // The specific shape this rules out: a dispatch whose pair nothing
+    // enqueues. An `await-*` node with no effect stage behind it is a wait
+    // no worker will ever answer, and a run that reaches it never ends —
+    // which every unit test in this folder would still pass.
+    const waits = ids.filter(id => id.startsWith('await-'));
+    const stages = new Set<string>(EVOLVE_EFFECT_STAGES);
+    for (const wait of waits) {
+      assert.ok(stages.has(wait.slice('await-'.length)),
+        `${wait} waits on something no effect stage dispatches, so nothing can answer it`);
+    }
+    assert.equal(waits.length, EVOLVE_EFFECT_STAGES.length,
+      'every effect stage waits, and nothing else does');
+
+    // `decide` hands straight to `record`: there is no stage between them.
+    const messages = workflow.messages as Array<{ from: { node: string }, to: { node: string } }>;
+    assert.ok(messages.some(one => one.from.node === 'decide' && one.to.node === 'record'),
+      'the planner hands the envelope to the record, with nothing in between');
+  });
+
+  it('declares an envelope schema the first envelope actually validates against', async () => {
+    // The members an experiment has not reached yet are `null`, not absent.
+    // A schema that named them `string` and `object` refused the very
+    // envelope every run is created with — and refused it at `propose`, in
+    // the first segment, where nothing had happened yet to explain it.
+    const properties = EVOLVE_ENVELOPE_SCHEMA.properties as Record<string, { type: unknown }>;
+    for (const member of ['decision', 'gate', 'rerun', 'fitness']) {
+      assert.ok(Array.isArray(properties[member].type) && (properties[member].type as string[]).includes('null'),
+        `${member} is null until the stage that sets it runs, and the schema has to say so`);
+    }
   });
 
   it('has no seal node, because sealing the base spawns git', async () => {

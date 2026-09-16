@@ -24,9 +24,17 @@ export interface EvolveHandlerDeclaration {
   idempotency: 'not-required' | 'honored';
 }
 
-/** The stages whose work is one fenced effect operation. */
+/**
+ * The stages whose work is one fenced effect operation.
+ *
+ * Settling is absent on purpose. It spawns git — a worktree removal and a
+ * branch delete — so it may not be a task; and it is already idempotent
+ * through the experiment's own compare-and-swap transition, so wrapping it
+ * in the effect fence would give one operation two idempotency mechanisms
+ * that could disagree. It is a reconciler over runs that have stopped.
+ */
 export const EVOLVE_EFFECT_STAGES = [
-  'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate', 'settle',
+  'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate',
 ] as const;
 
 export type EvolveEffectStage = (typeof EVOLVE_EFFECT_STAGES)[number];
@@ -68,7 +76,10 @@ export function evolveRegistryDocument(): Record<string, unknown> {
     tools: [],
     // Every edge carries a plain typed value; `json-schema` is the
     // builder's default adapter and the only one this workflow needs.
-    messageAdapters: [{ id: 'json-schema', version: '1' }],
+    // The version is the BUILT-IN adapter's own: a registry may only
+    // declare what a host can actually bind, and `compileMasRuntime`
+    // refuses a declared version no bound renderer answers to.
+    messageAdapters: [{ id: 'json-schema', version: '0.1' }],
     contextAdapters: [],
     templates: [],
     subgraphs: [],

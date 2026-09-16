@@ -1,5 +1,13 @@
 # @tangleai/pipeline
 
+## 0.29.5
+
+### Patch Changes
+
+- @tangleai/core@0.29.5
+  - @tangleai/memory@0.29.5
+  - @tangleai/models@0.29.5
+
 ## 0.29.4
 
 ### Patch Changes

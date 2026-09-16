@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.5
+
+### Patch Changes
+
+- The lifecycle version can now complete a run, which the released one could not. It authored a settle stage as a dispatch paired with a typed wait, but settling removes a worktree and deletes a branch — three spawns — so the dispatch did the work synchronously and nothing ever enqueued a job for the wait beside it; a run reached that wait and parked forever, and every unit test passed. Settling is a reconciler over stopped runs instead, `reconcileStoppedExperiments`, which is the conclusion cancellation had already reached for the same reason stated one way — a stopped run executes no further segment — and which is just as true of a completed one; `reconcileCancelledExperiments` is now its cancelled case. Two further defects only an end-to-end run could find: the envelope schema declared `decision`, `gate`, `rerun` and `fitness` non-nullable and so refused the very envelope every run is created with, failing in the first segment; and the handler registry declared the `json-schema` message adapter at a version no host binds, which validation accepts and runtime compilation refuses. The worker no longer expects a dispatch to hand it anything, because the fenced store owns the operation's job and writes its payload itself — it reads the plan out of the effect record and, through the new `createEffectAddressing`, answers the wait the run is actually parked on rather than one assembled from a stage name, which would address nothing for the rerun inside the flake branch, and refuses to answer at all when the run is parked on none or on more than one. A host built against the previous worker will not compile: `EvolveEffectWorkerOptions` gained required `effects` and `addressing`, `LifecycleJobQueue` is gone because preparing the intent is what enqueues, and `LifecycleContext` no longer takes a job queue, a settle duck or a run id. One experiment now runs end to end over a real repository, the real MAS runtime, the real queue and the real fenced store to a completed run with the registered verdict and the published leg census.
+- @tangleai/config@0.29.5
+  - @tangleai/context@0.29.5
+  - @tangleai/core@0.29.5
+  - @tangleai/mas@0.29.5
+  - @tangleai/outcomes@0.29.5
+
 ## 0.29.4
 
 ### Patch Changes

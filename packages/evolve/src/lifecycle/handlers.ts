@@ -36,12 +36,6 @@ import {
 } from './state.ts';
 import { EVOLVE_EFFECT_STAGES, type EvolveEffectStage } from './registry.ts';
 
-/** The queue a dispatch hands its prepared plan to. Injected, never imported. */
-export interface LifecycleJobQueue {
-  /** Enqueue this plan's own job. Enqueuing the same plan twice is a read. */
-  enqueue(plan: EffectPlan): Promise<unknown>;
-}
-
 /** The driver half a dispatch is allowed to reach: prepare, never run. */
 export interface LifecyclePreparer {
   prepare(plan: EffectPlan): Promise<EvolveOutcome<EffectPreparation>>;
@@ -54,7 +48,6 @@ export interface LifecycleEffectReader {
 /** Everything one experiment's stages need, supplied by the host. */
 export interface LifecycleContext {
   preparer: LifecyclePreparer;
-  jobs: LifecycleJobQueue;
   effects: LifecycleEffectReader;
   host: WorktreeHost;
   transcript: Transcript;
@@ -78,8 +71,6 @@ export interface LifecycleContext {
   };
   /** Record the outcome. Idempotent by key in the outcome service. */
   record: (env: EvolveEnvelope) => Promise<void>;
-  /** Remove the worktree, keep or delete the branch, write the bundle. */
-  settle: (env: EvolveEnvelope) => Promise<EvolveOutcome<{ legs: number }>>;
 }
 
 const envelopeOf = (input: MasTaskInput): EvolveEnvelope =>
@@ -114,10 +105,6 @@ export function planFor(stage: EvolveEffectStage, context: LifecycleContext): Ef
         experimentId, side: 'measure-candidate', name: INSTRUMENT_COMMAND,
         args: context.instrumentArgs, cwd: worktreePath, samples: context.budgets.samples,
       });
-    case 'settle':
-      // Settlement is driven by the host rather than by a plan builder:
-      // what it removes depends on the decision the planner just made.
-      return null;
   }
 }
 
@@ -133,10 +120,6 @@ export function planFor(stage: EvolveEffectStage, context: LifecycleContext): Ef
 export function legsFor(stage: EvolveEffectStage, budgets: EvolveBudgets): number {
   if (stage === 'isolate') return 2;
   if (stage === 'measure-base' || stage === 'measure-candidate') return budgets.samples;
-  // Settling is cleanup, not evidence. The sequential path counts no leg
-  // for it, and the published census must reconcile with that: a kept
-  // experiment reports 10 legs (2 + 1 + 1 + 3 + 3), not 11.
-  if (stage === 'settle') return 0;
   return 1;
 }
 
@@ -172,13 +155,14 @@ export function createEvolveLifecycleHandlers(
       const plan = planFor(stage, context);
       if (plan === null) return { env };
 
-      // Write the intent BEFORE anything reaches the world, then hand the
-      // job to the queue. A plan already held replays: preparing is a read.
+      // Writing the intent IS the enqueue. The fenced store creates the
+      // operation's job under the plan's own id in the same transaction
+      // that records the intent, so a dispatch that also enqueued would
+      // either be refused — the store will not share a job identity with
+      // another enqueue — or would race the record it depends on. A plan
+      // the record already holds replays instead: preparing is a read.
       const preparation = await context.preparer.prepare(plan);
       if (!preparation.ok) return { env: uncertain(env) };
-      if (preparation.value.replayed !== null) return { env };
-
-      await context.jobs.enqueue(plan);
       return { env };
     };
 
@@ -255,15 +239,6 @@ export function createEvolveLifecycleHandlers(
     });
     return { env: decide(env, planned as never) };
   };
-
-  handlers['evolve-dispatch-settle'] = async (input: MasTaskInput) => {
-    const env = envelopeOf(input);
-    const done = await context.settle(env);
-    if (!done.ok) return { env: uncertain(env) };
-    return { env: counted(env, done.value.legs) };
-  };
-
-  handlers['evolve-read-settle'] = (input: MasTaskInput) => ({ env: envelopeOf(input) });
 
   handlers['evolve-record'] = async (input: MasTaskInput) => {
     const env = envelopeOf(input);

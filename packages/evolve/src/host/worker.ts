@@ -34,7 +34,16 @@ import type { WorktreeHost } from './worktree.ts';
 /** The job kind every experiment effect is queued under. */
 export const EVOLVE_EFFECT_KIND = 'evolve-effect';
 
-/** What a dispatch put on the queue for this worker to find. */
+/**
+ * What this worker is running, and which wait its answer belongs to.
+ *
+ * It is ASSEMBLED, never carried: the fenced effect store owns the job and
+ * writes its payload itself — one field, the operation id — so there is no
+ * room in the queue for a dispatch to smuggle the rest, and trying would
+ * mean two writers on one job identity. The plan comes back out of the
+ * effect record and the address out of the run, both durable, both
+ * readable after a crash that lost every process that knew them.
+ */
 export interface EvolveEffectJob {
   plan: EffectPlan;
   runId: string;
@@ -76,8 +85,85 @@ export interface WorkerJobQueue {
   claim(options: { kinds: string[], owner: string, leaseMs: number }): Promise<unknown>;
 }
 
+/** The effect record, which is where the plan actually lives. */
+export interface WorkerEffectReader {
+  get(id: string): Promise<{ plan?: EffectPlan } | null | undefined>;
+}
+
+/** Where a settled operation's answer belongs. */
+export interface EffectAddress {
+  runId: string;
+  interactionPath: string;
+  seal?: { repositoryRoot: string, baseRevision: string };
+}
+
+export interface EffectAddressing {
+  /**
+   * The wait this operation answers, or `undefined` when there is none to
+   * answer. Undefined is not a failure: it is the honest result when the
+   * run is not parked, and the worker leaves the operation alone rather
+   * than answering something that did not ask.
+   */
+  address(operationId: string): Promise<EffectAddress | undefined>;
+}
+
+/** What the host must look up for the addressing rule to apply. */
+export interface EffectAddressingOptions {
+  /** The paths this run is parked on right now. */
+  waitingPaths(runId: string): Promise<string[]>;
+  /** Which run is executing this experiment. The host created it. */
+  runIdFor(experimentId: string): Promise<string | undefined>;
+  /** The operator root the base batch is bracketed against. */
+  baseSealFor(experimentId: string): Promise<{ repositoryRoot: string, baseRevision: string } | undefined>;
+}
+
+/**
+ * Address an operation by the wait its run is ACTUALLY parked on.
+ *
+ * Deriving the path from the stage name instead would be wrong wherever
+ * the topology nests: `await-gate-rerun` lives inside the flake switch's
+ * branch, so its recorded path carries that region's prefix, and an
+ * interaction id assembled from a bare node id would address nothing at
+ * all. Reading the wait is also the only version that stays correct if
+ * the graph is rearranged.
+ *
+ * Two waits at once is refused rather than resolved. A run parked on more
+ * than one wait cannot say which of them this operation answers, and
+ * picking either would be a guess recorded as a fact.
+ */
+export function createEffectAddressing(options: EffectAddressingOptions): EffectAddressing {
+  return {
+    async address(operationId) {
+      // `<experimentId>/<stage>`, split at the LAST separator so an
+      // experiment id that contains one still resolves to its own stage.
+      const cut = operationId.lastIndexOf('/');
+      if (cut <= 0) return undefined;
+      const experimentId = operationId.slice(0, cut);
+      const stage = operationId.slice(cut + 1);
+
+      const runId = await options.runIdFor(experimentId);
+      if (runId === undefined) return undefined;
+
+      const waiting = await options.waitingPaths(runId);
+      if (waiting.length !== 1) return undefined;
+
+      // Only the base batch runs in the operator's own root, and only it
+      // is bracketed. Sealing anything else would ask the worker to prove
+      // a worktree did not change, which is what a worktree is for.
+      const seal = stage === 'measure-base' ? await options.baseSealFor(experimentId) : undefined;
+      return {
+        runId,
+        interactionPath: waiting[0],
+        ...(seal === undefined ? {} : { seal }),
+      };
+    },
+  };
+}
+
 export interface EvolveEffectWorkerOptions {
   jobs: WorkerJobQueue;
+  effects: WorkerEffectReader;
+  addressing: EffectAddressing;
   driver: WorkerDriver;
   interactions: WorkerInteractionStore;
   host: WorktreeHost;
@@ -97,7 +183,7 @@ export interface WorkerPass {
 }
 
 export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
-  const { jobs, driver, interactions, host, owner, interactionIdOf } = options;
+  const { jobs, effects, addressing, driver, interactions, host, owner, interactionIdOf } = options;
   const leaseMs = options.leaseMs ?? 60000;
 
   /**
@@ -167,10 +253,22 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
         const claimed = await jobs.claim({ kinds: [EVOLVE_EFFECT_KIND], owner, leaseMs });
         if (claimed === undefined || claimed === null) break;
 
-        const held = claimed as { lease?: unknown, payload?: unknown };
+        const held = claimed as { lease?: unknown, payload?: { operationId?: unknown } };
         const lease = held.lease ?? claimed;
-        const job = held.payload as EvolveEffectJob | undefined;
-        if (job === undefined || typeof job !== 'object') break;
+        const operationId = held.payload?.operationId;
+        if (typeof operationId !== 'string') break;
+
+        // The plan is the record's, not the payload's. A worker that took
+        // the plan from a message would be running whatever the message
+        // said; taking it from the record means it runs the intent the
+        // fence actually admitted.
+        const record = await effects.get(operationId).catch(() => null);
+        const plan = record?.plan;
+        if (plan === undefined) { pass.unresolved.push(operationId); continue; }
+
+        const address = await addressing.address(operationId);
+        if (address === undefined) { pass.unresolved.push(operationId); continue; }
+        const job: EvolveEffectJob = { plan, ...address };
 
         const answer = await settle(job, lease);
         if (!answer.ok) {

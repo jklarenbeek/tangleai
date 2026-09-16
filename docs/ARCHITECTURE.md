@@ -450,8 +450,12 @@ Four things never happen, and each is structural rather than guarded:
 The durable half runs the same stages as one immutable MAS workflow version.
 Its shape is forced by a single rule: a workflow segment is never handed the
 suite job lease, so no node may spawn. Every stage that reaches a process is a
-task that writes a fenced effect intent and enqueues it, paired with a typed
-wait that an effect worker answers from another process. Because the effect
+task that writes a fenced effect intent — which is also what enqueues its job,
+since the fenced store creates it in the same transaction — paired with a typed
+wait that an effect worker answers from another process. Settling is the
+counterpart rule: it spawns git and a stopped run has no segment left to spawn
+from, so removing a workspace is a reconciler over runs that have stopped,
+cancelled and completed alike. Because the effect
 plan id is semantic rather than per-attempt, a worker that dies between running
 and answering replays the settled record without spawning and answers under the
 same key — so a crash in that window costs nothing. The one case nothing

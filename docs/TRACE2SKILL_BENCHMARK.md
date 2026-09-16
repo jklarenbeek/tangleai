@@ -8,8 +8,8 @@ before the first byte is read, and its zero is published as a probe.
 A scripted answer is registered data; it says whether the instrument can tell conditions
 apart, and it says nothing about whether a real model would answer the same way.
 
-Report identity: `3b681643466f22824707bb34971e788f8607ed22c7ca149dd73df32f5b6c945c`. Fixture: `013a26091313deed32f532891a95b28b48f752621127df1c11c18211e1233f8e`; registration `340bd65b1ec43b9aa277e2938f65042e3e01ce3d3d5397d03146af90a25f544a`;
-source `8c5130289180e0310cfb6bdedcce3b9bca2359fab9a48a2b08ce277c9c09701b` over 75 files. Suite 0.29.4, Jaren 0.90.6.
+Report identity: `3382407f059acf43e084b48ecad759e8dafe0954e77d36236acffb4eb3ed40ee`. Fixture: `013a26091313deed32f532891a95b28b48f752621127df1c11c18211e1233f8e`; registration `340bd65b1ec43b9aa277e2938f65042e3e01ce3d3d5397d03146af90a25f544a`;
+source `8c5130289180e0310cfb6bdedcce3b9bca2359fab9a48a2b08ce277c9c09701b` over 75 files. Suite 0.29.5, Jaren 0.90.6.
 
 ## The scorer, before any score
 

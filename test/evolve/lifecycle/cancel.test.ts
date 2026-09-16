@@ -10,7 +10,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  cancelExperiment, reconcileCancelledExperiments, cancelDecision,
+  cancelExperiment, reconcileCancelledExperiments, reconcileStoppedExperiments, cancelDecision,
 } from '@tangleai/evolve/host';
 import { ok } from '@tangleai/evolve';
 
@@ -142,5 +142,42 @@ describe('reconciling what a cancel left behind', () => {
       { experimentId: 'exp-a', reason: 'command' },
       { experimentId: 'exp-b', reason: 'over-budget' },
     ]);
+  });
+
+  it('settles a COMPLETED run the same way, carrying the decision the run reached', async () => {
+    // Settling is not a stage, and the reason is not specific to cancel:
+    // removing a worktree spawns git, which a segment may not do, and a
+    // completed run executes no further segment to do it in. So the
+    // reconciler covers both ways a run stops, and the only difference is
+    // where the decision comes from — `cancelDecision` for a cancel, the
+    // run's own output envelope for a completed one.
+    const settled: Array<{ experimentId: string, decision: unknown }> = [];
+    const stopped = [{
+      runId: 'run-done', experimentId: 'exp-done',
+      decision: { decision: 'abandoned' as const, reason: 'equal' as const, code: 'TEVO1008' as const },
+    }];
+    let terminal = false;
+
+    const options = {
+      stoppedRuns: async () => stopped,
+      needsSettling: async () => !terminal,
+      settle: async (input: { experimentId: string, decision: unknown }) => {
+        settled.push(input);
+        terminal = true;
+        return ok(true);
+      },
+    };
+
+    const first = await reconcileStoppedExperiments(options);
+    assert.deepEqual(first, { examined: 1, settled: 1 });
+    assert.deepEqual(settled, [{
+      experimentId: 'exp-done',
+      decision: { decision: 'abandoned', reason: 'equal', code: 'TEVO1008' },
+    }], 'the decision passes through untouched — the reconciler does not re-decide');
+
+    const second = await reconcileStoppedExperiments(options);
+    assert.deepEqual(second, { examined: 1, settled: 0 },
+      'once the experiment is terminal the second pass writes nothing');
+    assert.equal(settled.length, 1);
   });
 });

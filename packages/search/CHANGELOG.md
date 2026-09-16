@@ -1,5 +1,11 @@
 # @tangleai/search
 
+## 0.29.5
+
+### Patch Changes
+
+- @tangleai/core@0.29.5
+
 ## 0.29.4
 
 ### Patch Changes

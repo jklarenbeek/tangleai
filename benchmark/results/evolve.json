@@ -113,7 +113,7 @@
       },
       {
         "path": "packages/evolve/src/host/cancel.ts",
-        "sha256": "0707e4348b92cdc96a5e16780c141c92ceeea3935617762b8c983b43e9ebdcf8"
+        "sha256": "705a6b2a446e2265d98b0a9df19795b2c67237781dd35328fd7ba800ba7bb43f"
       },
       {
         "path": "packages/evolve/src/host/classify.ts",
@@ -137,7 +137,7 @@
       },
       {
         "path": "packages/evolve/src/host/index.ts",
-        "sha256": "6df5883c78ecd7898b2c0e5715a4ce6c3301a800b1c02822a3ed76b3e2ed077d"
+        "sha256": "c1b70dc8fb54ebd1105b09daeffc90c158dfedc93b1e7f9b29b755b32b4aa1b2"
       },
       {
         "path": "packages/evolve/src/host/measure.ts",
@@ -153,7 +153,7 @@
       },
       {
         "path": "packages/evolve/src/host/worker.ts",
-        "sha256": "0a01c9a561e983fe1ffc7d08f1e11fcbf1cb8d8db9a375e1cbc846910a218f1d"
+        "sha256": "64dee5ad2fc5e7aa264152c241de8871e9d431f04321b368d6b86919a920108b"
       },
       {
         "path": "packages/evolve/src/host/worktree.ts",
@@ -169,15 +169,15 @@
       },
       {
         "path": "packages/evolve/src/lifecycle/handlers.ts",
-        "sha256": "9653fe26fc04e227bd734808d52874d3501bb3b9297cc4d62d75605b56a296cd"
+        "sha256": "26ef70cc47f923eee582f871ee05823ca662d77e11f540b965e8a259d70f109f"
       },
       {
         "path": "packages/evolve/src/lifecycle/index.ts",
-        "sha256": "d05eaa85e1abba6f46f20db9dba114f0a49729e74b0ea68b2d502cdba515f821"
+        "sha256": "49b4f490565221bef9c5558ea12cf339dfe00edf08026e5ea515e716c77b317f"
       },
       {
         "path": "packages/evolve/src/lifecycle/registry.ts",
-        "sha256": "ed5d161a7423d9408e54462fbe57f812010a2d53ff1a8282d0581283046f9d66"
+        "sha256": "075977883cdac4b3f425201c17a8deccca51658d34b48d8b058d3cd58791b4e9"
       },
       {
         "path": "packages/evolve/src/lifecycle/state.ts",
@@ -185,7 +185,7 @@
       },
       {
         "path": "packages/evolve/src/lifecycle/workflow.ts",
-        "sha256": "6099a99e452e0986fb2107480abf5665fb7eca98d3ae18bcf61fba802064ebea"
+        "sha256": "14ce163fe44906cb619b88646fef67763fe020fb7778d2c7ac44e70ddfdecb05"
       },
       {
         "path": "packages/evolve/src/manifest.ts",
@@ -232,7 +232,7 @@
         "sha256": "125b37f678bb9cfc241d75f175968fbb60ff7157ced04962ab50aa8b4a8b66f2"
       }
     ],
-    "sha256": "e23692ad9d07ffeec9492f14aa4306183e3d4cbc4b004b07392fefbd08c29c13"
+    "sha256": "96e71469b75b3386811956303329bce402a93bd3e55429e9430f937d3c86c746"
   },
   "suite": {
     "packages": [
@@ -330,31 +330,31 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.29.4"
+        "version": "0.29.5"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.29.4"
+        "version": "0.29.5"
       }
     ]
   },
@@ -1303,5 +1303,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "25ede5fea537f8fe8307bebcca6234730e818391c4fd711de971035a4c21e765"
+  "reportId": "312d82886ce450a55be25bcc4d72a4fdc665dbed0b450309716958f83750ea16"
 }
