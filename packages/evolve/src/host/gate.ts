@@ -123,16 +123,22 @@ export function gatePlan(options: {
   };
 }
 
-export async function runGate(options: RunGateOptions): Promise<EvolveOutcome<GateOutcome>> {
-  const { driver, effects, host, experimentId, worktreePath, budgets, leg, transcript } = options;
+/**
+ * The readback half: what a settled gate leg means, with no process in it.
+ *
+ * Separated from `runGate` because the durable path does not own both
+ * halves. There, a workflow task writes the intent and a worker in another
+ * process runs it; the stage that reads the verdict runs later, against
+ * the record alone, and must touch no job and spawn nothing. The
+ * sequential path calls the two halves back to back and is unchanged.
+ */
+export async function readGateResult(
+  options: Omit<RunGateOptions, 'driver' | 'args'>,
+): Promise<EvolveOutcome<GateOutcome>> {
+  const { effects, host, experimentId, worktreePath, budgets, leg, transcript } = options;
+  const planId = experimentId + '/' + leg;
 
-  const plan = gatePlan({ experimentId, leg, args: options.args, worktreePath });
-  const run = await driver.run(plan);
-  // An unresolved leg travels up as TEVO1009 unchanged: the gate did not
-  // decide anything, and nothing below may pretend otherwise.
-  if (!run.ok) return run as EvolveOutcome<GateOutcome>;
-
-  const held = await effects.get(plan.id).catch(() => null) as { legs?: SettledLeg[] } | null;
+  const held = await effects.get(planId).catch(() => null) as { legs?: SettledLeg[] } | null;
   const settled = (held?.legs ?? []).find(one => one.id === leg);
   if (settled === undefined) {
     return refuseOne<GateOutcome>('TEVO1009', '/legs/' + leg,
@@ -174,7 +180,7 @@ export async function runGate(options: RunGateOptions): Promise<EvolveOutcome<Ga
     stdoutBytes: typeof evidence.stdoutBytes === 'number' ? evidence.stdoutBytes : 0,
     stderrBytes: typeof evidence.stderrBytes === 'number' ? evidence.stderrBytes : 0,
     truncated,
-    effectRecordId: plan.id,
+    effectRecordId: planId,
   });
   if (!record.ok) return record as EvolveOutcome<GateOutcome>;
 
@@ -184,6 +190,19 @@ export async function runGate(options: RunGateOptions): Promise<EvolveOutcome<Ga
     stdout: captured?.stdout ?? '',
     stderr: captured?.stderr ?? '',
   });
+}
+
+/** Both halves, back to back: the sequential path's gate stage. */
+export async function runGate(options: RunGateOptions): Promise<EvolveOutcome<GateOutcome>> {
+  const plan = gatePlan({
+    experimentId: options.experimentId, leg: options.leg,
+    args: options.args, worktreePath: options.worktreePath,
+  });
+  const run = await options.driver.run(plan);
+  // An unresolved leg travels up as TEVO1009 unchanged: the gate did not
+  // decide anything, and nothing below may pretend otherwise.
+  if (!run.ok) return run as EvolveOutcome<GateOutcome>;
+  return readGateResult(options);
 }
 
 /**

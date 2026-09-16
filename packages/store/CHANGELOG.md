@@ -1,5 +1,19 @@
 # @tangleai/store
 
+## 0.29.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @tangleai/evolve@0.29.2
+  - @tangleai/config@0.29.2
+  - @tangleai/core@0.29.2
+  - @tangleai/documents@0.29.2
+  - @tangleai/mas@0.29.2
+  - @tangleai/memory@0.29.2
+  - @tangleai/outcomes@0.29.2
+  - @tangleai/trace2skill@0.29.2
+
 ## 0.29.1
 
 ### Patch Changes

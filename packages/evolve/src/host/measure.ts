@@ -69,9 +69,42 @@ export interface MeasureOutcome {
 }
 
 /** What the base root must still be, before and after every batch. */
-interface BaseSeal {
+export interface BaseSeal {
   revision: string;
   digest: string;
+}
+
+/**
+ * Read the base root's seal: registered revision, and the bytes it holds.
+ *
+ * This SPAWNS git, which is why it is its own exported stage rather than a
+ * closure inside the measurement. The durable path cannot fold it into a
+ * task that also measures: the seal has to be taken again BETWEEN the two
+ * sample batches, so the base side and the seal-after are separate nodes
+ * with a process boundary between them.
+ */
+export async function sealBaseRoot(options: {
+  host: WorktreeHost, repositoryRoot: string, baseRevision: string,
+}): Promise<EvolveOutcome<BaseSeal>> {
+  const inspected = await options.host.inspect();
+  if (!inspected.ok) return inspected as EvolveOutcome<BaseSeal>;
+  if (inspected.value.revision !== options.baseRevision) {
+    return refuseOne<BaseSeal>('TEVO1003', '/base/revision',
+      'The repository root is at ' + inspected.value.revision + ', not the registered base.');
+  }
+  const digest = await options.host.trackedDigest(options.repositoryRoot);
+  if (!digest.ok) return digest as EvolveOutcome<BaseSeal>;
+  return ok({ revision: inspected.value.revision, digest: digest.value });
+}
+
+/**
+ * Whether the base stayed put across a batch. Pure, and deliberately
+ * total: a base that moved voids every number in the run, flattering ones
+ * included, because a candidate number is only evidence while the thing it
+ * is compared against still measures what it claims to.
+ */
+export function baseSealHolds(before: BaseSeal, after: BaseSeal): boolean {
+  return before.revision === after.revision && before.digest === after.digest;
 }
 
 /** One side's sample batch, prepared under its own semantic id. */
@@ -110,18 +143,7 @@ export async function measureFitness(options: MeasureOptions): Promise<EvolveOut
       'A measurement takes at least one sample per side.');
   }
 
-  /** The base root as it must stay: registered revision, clean, same bytes. */
-  async function sealBase(): Promise<EvolveOutcome<BaseSeal>> {
-    const inspected = await host.inspect();
-    if (!inspected.ok) return inspected as EvolveOutcome<BaseSeal>;
-    if (inspected.value.revision !== baseRevision) {
-      return refuseOne<BaseSeal>('TEVO1003', '/base/revision',
-        'The repository root is at ' + inspected.value.revision + ', not the registered base.');
-    }
-    const digest = await host.trackedDigest(repositoryRoot);
-    if (!digest.ok) return digest as EvolveOutcome<BaseSeal>;
-    return ok({ revision: inspected.value.revision, digest: digest.value });
-  }
+  const sealBase = () => sealBaseRoot({ host, repositoryRoot, baseRevision });
 
   const before = await sealBase();
   if (!before.ok) return before as EvolveOutcome<MeasureOutcome>;
@@ -137,7 +159,7 @@ export async function measureFitness(options: MeasureOptions): Promise<EvolveOut
 
   const after = await sealBase();
   if (!after.ok) return after as EvolveOutcome<MeasureOutcome>;
-  if (after.value.revision !== before.value.revision || after.value.digest !== before.value.digest) {
+  if (!baseSealHolds(before.value, after.value)) {
     return refuseOne<MeasureOutcome>('TEVO1003', '/base',
       'The repository root changed while the instrument ran; every number in this run is void.');
   }
@@ -148,6 +170,25 @@ export async function measureFitness(options: MeasureOptions): Promise<EvolveOut
   });
   const candidateRun = await driver.run(candidatePlan);
   if (!candidateRun.ok) return candidateRun as EvolveOutcome<MeasureOutcome>;
+
+  return readMeasurement(options);
+}
+
+/**
+ * The readback half: two settled sample batches become one measurement.
+ *
+ * No process, no seal, no clock — it reads the effect records and nothing
+ * else, which is what lets a resumed experiment reproduce its measurement
+ * without spawning. The parsed value lives in the leg's own evidence for
+ * exactly that reason.
+ */
+export async function readMeasurement(
+  options: Omit<MeasureOptions, 'driver' | 'args' | 'host' | 'repositoryRoot' | 'worktreePath' | 'baseRevision'>,
+): Promise<EvolveOutcome<MeasureOutcome>> {
+  const { effects, experimentId, samples, truth, metric, transcript } = options;
+
+  const basePlanId = experimentId + '/measure-base';
+  const candidatePlanId = experimentId + '/measure-candidate';
 
   const readSide = async (planId: string, side: MeasureSide): Promise<{ values: number[], issues: EvolveIssue[] }> => {
     const held = await effects.get(planId).catch(() => null) as { legs?: SettledLeg[] } | null;
@@ -167,8 +208,8 @@ export async function measureFitness(options: MeasureOptions): Promise<EvolveOut
     return { values, issues };
   };
 
-  const baseSide = await readSide(basePlan.id, 'measure-base');
-  const candidateSide = await readSide(candidatePlan.id, 'measure-candidate');
+  const baseSide = await readSide(basePlanId, 'measure-base');
+  const candidateSide = await readSide(candidatePlanId, 'measure-candidate');
   const refused = baseSide.issues.length + candidateSide.issues.length;
 
   const baseSummary = summarize(baseSide.values);
@@ -198,7 +239,7 @@ export async function measureFitness(options: MeasureOptions): Promise<EvolveOut
     candidate: candidateSummary.value as SampleSet,
     truth,
     delta: comparison.delta,
-    effectRecordIds: [basePlan.id, candidatePlan.id],
+    effectRecordIds: [basePlanId, candidatePlanId],
   });
   if (!record.ok) return record as EvolveOutcome<MeasureOutcome>;
 

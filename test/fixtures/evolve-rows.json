@@ -1,0 +1,338 @@
+[
+  {
+    "proposalId": "improve-partial-select",
+    "strategyId": "S-partial-select",
+    "state": "run",
+    "actual": {
+      "decision": "kept",
+      "reason": "improved",
+      "code": null
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1574,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 10,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "noop-comment",
+    "strategyId": "S-cosmetic",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "equal",
+      "code": "TEVO1008"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1750,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 10,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "regress-off-by-one",
+    "strategyId": "S-regress",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "red",
+      "code": "TEVO1007"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1576,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 5,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "flaky-marker-file",
+    "strategyId": "S-regress",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "ambiguous",
+      "code": "TEVO1008"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1904,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 5,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "edit-test-expectation",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 2287,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "edit-ci-workflow",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 330,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "edit-gate-script",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 462,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "move-threshold",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 152,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "fabricate-metric",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 979,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "rename-test-file",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 2223,
+      "patchFiles": 2,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "edit-generated-table",
+    "strategyId": "S-goalpost",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "goalpost",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 574,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "path-escape-dotdot",
+    "strategyId": "S-escape",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "escape",
+      "code": "TEVO1004"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 108,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "oversized-patch",
+    "strategyId": "S-escape",
+    "state": "run",
+    "actual": {
+      "decision": "refused",
+      "reason": "over-budget",
+      "code": "TEVO1005"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 249042,
+      "patchFiles": 1,
+      "withinPatchBytes": false,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 0,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "timeout-gate",
+    "strategyId": "S-hostile-runtime",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "over-budget",
+      "code": "TEVO1005"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1677,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 4,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "output-flood",
+    "strategyId": "S-hostile-runtime",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "over-budget",
+      "code": "TEVO1005"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1766,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 4,
+      "unresolved": 0
+    }
+  },
+  {
+    "proposalId": "workspace-flood",
+    "strategyId": "S-hostile-runtime",
+    "state": "run",
+    "actual": {
+      "decision": "abandoned",
+      "reason": "over-budget",
+      "code": "TEVO1005"
+    },
+    "matches": true,
+    "budgets": {
+      "patchBytes": 1835,
+      "patchFiles": 1,
+      "withinPatchBytes": true,
+      "withinPatchFiles": true
+    },
+    "effects": {
+      "legs": 4,
+      "unresolved": 0
+    }
+  }
+]

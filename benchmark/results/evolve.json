@@ -109,7 +109,7 @@
       },
       {
         "path": "packages/evolve/src/host/driver.ts",
-        "sha256": "060de83615702f6db925cbce559adda75ba681a382ae5042252f38826501ff2f"
+        "sha256": "6351d992e9993ccb3c26ed42ed3a072669b577ead606817fe0685a5c5a6c6dfa"
       },
       {
         "path": "packages/evolve/src/host/effects.ts",
@@ -117,7 +117,7 @@
       },
       {
         "path": "packages/evolve/src/host/gate.ts",
-        "sha256": "d4943ed87fe0fe483f11ec5659beeda08be9f04ed4acb49e4f4d22e592b081d5"
+        "sha256": "ee66e04e85940d27ebb25a0950eef3aa2b07e0cf3de19495a7d11a84e9d55cd3"
       },
       {
         "path": "packages/evolve/src/host/git-allow.ts",
@@ -125,11 +125,11 @@
       },
       {
         "path": "packages/evolve/src/host/index.ts",
-        "sha256": "97bc0b48bb3adec1ae0c5fce3118c4c8168eca43d0540017171d2845837b507f"
+        "sha256": "b54e7b9c4961370bdda81ab323b54233504a3de75063bc0c29f023f9062bccaf"
       },
       {
         "path": "packages/evolve/src/host/measure.ts",
-        "sha256": "28f7223420f5ab65626024e666d3ba59efac4552fb490294da2d6aff7566f581"
+        "sha256": "63ac071ef25f80c66aad994b8bf1810b213a0d4ff4a1a5f5910d35318fa0318c"
       },
       {
         "path": "packages/evolve/src/host/runner.ts",
@@ -150,6 +150,26 @@
       {
         "path": "packages/evolve/src/index.ts",
         "sha256": "2027177707cac2ea9cb0b3f9c4b3e892815a51516dc7cbbff74e5e37e90f7670"
+      },
+      {
+        "path": "packages/evolve/src/lifecycle/handlers.ts",
+        "sha256": "a3557d08dfd5317c02d75138efde18bc7f1e0f905a021ec8c28e2932c0c9ebc2"
+      },
+      {
+        "path": "packages/evolve/src/lifecycle/index.ts",
+        "sha256": "8a32d07f250badcee4c1cb8223fbfd8775aaf580a3af4d67cd5994ec815ecb7a"
+      },
+      {
+        "path": "packages/evolve/src/lifecycle/registry.ts",
+        "sha256": "ed5d161a7423d9408e54462fbe57f812010a2d53ff1a8282d0581283046f9d66"
+      },
+      {
+        "path": "packages/evolve/src/lifecycle/state.ts",
+        "sha256": "6a66ada46492a66ae3a4a8d515346f7c808b13f3e1ec1a3f7799bfe74e4da6cc"
+      },
+      {
+        "path": "packages/evolve/src/lifecycle/workflow.ts",
+        "sha256": "6099a99e452e0986fb2107480abf5665fb7eca98d3ae18bcf61fba802064ebea"
       },
       {
         "path": "packages/evolve/src/manifest.ts",
@@ -196,7 +216,7 @@
         "sha256": "125b37f678bb9cfc241d75f175968fbb60ff7157ced04962ab50aa8b4a8b66f2"
       }
     ],
-    "sha256": "8863e071fb93daddc9f6565c7745049a4f51fbcd23fe5c35e2b74faca3b781ef"
+    "sha256": "46d285782a02950b5111afa7b452e091d26195e7e7b3bffaac9ec78f1eb6e246"
   },
   "suite": {
     "packages": [
@@ -294,31 +314,31 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.29.1"
+        "version": "0.29.2"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.29.1"
+        "version": "0.29.2"
       }
     ]
   },
@@ -1267,5 +1287,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "eae3acf85a6d3f21501997a3010c8189a0a1456e10de80866a3cfe0a423a0200"
+  "reportId": "5cb28094505f30add831a1d9bd6481a45d80e6241c03998445e487eb03f85ade"
 }

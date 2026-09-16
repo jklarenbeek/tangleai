@@ -1,5 +1,20 @@
 # @tangleai/evolve
 
+## 0.29.2
+
+### Patch Changes
+
+- Split each experiment stage into the half that starts work and the half that reads what it settled, and author the lifecycle version those halves will run under. The effect driver now exposes `prepare` beside `run`, and `run` accepts a lease a caller already holds: the durable path writes an effect intent in one process and claims its job in another, and a driver that always claimed its own job would double-claim against a fence that asserts the lease belongs to the plan. `runGate` and `measureFitness` keep their signatures and their behaviour, and are now compositions of `readGateResult` and `readMeasurement` — readbacks that touch no job and spawn nothing, so a resumed experiment reproduces its measurement instead of taking it again. `sealBaseRoot` and `baseSealHolds` are separated for the same reason: sealing the base spawns git, and the seal has to bracket the base batch rather than sit inside a step that also measures.
+
+  The lifecycle workflow version is authored, validated and lowered, with its own handler registry: every stage that reaches a process is a task paired with a typed wait, because a segment holds no job lease and so no node may spawn. The base seal is deliberately not a node for exactly that reason — it belongs to the worker that runs the base batch. Authoring twice yields the same version id, since nothing in it reads a clock or a random source.
+
+  Nothing drives this yet. There is no worker, the instrument still runs the sequential path, and the sixteen registered rows are unchanged — so this release adds no capability a host can use, only the shape the next one will need.
+- @tangleai/config@0.29.2
+  - @tangleai/context@0.29.2
+  - @tangleai/core@0.29.2
+  - @tangleai/mas@0.29.2
+  - @tangleai/outcomes@0.29.2
+
 ## 0.29.1
 
 ### Patch Changes
