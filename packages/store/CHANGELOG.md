@@ -1,5 +1,29 @@
 # @tangleai/store
 
+## 0.29.8
+
+### Patch Changes
+
+- Move the store onto the Jaren 0.91.2 registry foundation and source pin. The
+  underlying native store's relational, jobs, live-query and migration modules are
+  refactored around the new PostgreSQL parity work; Tangle reads them through the
+  existing `openStore`, `db.jobs` and `planPhysicalMigration` seams with no API
+  change. The PostgreSQL Store, its notifications and the asynchronous `asyncLive`
+  resnapshot mode are evaluated and not adopted: Tangle stays on local SQLite with
+  the synchronous incremental live-query engine. The desktop folder watcher now
+  serializes its passes through Jaren's `createLatestDelivery`, so a change window
+  that closes during the start scan runs right after it. Every keyless benchmark
+  document is requalified against the new foundation, and checkpoints written
+  under the previous foundation are refused rather than silently resumed.
+- @tangleai/config@0.29.8
+  - @tangleai/core@0.29.8
+  - @tangleai/documents@0.29.8
+  - @tangleai/evolve@0.29.8
+  - @tangleai/mas@0.29.8
+  - @tangleai/memory@0.29.8
+  - @tangleai/outcomes@0.29.8
+  - @tangleai/trace2skill@0.29.8
+
 ## 0.29.7
 
 ### Patch Changes

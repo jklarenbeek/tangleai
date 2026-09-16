@@ -130,4 +130,9 @@ implementing any single one.
   PCA, and SVM/forest/boosting models. Tangle's deterministic k-means utility is unrelated;
   `SemanticBoundaryChunker` is only an untrained adjacent-similarity comparison baseline,
   not an implementation of this paper. 📄 [`refs/Exploring Semantic Clustering Methods.pdf`](refs/Exploring%20Semantic%20Clustering%20Methods.pdf)
+- **Topological Necessities** (arXiv:2609.11014v1, Shi & Li, Sep 2026) — executor-independent
+  subgoals for offline goal-conditioned control: the unavoidable stages every successful
+  trajectory crosses, read by homology over a transport-weighted carrier and certified per gate.
+  Tangle has no reinforcement-learning or control lane; no roadmap entry names it.
+  📄 [`refs/2609.11014v1.pdf`](refs/2609.11014v1.pdf)
 - **memflow S2Chunker notes** — 📄 [`refs/memflow-s2chunker.docx`](refs/memflow-s2chunker.docx)

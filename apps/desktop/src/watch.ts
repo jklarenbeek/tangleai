@@ -22,6 +22,7 @@
 
 import { watch as nodeWatch } from 'node:fs';
 
+import { createLatestDelivery } from '@jarenjs/core/async';
 import { sleep as abortableSleep } from '@jarenjs/core/retry';
 
 import type { SyncTrigger } from './ingest.ts';
@@ -140,9 +141,10 @@ export function createFolderWatcher(options: FolderWatchOptions): FolderWatcher 
   let dirty = false;
   let wake: AbortController | null = null;
   let ticker: AbortController | null = null;
-  /** The pass this watcher is waiting on, and the one window allowed to follow it. */
+  /** The pass this watcher is waiting on; a close waits for it to settle. */
   let running: Promise<void> | null = null;
-  let pending: WatchTrigger | null = null;
+  /** Bumped on detach, so a window queued for the previous folder is dropped. */
+  let generation = 0;
 
   const issue = (detail: string): void => {
     if (!issues.some((entry) => entry.detail === detail)) issues.push({ code: 'TDSK1005', path: '/folder', detail });
@@ -164,20 +166,21 @@ export function createFolderWatcher(options: FolderWatchOptions): FolderWatcher 
     issues: issues.map((entry) => ({ ...entry })),
   });
 
+  const track = (scan: Promise<void>): Promise<void> => {
+    running = scan;
+    void scan.then(() => { if (running === scan) running = null; });
+    return scan;
+  };
+
   /**
    * One pass at a time, and at most one window waiting behind it: a
    * burst can never become a queue of walks over the same folder.
    */
+  const passes = createLatestDelivery((request: { trigger: WatchTrigger, generation: number }) =>
+    request.generation === generation ? track(requestScan(request.trigger)) : undefined);
+
   function pump(trigger: WatchTrigger): void {
-    if (closed) return;
-    if (running !== null) { pending = trigger; return; }
-    running = (async () => {
-      await requestScan(trigger);
-      running = null;
-      const next = pending;
-      pending = null;
-      if (next !== null) pump(next);
-    })();
+    if (!closed) passes.notify({ trigger, generation });
   }
 
   async function requestScan(trigger: WatchTrigger): Promise<void> {
@@ -301,7 +304,7 @@ export function createFolderWatcher(options: FolderWatchOptions): FolderWatcher 
     handle = null;
     windowEvents = 0;
     dirty = false;
-    pending = null;
+    generation += 1;
   }
 
   async function startWatching(next: string): Promise<FolderWatchState> {
@@ -312,11 +315,10 @@ export function createFolderWatcher(options: FolderWatchOptions): FolderWatcher 
     mode = attach(next);
     startTicker();
     // the start scan is a pass like any other: a host closing under it
-    // waits for it, and a window opened during it queues exactly one more
-    const scan = requestScan('start');
-    running = scan;
-    await scan;
-    if (running === scan) running = null;
+    // waits for it, and a window opened during it queues exactly one more.
+    // Retargeting under a pass still in flight starts beside it, as before,
+    // so the new folder's start scan is never coalesced into a change pass.
+    await (passes.pending() === 0 ? (pump('start'), running) : track(requestScan('start')));
     return state();
   }
 
@@ -340,6 +342,7 @@ export function createFolderWatcher(options: FolderWatchOptions): FolderWatcher 
     async close(): Promise<void> {
       closed = true;
       detach();
+      passes.close();
       // an admitted pass keeps the store it is writing to alive until it
       // settles; closing under one is how a half-written run happens
       await running;

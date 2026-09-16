@@ -3,7 +3,7 @@
 Jaren supplies independent generic engines, contracts and complete editors.
 Tangle owns the model, context and agent mechanisms, their Jaren integrations,
 the reusable assistant, and the Pages adventure. The current foundation is
-[Jaren 0.90.6](JARENJS_INTEGRATION.md), which that audit keeps authoritative;
+[Jaren 0.91.2](JARENJS_INTEGRATION.md), which that audit keeps authoritative;
 the qualification below retains the
 0.84.3 migration and TypeScript-conversion receipts. The original [close-out receipt](migrations/jaren-ai/closeout.json)
 records the committed 0.84.0 migration; its foundation-manifest hash describes
@@ -16,7 +16,7 @@ author action.
 
 | Input | Identity |
 |---|---|
-| Current Jaren source | `37ba1676dab7868b168858b413a3ec647eebefdd`, version `0.90.6`; see the current integration audit |
+| Current Jaren source | `74036c063c5a4efa8c41aa878713d405223cc464`, version `0.91.2`; see the current integration audit |
 | TypeScript-conversion foundation | `ac8749711f5d058251f72842ce7e0095b389403f`, version `0.84.3` |
 | Original migration source | `b111a633f6d35f00109902a16cc25776ccaaf4ea`, version `0.84.0` |
 | Foundation source state | Committed; empty patch SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
@@ -31,8 +31,8 @@ AI-free dependency edges. The [registry receipt](migrations/jaren-ai/registry-0.
 records all 23 published tarball URLs: their downloaded bytes match those
 source-built archives exactly. The installed closure was checked against the
 same complete member inventories during that qualification. Current root and
-workspace dependencies use exact `0.90.6` registry versions; the checker refuses
-a stale `file:` lock entry. The current [registry receipt](integration/jaren-0.90.6-registry.json)
+workspace dependencies use exact `0.91.2` registry versions; the checker refuses
+a stale `file:` lock entry. The current [registry receipt](integration/jaren-0.91.2-registry.json)
 checks downloaded archive integrity without relabelling the old source rebuild.
 The active candidate `foundations.json` has been archived under its versioned
 name, so CI and ordinary installs use npm without an archive bootstrap.

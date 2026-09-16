@@ -142,6 +142,38 @@ describe('the folder watcher', () => {
     await watcher.close();
   });
 
+  it('runs the window that closed during the start scan right after it', async () => {
+    const timer = scriptedSleep();
+    const fs = scriptedWatch();
+    const scans: WatchTrigger[] = [];
+    let release = (): void => {};
+    const held = new Promise<void>((resolve) => { release = resolve; });
+    const watcher = createFolderWatcher({
+      watch: fs.watch,
+      sleep: timer.sleep,
+      now,
+      onScan: async (trigger) => {
+        scans.push(trigger);
+        if (trigger === 'start') await held;
+        return ran();
+      },
+    });
+
+    const started = watcher.start('/corpus');
+    await settle(() => scans.length === 1);
+    fs.emit(3);
+    await settle(() => timer.armed() === 1);
+    timer.fire();
+    await settle(() => watcher.state().windows === 1);
+    assert.deepEqual(scans, ['start'], 'nothing starts beside the start scan');
+
+    release();
+    await started;
+    await settle(() => scans.length === 2);
+    assert.deepEqual(scans, ['start', 'change'], 'the queued window follows without waiting for another event');
+    await watcher.close();
+  });
+
   it('answers a window that overflowed with one full scan, counted', async () => {
     const timer = scriptedSleep();
     const fs = scriptedWatch();

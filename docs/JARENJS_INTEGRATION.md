@@ -1,11 +1,11 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.90.6**, tag `v0.90.6`, source commit
-`37ba1676dab7868b168858b413a3ec647eebefdd`. Upstream `main`, the tag and all 23
-consumed npm latest releases agreed when checked on 2026-09-15. The submodule is the source
-reference; runtime imports resolve to the 23 published npm packages. All 111
+Tangle consumes **Jaren 0.91.2**, tag `v0.91.2`, source commit
+`74036c063c5a4efa8c41aa878713d405223cc464`. Upstream `main`, the tag and all 23
+consumed npm latest releases agreed when checked on 2026-09-16. The submodule is the source
+reference; runtime imports resolve to the 23 published npm packages. All 116
 direct dependency references are exact pins. The lock records registry URLs and
-integrities; the [registry receipt](integration/jaren-0.90.6-registry.json) checks
+integrities; the [registry receipt](integration/jaren-0.91.2-registry.json) checks
 all 23 downloaded archives against it. [The consumer gate](CONSUMER_GATE.md)
 describes these checks as a reusable pattern for other suite consumers. This receipt does not claim a source
 rebuild comparison. Installed packages are neither patched nor source-linked.
@@ -37,7 +37,33 @@ activation, claim support policy, callback reservations and host trigger
 eligibility. The frozen standard-BM25 comparison lives only in the benchmark;
 production lexical routing delegates to `compileLexical`.
 
-## Changes since 0.89.0 and current adoption
+## Changes since 0.90.6 and current adoption
+
+Three upstream commits cover this update: bounded PostgreSQL Store parity with
+portable backend hosts, opt-in Windows qualification, and settled recovery pool
+clients. Source changes are in `@jarenjs/db` (PostgreSQL dialect, driver,
+cursor, notifications, jobs, migration and replication; the dialect-neutral
+`relational` module; the new `@jarenjs/db/async-live` subpath) and one addition
+to `@jarenjs/core/async`. Every other consumed package advances its version and
+dependency references only. The
+[upstream comparison](https://github.com/jklarenbeek/jarenjs/compare/v0.90.6...v0.91.2)
+and pinned submodule retain the exact implementation and tests.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| `createLatestDelivery` (`@jarenjs/core/async`) | **Adopted** by the desktop folder watcher: one pass at a time, the latest window retained behind it, observer failures isolated. It replaces the watcher's hand-rolled running/pending pump, and a window that closes during the start scan now runs right after it instead of waiting for the next filesystem event. The watcher keeps its own policy: debounce, overflow, admission refusals, the awaited in-flight pass on close, and a generation that drops a queued window when the folder is retargeted. |
+| SQLite relational, jobs, live and migration refactors | Adopted transparently through the existing `openStore`, `db.jobs` and `planPhysicalMigration` seams. `sql`, `planRelational` and `relational` keep their public names; the typecheck, the store, memory, MAS and desktop suites and the physical-migration consumer pass unchanged. |
+| PostgreSQL Store parity, `postgresNotifications`, backend hosts | **Evaluated, not adopted.** Tangle is a local-first application over SQLite (Node, Bun and the browser WASM driver); no Tangle deployment runs a PostgreSQL server. PostgreSQL offers no synchronous incremental live maintenance, which the memory store depends on. Recorded so a hosted deployment consumes this rather than writing a dialect. |
+| `asyncLive()` (`@jarenjs/db/async-live`) | **Evaluated, not adopted.** Bounded resnapshot live maintenance for asynchronous connections, which needs durable capture and a lazy row iterator. Tangle's synchronous Node/Bun connections already maintain live queries incrementally, so switching would replace incremental patches with bounded re-reads without removing any Tangle code. |
+| `physicalObjectKey` | Not consumed; the migration example uses the complete planned artifacts and never names physical objects by key. |
+
+The generic capabilities Tangle still carries downstream (paired resampling,
+rank fusion, text-edit compilation, asynchronous guarded validation, a process
+executor, provider capture, a real snapshot event id, a single trailing newline
+from `jaren-emit`) are not in this release; the downstream implementations and
+workarounds stay in place.
+
+## Changes from 0.89.0 to 0.90.6
 
 Seven upstream commits cover this update. They add bounded host helpers and
 asynchronous SQLite integration, fix startup contention and Windows recovery
