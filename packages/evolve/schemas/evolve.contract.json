@@ -1,0 +1,1132 @@
+{
+  "$contract": "0.1",
+  "id": "tangle-evolve",
+  "version": "1",
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "revision40": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "positive": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "repoPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^[A-Za-z0-9._][A-Za-z0-9._*/-]*$"
+    },
+    "evolveCode": {
+      "enum": [
+        "TEVO1001",
+        "TEVO1002",
+        "TEVO1003",
+        "TEVO1004",
+        "TEVO1005",
+        "TEVO1006",
+        "TEVO1007",
+        "TEVO1008",
+        "TEVO1009",
+        "TEVO1010",
+        "TEVO1011"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "kept",
+        "abandoned",
+        "refused",
+        "uncertain"
+      ]
+    },
+    "decisionReason": {
+      "enum": [
+        "improved",
+        "equal",
+        "regression",
+        "red",
+        "ambiguous",
+        "over-budget",
+        "unverifiable",
+        "goalpost",
+        "escape",
+        "command",
+        "uncertain-effect"
+      ]
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "isolated",
+        "applied",
+        "gated",
+        "measured",
+        "decided",
+        "recorded",
+        "abandoned",
+        "refused",
+        "uncertain"
+      ]
+    },
+    "direction": {
+      "enum": [
+        "lower",
+        "higher"
+      ]
+    },
+    "origin": {
+      "enum": [
+        "hand-authored",
+        "checked-skill",
+        "model"
+      ]
+    },
+    "evolveIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/evolveCode"
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "docPath": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "docPath",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "evolveBudgets": {
+      "type": "object",
+      "properties": {
+        "patchBytes": {
+          "$ref": "#/$defs/positive"
+        },
+        "patchFiles": {
+          "$ref": "#/$defs/positive"
+        },
+        "attemptsPerLeg": {
+          "const": 1
+        },
+        "calls": {
+          "$ref": "#/$defs/count"
+        },
+        "tokens": {
+          "$ref": "#/$defs/count"
+        },
+        "legMs": {
+          "$ref": "#/$defs/positive"
+        },
+        "experimentMs": {
+          "$ref": "#/$defs/positive"
+        },
+        "stdoutBytes": {
+          "$ref": "#/$defs/positive"
+        },
+        "stderrBytes": {
+          "$ref": "#/$defs/positive"
+        },
+        "workspaceBytes": {
+          "$ref": "#/$defs/positive"
+        },
+        "samples": {
+          "$ref": "#/$defs/positive"
+        }
+      },
+      "required": [
+        "patchBytes",
+        "patchFiles",
+        "attemptsPerLeg",
+        "calls",
+        "tokens",
+        "legMs",
+        "experimentMs",
+        "stdoutBytes",
+        "stderrBytes",
+        "workspaceBytes",
+        "samples"
+      ],
+      "additionalProperties": false
+    },
+    "evolvePrincipal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "authorityId": {
+          "$ref": "#/$defs/id"
+        },
+        "propose": {
+          "type": "boolean"
+        },
+        "execute": {
+          "type": "boolean"
+        },
+        "approve": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "authorityId",
+        "propose",
+        "execute",
+        "approve"
+      ],
+      "additionalProperties": false
+    },
+    "command": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "maxItems": 64
+        }
+      },
+      "required": [
+        "command",
+        "args"
+      ],
+      "additionalProperties": false
+    },
+    "metricSpec": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "direction": {
+          "$ref": "#/$defs/direction"
+        },
+        "schema": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "direction",
+        "schema"
+      ],
+      "additionalProperties": false
+    },
+    "evolveRepository": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "repository"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "repositoryId": {
+          "$ref": "#/$defs/id"
+        },
+        "vcs": {
+          "const": "git"
+        },
+        "protectedRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          },
+          "minItems": 1
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "immutablePaths": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/repoPath"
+              }
+            },
+            "generated": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/repoPath"
+              }
+            },
+            "gate": {
+              "$ref": "#/$defs/command"
+            },
+            "instrument": {
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 512
+                  },
+                  "maxItems": 64
+                },
+                "metric": {
+                  "$ref": "#/$defs/metricSpec"
+                }
+              },
+              "required": [
+                "command",
+                "args",
+                "metric"
+              ],
+              "additionalProperties": false
+            },
+            "thresholdsPath": {
+              "$ref": "#/$defs/repoPath"
+            }
+          },
+          "required": [
+            "immutablePaths",
+            "generated",
+            "gate",
+            "instrument",
+            "thresholdsPath"
+          ],
+          "additionalProperties": false
+        },
+        "allow": {
+          "type": "object",
+          "properties": {
+            "commands": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          },
+          "required": [
+            "commands"
+          ],
+          "additionalProperties": false
+        },
+        "budgets": {
+          "$ref": "#/$defs/evolveBudgets"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "repositoryId",
+        "vcs",
+        "protectedRefs",
+        "policy",
+        "allow",
+        "budgets"
+      ],
+      "additionalProperties": false
+    },
+    "evolveBase": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "base"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "repositoryId": {
+          "$ref": "#/$defs/id"
+        },
+        "revision": {
+          "$ref": "#/$defs/revision40"
+        },
+        "clean": {
+          "const": true
+        },
+        "operatorBranch": {
+          "$ref": "#/$defs/text"
+        },
+        "checkedOut": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/repoPath"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "repositoryId",
+        "revision",
+        "clean",
+        "operatorBranch",
+        "checkedOut"
+      ],
+      "additionalProperties": false
+    },
+    "evolveStrategy": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "strategy"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "strategyId": {
+          "$ref": "#/$defs/id"
+        },
+        "skillId": {
+          "$ref": "#/$defs/id"
+        },
+        "memoryId": {
+          "$ref": "#/$defs/id"
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "revision": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "strategyId",
+        "skillId",
+        "memoryId",
+        "origin",
+        "evidence",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "evolvePatch": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "patch"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "patchId": {
+          "$ref": "#/$defs/id"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace",
+                  "remove"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/files/"
+              },
+              "value": {}
+            },
+            "required": [
+              "op",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "files": {
+          "$ref": "#/$defs/positive"
+        },
+        "bytes": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "patchId",
+        "operations",
+        "files",
+        "bytes"
+      ],
+      "additionalProperties": false
+    },
+    "evolveProposal": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "proposal"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "proposalId": {
+          "$ref": "#/$defs/id"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "strategyId": {
+          "$ref": "#/$defs/id"
+        },
+        "patchId": {
+          "$ref": "#/$defs/id"
+        },
+        "rationale": {
+          "$ref": "#/$defs/text"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "configuration": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "scripted"
+                },
+                "revision": {
+                  "$ref": "#/$defs/id"
+                }
+              },
+              "required": [
+                "kind",
+                "revision"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "model"
+                },
+                "identityId": {
+                  "$ref": "#/$defs/id"
+                }
+              },
+              "required": [
+                "kind",
+                "identityId"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "proposalId",
+        "experimentId",
+        "strategyId",
+        "patchId",
+        "rationale",
+        "evidence",
+        "origin",
+        "configuration"
+      ],
+      "additionalProperties": false
+    },
+    "evolveGateResult": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "gate-result"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "leg": {
+          "enum": [
+            "gate",
+            "gate-rerun"
+          ]
+        },
+        "exitCode": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "signal": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stdoutBytes": {
+          "$ref": "#/$defs/count"
+        },
+        "stderrBytes": {
+          "$ref": "#/$defs/count"
+        },
+        "truncated": {
+          "type": "object",
+          "properties": {
+            "stdout": {
+              "type": "boolean"
+            },
+            "stderr": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "stdout",
+            "stderr"
+          ],
+          "additionalProperties": false
+        },
+        "effectRecordId": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "experimentId",
+        "leg",
+        "exitCode",
+        "signal",
+        "stdoutBytes",
+        "stderrBytes",
+        "truncated",
+        "effectRecordId"
+      ],
+      "additionalProperties": false
+    },
+    "sampleSet": {
+      "type": "object",
+      "properties": {
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
+        },
+        "median": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "samples",
+        "median"
+      ],
+      "additionalProperties": false
+    },
+    "evolveMeasurement": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "measurement"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "metric": {
+          "$ref": "#/$defs/text"
+        },
+        "direction": {
+          "$ref": "#/$defs/direction"
+        },
+        "base": {
+          "$ref": "#/$defs/sampleSet"
+        },
+        "candidate": {
+          "$ref": "#/$defs/sampleSet"
+        },
+        "truth": {
+          "type": "number"
+        },
+        "delta": {
+          "type": "number"
+        },
+        "effectRecordIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "experimentId",
+        "metric",
+        "direction",
+        "base",
+        "candidate",
+        "truth",
+        "delta",
+        "effectRecordIds"
+      ],
+      "additionalProperties": false
+    },
+    "evolveDecision": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "decision"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "reason": {
+          "$ref": "#/$defs/decisionReason"
+        },
+        "code": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/evolveCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "budgets": {
+          "$ref": "#/$defs/evolveBudgets"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "experimentId",
+        "decision",
+        "reason",
+        "code",
+        "evidenceIds",
+        "budgets"
+      ],
+      "additionalProperties": false
+    },
+    "evolveReviewBundle": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "review-bundle"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "branch": {
+          "$ref": "#/$defs/text"
+        },
+        "headRevision": {
+          "$ref": "#/$defs/revision40"
+        },
+        "diffDigest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "diffBytes": {
+          "$ref": "#/$defs/count"
+        },
+        "gateResultIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "measurementId": {
+          "$ref": "#/$defs/id"
+        },
+        "decisionId": {
+          "$ref": "#/$defs/id"
+        },
+        "runIdentityId": {
+          "$ref": "#/$defs/id"
+        },
+        "effectRecordIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "experimentId",
+        "branch",
+        "headRevision",
+        "diffDigest",
+        "diffBytes",
+        "gateResultIds",
+        "measurementId",
+        "decisionId",
+        "runIdentityId",
+        "effectRecordIds"
+      ],
+      "additionalProperties": false
+    },
+    "evolveExperiment": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "experiment"
+        },
+        "id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "experimentId": {
+          "$ref": "#/$defs/id"
+        },
+        "repositoryId": {
+          "$ref": "#/$defs/id"
+        },
+        "baseRevision": {
+          "$ref": "#/$defs/revision40"
+        },
+        "strategyId": {
+          "$ref": "#/$defs/id"
+        },
+        "proposalId": {
+          "$ref": "#/$defs/id"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "runIdentityId": {
+          "$ref": "#/$defs/id"
+        },
+        "revision": {
+          "$ref": "#/$defs/count"
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "$ref": "#/$defs/status"
+              },
+              "to": {
+                "$ref": "#/$defs/status"
+              },
+              "recordId": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "recordId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "experimentId",
+        "repositoryId",
+        "baseRevision",
+        "strategyId",
+        "proposalId",
+        "status",
+        "runIdentityId",
+        "revision",
+        "history"
+      ],
+      "additionalProperties": false
+    },
+    "evolveRecord": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/evolveRepository"
+        },
+        {
+          "$ref": "#/$defs/evolveBase"
+        },
+        {
+          "$ref": "#/$defs/evolveStrategy"
+        },
+        {
+          "$ref": "#/$defs/evolvePatch"
+        },
+        {
+          "$ref": "#/$defs/evolveProposal"
+        },
+        {
+          "$ref": "#/$defs/evolveGateResult"
+        },
+        {
+          "$ref": "#/$defs/evolveMeasurement"
+        },
+        {
+          "$ref": "#/$defs/evolveDecision"
+        },
+        {
+          "$ref": "#/$defs/evolveReviewBundle"
+        },
+        {
+          "$ref": "#/$defs/evolveExperiment"
+        }
+      ]
+    },
+    "experimentsListQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseRevision": {
+          "$ref": "#/$defs/revision40"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      }
+    },
+    "experimentsListResult": {
+      "type": "object",
+      "required": [
+        "experiments",
+        "truncated"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evolveExperiment"
+          }
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "experimentGetQuery": {
+      "type": "object",
+      "required": [
+        "experimentId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "experimentId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "experimentGetResult": {
+      "type": "object",
+      "required": [
+        "experiment",
+        "recordIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "experiment": {
+          "$ref": "#/$defs/evolveExperiment"
+        },
+        "recordIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "reviewGetQuery": {
+      "type": "object",
+      "required": [
+        "experimentId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "experimentId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reviewGetResult": {
+      "type": "object",
+      "required": [
+        "bundle"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bundle": {
+          "$ref": "#/$defs/evolveReviewBundle"
+        }
+      }
+    }
+  },
+  "operations": {
+    "evolve.experiments.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/experimentsListQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/experimentsListResult"
+      }
+    },
+    "evolve.experiment.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/experimentGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/experimentGetResult"
+      }
+    },
+    "evolve.review.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/reviewGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/reviewGetResult"
+      }
+    }
+  }
+}

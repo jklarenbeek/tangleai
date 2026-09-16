@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.3
+
+### Patch Changes
+
+- Add the effect worker, cancellation and the read-only contract, and prove the durable path counts what the sequential one counts. The worker claims an experiment's effect job, runs it under the lease the workflow segment is deliberately not given, and answers the typed wait — using the effect record id as the response key, which is what makes a crash between running and answering cost nothing: the next pass prepares the same semantic plan id, finds every leg settled, replays without spawning and answers with the same key, so the store reads it as the same response rather than a conflict. The one case it will not answer is an unresolved leg; the wait stands and a person reconciles it, because inventing a settlement would turn "nobody can account for this" into a confident record. `cancelExperiment` is a host call rather than a wire operation, and the cleanup after it is a reconciler rather than a node, because a cancelled run executes no further segment and a cleanup node would simply never fire — the second reconciliation pass examines the same runs and settles none. The decision vocabulary is not widened for it: an operator cancel is `abandoned` / `command` / `TEVO1006` and an expiry is `abandoned` / `over-budget` / `TEVO1005`, while who asked lives in the run trace and never on the decision, which has no member for it. The published contract is three operations and all three are reads, with no operation that merges, promotes, approves, runs, cancels or stops an experiment — absent rather than guarded — and a frozen baseline the gate compares against, so adding one is a refused commit rather than a quiet change; a review bundle answers its diff digest and byte count and never the diff text or what the gate printed. The equivalence check earned its place immediately: settling an experiment is cleanup rather than evidence and contributes no leg, so a kept experiment publishes ten legs and not eleven, and counting it would have moved every measured row and broken the campaign's oracle at the end of a long regeneration with nothing to point at.
+- @tangleai/config@0.29.3
+  - @tangleai/context@0.29.3
+  - @tangleai/core@0.29.3
+  - @tangleai/mas@0.29.3
+  - @tangleai/outcomes@0.29.3
+
 ## 0.29.2
 
 ### Patch Changes

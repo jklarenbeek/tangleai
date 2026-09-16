@@ -21,3 +21,10 @@ export {
   measures, reruns, readSettlement,
 } from './state.ts';
 export type { EvolveEnvelope, EnvelopeDecision, EvolveSettlement } from './state.ts';
+
+export {
+  createEvolveLifecycleHandlers, planFor, legsFor, stageRuns,
+} from './handlers.ts';
+export type {
+  LifecycleContext, LifecycleJobQueue, LifecyclePreparer, LifecycleEffectReader,
+} from './handlers.ts';

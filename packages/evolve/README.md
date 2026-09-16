@@ -205,3 +205,66 @@ of to a repository — starts with this rule instead of inventing a weaker one.
 Everything in this layer is pure and total: it reads decided rows and answers
 counts, runs no process, reads no file, and decides nothing about any
 individual experiment.
+
+## The durable lifecycle
+
+`@tangleai/evolve/lifecycle` authors one immutable workflow version, and
+`@tangleai/evolve/host` runs it. The shape is forced by a single rule: **no
+spawn happens inside a workflow segment.** A segment is never handed the
+suite job lease, and the effect store asserts that a lease belongs to the
+plan it is running, so every stage that reaches a process is a pair — a task
+that writes the intent and enqueues it, and a typed wait that the effect
+worker answers from another process.
+
+Two consequences are worth knowing before reading the graph. A switch branch
+*owns* its nodes and has one result port, so the single rerun a red gate
+earns lives inside the flake branch together with the readback that folds its
+settlement back into the envelope. And there is no seal node: sealing the base
+root spawns git, so the seal belongs to the worker running the base sample
+batch, which brackets that batch on both sides and reports whether the base
+held. A base that moved voids every number in the run, flattering ones
+included.
+
+Authoring is deterministic — no clock, no random source — so the same options
+produce the same version id, and the version is safe to store once and reuse.
+
+`createEvolveEffectWorker` claims those jobs and answers the waits. It uses
+the effect record id as the response key, which is what makes a crash cheap: a
+worker that dies after running and before answering will, next pass, prepare
+the same semantic plan id, find every leg settled, replay without spawning,
+and answer with the same key — the same response, not a conflict. The one
+case it will not answer is an unresolved leg: the wait stands, and a person
+reconciles it, because inventing a settlement would turn "nobody can account
+for this" into a confident record.
+
+## Stopping one, and cleaning up
+
+`cancelExperiment` is a host call and deliberately not a wire operation. A
+cancelled run executes no further segment, so the cleanup cannot be a node —
+it would never fire, and the worktree would outlive the cancel.
+`reconcileCancelledExperiments` does it instead, and is idempotent through
+the experiment's own compare-and-swap: the second pass examines the same runs
+and settles none.
+
+The decision vocabulary is not widened for it. An operator cancel is
+`abandoned` / `command` / `TEVO1006`; an expiry is `abandoned` /
+`over-budget` / `TEVO1005` against the registered ceiling. Which it was, and
+who asked, lives in the run trace — never on the decision, which has no
+member for it.
+
+## What the contract publishes
+
+`@tangleai/evolve/contract` is three operations, and all three are reads:
+`evolve.experiments.list`, `evolve.experiment.get` and `evolve.review.get`.
+
+There is no operation that merges, promotes, approves, runs, cancels or stops
+an experiment. Not guarded — absent. `npm run evolve:contract:check` compares
+the published surface against a frozen baseline and refuses a commit that adds
+one, that removes an operation a client depends on, or that narrows an input
+so a call the freeze accepted would now be refused.
+
+`evolve.review.get` answers the bundle's diff digest and byte count, and never
+the diff text or what the gate printed. A reviewer reads those from the branch
+the experiment left behind, where they are attributable to a commit, rather
+than from a payload that could be rewritten on the way past. A list is bounded
+whether or not the caller asked for a bound.

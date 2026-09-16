@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "0.29.3",
+  "baseVersion": "0.29.2",
+  "baseCommit": "ccfadbd9146e9ea393481d6292f208b997679939",
+  "preparationCommit": "ccfadbd9146e9ea393481d6292f208b997679939",
+  "initial": false,
+  "inputHash": "e458b4131ac69790a30a2264b16d7a994943bd31d30e83d64e09c45cd4585c73",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        }
+      ],
+      "summary": "Add the effect worker, cancellation and the read-only contract, and prove the durable path counts what the sequential one counts. The worker claims an experiment's effect job, runs it under the lease the workflow segment is deliberately not given, and answers the typed wait — using the effect record id as the response key, which is what makes a crash between running and answering cost nothing: the next pass prepares the same semantic plan id, finds every leg settled, replays without spawning and answers with the same key, so the store reads it as the same response rather than a conflict. The one case it will not answer is an unresolved leg; the wait stands and a person reconciles it, because inventing a settlement would turn \"nobody can account for this\" into a confident record. `cancelExperiment` is a host call rather than a wire operation, and the cleanup after it is a reconciler rather than a node, because a cancelled run executes no further segment and a cleanup node would simply never fire — the second reconciliation pass examines the same runs and settles none. The decision vocabulary is not widened for it: an operator cancel is `abandoned` / `command` / `TEVO1006` and an expiry is `abandoned` / `over-budget` / `TEVO1005`, while who asked lives in the run trace and never on the decision, which has no member for it. The published contract is three operations and all three are reads, with no operation that merges, promotes, approves, runs, cancels or stops an experiment — absent rather than guarded — and a frozen baseline the gate compares against, so adding one is a refused commit rather than a quiet change; a review bundle answers its diff digest and byte count and never the diff text or what the gate printed. The equivalence check earned its place immediately: settling an experiment is cleanup rather than evidence and contributes no leg, so a kept experiment publishes ten legs and not eleven, and counting it would have moved every measured row and broken the campaign's oracle at the end of a long regeneration with nothing to point at.",
+      "id": "evolve-worker-cancel-contract"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.29.3"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.29.3"
+    }
+  ]
+}

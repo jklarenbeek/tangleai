@@ -133,6 +133,10 @@ export function planFor(stage: EvolveEffectStage, context: LifecycleContext): Ef
 export function legsFor(stage: EvolveEffectStage, budgets: EvolveBudgets): number {
   if (stage === 'isolate') return 2;
   if (stage === 'measure-base' || stage === 'measure-candidate') return budgets.samples;
+  // Settling is cleanup, not evidence. The sequential path counts no leg
+  // for it, and the published census must reconcile with that: a kept
+  // experiment reports 10 legs (2 + 1 + 1 + 3 + 3), not 11.
+  if (stage === 'settle') return 0;
   return 1;
 }
 

@@ -47,3 +47,14 @@ export type { ApplyOptions, ApplyOutcome } from './apply.ts';
 
 export { settleExperiment, dispositionOf } from './settle.ts';
 export type { SettleOptions, SettleOutcome, Disposition, ReviewBundleInput } from './settle.ts';
+
+export { createEvolveEffectWorker, EVOLVE_EFFECT_KIND } from './worker.ts';
+export type {
+  EvolveEffectJob, EvolveSettlementMessage, EvolveEffectWorkerOptions,
+  WorkerDriver, WorkerInteractionStore, WorkerJobQueue, WorkerPass,
+} from './worker.ts';
+
+export { cancelExperiment, reconcileCancelledExperiments, cancelDecision } from './cancel.ts';
+export type {
+  CancelOptions, CancelOutcome, CancelStore, ReconcileOptions, ReconcileOutcome,
+} from './cancel.ts';
