@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.4
+
+### Patch Changes
+
+- Pin the lifecycle version against a real store, and describe the capability where a stranger would look for it. The authored version stores under the identity the author computed, storing identical bytes twice is a read, a run binds the exact version it will run under, and no head is ever activated — an active head is a moving target, and experiments run under a moving target are not comparable with each other, which is the whole reason this package registers one immutable version instead. The resume path is the suite's own reconciler and this package adds no second one; with nothing pending it reports zeros twice over. The architecture document gains the section that says what never happens and why each of those is structural rather than guarded, the boundary document records that the worktree lifecycle and the bounded runner are Tangle-owned because the suite has neither, and names the upstream ask as a bounded process runner with nothing git-shaped above it, and the mutator surface policy is listed as something that must never migrate down: migrated into a general-purpose suite it would become a configurable file filter, which is the same mechanism with the argument removed. The roadmap entry is narrowed to what is actually still open, which corrects a claim that had spread to five separate files before anybody checked whether the round comparator had a caller: acceptance is still decided one experiment at a time, the comparator is published but nothing consults it, the instrument still drives the stages sequentially rather than through the workflow version, and nothing has been measured against a repository that was not the fixture.
+- @tangleai/config@0.29.4
+  - @tangleai/context@0.29.4
+  - @tangleai/core@0.29.4
+  - @tangleai/mas@0.29.4
+  - @tangleai/outcomes@0.29.4
+
 ## 0.29.3
 
 ### Patch Changes

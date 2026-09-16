@@ -1,5 +1,9 @@
 # @tangleai/linq
 
+## 0.29.4
+
+No changes in this release.
+
 ## 0.29.3
 
 No changes in this release.

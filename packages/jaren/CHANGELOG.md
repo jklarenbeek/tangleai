@@ -1,5 +1,13 @@
 # @tangleai/jaren
 
+## 0.29.4
+
+### Patch Changes
+
+- @tangleai/agents@0.29.4
+  - @tangleai/context@0.29.4
+  - @tangleai/models@0.29.4
+
 ## 0.29.3
 
 ### Patch Changes

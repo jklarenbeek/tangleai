@@ -386,11 +386,18 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   `@tangleai/evolve` runs that loop as a Node host over git worktrees and
   reproduces a registered oracle exactly — sixteen of sixteen adversarial
   proposals landing on the verdict written down before any of them could run
-  ([`EVOLVE_BENCHMARK.md`](EVOLVE_BENCHMARK.md)) — and a round of verdicts now
-  aggregates before anything is accepted, so a failure is read as evidence about
-  the mechanism only when unrelated instances produce it. *Still open:* proposals
-  are hand-authored rather than generated, an experiment is not yet a dag run,
-  and nothing has been measured against a repository that was not the fixture.
+  ([`EVOLVE_BENCHMARK.md`](EVOLVE_BENCHMARK.md)). A round of verdicts also
+  reduces to failure patterns and one scalar, published beside the per-experiment
+  decisions as evidence: a failure reads as being about the mechanism only when
+  unrelated instances produce it. The stages are additionally authored as one
+  immutable workflow version whose every process effect is a typed wait answered
+  by a separate worker, and three read-only operations expose experiments and
+  review bundles behind a frozen-baseline diff gate. *Still open:* acceptance is
+  still decided one experiment at a time — the round comparator is published but
+  nothing consults it — proposals are hand-authored rather than generated, the
+  instrument still drives the stages sequentially rather than through the
+  workflow version, and nothing has been measured against a repository that was
+  not the fixture.
   *Constraint:* this is the capability the standing rule was written for. The
   skill loop is its remaining prerequisite; the mutator may never touch tests,
   gates or CI; `main` is never a write target. *Closes on:* over N experiments on

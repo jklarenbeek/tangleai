@@ -415,6 +415,57 @@ domain schemas, evidence origin, configuration, authority, scheduling and UI.
 The [adapter kit](../packages/outcomes/docs/ADAPTERS.md) and
 [scripted measurement](OUTCOME_BENCHMARK.md) document the supported boundary.
 
+## Isolated repository experiments (added 2026-09-16)
+
+`@tangleai/evolve` runs one small change against a repository and reports
+whether it was an improvement, without ever holding the authority to land it.
+The shape of the package is an argument about that last clause: `EvolvePrincipal`
+carries `propose`, `execute` and `approve`, and the schema refuses a `merge`,
+`push` or `promote` member — the capability is absent from the vocabulary
+rather than defended at a call site. A change that wins leaves a branch and a
+review bundle addressed to a person.
+
+Four things never happen, and each is structural rather than guarded:
+
+- **Nothing merges or pushes.** The git vocabulary is an allow-list of whole
+  argument vectors; `push`, `merge`, `switch`, `checkout`, `reset`, `rebase`,
+  `remote` and `config` are not refused, they are absent, along with the global
+  options that would let git run something else or somewhere else.
+- **Nothing writes a protected ref, or the operator's worktree.** Experiments
+  live in their own worktree on an `exp/<id>` branch. The base side of a
+  measurement does run in the operator's root — the most dangerous thing the
+  package does — so it is bracketed: the root must answer the registered
+  revision on a clean tree with a byte-identical digest before and after, and
+  a root that moved voids every number in the run, flattering ones included.
+- **A proposed change cannot reach the rules that judge it.** The immutable
+  surface is compiled from the repository record, not from the tree being
+  edited, so tests, gates, CI, generated files and the registration that
+  defines success are unreachable by construction. Renames are checked twice,
+  the second time against git's own staged view, because the first pass is
+  structurally blind to a rename made between reading a file map and writing it.
+- **A gate is read by its exit code and nothing it printed.** A child that can
+  print can print a convincing success. What it printed is kept beside the
+  record for a reviewer and hashed into no identity.
+
+The durable half runs the same stages as one immutable MAS workflow version.
+Its shape is forced by a single rule: a workflow segment is never handed the
+suite job lease, so no node may spawn. Every stage that reaches a process is a
+task that writes a fenced effect intent and enqueues it, paired with a typed
+wait that an effect worker answers from another process. Because the effect
+plan id is semantic rather than per-attempt, a worker that dies between running
+and answering replays the settled record without spawning and answers under the
+same key — so a crash in that window costs nothing. The one case nothing
+answers is an effect nobody can account for: the wait stands and a person
+reconciles it, because deriving a tidy outcome from untrustworthy evidence
+would be the most dangerous available convenience.
+
+The published contract is three read operations and no more. There is nothing
+that merges, promotes, approves, runs, cancels or stops an experiment, and a
+frozen-baseline diff gate refuses the commit that adds one.
+
+Measured in [EVOLVE_BENCHMARK.md](EVOLVE_BENCHMARK.md) against a registration
+written before the mechanism existed.
+
 ## Evaluated skill directories (added 2026-09-14)
 
 `@tangleai/trace2skill` evolves ONE skill directory for a bounded scope from
