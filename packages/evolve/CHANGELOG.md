@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.1
+
+### Patch Changes
+
+- Refuse to compare two rounds that answered a different number of experiments. `compareRounds` read the score alone, and the score is kept over attempted where an experiment that never ran is not an attempt — so the count moved the ratio on its own, in both directions. A candidate that broke on the fifteen hard proposals and kept the one easy one scored 1/1 against an incumbent's 1/16 and was accepted; a candidate that padded the round with ten trivial proposals scored 11/26 against the same incumbent and was accepted too. Neither had repaired anything. That is the goalpost move the surface policy refuses in a patch, arriving through the scoreboard instead, and it is now refused on the same grounds: a score is evidence only while it is still answering the same question. The registration an experiment round runs over is immutable, so two legitimate rounds always attempt the same count, and an inequality means something changed that the score cannot see — the incumbent stands. The published prose that said failures aggregate before anything is accepted is corrected in the same pass: the round score is evidence published beside the per-experiment decisions, nothing calls the comparator yet, and `planExperimentDecision` still owns every acceptance.
+- Make the experiment runner's deadline reach the whole process tree. `child.kill()` signals one process, and a gate command is rarely one process — `node --test` runs each test file in its own worker. So a gate that outran its deadline had its root killed and its workers left alive, reparented to init, each holding a CPU for as long as the machine stayed up, while the runner reported a tidy `SIGKILL` and a correct `TEVO1005`: the leak was invisible precisely where the deadline was supposed to be the proof that nothing escaped. The registered experiment pool contains a proposal whose whole purpose is to make the gate hang, so every run of the instrument leaked workers. The child is now spawned as its own process-group leader and the deadline signals the group by negative pid, with the single-process kill kept as the fallback and as the only option on Windows. A regression test spawns a grandchild that would outlive its parent and asserts it is gone after the deadline fires.
+- @tangleai/config@0.29.1
+  - @tangleai/context@0.29.1
+  - @tangleai/core@0.29.1
+  - @tangleai/outcomes@0.29.1
+
 ## 0.29.0
 
 ### Minor Changes

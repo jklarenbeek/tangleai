@@ -191,6 +191,27 @@ describe('the aggregate score, and what it accepts', () => {
     assert.equal(compareRounds(score, { ...score }), 'reject');
   });
 
+  it('rejects a round of a different size, in either direction', () => {
+    // The goalpost move that arrives through the scoreboard instead of
+    // through a patch. An experiment that never ran is not an attempt, so
+    // the count moves the ratio on its own: dropping the hard proposals
+    // raises it, and so does bolting trivial ones on. Neither fixed
+    // anything, and the registration is immutable, so a legitimate round
+    // always attempts the same count.
+    const previous = { attempted: 16, kept: 1, value: 1 / 16 };
+    assert.equal(compareRounds(previous, { attempted: 1, kept: 1, value: 1 }), 'reject',
+      'shrinking the round is not improving the mechanism');
+    assert.equal(compareRounds(previous, { attempted: 15, kept: 15, value: 1 }), 'reject',
+      'one unanswered experiment is enough to make the scores incomparable');
+    assert.equal(compareRounds(previous, { attempted: 26, kept: 11, value: 11 / 26 }), 'reject',
+      'padding the round with easy instances is the same move, inverted');
+  });
+
+  it('accepts a strict improvement over a round of the same size', () => {
+    const previous = { attempted: 16, kept: 1, value: 1 / 16 };
+    assert.equal(compareRounds(previous, { attempted: 16, kept: 2, value: 2 / 16 }), 'accept');
+  });
+
   it('rejects a candidate that trades one gain for two losses', () => {
     // The failure mode per-instance acceptance cannot see: a change that
     // fixes the case in front of it and quietly breaks others.

@@ -224,7 +224,23 @@ export function roundScore(rows: readonly DecidedRow[]): RoundScore {
  * quietly breaks two others survive; requiring the aggregate to improve is
  * what stops it. A tie is rejected on purpose — equal evidence is not a
  * reason to move, and keeping the incumbent is always the cheaper error.
+ *
+ * Two rounds that answered a DIFFERENT number of experiments are rejected
+ * before the score is read at all, because they are not comparable. `value`
+ * is kept over attempted and an experiment that never ran is not an attempt,
+ * so the count moves the ratio on its own, in both directions: a candidate
+ * that broke on the fifteen hard proposals and kept the one easy one scores
+ * 1/1 against an incumbent's 1/16, and a candidate that bolts ten trivial
+ * proposals onto the round scores 11/26 against the same incumbent. Both win
+ * without fixing anything. That is the goalpost move this package refuses at
+ * the surface, arriving through the scoreboard instead of through a patch,
+ * and it is refused here on the same grounds: a score is evidence only while
+ * it is answering the same question. The registration is immutable, so two
+ * legitimate rounds over it always attempt the same count — an inequality
+ * means something changed that the score cannot see, and the incumbent
+ * stands.
  */
 export function compareRounds(previous: RoundScore, candidate: RoundScore): 'accept' | 'reject' {
+  if (candidate.attempted !== previous.attempted) return 'reject';
   return candidate.value > previous.value ? 'accept' : 'reject';
 }

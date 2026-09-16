@@ -1,5 +1,13 @@
 # @tangleai/documents
 
+## 0.29.1
+
+### Patch Changes
+
+- @tangleai/context@0.29.1
+  - @tangleai/core@0.29.1
+  - @tangleai/models@0.29.1
+
 ## 0.29.0
 
 ### Patch Changes

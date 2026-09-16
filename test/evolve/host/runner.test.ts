@@ -13,7 +13,7 @@
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, mkdir, symlink } from 'node:fs/promises';
+import { mkdtemp, rm, mkdir, symlink, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -144,6 +144,48 @@ describe('the bounded process runner', () => {
       assert.equal(issues[0].code, 'TEVO1005');
       assert.equal(issues[0].path, '/budgets/legMs');
       assert.equal(runner.spawns, 1, 'it did run; it did not get to finish');
+    }
+    finally { await rm(dir, { recursive: true, force: true }); }
+  });
+
+  it('kills what the child started too, not only the child', async (t) => {
+    // A gate command is rarely one process: `node --test` runs each file in
+    // its own worker. Signalling only the direct child leaves those workers
+    // alive and reparented to init, spinning on a CPU forever, while the
+    // runner still reports a tidy SIGKILL — the leak hiding exactly where
+    // the deadline was meant to prove nothing escaped.
+    if (process.platform === 'win32') return t.skip('no process groups on Windows');
+    const dir = await mkdtemp(join(tmpdir(), 'tangle-runner-'));
+    try {
+      const pidFile = join(dir, 'grandchild.pid');
+      const parent = [
+        'const { spawn } = require("node:child_process");',
+        // A grandchild that would outlive its parent, like a test worker.
+        'const kid = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" });',
+        `require("node:fs").writeFileSync(${JSON.stringify(pidFile)}, String(kid.pid));`,
+        'setTimeout(() => {}, 60000);',
+      ].join('');
+
+      const { runner } = runnerFor(dir, { limits: { legMs: 1000, stdoutBytes: 4096, stderrBytes: 4096 } });
+      const refused = await runner.run({ name: 'node', args: ['-e', parent], cwd: dir });
+
+      assert.equal(refused.ok, false);
+      assert.equal((refused as { issues: Array<{ code: string }> }).issues[0].code, 'TEVO1005');
+
+      const grandchild = Number(await readFile(pidFile, 'utf8'));
+      assert.ok(Number.isInteger(grandchild) && grandchild > 0, 'the grandchild recorded its pid');
+
+      // Signal 0 tests for existence. Reaping is not instant, so allow a
+      // brief window rather than asserting on the first observation.
+      const gone = async (): Promise<boolean> => {
+        for (let attempt = 0; attempt < 50; attempt++) {
+          try { process.kill(grandchild, 0); }
+          catch { return true; }
+          await new Promise(resolveWait => setTimeout(resolveWait, 100));
+        }
+        return false;
+      };
+      assert.ok(await gone(), 'the deadline reached the whole process group, not just its leader');
     }
     finally { await rm(dir, { recursive: true, force: true }); }
   });

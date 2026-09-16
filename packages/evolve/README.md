@@ -175,11 +175,32 @@ one model's quirks rather than repairing the mechanism. That number needs
 modification decisions to exist, and nothing in this package modifies itself.
 `systematicRatio` is its measurable precursor.
 
-`roundScore` reduces a round to one scalar and `compareRounds` accepts a
-candidate only on a **strict** improvement of it. Per-instance acceptance
-cannot see a change that fixes the case in front of it and quietly breaks two
-others; the aggregate can. A tie is rejected on purpose — equal evidence is
+`roundScore` reduces a round to one scalar, and `compareRounds` states the
+acceptance rule that goes with it: a candidate is accepted only on a
+**strict** improvement, and a tie is rejected on purpose — equal evidence is
 not a reason to move, and keeping the incumbent is always the cheaper error.
+The rule exists because per-instance acceptance cannot see a change that fixes
+the case in front of it and quietly breaks two others; the aggregate can.
+
+Two rounds that answered a **different number** of experiments are rejected
+before the score is read, because they are not comparable. The score is kept
+over attempted and an experiment that never ran is not an attempt, so the
+count moves the ratio on its own, in both directions: a candidate that broke
+on the fifteen hard proposals and kept the one easy one scores 1/1 against an
+incumbent's 1/16, and a candidate that bolts ten trivial proposals onto the
+round scores 11/26 against the same incumbent. Both win without fixing
+anything. That is the goalpost move this package refuses at the surface,
+arriving through the scoreboard instead of through a patch, and it is refused
+on the same grounds: a score is evidence only while it is still answering the
+same question. The registration is immutable, so two legitimate rounds over it
+always attempt the same count — an inequality means something changed that the
+score cannot see, and the incumbent stands.
+
+**Nothing calls `compareRounds` yet.** `planExperimentDecision` still owns
+every acceptance, one experiment at a time, and the round score is published
+as evidence rather than consulted as a gate. The comparator is here so that
+the loop which will need it — one that proposes changes to a harness instead
+of to a repository — starts with this rule instead of inventing a weaker one.
 
 Everything in this layer is pure and total: it reads decided rows and answers
 counts, runs no process, reads no file, and decides nothing about any

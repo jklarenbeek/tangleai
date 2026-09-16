@@ -93,6 +93,34 @@ function contains(root: string, child: string): boolean {
   return child.startsWith(root.endsWith(sep) ? root : root + sep);
 }
 
+/**
+ * Kill the child AND everything the child started.
+ *
+ * `child.kill()` signals one process, and a gate command is almost never
+ * one process. `node --test` runs each test file in its own worker; a
+ * build script shells out; a task runner supervises. Signalling only the
+ * parent leaves those workers alive and reparented to init, holding a CPU
+ * for as long as the machine is up — and the runner still reports a tidy
+ * `SIGKILL`, so the leak is invisible exactly where the deadline was
+ * supposed to be proof that nothing escaped.
+ *
+ * So the child is spawned as its own process-group leader and the whole
+ * group is signalled by negative pid. Windows has no equivalent, and the
+ * single-process kill is all that is available there.
+ */
+function killTree(child: ChildProcess): void {
+  const pid = child.pid;
+  if (pid === undefined) return;
+  if (process.platform === 'win32') {
+    try { child.kill('SIGKILL'); } catch { /* already gone */ }
+    return;
+  }
+  // The group first. ESRCH means it is already gone, which is the goal.
+  try { process.kill(-pid, 'SIGKILL'); }
+  catch { /* fall through to the single process */ }
+  try { child.kill('SIGKILL'); } catch { /* already gone */ }
+}
+
 /** A bounded sink: keeps at most `cap` bytes and remembers it dropped some. */
 function createSink(cap: number) {
   const chunks: Buffer[] = [];
@@ -168,6 +196,9 @@ export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunne
           env: childEnv,
           stdio: ['ignore', 'pipe', 'pipe'],
           shell: false,
+          // Its own process group, so the deadline can reach the whole
+          // tree and not just its root. See killTree.
+          detached: process.platform !== 'win32',
         });
       }
       catch (error) {
@@ -181,8 +212,8 @@ export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunne
       child.stderr?.on('data', (chunk: Buffer) => stderr.write(chunk));
 
       let timedOut = false;
-      const timer = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, limits.legMs);
-      const onAbort = () => child.kill('SIGKILL');
+      const timer = setTimeout(() => { timedOut = true; killTree(child); }, limits.legMs);
+      const onAbort = () => killTree(child);
       request.signal?.addEventListener('abort', onAbort, { once: true });
 
       const settled = await new Promise<{ code: number | null, signal: string | null, error?: Error }>(resolveSettled => {

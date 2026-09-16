@@ -91,7 +91,7 @@ signal this repo insists on.
 | stage blocks as loadable dag documents | this folder; needs a tiny prose-block → jaren-dag loader |
 | worktree executor (add/apply/gate/measure/remove) | exists (`@tangleai/evolve` host) — `node:child_process` over an allow-list of whole git argument vectors, each run one fenced leg of an external effect, no new dependencies |
 | mutation/proposal operators | missing — the sixteen registered proposals are hand-authored; LLM-backed via `createStructuredOutput` later |
-| round-level failure evidence | exists — failures group into patterns and read as systematic only on recurrence across distinct instances; a round reduces to one scalar and a candidate is accepted only on a strict improvement of it |
+| round-level failure evidence | partly — failures group into patterns and read as systematic only on recurrence across distinct instances, and a round reduces to one scalar; both are published beside the per-experiment decisions as evidence. `compareRounds` states the matching acceptance rule (strict improvement, ties rejected) but nothing calls it yet — `planExperimentDecision` still owns every acceptance, one experiment at a time |
 | the fitness instrument for memory policies | exists — `benchmark/locomo-qa.ts`, published as `docs/LOCOMO_BENCHMARK.md`; the policy matrix over it is the open roadmap entry |
 
 ## The rails (non-negotiable, written before the first run)
