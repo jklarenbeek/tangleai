@@ -146,10 +146,10 @@ describe('the experiment lifecycle version', () => {
     //
     // They cannot simply be put behind a switch: the partitioner carves a
     // branch's members into a dag subregion, and an interaction needs the
-    // control host, so a branch that owns one fails `TMAS2003`. Which also
-    // means the `flake` branch below, which owns `await-gate-rerun`, has
-    // the same defect today and nothing exercises it. A SUBGRAPH does
-    // work — it gets its own region walk — and that is the fix.
+    // control host, so a branch that owns one fails `TMAS2003`. The `flake`
+    // branch below owns `await-gate-rerun`, which is why every red-gate
+    // experiment fails there rather than parking — `run.test.ts` drives it.
+    // A SUBGRAPH does work: it gets its own region walk. That is the fix.
     //
     // This test does not pretend the defect is gone. It pins the exact set
     // of waits that carry it, so the fix can be checked against a list

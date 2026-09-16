@@ -23,8 +23,10 @@ import assert from 'node:assert/strict';
 import { createEvolveEffectWorker } from '@tangleai/evolve/host';
 import { interactionIdOf } from '@tangleai/mas';
 
+import { createMasStore } from '@tangleai/store';
+
 import { withEvolveRepository } from '../host/fixture.ts';
-import { driveExperiment, EXPERIMENT, type DurableRun } from './rig.ts';
+import { driveExperiment, EXPERIMENT, RUN_ID, type DurableRun } from './rig.ts';
 
 describe('one experiment over the durable path', () => {
   it('reaches a terminal run, answering every wait from its own job', async () => {
@@ -101,6 +103,78 @@ describe('one experiment over the durable path', () => {
       assert.deepEqual(pass, { settled: [], deferred: [], unresolved: [], replayed: 0 },
         'there is no queued effect left to claim');
       assert.equal(fixture.runner.spawns, spent, 'a second pass spends no process');
+    });
+  });
+});
+
+/**
+ * The two experiments the durable path cannot finish, pinned by what they
+ * actually do rather than by what a comment says they do.
+ *
+ * This is most of the campaign. Nine of the sixteen registered proposals
+ * are refused before anything runs and skip every stage; every red-gate
+ * proposal skips both measurements. The clean run above passes only
+ * because `noop-comment` happens to run every stage — it proved one path,
+ * not the workflow.
+ *
+ * One cause, two shapes. An interaction WAITS once a run reaches it,
+ * whether or not its dispatch wrote an intent for a worker to answer. At
+ * the top level that is a silent park; inside a switch branch it is a hard
+ * failure, because the partitioner carves branch members into a dag
+ * subregion and an interaction needs the control host.
+ *
+ * These tests exist to be DELETED. When the effect middle becomes
+ * subgraphs — which get their own region walk, as
+ * `test/mas/nested-interaction.test.ts` demonstrates with a durable pause
+ * and resume — both of these become ordinary completed runs, and the fix
+ * is checkable against this file rather than against a memory.
+ */
+describe('the experiments the durable path cannot finish yet', () => {
+  it('a refused proposal parks on a wait nothing will ever answer', async () => {
+    await withEvolveRepository(async (fixture) => {
+      const driven = await driveExperiment(fixture, { refuse: true, rounds: 8 });
+
+      assert.equal(driven.spawns, 0,
+        'the refusal is still free — nothing reached a process, which is the one '
+        + 'property this failure does not cost');
+      assert.deepEqual(driven.answered, [], 'no operation was dispatched, so none was answered');
+
+      // And that is exactly the problem: nothing was dispatched, so nothing
+      // will ever be enqueued, so no worker will ever be told to answer the
+      // wait the run is now parked on.
+      assert.equal(driven.status, 'waiting_for_input',
+        'a refused proposal should reach `record` with its decision; it stops here instead');
+
+      const store = createMasStore(fixture.db, { now: () => 'probe' });
+      const trace = await store.readTrace(RUN_ID);
+      assert.deepEqual((trace?.interactions ?? []).map(one => `${(one as { path: string }).path}:${(one as { status: string }).status}`),
+        ['await-isolate:waiting'],
+        'parked on the first wait of the first stage it declined to run');
+    });
+  });
+
+  it('a red gate FAILS inside the flake branch rather than parking', async () => {
+    await withEvolveRepository(async (fixture) => {
+      // `regress-off-by-one` is the registered proposal whose gate goes red,
+      // which earns the single rerun — and the rerun's wait is owned by the
+      // flake switch's branch. A branch may not own an interaction.
+      const driven = await driveExperiment(fixture, { proposal: 'regress-off-by-one', rounds: 12 });
+
+      assert.deepEqual(driven.answered, [
+        EXPERIMENT + '/isolate', EXPERIMENT + '/apply', EXPERIMENT + '/gate',
+      ], 'it gets as far as the gate, and the gate is red');
+
+      assert.equal(driven.status, 'failed',
+        'the rerun is a wait inside a switch branch, and that does not park — it fails');
+
+      const store = createMasStore(fixture.db, { now: () => 'probe' });
+      const trace = await store.readTrace(RUN_ID);
+      const failure = (trace as { run?: { failure?: { node?: string, error?: { code?: string } } } } | undefined)?.run?.failure;
+      assert.equal(failure?.node, 'await-gate-rerun');
+      assert.equal(failure?.error?.code, 'TMAS2003',
+        'the partitioner carves branch members into a dag subregion, and an '
+        + 'interaction needs the control host — so the branch that was supposed '
+        + 'to guard the rerun is the thing that breaks it');
     });
   });
 });

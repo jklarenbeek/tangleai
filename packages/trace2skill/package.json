@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/trace2skill",
-  "version": "0.29.6",
+  "version": "0.29.7",
   "description": "Immutable skill directories, anchored directory patches and revision-fenced activation for skill evolution",
   "license": "MIT",
   "type": "module",
@@ -22,10 +22,10 @@
     "@jarenjs/josl": "0.90.6",
     "@jarenjs/json": "0.90.6",
     "@jarenjs/validate": "0.90.6",
-    "@tangleai/agents": "^0.29.6",
-    "@tangleai/mas": "^0.29.6",
-    "@tangleai/models": "^0.29.6",
-    "@tangleai/outcomes": "^0.29.6"
+    "@tangleai/agents": "^0.29.7",
+    "@tangleai/mas": "^0.29.7",
+    "@tangleai/models": "^0.29.7",
+    "@tangleai/outcomes": "^0.29.7"
   },
   "private": false,
   "types": "./src/index.ts",

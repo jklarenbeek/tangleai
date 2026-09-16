@@ -145,7 +145,7 @@ const stageOf = (plan: EffectPlan): string => plan.id.slice(plan.id.lastIndexOf(
  */
 export async function driveExperiment(
   fixture: EvolveRepositoryFixture,
-  options: { crashAt?: CrashPoint | null, rounds?: number } = {},
+  options: { crashAt?: CrashPoint | null, rounds?: number, proposal?: string, refuse?: boolean } = {},
 ): Promise<DurableRun> {
   const { db } = fixture;
   const jobs = db.jobs;
@@ -172,7 +172,7 @@ export async function driveExperiment(
     executableRevision: plan.executableRevision,
     configRegistryRevision: null,
     profile: 'evolve',
-    input: { env: emptyEnvelope({ experimentId: EXPERIMENT, proposalId: PROPOSAL, strategyId: 'S-cosmetic' }) },
+    input: { env: emptyEnvelope({ experimentId: EXPERIMENT, proposalId: options.proposal ?? PROPOSAL, strategyId: 'S-cosmetic' }) },
     limits: {
       calls: 32, tokens: 200000, ms: 600000, toolRounds: 4, fanOut: 8,
       concurrency: 8, iterations: 8, contextChars: 40000, traceBytes: 1000000,
@@ -218,7 +218,11 @@ export async function driveExperiment(
     metric: { name: 'comparisons', direction: 'lower' },
     truth: fixture.truth,
     minDelta: 1,
-    prepared: { ok: true, value: await preparedProposal() },
+    // A refusal at `propose` is the nine-of-sixteen case: 04 declined the
+    // patch, so nothing may run and every stage declines in turn.
+    prepared: options.refuse === true
+      ? { ok: false, issues: [{ code: 'TEVO1001', path: '/patch', detail: 'refused' } as never] }
+      : { ok: true, value: await preparedProposal(options.proposal ?? PROPOSAL) },
     decideRefusal: () => ({ decision: 'refused', reason: 'goalpost', code: 'TEVO1001' }),
     record: async (env) => { recorded.push(env); },
   };

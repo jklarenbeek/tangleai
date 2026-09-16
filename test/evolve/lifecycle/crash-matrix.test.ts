@@ -88,6 +88,12 @@ function assertConverged(
   assert.deepEqual(driven.branches, CONVERGED.branches,
     `${note}: an experiment left more than its own branch behind`);
 
+  // The control runs first and every other case is measured against it.
+  // Said out loud rather than assumed: if this file is ever reordered, or
+  // node:test is asked to run a describe's cases concurrently, the whole
+  // matrix would silently compare against nothing.
+  assert.ok(cleanSpawns !== null,
+    `${note}: the clean control has not run yet, so there is nothing to converge to`);
   assert.equal(driven.spawns, cleanSpawns,
     `${note}: spent ${driven.spawns} processes against the clean run's ${cleanSpawns} — `
     + 'a crash that costs a spawn re-ran a gate or re-took a measurement, and a '

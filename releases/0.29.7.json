@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "0.29.7",
+  "baseVersion": "0.29.6",
+  "baseCommit": "4cdc617521dafdde5d1a6f1310b0c6883bc63788",
+  "preparationCommit": "4cdc617521dafdde5d1a6f1310b0c6883bc63788",
+  "initial": false,
+  "inputHash": "a558189555afe3e89745e9c2e39057b60cf1cacef101ecc3cfccbdb5553be92b",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/evolve",
+          "type": "patch"
+        }
+      ],
+      "summary": "Two experiments the durable lifecycle cannot finish are now driven and pinned rather than described, because the shapes turned out to differ and one of them was worse than suspected. A refused proposal parks on `await-isolate` and stays there: nothing was dispatched, so nothing will ever be enqueued, so no worker will ever be told to answer it — the refusal is still free, which is the one property the failure does not cost, but the run does not reach its record. A red-gate proposal does not park at all; it FAILS `TMAS2003`, \"a 'interaction' node requires the control host\", at `await-gate-rerun`, because the flake switch's branch owns that wait and a branch's members are executed as a dag subregion. The flake branch was therefore not merely unexercised but a live defect on every red-gate row. Together that is nine refused proposals of the sixteen registered plus every red-gate one, so the path completes only experiments that skip no stage — the clean end-to-end run passes because its proposal happens to run all of them. Both tests exist to be deleted: the fix is to make the effect middle a subgraph, which gets its own region walk, and when both of these become ordinary completed runs the restructure is done. No package source changed.",
+      "id": "pin-unfinishable"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.29.7"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.29.7"
+    }
+  ]
+}

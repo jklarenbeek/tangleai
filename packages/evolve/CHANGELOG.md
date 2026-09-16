@@ -1,5 +1,16 @@
 # @tangleai/evolve
 
+## 0.29.7
+
+### Patch Changes
+
+- Two experiments the durable lifecycle cannot finish are now driven and pinned rather than described, because the shapes turned out to differ and one of them was worse than suspected. A refused proposal parks on `await-isolate` and stays there: nothing was dispatched, so nothing will ever be enqueued, so no worker will ever be told to answer it — the refusal is still free, which is the one property the failure does not cost, but the run does not reach its record. A red-gate proposal does not park at all; it FAILS `TMAS2003`, "a 'interaction' node requires the control host", at `await-gate-rerun`, because the flake switch's branch owns that wait and a branch's members are executed as a dag subregion. The flake branch was therefore not merely unexercised but a live defect on every red-gate row. Together that is nine refused proposals of the sixteen registered plus every red-gate one, so the path completes only experiments that skip no stage — the clean end-to-end run passes because its proposal happens to run all of them. Both tests exist to be deleted: the fix is to make the effect middle a subgraph, which gets its own region walk, and when both of these become ordinary completed runs the restructure is done. No package source changed.
+- @tangleai/config@0.29.7
+  - @tangleai/context@0.29.7
+  - @tangleai/core@0.29.7
+  - @tangleai/mas@0.29.7
+  - @tangleai/outcomes@0.29.7
+
 ## 0.29.6
 
 ### Patch Changes

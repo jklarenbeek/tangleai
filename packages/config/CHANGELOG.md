@@ -1,5 +1,11 @@
 # @tangleai/config
 
+## 0.29.7
+
+### Patch Changes
+
+- @tangleai/context@0.29.7
+
 ## 0.29.6
 
 ### Patch Changes
