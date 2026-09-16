@@ -64,3 +64,11 @@ export { createStrategyRefiner, evidenceOperation, STRATEGY_EVIDENCE_PATH } from
 export type {
   StrategyRefinerOptions, RefinableLedger, LedgerSnapshot, EvidenceOperation, AppendEvidenceInput,
 } from './strategy-refiner.ts';
+
+export {
+  aggregateFailures, groupFailures, failureRecordOf, mechanismOf, roundScore, compareRounds,
+  FAILURE_MECHANISMS, SYSTEMATIC_THRESHOLD,
+} from './aggregate.ts';
+export type {
+  AggregateEvidence, FailurePattern, FailureRecord, FailureMechanism, DecidedRow, RoundScore,
+} from './aggregate.ts';

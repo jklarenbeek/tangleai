@@ -621,6 +621,84 @@ export interface Counts {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type FailurePatternInstancesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type FailurePatternCohortsItem = string;
+
+/**
+ * One failure group. `evidence` is `systematic` only when the group spans at least two DISTINCT instances — recurrence across unrelated proposals is what separates evidence about the mechanism from evidence about one proposal.
+ */
+export interface FailurePattern {
+  key: "mechanism" | "reason";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  mechanism: "surface" | "budget" | "gate" | "measurement" | "command" | "effect";
+  instances: Array<FailurePatternInstancesItem>;
+  cohorts: Array<FailurePatternCohortsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failures: number;
+  evidence: "systematic" | "incidental";
+}
+
+
+/**
+ * One scalar for the round — what a candidate mechanism must strictly beat to be accepted. Per-instance acceptance cannot see a change that fixes one case and breaks two others; this can.
+ */
+export interface AggregateScore {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  kept: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  value: number;
+}
+
+
+/**
+ * What a ROUND of verdicts amounts to, above the per-experiment decision. A mechanism that changed itself once per observed failure would bend around whatever it happened to see; this block reports which failures recur across distinct instances and therefore license a mechanism-level repair at all.
+ */
+export interface Aggregate {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failures: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  systematic: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  incidental: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  systematicRatio: number;
+  mechanisms: Array<FailurePattern>;
+  reasons: Array<FailurePattern>;
+  /**
+   * One scalar for the round — what a candidate mechanism must strictly beat to be accepted. Per-instance acceptance cannot see a change that fixes one case and breaks two others; this can.
+   */
+  score: AggregateScore;
+}
+
+
 export interface EvolveSuitePackagesItem {
   /**
    * Schema constraints this type cannot express: pattern="^@(jarenjs|tangleai)/[a-z0-9-]+$"
@@ -703,7 +781,7 @@ export interface EvolveRegistration {
 
 /**
  * What `benchmark/evolve.ts` writes. The registration is immutable input: a fixture repository pinned by file digests and one constant base revision, an immutable-surface policy and budget set held outside that repository, a hand-authored strategy library, and sixteen adversarial proposals each carrying the exact decision, reason and refusal code it must produce — true improvement, no-op, regression, flake, edits to tests, CI, the gate script, the registered threshold and the fitness instrument, a rename, a generated file, a path escape, an oversized patch, and three hostile runtimes. Rows are replaced by id as a mechanism lands and never change the registration or its denominators; `implementation-missing` is the honest state while no executor exists. Two analytic controls license every other number: an oracle that reads the registration back, and a seeded random selection. The census reconciles by `$query` at validation time, protected-ref writes and live model calls are literal zeros, and `reportId` is the canonical SHA-256 of the document with that field excluded. No clock, hostname, temporary path or duration has a representable member anywhere in this document.
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.proposals[*].id"},{"$count":{"$distinct":"$.registration.proposals[*].id"}}]},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.registration.experiments"]},{"$eq":[{"$count":"$.rows[*]"},"$.registration.experiments"]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.id"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.proposalId"}]]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.strategyId"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.strategyId"}]]},{"$eq":[{"$count":"$.hostProbes[*]"},{"$count":"$.registration.hostProbes[*]"}]},{"$every":{"r":"$.rows[?(@.state=='implementation-missing')]"},"$satisfies":{"$and":[{"$eq":["$r.actual",null]},{"$eq":["$r.matches",null]},{"$eq":["$r.effects.legs",0]},{"$eq":["$r.effects.unresolved",0]}]}},{"$every":{"r":"$.rows[?(@.state=='run')]"},"$satisfies":{"$and":[{"$ne":["$r.actual",null]},{"$ne":["$r.matches",null]}]}},{"$eq":[{"$count":"$.rows[?(@.state=='run')]"},"$.counts.attempted"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='kept')]"},"$.counts.kept"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='abandoned')]"},"$.counts.abandoned.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='refused')]"},"$.counts.refused.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='uncertain')]"},"$.counts.uncertain"]},{"$eq":[{"$sum":"$.counts.abandoned.byReason.*"},"$.counts.abandoned.total"]},{"$eq":[{"$sum":"$.counts.refused.byReason.*"},"$.counts.refused.total"]},{"$eq":["$.counts.attempted",{"$add":[{"$add":["$.counts.kept","$.counts.abandoned.total"]},{"$add":["$.counts.refused.total","$.counts.uncertain"]}]}]},{"$not":{"$lt":["$.counts.worktreesCreated","$.counts.worktreesRemoved"]}},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.controls.oracle.attempted"]},{"$eq":[{"$count":"$.registration.proposals[?(@.expect.decision=='kept')]"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.oracle.strategies[*]"},{"$count":"$.registration.strategies[*]"}]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].attempted"},"$.controls.oracle.attempted"]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].kept"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.random.selected[*]"},"$.controls.random.selects"]},{"$eq":["$.controls.random.attempted","$.controls.random.selects"]},{"$or":[{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]},{"$eq":["$.decision","implementation-missing"]}]},{"$or":[{"$ne":["$.decision","implementation-missing"]},{"$not":{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]}}]},{"$or":[{"$ne":["$.decision","oracle-exact"]},{"$and":[{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.matches",true]}},{"$every":{"p":"$.hostProbes[*]"},"$satisfies":{"$eq":["$p.state","pass"]}}]}]},{"$or":[{"$ne":["$.decision","executor-conformant"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.state","run"]}}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.proposals[*].id"},{"$count":{"$distinct":"$.registration.proposals[*].id"}}]},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.registration.experiments"]},{"$eq":[{"$count":"$.rows[*]"},"$.registration.experiments"]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.id"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.proposalId"}]]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.strategyId"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.strategyId"}]]},{"$eq":[{"$count":"$.hostProbes[*]"},{"$count":"$.registration.hostProbes[*]"}]},{"$every":{"r":"$.rows[?(@.state=='implementation-missing')]"},"$satisfies":{"$and":[{"$eq":["$r.actual",null]},{"$eq":["$r.matches",null]},{"$eq":["$r.effects.legs",0]},{"$eq":["$r.effects.unresolved",0]}]}},{"$every":{"r":"$.rows[?(@.state=='run')]"},"$satisfies":{"$and":[{"$ne":["$r.actual",null]},{"$ne":["$r.matches",null]}]}},{"$eq":[{"$count":"$.rows[?(@.state=='run')]"},"$.counts.attempted"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='kept')]"},"$.counts.kept"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='abandoned')]"},"$.counts.abandoned.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='refused')]"},"$.counts.refused.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='uncertain')]"},"$.counts.uncertain"]},{"$eq":[{"$sum":"$.counts.abandoned.byReason.*"},"$.counts.abandoned.total"]},{"$eq":[{"$sum":"$.counts.refused.byReason.*"},"$.counts.refused.total"]},{"$eq":["$.counts.attempted",{"$add":[{"$add":["$.counts.kept","$.counts.abandoned.total"]},{"$add":["$.counts.refused.total","$.counts.uncertain"]}]}]},{"$not":{"$lt":["$.counts.worktreesCreated","$.counts.worktreesRemoved"]}},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.controls.oracle.attempted"]},{"$eq":[{"$count":"$.registration.proposals[?(@.expect.decision=='kept')]"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.oracle.strategies[*]"},{"$count":"$.registration.strategies[*]"}]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].attempted"},"$.controls.oracle.attempted"]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].kept"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.random.selected[*]"},"$.controls.random.selects"]},{"$eq":["$.controls.random.attempted","$.controls.random.selects"]},{"$or":[{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]},{"$eq":["$.decision","implementation-missing"]}]},{"$or":[{"$ne":["$.decision","implementation-missing"]},{"$not":{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]}}]},{"$or":[{"$ne":["$.decision","oracle-exact"]},{"$and":[{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.matches",true]}},{"$every":{"p":"$.hostProbes[*]"},"$satisfies":{"$eq":["$p.state","pass"]}}]}]},{"$or":[{"$ne":["$.decision","executor-conformant"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.state","run"]}}]},{"$eq":[{"$add":["$.aggregate.failures","$.counts.kept"]},"$.counts.attempted"]},{"$eq":[{"$add":["$.aggregate.systematic","$.aggregate.incidental"]},"$.aggregate.failures"]},{"$eq":["$.aggregate.score.attempted","$.counts.attempted"]},{"$eq":["$.aggregate.score.kept","$.counts.kept"]},{"$every":{"p":"$.aggregate.mechanisms[*]"},"$satisfies":{"$eq":[{"$count":{"$distinct":"$p.instances[*]"}},{"$count":"$p.instances[*]"}]}}]}
  */
 export interface Evolve {
   benchmark: "evolve";
@@ -731,6 +809,7 @@ export interface Evolve {
    */
   hostProbes: Array<HostProbe>;
   counts: Counts;
+  aggregate: Aggregate;
   /**
    * The shared config-identity envelope. Every row here is analysis: no provider stack ran, so no row may reference one.
    */

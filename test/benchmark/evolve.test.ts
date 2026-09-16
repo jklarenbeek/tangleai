@@ -403,6 +403,29 @@ describe('the report schema refuses what the campaign says it refuses', () => {
     assert.equal(decideEvolve(run.map((row) => ({ ...row, matches: false })), passed), 'executor-conformant');
   });
 
+  it('refuses an aggregate that does not reconcile over the rows', () => {
+    const failures = structuredClone(committedReport);
+    failures.aggregate.failures += 1;
+    assert.equal(reportValidator(failures).valid, false,
+      'failures plus keeps must equal what was attempted');
+
+    const split = structuredClone(committedReport);
+    split.aggregate.systematic += 1;
+    assert.equal(reportValidator(split).valid, false,
+      'a failure is systematic or incidental, never both and never neither');
+
+    const score = structuredClone(committedReport);
+    score.aggregate.score.kept += 1;
+    assert.equal(reportValidator(score).valid, false,
+      'the round score cannot claim a keep the census does not hold');
+
+    const repeated = structuredClone(committedReport);
+    const pattern = repeated.aggregate.mechanisms[0];
+    pattern.instances = [...pattern.instances, pattern.instances[0]];
+    assert.equal(reportValidator(repeated).valid, false,
+      'one proposal counted twice would forge recurrence out of a single instance');
+  });
+
   it('refuses an oracle control edited away from the registration', () => {
     const flattered = structuredClone(committedReport);
     flattered.controls.oracle.kept = 4;
@@ -467,6 +490,27 @@ describe('the committed measurement claims exactly what it measured', () => {
     // Nothing was merged, pushed or bought.
     assert.equal(committedReport.counts.protectedRefWrites, 0);
     assert.equal(committedReport.counts.liveModelCalls, 0);
+
+    // The round, above the per-experiment verdicts. Fourteen of fifteen
+    // failures recur across distinct proposals; only the no-op's `equal`
+    // is a genuine one-off. The two views disagree on purpose — `escape`,
+    // `red` and `ambiguous` each look incidental by reason and roll up
+    // into a stage that unrelated proposals indicted.
+    const aggregate = committedReport.aggregate;
+    assert.equal(aggregate.failures, 15);
+    assert.equal(aggregate.systematic + aggregate.incidental, aggregate.failures);
+    assert.equal(aggregate.incidental, 1, 'exactly one failure stands alone');
+    assert.deepEqual(aggregate.score, { attempted: 16, kept: 1, value: 1 / 16 });
+    for (const pattern of [...aggregate.mechanisms, ...aggregate.reasons]) {
+      assert.equal(
+        pattern.evidence === 'systematic', pattern.instances.length >= 2,
+        pattern.name + ' is systematic exactly when distinct proposals recur');
+      assert.equal(new Set(pattern.instances).size, pattern.instances.length,
+        pattern.name + ' counts each proposal once');
+    }
+    const surface = aggregate.mechanisms.find((one) => one.name === 'surface');
+    assert.equal(surface?.evidence, 'systematic');
+    assert.equal(surface?.instances.length, 8, 'eight unrelated proposals indict the surface policy');
 
     const document = await readFile(DOCUMENT_PATH, 'utf8');
     assert.match(document, /\*\*16\/16 registered proposals run, 4\/4 host probes run, 16\/16 decisions exactly as registered\. Hit rate: 1\/16\.\*\*/);

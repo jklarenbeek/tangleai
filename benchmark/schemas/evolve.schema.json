@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://tangleai.dev/schemas/evolve",
-  "title": "Repository-experiment instrument report — registered before any executor exists",
-  "description": "What `benchmark/evolve.ts` writes. The registration is immutable input: a fixture repository pinned by file digests and one constant base revision, an immutable-surface policy and budget set held outside that repository, a hand-authored strategy library, and sixteen adversarial proposals each carrying the exact decision, reason and refusal code it must produce — true improvement, no-op, regression, flake, edits to tests, CI, the gate script, the registered threshold and the fitness instrument, a rename, a generated file, a path escape, an oversized patch, and three hostile runtimes. Rows are replaced by id as a mechanism lands and never change the registration or its denominators; `implementation-missing` is the honest state while no executor exists. Two analytic controls license every other number: an oracle that reads the registration back, and a seeded random selection. The census reconciles by `$query` at validation time, protected-ref writes and live model calls are literal zeros, and `reportId` is the canonical SHA-256 of the document with that field excluded. No clock, hostname, temporary path or duration has a representable member anywhere in this document.",
+  "title": "Repository-experiment instrument report \u2014 registered before any executor exists",
+  "description": "What `benchmark/evolve.ts` writes. The registration is immutable input: a fixture repository pinned by file digests and one constant base revision, an immutable-surface policy and budget set held outside that repository, a hand-authored strategy library, and sixteen adversarial proposals each carrying the exact decision, reason and refusal code it must produce \u2014 true improvement, no-op, regression, flake, edits to tests, CI, the gate script, the registered threshold and the fitness instrument, a rename, a generated file, a path escape, an oversized patch, and three hostile runtimes. Rows are replaced by id as a mechanism lands and never change the registration or its denominators; `implementation-missing` is the honest state while no executor exists. Two analytic controls license every other number: an oracle that reads the registration back, and a seeded random selection. The census reconciles by `$query` at validation time, protected-ref writes and live model calls are literal zeros, and `reportId` is the canonical SHA-256 of the document with that field excluded. No clock, hostname, temporary path or duration has a representable member anywhere in this document.",
   "type": "object",
   "required": [
     "benchmark",
@@ -15,6 +15,7 @@
     "controls",
     "hostProbes",
     "counts",
+    "aggregate",
     "identity",
     "decision",
     "reportId"
@@ -389,6 +390,57 @@
             }
           }
         ]
+      },
+      {
+        "$eq": [
+          {
+            "$add": [
+              "$.aggregate.failures",
+              "$.counts.kept"
+            ]
+          },
+          "$.counts.attempted"
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$add": [
+              "$.aggregate.systematic",
+              "$.aggregate.incidental"
+            ]
+          },
+          "$.aggregate.failures"
+        ]
+      },
+      {
+        "$eq": [
+          "$.aggregate.score.attempted",
+          "$.counts.attempted"
+        ]
+      },
+      {
+        "$eq": [
+          "$.aggregate.score.kept",
+          "$.counts.kept"
+        ]
+      },
+      {
+        "$every": {
+          "p": "$.aggregate.mechanisms[*]"
+        },
+        "$satisfies": {
+          "$eq": [
+            {
+              "$count": {
+                "$distinct": "$p.instances[*]"
+              }
+            },
+            {
+              "$count": "$p.instances[*]"
+            }
+          ]
+        }
       }
     ]
   },
@@ -587,6 +639,9 @@
     },
     "counts": {
       "$ref": "#/$defs/counts"
+    },
+    "aggregate": {
+      "$ref": "#/$defs/aggregate"
     },
     "identity": {
       "description": "The shared config-identity envelope. Every row here is analysis: no provider stack ran, so no row may reference one.",
@@ -1564,6 +1619,136 @@
         },
         "liveModelCalls": {
           "const": 0
+        }
+      }
+    },
+    "failurePattern": {
+      "type": "object",
+      "description": "One failure group. `evidence` is `systematic` only when the group spans at least two DISTINCT instances \u2014 recurrence across unrelated proposals is what separates evidence about the mechanism from evidence about one proposal.",
+      "required": [
+        "key",
+        "name",
+        "mechanism",
+        "instances",
+        "cohorts",
+        "failures",
+        "evidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "enum": [
+            "mechanism",
+            "reason"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mechanism": {
+          "enum": [
+            "surface",
+            "budget",
+            "gate",
+            "measurement",
+            "command",
+            "effect"
+          ]
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "cohorts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence": {
+          "enum": [
+            "systematic",
+            "incidental"
+          ]
+        }
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "description": "What a ROUND of verdicts amounts to, above the per-experiment decision. A mechanism that changed itself once per observed failure would bend around whatever it happened to see; this block reports which failures recur across distinct instances and therefore license a mechanism-level repair at all.",
+      "required": [
+        "failures",
+        "systematic",
+        "incidental",
+        "systematicRatio",
+        "mechanisms",
+        "reasons",
+        "score"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "systematic": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incidental": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "systematicRatio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mechanisms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/failurePattern"
+          }
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/failurePattern"
+          }
+        },
+        "score": {
+          "type": "object",
+          "description": "One scalar for the round \u2014 what a candidate mechanism must strictly beat to be accepted. Per-instance acceptance cannot see a change that fixes one case and breaks two others; this can.",
+          "required": [
+            "attempted",
+            "kept",
+            "value"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "attempted": {
+              "type": "integer",
+          "minimum": 0
+            },
+            "kept": {
+              "type": "integer",
+          "minimum": 0
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
         }
       }
     }

@@ -92,4 +92,28 @@ Refusals that cannot be written as a patch over the worktree file map and must b
 
 Every reason keeps its column whether or not it happened: an absent column is how a losing row disappears. Protected-ref writes and live model calls are literal zeros the schema asserts, so a report of a run that wrote a protected ref or bought a completion cannot validate at all.
 
-Report `561b772ce2cc…`, contract `ccaf181a694e…`, source `a59e4b45ff81…`, decision **oracle-exact**.
+## What the round amounts to
+
+A census counts failures; it does not say which of them are worth changing anything over. A mechanism that revised itself once per observed failure would bend around whatever it happened to see — narrowing what it accepts and getting worse at cases nobody showed it. What separates evidence about the MECHANISM from evidence about one PROPOSAL is recurrence across distinct instances, so a failure group is called `systematic` only when at least two unrelated proposals produced it. That threshold is an inductive bias and not a proof of cause; single-instance groups are kept below as evidence rather than discarded.
+
+| stage | evidence | failures | distinct proposals | strategies |
+|---|---|---:|---:|---|
+| `budget` | systematic | 4 | 4 | `S-escape`, `S-hostile-runtime` |
+| `gate` | systematic | 2 | 2 | `S-regress` |
+| `measurement` | incidental | 1 | 1 | `S-cosmetic` |
+| `surface` | systematic | 8 | 8 | `S-escape`, `S-goalpost` |
+
+| reason | evidence | failures | distinct proposals |
+|---|---|---:|---:|
+| `ambiguous` | incidental | 1 | 1 |
+| `equal` | incidental | 1 | 1 |
+| `escape` | incidental | 1 | 1 |
+| `goalpost` | systematic | 7 | 7 |
+| `over-budget` | systematic | 4 | 4 |
+| `red` | incidental | 1 | 1 |
+
+Of 15 failures, 14 belong to a group that recurs across distinct proposals and 1 does not, so 93.3% of the failure evidence would license a mechanism-level repair at all. The two views disagree on purpose: read by reason, several failures look like one-offs, and rolling them up by the stage that produced them shows the same stage indicted by unrelated proposals under different names. Nothing here is a repair — no mechanism modifies itself in this campaign — but this is the evidence a repair would have to be argued from.
+
+Round score 1/16 (0.0625). A candidate mechanism is accepted only on a strict improvement of that one number: per-instance acceptance cannot see a change that fixes the case in front of it and quietly breaks two others, and a tie is rejected because equal evidence is not a reason to move.
+
+Report `76738f712680…`, contract `4c0165dd3641…`, source `f8d868469f7a…`, decision **oracle-exact**.

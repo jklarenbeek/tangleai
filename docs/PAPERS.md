@@ -82,6 +82,18 @@ implementing any single one.
     the complete paper system are not implemented; the roadmap retains live
     qualification and explicit host adoption.
   - 📄 [`refs/2604.21748v1.pdf`](refs/2604.21748v1.pdf)
+- **Ecdysis** (arXiv:2609.11677v1, Yue, Cui et al., Sep 2026) — cross-instance
+  failure aggregation for evolving agent runtime harnesses.
+  - The experiment lane aggregates a round of decided experiments above the
+    per-experiment verdict: failures become records, records group into
+    patterns at two levels, and a pattern counts as systematic only when at
+    least two DISTINCT instances produced it. A round reduces to one scalar
+    and a candidate is accepted only on a strict improvement of it. Not
+    implemented: the paper's multi-role collaborative refinement, any
+    self-modifying harness, and the model-accommodation ratio — that number
+    needs modification decisions to exist, and nothing in this repo modifies
+    itself. The roadmap retains harness-level evolution.
+  - 📄 [`refs/2609.11677v1.pdf`](refs/2609.11677v1.pdf)
 
 ## Planned — an open roadmap entry names each
 

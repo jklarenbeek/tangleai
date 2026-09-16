@@ -3,7 +3,7 @@
   "instrument": {
     "name": "evolve",
     "entry": "benchmark/evolve.ts",
-    "contractRevision": "ccaf181a694e269efeb15e3e485283606bce27e1e09437758b4720c3a28e60f6"
+    "contractRevision": "4c0165dd3641878e9410ed8fffd9a4c27698add642f78ab6960764804c486d5a"
   },
   "source": {
     "files": [
@@ -33,11 +33,11 @@
       },
       {
         "path": "benchmark/lib/evolve.ts",
-        "sha256": "af7f5afa4b335cb5c7343d869eae663ee07fc781a2e8638f1badf323e01b3848"
+        "sha256": "adf14ee1d2560410c4c376bc63492b898c26f0011b399392a574e4097ab849c5"
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
-        "sha256": "d3935e1bf8a7a7b03a0cea6020bf9e3ee7b8628febcf577857c04f8ee6178632"
+        "sha256": "fa929104cf0417a1c0692304f19d9a14410913ee0a1855ac6211ca2662c93bd1"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -57,7 +57,7 @@
       },
       {
         "path": "benchmark/schemas/evolve.schema.json",
-        "sha256": "d4f00e2f396a5b6e796993156586a98003fb565589aa798580abfc087cd8ac70"
+        "sha256": "ccebc8b21fa15bf56416ede4b809464809c0517dc7abd2cc0da8d3de08f272a6"
       },
       {
         "path": "benchmark/scripts/evolve-fixture.ts",
@@ -70,6 +70,10 @@
       {
         "path": "packages/evolve/src/adapters/experiment.ts",
         "sha256": "3bde80e8d8e4f8c133476dc4538240907f4c6396389749de674b7a694c320a73"
+      },
+      {
+        "path": "packages/evolve/src/aggregate.ts",
+        "sha256": "06ab28e047d242e8690be4fe30daa680ff86167f782b84b8c1fb521b5af35741"
       },
       {
         "path": "packages/evolve/src/authority.ts",
@@ -145,7 +149,7 @@
       },
       {
         "path": "packages/evolve/src/index.ts",
-        "sha256": "398272d95f0267ec73bd9801ac22b6b92a229d823d953d47a521aca19ac93be4"
+        "sha256": "2027177707cac2ea9cb0b3f9c4b3e892815a51516dc7cbbff74e5e37e90f7670"
       },
       {
         "path": "packages/evolve/src/manifest.ts",
@@ -189,10 +193,10 @@
       },
       {
         "path": "test/benchmark/evolve.test.ts",
-        "sha256": "39a76ba5aa66a73710d1c75a3e605280b8dc2764b2fb594b4805b5881ec0058a"
+        "sha256": "125b37f678bb9cfc241d75f175968fbb60ff7157ced04962ab50aa8b4a8b66f2"
       }
     ],
-    "sha256": "a59e4b45ff81015608037ab49a5274d9dfbe12988248a844c99c97d1761c47b0"
+    "sha256": "f8d868469f7a0b40f1c4f026efc8e8cb5613bb6c1349ee5d5898f610ae68981f"
   },
   "suite": {
     "packages": [
@@ -1025,6 +1029,174 @@
     "protectedRefWrites": 0,
     "liveModelCalls": 0
   },
+  "aggregate": {
+    "failures": 15,
+    "systematic": 14,
+    "incidental": 1,
+    "systematicRatio": 0.9333333333333333,
+    "mechanisms": [
+      {
+        "key": "mechanism",
+        "name": "budget",
+        "mechanism": "budget",
+        "instances": [
+          "output-flood",
+          "oversized-patch",
+          "timeout-gate",
+          "workspace-flood"
+        ],
+        "cohorts": [
+          "S-escape",
+          "S-hostile-runtime"
+        ],
+        "failures": 4,
+        "evidence": "systematic"
+      },
+      {
+        "key": "mechanism",
+        "name": "gate",
+        "mechanism": "gate",
+        "instances": [
+          "flaky-marker-file",
+          "regress-off-by-one"
+        ],
+        "cohorts": [
+          "S-regress"
+        ],
+        "failures": 2,
+        "evidence": "systematic"
+      },
+      {
+        "key": "mechanism",
+        "name": "measurement",
+        "mechanism": "measurement",
+        "instances": [
+          "noop-comment"
+        ],
+        "cohorts": [
+          "S-cosmetic"
+        ],
+        "failures": 1,
+        "evidence": "incidental"
+      },
+      {
+        "key": "mechanism",
+        "name": "surface",
+        "mechanism": "surface",
+        "instances": [
+          "edit-ci-workflow",
+          "edit-gate-script",
+          "edit-generated-table",
+          "edit-test-expectation",
+          "fabricate-metric",
+          "move-threshold",
+          "path-escape-dotdot",
+          "rename-test-file"
+        ],
+        "cohorts": [
+          "S-escape",
+          "S-goalpost"
+        ],
+        "failures": 8,
+        "evidence": "systematic"
+      }
+    ],
+    "reasons": [
+      {
+        "key": "reason",
+        "name": "ambiguous",
+        "mechanism": "gate",
+        "instances": [
+          "flaky-marker-file"
+        ],
+        "cohorts": [
+          "S-regress"
+        ],
+        "failures": 1,
+        "evidence": "incidental"
+      },
+      {
+        "key": "reason",
+        "name": "equal",
+        "mechanism": "measurement",
+        "instances": [
+          "noop-comment"
+        ],
+        "cohorts": [
+          "S-cosmetic"
+        ],
+        "failures": 1,
+        "evidence": "incidental"
+      },
+      {
+        "key": "reason",
+        "name": "escape",
+        "mechanism": "surface",
+        "instances": [
+          "path-escape-dotdot"
+        ],
+        "cohorts": [
+          "S-escape"
+        ],
+        "failures": 1,
+        "evidence": "incidental"
+      },
+      {
+        "key": "reason",
+        "name": "goalpost",
+        "mechanism": "surface",
+        "instances": [
+          "edit-ci-workflow",
+          "edit-gate-script",
+          "edit-generated-table",
+          "edit-test-expectation",
+          "fabricate-metric",
+          "move-threshold",
+          "rename-test-file"
+        ],
+        "cohorts": [
+          "S-goalpost"
+        ],
+        "failures": 7,
+        "evidence": "systematic"
+      },
+      {
+        "key": "reason",
+        "name": "over-budget",
+        "mechanism": "budget",
+        "instances": [
+          "output-flood",
+          "oversized-patch",
+          "timeout-gate",
+          "workspace-flood"
+        ],
+        "cohorts": [
+          "S-escape",
+          "S-hostile-runtime"
+        ],
+        "failures": 4,
+        "evidence": "systematic"
+      },
+      {
+        "key": "reason",
+        "name": "red",
+        "mechanism": "gate",
+        "instances": [
+          "regress-off-by-one"
+        ],
+        "cohorts": [
+          "S-regress"
+        ],
+        "failures": 1,
+        "evidence": "incidental"
+      }
+    ],
+    "score": {
+      "attempted": 16,
+      "kept": 1,
+      "value": 0.0625
+    }
+  },
   "identity": {
     "identities": [],
     "rows": [
@@ -1095,5 +1267,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "561b772ce2cc79c8f61454e86c12e34d999f23f044b0d9db0cdfef2357e58155"
+  "reportId": "76738f7126803991d4047e5cda8d60d92cd032bb258e5696a4fd1d4b32a41ea4"
 }

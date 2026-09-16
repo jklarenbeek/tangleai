@@ -46,6 +46,7 @@ import { count, table } from './table.ts';
 import type { Controls, Counts, Evolve, HostProbe, Row, SourceManifest } from './evolve.types.ts';
 import { runHostProbes } from './evolve-probes.ts';
 import { withExperimentHost, runExperiment } from './evolve-host.ts';
+import { aggregateFailures, roundScore } from '@tangleai/evolve';
 
 export { loadEvolveFixture as loadFixture };
 
@@ -349,6 +350,11 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
     controls: controlsOf(loaded),
     hostProbes,
     counts: censusOf(rows, spent),
+    // What the ROUND amounts to, above the per-experiment decisions. A
+    // mechanism that changed itself once per observed failure would bend
+    // around whatever it happened to see; this says which failures recur
+    // across distinct proposals and therefore license a repair at all.
+    aggregate: { ...aggregateFailures(rows), score: roundScore(rows) },
     identity: analyticEnvelope(rows.map((row) => row.proposalId)) as unknown as Evolve['identity'],
     decision: decideEvolve(rows, hostProbes),
     reportId: '0'.repeat(64),
@@ -472,6 +478,33 @@ export function renderDocument(report: Evolve): string {
   }));
   lines.push('');
   lines.push('Every reason keeps its column whether or not it happened: an absent column is how a losing row disappears. Protected-ref writes and live model calls are literal zeros the schema asserts, so a report of a run that wrote a protected ref or bought a completion cannot validate at all.');
+  lines.push('');
+
+  const { aggregate } = report;
+  lines.push('## What the round amounts to');
+  lines.push('');
+  lines.push('A census counts failures; it does not say which of them are worth changing anything over. A mechanism that revised itself once per observed failure would bend around whatever it happened to see — narrowing what it accepts and getting worse at cases nobody showed it. What separates evidence about the MECHANISM from evidence about one PROPOSAL is recurrence across distinct instances, so a failure group is called `systematic` only when at least two unrelated proposals produced it. That threshold is an inductive bias and not a proof of cause; single-instance groups are kept below as evidence rather than discarded.');
+  lines.push('');
+  lines.push(table({
+    head: ['stage', 'evidence', 'failures', 'distinct proposals', 'strategies'],
+    numeric: [2, 3],
+    rows: aggregate.mechanisms.map((pattern) => [
+      `\`${pattern.name}\``, pattern.evidence, pattern.failures, pattern.instances.length,
+      pattern.cohorts.map((id) => `\`${id}\``).join(', '),
+    ]),
+  }));
+  lines.push('');
+  lines.push(table({
+    head: ['reason', 'evidence', 'failures', 'distinct proposals'],
+    numeric: [2, 3],
+    rows: aggregate.reasons.map((pattern) => [
+      `\`${pattern.name}\``, pattern.evidence, pattern.failures, pattern.instances.length,
+    ]),
+  }));
+  lines.push('');
+  lines.push(`Of ${aggregate.failures} failures, ${aggregate.systematic} belong to a group that recurs across distinct proposals and ${aggregate.incidental} ${aggregate.incidental === 1 ? 'does' : 'do'} not, so ${(aggregate.systematicRatio * 100).toFixed(1)}% of the failure evidence would license a mechanism-level repair at all. The two views disagree on purpose: read by reason, several failures look like one-offs, and rolling them up by the stage that produced them shows the same stage indicted by unrelated proposals under different names. Nothing here is a repair — no mechanism modifies itself in this campaign — but this is the evidence a repair would have to be argued from.`);
+  lines.push('');
+  lines.push(`Round score ${aggregate.score.kept}/${aggregate.score.attempted} (${aggregate.score.value.toFixed(4)}). A candidate mechanism is accepted only on a strict improvement of that one number: per-instance acceptance cannot see a change that fixes the case in front of it and quietly breaks two others, and a tie is rejected because equal evidence is not a reason to move.`);
   lines.push('');
   lines.push(`Report \`${report.reportId.slice(0, 12)}…\`, contract \`${report.instrument.contractRevision.slice(0, 12)}…\`, source \`${report.source.sha256.slice(0, 12)}…\`, decision **${report.decision}**.`);
   lines.push('');

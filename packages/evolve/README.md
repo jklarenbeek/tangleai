@@ -146,3 +146,41 @@ trail is an appended memory rather than an edited skill. Every pointer but
 `/memories/-` is refused `TEVO1011`, both validators are synchronous, and no
 refusal ever carries an empty `errors` — an empty one is indistinguishable
 from the engine's accidental-Promise trap.
+
+## What a round amounts to
+
+`planExperimentDecision` decides one experiment. `aggregateFailures` sits
+above it and says what a whole ROUND of decisions amounts to — and it exists
+because a mechanism that revised itself once per observed failure would be
+optimizing against the wrong thing.
+
+Any single failure has two possible causes and no way to tell them apart: the
+instance was peculiar, or the mechanism is deficient. Treating every failure
+as a direct instruction to change bends the mechanism around whatever it
+happened to see, narrowing what it will accept and making it worse at cases
+nobody showed it. What distinguishes the two is **recurrence across distinct
+instances** — so a failure group is `systematic` only when at least
+`SYSTEMATIC_THRESHOLD` (2) unrelated instances produced it, and everything
+else is `incidental` and kept as evidence rather than discarded.
+
+Failures group at two levels, and the levels disagree on purpose. By reason,
+a lone `escape` or `red` looks like a one-off; rolled up by the stage that
+produced it, `escape` joins `goalpost` under `surface` and `red` joins
+`ambiguous` under `gate`, and the same stage turns out to be indicted by
+unrelated instances wearing different names. `systematicRatio` is the share
+of failure evidence that would license a mechanism-level repair at all.
+
+What is deliberately **not** computed is the share of changes that accommodate
+one model's quirks rather than repairing the mechanism. That number needs
+modification decisions to exist, and nothing in this package modifies itself.
+`systematicRatio` is its measurable precursor.
+
+`roundScore` reduces a round to one scalar and `compareRounds` accepts a
+candidate only on a **strict** improvement of it. Per-instance acceptance
+cannot see a change that fixes the case in front of it and quietly breaks two
+others; the aggregate can. A tie is rejected on purpose — equal evidence is
+not a reason to move, and keeping the incumbent is always the cheaper error.
+
+Everything in this layer is pure and total: it reads decided rows and answers
+counts, runs no process, reads no file, and decides nothing about any
+individual experiment.
