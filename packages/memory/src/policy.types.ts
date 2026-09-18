@@ -37,5 +37,3 @@ export interface Policy {
   retrieval: PolicyRetrieval;
   embedding: PolicyEmbedding;
 }
-
-

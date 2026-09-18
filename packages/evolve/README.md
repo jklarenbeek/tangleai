@@ -143,9 +143,9 @@ besides the patch path. Where the evidence lands is the ledger's decision,
 not this package's: the ledger's refinement vocabulary cannot address inside
 a record, and its skill schema is closed with no evidence member, so the
 trail is an appended memory rather than an edited skill. Every pointer but
-`/memories/-` is refused `TEVO1011`, both validators are synchronous, and no
-refusal ever carries an empty `errors` — an empty one is indistinguishable
-from the engine's accidental-Promise trap.
+`/memories/-` is refused `TEVO1011`, both validators are synchronous
+(preparation uses the engine's synchronous path, which refuses an
+asynchronous hook), and no refusal ever carries an empty `errors`.
 
 ## What a round amounts to
 

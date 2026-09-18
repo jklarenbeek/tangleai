@@ -7,14 +7,15 @@
  * supplies the five judgements and nothing else; it does not reimplement
  * the sequencing, and no second copy of it exists in this package.
  *
- * Two traps the suite's contract sets, both deliberate:
+ * Two rules this consumer keeps, both deliberate:
  *
- *  - every validator must be SYNCHRONOUS. A validator that returns a
- *    Promise is read as `{ valid: false, errors: [] }` — a refusal with no
- *    reason, which looks like a bug in the caller rather than in the
- *    validator. A test pins that ours are synchronous.
- *  - every refusal must carry at least one error, for the same reason: an
- *    empty `errors` is indistinguishable from the accidental-Promise case.
+ *  - every validator is SYNCHRONOUS, because preparation is the engine's
+ *    synchronous `prepare`. That path refuses an asynchronous hook with a
+ *    stated reason (only `prepareAsync` and `commit` await one), so a
+ *    Promise here would turn every proposal into that refusal. A test pins
+ *    that ours are synchronous.
+ *  - every refusal carries at least one error: a refusal with no reason
+ *    tells the proposer nothing it can act on.
  *
  * `commit` refuses on purpose. Preparation never writes: the host applies
  * the plan as a fenced effect, so the thing that edits files is the thing
@@ -52,7 +53,7 @@ export interface PreparedPatch {
 interface Verdict { valid: boolean; errors: EvolveIssue[] }
 
 const invalid = (errors: EvolveIssue[]): Verdict =>
-  // Never empty: an empty refusal reads like the accidental-Promise trap.
+  // Never empty: a refusal without a reason gives the proposer nothing to fix.
   ({ valid: false, errors: errors.length > 0 ? errors : [evolveIssue('TEVO1001', '', 'The candidate was refused without a stated reason.')] });
 
 export function createPatchRefiner(options: PatchRefinerOptions) {

@@ -1233,5 +1233,3 @@ export interface LocomoPolicy {
   liveEvidence?: Array<LocomoPolicyLiveEvidenceItem>;
   purchases?: LocomoPolicyPurchases;
 }
-
-

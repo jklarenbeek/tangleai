@@ -692,4 +692,3 @@ export interface QueryProposal {
 
 
 export type Temporal = SourceOccurrence;
-

@@ -640,4 +640,3 @@ export interface Trace2SkillPromptCatalog {
 
 
 export type Trace2skill = SkillBundle;
-

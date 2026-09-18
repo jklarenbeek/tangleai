@@ -328,8 +328,10 @@ table as a `@jarenjs/db` live query, `run.live` one named run's frames with
 replay by cursor. The live emission's store-wide capture sequence is
 re-emitted under the appended frame's own, and a replay page carries exactly
 the frames above a cursor and never asks for a reset — so `Last-Event-ID`
-means the same thing live and replayed, a resumed subscriber loses and
-repeats nothing, and no subscription can ask for "whatever is running now".
+means the same thing live and replayed. The opening snapshot's event id is
+the last frame it holds, so even a reconnect straight after it resumes above
+those frames: a resumed subscriber loses and repeats nothing, and no
+subscription can ask for "whatever is running now".
 The compiled surface is gated by shape: a frozen public projection of the
 released contract sits beside the tests, every difference the suite's rule
 table classifies as breaking or unclassifiable must be one the gate names,

@@ -444,9 +444,9 @@ shared Jaren driver, contract, transport and editor remain the execution path.
 
 ## JarenJS release integration
 
-Tangle consumes 23 AI-free Jaren **0.91.2** packages from npm. The source
-submodule at `vendor/jarenjs` pins `74036c063c5a4efa8c41aa878713d405223cc464`.
-The [registry receipt](docs/integration/jaren-0.91.2-registry.json) verifies all
+Tangle consumes 23 AI-free Jaren **0.91.3** packages from npm. The source
+submodule at `vendor/jarenjs` pins `1577600d98b9ef23381843911958aab10728707f`.
+The [registry receipt](docs/integration/jaren-0.91.3-registry.json) verifies all
 23 downloaded archives against the exact lockfile integrities.
 `npm ci --ignore-scripts` installs from npm without a foundation bootstrap;
 `npm run jaren:check` verifies source, manifests, installed versions and archive

@@ -518,5 +518,3 @@ export interface MasConformance {
    */
   decision: { outcome: "runtime-conformant" | "not-conformant"; failedClauses: Array<MasConformanceDecisionFailedClausesItem>; clauses: { registration: boolean; conformance: boolean; concurrencyOrder: boolean; durability: boolean; controlSafety: boolean; persistenceIdentity: boolean; hygiene: boolean; }; };
 }
-
-

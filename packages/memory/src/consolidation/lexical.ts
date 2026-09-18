@@ -1,5 +1,5 @@
 /** Domain normalization over the public bounded Jaren lexical owner. */
-import { compileLexical, SEARCH_LIMITS } from '@jarenjs/core/search';
+import { compileLexical, reciprocalRankFusion, SEARCH_LIMITS } from '@jarenjs/core/search';
 export function consolidationTerms(text: string): string[] {
   return text.normalize('NFKC').toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
 }
@@ -34,13 +34,13 @@ export function createConsolidationLexicalIndex(documents: readonly LexicalDocum
     },
   });
 }
-/** Reciprocal rank is routing only; callers still expand and budget original evidence. */
+/**
+ * Reciprocal rank is routing only; callers still expand and budget original
+ * evidence. A lane votes once per id (its first position), and equal fused
+ * scores order by code point id — the suite's fusion contract.
+ */
 export function fuseConsolidationRanks(ranks: readonly (readonly string[])[], k = 60): string[] {
   if (!Number.isFinite(k) || k <= 0) throw new TypeError('reciprocal rank constant must be positive');
-  const scores = new Map<string, { score: number; order: number }>();
-  for (const ranking of ranks) for (const [index, id] of [...new Set(ranking)].entries()) {
-    const row = scores.get(id) ?? { score: 0, order: scores.size };
-    row.score += 1 / (k + index + 1); scores.set(id, row);
-  }
-  return [...scores].sort(([, a], [, b]) => b.score - a.score || a.order - b.order).map(([id]) => id);
+  const lanes = ranks.map(ranking => [...new Set(ranking)].map((id, index) => ({ id, rank: index + 1 })));
+  return reciprocalRankFusion(lanes, { k, maxItems: Math.max(1, lanes.reduce((n, lane) => n + lane.length, 0)) }).map(row => row.id);
 }

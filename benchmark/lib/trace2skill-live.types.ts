@@ -136,4 +136,3 @@ export interface Trace2skillLive {
  * The frozen, credential-free description of what a live skill-evolution tier WOULD spend, and the record that it was not spent. A key never reaches this document: it carries the NAME of the variable a key would be read from and nothing else. `status` is `not-run` in every committed copy, because executing the plan needs an explicit operator approval that names its `planId`.
  */
 export type Trace2skillLive2 = Trace2skillLive;
-

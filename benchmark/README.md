@@ -31,7 +31,7 @@ The [JarenJS integration comparison](../docs/JARENJS_BENCHMARK.md) records
 Node/Bun history strategies; the [integration audit](../docs/JARENJS_INTEGRATION.md)
 explains choices against the pinned upstream benchmarks. Reproduce it with
 `npm run benchmark:jaren` (keyless).
-The current foundation is Jaren 0.91.2. Its native migration, validation and rendering changes
+The current foundation is Jaren 0.91.3. Its native migration, validation and rendering changes
 are qualified by the [schema consumer](../test/store/native-foundation.test.ts),
 [migration consumer](../test/store/physical-migration.test.ts) and installed
 Node/Bun and browser gates. These compatibility checks do not measure an

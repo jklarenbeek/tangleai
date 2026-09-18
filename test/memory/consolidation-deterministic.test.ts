@@ -45,7 +45,9 @@ it('uses the public Jaren lexical score with Unicode normalization and stable ti
   assert.deepEqual(index.rank('cat'), [{ id: 'a', score: 1.5 * Math.log(2) }]);
   assert.deepEqual(index.rank('unseen'), []);
   assert.deepEqual(createConsolidationLexicalIndex([{ id: 'a', text: 'cat' }, { id: 'b', text: 'cat' }]).rank('cat').map(hit => hit.id), ['a', 'b']);
-  assert.deepEqual(fuseConsolidationRanks([['b', 'b', 'a'], ['a', 'b']]), ['b', 'a']);
+  // one vote per id per lane; an exact tie orders by code point id, not by first appearance
+  assert.deepEqual(fuseConsolidationRanks([['b', 'b', 'a'], ['a', 'b']]), ['a', 'b']);
+  assert.deepEqual(fuseConsolidationRanks([['c'], ['b']]), ['b', 'c']);
   const bounded = createConsolidationLexicalIndex([{ id: 'a', text: 'cat' }], { limits: { maxQueryBytes: 2 } });
   assert.throws(() => bounded.rank('cat'), /bound/);
   assert.throws(() => createConsolidationLexicalIndex([{ id: 'a', text: 'cat' }, { id: 'a', text: 'dog' }]), /Duplicate/);

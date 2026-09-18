@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "version": "0.30.0",
+  "baseVersion": "0.29.8",
+  "baseCommit": "0c21222124c7d56d26c044a69aac963cc41eb3d6",
+  "preparationCommit": "0c21222124c7d56d26c044a69aac963cc41eb3d6",
+  "initial": false,
+  "inputHash": "3e81f40fc5ececd00f00f535b0cda848165c30cc5fddcbd49e0ce792d37c5fd1",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/evolve",
+          "type": "minor"
+        }
+      ],
+      "summary": "Move onto the Jaren 0.91.3 registry foundation and source pin, and consume what\nit delivers instead of keeping local copies. The paired bootstrap behind the\npolicy, grounding and consolidation intervals is now the suite's\n`pairedBootstrap`, with the same intervals bit for bit. Consolidation's rank\nfusion is the suite's `reciprocalRankFusion`, so equal fused scores now order by\ncode point id rather than by first appearance; the hybrid rows move by at most\n0.002 recall. The evolve host's process runner keeps its refusal codes but\nruns on the suite's named-process executor: a request whose signal is\nalready aborted is refused before spawning, and a process group's remaining\nmembers are killed when its leader exits. A desktop run stream now opens on a\nsnapshot whose event id is the last frame it holds, so a reconnect right after\nit repeats nothing, and the UI no longer de-duplicates frames or threads a\nresume cursor through its document. Emitted contract bundles end with a single\nnewline. Every keyless benchmark document is requalified against the new\nfoundation.\n\nMigration: `createProcessRunner` no longer accepts a `clock` option. The\nexecutor times each run, so drop the option; `durationMs` is the executor's\nfigure. Callers of `fuseConsolidationRanks` that relied on first-appearance\norder for equal scores now get code point id order.",
+      "id": "jaren-foundation-0-91-3"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.30.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.30.0"
+    }
+  ]
+}

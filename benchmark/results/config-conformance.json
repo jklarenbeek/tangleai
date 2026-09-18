@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "e5e495eafb9dc2b65d08db6da61c74318bebc381",
+    "head": "0c21222124c7d56d26c044a69aac963cc41eb3d6",
     "clean": false,
     "files": [
       {
@@ -41,7 +41,7 @@
       },
       {
         "path": "benchmark/lib/config-conformance.types.ts",
-        "sha256": "7ab5ee682b01ff2c1780e91a125725ab92c28f0cf820ebf8e2c64172141ef6b6"
+        "sha256": "03538ba9422b2eb9e40d4621778f965900735f800f714289c37ec6c987b59775"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -81,7 +81,7 @@
       },
       {
         "path": "packages/config/src/contracts.gen.ts",
-        "sha256": "711abfd3e117bd9c55842fc9e78cb9b20cd7846548d7c99b8285e24cf0f63063"
+        "sha256": "0cf00ceae56eaf29b007f2c83c52b04132469b73e3ce0328996ceeb8fb95a70e"
       },
       {
         "path": "packages/config/src/identity.ts",
@@ -120,101 +120,101 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "e3cd54b65eff826cd30954933bba9c17f252a320def533145a5e9553a855c2e4"
+    "sha256": "311220e14bf7714d0259cdd564254d2ea83081b0417f61e639fe94db06d91c0b"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@tangleai/agents",
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "908b568507b75633c95e127d00659cc0295f6d610edcbf160d8c542390f46e72"
+  "reportId": "d1c87fdbb677964e78ee82cfa5fac7f60e36cc7e63516730d4b1fad99dc1bb1d"
 }

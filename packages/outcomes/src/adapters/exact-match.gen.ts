@@ -50,4 +50,3 @@ export interface Artifact {
 
 
 export type ExactMatch = Artifact;
-

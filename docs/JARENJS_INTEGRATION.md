@@ -1,11 +1,11 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.91.2**, tag `v0.91.2`, source commit
-`74036c063c5a4efa8c41aa878713d405223cc464`. Upstream `main`, the tag and all 23
-consumed npm latest releases agreed when checked on 2026-09-16. The submodule is the source
+Tangle consumes **Jaren 0.91.3**, tag `v0.91.3`, source commit
+`1577600d98b9ef23381843911958aab10728707f`. Upstream `main`, the tag and all 23
+consumed npm latest releases agreed when checked on 2026-09-17. The submodule is the source
 reference; runtime imports resolve to the 23 published npm packages. All 116
 direct dependency references are exact pins. The lock records registry URLs and
-integrities; the [registry receipt](integration/jaren-0.91.2-registry.json) checks
+integrities; the [registry receipt](integration/jaren-0.91.3-registry.json) checks
 all 23 downloaded archives against it. [The consumer gate](CONSUMER_GATE.md)
 describes these checks as a reusable pattern for other suite consumers. This receipt does not claim a source
 rebuild comparison. Installed packages are neither patched nor source-linked.
@@ -37,7 +37,32 @@ activation, claim support policy, callback reservations and host trigger
 eligibility. The frozen standard-BM25 comparison lives only in the benchmark;
 production lexical routing delegates to `compileLexical`.
 
-## Changes since 0.90.6 and current adoption
+## Changes from 0.91.2 to 0.91.3 and current adoption
+
+Three upstream commits cover this update. They add paired inference, rank
+fusion, text-edit compilation, asynchronous guarded validation, a Node-only
+named-process executor, provider capture/replay, finance indicators and risk
+measures, a watermark id for replay-backed stream snapshots, and a single
+trailing newline from `jaren-emit`. Source changes are in `@jarenjs/core`
+(`stats`, `search/fusion`, `text/edits`, `guarded`, `finance`, the new
+`process-node` subpath), `@jarenjs/contract` (`provider/replay`,
+`stream/server`) and `@jarenjs/emit`. Every other consumed package advances its
+version and dependency references only. The
+[upstream comparison](https://github.com/jklarenbeek/jarenjs/compare/v0.91.2...v0.91.3)
+and pinned submodule retain the exact implementation and tests.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| `pairedBootstrap` (`@jarenjs/core/stats`) | **Adopted.** The policy screen's `bootstrapInterval`, and through it the grounding and consolidation instruments, now delegate to the suite. A precomputed delta is the pair `[0, delta]`, so "second minus first" is the delta and the draw order and nearest-rank endpoints are unchanged: the same intervals, bit for bit, on 18 seeded sets up to 2,500 pairs. Tangle keeps two things: an empty set reads as a zero interval that the eligibility rules refuse, and the work bound is raised to the suite's ceiling because the full LoCoMo question set exceeds the default at 10,000 resamples. The temporal evaluation's group bootstrap is not a paired bootstrap (it resamples independent groups and divides summed deltas by summed counts) and stays local. `permutationTest` has no Tangle consumer yet. |
+| `reciprocalRankFusion` (`@jarenjs/core/search`) | **Adopted** by `fuseConsolidationRanks`, which keeps its string-list signature and its one-vote-per-id rule. Equal fused scores now order by code point id instead of first appearance; that is the contract Tangle asked for. The hybrid consolidation rows move by at most 0.002 recall and about one context character; no default decision changes. `weightedScoreFusion` has no Tangle consumer yet. |
+| Replay-backed stream snapshot id (`@jarenjs/contract/stream`) | **Adopted.** A fresh `run.live` subscription opens on a snapshot whose event id is the last frame it holds, so a browser that reconnects straight after the snapshot replays nothing. The run source's synchronous live snapshot already reflects the replay watermark and every held emission, so it needs no `snapshotWithCursor`. The desktop UI no longer de-duplicates frames by id or threads a `lastSeq` cursor through its document; a subscription restarted after a lost stream re-seeds from a fresh snapshot of the whole run. A desktop test fails on the previous binding and passes on this one. |
+| `createProcessExecutor` (`@jarenjs/core/process-node`) | **Adopted** under the evolve host's `createProcessRunner`, which keeps its refusal codes and drops its `clock` option: the executor times each run, so `durationMs` is its figure. The executor owns spawning without a shell, the realpath working-directory check, allow-listed environment copying, output caps, the deadline and process-group cleanup. Tangle owns one executor per declared root, the host's fixed environment values, resolving a bare command name once on the child's PATH, and mapping every verdict to `TEVO1005`/`TEVO1006`. Two behaviours are new: a request whose signal is already aborted is refused before spawning (it used to run), and a group's remaining members are killed when the parent exits normally, not only on a deadline. The executor reports no RSS figure and is not an OS sandbox. |
+| `prepareAsync` and awaited `commit` (`@jarenjs/core/guarded`) | **Available; no Tangle editor needs it yet.** Every Tangle guarded editor validates synchronously, and none computes an asynchronous verdict before calling the refiner, so there was no pre-stage plumbing to remove. The synchronous `prepare` now refuses an asynchronous hook with a stated reason instead of reading it as an unexplained refusal; the evolve comments and tests that described the old behaviour are corrected, and a test pins the new contract. Prepared plans are now JSON copies, which every Tangle plan already is. |
+| `jaren-emit` trailing newline | **Adopted.** Thirty-one emitted TypeScript bundles are regenerated; each loses only its extra blank line, so a newly emitted bundle passes `git diff --check`. |
+| `compileTextEdits` / `applyTextEdits` (`@jarenjs/core/text/edits`) | **Not adopted: the semantics differ.** Trace2Skill's directory compiler resolves an anchor anywhere inside a line, gives a heading anchor its whole section, keeps the earlier of two overlapping hunks, allows two insertions at one boundary, and binds a created page to every link that reaches it. The suite requires whole-line anchors, has no heading or link interpretation, and withholds both sides of an overlap (boundary insertions included). Delegating would change which proposals compile and the pinned Trace2Skill results, so it is an explicit decision rather than a dependency update. |
+| Finance indicators and risk measures, provider capture/replay | **No consumer yet.** Tangle has no trading package and no `createProviderExecutor` call site. The trading and research campaigns consume these when they run, instead of writing local copies. |
+
+## Changes from 0.90.6 to 0.91.2
 
 Three upstream commits cover this update: bounded PostgreSQL Store parity with
 portable backend hosts, opt-in Windows qualification, and settled recovery pool
@@ -56,12 +81,6 @@ and pinned submodule retain the exact implementation and tests.
 | PostgreSQL Store parity, `postgresNotifications`, backend hosts | **Evaluated, not adopted.** Tangle is a local-first application over SQLite (Node, Bun and the browser WASM driver); no Tangle deployment runs a PostgreSQL server. PostgreSQL offers no synchronous incremental live maintenance, which the memory store depends on. Recorded so a hosted deployment consumes this rather than writing a dialect. |
 | `asyncLive()` (`@jarenjs/db/async-live`) | **Evaluated, not adopted.** Bounded resnapshot live maintenance for asynchronous connections, which needs durable capture and a lazy row iterator. Tangle's synchronous Node/Bun connections already maintain live queries incrementally, so switching would replace incremental patches with bounded re-reads without removing any Tangle code. |
 | `physicalObjectKey` | Not consumed; the migration example uses the complete planned artifacts and never names physical objects by key. |
-
-The generic capabilities Tangle still carries downstream (paired resampling,
-rank fusion, text-edit compilation, asynchronous guarded validation, a process
-executor, provider capture, a real snapshot event id, a single trailing newline
-from `jaren-emit`) are not in this release; the downstream implementations and
-workarounds stay in place.
 
 ## Changes from 0.89.0 to 0.90.6
 

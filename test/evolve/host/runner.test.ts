@@ -15,7 +15,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm, mkdir, symlink, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
 import { createProcessRunner, type ProcessRunnerOptions } from '@tangleai/evolve/host';
 import { ok, refuseOne } from '@tangleai/evolve';
@@ -219,6 +219,41 @@ describe('the bounded process runner', () => {
       const red = await runner.run({ name: 'node', args: ['-e', 'process.exit(3)'], cwd: dir });
       assert.equal(red.ok, true, 'a non-zero exit is a value, not a refusal');
       assert.equal((red as { value: { exitCode: number } }).value.exitCode, 3);
+    }
+    finally { await rm(dir, { recursive: true, force: true }); }
+  });
+
+  it('refuses a request that was cancelled before it started, without spawning', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tangle-runner-'));
+    try {
+      const { runner } = runnerFor(dir);
+      const refused = await runner.run({ name: 'node', args: ['-e', ''], cwd: dir, signal: AbortSignal.abort() });
+      assert.equal(refused.ok, false);
+      assert.deepEqual((refused as { issues: Array<{ code: string, path: string }> }).issues.map(one => [one.code, one.path]), [['TEVO1006', '/signal']]);
+      assert.equal(runner.spawns, 0);
+    }
+    finally { await rm(dir, { recursive: true, force: true }); }
+  });
+
+  it('resolves a bare command on the child PATH once, and refuses one that is not there', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tangle-runner-'));
+    try {
+      const runner = createProcessRunner({
+        allow: {
+          node: { file: basename(process.execPath), args: acceptAll, cwd: 'worktree' },
+          ghost: { file: 'tangle-no-such-command', args: acceptAll, cwd: 'worktree' },
+        },
+        env: { allow: [], set: { PATH: dirname(process.execPath) } },
+        limits: { legMs: 5000, stdoutBytes: 4096, stderrBytes: 4096 },
+        roots: { worktree: dir },
+      });
+      const green = await runner.run({ name: 'node', args: ['-e', 'process.stdout.write("found")'], cwd: dir });
+      assert.equal(green.ok, true, JSON.stringify(green));
+      assert.equal((green as { value: { stdout: string } }).value.stdout, 'found');
+      const missing = await runner.run({ name: 'ghost', args: [], cwd: dir });
+      assert.equal(missing.ok, false);
+      assert.equal((missing as { issues: Array<{ code: string }> }).issues[0].code, 'TEVO1006');
+      assert.equal(runner.spawns, 1, 'the unresolved command never reached spawn');
     }
     finally { await rm(dir, { recursive: true, force: true }); }
   });

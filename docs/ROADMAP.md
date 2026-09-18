@@ -1,10 +1,14 @@
 # 📅 Tangle Roadmap
 
-The current substrate is [JarenJS 0.91.2](JARENJS_INTEGRATION.md): atomic
+The current substrate is [JarenJS 0.91.3](JARENJS_INTEGRATION.md): atomic
 ledger storage, retention options, verified DAG checkpoints, bounded history
 reads, scheduled document transport and supervised Node SQLite execution are
 available. Native relational migrations and revision-aware collection drag are
-upstream mechanisms for future consumers, with host policy still required. The open policies below
+upstream mechanisms for future consumers, with host policy still required. Paired
+bootstrap and permutation tests, rank fusion, a named-process executor,
+asynchronous guarded validation, a line-anchored text-edit compiler, safe-read
+provider capture/replay and the wider finance indicator and risk family are
+published for the entries below to consume rather than rebuild. The open policies below
 still require their own corpus and quality measurements.
 
 This is the single roadmap for the repository: what Tangle wants to have and

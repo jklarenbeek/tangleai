@@ -42,18 +42,11 @@ function failText(outcome: any): string {
     : `${error.code ?? outcome.kind}: ${error.message ?? ''}`.trim();
 }
 
-/** The highest frame seq a row set carries — the cursor a resume names. */
-function seqOf(rows: readonly any[]): number {
-  let top = 0;
-  for (const row of rows) if (typeof row?.seq === 'number' && row.seq > top) top = row.seq;
-  return top;
-}
-
 /**
- * Watch one run's frames. The handler owns the rows it holds and the
- * seq it reached, and a frame already held is never taken twice — so a
- * resume that re-delivers what the snapshot already carried changes
- * nothing, however the cursor was negotiated.
+ * Watch one run's frames. Every subscription opens on a snapshot whose
+ * event id is the last frame it holds, so the client's own reconnect
+ * resumes above it and delivers each frame once; a subscription started
+ * after a lost stream re-seeds from a fresh snapshot of the whole run.
  */
 function watchRun(
   client: TangleUiOptions['client'],
@@ -63,26 +56,19 @@ function watchRun(
 ): () => void {
   if (client.subscribe === undefined || typeof props?.runId !== 'string') return () => {};
   let rows: any[] = [];
-  const held = new Set<string>();
   // the slot belongs to THIS run from the moment the subscription
   // starts, so a switch can never leave the previous run's frames
   // showing under a new run's id
   publish(rows);
-  const admit = (incoming: readonly any[]): any[] => incoming.filter((row) => {
-    if (typeof row?.id !== 'string' || held.has(row.id)) return false;
-    held.add(row.id);
-    return true;
-  });
   const subscription = client.subscribe('run.live', { runId: props.runId }, {
-    ...(typeof props.lastSeq === 'number' && props.lastSeq > 0 ? { lastSeq: props.lastSeq } : {}),
     reconnect: { max: 3 },
     onError: onLost,
     onSnapshot: (value: any) => {
-      rows = admit(value.rows ?? []);
+      rows = value.rows ?? [];
       publish(rows);
     },
     onPatch: ({ patch }: any) => {
-      const added = admit(patch.filter((op: any) => op.op !== 'remove').map((op: any) => op.value));
+      const added = patch.filter((op: any) => op.op !== 'remove').map((op: any) => op.value);
       if (added.length === 0) return;
       rows = [...rows, ...added];
       publish(rows);
@@ -174,8 +160,7 @@ export function createTangleUi(options: TangleUiOptions): any {
       if (client.subscribe !== undefined || typeof props.runId !== 'string') return;
       void client.invoke('run.live', { runId: props.runId }).then((outcome: any) => {
         if (!outcome.ok) return;
-        const rows = outcome.value.rows ?? [];
-        dispatch('loom/frames', { runId: props.runId, rows, lastSeq: seqOf(rows) });
+        dispatch('loom/frames', { runId: props.runId, rows: outcome.value.rows ?? [] });
       });
     },
 
@@ -369,7 +354,7 @@ export function createTangleUi(options: TangleUiOptions): any {
     frames: (props: any, dispatch: Dispatch): (() => void) => {
       let counted = 0;
       return watchRun(client, props, (rows) => {
-        dispatch('loom/frames', { runId: props.runId, rows, lastSeq: seqOf(rows) });
+        dispatch('loom/frames', { runId: props.runId, rows });
         // a pass that reported its counts is a pass the watcher's own
         // numbers have moved for
         const passes = rows.filter((row) => row.kind === 'sync').length;
@@ -403,7 +388,7 @@ export function createTangleUi(options: TangleUiOptions): any {
         run: 'frames',
         when: '$.loom.watch',
         key: { runId: '$.loom.watch', attempt: '$.loom.frameAttempt' },
-        withQuery: { runId: '$.loom.watch', attempt: '$.loom.frameAttempt', lastSeq: '$.loom.frames.lastSeq' },
+        withQuery: { runId: '$.loom.watch', attempt: '$.loom.frameAttempt' },
       },
       {
         run: 'chatFrames',

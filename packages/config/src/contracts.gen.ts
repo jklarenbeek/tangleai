@@ -682,4 +682,3 @@ export interface ResolutionOneOf2 {
  * The pure resolver's only two outcomes. Refusal is a value: sorted stable issues with document paths, no secret in any detail.
  */
 export type Resolution = { ok: true; identity: RunIdentity; } | ResolutionOneOf2;
-

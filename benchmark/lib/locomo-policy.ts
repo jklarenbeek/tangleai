@@ -45,11 +45,10 @@
  * a mean can look complete.
  *
  * The report's TypeScript comes from `schemas/locomo-policy.schema.json`
- * through `@jarenjs/emit`; this file holds only behaviour. The one
- * primitive built here rather than consumed is the paired bootstrap:
- * `@jarenjs/core/stats` publishes mean/median/quantile/stddev/variance
- * and no resampling, and the inverse normal it needs for a minimum
- * detectable effect is missing beside it.
+ * through `@jarenjs/emit`; this file holds only behaviour. The paired
+ * bootstrap is `@jarenjs/core/stats`'s; the one primitive built here is
+ * the inverse normal a minimum detectable effect needs, which the suite
+ * does not publish.
  */
 
 import { execFile } from 'node:child_process';
@@ -59,7 +58,7 @@ import { join } from 'node:path';
 import { promisify } from 'node:util';
 
 import { canonicalSha256 } from '@jarenjs/json/canonical';
-import { mean as meanOf, quantile, stddev } from '@jarenjs/core/stats';
+import { mean as meanOf, pairedBootstrap, stddev } from '@jarenjs/core/stats';
 import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { createHashEmbedder, type Embedder } from '@tangleai/models/embed';
 import { sizeOf } from '@jarenjs/core/chunk';
@@ -138,6 +137,12 @@ const exec = promisify(execFile);
 
 /** The draw's seed — LoCoMo's arXiv number, as every other instrument here. */
 export const POLICY_SEED = 17753;
+/**
+ * Pairs times resamples. The suite's default (ten million) stops at a
+ * thousand questions under ten thousand resamples, below the full LoCoMo
+ * question set, so the paired bootstrap runs at the suite's own ceiling.
+ */
+const BOOTSTRAP_MAX_WORK = 100_000_000;
 
 /** A similarity no cosine reaches: the policy runs and does nothing. */
 export const OFF = 2;
@@ -410,30 +415,24 @@ export function powerOf(pairs: readonly Pair[], level: number): PowerBlock {
 }
 
 /**
- * The paired bootstrap: resample the pairs WITH replacement, take the
- * mean each time, and read the percentile interval by the suite's own
- * nearest-rank quantile. Seeded, so the interval is a property of the
- * data and not of the day it was computed.
- *
- * Written here because `@jarenjs/core/stats` publishes no resampling.
+ * The paired bootstrap over precomputed deltas: each delta is the pair
+ * `[0, delta]`, so the suite's "second minus first" is the delta itself
+ * and its draw order and nearest-rank percentiles are the ones every
+ * published interval was computed with. Seeded, so the interval is a
+ * property of the data and not of the day it was computed. An empty set
+ * has no interval and reads as zero, which the eligibility rules refuse
+ * before any gate trusts it.
  */
 export function bootstrapInterval(
   deltas: readonly number[],
   options: { resamples: number, seed: number, level: number },
 ): { low: number, high: number } {
   if (deltas.length === 0) return { low: 0, high: 0 };
-  const random = mulberry32(options.seed);
-  const means: number[] = [];
-  for (let r = 0; r < options.resamples; r++) {
-    let sum = 0;
-    for (let i = 0; i < deltas.length; i++) sum += deltas[Math.floor(random() * deltas.length)];
-    means.push(sum / deltas.length);
-  }
-  const tail = (1 - options.level) / 2;
-  return {
-    low: quantile(means, tail, { method: 'nearest-rank' }) ?? 0,
-    high: quantile(means, 1 - tail, { method: 'nearest-rank' }) ?? 0,
-  };
+  const interval = pairedBootstrap(deltas.map((delta): [number, number] => [0, delta]), {
+    resamples: options.resamples, seed: options.seed, level: options.level,
+    quantile: 'nearest-rank', maxWork: BOOTSTRAP_MAX_WORK,
+  });
+  return { low: interval.lower, high: interval.upper };
 }
 
 /** The one-sided lower bound at `level` over a sample's own SD. */

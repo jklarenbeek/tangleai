@@ -22,4 +22,3 @@ export interface Artifact {
 
 
 export type DirectionDelta = Artifact;
-

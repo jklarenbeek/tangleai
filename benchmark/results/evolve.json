@@ -37,7 +37,7 @@
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
-        "sha256": "fa929104cf0417a1c0692304f19d9a14410913ee0a1855ac6211ca2662c93bd1"
+        "sha256": "caf74e5ef071faaa4d0a72548d0619568a997f8af059a7961d782e3a0c9a62c3"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -65,7 +65,7 @@
       },
       {
         "path": "packages/evolve/src/adapters/experiment.gen.ts",
-        "sha256": "884b46a010aaa902aa57ff181ea59929dc65fcdb790bbf350bdcc924abbb5228"
+        "sha256": "7943f927669cb50df6b9c3a7a9829d4f21d9647ddd629f8c12be792fe708afc6"
       },
       {
         "path": "packages/evolve/src/adapters/experiment.ts",
@@ -89,7 +89,7 @@
       },
       {
         "path": "packages/evolve/src/contracts.gen.ts",
-        "sha256": "446acad0f905566185d5de702dff87b95bed3c585e53184ee6a2e4fd6fe9c639"
+        "sha256": "2c40a77852223abf688a96916604b9d0d3a7e4ed400ecdd5e98dc7b56b8ff6d1"
       },
       {
         "path": "packages/evolve/src/decide.ts",
@@ -145,7 +145,7 @@
       },
       {
         "path": "packages/evolve/src/host/runner.ts",
-        "sha256": "f0e775ac62419ddb77e56a4ae0d29b5ec5673ed078294f08ad9997f72ece44d0"
+        "sha256": "62def228ffc173be752a37c488d091ee302fc9636b29b66656e7dfeae0dee899"
       },
       {
         "path": "packages/evolve/src/host/settle.ts",
@@ -197,7 +197,7 @@
       },
       {
         "path": "packages/evolve/src/patch.ts",
-        "sha256": "79bf963fccfefa908bd60bce2ca0649e8adcaca498e531ad755ee54ded943fd9"
+        "sha256": "05e6a92fd6a6a04de8e0b4235ef49dee1396a9a252b1ecbc40391f0911e62e60"
       },
       {
         "path": "packages/evolve/src/policy.ts",
@@ -217,7 +217,7 @@
       },
       {
         "path": "packages/evolve/src/strategy-refiner.ts",
-        "sha256": "9d6e8a4a9e46e5810df5143c2aca14b9c73d9408bec5a5b5d7f3bf16c4b77b5e"
+        "sha256": "ed41fdb7a962f9e8028b8ccf57fbb7552eeae5bab724a9bc8878cc669ca9643c"
       },
       {
         "path": "packages/evolve/src/strategy.ts",
@@ -232,129 +232,129 @@
         "sha256": "125b37f678bb9cfc241d75f175968fbb60ff7157ced04962ab50aa8b4a8b66f2"
       }
     ],
-    "sha256": "d2d9288c5b0ae829f19b3a8716b3d4892e188357a0c653d7235582ab29f01a8f"
+    "sha256": "5d47c7696cc9297649ae387ac6e0299ff616d20169475c91a51f33ae819f2e8a"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.91.2"
+        "version": "0.91.3"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/config",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/mas",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/outcomes",
-        "version": "0.29.8"
+        "version": "0.30.0"
       },
       {
         "name": "@tangleai/store",
-        "version": "0.29.8"
+        "version": "0.30.0"
       }
     ]
   },
@@ -1303,5 +1303,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "070f7a7bc942014725b2c7fbc68408e7611987d0e807eb4552b2fb2b7a8334a1"
+  "reportId": "550f16820bbf0584cea78395ea60e940b0ca7bbe53f5debc32be191f8e2f9c91"
 }

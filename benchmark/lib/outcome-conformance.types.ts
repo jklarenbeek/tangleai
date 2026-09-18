@@ -327,5 +327,3 @@ export interface OutcomeConformance {
   traces: Array<Trace>;
   bindings: Array<Binding>;
 }
-
-

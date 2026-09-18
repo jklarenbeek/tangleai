@@ -445,5 +445,3 @@ export interface GmplConformance {
    */
   ablationRegistrationId: string;
 }
-
-

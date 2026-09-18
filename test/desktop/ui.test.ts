@@ -86,9 +86,8 @@ describe('tangle desktop UI (headless)', () => {
       const frame = (runId: string, seq: number, node: string): any =>
         ({ id: `${runId}:${String(seq).padStart(8, '0')}`, runId, seq, at: '2026-09-14T00:00:00.000Z', kind: 'node', body: { node, status: 'ok', ms: 1 } });
       isolated.dispatch('loom/follow', 'r-a');
-      isolated.dispatch('loom/frames', { runId: 'r-a', rows: [frame('r-a', 1, 'embed'), frame('r-a', 2, 'report')], lastSeq: 2 });
+      isolated.dispatch('loom/frames', { runId: 'r-a', rows: [frame('r-a', 1, 'embed'), frame('r-a', 2, 'report')] });
       assert.equal(isolated.getState().loom.watch, 'r-a');
-      assert.equal(isolated.getState().loom.frames.lastSeq, 2);
 
       // watching a second run replaces the picture with that run's own;
       // the two runs' frames are never merged, and the Loom draws
@@ -98,14 +97,14 @@ describe('tangle desktop UI (headless)', () => {
       assert.notEqual(isolated.getState().loom.frames.runId, isolated.getState().loom.watch);
       assert.equal(JSON.stringify(isolated.getVnode()).includes('embed'), false,
         'the earlier run\'s nodes are not drawn under the newly watched run');
-      isolated.dispatch('loom/frames', { runId: 'r-b', rows: [frame('r-b', 1, 'fetch')], lastSeq: 1 });
+      isolated.dispatch('loom/frames', { runId: 'r-b', rows: [frame('r-b', 1, 'fetch')] });
       assert.deepEqual(isolated.getState().loom.frames.rows.map((row: any) => row.runId), ['r-b']);
 
-      // a lost stream asks for a fresh attempt, which is what restarts
-      // the subscription at the seq the rows already reached
+      // a lost stream asks for a fresh attempt, which restarts the
+      // subscription on a fresh snapshot rather than on a cursor
       isolated.dispatch('loom/frameLost', 1);
       assert.equal(isolated.getState().loom.frameAttempt, 1);
-      assert.equal(isolated.getState().loom.frames.lastSeq, 1, 'the cursor survives the restart');
+      assert.equal('lastSeq' in isolated.getState().loom.frames, false, 'no cursor is threaded through the document');
     } finally { isolated.destroy(); wire.close(); }
   });
 
@@ -207,7 +206,7 @@ describe('tangle desktop UI (headless)', () => {
       const frames = isolated.getState().loom.frames;
       assert.equal(frames.rows.filter((row: any) => row.kind === 'node').length, 6);
       assert.equal(frames.rows.at(-1).kind, 'status', 'the terminal frame is committed with the run row');
-      assert.equal(frames.lastSeq, frames.rows.length);
+      assert.deepEqual(frames.rows.map((row: any) => row.seq), frames.rows.map((_: any, i: number) => i + 1));
     } finally { isolated.destroy(); wire.close(); await localDesktop.close(); }
   });
 

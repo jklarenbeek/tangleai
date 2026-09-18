@@ -1,5 +1,38 @@
 # @tangleai/evolve
 
+## 0.30.0
+
+### Minor Changes
+
+- Move onto the Jaren 0.91.3 registry foundation and source pin, and consume what
+  it delivers instead of keeping local copies. The paired bootstrap behind the
+  policy, grounding and consolidation intervals is now the suite's
+  `pairedBootstrap`, with the same intervals bit for bit. Consolidation's rank
+  fusion is the suite's `reciprocalRankFusion`, so equal fused scores now order by
+  code point id rather than by first appearance; the hybrid rows move by at most
+  0.002 recall. The evolve host's process runner keeps its refusal codes but
+  runs on the suite's named-process executor: a request whose signal is
+  already aborted is refused before spawning, and a process group's remaining
+  members are killed when its leader exits. A desktop run stream now opens on a
+  snapshot whose event id is the last frame it holds, so a reconnect right after
+  it repeats nothing, and the UI no longer de-duplicates frames or threads a
+  resume cursor through its document. Emitted contract bundles end with a single
+  newline. Every keyless benchmark document is requalified against the new
+  foundation.
+
+  Migration: `createProcessRunner` no longer accepts a `clock` option. The
+  executor times each run, so drop the option; `durationMs` is the executor's
+  figure. Callers of `fuseConsolidationRanks` that relied on first-appearance
+  order for equal scores now get code point id order.
+
+### Patch Changes
+
+- @tangleai/outcomes@0.30.0
+  - @tangleai/config@0.30.0
+  - @tangleai/context@0.30.0
+  - @tangleai/core@0.30.0
+  - @tangleai/mas@0.30.0
+
 ## 0.29.8
 
 ### Patch Changes

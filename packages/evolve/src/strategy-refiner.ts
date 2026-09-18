@@ -24,10 +24,10 @@
  * the outcome service's transaction, and a second path that could nudge it
  * would make "how well has this strategy done" a question with two answers.
  *
- * Both validators are SYNCHRONOUS and every refusal carries at least one
- * error. A validator that returns a Promise is read by the engine as
- * `{ valid: false, errors: [] }` — a refusal with no reason — and an empty
- * `errors` is indistinguishable from having fallen into that trap.
+ * Both validators are SYNCHRONOUS, because `prepare` is the engine's
+ * synchronous path, which refuses an asynchronous hook rather than awaiting
+ * it. Every refusal carries at least one error, so no refusal reaches the
+ * caller without a reason it can act on.
  */
 
 import { createGuardedRefiner } from '@jarenjs/core/guarded';
@@ -70,7 +70,7 @@ export interface AppendEvidenceInput {
 interface Verdict { valid: boolean; errors: EvolveIssue[] }
 
 const invalid = (errors: EvolveIssue[]): Verdict =>
-  // Never empty: an empty refusal reads like the accidental-Promise trap.
+  // Never empty: a refusal without a reason gives the proposer nothing to fix.
   ({ valid: false, errors: errors.length > 0 ? errors : [evolveIssue('TEVO1011', '', 'The proposal was refused without a stated reason.')] });
 
 /** Build the one legal operation. Nothing else forms a valid proposal. */

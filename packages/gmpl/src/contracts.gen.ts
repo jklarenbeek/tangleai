@@ -815,4 +815,3 @@ export interface GmplProjectedAnswer {
 
 
 export type Gmpl = GmplCatalogDocument;
-

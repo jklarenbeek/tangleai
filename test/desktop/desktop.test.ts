@@ -516,6 +516,7 @@ describe('run-addressed streams', () => {
     assert.ok(snapshot, 'the stream opens with a snapshot');
     assert.equal(snapshot.data.resumed, false);
     assert.deepEqual(snapshot.data.value.rows.map((row: any) => row.seq), [1, 2]);
+    assert.equal(snapshot.id, '2', 'the snapshot event id is the frames it holds, not zero');
     const patches = events.filter((entry) => entry.event === 'patch');
     assert.deepEqual(patches.map((entry) => entry.data.seq), [3, 4], 'the live half carries the frames the snapshot did not');
     assert.deepEqual(patches.map((entry) => Number(entry.id)), [3, 4], 'the event id IS the frame seq');
@@ -533,6 +534,29 @@ describe('run-addressed streams', () => {
 
     const exhausted = await readStream(desktop, `/api/runs/live/frames?runId=${run.id}`, '4');
     assert.deepEqual(exhausted.filter((entry) => entry.event === 'patch'), [], 'a cursor at the head replays nothing');
+  });
+
+  it('a reconnect that lands right after the snapshot repeats none of its frames', async () => {
+    const log = createRunLog(desktop.db, { now });
+    const run = await log.startRun('probe');
+    for (const text of ['one', 'two', 'three'])
+      await log.appendFrame(run.id, { kind: 'delta', body: { text, chars: text.length } });
+
+    const opened = await readStream(desktop, `/api/runs/live/frames?runId=${run.id}`, undefined,
+      (seen) => seen.some((entry) => entry.event === 'snapshot'));
+    const snapshot = opened.find((entry) => entry.event === 'snapshot')!;
+    assert.deepEqual(snapshot.data.value.rows.map((row: any) => row.seq), [1, 2, 3]);
+    assert.equal(snapshot.id, '3');
+
+    // the id a browser holds after the snapshot alone is the one it sends back
+    const resumed = await readStream(desktop, `/api/runs/live/frames?runId=${run.id}`, snapshot.id!);
+    assert.deepEqual(resumed.filter((entry) => entry.event === 'patch'), [], 'nothing the snapshot held comes again');
+    assert.equal(resumed.some((entry) => entry.event === 'snapshot'), false);
+
+    await log.appendFrame(run.id, { kind: 'delta', body: { text: 'four', chars: 4 } });
+    const after = await readStream(desktop, `/api/runs/live/frames?runId=${run.id}`, snapshot.id!,
+      (seen) => seen.some((entry) => entry.event === 'patch'));
+    assert.deepEqual(after.filter((entry) => entry.event === 'patch').map((entry) => entry.data.seq), [4]);
   });
 
   it('ends a chat run as cancelled when the wire never answers, and says so in the transcript', async () => {

@@ -45,4 +45,3 @@ export interface Artifact {
 
 
 export type ExperimentAdapter = Input;
-

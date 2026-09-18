@@ -820,5 +820,3 @@ export interface Evolve {
   decision: "implementation-missing" | "executor-conformant" | "oracle-exact";
   reportId: Sha256;
 }
-
-

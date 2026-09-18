@@ -311,4 +311,3 @@ export interface EvolveExperiment {
 export type EvolveRecord = EvolveRepository | EvolveBase | EvolveStrategy | EvolvePatch | EvolveProposal | EvolveGateResult | EvolveMeasurement | EvolveDecision | EvolveReviewBundle | EvolveExperiment;
 
 export type Evolve = EvolveRecord;
-

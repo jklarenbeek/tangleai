@@ -1,5 +1,6 @@
 /**
- * A bounded, allow-listed process runner.
+ * A bounded, allow-listed process runner over the suite's named-process
+ * executor (`@jarenjs/core/process-node`).
  *
  * The rule that matters most here: a command is selected by NAME from a
  * table the host wrote, and the name resolves to a file the host chose. A
@@ -9,19 +10,24 @@
  * directory outside the declared root, or an environment variable the
  * allow-list does not carry.
  *
- * Everything is a value. A spawn that fails with ENOENT, a child that
- * outruns its deadline, a flood of output — each is a refusal with a code,
- * never an exception. That is what lets the layer above record a run's
- * outcome instead of losing it to a stack unwind.
+ * The executor owns spawning, process-group cleanup, output caps and the
+ * deadline. This layer owns what is Tangle's: one executor per declared
+ * root, the host's fixed environment values, a bare command name resolved
+ * once against the child's PATH, and the translation of every executor
+ * verdict into an evolve outcome with a code. A spawn that fails, a child
+ * that outruns its deadline, a flood of output — each is a refusal, never
+ * an exception, which is what lets the layer above record a run's outcome
+ * instead of losing it to a stack unwind.
  *
  * Output is capped rather than buffered without limit, and exceeding the
  * cap is REPORTED as well as truncated, so a child cannot hide what it
  * did by drowning the reader in bytes.
  */
 
-import { spawn as nodeSpawn, type ChildProcess } from 'node:child_process';
-import { realpath } from 'node:fs/promises';
-import { resolve, sep } from 'node:path';
+import { spawn as nodeSpawn } from 'node:child_process';
+import { accessSync, constants } from 'node:fs';
+import { delimiter, isAbsolute, join } from 'node:path';
+import { createProcessExecutor } from '@jarenjs/core/process-node';
 
 import { refuseOne, refuse, ok, evolveIssue, type EvolveOutcome } from '../errors.ts';
 
@@ -84,67 +90,55 @@ export interface ProcessRunnerOptions {
   env: RunnerEnv;
   limits: RunnerLimits;
   roots: RunnerRoots;
-  clock?: () => number;
 }
 
-/** Whether `child` is the directory itself or below it, after both are resolved. */
-function contains(root: string, child: string): boolean {
-  if (root === child) return true;
-  return child.startsWith(root.endsWith(sep) ? root : root + sep);
-}
+type Executor = ReturnType<typeof createProcessExecutor>;
 
-/**
- * Kill the child AND everything the child started.
- *
- * `child.kill()` signals one process, and a gate command is almost never
- * one process. `node --test` runs each test file in its own worker; a
- * build script shells out; a task runner supervises. Signalling only the
- * parent leaves those workers alive and reparented to init, holding a CPU
- * for as long as the machine is up — and the runner still reports a tidy
- * `SIGKILL`, so the leak is invisible exactly where the deadline was
- * supposed to be proof that nothing escaped.
- *
- * So the child is spawned as its own process-group leader and the whole
- * group is signalled by negative pid. Windows has no equivalent, and the
- * single-process kill is all that is available there.
- */
-function killTree(child: ChildProcess): void {
-  const pid = child.pid;
-  if (pid === undefined) return;
-  if (process.platform === 'win32') {
-    try { child.kill('SIGKILL'); } catch { /* already gone */ }
-    return;
+/** The file a bare command name would run, searched on the child's own PATH. */
+function onPath(file: string, path: string | undefined): string | null {
+  if (isAbsolute(file)) return file;
+  if (file.includes('/') || file.includes('\\')) return null;
+  const suffixes = process.platform === 'win32' ? ['', ...(process.env.PATHEXT ?? '.EXE;.CMD;.BAT').split(';')] : [''];
+  for (const directory of (path ?? '').split(delimiter)) {
+    if (!isAbsolute(directory)) continue;
+    for (const suffix of suffixes) {
+      const candidate = join(directory, file + suffix);
+      try { accessSync(candidate, constants.X_OK); return candidate; }
+      catch { /* not here */ }
+    }
   }
-  // The group first. ESRCH means it is already gone, which is the goal.
-  try { process.kill(-pid, 'SIGKILL'); }
-  catch { /* fall through to the single process */ }
-  try { child.kill('SIGKILL'); } catch { /* already gone */ }
-}
-
-/** A bounded sink: keeps at most `cap` bytes and remembers it dropped some. */
-function createSink(cap: number) {
-  const chunks: Buffer[] = [];
-  let kept = 0;
-  let overflowed = false;
-  return {
-    write(chunk: Buffer): void {
-      if (kept >= cap) { overflowed = true; return; }
-      const room = cap - kept;
-      if (chunk.length <= room) { chunks.push(chunk); kept += chunk.length; return; }
-      chunks.push(chunk.subarray(0, room));
-      kept = cap;
-      overflowed = true;
-    },
-    get text(): string { return Buffer.concat(chunks).toString('utf8'); },
-    get truncated(): boolean { return overflowed; },
-  };
+  return null;
 }
 
 export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunner {
   const spawn = options.spawn ?? nodeSpawn;
-  const clock = options.clock ?? (() => performance.now());
   const { allow, env, limits, roots } = options;
   let spawns = 0;
+
+  // The child's environment is built, never inherited: the executor copies
+  // only allow-listed names, and the host's fixed values ride every request.
+  const envNames = [...new Set([...env.allow, ...Object.keys(env.set)])];
+  const childPath = Object.hasOwn(env.set, 'PATH') ? env.set.PATH : env.allow.includes('PATH') ? process.env.PATH : undefined;
+  const counted = ((...args: Parameters<SpawnFn>) => { spawns++; return spawn(...args); }) as SpawnFn;
+  const unresolved = new Set<string>();
+  const executors = new Map<RunnerCwd, Executor>();
+  for (const cwd of ['worktree', 'repository', 'base'] as const) {
+    const root = roots[cwd];
+    if (root === undefined) continue;
+    const table: Record<string, { argv0: string, args: (argv: readonly string[]) => boolean }> = {};
+    for (const [name, command] of Object.entries(allow)) {
+      if (command.cwd !== cwd) continue;
+      const file = onPath(command.file, childPath);
+      if (file === null) { unresolved.add(name); continue; }
+      table[name] = { argv0: file, args: (argv) => command.args([...argv]).ok };
+    }
+    executors.set(cwd, createProcessExecutor({
+      cwd: root, allow: table, env: { allow: envNames },
+      timeoutMs: limits.legMs, maxStdoutBytes: limits.stdoutBytes, maxStderrBytes: limits.stderrBytes,
+      // A deadline is a verdict, not a request to wind down.
+      killSignal: 'SIGKILL', spawn: counted as never,
+    }));
+  }
 
   return {
     get spawns() { return spawns; },
@@ -158,99 +152,65 @@ export function createProcessRunner(options: ProcessRunnerOptions): ProcessRunne
       const accepted = allowed.args(request.args);
       if (!accepted.ok) return accepted as EvolveOutcome<RunResult>;
 
-      const root = roots[allowed.cwd];
-      if (root === undefined) {
+      const executor = executors.get(allowed.cwd);
+      if (executor === undefined) {
         return refuseOne<RunResult>('TEVO1006', '/cwd', 'No ' + allowed.cwd + ' root is declared for ' + request.name + '.');
       }
-
-      // realpath on BOTH sides, so a symlink cannot point a legal-looking
-      // path at a directory outside the root.
-      let resolvedRoot: string;
-      let resolvedCwd: string;
-      try {
-        resolvedRoot = await realpath(resolve(root));
-        resolvedCwd = await realpath(resolve(request.cwd));
-      }
-      catch {
-        return refuseOne<RunResult>('TEVO1006', '/cwd', 'The working directory does not resolve.');
-      }
-      if (!contains(resolvedRoot, resolvedCwd)) {
-        return refuseOne<RunResult>('TEVO1006', '/cwd', 'The working directory escapes the ' + allowed.cwd + ' root.');
+      if (unresolved.has(request.name)) {
+        return refuseOne<RunResult>('TEVO1006', '/name', 'Spawning ' + request.name + ' failed: ' + allowed.file + ' is not on the PATH.');
       }
 
-      // The child's environment is built, never inherited. A name outside
-      // the allow-list cannot reach the child even if it is set here.
-      const childEnv: Record<string, string> = {};
-      for (const name of env.allow) {
-        const value = process.env[name];
-        if (typeof value === 'string') childEnv[name] = value;
+      // The executor resolves both sides through realpath, so a symlink
+      // cannot point a legal-looking path at a directory outside the root.
+      const result = await executor.run({ name: request.name, args: request.args, cwd: request.cwd, env: env.set, signal: request.signal });
+
+      switch (result.refused) {
+        case undefined: break;
+        case 'cwd-escape':
+          return refuseOne<RunResult>('TEVO1006', '/cwd', 'The working directory escapes the ' + allowed.cwd + ' root.');
+        case 'request-rejected':
+          return refuseOne<RunResult>('TEVO1006', '/cwd', 'The working directory does not resolve.');
+        case 'argument-rejected':
+          return refuseOne<RunResult>('TEVO1006', '/args', 'The arguments for ' + request.name + ' exceed the process bounds.');
+        case 'env-rejected':
+          return refuseOne<RunResult>('TEVO1006', '/env', 'The environment for ' + request.name + ' exceeds the process bounds.');
+        case 'cancelled':
+          return refuseOne<RunResult>('TEVO1006', '/signal', request.name + ' was cancelled before it started.');
+        default:
+          return refuseOne<RunResult>('TEVO1006', '/name', 'Running ' + request.name + ' was refused: ' + result.refused + '.');
       }
-      for (const [name, value] of Object.entries(env.set)) childEnv[name] = value;
-
-      const started = clock();
-      let child: ChildProcess;
-      try {
-        spawns++;
-        child = spawn(allowed.file, request.args, {
-          cwd: resolvedCwd,
-          env: childEnv,
-          stdio: ['ignore', 'pipe', 'pipe'],
-          shell: false,
-          // Its own process group, so the deadline can reach the whole
-          // tree and not just its root. See killTree.
-          detached: process.platform !== 'win32',
-        });
+      if (result.reason === 'spawn-error' || result.reason === 'process-error' || result.reason === 'input-error') {
+        return refuseOne<RunResult>('TEVO1006', '/name', 'Running ' + request.name + ' failed: ' + result.reason + '.');
       }
-      catch (error) {
-        return refuseOne<RunResult>('TEVO1006', '/name',
-          'Spawning ' + request.name + ' failed: ' + (error instanceof Error ? error.message : String(error)) + '.');
-      }
-
-      const stdout = createSink(limits.stdoutBytes);
-      const stderr = createSink(limits.stderrBytes);
-      child.stdout?.on('data', (chunk: Buffer) => stdout.write(chunk));
-      child.stderr?.on('data', (chunk: Buffer) => stderr.write(chunk));
-
-      let timedOut = false;
-      const timer = setTimeout(() => { timedOut = true; killTree(child); }, limits.legMs);
-      const onAbort = () => killTree(child);
-      request.signal?.addEventListener('abort', onAbort, { once: true });
-
-      const settled = await new Promise<{ code: number | null, signal: string | null, error?: Error }>(resolveSettled => {
-        child.once('error', (error: Error) => resolveSettled({ code: null, signal: null, error }));
-        child.once('close', (code, signal) => resolveSettled({ code, signal: signal ?? null }));
-      });
-      clearTimeout(timer);
-      request.signal?.removeEventListener('abort', onAbort);
-
-      const durationMs = clock() - started;
-
-      if (settled.error && !timedOut) {
-        return refuseOne<RunResult>('TEVO1006', '/name',
-          'Running ' + request.name + ' failed: ' + settled.error.message + '.');
+      if (result.settlement === 'unresolved') {
+        return refuseOne<RunResult>('TEVO1006', '/name', request.name + ' did not exit after it was stopped; its process is still owned.');
       }
 
       const value: RunResult = {
-        exitCode: settled.code,
-        signal: timedOut ? 'SIGKILL' : settled.signal,
-        stdout: stdout.text,
-        stderr: stderr.text,
-        truncated: { stdout: stdout.truncated, stderr: stderr.truncated },
-        durationMs,
+        exitCode: result.exitCode,
+        signal: result.signal,
+        stdout: result.stdout,
+        stderr: result.stderr,
+        truncated: { stdout: result.truncated.stdout, stderr: result.truncated.stderr },
+        durationMs: result.durationMs,
       };
 
       // A budget that was exceeded is reported even though the output was
       // already capped: truncation alone would let a flood pass quietly.
       const exhausted = [];
-      if (timedOut) {
+      if (result.reason === 'timeout') {
         exhausted.push(evolveIssue('TEVO1005', '/budgets/legMs',
           request.name + ' exceeded ' + limits.legMs + 'ms and was killed.'));
       }
-      if (stdout.truncated) {
+      if (result.reason === 'drain-timeout') {
+        exhausted.push(evolveIssue('TEVO1005', '/budgets/legMs',
+          request.name + ' exited but its output did not close and was killed.'));
+      }
+      if (value.truncated.stdout) {
         exhausted.push(evolveIssue('TEVO1005', '/budgets/stdoutBytes',
           request.name + ' wrote more than ' + limits.stdoutBytes + ' stdout bytes.'));
       }
-      if (stderr.truncated) {
+      if (value.truncated.stderr) {
         exhausted.push(evolveIssue('TEVO1005', '/budgets/stderrBytes',
           request.name + ' wrote more than ' + limits.stderrBytes + ' stderr bytes.'));
       }

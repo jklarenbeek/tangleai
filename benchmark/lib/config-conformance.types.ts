@@ -345,5 +345,3 @@ export interface ConfigConformance {
   gate: { schemaValid: true; transportCalls: 0; probeCalls: 0; modelCalls: 0; };
   reportId: Sha256;
 }
-
-

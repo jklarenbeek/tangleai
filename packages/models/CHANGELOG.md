@@ -1,5 +1,9 @@
 # @tangleai/models
 
+## 0.30.0
+
+No changes in this release.
+
 ## 0.29.8
 
 No changes in this release.

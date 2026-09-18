@@ -1,12 +1,11 @@
 /**
- * The evidence trail, and the two traps the guarded engine sets.
+ * The evidence trail, and the two rules the guarded engine asks for.
  *
- * The engine reads a validator that returns a Promise as
- * `{ valid: false, errors: [] }` — a refusal with no reason, which looks
- * like a bug in the caller rather than in the validator. So two things are
+ * The engine's synchronous `prepare` refuses a validator that returns a
+ * Promise (only `prepareAsync` and `commit` await one). So two things are
  * pinned here rather than assumed: that every validator this module
  * supplies is synchronous, and that no refusal it produces ever carries an
- * empty `errors`. Either one alone would let the trap through.
+ * empty `errors`.
  *
  * The other assertions are about what a refinement may reach. The ledger's
  * vocabulary cannot address inside a record and the skill schema carries no
@@ -17,6 +16,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { createGuardedRefiner } from '@jarenjs/core/guarded';
 import { createLedger } from '@tangleai/context/ledger';
 import { createStrategyRefiner, evidenceOperation, STRATEGY_EVIDENCE_PATH } from '@tangleai/evolve';
 
@@ -159,15 +159,35 @@ describe('what a refinement may not reach', () => {
   });
 });
 
-describe('the engine’s two traps', () => {
+describe('the engine’s two rules', () => {
+  it('relies on an engine that names an asynchronous hook instead of refusing silently', async () => {
+    let written = 0;
+    const engine = createGuardedRefiner({
+      read: async () => ({ n: 1 }),
+      validateProposal: () => ({ valid: true, errors: [] }),
+      apply: (document: { n: number }, by: number) => ({ n: document.n + by }),
+      validateCandidate: async () => ({ valid: false, errors: [{ code: 'TEVO1011', docPath: '', message: 'the evaluator said no' }] }),
+      planCommit: (next: unknown) => next,
+      commit: async () => { written++; },
+    });
+    const sync = engine.prepare({ n: 1 }, 1);
+    assert.equal(sync.valid, false);
+    assert.match(String(sync.errors[0]?.message), /asynchronous hook/, 'the synchronous path says why');
+    const awaited = await engine.prepareAsync({ n: 1 }, 1);
+    assert.deepEqual(awaited.errors.map((one: { message: string }) => one.message), ['the evaluator said no']);
+    const committed = await engine.commit(1);
+    assert.equal(committed.ok, false);
+    assert.equal(written, 0, 'an asynchronous refusal never reaches the writer');
+  });
+
   it('supplies only synchronous validators', async () => {
     const ledger = await withSkill();
     const refiner = createStrategyRefiner({ ledger: ledger as never, at: AT });
     const snapshot = await refiner.read();
 
-    // If any validator returned a Promise the engine would answer
-    // `{ valid: false, errors: [] }`, so a VALID proposal preparing cleanly
-    // is itself the proof that none of them does.
+    // If any validator returned a Promise the synchronous path would refuse
+    // it, so a VALID proposal preparing cleanly is itself the proof that
+    // none of them does.
     const prepared = refiner.prepare(snapshot, [evidenceOperation(APPEND)]);
     assert.equal(prepared.valid, true, JSON.stringify(prepared.errors));
     assert.ok(!(prepared as unknown as Promise<unknown>).then, 'prepare is synchronous');
@@ -188,7 +208,7 @@ describe('the engine’s two traps', () => {
       const refused = refiner.prepare(snapshot, proposal);
       assert.equal(refused.valid, false);
       assert.ok(refused.errors.length >= 1,
-        'an empty errors array is indistinguishable from the accidental-Promise trap');
+        'every refusal states at least one reason');
       for (const issue of refused.errors as Array<{ code: string, detail: string }>) {
         assert.match(issue.code, /^TEVO10\d\d$/);
         assert.ok(issue.detail.length > 0, 'and every reason is stated');

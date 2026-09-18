@@ -869,5 +869,3 @@ export interface MasWorkflow {
   config: { registryRevision: null | Sha256; profile: Name; };
   compile: { schemaVersion: "0.1"; sourceMode: "declarative" | "imperative"; sourceDesignRevision: null | Sha256; executableRevision: null | Sha256; };
 }
-
-

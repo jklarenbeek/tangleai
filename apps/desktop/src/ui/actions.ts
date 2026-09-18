@@ -43,7 +43,7 @@ export const INITIAL_STATE = {
     watch: null as string | null,
     /** A fresh attempt number restarts the frame subscription at the seq the rows reached. */
     frameAttempt: 0,
-    frames: { runId: null as string | null, rows: [] as any[], lastSeq: 0 },
+    frames: { runId: null as string | null, rows: [] as any[] },
     detail: null as any,
     syncing: false,
     syncError: null as string | null,
@@ -258,7 +258,7 @@ export const ACTIONS: Record<string, any> = {
    * subscription that starts for it seeds the slot with its own id. */
   'loom/follow': { patch: [{ op: 'replace', path: '/loom/watch', value: '$payload' }] },
   'loom/frames': { patch: [{ op: 'replace', path: '/loom/frames', value: '$payload' }] },
-  /** A lost stream: a new attempt restarts the subscription from the seq the rows already reached. */
+  /** A lost stream: a new attempt restarts the subscription from a fresh snapshot of the run. */
   'loom/frameLost': { patch: [{ op: 'replace', path: '/loom/frameAttempt', value: '$payload' }] },
   'runs/refresh': {
     effects: [

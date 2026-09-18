@@ -1,12 +1,10 @@
 /**
  * The guarded patch path, and the two traps its contract sets.
  *
- * The suite reads a validator that returns a Promise as
- * `{ valid: false, errors: [] }` — a refusal with no reason. So two
- * properties are pinned here that no ordinary test would think to check:
- * that every validator this consumer supplies is declared synchronous, and
- * that no refusal ever arrives with an empty error list. Either failing
- * would turn a real refusal into an unexplained one.
+ * The suite's synchronous `prepare` refuses a validator that returns a
+ * Promise. So two properties are pinned here that no ordinary test would
+ * think to check: that every validator this consumer supplies is declared
+ * synchronous, and that no refusal ever arrives with an empty error list.
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
@@ -62,7 +60,7 @@ describe('the guarded patch path', () => {
       const prepared = refiner.prepare(base, proposal(patch));
       assert.equal(prepared.ok, false, JSON.stringify(patch));
       const issues = (prepared as { issues: EvolveIssue[] }).issues;
-      assert.ok(issues.length >= 1, 'an empty refusal is indistinguishable from the Promise trap');
+      assert.ok(issues.length >= 1, 'every refusal states at least one reason');
       assert.ok(issues.every(one => one.detail.length > 0 && one.code.startsWith('TEVO')));
     }
   });
@@ -78,9 +76,8 @@ describe('the guarded patch path', () => {
   });
 
   it('declares every validator synchronously', async () => {
-    // A validator that returns a Promise is read as a refusal with no
-    // errors. Reading the source is the only way to pin this, because the
-    // failure mode is silent.
+    // A validator that returns a Promise would make every synchronous
+    // preparation a refusal. Reading the source pins the declaration itself.
     const source = await readFile('packages/evolve/src/patch.ts', 'utf8');
     const start = source.indexOf('createGuardedRefiner({');
     assert.ok(start > 0, 'the consumer must call the suite editor');
