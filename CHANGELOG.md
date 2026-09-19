@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.30.1
+
+Move the store onto the Jaren 0.91.4 registry foundation and source pin. The new foundation fixes four quirks of the native store's relational entity path: a declared index on a foreign-key column is the key's own index, a set-null foreign key reopens, session capture decodes a table that gained a column by `ADD COLUMN`, and an additive migration on a table with a foreign key or an enum check is accepted. They are evaluated and have nothing to change in Tangle: its database model declares document collections only, with no entity, relation or foreign key, so no Tangle path reached the defects and there was no local workaround to remove. Every keyless benchmark document is requalified against the new foundation.
+
 ## 0.30.0
 
 Move onto the Jaren 0.91.3 registry foundation and source pin, and consume what

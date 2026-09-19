@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "version": "0.30.1",
+  "baseVersion": "0.30.0",
+  "baseCommit": "d954084b4020acb6c778ac19807eed36fae3d950",
+  "preparationCommit": "d954084b4020acb6c778ac19807eed36fae3d950",
+  "initial": false,
+  "inputHash": "77983c8d7d848c4e817974e6b9f3564c9155e55d1d5b4b9a6b49139cba220c94",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Move the store onto the Jaren 0.91.4 registry foundation and source pin. The new foundation fixes four quirks of the native store's relational entity path: a declared index on a foreign-key column is the key's own index, a set-null foreign key reopens, session capture decodes a table that gained a column by `ADD COLUMN`, and an additive migration on a table with a foreign key or an enum check is accepted. They are evaluated and have nothing to change in Tangle: its database model declares document collections only, with no entity, relation or foreign key, so no Tangle path reached the defects and there was no local workaround to remove. Every keyless benchmark document is requalified against the new foundation.",
+      "id": "jaren-relation-quirk-fixes"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.30.1"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.30.1"
+    }
+  ]
+}

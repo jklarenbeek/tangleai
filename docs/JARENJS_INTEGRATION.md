@@ -1,11 +1,11 @@
 # JarenJS integration
 
-Tangle consumes **Jaren 0.91.3**, tag `v0.91.3`, source commit
-`1577600d98b9ef23381843911958aab10728707f`. Upstream `main`, the tag and all 23
-consumed npm latest releases agreed when checked on 2026-09-17. The submodule is the source
+Tangle consumes **Jaren 0.91.4**, tag `v0.91.4`, source commit
+`30ec046081c02c80ad1916569c45e134e33fb82b`. Upstream `main`, the tag and all 23
+consumed npm latest releases agreed when checked on 2026-09-19. The submodule is the source
 reference; runtime imports resolve to the 23 published npm packages. All 116
 direct dependency references are exact pins. The lock records registry URLs and
-integrities; the [registry receipt](integration/jaren-0.91.3-registry.json) checks
+integrities; the [registry receipt](integration/jaren-0.91.4-registry.json) checks
 all 23 downloaded archives against it. [The consumer gate](CONSUMER_GATE.md)
 describes these checks as a reusable pattern for other suite consumers. This receipt does not claim a source
 rebuild comparison. Installed packages are neither patched nor source-linked.
@@ -37,7 +37,27 @@ activation, claim support policy, callback reservations and host trigger
 eligibility. The frozen standard-BM25 comparison lives only in the benchmark;
 production lexical routing delegates to `compileLexical`.
 
-## Changes from 0.91.2 to 0.91.3 and current adoption
+## Changes from 0.91.3 to 0.91.4 and current adoption
+
+One upstream commit covers this update: four fixes in `@jarenjs/db`, all on
+the relational entity path, reported by another suite consumer. A declared
+`index` or `unique` on a foreign-key column is now the key's own index rather
+than a second one (and `unique` on the key of a one-to-many edge is refused as
+`JD0031`); a `setNull` foreign key reopens instead of reading as a changed
+model; session capture decodes a table that gained a column through
+`ADD COLUMN` by its physical column order; and managed named-column comparison
+lets a plain column sit anywhere among columns with order-sensitive inline
+clauses, so `migrate()` accepts its own additive plan on a table with a foreign
+key or an enum check. Every other consumed package advances its version and
+dependency references only. The
+[upstream comparison](https://github.com/jklarenbeek/jarenjs/compare/v0.91.3...v0.91.4)
+and pinned submodule retain the exact implementation and tests.
+
+| Surface | Tangle use and boundary |
+|---|---|
+| Relation index, `setNull` reopen, migrated-table capture, additive-migration shape (`@jarenjs/db`) | **Available; no Tangle path reaches them.** The Tangle database model declares document `collections` only, with JSON-path indexes: no entity, no relation, no foreign key. The desktop store opens with `capture: { mode: 'auto' }`, which resolves to session capture on Node SQLite, but the capture realignment applies to entity tables alone, and no Tangle collection gains a column through `ADD COLUMN`. The only entity declarations are the host-table checks in the native-foundation and editor-adapter tests, which declare no relation. There was no local workaround to remove; the store, desktop and migration consumers pass unchanged on the new foundation. |
+
+## Changes from 0.91.2 to 0.91.3
 
 Three upstream commits cover this update. They add paired inference, rank
 fusion, text-edit compilation, asynchronous guarded validation, a Node-only

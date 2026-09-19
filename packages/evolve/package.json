@@ -1,6 +1,6 @@
 {
   "name": "@tangleai/evolve",
-  "version": "0.30.0",
+  "version": "0.30.1",
   "description": "Isolated propose, apply, gate, measure and decide experiments over a repository, with human merge authority",
   "license": "MIT",
   "type": "module",
@@ -22,15 +22,15 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@jarenjs/contract": "0.91.3",
-    "@jarenjs/core": "0.91.3",
-    "@jarenjs/json": "0.91.3",
-    "@jarenjs/validate": "0.91.3",
-    "@tangleai/config": "^0.30.0",
-    "@tangleai/context": "^0.30.0",
-    "@tangleai/core": "^0.30.0",
-    "@tangleai/mas": "^0.30.0",
-    "@tangleai/outcomes": "^0.30.0"
+    "@jarenjs/contract": "0.91.4",
+    "@jarenjs/core": "0.91.4",
+    "@jarenjs/json": "0.91.4",
+    "@jarenjs/validate": "0.91.4",
+    "@tangleai/config": "^0.30.1",
+    "@tangleai/context": "^0.30.1",
+    "@tangleai/core": "^0.30.1",
+    "@tangleai/mas": "^0.30.1",
+    "@tangleai/outcomes": "^0.30.1"
   },
   "private": false,
   "types": "./src/index.ts",

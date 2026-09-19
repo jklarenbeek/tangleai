@@ -1,5 +1,19 @@
 # @tangleai/store
 
+## 0.30.1
+
+### Patch Changes
+
+- Move the store onto the Jaren 0.91.4 registry foundation and source pin. The new foundation fixes four quirks of the native store's relational entity path: a declared index on a foreign-key column is the key's own index, a set-null foreign key reopens, session capture decodes a table that gained a column by `ADD COLUMN`, and an additive migration on a table with a foreign key or an enum check is accepted. They are evaluated and have nothing to change in Tangle: its database model declares document collections only, with no entity, relation or foreign key, so no Tangle path reached the defects and there was no local workaround to remove. Every keyless benchmark document is requalified against the new foundation.
+- @tangleai/config@0.30.1
+  - @tangleai/core@0.30.1
+  - @tangleai/documents@0.30.1
+  - @tangleai/evolve@0.30.1
+  - @tangleai/mas@0.30.1
+  - @tangleai/memory@0.30.1
+  - @tangleai/outcomes@0.30.1
+  - @tangleai/trace2skill@0.30.1
+
 ## 0.30.0
 
 ### Patch Changes

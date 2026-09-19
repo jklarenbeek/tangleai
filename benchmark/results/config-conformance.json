@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "0c21222124c7d56d26c044a69aac963cc41eb3d6",
+    "head": "d954084b4020acb6c778ac19807eed36fae3d950",
     "clean": false,
     "files": [
       {
@@ -120,113 +120,113 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "311220e14bf7714d0259cdd564254d2ea83081b0417f61e639fe94db06d91c0b"
+    "sha256": "efcb8bca1a3cbd234ea58d2b37a363611e0e42782cb8a165192ae9d511af804b"
   },
   "suite": {
     "packages": [
       {
         "name": "@jarenjs/app",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/calc",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/charts",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/collection",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/contract",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/core",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/db",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/emit",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/flow",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/formats",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/forms",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/josl",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/json",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/linq",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/locales",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/md",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/mermaid",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/play",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/refs",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/rules",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/studio",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/validate",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@jarenjs/view",
-        "version": "0.91.3"
+        "version": "0.91.4"
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.29.8"
+        "version": "0.30.1"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.29.8"
+        "version": "0.30.1"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.29.8"
+        "version": "0.30.1"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 37,
-      "revision": "0aebbd4f243ced6dc35e7fa1eb349d25456533a663f0abe34d5eac8385fcb0ff"
+      "revision": "41c23d83e63712043190e0e0659c6cb921dbb92978ae1bf4929ddf677ee32679"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "d1c87fdbb677964e78ee82cfa5fac7f60e36cc7e63516730d4b1fad99dc1bb1d"
+  "reportId": "44572af3c0511c4ef612bedd8bc1923e15e522bd51b2368bc3850045c2c1b1c1"
 }
