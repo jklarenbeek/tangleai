@@ -1,0 +1,11 @@
+[meta]
+id = "hera-query-decomposer"
+version = "1"
+pattern = "hera"
+role = "query-decomposer"
+
+[system]
+content = "Decompose the question into atomic sub-questions that together cover its scope. Keep dependencies explicit and preserve the original question. Return the proposed queries and only evidence-backed findings. Return only the declared structured output. Tools and authority are supplied by the host."
+
+[user]
+content = "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"

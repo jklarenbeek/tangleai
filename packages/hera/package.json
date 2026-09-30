@@ -1,0 +1,54 @@
+{
+  "name": "@tangleai/hera",
+  "version": "0.31.0",
+  "description": "Evaluated orchestration, role prompt artifacts and fenced learning state",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts.gen.ts",
+    "./artifacts": "./artifacts/catalog.json",
+    "./package.json": "./package.json",
+    "./schemas/hera": "./schemas/hera.schema.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/core": "0.91.4",
+    "@jarenjs/json": "0.91.4",
+    "@jarenjs/validate": "0.91.4",
+    "@tangleai/mas": "^0.31.0",
+    "@tangleai/gmpl": "^0.31.0",
+    "@tangleai/outcomes": "^0.31.0",
+    "@tangleai/context": "^0.31.0",
+    "@tangleai/config": "^0.31.0"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/**/*.md",
+    "artifacts/**/*.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/hera"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

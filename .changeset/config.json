@@ -20,8 +20,9 @@
       "@tangleai/outcomes",
       "@tangleai/trace2skill",
       "@tangleai/evolve",
-      "@tangleai/store",
-      "@tangleai/gmpl"
+      "@tangleai/gmpl",
+      "@tangleai/hera",
+      "@tangleai/store"
     ]
   ],
   "linked": [],

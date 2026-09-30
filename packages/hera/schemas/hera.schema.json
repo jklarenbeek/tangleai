@@ -1,0 +1,3068 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/hera",
+  "title": "Experience-guided orchestration contracts",
+  "$defs": {
+    "heraIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "THERA1001",
+            "THERA1002",
+            "THERA1003",
+            "THERA1004",
+            "THERA1005",
+            "THERA1006",
+            "THERA1007",
+            "THERA1008",
+            "THERA1009"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "cause": {}
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "heraMode": {
+      "enum": [
+        "learn",
+        "evaluate",
+        "infer"
+      ]
+    },
+    "heraBudget": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fanOut": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "turns",
+        "nodes",
+        "depth",
+        "fanOut",
+        "concurrency"
+      ],
+      "additionalProperties": false
+    },
+    "heraUsage": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimatedTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownMsRequests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "promptTokens",
+        "completionTokens",
+        "unknownTokenRequests",
+        "estimatedTokens",
+        "ms",
+        "unknownMsRequests"
+      ],
+      "additionalProperties": false
+    },
+    "heraProfile": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "embeddedBy": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "text",
+        "tags",
+        "embedding",
+        "embeddedBy"
+      ],
+      "additionalProperties": false
+    },
+    "heraEvaluator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "successRuleId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "successRuleId"
+      ],
+      "additionalProperties": false
+    },
+    "heraLearningConfig": {
+      "type": "object",
+      "properties": {
+        "groupSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxAgents": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "selectorVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selectorWeights": {
+          "type": "object",
+          "properties": {
+            "similarity": {
+              "type": "number",
+              "minimum": 0
+            },
+            "utility": {
+              "type": "number",
+              "minimum": 0
+            },
+            "novelty": {
+              "type": "number",
+              "minimum": 0
+            },
+            "selectionPenalty": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "similarity",
+            "utility",
+            "novelty",
+            "selectionPenalty"
+          ],
+          "additionalProperties": false
+        },
+        "selectorCap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "libraryCap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "operationCap": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "failureBufferSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "consecutiveFailures": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "variantAxes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "promptBounds": {
+          "type": "object",
+          "properties": {
+            "maxRules": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxBytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxOps": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "maxRules",
+            "maxBytes",
+            "maxOps"
+          ],
+          "additionalProperties": false
+        },
+        "flags": {
+          "type": "object",
+          "properties": {
+            "experience": {
+              "type": "boolean"
+            },
+            "rope": {
+              "type": "boolean"
+            },
+            "mutation": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "experience",
+            "rope",
+            "mutation"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "groupSize",
+        "maxAgents",
+        "selectorVersion",
+        "selectorWeights",
+        "selectorCap",
+        "libraryCap",
+        "operationCap",
+        "failureBufferSize",
+        "consecutiveFailures",
+        "variantAxes",
+        "promptBounds",
+        "flags"
+      ],
+      "additionalProperties": false
+    },
+    "heraHead": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "library",
+            "prompt",
+            "snapshot"
+          ]
+        },
+        "versionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "kind",
+        "versionId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "heraTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileHints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "corpusRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "split": {
+          "enum": [
+            "training",
+            "held-out",
+            "unlabelled"
+          ]
+        },
+        "evaluator": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "successRuleId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "successRuleId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goldAddress": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcomeAddress": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "query",
+        "corpusRevision",
+        "split",
+        "evaluator"
+      ],
+      "additionalProperties": false
+    },
+    "heraAgentDefinition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "envelopeRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "contextAdapters": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activePromptVersionId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "archived"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "title",
+        "artifactId",
+        "envelopeRevision",
+        "tools",
+        "contextAdapters",
+        "profile",
+        "activePromptVersionId",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "heraPromptVersion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "envelopeRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "operationalRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "behavioralPrinciples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "effectivePrompt": {
+          "type": "string"
+        },
+        "sourceTrialIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "enum": [
+            "candidate",
+            "active",
+            "rejected",
+            "archived"
+          ]
+        },
+        "size": {
+          "type": "object",
+          "properties": {
+            "rules": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "rules",
+            "bytes"
+          ],
+          "additionalProperties": false
+        },
+        "at": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "agentId",
+        "parentId",
+        "envelopeRevision",
+        "operationalRules",
+        "behavioralPrinciples",
+        "effectivePrompt",
+        "sourceTrialIds",
+        "status",
+        "size",
+        "at"
+      ],
+      "additionalProperties": false
+    },
+    "heraTopology": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "embedding": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "embeddedBy": {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dims": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "model",
+                "dims"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "text",
+            "tags",
+            "embedding",
+            "embeddedBy"
+          ],
+          "additionalProperties": false
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "agentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "promptVersionId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "dependsOn": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "agentId",
+              "promptVersionId",
+              "dependsOn"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "offeredExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "appliedExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "generator": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "fixed",
+                "orchestrator",
+                "mutation"
+              ]
+            },
+            "configRevision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "configRevision"
+          ],
+          "additionalProperties": false
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/heraIssue"
+              }
+            }
+          },
+          "required": [
+            "valid",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "workflowVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "profile",
+        "nodes",
+        "offeredExperienceIds",
+        "appliedExperienceIds",
+        "generator",
+        "validation",
+        "workflowVersionId"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": "$.nodes[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.nodes[*].id"
+                }
+              }
+            ]
+          },
+          {
+            "$every": {
+              "n": "$.nodes[*]"
+            },
+            "$satisfies": {
+              "$every": {
+                "dependency": "$n.dependsOn[*]"
+              },
+              "$satisfies": {
+                "$some": {
+                  "other": "$.nodes[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$other.id",
+                    "$dependency"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "heraTrajectory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "topologyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "masRunId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "groupId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invocationOrder": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "answer": {
+          "type": "string"
+        },
+        "claimEnvelopeId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "primaryScore": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "success": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tokens": {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "completion": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknownRequests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "estimated": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "prompt",
+            "completion",
+            "unknownRequests",
+            "estimated"
+          ],
+          "additionalProperties": false
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stopReason": {
+          "type": "string"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "node": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "issue": {
+                  "$ref": "#/$defs/heraIssue"
+                }
+              },
+              "required": [
+                "node",
+                "issue"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stepIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "orphan",
+            "skipped"
+          ]
+        },
+        "identityId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "citationRecall": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unsupported": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/heraIssue"
+              }
+            }
+          },
+          "required": [
+            "citationRecall",
+            "unsupported"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "topologyId",
+        "masRunId",
+        "groupId",
+        "invocationOrder",
+        "answer",
+        "claimEnvelopeId",
+        "citations",
+        "primaryScore",
+        "success",
+        "tokens",
+        "calls",
+        "stopReason",
+        "failure",
+        "stepIds",
+        "status",
+        "identityId",
+        "metrics"
+      ],
+      "additionalProperties": false
+    },
+    "heraTrajectoryStep": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trajectoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invocationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promptVersionId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "masAttemptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputView": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "enum": [
+                "retained",
+                "truncated",
+                "omitted"
+              ]
+            },
+            "text": {
+              "type": "string"
+            },
+            "originalBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "state",
+            "text",
+            "originalBytes"
+          ],
+          "additionalProperties": false
+        },
+        "transcriptView": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "enum": [
+                "retained",
+                "truncated",
+                "omitted"
+              ]
+            },
+            "text": {
+              "type": "string"
+            },
+            "originalBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "state",
+            "text",
+            "originalBytes"
+          ],
+          "additionalProperties": false
+        },
+        "toolSteps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "input": {},
+              "output": {},
+              "status": {
+                "enum": [
+                  "completed",
+                  "failed",
+                  "uncertain"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "input",
+              "output",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "evidenceAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promptTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "completionTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknownTokenRequests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "estimatedTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknownMsRequests": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "promptTokens",
+            "completionTokens",
+            "unknownTokenRequests",
+            "estimatedTokens",
+            "ms",
+            "unknownMsRequests"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "stopReason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "at": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "trajectoryId",
+        "invocationId",
+        "agentId",
+        "promptVersionId",
+        "masAttemptId",
+        "inputView",
+        "transcriptView",
+        "toolSteps",
+        "evidenceAddresses",
+        "usage",
+        "spend",
+        "stopReason",
+        "at"
+      ],
+      "additionalProperties": false
+    },
+    "heraRolloutGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requestedSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "candidateTrajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraIssue"
+          }
+        },
+        "skips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraIssue"
+          }
+        },
+        "ranking": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "mixedOutcome": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "calls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "ms": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "turns": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "nodes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "depth": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "fanOut": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "concurrency": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "calls",
+                "tokens",
+                "ms",
+                "turns",
+                "nodes",
+                "depth",
+                "fanOut",
+                "concurrency"
+              ],
+              "additionalProperties": false
+            },
+            "spent": {
+              "type": "object",
+              "properties": {
+                "calls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "ms": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "turns": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "nodes": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "depth": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "fanOut": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "concurrency": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "calls",
+                "tokens",
+                "ms",
+                "turns",
+                "nodes",
+                "depth",
+                "fanOut",
+                "concurrency"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "limits",
+            "spent"
+          ],
+          "additionalProperties": false
+        },
+        "state": {
+          "enum": [
+            "completed",
+            "failed",
+            "orphan"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "requestedSize",
+        "candidateTrajectoryIds",
+        "failures",
+        "skips",
+        "ranking",
+        "mixedOutcome",
+        "budget",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "heraSemanticAdvantage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "groupId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "successFactors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "failureModes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "insights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds",
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "failedInvocationCredit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "invocationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "invocationId",
+              "trajectoryId",
+              "reason",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "promptVersionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "sourceTrajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "groupId",
+        "successFactors",
+        "failureModes",
+        "insights",
+        "failedInvocationCredit",
+        "promptVersionIds",
+        "sourceTrajectoryIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraExperience": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "embedding": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "embeddedBy": {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dims": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "model",
+                "dims"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "text",
+            "tags",
+            "embedding",
+            "embeddedBy"
+          ],
+          "additionalProperties": false
+        },
+        "insight": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "advantageId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "groupId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "advantageId",
+            "groupId"
+          ],
+          "additionalProperties": false
+        },
+        "useCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "successCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "utility": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "selectionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "active",
+            "archived"
+          ]
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "inheritedCounts": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "useCount": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "successCount": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "useCount",
+                "successCount"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "profile",
+        "insight",
+        "provenance",
+        "useCount",
+        "successCount",
+        "utility",
+        "selectionCount",
+        "status",
+        "parents",
+        "inheritedCounts"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$le": [
+              "$.successCount",
+              "$.useCount"
+            ]
+          },
+          {
+            "$eq": [
+              "$.utility",
+              {
+                "$if": [
+                  {
+                    "$gt": [
+                      "$.useCount",
+                      0
+                    ]
+                  },
+                  {
+                    "$div": [
+                      "$.successCount",
+                      "$.useCount"
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "heraPromptTrial": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failedInvocationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "bufferTrajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "axis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidatePromptVersionId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "controlTrajectoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replayTrajectoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delta": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "tokens": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "score",
+            "tokens"
+          ],
+          "additionalProperties": false
+        },
+        "operationalRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "behavioralPrinciples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "decision": {
+          "enum": [
+            "activated",
+            "rejected",
+            "malformed",
+            "unevaluated"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "agentId",
+        "failedInvocationIds",
+        "bufferTrajectoryIds",
+        "axis",
+        "candidatePromptVersionId",
+        "controlTrajectoryId",
+        "replayTrajectoryId",
+        "delta",
+        "operationalRules",
+        "behavioralPrinciples",
+        "decision",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "heraLearningSnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "activePromptVersionIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "libraryRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "experienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "registryRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "identities": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "decoder": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "corpusRevision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "embeddedBy": {
+              "type": "object",
+              "properties": {
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "dims": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "model",
+                "dims"
+              ],
+              "additionalProperties": false
+            },
+            "evaluator": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "successRuleId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "successRuleId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "model",
+            "decoder",
+            "tools",
+            "corpusRevision",
+            "embeddedBy",
+            "evaluator"
+          ],
+          "additionalProperties": false
+        },
+        "config": {
+          "$ref": "#/$defs/heraLearningConfig"
+        },
+        "status": {
+          "enum": [
+            "staged",
+            "active",
+            "archived"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "parentId",
+        "activePromptVersionIds",
+        "libraryRevision",
+        "experienceIds",
+        "registryRevision",
+        "identities",
+        "config",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "heraQueryDecomposerOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "queries"
+      ],
+      "additionalProperties": false
+    },
+    "heraRetrieverOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "selectedEvidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "selectedEvidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraAnswerGeneratorOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "heraQueryRewriterOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "queries"
+      ],
+      "additionalProperties": false
+    },
+    "heraEvidenceSelectorOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "selectedEvidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "selectedEvidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraContextValidatorOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sufficient": {
+          "type": "boolean"
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "sufficient",
+        "missing"
+      ],
+      "additionalProperties": false
+    },
+    "heraReflectAgentOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "problems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
+        "problems"
+      ],
+      "additionalProperties": false
+    },
+    "heraConcludeAgentOutput": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "heraPlanOutput": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "agentId": {
+                "enum": [
+                  "query-decomposer",
+                  "retriever",
+                  "answer-generator",
+                  "query-rewriter",
+                  "evidence-selector",
+                  "context-validator",
+                  "reflect-agent",
+                  "conclude-agent"
+                ]
+              },
+              "dependsOn": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "agentId",
+              "dependsOn"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "appliedExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "nodes",
+        "appliedExperienceIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraReflectionOutput": {
+      "type": "object",
+      "properties": {
+        "successFactors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "failureModes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "insights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "text",
+              "trajectoryIds",
+              "stepIds",
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "failedInvocationCredit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "invocationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectoryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "invocationId",
+              "trajectoryId",
+              "reason",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "successFactors",
+        "failureModes",
+        "insights",
+        "failedInvocationCredit"
+      ],
+      "additionalProperties": false
+    },
+    "heraConsolidationOutput": {
+      "type": "object",
+      "properties": {
+        "ops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "ADD",
+                  "MERGE",
+                  "PRUNE",
+                  "KEEP"
+                ]
+              },
+              "sourceInsightIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "targetIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "op",
+              "sourceInsightIds",
+              "targetIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "ops"
+      ],
+      "additionalProperties": false
+    },
+    "heraRopeOutput": {
+      "type": "object",
+      "properties": {
+        "operationalRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "behavioralPrinciples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "derivedFrom": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "text",
+              "derivedFrom"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "derivedFrom": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "operationalRules",
+        "behavioralPrinciples",
+        "derivedFrom"
+      ],
+      "additionalProperties": false
+    },
+    "heraMutationOutput": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "replace",
+            "augment"
+          ]
+        },
+        "removeInvocationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "addAgentId": {
+          "enum": [
+            "query-decomposer",
+            "retriever",
+            "answer-generator",
+            "query-rewriter",
+            "evidence-selector",
+            "context-validator",
+            "reflect-agent",
+            "conclude-agent"
+          ]
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "addAgentId",
+        "dependsOn",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "gmplCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "type": "object"
+    },
+    "gmplClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "type": "object"
+    },
+    "gmplFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contradictory": {
+          "type": "boolean"
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "origin": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "disposition",
+        "reason",
+        "citations"
+      ],
+      "type": "object"
+    }
+  }
+}

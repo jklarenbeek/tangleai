@@ -1,5 +1,6 @@
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
+import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
 import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
 import { createMemoryOutcomeStore, createOutcomeContract } from '@tangleai/outcomes';
@@ -13,6 +14,7 @@ import { createModelProposer, selectExperiment, EVOLVE_SELECTION_DEFAULT } from 
 globalThis.tangleConsumer = {
   evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
+  hera: qualifyHeraBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
   trace2skill: qualifyTrace2SkillBrowser(),

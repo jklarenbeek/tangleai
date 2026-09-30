@@ -1,12 +1,18 @@
 import {describe,it} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {gmplArtifacts,compileGmplPromptPack,renderGmplPrompt,validateGmplPromptArtifact} from '@tangleai/gmpl';
+import {gmplArtifacts,compileGmplPromptPack,renderGmplPrompt,validateGmplPromptArtifact,resolveGmplParameters} from '@tangleai/gmpl';
 import type {GmplPromptArtifact} from '@tangleai/gmpl';
 const artifacts=gmplArtifacts.prompts as GmplPromptArtifact[];
 const compiled=async(source:string)=>compileGmplPromptPack(source,{variables:{value:{schema:{type:'string'},render:'text'}},outputSchema:{type:'object'}});
 const source=(text:string)=>`[meta]\nid="analysis-analyst"\nversion="1"\npattern="parallel-analysis"\nrole="analyst"\n[system]\ncontent="Static instructions"\n[user]\ncontent=${JSON.stringify(text)}\n`;
 describe('GMPL TOML to JTLT',()=>{
+  it('a pack may declare a non-family pattern',async()=>{
+    const artifact=await compiled(source('{{value}}').replace('pattern="parallel-analysis"','pattern="hera"'));
+    assert.ok(artifact.valid);assert.equal(artifact.value.pack.meta.pattern,'hera');
+    assert.equal(resolveGmplParameters({pattern:'hera'}).valid,false);
+    assert.equal(resolveGmplParameters({pattern:'unknown'}).valid,false);
+  });
   for(const artifact of artifacts){
     it(`${artifact.id} minimal render`,async()=>{
       assert.ok((await validateGmplPromptArtifact(artifact)).valid);

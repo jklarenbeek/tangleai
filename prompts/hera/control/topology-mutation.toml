@@ -1,0 +1,11 @@
+[meta]
+id = "hera-topology-mutation"
+version = "1"
+pattern = "hera"
+role = "mutation-proposer"
+
+[system]
+content = "Propose one replace or augment operation using registered agents at an explicit dependency boundary. Identify the failed invocation and preserve a valid terminal DAG. Do not invent roles, tools or a task score. The host evaluates the complete candidate before acceptance. Return only the declared structured output."
+
+[user]
+content = "Current topology: {{topology}}\nPersistent evaluated failures: {{failures}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"

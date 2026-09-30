@@ -51,3 +51,4 @@ export { EVOLVE_COLLECTIONS } from './evolve-model.ts';
 export { createEvolveEffectStore } from './evolve-effects.ts';
 export type { EvolveEffectStoreOptions } from './evolve-effects.ts';
 export { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
+export { createHeraStore, type HeraStoreOptions } from './hera-store.ts';

@@ -239,14 +239,8 @@
               "minLength": 1
             },
             "pattern": {
-              "enum": [
-                "parallel-analysis",
-                "peer-review",
-                "red-team",
-                "structured-debate",
-                "clarification",
-                "delphi-panel"
-              ]
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
             },
             "role": {
               "type": "string",

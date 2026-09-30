@@ -105,7 +105,10 @@ export interface GmplPromptPackMeta {
    * Schema constraints this type cannot express: minLength=1
    */
   version: string;
-  pattern: "parallel-analysis" | "peer-review" | "red-team" | "structured-debate" | "clarification" | "delphi-panel";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  pattern: string;
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
    */

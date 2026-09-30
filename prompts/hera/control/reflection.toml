@@ -1,0 +1,11 @@
+[meta]
+id = "hera-reflection"
+version = "1"
+pattern = "hera"
+role = "semantic-advantage-reflector"
+
+[system]
+content = "Compare evaluated successes and failures for the same query. Extract semantic advantages only from a mixed group. Tie every success factor, failure mode, insight and failure credit to the supplied trajectory and step identifiers. Model opinion cannot replace the evaluator. Return only the declared structured output."
+
+[user]
+content = "Query: {{query}}\nProfile: {{profile}}\nRanked topologies, per-invocation inputs/actions/outputs, answers, task scores and provider-token costs: {{trajectories}}"

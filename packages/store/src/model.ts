@@ -46,6 +46,7 @@ import { CONSOLIDATION_COLLECTIONS } from './consolidation-model.ts';
 import { TEMPORAL_COLLECTIONS } from './temporal-model.ts';
 import { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
 import { EVOLVE_COLLECTIONS } from './evolve-model.ts';
+import { HERA_COLLECTIONS } from './hera-model.ts';
 import { FRAME_KINDS } from './runs.ts';
 
 const ID: JsonSchema = { type: 'string', minLength: 1 };
@@ -57,6 +58,7 @@ export const TANGLE_DB_MODEL = {
     ...CONSOLIDATION_COLLECTIONS,
     ...TRACE2SKILL_COLLECTIONS,
     ...EVOLVE_COLLECTIONS,
+    ...HERA_COLLECTIONS,
     outcome_records: {
       schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
       key: '/id',

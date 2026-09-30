@@ -1,0 +1,56 @@
+/** Every HERA activation delegates version-and-revision fencing to outcomes. */
+import { planHeadTransition } from '@tangleai/outcomes';
+import { heraRefuse, type HeraOutcome } from './errors.ts';
+import type { HeraHead, HeraPromptVersion, HeraLearningSnapshot } from './contracts.gen.ts';
+
+export interface HeraHeadPlan {
+  expected: HeraHead;
+  next: HeraHead;
+  changes: Array<{ kind: 'promptVersion' | 'snapshot' | 'experience'; id: string; from: string; to: string }>;
+}
+/** JSON tuples keep opaque scopes and keys distinct, including embedded separators. */
+export function heraHeadId(scope: string, kind: HeraHead['kind'], key = ''): string {
+  return JSON.stringify([scope, kind, key]);
+}
+export function emptyHeraHead(scope: string, kind: HeraHead['kind'], key = ''): HeraHead {
+  return { id: heraHeadId(scope, kind, key), scope, kind, versionId: null, revision: 0 };
+}
+export function planHeraHeadTransition(actual: HeraHead, expected: HeraHead, target: string): HeraOutcome<HeraHeadPlan> {
+  if (actual.id !== expected.id || actual.scope !== expected.scope || actual.kind !== expected.kind)
+    return heraRefuse('THERA1006', '/expected', 'The head identity differs.');
+  try {
+    const next = planHeadTransition({ versionId: actual.versionId, revision: actual.revision }, { versionId: expected.versionId, revision: expected.revision }, target);
+    return { valid: true, value: { expected: structuredClone(expected), next: { ...actual, ...next }, changes: [] } };
+  } catch (error) {
+    const issues = error && typeof error === 'object' && 'issues' in error ? error.issues : null;
+    if (Array.isArray(issues) && issues.every(issue => issue.code === 'OUTC1013'))
+      return heraRefuse('THERA1006', '/expected', 'The expected head version or revision is stale.', issues);
+    throw error;
+  }
+}
+export function planLibraryActivation(actual: HeraHead, expected: HeraHead, revision: string): HeraOutcome<HeraHeadPlan> {
+  if (actual.kind !== 'library') return heraRefuse('THERA1006', '/kind', 'A library activation requires a library head.');
+  return planHeraHeadTransition(actual, expected, revision);
+}
+export function planPromptActivation(actual: HeraHead, expected: HeraHead, candidate: HeraPromptVersion, previous?: HeraPromptVersion): HeraOutcome<HeraHeadPlan> {
+  if (actual.id !== heraHeadId(candidate.scope, 'prompt', candidate.agentId) || actual.kind !== 'prompt' || candidate.status !== 'candidate' || candidate.parentId !== actual.versionId)
+    return heraRefuse('THERA1006', '/promptVersion', 'Prompt scope, parent or candidate status differs from the head.');
+  if ((actual.versionId !== null && !previous) || (previous && (previous.id !== actual.versionId || previous.agentId !== candidate.agentId || previous.scope !== candidate.scope || previous.status !== 'active')))
+    return heraRefuse('THERA1006', '/previous', 'The active prompt does not match the expected head.');
+  const plan = planHeraHeadTransition(actual, expected, candidate.id);
+  if (!plan.valid) return plan;
+  plan.value.changes = [ ...(previous ? [{ kind: 'promptVersion' as const, id: previous.id, from: 'active', to: 'archived' }] : []),
+    { kind: 'promptVersion', id: candidate.id, from: 'candidate', to: 'active' } ];
+  return plan;
+}
+export function planSnapshotActivation(actual: HeraHead, expected: HeraHead, candidate: HeraLearningSnapshot, previous?: HeraLearningSnapshot): HeraOutcome<HeraHeadPlan> {
+  if (actual.id !== heraHeadId(candidate.scope, 'snapshot') || actual.kind !== 'snapshot' || candidate.status !== 'staged' || candidate.parentId !== actual.versionId)
+    return heraRefuse('THERA1006', '/snapshot', 'Snapshot scope, parent or staged status differs from the head.');
+  if ((actual.versionId !== null && !previous) || (previous && (previous.id !== actual.versionId || previous.scope !== candidate.scope || previous.status !== 'active')))
+    return heraRefuse('THERA1006', '/previous', 'The active snapshot does not match the expected head.');
+  const plan = planHeraHeadTransition(actual, expected, candidate.id);
+  if (!plan.valid) return plan;
+  plan.value.changes = [ ...(previous ? [{ kind: 'snapshot' as const, id: previous.id, from: 'active', to: 'archived' }] : []),
+    { kind: 'snapshot', id: candidate.id, from: 'staged', to: 'active' } ];
+  return plan;
+}

@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "26d2dc14fe31166f29ac27fcf8ccfef4c41b9232",
+    "head": "072932227b6cb808bfcadd603a8b091a9bded6a2",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "954cc0cb61fb5bcd954febcbbcc484c7da5b7772b7cf4e8fcd022e2090ce221f"
+        "sha256": "6ecc23267018a84b502262f67e6c5ce3ae99806ce11424700127513ef44f6e17"
       },
       {
         "path": "package.json",
-        "sha256": "1e95a11409f0a9359911a26a629b2faeacf49496e260811ea58df8a7e22eb10b"
+        "sha256": "7b5e5ee618bd21b82eda8dc9061d03297f8458de381b256badc4922615a8805e"
       },
       {
         "path": "packages/agents/package.json",
@@ -407,7 +407,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "e44961793f07f4c5f5f8b791463610543416282da96df65916017f5c6c20a02e"
+        "sha256": "0e78fcf555651b8dcffa3b55853259d797a54cac0383bd5242e42e1aba8dccbe"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -419,7 +419,7 @@
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "f18d4ca21c2ba8a10abcecc89f951686dee0628b592f781204e586e87e9f5d45"
+        "sha256": "53683c302a3986681c5b50fbfc62c980f40fbcbcdc0e5cfe3888bcf51719a800"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -512,6 +512,10 @@
       {
         "path": "packages/gmpl/src/tasks.ts",
         "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+      },
+      {
+        "path": "packages/hera/package.json",
+        "sha256": "46ee434325778dbae7af6c3170477028f4af34e91ee32e78d4fe8cf96190d240"
       },
       {
         "path": "packages/jaren/package.json",
@@ -723,7 +727,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "7a8ce6dc33fc42994b86d104d7916045df89e77b69d60f1ac7efe51f37095847"
+        "sha256": "d4d83efe4797904063e3c0954cf7948c6cf0973635064e1cf8f1a9861dd45a7c"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -754,12 +758,20 @@
         "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
       },
       {
+        "path": "packages/store/src/hera-model.ts",
+        "sha256": "bce32376156e159f127ed13868fb55e7a921900b8d9c772a7b3ab08c3264cf41"
+      },
+      {
+        "path": "packages/store/src/hera-store.ts",
+        "sha256": "2cd390b865a6bc3969f868d43b68df6aa72e239d50f2551ea76456e4b63690d6"
+      },
+      {
         "path": "packages/store/src/identities.ts",
         "sha256": "ccaa309d775cbfbc94168f32e616353cec3743c7f5b3f7919e4f7af218da3fef"
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "dc57fc2bd785cfc73b166dc35dec6c3fc5d39fcb269434397a2cdb38375dca92"
+        "sha256": "7d004c23e082ba7af72d47b1ce2d1c82958ce39ff9fc3965a9b0608979724eff"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -779,7 +791,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "3a426feac9f9efd75d86b9043eaa17e1a8f15fd19369499667847cc2046caa56"
+        "sha256": "eda53bc4a476b485eb216a48382124fabedd5539c87426cfbb6d726631274367"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -871,7 +883,7 @@
       },
       {
         "path": "release.config.json",
-        "sha256": "35d18f33fbed874af960872d7c1634a62295123d138e773dd828138e34d5ca1e"
+        "sha256": "9be64998746ef8b8ebf75df1546f4f065686f28d3abddd4be4912306906c76de"
       },
       {
         "path": "scripts/gmpl-artifacts.ts",
@@ -891,7 +903,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "e32238569aa59867a174694a23c7ed9e6edea06d05e194cd26009a8bfadee43d"
+        "sha256": "2179833ac559a2c6ed378637514bcb6a3c5ba3c3014c9148bc9055ba1ddd9811"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -951,7 +963,7 @@
       },
       {
         "path": "test/gmpl/prompts.test.ts",
-        "sha256": "cd7e0c0ab9dd1e944863e863515d013574ae1401c5a02aa4f33da2d6b79706ca"
+        "sha256": "644523c75030b85f797bbda4d52ec9336d3ff061d0b7ef6cc71748bae9b08737"
       },
       {
         "path": "test/gmpl/recovery.test.ts",
@@ -983,7 +995,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "b238f4ef218c37c5560c8d3b1c656c9f98279a18441b716ea450893eab9faa68"
+        "sha256": "8047a8ece98e3943c8db625fe3cb4d484858708f1dd9de84b626e31a825c146b"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -998,7 +1010,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "101610642dbbb487b9546b78fc4f644c76537b5f7ef73cd1a5a6d9230455797d"
+    "sha256": "18f5c9e6861aebe4f0ea0d5e5ca35a3a4c9d1fd297970d26e478e69e41311759"
   },
   "ablations": [
     {
@@ -76552,5 +76564,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "c4c0399fce689f138795690fea6b4483e9a38f9d513ea48f455cbd4104ea8cc7"
+  "reportId": "7912b27b804e8618ef93189555c49f4ad39e21847812b13f726b9a5d730fe2d8"
 }

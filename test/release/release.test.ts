@@ -420,3 +420,13 @@ it('distribution manifests retain compiled content artifacts and reject traversa
   assert.equal(distributionManifest(source).exports!['./artifacts'],'./artifacts/catalog.json');
   assert.throws(()=>distributionManifest({...source,exports:{'./artifacts':'./artifacts/../secret.json'}}),/traverse|match/);
 });
+
+it('the orchestration package publishes its composed schema and immutable catalog',()=>{
+  const source=readJson(resolve(ROOT,'packages/hera/package.json'));
+  const manifest=distributionManifest(source);
+  assert.equal(manifest.exports!['./artifacts'],'./artifacts/catalog.json');
+  assert.equal(manifest.exports!['./schemas/hera'],'./schemas/hera.schema.json');
+  assert.deepEqual(manifest.exports!['.'],{types:'./src/index.d.ts',import:'./src/index.js',default:'./src/index.js'});
+  assert.ok(source.files?.includes('artifacts/**/*.json'));
+  assert.ok(source.files?.includes('schemas/**/*.json'));
+});

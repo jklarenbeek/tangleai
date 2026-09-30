@@ -1,0 +1,5365 @@
+{
+  "domains": [],
+  "id": "hera-default",
+  "prompts": [
+    {
+      "id": "hera-query-decomposer",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraQueryDecomposerOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "queries": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "queries"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-query-decomposer",
+          "pattern": "hera",
+          "role": "query-decomposer",
+          "version": "1"
+        },
+        "system": {
+          "content": "Decompose the question into atomic sub-questions that together cover its scope. Keep dependencies explicit and preserve the original question. Return the proposed queries and only evidence-backed findings. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "0334968d0050f1e15b5393806eb51145d540084f186ceaee49dc0e60304ccc4a",
+      "role": {
+        "id": "query-decomposer",
+        "instructions": "Decompose the question into atomic sub-questions that together cover its scope. Keep dependencies explicit and preserve the original question. Return the proposed queries and only evidence-backed findings. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "cc22cea0bd38648130cfe5130611c607ea22a49fd3dcedf09085ec6292001b02",
+        "title": "query-decomposer"
+      },
+      "sourceDigest": "06d3c749b201ab5a561c8484d9c2ec8ee1f0a887b292ea3f41de195ffca58677",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-retriever",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraRetrieverOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "selectedEvidenceIds": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "selectedEvidenceIds"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-retriever",
+          "pattern": "hera",
+          "role": "retriever",
+          "version": "1"
+        },
+        "system": {
+          "content": "Retrieve relevant evidence with the host-declared hera-evidence tool. Respect the pinned corpus and return exact evidence identifiers. Record gaps instead of inventing records or tool grants. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "77f61fe0b88a94f32a4b9f8b2f9b962230c0ec4c55061b02471a8a2217a4b290",
+      "role": {
+        "id": "retriever",
+        "instructions": "Retrieve relevant evidence with the host-declared hera-evidence tool. Respect the pinned corpus and return exact evidence identifiers. Record gaps instead of inventing records or tool grants. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "811eeb32bd7095d823d6ce946f94d9b9365a3bbf4baec2a4a64f933e579c716a",
+        "title": "retriever"
+      },
+      "sourceDigest": "8176ff17fbf6f4f9124765b8ba6cee92f04fc47626a64b368555232322f267f8",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-answer-generator",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraAnswerGeneratorOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-answer-generator",
+          "pattern": "hera",
+          "role": "answer-generator",
+          "version": "1"
+        },
+        "system": {
+          "content": "Answer from the evidence and preceding results. Every factual claim cites visible evidence identifiers and exact digests. Distinguish missing information from a supported answer. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "3851ce4dbdb3b4664a81c547e225fd390c7e1fcdfd395d8702c9fca0955d393b",
+      "role": {
+        "id": "answer-generator",
+        "instructions": "Answer from the evidence and preceding results. Every factual claim cites visible evidence identifiers and exact digests. Distinguish missing information from a supported answer. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "376002bd343b4a296abb0e5c38009d61692eab2334f5fe05701078cd3fd8e836",
+        "title": "answer-generator"
+      },
+      "sourceDigest": "38a330a6c80eb68beab0ee2096a637639b703d837ee46520f34e3758b0bc7d74",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-query-rewriter",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraQueryRewriterOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "queries": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "queries"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-query-rewriter",
+          "pattern": "hera",
+          "role": "query-rewriter",
+          "version": "1"
+        },
+        "system": {
+          "content": "Rewrite the query into two or three useful retrieval variants. Preserve its entities, temporal constraints and intent. Do not insert an assumed answer. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "bc51046f2a74c76942a17ad94492d5c37dba6f16d75adcde9db690a4ff018657",
+      "role": {
+        "id": "query-rewriter",
+        "instructions": "Rewrite the query into two or three useful retrieval variants. Preserve its entities, temporal constraints and intent. Do not insert an assumed answer. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "bb1e7f1a226aca726630ece134fa98c5100612683a298faedb775e802b957262",
+        "title": "query-rewriter"
+      },
+      "sourceDigest": "e4ed981ed2e517f5c1a43f9e4f82cc746ad16180e2f9872c86b68bf48ea1cf11",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-evidence-selector",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraEvidenceSelectorOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "selectedEvidenceIds": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "selectedEvidenceIds"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-evidence-selector",
+          "pattern": "hera",
+          "role": "evidence-selector",
+          "version": "1"
+        },
+        "system": {
+          "content": "Select relevant, reliable and complementary evidence from the visible records. Return existing identifiers; discard redundancy without silently discarding contradictory evidence. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "7deeb74ca67e7388eafab8b9182aacf9b6cfe5070746add8ecf28ac00930c912",
+      "role": {
+        "id": "evidence-selector",
+        "instructions": "Select relevant, reliable and complementary evidence from the visible records. Return existing identifiers; discard redundancy without silently discarding contradictory evidence. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "efe7b267a6e545a2f261043adb771318dac6802f7e2c13a70ab79a8768238b7f",
+        "title": "evidence-selector"
+      },
+      "sourceDigest": "c1678f60acdda9505fb01f5d696234ecb1b296ca01efd48351e43d92ef01412c",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-context-validator",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraContextValidatorOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sufficient": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "sufficient",
+          "missing"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-context-validator",
+          "pattern": "hera",
+          "role": "context-validator",
+          "version": "1"
+        },
+        "system": {
+          "content": "Check whether visible evidence is sufficient for the query. Name information gaps and contradictions. A sufficiency judgment is a diagnostic and never a task score. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "a92ceaa656cfd63ecf49ed716beda0ab99f42513788fc9df971ce5d6ca5bff23",
+      "role": {
+        "id": "context-validator",
+        "instructions": "Check whether visible evidence is sufficient for the query. Name information gaps and contradictions. A sufficiency judgment is a diagnostic and never a task score. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "7451e1bae42bea3024a81ea6a121136f37759b9a27d0da2aa13b4ee802fe3aa9",
+        "title": "context-validator"
+      },
+      "sourceDigest": "71a6a4149228f35fbf496ead45a4ecfb8a917b40c743d98a3ffbf727a8fadee5",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-reflect-agent",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraReflectAgentOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "problems": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings",
+          "problems"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-reflect-agent",
+          "pattern": "hera",
+          "role": "reflect-agent",
+          "version": "1"
+        },
+        "system": {
+          "content": "Inspect the bounded prior steps for factual gaps or reasoning failures. Cite the visible evidence for any findings. Reflection cannot update learning state or award success. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "1d3cbeab5578c25ba32cfa916a62ca8f77cd6b6220ea7cd9a3b8acb839e16871",
+      "role": {
+        "id": "reflect-agent",
+        "instructions": "Inspect the bounded prior steps for factual gaps or reasoning failures. Cite the visible evidence for any findings. Reflection cannot update learning state or award success. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "db0b082eb9f7e00cc374ac40b46c4c7212af6d20a0000539a7578c3b603b499b",
+        "title": "reflect-agent"
+      },
+      "sourceDigest": "2c06525c4cc77c73d854c9b3357d826cc73e7faa8c51eb9bcdc2bba6547500f4",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-conclude-agent",
+      "outputSchema": {
+        "$defs": {
+          "gmplCitation": {
+            "additionalProperties": false,
+            "properties": {
+              "digest": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "type": "object"
+          },
+          "gmplClaim": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "text": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "citations"
+            ],
+            "type": "object"
+          },
+          "gmplFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "citations": {
+                "items": {
+                  "$ref": "#/$defs/gmplCitation"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "contradictory": {
+                "type": "boolean"
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "disposition": {
+                "enum": [
+                  "supported",
+                  "contested",
+                  "rejected-with-reason",
+                  "unresolved"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "origin": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "origin",
+              "disposition",
+              "reason",
+              "citations"
+            ],
+            "type": "object"
+          }
+        },
+        "$id": "https://tangleai.dev/schemas/hera/heraConcludeAgentOutput",
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/$defs/gmplClaim"
+            },
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "completed",
+              "no-consensus",
+              "needs-information",
+              "rejected"
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/$defs/gmplFinding"
+            },
+            "type": "array"
+          },
+          "outstandingQuestions": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "disposition",
+          "claims",
+          "findings"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-conclude-agent",
+          "pattern": "hera",
+          "role": "conclude-agent",
+          "version": "1"
+        },
+        "system": {
+          "content": "Synthesize a concise final answer from the query, evidence and preceding steps. Resolve contradictions explicitly, cite exact evidence identifiers and digests, and abstain when the evidence does not answer the question. Return only the declared structured output. Tools and authority are supplied by the host."
+        },
+        "user": {
+          "content": "Query: {{query}}\nVisible evidence: {{evidence}}\n{{#if context}}Prior bounded context: {{context}}{{/if}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "592f78f1587e4810b92e8558ef857fd03f9f8feb7777b5559f0569911c4cc04a",
+      "role": {
+        "id": "conclude-agent",
+        "instructions": "Synthesize a concise final answer from the query, evidence and preceding steps. Resolve contradictions explicitly, cite exact evidence identifiers and digests, and abstain when the evidence does not answer the question. Return only the declared structured output. Tools and authority are supplied by the host.",
+        "revision": "64e720f34a33cba57158a35971d3433eb82aa397da5306d494c03a83f7eda3db",
+        "title": "conclude-agent"
+      },
+      "sourceDigest": "155a3a66a52bec9af2ef7f10fac465ae470987c83caca1f1260126510d848962",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nVisible evidence: ",
+              {
+                "$json": "$.variables.evidence"
+              },
+              "\n",
+              {
+                "$apply": [
+                  "$",
+                  "condition-1"
+                ]
+              }
+            ],
+            "match": "$"
+          },
+          {
+            "body": [
+              "Prior bounded context: ",
+              {
+                "$json": "$.variables.context"
+              }
+            ],
+            "match": {
+              "schema": {
+                "properties": {
+                  "present": {
+                    "properties": {
+                      "context": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "context"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "present"
+                ],
+                "type": "object"
+              }
+            },
+            "mode": "condition-1",
+            "priority": 1
+          },
+          {
+            "body": [],
+            "mode": "condition-1"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "context": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "context": {
+          "render": "json",
+          "schema": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/gmpl/gmplEvidenceUnit",
+              "additionalProperties": false,
+              "properties": {
+                "digest": {
+                  "pattern": "^[a-f0-9]{64}$",
+                  "type": "string"
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "digest",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-plan-generation",
+      "outputSchema": {
+        "$defs": {},
+        "$id": "https://tangleai.dev/schemas/hera/heraPlanOutput",
+        "additionalProperties": false,
+        "properties": {
+          "appliedExperienceIds": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "nodes": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "agentId": {
+                  "enum": [
+                    "query-decomposer",
+                    "retriever",
+                    "answer-generator",
+                    "query-rewriter",
+                    "evidence-selector",
+                    "context-validator",
+                    "reflect-agent",
+                    "conclude-agent"
+                  ]
+                },
+                "dependsOn": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "tools": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "agentId",
+                "dependsOn"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "nodes",
+          "appliedExperienceIds"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-plan-generation",
+          "pattern": "hera",
+          "role": "orchestrator",
+          "version": "1"
+        },
+        "system": {
+          "content": "Design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
+        },
+        "user": {
+          "content": "Query: {{query}}\nProfile: {{profile}}\nOffered experiences: {{offered_experiences}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "777db2fbf8c795256aad86d1173fde6e481f53b35ce30942b2127e3fea6981a0",
+      "role": {
+        "id": "orchestrator",
+        "instructions": "Design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output.",
+        "revision": "a4bc9144bb2dbc793c7c8ee792c3c694d911e2d8fc170afb5c4229486ef1744c",
+        "title": "orchestrator"
+      },
+      "sourceDigest": "3bef3389fece6311ffe49faa3378d6d15719110161703f263357d780321c1486",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nProfile: ",
+              {
+                "$json": "$.variables.profile"
+              },
+              "\nOffered experiences: ",
+              {
+                "$json": "$.variables.offered_experiences"
+              },
+              "\nRegistered agents: ",
+              {
+                "$json": "$.variables.agents"
+              },
+              "\nHost caps: ",
+              {
+                "$json": "$.variables.caps"
+              }
+            ],
+            "match": "$"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "agents": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "caps": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraBudget",
+            "additionalProperties": false,
+            "properties": {
+              "calls": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "concurrency": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "depth": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "fanOut": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "ms": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "nodes": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tokens": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "turns": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "calls",
+              "tokens",
+              "ms",
+              "turns",
+              "nodes",
+              "depth",
+              "fanOut",
+              "concurrency"
+            ],
+            "type": "object"
+          },
+          "offered_experiences": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
+              "$query": {
+                "$and": [
+                  {
+                    "$le": [
+                      "$.successCount",
+                      "$.useCount"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.utility",
+                      {
+                        "$if": [
+                          {
+                            "$gt": [
+                              "$.useCount",
+                              0
+                            ]
+                          },
+                          {
+                            "$div": [
+                              "$.successCount",
+                              "$.useCount"
+                            ]
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "inheritedCounts": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "successCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "useCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "useCount",
+                        "successCount"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "embeddedBy": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dims": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "model": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "model",
+                        "dims"
+                      ],
+                      "type": "object"
+                    },
+                    "embedding": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "tags": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "tags",
+                    "embedding",
+                    "embeddedBy"
+                  ],
+                  "type": "object"
+                },
+                "provenance": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "advantageId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "advantageId",
+                    "groupId"
+                  ],
+                  "type": "object"
+                },
+                "scope": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "selectionCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "status": {
+                  "enum": [
+                    "active",
+                    "archived"
+                  ]
+                },
+                "successCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "useCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "utility": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "scope",
+                "profile",
+                "insight",
+                "provenance",
+                "useCount",
+                "successCount",
+                "utility",
+                "selectionCount",
+                "status",
+                "parents",
+                "inheritedCounts"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "profile": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "additionalProperties": false,
+            "properties": {
+              "embeddedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "dims": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "model": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "model",
+                  "dims"
+                ],
+                "type": "object"
+              },
+              "embedding": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "tags": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "tags",
+              "embedding",
+              "embeddedBy"
+            ],
+            "type": "object"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "agents",
+          "caps",
+          "offered_experiences",
+          "profile",
+          "query"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "agents": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "caps": {
+          "render": "json",
+          "schema": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraBudget",
+            "additionalProperties": false,
+            "properties": {
+              "calls": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "concurrency": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "depth": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "fanOut": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "ms": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "nodes": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tokens": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "turns": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "calls",
+              "tokens",
+              "ms",
+              "turns",
+              "nodes",
+              "depth",
+              "fanOut",
+              "concurrency"
+            ],
+            "type": "object"
+          }
+        },
+        "offered_experiences": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
+              "$query": {
+                "$and": [
+                  {
+                    "$le": [
+                      "$.successCount",
+                      "$.useCount"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.utility",
+                      {
+                        "$if": [
+                          {
+                            "$gt": [
+                              "$.useCount",
+                              0
+                            ]
+                          },
+                          {
+                            "$div": [
+                              "$.successCount",
+                              "$.useCount"
+                            ]
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "inheritedCounts": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "successCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "useCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "useCount",
+                        "successCount"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "embeddedBy": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dims": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "model": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "model",
+                        "dims"
+                      ],
+                      "type": "object"
+                    },
+                    "embedding": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "tags": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "tags",
+                    "embedding",
+                    "embeddedBy"
+                  ],
+                  "type": "object"
+                },
+                "provenance": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "advantageId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "advantageId",
+                    "groupId"
+                  ],
+                  "type": "object"
+                },
+                "scope": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "selectionCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "status": {
+                  "enum": [
+                    "active",
+                    "archived"
+                  ]
+                },
+                "successCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "useCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "utility": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "scope",
+                "profile",
+                "insight",
+                "provenance",
+                "useCount",
+                "successCount",
+                "utility",
+                "selectionCount",
+                "status",
+                "parents",
+                "inheritedCounts"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "profile": {
+          "render": "json",
+          "schema": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "additionalProperties": false,
+            "properties": {
+              "embeddedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "dims": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "model": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "model",
+                  "dims"
+                ],
+                "type": "object"
+              },
+              "embedding": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "tags": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "tags",
+              "embedding",
+              "embeddedBy"
+            ],
+            "type": "object"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-reflection",
+      "outputSchema": {
+        "$defs": {},
+        "$id": "https://tangleai.dev/schemas/hera/heraReflectionOutput",
+        "additionalProperties": false,
+        "properties": {
+          "failedInvocationCredit": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "invocationId": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "reason": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "stepIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "trajectoryId": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "invocationId",
+                "trajectoryId",
+                "reason",
+                "stepIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "failureModes": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "stepIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "trajectoryIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "text",
+                "trajectoryIds",
+                "stepIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "insights": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "stepIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "trajectoryIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "text",
+                "trajectoryIds",
+                "stepIds",
+                "id"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "successFactors": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "stepIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "trajectoryIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "text",
+                "trajectoryIds",
+                "stepIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "successFactors",
+          "failureModes",
+          "insights",
+          "failedInvocationCredit"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-reflection",
+          "pattern": "hera",
+          "role": "semantic-advantage-reflector",
+          "version": "1"
+        },
+        "system": {
+          "content": "Compare evaluated successes and failures for the same query. Extract semantic advantages only from a mixed group. Tie every success factor, failure mode, insight and failure credit to the supplied trajectory and step identifiers. Model opinion cannot replace the evaluator. Return only the declared structured output."
+        },
+        "user": {
+          "content": "Query: {{query}}\nProfile: {{profile}}\nRanked topologies, per-invocation inputs/actions/outputs, answers, task scores and provider-token costs: {{trajectories}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "08ae5d27dc729d23b55c489530e420b8e241c7fc3e005e4331e6cdab9f3840ec",
+      "role": {
+        "id": "semantic-advantage-reflector",
+        "instructions": "Compare evaluated successes and failures for the same query. Extract semantic advantages only from a mixed group. Tie every success factor, failure mode, insight and failure credit to the supplied trajectory and step identifiers. Model opinion cannot replace the evaluator. Return only the declared structured output.",
+        "revision": "7d96442d3178c5854d58e36f61846821dc472f7f77129189fed3ebdb695ab1af",
+        "title": "semantic-advantage-reflector"
+      },
+      "sourceDigest": "34111b7d22fc370575b661d32b7bee33a179181015e0b6059041f21f4a9dbea3",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Query: ",
+              "$.variables.query",
+              "\nProfile: ",
+              {
+                "$json": "$.variables.profile"
+              },
+              "\nRanked topologies, per-invocation inputs/actions/outputs, answers, task scores and provider-token costs: ",
+              {
+                "$json": "$.variables.trajectories"
+              }
+            ],
+            "match": "$"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "profile": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "additionalProperties": false,
+            "properties": {
+              "embeddedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "dims": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "model": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "model",
+                  "dims"
+                ],
+                "type": "object"
+              },
+              "embedding": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "tags": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "tags",
+              "embedding",
+              "embeddedBy"
+            ],
+            "type": "object"
+          },
+          "query": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "trajectories": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "profile",
+          "query",
+          "trajectories"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "profile": {
+          "render": "json",
+          "schema": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "additionalProperties": false,
+            "properties": {
+              "embeddedBy": {
+                "additionalProperties": false,
+                "properties": {
+                  "dims": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "model": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "model",
+                  "dims"
+                ],
+                "type": "object"
+              },
+              "embedding": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "tags": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "tags",
+              "embedding",
+              "embeddedBy"
+            ],
+            "type": "object"
+          }
+        },
+        "query": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "trajectories": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-consolidation",
+      "outputSchema": {
+        "$defs": {},
+        "$id": "https://tangleai.dev/schemas/hera/heraConsolidationOutput",
+        "additionalProperties": false,
+        "properties": {
+          "ops": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "op": {
+                  "enum": [
+                    "ADD",
+                    "MERGE",
+                    "PRUNE",
+                    "KEEP"
+                  ]
+                },
+                "sourceInsightIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "targetIds": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "op",
+                "sourceInsightIds",
+                "targetIds"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ops"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-consolidation",
+          "pattern": "hera",
+          "role": "consolidation-proposer",
+          "version": "1"
+        },
+        "system": {
+          "content": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output."
+        },
+        "user": {
+          "content": "Scope: {{scope}}\nSource insights: {{insights}}\nActive library: {{library}}\nBounds and policy: {{config}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "ea67922cdae1ae4be8278f5174c2d6479cc829a4f7f05003983ef9a185d7ea94",
+      "role": {
+        "id": "consolidation-proposer",
+        "instructions": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output.",
+        "revision": "d9039255933f8dea49d7f64c6e74c9ae31ad0d4e094e0afbe4bd9ef0037ce1b3",
+        "title": "consolidation-proposer"
+      },
+      "sourceDigest": "6820bbe5087498b61564a6773726bd5d7b7dc3f85ba1a544bdcd966cee4747b2",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Scope: ",
+              "$.variables.scope",
+              "\nSource insights: ",
+              {
+                "$json": "$.variables.insights"
+              },
+              "\nActive library: ",
+              {
+                "$json": "$.variables.library"
+              },
+              "\nBounds and policy: ",
+              {
+                "$json": "$.variables.config"
+              }
+            ],
+            "match": "$"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraLearningConfig",
+            "additionalProperties": false,
+            "properties": {
+              "consecutiveFailures": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "failureBufferSize": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "flags": {
+                "additionalProperties": false,
+                "properties": {
+                  "experience": {
+                    "type": "boolean"
+                  },
+                  "mutation": {
+                    "type": "boolean"
+                  },
+                  "rope": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "experience",
+                  "rope",
+                  "mutation"
+                ],
+                "type": "object"
+              },
+              "groupSize": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "libraryCap": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxAgents": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "operationCap": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "promptBounds": {
+                "additionalProperties": false,
+                "properties": {
+                  "maxBytes": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "maxOps": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "maxRules": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "maxRules",
+                  "maxBytes",
+                  "maxOps"
+                ],
+                "type": "object"
+              },
+              "selectorCap": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "selectorVersion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "selectorWeights": {
+                "additionalProperties": false,
+                "properties": {
+                  "novelty": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "selectionPenalty": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "similarity": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "utility": {
+                    "minimum": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "similarity",
+                  "utility",
+                  "novelty",
+                  "selectionPenalty"
+                ],
+                "type": "object"
+              },
+              "variantAxes": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "groupSize",
+              "maxAgents",
+              "selectorVersion",
+              "selectorWeights",
+              "selectorCap",
+              "libraryCap",
+              "operationCap",
+              "failureBufferSize",
+              "consecutiveFailures",
+              "variantAxes",
+              "promptBounds",
+              "flags"
+            ],
+            "type": "object"
+          },
+          "insights": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "library": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
+              "$query": {
+                "$and": [
+                  {
+                    "$le": [
+                      "$.successCount",
+                      "$.useCount"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.utility",
+                      {
+                        "$if": [
+                          {
+                            "$gt": [
+                              "$.useCount",
+                              0
+                            ]
+                          },
+                          {
+                            "$div": [
+                              "$.successCount",
+                              "$.useCount"
+                            ]
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "inheritedCounts": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "successCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "useCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "useCount",
+                        "successCount"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "embeddedBy": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dims": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "model": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "model",
+                        "dims"
+                      ],
+                      "type": "object"
+                    },
+                    "embedding": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "tags": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "tags",
+                    "embedding",
+                    "embeddedBy"
+                  ],
+                  "type": "object"
+                },
+                "provenance": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "advantageId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "advantageId",
+                    "groupId"
+                  ],
+                  "type": "object"
+                },
+                "scope": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "selectionCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "status": {
+                  "enum": [
+                    "active",
+                    "archived"
+                  ]
+                },
+                "successCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "useCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "utility": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "scope",
+                "profile",
+                "insight",
+                "provenance",
+                "useCount",
+                "successCount",
+                "utility",
+                "selectionCount",
+                "status",
+                "parents",
+                "inheritedCounts"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "scope": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "config",
+          "insights",
+          "library",
+          "scope"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "config": {
+          "render": "json",
+          "schema": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraLearningConfig",
+            "additionalProperties": false,
+            "properties": {
+              "consecutiveFailures": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "failureBufferSize": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "flags": {
+                "additionalProperties": false,
+                "properties": {
+                  "experience": {
+                    "type": "boolean"
+                  },
+                  "mutation": {
+                    "type": "boolean"
+                  },
+                  "rope": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "experience",
+                  "rope",
+                  "mutation"
+                ],
+                "type": "object"
+              },
+              "groupSize": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "libraryCap": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "maxAgents": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "operationCap": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "promptBounds": {
+                "additionalProperties": false,
+                "properties": {
+                  "maxBytes": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "maxOps": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "maxRules": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "maxRules",
+                  "maxBytes",
+                  "maxOps"
+                ],
+                "type": "object"
+              },
+              "selectorCap": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "selectorVersion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "selectorWeights": {
+                "additionalProperties": false,
+                "properties": {
+                  "novelty": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "selectionPenalty": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "similarity": {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "utility": {
+                    "minimum": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "similarity",
+                  "utility",
+                  "novelty",
+                  "selectionPenalty"
+                ],
+                "type": "object"
+              },
+              "variantAxes": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "groupSize",
+              "maxAgents",
+              "selectorVersion",
+              "selectorWeights",
+              "selectorCap",
+              "libraryCap",
+              "operationCap",
+              "failureBufferSize",
+              "consecutiveFailures",
+              "variantAxes",
+              "promptBounds",
+              "flags"
+            ],
+            "type": "object"
+          }
+        },
+        "insights": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "library": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "$defs": {},
+              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
+              "$query": {
+                "$and": [
+                  {
+                    "$le": [
+                      "$.successCount",
+                      "$.useCount"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.utility",
+                      {
+                        "$if": [
+                          {
+                            "$gt": [
+                              "$.useCount",
+                              0
+                            ]
+                          },
+                          {
+                            "$div": [
+                              "$.successCount",
+                              "$.useCount"
+                            ]
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "inheritedCounts": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "successCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "useCount": {
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "useCount",
+                        "successCount"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "embeddedBy": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dims": {
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "model": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "model",
+                        "dims"
+                      ],
+                      "type": "object"
+                    },
+                    "embedding": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "type": "array"
+                    },
+                    "tags": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "tags",
+                    "embedding",
+                    "embeddedBy"
+                  ],
+                  "type": "object"
+                },
+                "provenance": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "advantageId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "groupId": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "advantageId",
+                    "groupId"
+                  ],
+                  "type": "object"
+                },
+                "scope": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "selectionCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "status": {
+                  "enum": [
+                    "active",
+                    "archived"
+                  ]
+                },
+                "successCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "useCount": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "utility": {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "scope",
+                "profile",
+                "insight",
+                "provenance",
+                "useCount",
+                "successCount",
+                "utility",
+                "selectionCount",
+                "status",
+                "parents",
+                "inheritedCounts"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "scope": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-rope-evolution",
+      "outputSchema": {
+        "$defs": {},
+        "$id": "https://tangleai.dev/schemas/hera/heraRopeOutput",
+        "additionalProperties": false,
+        "properties": {
+          "behavioralPrinciples": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "derivedFrom": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "derivedFrom"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "derivedFrom": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "operationalRules": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "derivedFrom": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "derivedFrom"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "operationalRules",
+          "behavioralPrinciples",
+          "derivedFrom"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-rope-evolution",
+          "pattern": "hera",
+          "role": "prompt-contrastive-analyst",
+          "version": "1"
+        },
+        "system": {
+          "content": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. Every proposal cites actual replay trial ids in derivedFrom. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output."
+        },
+        "user": {
+          "content": "Agent: {{agent}}\nCurrent prompt: {{current_prompt}}\nEvaluated failures: {{failures}}\nWhole-run paired trials: {{trials}}\nAxis: {{axis}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "eeee4d76d206d7c9f06708fc3322a4c16d1b7a8b493173d31aee429db63e84a8",
+      "role": {
+        "id": "prompt-contrastive-analyst",
+        "instructions": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. Every proposal cites actual replay trial ids in derivedFrom. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output.",
+        "revision": "2ea24f9fc527571625588ef36518b4e0663e44ecfe3f66ed52658f439811ff1c",
+        "title": "prompt-contrastive-analyst"
+      },
+      "sourceDigest": "bcaffe1a13cecffafc6559ed03ca6c82bd2b0fa97a99a0628902bc30532b6efb",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Agent: ",
+              "$.variables.agent",
+              "\nCurrent prompt: ",
+              "$.variables.current_prompt",
+              "\nEvaluated failures: ",
+              {
+                "$json": "$.variables.failures"
+              },
+              "\nWhole-run paired trials: ",
+              {
+                "$json": "$.variables.trials"
+              },
+              "\nAxis: ",
+              "$.variables.axis"
+            ],
+            "match": "$"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "agent": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "axis": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "current_prompt": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "failures": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "trials": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "agent",
+          "axis",
+          "current_prompt",
+          "failures",
+          "trials"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "agent": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "axis": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "current_prompt": {
+          "render": "text",
+          "schema": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "failures": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "trials": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        }
+      }
+    },
+    {
+      "id": "hera-topology-mutation",
+      "outputSchema": {
+        "$defs": {},
+        "$id": "https://tangleai.dev/schemas/hera/heraMutationOutput",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "replace",
+              "augment"
+            ]
+          },
+          "addAgentId": {
+            "enum": [
+              "query-decomposer",
+              "retriever",
+              "answer-generator",
+              "query-rewriter",
+              "evidence-selector",
+              "context-validator",
+              "reflect-agent",
+              "conclude-agent"
+            ]
+          },
+          "dependsOn": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "removeInvocationId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "addAgentId",
+          "dependsOn",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "pack": {
+        "meta": {
+          "id": "hera-topology-mutation",
+          "pattern": "hera",
+          "role": "mutation-proposer",
+          "version": "1"
+        },
+        "system": {
+          "content": "Propose one replace or augment operation using registered agents at an explicit dependency boundary. Identify the failed invocation and preserve a valid terminal DAG. Do not invent roles, tools or a task score. The host evaluates the complete candidate before acceptance. Return only the declared structured output."
+        },
+        "user": {
+          "content": "Current topology: {{topology}}\nPersistent evaluated failures: {{failures}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"
+        }
+      },
+      "policyVersion": "gmpl-jtlt-v1",
+      "revision": "5535e0eb07f96f09a2b66cb72afe186f4a64a41f238954776e39bba8002d17e3",
+      "role": {
+        "id": "mutation-proposer",
+        "instructions": "Propose one replace or augment operation using registered agents at an explicit dependency boundary. Identify the failed invocation and preserve a valid terminal DAG. Do not invent roles, tools or a task score. The host evaluates the complete candidate before acceptance. Return only the declared structured output.",
+        "revision": "166b87171330007d736f39d911378eae0de17f8c9f729d84bd819317b3638f47",
+        "title": "mutation-proposer"
+      },
+      "sourceDigest": "03e96b029e7c38cd0788bfcb0127f5ef2b9577e667993e36d5a3ad720e99d381",
+      "userStylesheet": {
+        "$jtlt": "0.1",
+        "output": "text",
+        "rules": [
+          {
+            "body": [
+              "Current topology: ",
+              {
+                "$json": "$.variables.topology"
+              },
+              "\nPersistent evaluated failures: ",
+              {
+                "$json": "$.variables.failures"
+              },
+              "\nRegistered agents: ",
+              {
+                "$json": "$.variables.agents"
+              },
+              "\nHost caps: ",
+              {
+                "$json": "$.variables.caps"
+              }
+            ],
+            "match": "$"
+          }
+        ]
+      },
+      "variableSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "agents": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "caps": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraBudget",
+            "additionalProperties": false,
+            "properties": {
+              "calls": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "concurrency": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "depth": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "fanOut": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "ms": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "nodes": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tokens": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "turns": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "calls",
+              "tokens",
+              "ms",
+              "turns",
+              "nodes",
+              "depth",
+              "fanOut",
+              "concurrency"
+            ],
+            "type": "object"
+          },
+          "failures": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "topology": {
+            "$defs": {
+              "heraIssue": {
+                "additionalProperties": false,
+                "properties": {
+                  "cause": {},
+                  "code": {
+                    "enum": [
+                      "THERA1001",
+                      "THERA1002",
+                      "THERA1003",
+                      "THERA1004",
+                      "THERA1005",
+                      "THERA1006",
+                      "THERA1007",
+                      "THERA1008",
+                      "THERA1009"
+                    ]
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "path",
+                  "detail"
+                ],
+                "type": "object"
+              }
+            },
+            "$id": "https://tangleai.dev/schemas/hera/heraTopology",
+            "$query": {
+              "$and": [
+                {
+                  "$eq": [
+                    {
+                      "$count": "$.nodes[*].id"
+                    },
+                    {
+                      "$count": {
+                        "$distinct": "$.nodes[*].id"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$every": {
+                    "n": "$.nodes[*]"
+                  },
+                  "$satisfies": {
+                    "$every": {
+                      "dependency": "$n.dependsOn[*]"
+                    },
+                    "$satisfies": {
+                      "$satisfies": {
+                        "$eq": [
+                          "$other.id",
+                          "$dependency"
+                        ]
+                      },
+                      "$some": {
+                        "other": "$.nodes[*]"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "additionalProperties": false,
+            "properties": {
+              "appliedExperienceIds": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "generator": {
+                "additionalProperties": false,
+                "properties": {
+                  "configRevision": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": [
+                      "fixed",
+                      "orchestrator",
+                      "mutation"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "configRevision"
+                ],
+                "type": "object"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "nodes": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "agentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "dependsOn": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "id": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "promptVersionId": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "tools": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "agentId",
+                    "promptVersionId",
+                    "dependsOn"
+                  ],
+                  "type": "object"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "offeredExperienceIds": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "profile": {
+                "additionalProperties": false,
+                "properties": {
+                  "embeddedBy": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "dims": {
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      "model": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "model",
+                      "dims"
+                    ],
+                    "type": "object"
+                  },
+                  "embedding": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  },
+                  "tags": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "tags",
+                  "embedding",
+                  "embeddedBy"
+                ],
+                "type": "object"
+              },
+              "scope": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "snapshotId": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "taskId": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "validation": {
+                "additionalProperties": false,
+                "properties": {
+                  "issues": {
+                    "items": {
+                      "$ref": "#/$defs/heraIssue"
+                    },
+                    "type": "array"
+                  },
+                  "valid": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "valid",
+                  "issues"
+                ],
+                "type": "object"
+              },
+              "workflowVersionId": {
+                "anyOf": [
+                  {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "scope",
+              "taskId",
+              "snapshotId",
+              "profile",
+              "nodes",
+              "offeredExperienceIds",
+              "appliedExperienceIds",
+              "generator",
+              "validation",
+              "workflowVersionId"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "agents",
+          "caps",
+          "failures",
+          "topology"
+        ],
+        "type": "object"
+      },
+      "variables": {
+        "agents": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "caps": {
+          "render": "json",
+          "schema": {
+            "$defs": {},
+            "$id": "https://tangleai.dev/schemas/hera/heraBudget",
+            "additionalProperties": false,
+            "properties": {
+              "calls": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "concurrency": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "depth": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "fanOut": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "ms": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "nodes": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tokens": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "turns": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "calls",
+              "tokens",
+              "ms",
+              "turns",
+              "nodes",
+              "depth",
+              "fanOut",
+              "concurrency"
+            ],
+            "type": "object"
+          }
+        },
+        "failures": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "topology": {
+          "render": "json",
+          "schema": {
+            "$defs": {
+              "heraIssue": {
+                "additionalProperties": false,
+                "properties": {
+                  "cause": {},
+                  "code": {
+                    "enum": [
+                      "THERA1001",
+                      "THERA1002",
+                      "THERA1003",
+                      "THERA1004",
+                      "THERA1005",
+                      "THERA1006",
+                      "THERA1007",
+                      "THERA1008",
+                      "THERA1009"
+                    ]
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "path",
+                  "detail"
+                ],
+                "type": "object"
+              }
+            },
+            "$id": "https://tangleai.dev/schemas/hera/heraTopology",
+            "$query": {
+              "$and": [
+                {
+                  "$eq": [
+                    {
+                      "$count": "$.nodes[*].id"
+                    },
+                    {
+                      "$count": {
+                        "$distinct": "$.nodes[*].id"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "$every": {
+                    "n": "$.nodes[*]"
+                  },
+                  "$satisfies": {
+                    "$every": {
+                      "dependency": "$n.dependsOn[*]"
+                    },
+                    "$satisfies": {
+                      "$satisfies": {
+                        "$eq": [
+                          "$other.id",
+                          "$dependency"
+                        ]
+                      },
+                      "$some": {
+                        "other": "$.nodes[*]"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "additionalProperties": false,
+            "properties": {
+              "appliedExperienceIds": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "generator": {
+                "additionalProperties": false,
+                "properties": {
+                  "configRevision": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "enum": [
+                      "fixed",
+                      "orchestrator",
+                      "mutation"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "configRevision"
+                ],
+                "type": "object"
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "nodes": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "agentId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "dependsOn": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "id": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "promptVersionId": {
+                      "pattern": "^[0-9a-f]{64}$",
+                      "type": "string"
+                    },
+                    "tools": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "agentId",
+                    "promptVersionId",
+                    "dependsOn"
+                  ],
+                  "type": "object"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "offeredExperienceIds": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array",
+                "uniqueItems": true
+              },
+              "profile": {
+                "additionalProperties": false,
+                "properties": {
+                  "embeddedBy": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "dims": {
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      "model": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "model",
+                      "dims"
+                    ],
+                    "type": "object"
+                  },
+                  "embedding": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  },
+                  "tags": {
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "uniqueItems": true
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "tags",
+                  "embedding",
+                  "embeddedBy"
+                ],
+                "type": "object"
+              },
+              "scope": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "snapshotId": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "taskId": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "validation": {
+                "additionalProperties": false,
+                "properties": {
+                  "issues": {
+                    "items": {
+                      "$ref": "#/$defs/heraIssue"
+                    },
+                    "type": "array"
+                  },
+                  "valid": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "valid",
+                  "issues"
+                ],
+                "type": "object"
+              },
+              "workflowVersionId": {
+                "anyOf": [
+                  {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "scope",
+              "taskId",
+              "snapshotId",
+              "profile",
+              "nodes",
+              "offeredExperienceIds",
+              "appliedExperienceIds",
+              "generator",
+              "validation",
+              "workflowVersionId"
+            ],
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "recipes": [],
+  "revision": "8b2f12a392d322ad79bc0f5e06aefbdb530f2c6b528e76659a406a4863e6de9c"
+}

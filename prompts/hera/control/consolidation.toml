@@ -1,0 +1,11 @@
+[meta]
+id = "hera-consolidation"
+version = "1"
+pattern = "hera"
+role = "consolidation-proposer"
+
+[system]
+content = "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output."
+
+[user]
+content = "Scope: {{scope}}\nSource insights: {{insights}}\nActive library: {{library}}\nBounds and policy: {{config}}"

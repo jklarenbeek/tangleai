@@ -36,4 +36,4 @@ Held-out learning attempts refused: 5. Learning writes: 0. Dataset comparisons r
 - No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.
 - No model or topology metrics are simulated. Training costs and held-out costs will be reported separately when those mechanisms execute.
 
-Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `f5724d82d52bd521c9b8a90b8d98cb6ab229cd54406cd6d7cba6904eb339346b`. Report: `34ca9de38da01e882d5b159d8c4b37f322c4370b0b44670322e7a8d8f3a17a3a`.
+Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `899db0aff9a768d7a9b78536b189a782db15a444b754bdca6d5e8ef89dff48e2`. Report: `a4285bbc72a49440b323b7d12bcc9c1f4b82c2c711629b2a70c202a66e526ea7`.

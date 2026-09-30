@@ -7,6 +7,7 @@ import { mulberry32, randomInt } from '@jarenjs/core/random';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import { recallByEmbedding } from '@tangleai/memory';
 import { gmplTextDigest, type GmplInput } from '@tangleai/gmpl';
+import { assertTaskSplit } from '@tangleai/hera';
 import { loadLocomo, SCORABLE_CATEGORIES, INIT_COMMAND, type LoadOutcome } from './locomo.ts';
 import { conversationCorpus, transcriptUnits } from './locomo-corpus.ts';
 import { questionsOf, sampleQuestions, type QaQuestion } from './locomo-qa.ts';
@@ -67,9 +68,7 @@ export async function loadHeraFixture(root = process.cwd()): Promise<HeraFixture
 }
 /** An adapter supplies the split; a model cannot authorize its own learning. */
 export function planHeraFixtureMode(mode: 'learn' | 'evaluate' | 'infer', task: Pick<HeraFixtureQuestion, 'split'>) {
-  return mode === 'learn' && task.split !== 'training'
-    ? { valid: false as const, issues: [{ code: 'THERA1004', path: '/split', detail: 'Held-out tasks cannot enter learning.' }] }
-    : { valid: true as const, value: { mode } };
+  return assertTaskSplit(task, mode);
 }
 export const heraRoleInput = (question: HeraFixtureQuestion, fixture: HeraFixture): GmplInput => ({
   caseId: question.id, query: question.query, evidence: fixture.corpus.map(p => ({ ...p })),
@@ -128,8 +127,12 @@ export async function createHeraDatasetPlan(dataset: LoadOutcome) {
 export async function heraSourceId(root = process.cwd()) {
   const packs = (await readdir(join(root, 'prompts/hera'), { recursive: true })).filter(p => p.endsWith('.toml')).map(p => 'prompts/hera/' + p).sort();
   const roots = ['benchmark/lib', 'benchmark/fixtures/hera', 'packages/mas/src', 'packages/gmpl/src', 'packages/store/src', 'packages/agents/src', 'packages/models/src', 'packages/config/src', 'packages/context/src'];
-  if (await stat(join(root, 'packages/hera/src')).then(s => s.isDirectory(), () => false)) roots.push('packages/hera/src');
-  const source = await sourceManifest(root, ['benchmark/hera-qa.ts', 'benchmark/schemas/hera-qa.schema.json', 'package.json', 'package-lock.json', ...packs], roots);
+  const scripts: string[] = [];
+  if (await stat(join(root, 'packages/hera/src')).then(s => s.isDirectory(), () => false)) {
+    roots.push('packages/hera/src', 'packages/hera/schemas', 'packages/hera/artifacts');
+    scripts.push('scripts/hera-artifacts.ts', 'scripts/hera-sources.ts', 'scripts/hera-schema.ts');
+  }
+  const source = await sourceManifest(root, ['benchmark/hera-qa.ts', 'benchmark/schemas/hera-qa.schema.json', 'package.json', 'package-lock.json', ...scripts, ...packs], roots);
   return canonicalSha256({ files: source.files });
 }
 const failures = (): NonNullable<Row['failures']> => ({ skipped: 0, refusedCandidates: 0, budgetStops: 0, orphans: 0, headConflicts: 0, refusedLearningWrites: 0 });
