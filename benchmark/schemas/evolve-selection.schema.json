@@ -1,0 +1,1070 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/evolve-selection",
+  "title": "Evolve selection report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark",
+    "registration",
+    "source",
+    "rounds",
+    "experiments",
+    "modelDecision",
+    "verdict",
+    "default",
+    "candidateWeights",
+    "identity",
+    "selectionHead",
+    "protectedRefWrites",
+    "operatorWorktreeChanged",
+    "liveModelCalls",
+    "reportId"
+  ],
+  "properties": {
+    "benchmark": {
+      "const": "evolve-selection/v1"
+    },
+    "registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "fixtureRevision",
+        "baseRevision",
+        "rounds",
+        "attempts",
+        "seed"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fixtureRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "baseRevision": {
+          "type": "string"
+        },
+        "rounds": {
+          "const": 3
+        },
+        "attempts": {
+          "const": 6
+        },
+        "seed": {
+          "const": 24071
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "sha256"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "rounds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/selectionRound"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "experiments": {
+      "const": 72
+    },
+    "modelDecision": {
+      "enum": [
+        "model-exact",
+        "model-mismatch"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "ranked-wins",
+        "inconclusive",
+        "ranked-loses"
+      ]
+    },
+    "default": {
+      "const": "unranked"
+    },
+    "candidateWeights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "strategyId",
+          "confidence"
+        ],
+        "properties": {
+          "strategyId": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "identity": {
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+    },
+    "selectionHead": {
+      "type": "null"
+    },
+    "protectedRefWrites": {
+      "const": 0
+    },
+    "operatorWorktreeChanged": {
+      "const": false
+    },
+    "liveModelCalls": {
+      "const": 0
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          "$.verdict",
+          {
+            "$if": [
+              {
+                "$every": {
+                  "r": "$.rounds[*]"
+                },
+                "$satisfies": {
+                  "$or": [
+                    {
+                      "$eq": [
+                        "$r.round",
+                        1
+                      ]
+                    },
+                    {
+                      "$and": [
+                        {
+                          "$lt": [
+                            "$r.comparison.rankedFirst",
+                            "$r.comparison.unrankedFirst"
+                          ]
+                        },
+                        {
+                          "$le": [
+                            "$r.comparison.rankedFirst",
+                            "$r.comparison.recallFirst"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$r.comparison.rankedGoalposts",
+                            "$r.comparison.unrankedGoalposts"
+                          ]
+                        },
+                        {
+                          "$eq": [
+                            "$r.comparison.rankedGoalposts",
+                            "$r.comparison.recallGoalposts"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "ranked-wins",
+              {
+                "$if": [
+                  {
+                    "$some": {
+                      "r": "$.rounds[*]"
+                    },
+                    "$satisfies": {
+                      "$and": [
+                        {
+                          "$gt": [
+                            "$r.round",
+                            1
+                          ]
+                        },
+                        {
+                          "$or": [
+                            {
+                              "$gt": [
+                                "$r.comparison.rankedFirst",
+                                "$r.comparison.unrankedFirst"
+                              ]
+                            },
+                            {
+                              "$gt": [
+                                "$r.comparison.rankedFirst",
+                                "$r.comparison.recallFirst"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "ranked-loses",
+                  "inconclusive"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.experiments",
+          {
+            "$sum": "$.rounds[*].arms[*].attempts"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.modelDecision",
+          {
+            "$if": [
+              {
+                "$every": {
+                  "r": "$.rounds[*].arms[*].rows[*]"
+                },
+                "$satisfies": {
+                  "$eq": [
+                    "$r.matches",
+                    true
+                  ]
+                }
+              },
+              "model-exact",
+              "model-mismatch"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.identity.identities[*]"
+          },
+          0
+        ]
+      },
+      {
+        "$eq": [
+          {
+            "$count": "$.identity.rows[*]"
+          },
+          12
+        ]
+      },
+      {
+        "$every": {
+          "r": "$.identity.rows[*]"
+        },
+        "$satisfies": {
+          "$eq": [
+            "$r.identityStatus",
+            "not-run"
+          ]
+        }
+      },
+      {
+        "$eq": [
+          "$.rounds[0].round",
+          1
+        ]
+      },
+      {
+        "$eq": [
+          "$.rounds[1].round",
+          2
+        ]
+      },
+      {
+        "$eq": [
+          "$.rounds[2].round",
+          3
+        ]
+      }
+    ]
+  },
+  "$defs": {
+    "selectionAttempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempt",
+        "proposalId",
+        "strategyId",
+        "actual",
+        "expected",
+        "matches",
+        "processRuns",
+        "worktreesCreated",
+        "patchBytes",
+        "modelCalls",
+        "modelTokens"
+      ],
+      "properties": {
+        "attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "proposalId": {
+          "type": "string"
+        },
+        "strategyId": {
+          "type": "string"
+        },
+        "actual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "reason",
+            "code"
+          ],
+          "properties": {
+            "decision": {
+              "enum": [
+                "kept",
+                "abandoned",
+                "refused",
+                "uncertain"
+              ]
+            },
+            "reason": {
+              "enum": [
+                "improved",
+                "equal",
+                "regression",
+                "red",
+                "ambiguous",
+                "over-budget",
+                "unverifiable",
+                "goalpost",
+                "escape",
+                "command",
+                "uncertain-effect"
+              ]
+            },
+            "code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "reason",
+            "code"
+          ],
+          "properties": {
+            "decision": {
+              "enum": [
+                "kept",
+                "abandoned",
+                "refused",
+                "uncertain"
+              ]
+            },
+            "reason": {
+              "enum": [
+                "improved",
+                "equal",
+                "regression",
+                "red",
+                "ambiguous",
+                "over-budget",
+                "unverifiable",
+                "goalpost",
+                "escape",
+                "command",
+                "uncertain-effect"
+              ]
+            },
+            "code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "matches": {
+          "type": "boolean"
+        },
+        "processRuns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreesCreated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patchBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.matches",
+          {
+            "$eq": [
+              "$.actual",
+              "$.expected"
+            ]
+          }
+        ]
+      }
+    },
+    "selectionArm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arm",
+        "rows",
+        "kept",
+        "attempts",
+        "shapeRefusals",
+        "red",
+        "ambiguous",
+        "goalpostRefusals",
+        "escapeRefusals",
+        "overBudget",
+        "uncertain",
+        "abandoned",
+        "refused",
+        "processRuns",
+        "worktreesCreated",
+        "patchBytes",
+        "modelCalls",
+        "modelTokens",
+        "attemptsToFirstKeep",
+        "hitRate"
+      ],
+      "properties": {
+        "arm": {
+          "enum": [
+            "unranked",
+            "recall",
+            "outcome-ranked",
+            "scripted-model"
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectionAttempt"
+          },
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "kept": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shapeRefusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "red": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "goalpostRefusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "escapeRefusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "overBudget": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncertain": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "abandoned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "processRuns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreesCreated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patchBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attemptsToFirstKeep": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 6
+        },
+        "hitRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.attempts",
+              {
+                "$count": "$.rows[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*].proposalId"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.rows[*].proposalId"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.hitRate",
+              {
+                "$div": [
+                  "$.kept",
+                  "$.attempts"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.shapeRefusals",
+              {
+                "$count": "$.rows[?(@.actual.code=='TEVO1001')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.kept",
+              {
+                "$count": "$.rows[?(@.actual.decision=='kept')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.red",
+              {
+                "$count": "$.rows[?(@.actual.reason=='red')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.ambiguous",
+              {
+                "$count": "$.rows[?(@.actual.reason=='ambiguous')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.goalpostRefusals",
+              {
+                "$count": "$.rows[?(@.actual.reason=='goalpost' && @.actual.code=='TEVO1004')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.escapeRefusals",
+              {
+                "$count": "$.rows[?(@.actual.reason=='escape')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.overBudget",
+              {
+                "$count": "$.rows[?(@.actual.reason=='over-budget')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.uncertain",
+              {
+                "$count": "$.rows[?(@.actual.decision=='uncertain')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.abandoned",
+              {
+                "$count": "$.rows[?(@.actual.decision=='abandoned')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.refused",
+              {
+                "$count": "$.rows[?(@.actual.decision=='refused')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.processRuns",
+              {
+                "$sum": "$.rows[*].processRuns"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.worktreesCreated",
+              {
+                "$sum": "$.rows[*].worktreesCreated"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.patchBytes",
+              {
+                "$sum": "$.rows[*].patchBytes"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.modelCalls",
+              {
+                "$sum": "$.rows[*].modelCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.modelTokens",
+              {
+                "$sum": "$.rows[*].modelTokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[0].attempt",
+              1
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[1].attempt",
+              2
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[2].attempt",
+              3
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[3].attempt",
+              4
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[4].attempt",
+              5
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[5].attempt",
+              6
+            ]
+          },
+          {
+            "$eq": [
+              "$.attemptsToFirstKeep",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.kept",
+                      0
+                    ]
+                  },
+                  null,
+                  {
+                    "$min": "$.rows[?(@.actual.decision=='kept')].attempt"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "selectionRound": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "round",
+        "pool",
+        "arms",
+        "comparison",
+        "oracleAttemptsToFirstKeep"
+      ],
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "pool": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 16,
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "arms": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/selectionArm"
+          }
+        },
+        "comparison": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rankedFirst",
+            "unrankedFirst",
+            "recallFirst",
+            "rankedGoalposts",
+            "unrankedGoalposts",
+            "recallGoalposts"
+          ],
+          "properties": {
+            "rankedFirst": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unrankedFirst": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "recallFirst": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rankedGoalposts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unrankedGoalposts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "recallGoalposts": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "oracleAttemptsToFirstKeep": {
+          "const": 1
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.arms[0].arm",
+              "unranked"
+            ]
+          },
+          {
+            "$eq": [
+              "$.arms[1].arm",
+              "recall"
+            ]
+          },
+          {
+            "$eq": [
+              "$.arms[2].arm",
+              "outcome-ranked"
+            ]
+          },
+          {
+            "$eq": [
+              "$.arms[3].arm",
+              "scripted-model"
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.rankedFirst",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.arms[2].attemptsToFirstKeep",
+                      null
+                    ]
+                  },
+                  7,
+                  "$.arms[2].attemptsToFirstKeep"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.rankedGoalposts",
+              "$.arms[2].goalpostRefusals"
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.unrankedFirst",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.arms[0].attemptsToFirstKeep",
+                      null
+                    ]
+                  },
+                  7,
+                  "$.arms[0].attemptsToFirstKeep"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.unrankedGoalposts",
+              "$.arms[0].goalpostRefusals"
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.recallFirst",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.arms[1].attemptsToFirstKeep",
+                      null
+                    ]
+                  },
+                  7,
+                  "$.arms[1].attemptsToFirstKeep"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.comparison.recallGoalposts",
+              "$.arms[1].goalpostRefusals"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "x-verdict-query": {
+    "$if": [
+      {
+        "$every": {
+          "r": "$.rounds[*]"
+        },
+        "$satisfies": {
+          "$or": [
+            {
+              "$eq": [
+                "$r.round",
+                1
+              ]
+            },
+            {
+              "$and": [
+                {
+                  "$lt": [
+                    "$r.comparison.rankedFirst",
+                    "$r.comparison.unrankedFirst"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$r.comparison.rankedFirst",
+                    "$r.comparison.recallFirst"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.comparison.rankedGoalposts",
+                    "$r.comparison.unrankedGoalposts"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.comparison.rankedGoalposts",
+                    "$r.comparison.recallGoalposts"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "ranked-wins",
+      {
+        "$if": [
+          {
+            "$some": {
+              "r": "$.rounds[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$gt": [
+                    "$r.round",
+                    1
+                  ]
+                },
+                {
+                  "$or": [
+                    {
+                      "$gt": [
+                        "$r.comparison.rankedFirst",
+                        "$r.comparison.unrankedFirst"
+                      ]
+                    },
+                    {
+                      "$gt": [
+                        "$r.comparison.rankedFirst",
+                        "$r.comparison.recallFirst"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "ranked-loses",
+          "inconclusive"
+        ]
+      }
+    ]
+  }
+}

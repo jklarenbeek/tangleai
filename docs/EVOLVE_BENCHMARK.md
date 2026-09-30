@@ -122,4 +122,4 @@ Of 15 failures, 14 belong to a group that recurs across distinct proposals and 1
 
 Round score 1/16 (0.0625). `compareRounds` states the rule this number exists for — a candidate mechanism is accepted only on a strict improvement of it, and a tie is rejected because equal evidence is not a reason to move — because per-instance acceptance cannot see a change that fixes the case in front of it and quietly breaks two others. It also refuses to compare two rounds that answered a different number of experiments at all: an experiment that never ran is not an attempt, so dropping the hard instances raises the ratio and padding it with easy ones raises it too, and neither repaired anything. Nothing calls that comparator yet: every acceptance in this run was decided one experiment at a time by `planExperimentDecision`, and the score above is published as evidence, not as a gate. The rule is here so that the loop which will need it does not have to invent one.
 
-Report `a1e3d3d76b5e…`, contract `fe7f79dc0c24…`, source `2621e1e0ec15…`, decision **oracle-exact**.
+Report `2bea8c2f947d…`, contract `fe7f79dc0c24…`, source `466682a54f50…`, decision **oracle-exact**.

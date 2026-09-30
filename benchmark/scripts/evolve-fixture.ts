@@ -30,6 +30,7 @@ import { join } from 'node:path';
 
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
+import { mulberry32, shuffle } from '@jarenjs/core/random';
 
 import { parseArgs } from '../lib/args.ts';
 import {
@@ -467,6 +468,43 @@ const manifest: Manifest = {
   hostProbes: HOST_PROBES,
 };
 await emit(MANIFEST_PATH, render(manifest));
+
+// Selection is registered separately so the original sixteen-case oracle and
+// its fixture identity remain immutable. Each round continues one seeded stream.
+const selectionRandom = mulberry32(24071);
+const permutations: string[][] = [];
+const modelReplies = [];
+if (!CHECK) await mkdir(join(ROOT, FIXTURE_DIR, 'model-replies'), { recursive: true });
+for (let round = 1; round <= 3; round++) {
+  const pool = shuffle(selectionRandom, registered.map(one => one.id));
+  permutations.push(pool);
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const proposal = authored.find(one => one.id === pool[attempt - 1])!;
+    const malformed = round === 1 && attempt === 1;
+    const content = malformed ? '{"proposalId":' : JSON.stringify({
+      proposalId: proposal.id, strategyId: proposal.strategyId,
+      rationale: proposal.rationale, evidence: [proposal.evidence],
+      patch: proposal.patch, origin: 'model',
+    });
+    const reply = { message: { role: 'assistant', content }, usage: { prompt_tokens: 24, completion_tokens: 40, total_tokens: 64 } };
+    const path = `${FIXTURE_DIR}/model-replies/${round}-${attempt}.json`;
+    await emit(path, render(reply));
+    modelReplies.push({ round, attempt, proposalId: proposal.id, path,
+      revision: await canonicalSha256(reply), malformed,
+      expect: malformed ? { decision: 'refused', reason: 'goalpost', code: 'TEVO1001' } : proposal.expect });
+  }
+}
+await emit(`${FIXTURE_DIR}/ablation.json`, render({
+  registration: 'evolve-selection/v1', rounds: 3, attempts: 6, seed: 24071,
+  fixtureRevision: await canonicalSha256(manifest),
+  baseRevision: manifest.fixture.baseRevision,
+  arms: ['unranked', 'recall', 'outcome-ranked', 'scripted-model'],
+  strategyOrder: STRATEGIES.map(one => one.id),
+  tieBreak: 'registered strategy order, then the round pool order within a strategy',
+  near: 'Select a bounded prefix without sorting every element.',
+  model: { identity: 'scripted/evolve-selection-v1', turns: 6, tokens: 512, ms: 600000, maxRepairs: 0 },
+  permutations, modelReplies,
+}));
 
 if (CHECK) {
   const committed = JSON.parse(await readFile(join(ROOT, MANIFEST_PATH), 'utf8').catch(() => '{}')) as Partial<Manifest>;

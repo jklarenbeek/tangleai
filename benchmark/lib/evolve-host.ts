@@ -42,8 +42,8 @@ import {
 import {
   compileSurfacePolicy, createPatchRefiner, sealRecord,
   recordExperimentOutcome, resolveEvolveEvidence, createSourceRegistry,
-  DEFAULT_EVOLVE_BUDGETS, AUTOMATION_PRINCIPAL, ok, refuseOne,
-  type EvolveStore, type PlannedDecision,
+  DEFAULT_EVOLVE_BUDGETS, AUTOMATION_PRINCIPAL, ok, refuseOne, refuse,
+  type EvolveStore, type PlannedDecision, type EvolveIssue,
 } from '@tangleai/evolve';
 import { createExperimentOutcomeAdapter } from '@tangleai/evolve/adapters/experiment';
 import type { EvolveBudgets, EvolveDecision, EvolveExperiment, EvolveMeasurement } from '@tangleai/evolve/contracts';
@@ -269,7 +269,7 @@ export interface ExperimentRun {
  */
 export async function runExperiment(
   registration: LoadedEvolveFixture,
-  entry: { document: { id: string, strategyId: string, rationale: string, evidence: string, patch: unknown[] }, index: number, budgets: Row['budgets'], expect: { decision: string, reason: string, code: string | null } },
+  entry: { document: { id: string, strategyId: string, rationale: string, evidence: string, patch: unknown[] }, index: number, budgets: Row['budgets'], expect: { decision: string, reason: string, code: string | null }, origin?: 'hand-authored' | 'model', refusal?: EvolveIssue[] },
   host: ExperimentHost,
   baseFiles: Record<string, string>,
 ): Promise<ExperimentRun> {
@@ -376,14 +376,14 @@ export async function runExperiment(
   };
 
   // ---- prepare -----------------------------------------------------------
-  const prepared = refiner.prepare(baseFiles, {
+  const prepared = entry.refusal === undefined ? refiner.prepare(baseFiles, {
     proposalId: document.id,
     strategyId: document.strategyId,
     rationale: document.rationale,
     evidence: [document.evidence],
-    origin: 'hand-authored',
+    origin: entry.origin ?? 'hand-authored',
     patch: document.patch,
-  });
+  }) : refuse(entry.refusal);
   const driven = await driveEvolveLifecycle({
     db: host.db, driver, proposalId: document.id, strategyId: document.strategyId, epoch: epochFor(entry.index),
     context: {

@@ -14,7 +14,7 @@
  */
 
 import {
-  planExperimentWrite, recordExperimentId, sealRecord, validateRecord, ok, refuseOne,
+  planExperimentWrite, recordExperimentId, sealRecord, validateRecord, ok, refuseOne, checkEvolveKeyKind,
   type EvolveStore, type EvolveOutcome, type ListQuery, type WriteReceipt,
   type EvolveRecord, type EvolveExperiment, type ExperimentCommand,
 } from '@tangleai/evolve';
@@ -98,6 +98,8 @@ export function createEvolveStore(db: TangleDb): EvolveStore {
     },
 
     async putKey(kind: string, key: string, id: string): Promise<EvolveOutcome<WriteReceipt>> {
+      const checked = checkEvolveKeyKind(kind);
+      if (!checked.ok) return checked;
       return db.transaction(async tx => {
         const rows = tx.collection<KeyRow>('evolve_keys');
         const composite = keyOf(kind, key);
@@ -113,6 +115,8 @@ export function createEvolveStore(db: TangleDb): EvolveStore {
     },
 
     async getKey(kind: string, key: string): Promise<EvolveOutcome<string | null>> {
+      const checked = checkEvolveKeyKind(kind);
+      if (!checked.ok) return checked;
       return db.transaction(async tx => {
         const held = await tx.collection<KeyRow>('evolve_keys').get(keyOf(kind, key));
         return ok(held?.target ?? null);

@@ -381,32 +381,31 @@ direct-answer comparisons rather than against the earlier empty-answer count.
 
 ## The loop that runs the workflows
 
-- [ ] **The evolution loop: workflows as evolvable DAGs.** *Wanted:* point the
-  desktop workspace at a REPOSITORY and run experiments as dag runs — propose from
-  strategy memory → git-worktree isolate → apply → gate by exit code → measure →
-  commit-on-branch or abandon (the default) → record the outcome so `applyOutcome`
-  moves the proposing strategy's confidence. Design, rails and the exists/missing
-  table: [`workflow/EVOLVE.md`](workflow/EVOLVE.md). *Built so far:*
-  `@tangleai/evolve` runs that loop as a Node host over git worktrees and
-  reproduces a registered oracle exactly — sixteen of sixteen adversarial
-  proposals landing on the verdict written down before any of them could run
-  ([`EVOLVE_BENCHMARK.md`](EVOLVE_BENCHMARK.md)). A round of verdicts also
-  reduces to failure patterns and one scalar, published beside the per-experiment
-  decisions as evidence: a failure reads as being about the mechanism only when
-  unrelated instances produce it. The stages are additionally authored as one
-  immutable workflow version whose every process effect is a typed wait answered
-  by a separate worker, and three read-only operations expose experiments and
-  review bundles behind a frozen-baseline diff gate. *Still open:* acceptance is
-  still decided one experiment at a time — the round comparator is published but
-  nothing consults it — proposals are hand-authored rather than generated, the
-  instrument still drives the stages sequentially rather than through the
-  workflow version, and nothing has been measured against a repository that was
-  not the fixture.
-  *Constraint:* this is the capability the standing rule was written for. The
-  skill loop is its remaining prerequisite; the mutator may never touch tests,
-  gates or CI; `main` is never a write target. *Closes on:* over N experiments on
-  a fixed repo state, the strategy ledger's hit rate rises while gate-red and
-  goalpost-refusal counts are fully accounted, and zero writes ever reach `main`.
+- [ ] **Repository evolution beyond the registered fixture.** *Wanted:* evaluate
+  live model-authored proposals under an explicitly authorized model, attempt and
+  token plan; run experiments against the Tangle checkout; qualify Jaren as a
+  second target; and promote ranked selection only when independent measurement
+  earns it. The isolated, gated and measured lifecycle, immutable surface,
+  durable MAS execution and four-policy ablation have shipped
+  ([workflow/EVOLVE.md](workflow/EVOLVE.md),
+  [EVOLVE_SELECTION.md](EVOLVE_SELECTION.md)). The current result is inconclusive
+  and selection remains unranked. *Constraint:* proposals never edit the tests,
+  gate or registration; protected refs remain untouched; live spend and outcome
+  promotion each require their own explicit authority. *Closes on:* reproducible
+  target-specific measurements with all failures and costs counted, a stated
+  selection improvement over both controls under the registered refusal checks,
+  and independently approved promotion. Fixture success alone closes none of
+  these target or live-model claims.
+- [ ] **Experiment cleanup recovery after the terminal transition.** *Wanted:*
+  a durable cleanup receipt that distinguishes a recorded decision from completed
+  workspace removal. `settleExperiment` currently wins its compare-and-swap
+  before removing the worktree; a crash in that interval leaves a terminal
+  experiment and a workspace for operator inspection. A returned cleanup failure
+  is explicit, but a later reconciler skips the terminal experiment. *Constraint:*
+  recovery must not delete a recreated workspace or reapply a completed effect.
+  *Closes on:* crash tests at both sides of removal converge through a fenced
+  cleanup receipt, while stale settlement and recreated-workspace tests still
+  refuse. Until then, terminal status alone is not evidence of cleanup.
 - [ ] **Verifiable autonomous research.** *Wanted:* a topic taken through
   literature discovery, hypothesis formation, executable experiments, analysis,
   review and a draft — with every important claim traceable to literature or

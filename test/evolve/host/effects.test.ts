@@ -52,6 +52,22 @@ const planFor = (id: string, root: string, script: string): EffectPlan => ({
 });
 
 describe('the effect fence', () => {
+  it('reports a failed completion or pause instead of swallowing a lost job lease', async () => {
+    for (const state of ['complete', 'unresolved']) {
+      const driver = createEffectDriver({
+        owner: 'test', effects: { prepare: async () => ({ record: {}, writes: 1 }), get: async () => null },
+        jobs: { claim: async () => ({ jobId: 'lease-failure' }),
+          complete: async () => { throw new Error('lost completion lease'); },
+          pause: async () => { throw new Error('lost pause lease'); } },
+        external: { run: async () => ({ state, legs: [] }) },
+      });
+      const result = await driver.run(planFor('lease-failure', '/tmp', ''));
+      assert.ok(!result.ok);
+      assert.equal(result.issues[0].code, 'TEVO1009');
+      assert.match(result.issues[0].detail, /lost (completion|pause) lease/);
+    }
+  });
+
   it('records the intent before dispatching, and never throws', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'tangle-eff-'));
     try {

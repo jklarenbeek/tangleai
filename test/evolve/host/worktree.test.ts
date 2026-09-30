@@ -48,6 +48,10 @@ describe('the worktree host', () => {
     assert.match(base.id, /^[a-f0-9]{64}$/, 'a base is a sealed record like any other');
   });
 
+  it('does not report an unreadable workspace as zero bytes', async () => {
+    await assert.rejects(host.workspaceBytes(join(fixture.worktreeRoot, 'missing-workspace')), { code: 'ENOENT' });
+  });
+
   it('refuses a dirty operator tree, because a base nobody is editing is the point', async () => {
     await writeFile(join(fixture.repositoryRoot, 'scratch.txt'), 'uncommitted\n');
     try {

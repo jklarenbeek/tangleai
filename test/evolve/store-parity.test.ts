@@ -87,6 +87,23 @@ async function transcript(store: EvolveStore): Promise<unknown[]> {
 }
 
 describe('evolve store parity', () => {
+  it('refuses key-kind delimiters before they can alias a different namespace', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tangle-evolve-key-'));
+    const db = await openTangleDb({ path: join(dir, 'evolve.sqlite') });
+    try {
+      for (const store of [createMemoryEvolveStore(), createEvolveStore(db)]) {
+        for (const separator of [' ', '\u0000']) {
+          assert.ok((await store.putKey('a', 'b' + separator + 'c', 'first')).ok);
+          const read = await store.getKey('a' + separator + 'b', 'c');
+          assert.ok(!read.ok && read.issues[0].code === 'TEVO1001');
+          const write = await store.putKey('a' + separator + 'b', 'c', 'second');
+          assert.ok(!write.ok && write.issues[0].code === 'TEVO1001');
+          assert.deepEqual(await store.getKey('a', 'b' + separator + 'c'), { ok: true, value: 'first' });
+        }
+      }
+    } finally { await db.close(); await rm(dir, { recursive: true, force: true }); }
+  });
+
   it('the memory reference and SQLite answer the same scenario identically', async () => {
     const memory = await transcript(createMemoryEvolveStore());
 

@@ -191,13 +191,23 @@ export function createEffectDriver(options: EffectDriverOptions) {
       const legs = result.legs ?? [];
 
       if (result.state === 'complete') {
-        if (claimedHere) await jobs.complete(lease, result).catch(() => undefined);
+        if (claimedHere) {
+          try { await jobs.complete(lease, result); }
+          catch (error) {
+            return refuseOne('TEVO1009', '/jobs', 'Completing the effect job failed: ' + String(error));
+          }
+        }
         return ok({ planId: plan.id, prepared: preparation.value.prepared, state: result.state, legs });
       }
 
       // Anything else pauses rather than completing: a job whose identity is
       // consumed cannot be claimed again for reconciliation.
-      if (claimedHere) await jobs.pause?.(lease).catch(() => undefined);
+      if (claimedHere) {
+        try { await jobs.pause?.(lease); }
+        catch (error) {
+          return refuseOne('TEVO1009', '/jobs', 'Pausing the effect job failed: ' + String(error));
+        }
+      }
       if (result.state === 'unresolved') {
         return unresolvedRefusal(result.leg ?? plan.id) as EvolveOutcome<EffectRunResult>;
       }

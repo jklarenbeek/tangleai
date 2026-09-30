@@ -303,7 +303,7 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
     async workspaceBytes(path: string): Promise<number> {
       let total = 0;
       const walk = async (dir: string): Promise<void> => {
-        const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+        const entries = await readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
           if (entry.name === '.git') continue;
           const full = join(dir, entry.name);
@@ -311,8 +311,8 @@ export function createWorktreeHost(options: WorktreeHostOptions): WorktreeHost {
           // into a large tree cannot inflate — or hang — this walk.
           if (entry.isSymbolicLink()) { total += 1; continue; }
           if (entry.isDirectory()) { await walk(full); continue; }
-          const info = await lstat(full).catch(() => null);
-          if (info) total += info.size;
+          const info = await lstat(full);
+          total += info.size;
         }
       };
       await walk(resolve(path));

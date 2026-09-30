@@ -41,6 +41,13 @@ export interface WriteReceipt {
   writes: number;
 }
 
+/** Both stores reserve their key separators; keys themselves remain opaque. */
+export function checkEvolveKeyKind(kind: string): EvolveOutcome<true> {
+  return typeof kind === 'string' && kind.length > 0 && !/[\u0000\s]/u.test(kind)
+    ? ok(true as const)
+    : refuseOne('TEVO1001', '/kind', 'A semantic key kind must be nonempty and contain no whitespace or NUL.');
+}
+
 export interface EvolveStore {
   putRecord(record: unknown): Promise<EvolveOutcome<WriteReceipt>>;
   getRecord(id: string): Promise<EvolveOutcome<EvolveRecord | null>>;
@@ -142,6 +149,8 @@ export function createMemoryEvolveStore(): EvolveStore {
     },
 
     async putKey(kind, key, id) {
+      const checked = checkEvolveKeyKind(kind);
+      if (!checked.ok) return checked;
       const composite = keyOf(kind, key);
       const held = keys.get(composite);
       if (held !== undefined) {
@@ -153,6 +162,8 @@ export function createMemoryEvolveStore(): EvolveStore {
     },
 
     async getKey(kind, key) {
+      const checked = checkEvolveKeyKind(kind);
+      if (!checked.ok) return checked;
       return ok(keys.get(keyOf(kind, key)) ?? null);
     },
 

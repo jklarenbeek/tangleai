@@ -253,8 +253,9 @@ experiment's compare-and-swap and retains uncertain work for review.
 stopped run executes no further segment, so the cleanup cannot be a node — it
 would never fire, and the worktree would outlive the run.
 `reconcileStoppedExperiments` does it instead, for both ways a run can stop,
-and is idempotent through the experiment's own compare-and-swap: the second
-pass examines the same runs and settles none.
+and rejects repeated settlement through the experiment's compare-and-swap.
+After successful cleanup a second pass settles none; the terminal-transition
+crash limitation is described below.
 `reconcileCancelledExperiments` is its cancelled case, and supplies the one
 thing specific to that case — the decision a cancel settles to.
 
@@ -280,3 +281,52 @@ the diff text or what the gate printed. A reviewer reads those from the branch
 the experiment left behind, where they are attributable to a commit, rather
 than from a payload that could be rewritten on the way past. A list is bounded
 whether or not the caller asked for a bound.
+
+
+## Measured strategy selection and injected proposals
+
+`selectExperiment` supports `unranked`, `recall`, `outcome-ranked` and
+`scripted-model`. The latter two names select policies; constructing a selector
+never constructs a model client. Recall scores come from the context ledger's
+hash-embedded skill retrieval. Ranked scores come from outcome-projected carrier
+confidence. Ties use registered strategy order, then the round pool order. Only
+the ranked arm carries confidence across rounds.
+
+[The selection instrument](../../docs/EVOLVE_SELECTION.md) runs three rounds of
+six attempts in each arm: 72 durable experiments. Recall and outcome ranking each
+find the registered keep on their first attempt; unranked finds none within six
+attempts in any round. The required goalpost-refusal counts differ, so the result
+is **inconclusive**, and `EVOLVE_SELECTION_DEFAULT` remains **unranked**. The
+report publishes red gates, ambiguity, malformed proposals, refusals, budgets,
+processes and model tokens beside the keeps. No selection head moves.
+
+`createModelProposer({ client, budget, tier, prepare })` has no default client.
+Inject a `createBudgetAccount` from `@tangleai/agents/recursive` and a synchronous
+`prepare` callback using the same `createPatchRefiner` as hand-authored proposals.
+Call `propose({ messages, proposalId, strategyId, authorize })`. Identities and
+`origin: 'model'` are fixed; malformed structured replies are `TEVO1001`, changed
+identities `TEVO1002`, forbidden surfaces `TEVO1004`, and exhausted budgets
+`TEVO1005`. Repair is disabled. Only one model call may be outstanding; actual
+usage is charged even when a reply is refused. A reply that exhausts its token
+or time ceiling cannot admit a patch. Token accounting occurs after a reply;
+hosts must also apply provider-side output limits to bound individual calls.
+
+For `tier: 'live'`, `authorize: true` is required before any call or budget
+reservation. The host must show a frozen model, attempt and token plan before
+requesting that authorization. `benchmark:evolve -- --live --model MODEL
+--tokens N` prints the plan and refuses without `--authorize`; the instrument
+has no live provider even with that flag. Its measured model arm uses only the
+18 registered replies, including a forbidden patch and a malformed reply.
+
+Run `npm run benchmark:evolve -- --ablation --check` to reproduce the separate
+selection artifacts. The original sixteen-proposal manifest and oracle rows
+remain fixed. The package's injected proposal seam is exported because that
+oracle remains exact and the model arm passes its registered adversarial cases.
+
+A terminal experiment status alone does not prove workspace cleanup. Settlement
+wins its revision fence before removal; a crash after that transition requires
+operator inspection, as recorded in [the roadmap](../../docs/ROADMAP.md).
+
+Semantic store key kinds must be nonempty and contain neither whitespace nor NUL.
+Both stores return `TEVO1001` before reading or writing an ambiguous kind; key
+values remain opaque, and valid existing persistent key encodings are unchanged.

@@ -469,8 +469,21 @@ The published contract is three read operations and no more. There is nothing
 that merges, promotes, approves, runs, cancels or stops an experiment, and a
 frozen-baseline diff gate refuses the commit that adds one.
 
-Measured in [EVOLVE_BENCHMARK.md](EVOLVE_BENCHMARK.md) against a registration
-written before the mechanism existed.
+All sixteen registered experiments now run through these durable workflows,
+including early refusals and the single flake rerun. Readback handlers persist
+gate, measurement and decision evidence before the host settles the workspace.
+Effect workers checkpoint the original interaction address and answer under the
+job lease; redelivery cannot answer a later wait with an earlier stage's result.
+
+[EVOLVE_BENCHMARK.md](EVOLVE_BENCHMARK.md) reproduces the registered oracle.
+[EVOLVE_SELECTION.md](EVOLVE_SELECTION.md) compares four policies across 72
+durable experiments. Its result is inconclusive: ranked selection finds the keep
+early but does not preserve the controls' refusal counts. Only that arm carries
+outcome-projected confidence between rounds. The default remains unranked and no
+selection head is promoted. `createModelProposer` requires an injected client,
+budget and guarded preparation callback; its keyless adversarial replies pass
+the same surface checks as hand-authored proposals. A live client additionally
+requires explicit authorization from its host.
 
 ## Evaluated skill directories (added 2026-09-14)
 

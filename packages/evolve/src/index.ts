@@ -26,7 +26,7 @@ export type { EvolveAction } from './authority.ts';
 export { checkBudgets, checkBudget, DEFAULT_EVOLVE_BUDGETS, BUDGET_NAMES } from './budgets.ts';
 export type { BudgetName } from './budgets.ts';
 
-export { createMemoryEvolveStore, planExperimentWrite, recordExperimentId } from './store.ts';
+export { createMemoryEvolveStore, planExperimentWrite, recordExperimentId, checkEvolveKeyKind } from './store.ts';
 export type { EvolveStore, ListQuery, StoredRecord, WriteReceipt } from './store.ts';
 
 export { createStrategyLibrary } from './strategy.ts';
@@ -72,3 +72,8 @@ export {
 export type {
   AggregateEvidence, FailurePattern, FailureRecord, FailureMechanism, DecidedRow, RoundScore,
 } from './aggregate.ts';
+
+export { selectExperiment, EVOLVE_SELECTION_DEFAULT, EVOLVE_SELECTION_ARMS } from './selection.ts';
+export type { SelectionArm, SelectionCandidate, SelectionContext } from './selection.ts';
+export { createModelProposer } from './proposer.ts';
+export type { ProposalBudget, ModelProposerOptions } from './proposer.ts';

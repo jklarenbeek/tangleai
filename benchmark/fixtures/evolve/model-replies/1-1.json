@@ -1,0 +1,11 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": "{\"proposalId\":"
+  },
+  "usage": {
+    "prompt_tokens": 24,
+    "completion_tokens": 40,
+    "total_tokens": 64
+  }
+}

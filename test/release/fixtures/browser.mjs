@@ -8,8 +8,10 @@ import { createStudioFileAuthor, createDataAdapter, createFlowAdapter } from '@t
 import { estimateTokens } from '@tangleai/core';
 import { createMemoryUnitStore } from '@tangleai/memory';
 import { createOfflineEmbedder, dagToMermaid, PIPELINE_DAG } from '@tangleai/pipeline';
+import { createModelProposer, selectExperiment, EVOLVE_SELECTION_DEFAULT } from '@tangleai/evolve';
 
 globalThis.tangleConsumer = {
+  evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),

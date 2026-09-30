@@ -30,7 +30,8 @@
     "@tangleai/context": "^0.30.1",
     "@tangleai/core": "^0.30.1",
     "@tangleai/mas": "^0.30.1",
-    "@tangleai/outcomes": "^0.30.1"
+    "@tangleai/outcomes": "^0.30.1",
+    "@tangleai/models": "^0.30.1"
   },
   "private": false,
   "types": "./src/index.ts",

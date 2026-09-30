@@ -546,7 +546,8 @@ are excluded from every public distribution.
   proved: conventions, the bootstrap prompt, campaigns (router, orders,
   session records — gitignored scratch), health pass, release — each with
   a machine-readable stage block, and [EVOLVE.md](docs/workflow/EVOLVE.md),
-  the gated design for running these workflows as evolvable DAGs
+  the shipped durable repository experiment lifecycle and its
+  [measured selection comparison](docs/EVOLVE_SELECTION.md)
 - `prompts/` — memflow's TOML prompt packs, carried as data for the
   shipped mechanisms and remaining research; package guides identify the packs
   actually compiled and used

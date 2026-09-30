@@ -1,24 +1,28 @@
 # EVOLVE.md — workflows as executable, measurable, evolvable DAGs
 
-**Status: PARTLY BUILT.** The loop below ships as `@tangleai/evolve`:
-propose, isolate, apply, gate, measure, decide, settle, record, over git
-worktrees, with the authority to land a change absent from the vocabulary
-rather than defended at a call site. What it has been run against is an
-authored oracle — sixteen adversarial proposals whose verdicts were
-written down before any of them could run, published as
-`docs/EVOLVE_BENCHMARK.md`. That measures the mechanism; it does not
-measure a model, and it does not measure this repository. Still unbuilt:
-the prose-block → jaren-dag loader, the desktop wiring that would make an
-experiment a dag run, proposal operators that generate rather than
-replay, and any sequence of experiments against a real repository — which
-is why the standing rule (CONVENTIONS §6) still governs the rest: *no
+**Status: SHIPPED FOR THE REGISTERED FIXTURE.** `@tangleai/evolve` runs
+propose, isolate, apply, gate, measure, decide and record as a durable MAS
+workflow, then settles the workspace from the host. All sixteen registered
+adversarial proposals reproduce their original decisions; every effect wait is
+answered by its own lease-holding worker. See
+[EVOLVE_BENCHMARK.md](../EVOLVE_BENCHMARK.md).
+
+The four-policy comparison runs 72 real experiments with keyless recorded model
+replies and hash embeddings. [EVOLVE_SELECTION.md](../EVOLVE_SELECTION.md)
+publishes an **inconclusive** result, including refusal and cost counts. The
+default remains unranked. Model proposals use an injected client, budget and
+immutable-surface preparation; the scripted goalpost and malformed replies are
+refused without repair. No selection artifact is evaluated, approved or promoted.
+
+Live proposal evaluation under an authorized spend plan, targeting the Tangle
+checkout, Jaren as a second target and earned selection promotion remain open.
+The CLI prints a frozen plan and refuses an unauthorized live request; it has
+no configured live provider. The public proposer seam supports an explicitly
+authorized injected host. Desktop experiment authoring and arbitrary prose-stage
+loading remain design. This fixture establishes mechanism behavior, not model
+quality or improvement on another repository. The standing rule remains: *no
 self-evolving capability ships before the instrument that can call it an
-improvement.* This is the capability that rule was written for.
-`docs/ROADMAP.md` carries it as the evolution-loop entry, still open; the
-skill loop remains its prerequisite. The generic evidenced lifecycle
-ships in `@tangleai/outcomes` and an experiment binds to it through the
-`evolve-experiment/v1` adapter; neither establishes repository evolution
-quality.
+improvement.*
 
 ## The idea
 
@@ -43,7 +47,7 @@ signal this repo insists on.
 
 ## The experiment loop (one dag run)
 
-1. **Propose.** A strategy — initially hand-authored, later an LLM over
+1. **Propose.** A strategy — hand-authored or an injected model over
    the strategy memory — names one small change: a duplicate to
    collapse, an order step, a threshold to try, a hot path to rewrite.
    Proposals are memory units: text + evidence + confidence, so recall
@@ -88,9 +92,9 @@ signal this repo insists on.
 | run history + live streaming surface | exists (`@tangleai/store`, desktop `runs.live`/`run.live`) |
 | outcome-driven strategy fitness | exists for one experiment (`@tangleai/outcomes` + the `evolve-experiment/v1` adapter: a kept change scores success, an equal one partial, a refusal a strategy failure); measured fitness over a real repository remains downstream |
 | proposal discipline | exists and is wired here — an RFC 6902 patch over a file map with `move`, `copy` and `test` absent from the vocabulary, five ordered detections, and a second rename check over git's own staged view |
-| stage blocks as loadable dag documents | exists as one immutable MAS workflow version (`@tangleai/evolve/lifecycle`) — every stage that reaches a process is a task that writes a fenced effect intent paired with a typed wait a separate worker answers, because a segment holds no job lease and so no node may spawn. One experiment is driven end to end over the real runtime, the real queue and a real repository to a completed run; the instrument still drives the stages sequentially |
+| stage blocks as loadable dag documents | exists as one immutable MAS workflow version (`@tangleai/evolve/lifecycle`) — every stage that reaches a process is a task that writes a fenced effect intent paired with a typed wait a separate worker answers, because a segment holds no job lease and so no node may spawn. All sixteen oracle cases and 72 selection experiments execute through the real runtime and queue; skipped stages omit their waits and each redelivery reuses the original checkpointed answer |
 | worktree executor (add/apply/gate/measure/remove) | exists (`@tangleai/evolve` host) — `node:child_process` over an allow-list of whole git argument vectors, each run one fenced leg of an external effect, no new dependencies |
-| mutation/proposal operators | missing — the sixteen registered proposals are hand-authored; LLM-backed via `createStructuredOutput` later |
+| mutation/proposal operators | exists as `createModelProposer` over `createStructuredOutput`, an injected client, a shared budget and guarded preparation. Keyless adversarial replies are measured; no live provider is configured or measured |
 | read-only review surface | exists — three read operations (`evolve.experiments.list`, `evolve.experiment.get`, `evolve.review.get`) behind a frozen-baseline diff gate that refuses any operation which would land a change. A review bundle answers its diff digest and byte count, never the diff text or what the gate printed |
 | stopping one, and cleaning up after it | exists — `cancelExperiment` is a host call and not a wire operation, and settling is a reconciler rather than a node for BOTH ways a run stops: removing a worktree spawns git, which a segment may not do, and a stopped run — cancelled or completed — executes no further segment to do it in. A cancel records `abandoned`/`command`; an expiry records `abandoned`/`over-budget`; a completed run carries the decision it reached; the decision vocabulary is not widened |
 | round-level failure evidence | partly — failures group into patterns and read as systematic only on recurrence across distinct instances, and a round reduces to one scalar; both are published beside the per-experiment decisions as evidence. `compareRounds` states the matching acceptance rule (strict improvement, ties rejected) but nothing calls it yet — `planExperimentDecision` still owns every acceptance, one experiment at a time |
