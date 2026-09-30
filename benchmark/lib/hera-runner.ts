@@ -12,16 +12,16 @@ import {SCORABLE_CATEGORIES} from './locomo.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
 import type {HeraPlanOutput} from '@tangleai/hera';
-import type {HeraTrainingSequence,HeraReflectionScript,HeraConsolidationScript} from './hera-learning-scripts.ts';
+import type {HeraTrainingSequence,HeraReflectionScript,HeraConsolidationScript,HeraRopeScript} from './hera-learning-scripts.ts';
 import {heraQuality} from './hera-quality.ts';
 type Script=Record<string,Record<'single-turn'|'fixed',Record<string,{completion:unknown;normalization:unknown;repair:unknown;tool?:{query:string;k:number}}>>>;
 export interface HeraOrchestratorScript {kind:string;profile:{text:string;tags:string[]};plans:Record<string,HeraPlanOutput>;proposals:Record<string,string[]>;}
 export async function loadHeraScripts(root:string) {
   const directory=join(root,'benchmark/fixtures/hera/scripts'),manifest=JSON.parse(await readFile(join(directory,'manifest.json'),'utf8')) as {kind:string;files:Array<{path:string;sha256:string}>};
-  if(manifest.kind!=='hera-scripted/v3'||JSON.stringify(manifest.files.map(f=>f.path))!==JSON.stringify(['baseline.json','orchestrator.json','reflection.json','consolidation.json','../sequence.json']))throw Error('Invalid HERA script registration.');
+  if(manifest.kind!=='hera-scripted/v4'||JSON.stringify(manifest.files.map(f=>f.path))!==JSON.stringify(['baseline.json','orchestrator.json','reflection.json','consolidation.json','rope.json','../sequence.json']))throw Error('Invalid HERA script registration.');
   const files=new Map<string,string>();
   for(const file of manifest.files){const bytes=await readFile(join(directory,file.path),'utf8');if(createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw Error('HERA script bytes changed.');files.set(file.path,bytes);}
-  return {revision:await heraRevisionOf(manifest),scripts:JSON.parse(files.get('baseline.json')!) as Script,orchestrator:JSON.parse(files.get('orchestrator.json')!) as HeraOrchestratorScript,
+  return {rope:JSON.parse(files.get('rope.json')!) as HeraRopeScript,revision:await heraRevisionOf(manifest),scripts:JSON.parse(files.get('baseline.json')!) as Script,orchestrator:JSON.parse(files.get('orchestrator.json')!) as HeraOrchestratorScript,
     sequence:JSON.parse(files.get('../sequence.json')!) as HeraTrainingSequence,reflection:JSON.parse(files.get('reflection.json')!) as HeraReflectionScript,consolidation:JSON.parse(files.get('consolidation.json')!) as HeraConsolidationScript};
 }
 /** The native document store and recall implementation own ranking and identity gates. */

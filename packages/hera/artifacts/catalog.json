@@ -3433,7 +3433,7 @@
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "f0b27632a951fbbdc314123150286290c5690ac41f110ecea879ad3f109ce220",
+      "revision": "e394ab16a8253ef0a8075d97276f4b59d0a5427f6475b088c99ccc387104eb39",
       "role": {
         "id": "consolidation-proposer",
         "instructions": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output.",
@@ -3583,8 +3583,13 @@
               },
               "variantAxes": {
                 "items": {
-                  "minLength": 1,
-                  "type": "string"
+                  "enum": [
+                    "efficiency",
+                    "thoroughness",
+                    "risk-sensitivity",
+                    "error-correction",
+                    "heuristic-injection"
+                  ]
                 },
                 "type": "array",
                 "uniqueItems": true
@@ -3848,8 +3853,13 @@
               },
               "variantAxes": {
                 "items": {
-                  "minLength": 1,
-                  "type": "string"
+                  "enum": [
+                    "efficiency",
+                    "thoroughness",
+                    "risk-sensitivity",
+                    "error-correction",
+                    "heuristic-injection"
+                  ]
                 },
                 "type": "array",
                 "uniqueItems": true
@@ -4083,31 +4093,35 @@
           "id": "hera-rope-evolution",
           "pattern": "hera",
           "role": "prompt-contrastive-analyst",
-          "version": "1"
+          "version": "2"
         },
         "system": {
-          "content": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. Every proposal cites actual replay trial ids in derivedFrom. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output."
+          "content": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. In proposal phase, each rule and the top-level derivedFrom cite only the supplied failure trajectory ids. In contrast phase, retain the exact tested rule texts and categories and cite both actual control and replay trajectory ids for every rule and top-level derivedFrom; report a losing comparison honestly. The candidate remains bound to its source failures; this contrast records the measured replay evidence. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output."
         },
         "user": {
-          "content": "Agent: {{agent}}\nCurrent prompt: {{current_prompt}}\nEvaluated failures: {{failures}}\nWhole-run paired trials: {{trials}}\nAxis: {{axis}}"
+          "content": "Phase: {{phase}}\nAgent: {{agent}}\nCurrent prompt: {{current_prompt}}\nEvaluated failures: {{failures}}\nWhole-run paired trials: {{trials}}\nAxis: {{axis}}"
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "eeee4d76d206d7c9f06708fc3322a4c16d1b7a8b493173d31aee429db63e84a8",
+      "revision": "234a32a39a17a2e5b9e01f709f2fb1aa580fb85122d1c9636d9d366ef78b15be",
       "role": {
         "id": "prompt-contrastive-analyst",
-        "instructions": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. Every proposal cites actual replay trial ids in derivedFrom. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output.",
-        "revision": "2ea24f9fc527571625588ef36518b4e0663e44ecfe3f66ed52658f439811ff1c",
+        "instructions": "Compare whole-run paired prompt trials for the named role and behavioral axis. Separate operational rules from behavioral principles. In proposal phase, each rule and the top-level derivedFrom cite only the supplied failure trajectory ids. In contrast phase, retain the exact tested rule texts and categories and cite both actual control and replay trajectory ids for every rule and top-level derivedFrom; report a losing comparison honestly. The candidate remains bound to its source failures; this contrast records the measured replay evidence. Preserve the immutable role envelope, tools and output schema; never rewrite the complete prompt or infer a win from a partial replay. Return only the declared structured output.",
+        "revision": "5058112724e7e72a335c7cbaa8af9e5b8b7a20c3f7c74823d5eedf4c0c290c91",
         "title": "prompt-contrastive-analyst"
       },
-      "sourceDigest": "bcaffe1a13cecffafc6559ed03ca6c82bd2b0fa97a99a0628902bc30532b6efb",
+      "sourceDigest": "7e4bffdbdb28d38144a5768627323f3243fd82f82a20d1b15d3d1aabe7beeaa3",
       "userStylesheet": {
         "$jtlt": "0.1",
         "output": "text",
         "rules": [
           {
             "body": [
-              "Agent: ",
+              "Phase: ",
+              {
+                "$json": "$.variables.phase"
+              },
+              "\nAgent: ",
               "$.variables.agent",
               "\nCurrent prompt: ",
               "$.variables.current_prompt",
@@ -4147,6 +4161,12 @@
             },
             "type": "array"
           },
+          "phase": {
+            "enum": [
+              "proposal",
+              "contrast"
+            ]
+          },
           "trials": {
             "items": {
               "type": "object"
@@ -4159,6 +4179,7 @@
           "axis",
           "current_prompt",
           "failures",
+          "phase",
           "trials"
         ],
         "type": "object"
@@ -4192,6 +4213,15 @@
               "type": "object"
             },
             "type": "array"
+          }
+        },
+        "phase": {
+          "render": "json",
+          "schema": {
+            "enum": [
+              "proposal",
+              "contrast"
+            ]
           }
         },
         "trials": {
@@ -5024,5 +5054,5 @@
     }
   ],
   "recipes": [],
-  "revision": "4315c1bdc736573bd57910ac54af6f42a061e2a9a5de8e97aecf7d041181f800"
+  "revision": "700961bf8e17820b6fd5a36f2fe0ee9b99f84770f71efafb5f247ec6c9319344"
 }

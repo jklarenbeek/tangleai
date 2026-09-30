@@ -10,7 +10,7 @@ const bounded = (value:unknown,maxChars:number):HeraTrajectoryStep['inputView'] 
   return {state:text.length>maxChars?'truncated':'retained',text:text.slice(0,maxChars),originalBytes:new TextEncoder().encode(text).byteLength};
 };
 export async function assembleHeraTrajectory(input:{id:string;groupId:string;task:HeraTask;snapshot:HeraLearningSnapshot;topology:HeraTopology;
-  trace:TraceView;workflow:MasWorkflow;identityId:string;answer:HeraAnswerEvidence;score:HeraTaskScore;maxChars:number}) {
+  trace:TraceView;workflow:MasWorkflow;identityId:string;answer:HeraAnswerEvidence;score:HeraTaskScore;maxChars:number;promptVersionIds?:Record<string,string>}) {
   const {trace,topology,task}=input;
   const attempts=trace.attempts.filter(a=>a.kind==='agent').sort((a,b)=>a.seq-b.seq);
   const steps:HeraTrajectoryStep[]=[];
@@ -26,7 +26,7 @@ export async function assembleHeraTrajectory(input:{id:string;groupId:string;tas
       return Array.isArray(result?.units)?result.units.flatMap(e=>typeof e.address==='string'?[e.address]:[]):[];
     });
     steps.push({id:await heraRevisionOf([input.id,a.id]),scope:task.scope,trajectoryId:input.id,invocationId:a.invocationId,agentId:node.agentId,
-      promptVersionId:node.promptVersionId,masAttemptId:a.id,inputView:bounded({query:task.query,context:inbound},input.maxChars),
+      promptVersionId:input.promptVersionIds?.[node.agentId]??node.promptVersionId,masAttemptId:a.id,inputView:bounded({query:task.query,context:inbound},input.maxChars),
       transcriptView:transcript.text===null?{state:'omitted',text:'',originalBytes:transcript.size}: {...bounded(transcript.text,input.maxChars),
         ...(transcript.state==='truncated'?{state:'truncated' as const}:{}),originalBytes:Math.max(new TextEncoder().encode(transcript.text).byteLength,transcript.size)},
       toolSteps:a.toolSteps.map(s=>({name:s.name,input:s.arguments,output:s.result,status:a.status==='uncertain'?'uncertain':s.state==='ok'?'completed':'failed'})),

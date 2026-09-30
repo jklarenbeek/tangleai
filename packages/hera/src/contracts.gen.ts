@@ -147,11 +147,6 @@ export interface HeraLearningConfigSelectorWeights {
 }
 
 
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type HeraLearningConfigVariantAxesItem = string;
-
 export interface HeraLearningConfigPromptBounds {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=1
@@ -205,7 +200,7 @@ export interface HeraLearningConfig {
   /**
    * Schema constraints this type cannot express: uniqueItems=true
    */
-  variantAxes: Array<HeraLearningConfigVariantAxesItem>;
+  variantAxes: Array<"efficiency" | "thoroughness" | "risk-sensitivity" | "error-correction" | "heuristic-injection">;
   promptBounds: HeraLearningConfigPromptBounds;
   flags: { experience: boolean; rope: boolean; mutation: boolean; };
 }
@@ -427,6 +422,10 @@ export interface HeraPromptVersion {
    * Schema constraints this type cannot express: minLength=1
    */
   at: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  proposalOperationId?: string;
 }
 
 
@@ -1237,6 +1236,21 @@ export type HeraPromptTrialFailedInvocationIdsItem = string;
 export type HeraPromptTrialBufferTrajectoryIdsItem = string;
 
 /**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraPromptTrialCandidatePromptVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptTrialControlTrajectoryIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptTrialReplayTrajectoryIdAnyOf1 = string;
+
+/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type HeraPromptTrialOperationalRulesItemDerivedFromItem = string;
@@ -1270,6 +1284,52 @@ export interface HeraPromptTrialBehavioralPrinciplesItem {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraPromptTrialPinsActivePromptVersionIdsAdditional = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type HeraPromptTrialPinsLimitsAdditional = number;
+
+export interface HeraPromptTrialPins {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  snapshotId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  corpusRevision: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topologyId: string;
+  activePromptVersionIds: { [key: string]: HeraPromptTrialPinsActivePromptVersionIdsAdditional; };
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  identityId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  evidenceRevision: string;
+  contextAdapter: "documents" | "memory";
+  limits: { [key: string]: HeraPromptTrialPinsLimitsAdditional; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptTrialExecutionRunIdsItem = string;
+
 export interface HeraPromptTrial {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1291,27 +1351,24 @@ export interface HeraPromptTrial {
    * Schema constraints this type cannot express: uniqueItems=true
    */
   bufferTrajectoryIds: Array<HeraPromptTrialBufferTrajectoryIdsItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  axis: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
-   */
-  candidatePromptVersionId: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  controlTrajectoryId: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  replayTrajectoryId: string;
-  delta: { score: number; tokens: number; };
+  axis: "efficiency" | "thoroughness" | "risk-sensitivity" | "error-correction" | "heuristic-injection";
+  candidatePromptVersionId: HeraPromptTrialCandidatePromptVersionIdAnyOf1 | null;
+  controlTrajectoryId: HeraPromptTrialControlTrajectoryIdAnyOf1 | null;
+  replayTrajectoryId: HeraPromptTrialReplayTrajectoryIdAnyOf1 | null;
+  delta: { score: number; tokens: number; } | null;
   operationalRules: Array<HeraPromptTrialOperationalRulesItem>;
   behavioralPrinciples: Array<HeraPromptTrialBehavioralPrinciplesItem>;
   decision: "activated" | "rejected" | "malformed" | "unevaluated";
   reason: string;
+  pins: HeraPromptTrialPins;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  bufferId: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  executionRunIds: Array<HeraPromptTrialExecutionRunIdsItem>;
 }
 
 
@@ -1385,6 +1442,11 @@ export interface HeraLearningSnapshotIdentities {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraLearningSnapshotFailureBufferIdsAdditional = string;
+
 export interface HeraLearningSnapshot {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1411,6 +1473,7 @@ export interface HeraLearningSnapshot {
   identities: HeraLearningSnapshotIdentities;
   config: HeraLearningConfig;
   status: "staged" | "active" | "archived";
+  failureBufferIds?: { [key: string]: HeraLearningSnapshotFailureBufferIdsAdditional; };
 }
 
 
@@ -1964,5 +2027,140 @@ export interface HeraExperienceView {
   parents: Array<HeraExperienceViewParentsItem>;
 }
 
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraFailureBufferParentIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraFailureBufferEntriesItemStepIdsItem = string;
+
+export interface HeraFailureBufferEntriesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  trajectoryId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  invocationId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  advantageId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  groupId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  snapshotId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  stepIds: Array<HeraFailureBufferEntriesItemStepIdsItem>;
+}
+
+
+export interface HeraFailureBuffer {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  agentId: string;
+  parentId: HeraFailureBufferParentIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  entries: Array<HeraFailureBufferEntriesItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptBlocksOperationalRulesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptBlocksBehavioralPrinciplesItem = string;
+
+export interface HeraPromptBlocks {
+  operationalRules: Array<HeraPromptBlocksOperationalRulesItem>;
+  behavioralPrinciples: Array<HeraPromptBlocksBehavioralPrinciplesItem>;
+}
+
+
+export interface HeraPromptPatchItemOneOf1 {
+  op: "add";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)/((0|[1-9][0-9]*)|-)$"
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  value: string;
+}
+
+
+export interface HeraPromptPatchItemOneOf2 {
+  op: "replace";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)/(0|[1-9][0-9]*)$"
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  value: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraPromptPatchItemOneOf3ValueItem = string;
+
+export interface HeraPromptPatchItemOneOf3 {
+  op: "add" | "replace";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)$"
+   */
+  path: string;
+  value: Array<HeraPromptPatchItemOneOf3ValueItem>;
+}
+
+
+export interface HeraPromptPatchItemOneOf4 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)(/(0|[1-9][0-9]*))?$"
+   */
+  path: string;
+}
+
+
+export type HeraPromptPatch = Array<HeraPromptPatchItemOneOf1 | HeraPromptPatchItemOneOf2 | HeraPromptPatchItemOneOf3 | HeraPromptPatchItemOneOf4>;
 
 export type Hera = unknown;

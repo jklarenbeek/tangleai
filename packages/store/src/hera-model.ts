@@ -5,5 +5,5 @@ export const HERA_COLLECTIONS = {
   hera_operations:collection,hera_agents:collection,hera_prompt_versions:collection,hera_experiences:collection,
   hera_topologies:collection,hera_rollout_groups:collection,hera_trajectories:collection,
   hera_trajectory_steps:collection,hera_advantages:collection,hera_prompt_trials:collection,
-  hera_snapshots:collection,hera_heads:collection,
+  hera_snapshots:collection,hera_heads:collection,hera_failure_buffers:collection,
 };

@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "52e3d5a602e2cd422be265cc9f0447b89db7174b",
+    "head": "30e2ada872e20f04d56d806edd4b55dd2cd0bacb",
     "clean": false,
     "files": [
       {
@@ -759,11 +759,11 @@
       },
       {
         "path": "packages/store/src/hera-model.ts",
-        "sha256": "37c496c5aab84c9cb8eb5ecc91150089dd983d006a665d18317087be05ddf0b3"
+        "sha256": "d0ee554349c289f9cc994b6251c073745f3f9c0175f0a118735b834a77052e20"
       },
       {
         "path": "packages/store/src/hera-store.ts",
-        "sha256": "a89f8c5e3c590aa91d472f2ec45b002808348959331aead09df86e942b8d5a56"
+        "sha256": "0d657cfdf1c08feed12d64cfa9aeb71345d53a05a6c5b007b60b7253295c5eb7"
       },
       {
         "path": "packages/store/src/identities.ts",
@@ -1010,7 +1010,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "ee9f24751f1261489bb9e799f6f433891e517cc2d29d87113f02cb57d11ca4cc"
+    "sha256": "cd68eaa6849d627f531b34c9ed43b7da160266ab8f879c90f8035c117589719d"
   },
   "ablations": [
     {
@@ -76564,5 +76564,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "b6bcfab33192d16c3e7f3098af0fcf6e918ca18b04c8d77ea7f81939c2f179f6"
+  "reportId": "feb74d23d950f1bd279629eef17c2ce11d71b45ddcae8e1b0221121ac118e65a"
 }

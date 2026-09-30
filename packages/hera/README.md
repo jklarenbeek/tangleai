@@ -9,8 +9,9 @@ The current measurement is the [keyless orchestration instrument](../../docs/HER
 Its analytic oracle and reference establish the fixture. Single-turn, fixed
 MAS and query-specific frozen rows execute registered scripted responses, with
 counted requests and zero learning writes. The experience-only row trains a
-library and then evaluates held-out tasks against its final snapshot. Three
-prompt and topology learning variants remain explicitly unimplemented.
+library and then evaluates held-out tasks against its final snapshot. Prompt-only
+and combined experience/prompt rows run whole-topology paired trials and publish
+a scripted held-out loss. The full topology-mutation row remains unimplemented.
 Scripted quality measures fixture sensitivity, not model quality or a learning
 improvement.
 
@@ -164,8 +165,9 @@ sibling admitted by `host.consolidationPolicy`. This optional, versioned host
 policy returns exact target and insight ids with a reason; its absence admits
 no contradictions. A model cannot manufacture that authority.
 
-The learner reserves only the original group budget's remaining calls, tokens
-and time for learning. Every reflection, consolidation and insight embedding has
+The learner uses the original group's remaining calls, tokens and time unless
+the request explicitly supplies `learningBudget`. This separate refinement
+allowance is lowered to CONFIG caps and reported alongside rollout limits. Every reflection, consolidation and insight embedding has
 a durable receipt. It persists its prepared proposal before committing the
 advantage, utility versions, library membership and staged snapshot in one
 transaction. `planHeraLibraryTransition` and `activateSnapshot` use both head
@@ -175,11 +177,55 @@ including after SQLite reopen or later snapshot activation.
 
 Learning stage operations are append-only. The returned group view composes
 their ids with the original rollout group's ids; it does not rewrite completed
-execution evidence. `rope.run` and `topology.mutate` are explicitly disabled;
-enabling their flags currently refuses `THERA1008`. Refused training requests
+execution evidence. `topology.mutate` remains disabled; enabling its flag
+currently refuses `THERA1008`. Refused training requests
 record operational `refusedLearningWrites` counters, separate from the store's
 counts of attempted forbidden writes. Evaluations pinned to old snapshots keep
 reading their exact archived membership.
+
+## Role prompt evolution
+
+Enable `snapshot.config.flags.rope` to retain immutable failure-buffer versions
+and run a bounded prompt trial. This also enables mixed-group reflection when
+experience learning is disabled. Only evaluated failed invocations enter a
+role's buffer; `failureBufferSize` drops the oldest entries. Snapshot
+`failureBufferIds` pins their exact versions without changing immutable agents.
+
+One newly credited role is selected per group in ascending role-id order.
+The group index selects an enabled axis: `efficiency`, `thoroughness`,
+`risk-sensitivity`, `error-correction`, or `heuristic-injection`. The structured
+proposal must cite retained buffer trajectories for every operational rule and
+behavioral principle. A second contrast phase cites the actual control and
+replay trajectories while preserving the tested text and categories. Candidate
+metadata keeps its original failure provenance and `proposalOperationId`; the
+trial binds the measured replay back to that immutable candidate, avoiding a
+circular content hash or invented future evidence id.
+
+`runHeraPromptTrial` reuses a control only when its complete task, snapshot,
+topology, model/decoder, evidence-provider and workflow limits match. Otherwise
+it purchases a full control. `promptTrial` on the existing executor substitutes
+exactly one role's retained candidate in the complete topology; other roles and
+the frozen evidence slice remain pinned. The semantic execution key includes
+the candidate, control and proposal receipt. Failed or incomplete evaluations
+retain MAS run ids and costs without activating anything. Restart restores
+proposal, contrast and whole-run charges without purchasing them again.
+
+`integratePrompt` is one consumer of Jaren's guarded refiner and JSON Patch.
+Only the operational and behavioral blocks can change. It checks source-backed
+categories, rule/byte/operation bounds, normalized duplicates, registered
+negation pairs, exact-negation conflicts, immutable tools and the byte-exact
+role-instruction prefix. Activation requires a higher paired task score, or an
+equal score with fewer known provider tokens. A model's claim of improvement
+cannot authorize activation. The contradiction check is a declared lexical
+policy, not an unmeasured semantic classifier.
+
+Failure buffers, trial decisions, candidate versions, prompt heads, experience
+changes and the next snapshot commit in one fenced transaction. Rejected
+candidates remain inspectable. `rollbackPromptVersion` restores an archived
+version and derives a new snapshot under the same version/revision fences;
+old snapshots keep their original pins. No domain learning records are written
+before the final transaction, so a competing loser retains only operational
+evidence and purchases.
 
 ## Building and checking
 

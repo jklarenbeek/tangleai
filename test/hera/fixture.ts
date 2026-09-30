@@ -5,7 +5,7 @@ import { heraArtifacts, createHeraAgents, heraRegistryDocument, heraContentIdOf,
   emptyHeraHead, planPromptActivation, planSnapshotActivation, planLibraryActivation, heraRevisionOf,
   type HeraStore, type HeraLearningConfig, type HeraLearningSnapshot, type HeraExperience } from '@tangleai/hera';
 export const scope = 'fixture', authority = {scope,mode:'learn' as const}, at = '2020-01-01T00:00:00.000Z';
-export const config: HeraLearningConfig = {groupSize:3,maxAgents:5,selectorVersion:'mmr-v1',selectorWeights:{similarity:1,utility:0.5,novelty:0.25,selectionPenalty:0.1},selectorCap:4,libraryCap:32,operationCap:8,failureBufferSize:8,consecutiveFailures:3,variantAxes:['evidence','decomposition'],promptBounds:{maxRules:16,maxBytes:8192,maxOps:16},flags:{experience:true,rope:true,mutation:true}};
+export const config: HeraLearningConfig = {groupSize:3,maxAgents:5,selectorVersion:'mmr-v1',selectorWeights:{similarity:1,utility:0.5,novelty:0.25,selectionPenalty:0.1},selectorCap:4,libraryCap:32,operationCap:8,failureBufferSize:8,consecutiveFailures:3,variantAxes:['efficiency','thoroughness'],promptBounds:{maxRules:16,maxBytes:8192,maxOps:16},flags:{experience:true,rope:true,mutation:true}};
 export async function fixture() {
   const catalog = await createGmplCatalog(heraArtifacts); assert.ok(catalog.valid);
   const created = await createHeraAgents(catalog.value,{scope,profile:'scripted',at}); assert.ok(created.valid);

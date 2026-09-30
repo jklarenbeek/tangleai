@@ -3,14 +3,14 @@ import { cloneJson, equalsJson } from '@jarenjs/core/object';
 import { HeraRefusal, heraIssue, type HeraOutcome } from './errors.ts';
 import { assertLearningWrite, isHeraLearningKind, type HeraAuthority } from './modes.ts';
 import { validateHeraRecord } from './schema.ts';
-import { planHeraHeadTransition, planPromptActivation, planSnapshotActivation, planHeraLibraryTransition, type HeraHeadPlan } from './heads.ts';
+import { planHeraHeadTransition, planPromptActivation, planPromptRollback, planSnapshotActivation, planHeraLibraryTransition, type HeraHeadPlan } from './heads.ts';
 import type { HeraAgentDefinition, HeraPromptVersion, HeraExperience, HeraTopology, HeraRolloutGroup,
-  HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead } from './contracts.gen.ts';
+  HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead,HeraFailureBuffer } from './contracts.gen.ts';
 export interface HeraRecords {
   operation: HeraOperation; agent: HeraAgentDefinition; promptVersion: HeraPromptVersion; experience: HeraExperience;
   topology: HeraTopology; rolloutGroup: HeraRolloutGroup; trajectory: HeraTrajectory;
   trajectoryStep: HeraTrajectoryStep; advantage: HeraSemanticAdvantage; promptTrial: HeraPromptTrial;
-  snapshot: HeraLearningSnapshot; head: HeraHead;
+  snapshot: HeraLearningSnapshot; head: HeraHead;failureBuffer:HeraFailureBuffer;
 }
 export type HeraRecordKind = keyof HeraRecords;
 type HeraMutableKind = Exclude<HeraRecordKind, 'head'>;
@@ -19,7 +19,7 @@ export type HeraRecordMethods = {
 } & {
   [K in HeraRecordKind as `get${Capitalize<K>}`]: (id: string) => Promise<HeraRecords[K] | undefined>;
 };
-export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['operation','agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head'];
+export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['operation','agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head','failureBuffer'];
 export interface HeraQuery { scope?: string; status?: string; agentId?: string; groupId?: string; taskId?: string; limit?: number; }
 export interface HeraPersistenceView {
   get<K extends HeraRecordKind>(kind: K, id: string): Promise<HeraRecords[K] | undefined>;
@@ -107,7 +107,8 @@ export function createHeraStoreAdapter(persistence: HeraPersistence, scope: stri
               const agent = await raw.get('agent', candidate.agentId);
               if (!agent || agent.envelopeRevision !== candidate.envelopeRevision || agent.scope !== candidate.scope)
                 return refuse('THERA1002', '/envelopeRevision', 'The prompt does not bind a stored agent envelope.');
-              expected = must(planPromptActivation(actual, plan.expected, candidate, actual.versionId ? await raw.get('promptVersion', actual.versionId) : undefined));
+              const previous=actual.versionId?await raw.get('promptVersion',actual.versionId):undefined;
+              expected = must(candidate.status==='archived'&&previous?planPromptRollback(actual,plan.expected,candidate,previous):planPromptActivation(actual, plan.expected, candidate,previous));
             } else if (actual.kind === 'snapshot') {
               const candidate = await raw.get('snapshot', plan.next.versionId!);
               if (!candidate) return refuse('THERA1002', '/versionId', 'The snapshot is missing.');
@@ -119,6 +120,10 @@ export function createHeraStoreAdapter(persistence: HeraPersistence, scope: stri
               for (const id of candidate.experienceIds) {
                 const entry = await raw.get('experience', id);
                 if (!entry || entry.scope !== candidate.scope) return refuse('THERA1002', '/experienceIds', 'A frozen experience is missing.');
+              }
+              for(const [agentId,id] of Object.entries(candidate.failureBufferIds??{})){
+                const buffer=await raw.get('failureBuffer',id);
+                if(!buffer||buffer.agentId!==agentId||buffer.scope!==candidate.scope)return refuse('THERA1002','/failureBufferIds/'+agentId,'The frozen role buffer is missing or foreign.');
               }
               expected = must(planSnapshotActivation(actual, plan.expected, candidate, actual.versionId ? await raw.get('snapshot', actual.versionId) : undefined));
             } else if(actual.kind==='library'&&plan.membership){

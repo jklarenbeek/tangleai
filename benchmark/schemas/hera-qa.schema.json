@@ -855,6 +855,54 @@
             "concurrency"
           ],
           "additionalProperties": false
+        },
+        "learningBudget": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "nodes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "turns",
+            "nodes",
+            "depth",
+            "fanOut",
+            "concurrency"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1130,12 +1178,53 @@
           "minimum": 0
         },
         "promptChurn": {
-          "type": "integer",
-          "minimum": 0
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "agentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "activated": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "rejected": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "agentId",
+              "activated",
+              "rejected"
+            ],
+            "additionalProperties": false
+          }
         },
         "replayCost": {
-          "type": "integer",
-          "minimum": 0
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false
         },
         "mutationAcceptance": {
           "type": "number",
@@ -1228,6 +1317,34 @@
         "libraryCap": {
           "type": "integer",
           "minimum": 1
+        },
+        "trials": {
+          "type": "object",
+          "properties": {
+            "activated": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rejected": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "malformed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unevaluated": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "activated",
+            "rejected",
+            "malformed",
+            "unevaluated"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1244,7 +1361,8 @@
         "mixedGroups",
         "libraryOperations",
         "flags",
-        "libraryCap"
+        "libraryCap",
+        "trials"
       ],
       "additionalProperties": false,
       "$query": {
@@ -1310,6 +1428,32 @@
                 "$le": [
                   "$.librarySize",
                   "$.libraryCap"
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$sum": "$.promptChurn[*].activated"
+                  },
+                  "$.trials.activated"
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$sum": "$.promptChurn[*].rejected"
+                  },
+                  {
+                    "$add": [
+                      "$.trials.rejected",
+                      {
+                        "$add": [
+                          "$.trials.malformed",
+                          "$.trials.unevaluated"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               }
             ]

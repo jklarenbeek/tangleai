@@ -1,0 +1,25 @@
+{
+  "kind": "hera-scripted-rope/v1",
+  "proposals": {
+    "q01": {
+      "text": "Check both retained links before concluding the director inquiry.",
+      "outcome": "supported"
+    },
+    "q02": {
+      "text": "Prefer a shorter summary of the retained evidence.",
+      "outcome": "supported"
+    },
+    "q03": {
+      "text": "Apply an unretained replay claim.",
+      "outcome": "unsupported"
+    }
+  },
+  "replayImproves": [
+    "q01"
+  ],
+  "heldOutLosses": [
+    "q06"
+  ],
+  "lossMarker": "Check both retained links before concluding the director inquiry.",
+  "referenceRecipe": "Proposal rules cite only visible failure trajectories. Contrast rules keep the tested categories and cite both actual execution ids. The q01 variant repairs its authored serial answer; that same rule causes a declared held-out q06 loss. No truth enters the clients."
+}

@@ -56,6 +56,14 @@ export function planPromptActivation(actual: HeraHead, expected: HeraHead, candi
     { kind: 'promptVersion', id: candidate.id, from: 'candidate', to: 'active' } ];
   return plan;
 }
+/** Rollback preserves the archived content address and advances the same revision fence. */
+export function planPromptRollback(actual:HeraHead,expected:HeraHead,target:HeraPromptVersion,previous:HeraPromptVersion):HeraOutcome<HeraHeadPlan>{
+  if(actual.kind!=='prompt'||actual.id!==heraHeadId(target.scope,'prompt',target.agentId)||target.status!=='archived'
+    ||previous.id!==actual.versionId||previous.status!=='active'||previous.scope!==target.scope||previous.agentId!==target.agentId||previous.envelopeRevision!==target.envelopeRevision)
+    return heraRefuse('THERA1006','/promptVersion','Rollback requires the current active role and an archived version of its same envelope.');
+  const plan=planHeraHeadTransition(actual,expected,target.id);if(!plan.valid)return plan;
+  plan.value.changes=[{kind:'promptVersion',id:previous.id,from:'active',to:'archived'},{kind:'promptVersion',id:target.id,from:'archived',to:'active'}];return plan;
+}
 export function planSnapshotActivation(actual: HeraHead, expected: HeraHead, candidate: HeraLearningSnapshot, previous?: HeraLearningSnapshot): HeraOutcome<HeraHeadPlan> {
   if (actual.id !== heraHeadId(candidate.scope, 'snapshot') || actual.kind !== 'snapshot' || candidate.status !== 'staged' || candidate.parentId !== actual.versionId)
     return heraRefuse('THERA1006', '/snapshot', 'Snapshot scope, parent or staged status differs from the head.');

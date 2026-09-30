@@ -1,5 +1,5 @@
 {
-  "kind": "hera-scripted/v3",
+  "kind": "hera-scripted/v4",
   "files": [
     {
       "path": "baseline.json",
@@ -16,6 +16,10 @@
     {
       "path": "consolidation.json",
       "sha256": "d3b276fe11fae89fb684f3b2e7023aeacfd0333244a302db444683f085f0f795"
+    },
+    {
+      "path": "rope.json",
+      "sha256": "b9296a97097f3771ed72868fd466d62bd297797136735f371edc8a1e4affd44a"
     },
     {
       "path": "../sequence.json",

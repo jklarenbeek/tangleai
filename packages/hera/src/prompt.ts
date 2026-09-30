@@ -15,13 +15,13 @@ export async function compileEffectivePrompt(artifact: GmplPromptArtifact, versi
 }
 export async function createHeraPromptVersion(artifact: GmplPromptArtifact, options: {
   scope: string; at: string; parentId?: string | null; operationalRules?: HeraPromptVersion['operationalRules'];
-  behavioralPrinciples?: HeraPromptVersion['behavioralPrinciples']; sourceTrialIds?: string[];
+  behavioralPrinciples?: HeraPromptVersion['behavioralPrinciples']; sourceTrialIds?: string[];proposalOperationId?:string;
 }): Promise<HeraOutcome<HeraPromptVersion>> {
   const blocks = { agentId: artifact.role.id, envelopeRevision: await heraEnvelopeRevision(artifact),
     operationalRules: options.operationalRules ?? [], behavioralPrinciples: options.behavioralPrinciples ?? [] };
   const compiled = await compileEffectivePrompt(artifact, blocks); if (!compiled.valid) return compiled;
   const content = { ...blocks, scope: options.scope, parentId: options.parentId ?? null, effectivePrompt: compiled.value,
-    sourceTrialIds: options.sourceTrialIds ?? [], status: 'candidate' as const,
+    sourceTrialIds: options.sourceTrialIds ?? [],...(options.proposalOperationId?{proposalOperationId:options.proposalOperationId}:{}), status: 'candidate' as const,
     size: { rules: blocks.operationalRules.length + blocks.behavioralPrinciples.length, bytes: new TextEncoder().encode(compiled.value).byteLength }, at: options.at };
   return { valid: true, value: { ...content, id: await heraContentIdOf(content) } };
 }

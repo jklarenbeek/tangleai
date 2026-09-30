@@ -6,15 +6,16 @@ import {planSnapshotActivation} from './heads.ts';
 import {HeraRefusal,heraRefuse,type HeraOutcome} from './errors.ts';
 import type {HeraLearningSnapshot,HeraHead} from './contracts.gen.ts';
 import type {HeraTransaction} from './store.ts';
-export interface HeraSnapshotChanges {experienceIds?:readonly string[];activePromptVersionIds?:Record<string,string>;registryRevision?:string;}
+export interface HeraSnapshotChanges {experienceIds?:readonly string[];activePromptVersionIds?:Record<string,string>;registryRevision?:string;failureBufferIds?:Record<string,string>;}
 export async function prepareHeraSnapshot(parent:HeraLearningSnapshot,changes:HeraSnapshotChanges):Promise<HeraOutcome<{snapshot:HeraLearningSnapshot;noOp:boolean}>>{
   const checked=await validateHeraRecord('snapshot',parent);if(!checked.valid)return checked;
   const experienceIds=[...(changes.experienceIds??parent.experienceIds)].sort();
   if(new Set(experienceIds).size!==experienceIds.length)return heraRefuse('THERA1002','/experienceIds','Snapshot membership cannot repeat a version.');
   const libraryRevision=await heraLibraryRevisionOf(experienceIds),activePromptVersionIds=structuredClone(changes.activePromptVersionIds??parent.activePromptVersionIds),registryRevision=changes.registryRevision??parent.registryRevision;
-  const noOp=libraryRevision===parent.libraryRevision&&registryRevision===parent.registryRevision&&equalsJson(activePromptVersionIds,parent.activePromptVersionIds);
+  const failureBufferIds=changes.failureBufferIds??parent.failureBufferIds;
+  const noOp=libraryRevision===parent.libraryRevision&&registryRevision===parent.registryRevision&&equalsJson(activePromptVersionIds,parent.activePromptVersionIds)&&equalsJson(failureBufferIds??{},parent.failureBufferIds??{});
   if(noOp)return {valid:true,value:{snapshot:structuredClone(parent),noOp:true}};
-  const content={...parent,parentId:parent.id,experienceIds,libraryRevision,activePromptVersionIds,registryRevision,status:'staged' as const};
+  const content={...parent,parentId:parent.id,experienceIds,libraryRevision,activePromptVersionIds,registryRevision,...(failureBufferIds?{failureBufferIds:structuredClone(failureBufferIds)}:{}),status:'staged' as const};
   const snapshot={...content,id:await heraContentIdOf(content)},shape=await validateHeraRecord('snapshot',snapshot);if(!shape.valid)return shape;
   return {valid:true,value:{snapshot,noOp:false}};
 }

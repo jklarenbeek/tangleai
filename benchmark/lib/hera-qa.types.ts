@@ -42,7 +42,43 @@ export interface RowIdentityBudget {
 }
 
 
-export type RowIdentity = { snapshotId: string; model: string; decoder: string; corpusRevision: string; evaluatorId: string; toolIds: Array<string>; budget: RowIdentityBudget; } | null;
+export interface RowIdentityLearningBudget {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  nodes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  depth: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  concurrency: number;
+}
+
+
+export type RowIdentity = { snapshotId: string; model: string; decoder: string; corpusRevision: string; evaluatorId: string; toolIds: Array<string>; budget: RowIdentityBudget; learningBudget?: RowIdentityLearningBudget; } | null;
 
 export interface QualityByCategoryItem {
   category: 1 | 2 | 3 | 4;
@@ -100,6 +136,38 @@ export interface Failures {
 }
 
 
+export interface LearningPromptChurnItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  agentId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+}
+
+
+export interface LearningReplayCost {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
 export interface LearningLibraryOperations {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -120,10 +188,30 @@ export interface LearningLibraryOperations {
 }
 
 
+export interface LearningTrials {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  malformed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unevaluated: number;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$if":[{"$ne":["$",null]},{"$and":[{"$eq":["$.evaluatedGroups",{"$add":["$.mixedGroups","$.groupsWithoutMixedOutcome"]}]},{"$eq":["$.mixedGroupRate",{"$if":[{"$gt":["$.evaluatedGroups",0]},{"$div":["$.mixedGroups","$.evaluatedGroups"]},0]}]},{"$eq":["$.libraryChurn",{"$add":[{"$add":["$.libraryOperations.add","$.libraryOperations.merge"]},"$.libraryOperations.prune"]}]},{"$le":["$.librarySize","$.libraryCap"]}]},true]}
+ * Schema constraints this type cannot express: $query={"$if":[{"$ne":["$",null]},{"$and":[{"$eq":["$.evaluatedGroups",{"$add":["$.mixedGroups","$.groupsWithoutMixedOutcome"]}]},{"$eq":["$.mixedGroupRate",{"$if":[{"$gt":["$.evaluatedGroups",0]},{"$div":["$.mixedGroups","$.evaluatedGroups"]},0]}]},{"$eq":["$.libraryChurn",{"$add":[{"$add":["$.libraryOperations.add","$.libraryOperations.merge"]},"$.libraryOperations.prune"]}]},{"$le":["$.librarySize","$.libraryCap"]},{"$eq":[{"$sum":"$.promptChurn[*].activated"},"$.trials.activated"]},{"$eq":[{"$sum":"$.promptChurn[*].rejected"},{"$add":["$.trials.rejected",{"$add":["$.trials.malformed","$.trials.unevaluated"]}]}]}]},true]}
  */
-export type Learning = { mixedGroupRate: number; librarySize: number; libraryChurn: number; promptChurn: number; replayCost: number; mutationAcceptance: number; negativeTransferByProfile: Array<{ profile: string; delta: number; }>; writes: number; groupsWithoutMixedOutcome: number; evaluatedGroups: number; mixedGroups: number; libraryOperations: LearningLibraryOperations; flags: { experience: boolean; rope: boolean; mutation: boolean; }; libraryCap: number; } | null;
+export type Learning = { mixedGroupRate: number; librarySize: number; libraryChurn: number; promptChurn: Array<LearningPromptChurnItem>; replayCost: LearningReplayCost; mutationAcceptance: number; negativeTransferByProfile: Array<{ profile: string; delta: number; }>; writes: number; groupsWithoutMixedOutcome: number; evaluatedGroups: number; mixedGroups: number; libraryOperations: LearningLibraryOperations; flags: { experience: boolean; rope: boolean; mutation: boolean; }; libraryCap: number; trials: LearningTrials; } | null;
 
 export type Topology = { entropy: number; distinctRoles: number; nodeEfficiency: number; selfLoops: number; cycles: number; diameter: number | null; includesFailed: boolean; } | null;
 

@@ -16,8 +16,12 @@ interface ResponseValue {completion?:MasChatCompletion;vector?:number[];chargedT
 export interface HeraControlReceipts {
   client(stage:string,client:MasChatClient):MasChatClient&{endpoint:{provider:string}};
   embed(stage:string,text:string,invoke:(signal:AbortSignal)=>Promise<number[]>):Promise<number[]>;
+  /** Admit completed MAS spend into the same bounded learning account. */
+  chargeExecution(id:string,spent:{calls:number;tokens:number;ms:number}):void;
+  remaining():{calls:number;tokens:number;ms:number};
   usage():HeraUsage;
   spent():{calls:number;tokens:number;ms:number};
+  replay(ids:readonly string[]):Promise<void>;
   operationIds():string[];
 }
 /** A missing response is uncertain, including a crash before the physical dispatch. */
@@ -26,10 +30,11 @@ export function createHeraControlReceipts(options:{store:HeraStore;authority:Her
   const {store,authority,identity,budget}=options;
   const started=options.clock();
   let account=createBudgetAccount({turns:budget.calls,tokens:budget.tokens,ms:budget.ms},options.clock);
-  const receipts=new Map<string,HeraOperation>();
-  const spent=()=>({calls:[...receipts.values()].reduce((n,r)=>n+r.usage.calls+(r.usage.embeddingRequests??0),0),
-    tokens:[...receipts.values()].reduce((n,r)=>n+(r.value as ResponseValue).chargedTokens,0),
-    ms:Math.max(0,Math.floor(options.clock()-started),[...receipts.values()].reduce((n,r)=>n+r.usage.ms,0))});
+  const receipts=new Map<string,HeraOperation>(),executions=new Map<string,{calls:number;tokens:number;ms:number}>();
+  const external=(key:"calls"|"tokens"|"ms")=>[...executions.values()].reduce((n,e)=>n+e[key],0);
+  const spent=()=>({calls:external("calls")+[...receipts.values()].reduce((n,r)=>n+r.usage.calls+(r.usage.embeddingRequests??0),0),
+    tokens:external("tokens")+[...receipts.values()].reduce((n,r)=>n+(r.value as ResponseValue).chargedTokens,0),
+    ms:Math.max(0,Math.floor(options.clock()-started),external("ms")+[...receipts.values()].reduce((n,r)=>n+r.usage.ms,0))});
   const synchronize=()=>{const used=spent();account=createBudgetAccount({turns:budget.calls,tokens:budget.tokens,ms:budget.ms,spent:{turns:used.calls,tokens:used.tokens,ms:used.ms}},options.clock);};
   const base={scope:authority.scope,taskId:options.taskId,snapshotId:options.snapshotId,groupId:options.groupId};
   const read=async(stage:string,input:unknown)=>{
@@ -107,8 +112,16 @@ export function createHeraControlReceipts(options:{store:HeraStore;authority:Her
       if(remote){account.settle(undefined,text);usage.estimatedTokens=account.spent().tokens-spent().tokens;}
       await save(stage,key,{...(vector?{vector}:{}),chargedTokens:usage.estimatedTokens},usage,error);return vector!;
     },
+    chargeExecution(id,value){if(!Object.values(value).every(n=>Number.isSafeInteger(n)&&n>=0))throw new TypeError("Execution spend must be nonnegative safe integers.");
+      const old=executions.get(id);if(old&&(['calls','tokens','ms'] as const).some(key=>old[key]!==value[key]))throw new HeraRefusal([heraIssue("THERA1007","/execution/spend","The same execution has different retained spend.")]);executions.set(id,{...value});synchronize();},
+    remaining(){const used=spent();return {calls:Math.max(0,budget.calls-used.calls),tokens:Math.max(0,budget.tokens-used.tokens),ms:Math.max(0,budget.ms-used.ms)};},
     usage(){const total=emptyHeraUsage();for(const receipt of receipts.values())for(const k of Object.keys(total) as Array<keyof HeraUsage>)total[k]=(total[k]??0)+(receipt.usage[k]??0);return total;},
     spent,
+    async replay(ids){for(const id of ids){const receipt=await store.getOperation(id);
+      if(!receipt||receipt.scope!==base.scope||receipt.taskId!==base.taskId||receipt.snapshotId!==base.snapshotId||receipt.groupId!==base.groupId)throw new HeraRefusal([heraIssue('THERA1007','/operation/evidence','Retained control evidence is missing or crosses the operation binding.')]);
+      if(receipt.phase==='response'){const dispatch=await store.getOperation(id.replace(/:response$/,':dispatch'));
+        if(!dispatch||dispatch.binding!==receipt.binding)throw pending();receipts.set(receipt.id,receipt);}
+    }synchronize();},
     operationIds:()=>[...receipts.keys()],
   };
 }

@@ -1,9 +1,9 @@
 import {openTangleDb,createHeraStore,createMasStore,type TangleDb} from '@tangleai/store';
-import {MasUncertainEffect,type MasRuntimeObserver} from '@tangleai/mas';
+import {MasUncertainEffect,type MasRuntimeObserver,type AgentNode} from '@tangleai/mas';
 import {gmplTextDigest} from '@tangleai/gmpl';
 import {createHeraExecutor,heraRevisionOf,type HeraTask,type HeraExecuteRequest,type HeraEvidenceProvider,type HeraExecutorHost,type HeraLearningConfig} from '@tangleai/hera';
 import {createHeraExampleState,createHeraExampleSegments} from '../../examples/hera.ts';
-export interface ExecutorFixtureOptions {path?:string;unknownUsage?:boolean;failNode?:string;repairNode?:string;unsupported?:boolean;uncertain?:boolean;overlap?:boolean;observer?:MasRuntimeObserver;config?:HeraLearningConfig;}
+export interface ExecutorFixtureOptions {path?:string;unknownUsage?:boolean;failNode?:string;repairNode?:string;unsupported?:boolean;uncertain?:boolean;overlap?:boolean;observer?:MasRuntimeObserver;config?:HeraLearningConfig;transformResult?:(node:AgentNode,request:unknown,result:Record<string,unknown>)=>Record<string,unknown>;}
 export async function executorFixture(options:ExecutorFixtureOptions={}) {
   let calls=0,toolCalls=0,active=0,maxActive=0,tick=0,currentRevision='',normalizations=new Map<string,number>();
   const clock={value:1000000},now=()=>`tick-${String(tick++).padStart(6,'0')}`;
@@ -34,7 +34,7 @@ export async function executorFixture(options:ExecutorFixtureOptions={}) {
         const citations=options.unsupported&&node.role==='conclude-agent'?[{id:'invented',digest:'f'.repeat(64)}]:units.map(({id,digest})=>({id,digest}));
         const result={answer:'Eastmere',disposition:'completed',claims:[{text:'The director studied in Eastmere.',citations}],findings:[],
           ...(node.role==='query-decomposer'?{queries:['Who directed Lumen?','Where did Ivo study?']}:['retriever','evidence-selector'].includes(node.role)?{selectedEvidenceIds:units.map(e=>e.id)}:{})};
-        return {...usage,message:{role:'assistant',content:JSON.stringify(result)},finishReason:'stop'};
+        return {...usage,message:{role:'assistant',content:JSON.stringify(options.transformResult?options.transformResult(node,request,result):result)},finishReason:'stop'};
       }})};
     const request:HeraExecuteRequest={task,snapshot:state.snapshot,topology:'fixed',mode:'evaluate',groupIndex:0,candidateIndex:0,configRevision:await heraRevisionOf({kind:'fixed-fixture'})};
     return {host,store,masStore,executor:createHeraExecutor(host),request,initialWrites:store.counters().learningWrites};

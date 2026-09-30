@@ -1,0 +1,21 @@
+import {it} from 'node:test';import assert from 'node:assert/strict';
+import {createMemoryHeraStore,createHeraPromptVersion,activatePromptVersion,prepareHeraPromptRegistry,prepareHeraSnapshot,activateSnapshot,rollbackPromptVersion,emptyHeraHead,planPromptActivation} from '@tangleai/hera';
+import {fixture,lifecycle,scope,authority,at} from './fixture.ts';
+it('prompt activation and archived rollback move the snapshot atomically and fence A→B→A',async()=>{
+  const store=createMemoryHeraStore({scope}),f=await fixture();await lifecycle(store);
+  const agent=f.agents.find(a=>a.id==='retriever')!,artifact=f.catalog.prompt(agent.artifactId)!,old=(await store.getPromptVersion(agent.activePromptVersionId))!;
+  const expectedPrompt=(await store.readHead(emptyHeraHead(scope,'prompt',agent.id).id))!,expectedSnapshot=(await store.readHead(emptyHeraHead(scope,'snapshot').id))!,parent=(await store.getSnapshot(expectedSnapshot.versionId!))!;
+  const made=await createHeraPromptVersion(artifact,{scope,at,parentId:old.id,operationalRules:[{text:'Check each retained evidence id.',derivedFrom:['control']}]});assert.ok(made.valid);
+  const candidate=made.value,promptIds={...parent.activePromptVersionIds,[agent.id]:candidate.id},registry=await prepareHeraPromptRegistry(store,scope,promptIds,[candidate]);assert.ok(registry.valid);
+  const next=await prepareHeraSnapshot(parent,{activePromptVersionIds:promptIds,registryRevision:registry.value.registry.revision});assert.ok(next.valid);
+  const activated=await store.transaction(authority,async tx=>{await tx.put('promptVersion',candidate);await activatePromptVersion(tx,expectedPrompt,candidate);await tx.put('snapshot',next.value.snapshot);await activateSnapshot(tx,expectedSnapshot,next.value.snapshot);});assert.ok(activated.valid,JSON.stringify(activated));
+  assert.equal((await store.getPromptVersion(old.id))?.status,'archived');assert.equal((await store.getPromptVersion(candidate.id))?.status,'active');
+  assert.deepEqual((await store.getSnapshot(parent.id))?.activePromptVersionIds,parent.activePromptVersionIds);
+  const rollback=await rollbackPromptVersion(store,{agentId:agent.id,toVersionId:old.id,expectedPrompt:(await store.readHead(expectedPrompt.id))!,expectedSnapshot:(await store.readHead(expectedSnapshot.id))!},authority);assert.ok(rollback.valid,JSON.stringify(rollback));
+  assert.equal(rollback.value.promptVersion.id,old.id);assert.equal(rollback.value.snapshot.activePromptVersionIds[agent.id],old.id);assert.equal(rollback.value.snapshot.registryRevision,parent.registryRevision);
+  assert.equal((await store.getPromptVersion(candidate.id))?.status,'archived');const restored=(await store.readHead(expectedPrompt.id))!;assert.equal(restored.versionId,old.id);assert.equal(restored.revision,expectedPrompt.revision+2);
+  const stale=planPromptActivation(restored,expectedPrompt,candidate,{...old,status:'active'});assert.equal(stale.valid,false);if(!stale.valid)assert.equal(stale.issues[0].code,'THERA1006');
+  const snapshots=await store.listSnapshots({scope}),prompts=await store.listPromptVersions({agentId:agent.id});
+  const refused=await rollbackPromptVersion(store,{agentId:agent.id,toVersionId:candidate.id,expectedPrompt,expectedSnapshot},authority);assert.equal(refused.valid,false);
+  assert.deepEqual(await store.listSnapshots({scope}),snapshots);assert.deepEqual(await store.listPromptVersions({agentId:agent.id}),prompts);
+});

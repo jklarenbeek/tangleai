@@ -272,8 +272,13 @@
         "variantAxes": {
           "type": "array",
           "items": {
-            "type": "string",
-            "minLength": 1
+            "enum": [
+              "efficiency",
+              "thoroughness",
+              "risk-sensitivity",
+              "error-correction",
+              "heuristic-injection"
+            ]
           },
           "uniqueItems": true
         },
@@ -649,6 +654,10 @@
           "additionalProperties": false
         },
         "at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposalOperationId": {
           "type": "string",
           "minLength": 1
         }
@@ -2046,36 +2055,69 @@
           "uniqueItems": true
         },
         "axis": {
-          "type": "string",
-          "minLength": 1
+          "enum": [
+            "efficiency",
+            "thoroughness",
+            "risk-sensitivity",
+            "error-correction",
+            "heuristic-injection"
+          ]
         },
         "candidatePromptVersionId": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "controlTrajectoryId": {
-          "type": "string",
-          "minLength": 1
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "replayTrajectoryId": {
-          "type": "string",
-          "minLength": 1
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "delta": {
-          "type": "object",
-          "properties": {
-            "score": {
-              "type": "number"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "tokens": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "score",
+                "tokens"
+              ],
+              "additionalProperties": false
             },
-            "tokens": {
-              "type": "number"
+            {
+              "type": "null"
             }
-          },
-          "required": [
-            "score",
-            "tokens"
-          ],
-          "additionalProperties": false
+          ]
         },
         "operationalRules": {
           "type": "array",
@@ -2137,6 +2179,21 @@
         },
         "reason": {
           "type": "string"
+        },
+        "pins": {
+          "$ref": "#/$defs/heraPromptTrialPins"
+        },
+        "bufferId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "executionRunIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -2153,7 +2210,10 @@
         "operationalRules",
         "behavioralPrinciples",
         "decision",
-        "reason"
+        "reason",
+        "pins",
+        "bufferId",
+        "executionRunIds"
       ],
       "additionalProperties": false
     },
@@ -2286,6 +2346,13 @@
             "active",
             "archived"
           ]
+        },
+        "failureBufferIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
         }
       },
       "required": [
@@ -3282,6 +3349,286 @@
         "utility",
         "selectionCount",
         "parents"
+      ],
+      "additionalProperties": false
+    },
+    "heraFailureBuffer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "trajectoryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "invocationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "advantageId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "groupId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "taskId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "snapshotId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "stepIds": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "trajectoryId",
+              "invocationId",
+              "reason",
+              "advantageId",
+              "groupId",
+              "taskId",
+              "snapshotId",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "agentId",
+        "parentId",
+        "entries"
+      ],
+      "additionalProperties": false
+    },
+    "heraPromptBlocks": {
+      "type": "object",
+      "properties": {
+        "operationalRules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "behavioralPrinciples": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "operationalRules",
+        "behavioralPrinciples"
+      ],
+      "additionalProperties": false
+    },
+    "heraPromptPatch": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "add"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)/((0|[1-9][0-9]*)|-)$"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "replace"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)/(0|[1-9][0-9]*)$"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)$"
+              },
+              "value": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "remove"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)(/(0|[1-9][0-9]*))?$"
+              }
+            },
+            "required": [
+              "op",
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "heraPromptTrialPins": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "corpusRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "topologyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activePromptVersionIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "identityId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "evidenceRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contextAdapter": {
+          "enum": [
+            "documents",
+            "memory"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "taskId",
+        "snapshotId",
+        "corpusRevision",
+        "topologyId",
+        "activePromptVersionIds",
+        "identityId",
+        "evidenceRevision",
+        "contextAdapter",
+        "limits"
       ],
       "additionalProperties": false
     },

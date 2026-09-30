@@ -22,10 +22,10 @@ describe('the HERA registration', () => {
     assert.equal(renderHeraReport(report), renderHeraReport(second));
     assert.equal(renderHeraDocument(report), renderHeraDocument(second));
     assert.equal(report.rows[0].quality!.f1, 1);
-    assert.equal(report.totals.calls, 569);
-    assert.equal(report.totals.learningWrites, 53);
+    assert.equal(report.totals.calls, 1018);
+    assert.equal(report.totals.learningWrites, 143);
     assert.deepEqual(report.rows.map(r => r.id), HERA_ROWS);
-    assert.equal(report.rows.filter(r => r.status === 'implementation-missing').length, 3);
+    assert.equal(report.rows.filter(r => r.status === 'implementation-missing').length, 1);
     assert.deepEqual(report.refusals,{evalSplitInLearn:5,invalidCandidates:3,duplicateCandidates:7,appliedNotOffered:1});
   });
   it('an absent dataset never acquires synthetic questions or an eligible comparison', async () => {
@@ -55,7 +55,7 @@ describe('the HERA registration', () => {
       (r: HeraQa) => { r.totals.learningWrites++; },
       (r: HeraQa) => { r.rows[0].identity = null; },
       (r: HeraQa) => { r.rows[0].quality!.answered++; },
-      (r: HeraQa) => { r.rows[5].status = 'run'; },
+      (r: HeraQa) => { r.rows[7].status = 'run'; },
       (r: HeraQa) => { r.split.training.sampleId = 'b'.repeat(64); },
       (r: HeraQa) => { r.pairs[2].eligible = true; r.pairs[2].delta = 0.5; },
       ...['snapshotId', 'model', 'decoder', 'corpusRevision', 'evaluatorId', 'toolIds', 'budget'].map(key =>
@@ -65,8 +65,13 @@ describe('the HERA registration', () => {
       (r: HeraQa) => { r.rows[6].learning!.mixedGroups++; },
       (r: HeraQa) => { r.rows[6].learning!.libraryOperations.add++; },
       (r: HeraQa) => { r.rows[6].learning!.librarySize=33; },
-      (r: HeraQa) => { r.rows[5].heldOutQuality=r.rows[4].heldOutQuality; },
+      (r: HeraQa) => { r.rows[7].heldOutQuality=r.rows[4].heldOutQuality; },
       (r: HeraQa) => { r.rows[6].heldOutQuality=null; },
+      (r: HeraQa) => { r.rows[5].learning!.trials.activated++; },
+      (r: HeraQa) => { r.rows[5].learning!.promptChurn[0].rejected++; },
+      (r: HeraQa) => { r.rows[5].learning!.replayCost.calls=10000; },
+      (r: HeraQa) => { r.rows[6].learning!.replayCost.calls=1; },
+      (r: HeraQa) => { delete r.rows[5].identity!.learningBudget; },
       (r: HeraQa) => { r.rows[6].heldOutQuality={...r.rows[6].quality!}; },
     ]) {
       const changed = structuredClone(report); mutate(changed);
@@ -130,16 +135,26 @@ describe('the HERA registration', () => {
     assert.doesNotThrow(() => requireHeraCapability(report, 'experience'));
     assert.equal(report.scripted.maxConcurrentRetrievers, 2);
     assert.equal(report.scripted.replayCalls, 0);
-    for (const capability of ['rope','mutation','complete','unknown']) assert.throws(() => requireHeraCapability(report, capability));
+    assert.doesNotThrow(() => requireHeraCapability(report, 'rope'));
+    for (const capability of ['mutation','complete','unknown']) assert.throws(() => requireHeraCapability(report, capability));
   });
   it('measures mixed and unmixed learning, all consolidation operations and unchanged held-out quality',()=>{
     const row=report.rows[6],learning=row.learning!;
     assert.deepEqual(learning.flags,{experience:true,rope:false,mutation:false});assert.equal(learning.mixedGroupRate,.6);assert.equal(learning.groupsWithoutMixedOutcome,2);
     assert.deepEqual(learning.libraryOperations,{add:4,merge:1,prune:1,keep:1});assert.equal(learning.librarySize,2);assert.ok(learning.librarySize<=learning.libraryCap);
-    assert.equal(row.failures.refusedLearningWrites,5);assert.equal(row.failures.headConflicts,0);assert.equal(learning.replayCost,0);
+    assert.equal(row.failures.refusedLearningWrites,5);assert.equal(row.failures.headConflicts,0);assert.deepEqual(learning.replayCost,{calls:0,tokens:0,ms:0});
     assert.equal(row.cost!.trainingCalls,106);assert.equal(row.cost!.heldOutCalls,100);assert.equal(row.heldOutQuality!.planned,5);
     assert.equal(row.heldOutQuality!.f1,.8);assert.equal(report.rows[3].heldOutQuality!.f1,.8);assert.equal(report.rows[4].heldOutQuality!.f1,.8);
     assert.equal(row.quality!.f1,.8);assert.equal(report.rows[3].quality!.f1,.9);
+  });
+  it('publishes paired prompt costs, per-role churn and the scripted held-out loss',()=>{
+    for(const id of ['hera-no-experience','hera-no-mutation']){const row=report.rows.find(r=>r.id===id)!,learning=row.learning!;
+      assert.equal(row.status,'run');assert.equal(learning.flags.rope,true);assert.equal(learning.flags.experience,id==='hera-no-mutation');
+      assert.deepEqual(learning.promptChurn,[{agentId:'conclude-agent',activated:1,rejected:2}]);
+      assert.deepEqual(learning.trials,{activated:1,rejected:1,malformed:1,unevaluated:0});assert.deepEqual(learning.replayCost,{calls:14,tokens:140,ms:0});
+      assert.equal(row.heldOutQuality!.f1,.6);assert.ok(row.heldOutQuality!.f1<report.rows[6].heldOutQuality!.f1);assert.equal(row.failures.refusedLearningWrites,5);
+      assert.deepEqual(row.identity!.learningBudget,report.rows[6].identity!.learningBudget);
+    }
   });
   it('refuses a tampered registered fixture before reading its truth', async () => {
     const root = await mkdtemp(join(tmpdir(), 'tangle-hera-fixture-'));
@@ -160,7 +175,7 @@ it('HERA CLI redirects every artifact, reproduces bytes and checks without writi
   const before = await Promise.all(committed.map(async path => ({ text: await readFile(path, 'utf8'), mtime: (await stat(path)).mtimeMs })));
   try {
     const a = join(root, 'a'), b = join(root, 'b');
-    await run('--out-dir', a, '--require', 'experience');
+    await run('--out-dir', a, '--require', 'rope');
     await run('--out-dir', b);
     for (const name of ['hera-qa.json', 'HERA_BENCHMARK.md']) {
       const path = join(a, name), bytes = await readFile(path, 'utf8'), mtime = (await stat(path)).mtimeMs;
@@ -169,7 +184,7 @@ it('HERA CLI redirects every artifact, reproduces bytes and checks without writi
       assert.equal((await stat(path)).mtimeMs, mtime);
       assert.equal(await readFile(path, 'utf8'), bytes);
     }
-    for (const capability of ['rope', 'mutation', 'complete']) {
+    for (const capability of ['mutation', 'complete']) {
       await assert.rejects(run('--require', capability, '--out-dir', join(root, 'refused')), /not implemented/);
     }
     await assert.rejects(stat(join(root, 'refused')), { code: 'ENOENT' });

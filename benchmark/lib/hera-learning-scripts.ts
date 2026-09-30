@@ -1,5 +1,5 @@
 /** Authored recipes bind only identifiers and observations visible in control prompts. */
-import type {HeraConsolidationOutput,HeraReflectionOutput,HeraExperienceView} from '@tangleai/hera';
+import type {HeraConsolidationOutput,HeraReflectionOutput,HeraExperienceView,HeraRopeOutput} from '@tangleai/hera';
 export interface HeraTrainingSequence {kind:string;training:Array<{taskId:string;serial:'incorrect'|'registered';parallel:'incorrect'|'registered';consolidation:string|null}>;heldOut:string[];
   incorrectAnswer:string;application:{serial:string;parallel:string};conflict:{taskId:string;targets:[string,string];reason:string};}
 export interface HeraReflectionScript {kind:string;successFactor:string;failureMode:string;insight:{id:string;text:string};creditReason:string;referenceRecipe:string;}
@@ -21,4 +21,16 @@ export function heraScriptedConsolidation(request:unknown,script:HeraConsolidati
   return {ops:instructions.map(op=>({op:op.op,sourceInsightIds:op.op==='KEEP'?[]:insights.map(i=>i.id),targetIds:op.targets.map(key=>{
     const entry=library.find(e=>e.insight===script.guidance[key]);if(!entry)throw Error('Unregistered library target '+key);return entry.id;
   }),...(op.text?{text:op.text==='merged'?script.merged:script.guidance[op.text]}:{})}))};
+}
+
+export interface HeraRopeScript {kind:string;proposals:Record<string,{text:string;outcome:'supported'|'unsupported'}>;replayImproves:string[];heldOutLosses:string[];lossMarker:string;referenceRecipe:string;}
+export function heraScriptedRope(request:unknown,script:HeraRopeScript,id:string,phase:'proposal'|'contrast'):HeraRopeOutput{
+  if(phase==='proposal'){
+    const recipe=script.proposals[id];if(!recipe)throw Error('Unregistered prompt trial '+id);
+    const failures=heraPromptField<Array<{trajectoryId:string}>>(request,'Evaluated failures: '),active=heraPromptField<{operationalRules:Array<{text:string}>;behavioralPrinciples:Array<{text:string}>}>(request,'Current prompt: ');
+    const derivedFrom=recipe.outcome==='supported'?[failures.at(-1)!.trajectoryId]:['unretained-scripted-replay'];
+    return {operationalRules:[...active.operationalRules.map(r=>({text:r.text,derivedFrom})),{text:recipe.text,derivedFrom}],behavioralPrinciples:active.behavioralPrinciples.map(r=>({text:r.text,derivedFrom})),derivedFrom};
+  }
+  const pair=heraPromptField<Array<{control:{id:string};replay:{id:string};operationalRules:Array<{text:string}>;behavioralPrinciples:Array<{text:string}>}>>(request,'Whole-run paired trials: ')[0],derivedFrom=[pair.control.id,pair.replay.id];
+  return {operationalRules:pair.operationalRules.map(r=>({text:r.text,derivedFrom})),behavioralPrinciples:pair.behavioralPrinciples.map(r=>({text:r.text,derivedFrom})),derivedFrom};
 }

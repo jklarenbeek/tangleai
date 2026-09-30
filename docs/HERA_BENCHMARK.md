@@ -11,23 +11,27 @@ Fixture: 16 passages, 10 questions (5 training, 5 held out). Licence: MIT.
 | single-turn | run | scripted | 0.5000 | 10 / 10 | 20 | scripted execution |
 | fixed-topology | run | scripted | 0.9000 | 10 / 10 | 140 | scripted execution |
 | query-specific-frozen | run | scripted | 0.9000 | 10 / 10 | 203 | scripted execution |
-| hera-no-experience | implementation-missing | scripted | — | — | — | Role prompt learning with a frozen experience library is not implemented. |
+| hera-no-experience | run | scripted | 0.7000 | 10 / 10 | 223 | scripted execution |
 | hera-no-rope | run | scripted | 0.8000 | 10 / 10 | 206 | scripted execution |
 | hera-full | implementation-missing | scripted | — | — | — | Experience, prompt and topology learning together are not implemented. |
-| hera-no-mutation | implementation-missing | scripted | — | — | — | Experience and prompt learning without topology mutation are not implemented. |
+| hera-no-mutation | run | scripted | 0.7000 | 10 / 10 | 226 | scripted execution |
 
 | Row | Held-out F1 | Held-out answered / planned | Training calls | Held-out calls |
 |---|---:|---:|---:|---:|
 | single-turn | 0.4000 | 5 / 5 | 10 | 10 |
 | fixed-topology | 0.8000 | 5 / 5 | 70 | 70 |
 | query-specific-frozen | 0.8000 | 5 / 5 | 101 | 102 |
+| hera-no-experience | 0.6000 | 5 / 5 | 123 | 100 |
 | hera-no-rope | 0.8000 | 5 / 5 | 106 | 100 |
+| hera-no-mutation | 0.6000 | 5 / 5 | 126 | 100 |
 
 | Learning row | Mixed / evaluated | Unmixed groups | Library size | ADD / MERGE / PRUNE / KEEP | Head conflicts | Refused learning |
 |---|---:|---:|---:|---:|---:|---:|
+| hera-no-experience | 3 / 5 | 2 | 0 | 0 / 0 / 0 / 0 | 0 | 5 |
 | hera-no-rope | 3 / 5 | 2 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
+| hera-no-mutation | 3 / 5 | 2 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
 
-Measured retriever concurrency: 2. Replay calls: 0. Script revision: `b53b2deb33a38eae4fbcd890c22bd214de9b3e6a8f701aa68a3efa97c0f8b1e3`.
+Measured retriever concurrency: 2. Replay calls: 0. Script revision: `fcbfb4c7544912d695a239d96a19b89ac84ea0ee659d4129ca85aaf3dda60bca`.
 
 Dataset: available. Training 64; held out 64; category-3 uncut answers below their ceiling: 4.
 
@@ -38,9 +42,14 @@ Dataset: available. Training 64; held out 64; category-3 uncut answers below the
 | 3 | 32 | 1.0000 | 0 |
 | 4 | 32 | 1.0000 | 0 |
 
-Held-out learning attempts refused: 5. Learning writes: 53. Dataset comparisons remain ineligible.
+| Prompt row | Role | Activated / rejected versions | Activated / rejected / malformed / unevaluated trials | Whole replay calls / tokens | Held-out F1 |
+|---|---:|---:|---:|---:|---:|
+| hera-no-experience | conclude-agent | 1 / 2 | 1 / 1 / 1 / 0 | 14 / 140 | 0.6 |
+| hera-no-mutation | conclude-agent | 1 / 2 | 1 / 1 / 1 / 0 | 14 / 140 | 0.6 |
 
-- The single-turn, fixed-topology, query-specific frozen and experience-learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Three learning variants remain unimplemented.
+Held-out learning attempts refused: 5. Learning writes: 143. Dataset comparisons remain ineligible.
+
+- The single-turn, fixed-topology, query-specific frozen and bounded experience/prompt learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. The full row still requires topology mutation.
 - The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.
 - The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.
 - LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.
@@ -51,6 +60,8 @@ Held-out learning attempts refused: 5. Learning writes: 53. Dataset comparisons 
 - Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.
 - The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.
 - The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.
+- Prompt variants run one deterministic credited role per mixed training group. The registered axes are efficiency, thoroughness, risk-sensitivity, error-correction and heuristic-injection; group index selects the axis. Proposal and contrast calls, rejected trials and complete control/replay executions are charged. Each learning row declares the same separate refinement budget in addition to its rollout budget.
+- The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.
 - Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.
 
-Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `304a58be024e398a10a7ea1b4a2603b0213bd6d466698e982104d8434d62470f`. Report: `6d3679542bddcb1df9f4fc31b4879af76861f6a40a8c8a62dc3bb903febea7d7`.
+Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `805b9d235d4dadf7b6a9bb7dfe29cae92a73daac1a51009eec61fd079d47358c`. Report: `b0b908713959dce92b6e9f660efb8952ce34ebe795e12b49788488b0add08140`.

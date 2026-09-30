@@ -7,7 +7,7 @@ import {heraArtifacts,createHeraAgents,heraRegistryDocument,heraContentIdOf,hera
   emptyHeraHead,planPromptActivation,planSnapshotActivation,createHeraExecutor,HERA_EVIDENCE_INPUT,
   type HeraStore,type HeraLearningSnapshot,type HeraLearningConfig,type HeraEvidenceProvider,type HeraTask,type HeraOutcome} from '@tangleai/hera';
 export function heraValue<T>(outcome:{valid:true;value:T}|{valid:false;issues:unknown[]}):T {if(!outcome.valid)throw Error(JSON.stringify(outcome.issues));return outcome.value;}
-export const HERA_EXAMPLE_CONFIG:HeraLearningConfig={groupSize:3,maxAgents:5,selectorVersion:'mmr-v1',selectorWeights:{similarity:1,utility:0.5,novelty:0.25,selectionPenalty:0.1},selectorCap:4,libraryCap:32,operationCap:8,failureBufferSize:8,consecutiveFailures:3,variantAxes:['evidence','decomposition'],promptBounds:{maxRules:16,maxBytes:8192,maxOps:16},flags:{experience:false,rope:false,mutation:false}};
+export const HERA_EXAMPLE_CONFIG:HeraLearningConfig={groupSize:3,maxAgents:5,selectorVersion:'mmr-v1',selectorWeights:{similarity:1,utility:0.5,novelty:0.25,selectionPenalty:0.1},selectorCap:4,libraryCap:32,operationCap:8,failureBufferSize:8,consecutiveFailures:3,variantAxes:['efficiency','thoroughness','risk-sensitivity','error-correction','heuristic-injection'],promptBounds:{maxRules:16,maxBytes:8192,maxOps:16},flags:{experience:false,rope:false,mutation:false}};
 export async function createHeraExampleState(store:HeraStore,options:{corpusRevision:string;embeddedBy:{model:string;dims:number};config?:HeraLearningConfig}) {
   const toolRevision=await heraRevisionOf(HERA_EVIDENCE_INPUT);
   const registry:ProfileRegistry={version:1,credentialSlots:[],candidates:[

@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "304a58be024e398a10a7ea1b4a2603b0213bd6d466698e982104d8434d62470f",
+  "sourceId": "805b9d235d4dadf7b6a9bb7dfe29cae92a73daac1a51009eec61fd079d47358c",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -272,7 +272,8 @@
       },
       {
         "rowId": "hera-no-experience",
-        "identityStatus": "not-run"
+        "identityStatus": "run",
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227"
       },
       {
         "rowId": "hera-no-rope",
@@ -285,7 +286,8 @@
       },
       {
         "rowId": "hera-no-mutation",
-        "identityStatus": "not-run"
+        "identityStatus": "run",
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227"
       }
     ]
   },
@@ -468,7 +470,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "5ea66bf58918fb896c032a6bcaac507fd18482ebcfd2315102b8a424fe18b54e",
+        "snapshotId": "eac1fa3caab3addc7f1f15455cc632eae502a6299d60868dfbc01134e6c02a53",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -587,7 +589,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "5ea66bf58918fb896c032a6bcaac507fd18482ebcfd2315102b8a424fe18b54e",
+        "snapshotId": "eac1fa3caab3addc7f1f15455cc632eae502a6299d60868dfbc01134e6c02a53",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -706,7 +708,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "da819e8070d12b7dc983e855ddff2487b72ee0f3e0a93171f522b03178cee5db",
+        "snapshotId": "092d16e34a440e418c354d4bf9045a9ea8cffd2f80c3fef6c2d8de8f77e26c3f",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -818,12 +820,120 @@
     {
       "id": "hera-no-experience",
       "kind": "ablation",
-      "status": "implementation-missing",
-      "reason": "Role prompt learning with a frozen experience library is not implemented.",
+      "status": "run",
+      "reason": null,
       "tier": "scripted",
-      "identity": null,
-      "quality": null,
-      "cost": null,
+      "seeds": [
+        17753
+      ],
+      "identity": {
+        "snapshotId": "1865a26bcdf97574053e1f500637a3e9f3d6910d2ca0b9729a9f7ea47a7502a4",
+        "model": "ollama/hera-scripted",
+        "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
+        "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
+        "evaluatorId": "fixture-exact",
+        "toolIds": [
+          "hera-evidence"
+        ],
+        "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        },
+        "learningBudget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        }
+      },
+      "quality": {
+        "f1": 0.7,
+        "successRate": 0.7,
+        "citationRecall": 0.9166666666666666,
+        "answered": 10,
+        "planned": 10,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.6666666666666666,
+            "answered": 3,
+            "planned": 3
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 3,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 4,
+            "f1": 0.5,
+            "answered": 4,
+            "planned": 4
+          }
+        ]
+      },
+      "heldOutQuality": {
+        "f1": 0.6,
+        "successRate": 0.6,
+        "citationRecall": 0.9333333333333332,
+        "answered": 5,
+        "planned": 5,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 3,
+            "f1": 0,
+            "answered": 0,
+            "planned": 0
+          },
+          {
+            "category": 4,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          }
+        ]
+      },
+      "cost": {
+        "calls": 223,
+        "promptTokens": 1561,
+        "completionTokens": 669,
+        "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
+        "ms": 0,
+        "unknownMsRequests": 223,
+        "money": null,
+        "trainingCalls": 123,
+        "heldOutCalls": 100
+      },
       "failures": {
         "skipped": 0,
         "failed": 0,
@@ -831,13 +941,50 @@
         "budgetStops": 0,
         "orphans": 0,
         "headConflicts": 0,
-        "refusedLearningWrites": 0
+        "refusedLearningWrites": 5
       },
-      "learning": null,
-      "topology": null,
-      "seeds": [
-        17753
-      ]
+      "learning": {
+        "mixedGroupRate": 0.6,
+        "mixedGroups": 3,
+        "evaluatedGroups": 5,
+        "groupsWithoutMixedOutcome": 2,
+        "librarySize": 0,
+        "libraryCap": 32,
+        "libraryChurn": 0,
+        "libraryOperations": {
+          "add": 0,
+          "merge": 0,
+          "prune": 0,
+          "keep": 0
+        },
+        "promptChurn": [
+          {
+            "agentId": "conclude-agent",
+            "activated": 1,
+            "rejected": 2
+          }
+        ],
+        "replayCost": {
+          "calls": 14,
+          "tokens": 140,
+          "ms": 0
+        },
+        "trials": {
+          "activated": 1,
+          "rejected": 1,
+          "malformed": 1,
+          "unevaluated": 0
+        },
+        "mutationAcceptance": 0,
+        "negativeTransferByProfile": [],
+        "writes": 26,
+        "flags": {
+          "experience": false,
+          "rope": true,
+          "mutation": false
+        }
+      },
+      "topology": null
     },
     {
       "id": "hera-no-rope",
@@ -849,7 +996,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "470fe51b85918ed128b5b5a55c68525a00992895a2e0efb99785715cbdc7c7d8",
+        "snapshotId": "84806f34efc6a46a12f04a8076ada70e12e0e16300bdbfac6ee90335fe2c3361",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -858,6 +1005,16 @@
           "hera-evidence"
         ],
         "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        },
+        "learningBudget": {
           "calls": 24,
           "tokens": 65536,
           "ms": 120000,
@@ -969,8 +1126,18 @@
           "prune": 1,
           "keep": 1
         },
-        "promptChurn": 0,
-        "replayCost": 0,
+        "promptChurn": [],
+        "replayCost": {
+          "calls": 0,
+          "tokens": 0,
+          "ms": 0
+        },
+        "trials": {
+          "activated": 0,
+          "rejected": 0,
+          "malformed": 0,
+          "unevaluated": 0
+        },
         "mutationAcceptance": 0,
         "negativeTransferByProfile": [],
         "writes": 53,
@@ -1009,12 +1176,120 @@
     {
       "id": "hera-no-mutation",
       "kind": "ablation",
-      "status": "implementation-missing",
-      "reason": "Experience and prompt learning without topology mutation are not implemented.",
+      "status": "run",
+      "reason": null,
       "tier": "scripted",
-      "identity": null,
-      "quality": null,
-      "cost": null,
+      "seeds": [
+        17753
+      ],
+      "identity": {
+        "snapshotId": "5a739d06aac18caa499ee438b2e28c00c63f0f03c160f92827e486e2d76d34c4",
+        "model": "ollama/hera-scripted",
+        "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
+        "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
+        "evaluatorId": "fixture-exact",
+        "toolIds": [
+          "hera-evidence"
+        ],
+        "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        },
+        "learningBudget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        }
+      },
+      "quality": {
+        "f1": 0.7,
+        "successRate": 0.7,
+        "citationRecall": 0.9166666666666666,
+        "answered": 10,
+        "planned": 10,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.6666666666666666,
+            "answered": 3,
+            "planned": 3
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 3,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 4,
+            "f1": 0.5,
+            "answered": 4,
+            "planned": 4
+          }
+        ]
+      },
+      "heldOutQuality": {
+        "f1": 0.6,
+        "successRate": 0.6,
+        "citationRecall": 0.9333333333333332,
+        "answered": 5,
+        "planned": 5,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 3,
+            "f1": 0,
+            "answered": 0,
+            "planned": 0
+          },
+          {
+            "category": 4,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          }
+        ]
+      },
+      "cost": {
+        "calls": 226,
+        "promptTokens": 1582,
+        "completionTokens": 678,
+        "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
+        "ms": 0,
+        "unknownMsRequests": 226,
+        "money": null,
+        "trainingCalls": 126,
+        "heldOutCalls": 100
+      },
       "failures": {
         "skipped": 0,
         "failed": 0,
@@ -1022,13 +1297,50 @@
         "budgetStops": 0,
         "orphans": 0,
         "headConflicts": 0,
-        "refusedLearningWrites": 0
+        "refusedLearningWrites": 5
       },
-      "learning": null,
-      "topology": null,
-      "seeds": [
-        17753
-      ]
+      "learning": {
+        "mixedGroupRate": 0.6,
+        "mixedGroups": 3,
+        "evaluatedGroups": 5,
+        "groupsWithoutMixedOutcome": 2,
+        "librarySize": 2,
+        "libraryCap": 32,
+        "libraryChurn": 6,
+        "libraryOperations": {
+          "add": 4,
+          "merge": 1,
+          "prune": 1,
+          "keep": 1
+        },
+        "promptChurn": [
+          {
+            "agentId": "conclude-agent",
+            "activated": 1,
+            "rejected": 2
+          }
+        ],
+        "replayCost": {
+          "calls": 14,
+          "tokens": 140,
+          "ms": 0
+        },
+        "trials": {
+          "activated": 1,
+          "rejected": 1,
+          "malformed": 1,
+          "unevaluated": 0
+        },
+        "mutationAcceptance": 0,
+        "negativeTransferByProfile": [],
+        "writes": 64,
+        "flags": {
+          "experience": true,
+          "rope": true,
+          "mutation": false
+        }
+      },
+      "topology": null
     }
   ],
   "pairs": [
@@ -1111,8 +1423,8 @@
     }
   ],
   "scripted": {
-    "revision": "b53b2deb33a38eae4fbcd890c22bd214de9b3e6a8f701aa68a3efa97c0f8b1e3",
-    "requests": 569,
+    "revision": "fcbfb4c7544912d695a239d96a19b89ac84ea0ee659d4129ca85aaf3dda60bca",
+    "requests": 1018,
     "replayCalls": 0,
     "maxConcurrentRetrievers": 2
   },
@@ -7468,17 +7780,17 @@
   },
   "totals": {
     "rows": 9,
-    "run": 6,
+    "run": 8,
     "notRun": 0,
-    "implementationMissing": 3,
+    "implementationMissing": 1,
     "datasetUnavailable": 0,
-    "answered": 60,
-    "planned": 60,
-    "calls": 569,
-    "learningWrites": 53
+    "answered": 80,
+    "planned": 80,
+    "calls": 1018,
+    "learningWrites": 143
   },
   "limitations": [
-    "The single-turn, fixed-topology, query-specific frozen and experience-learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Three learning variants remain unimplemented.",
+    "The single-turn, fixed-topology, query-specific frozen and bounded experience/prompt learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. The full row still requires topology mutation.",
     "The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.",
     "The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.",
     "LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.",
@@ -7489,7 +7801,9 @@
     "Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.",
     "The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.",
     "The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.",
+    "Prompt variants run one deterministic credited role per mixed training group. The registered axes are efficiency, thoroughness, risk-sensitivity, error-correction and heuristic-injection; group index selects the axis. Proposal and contrast calls, rejected trials and complete control/replay executions are charged. Each learning row declares the same separate refinement budget in addition to its rollout budget.",
+    "The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.",
     "Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost."
   ],
-  "reportId": "6d3679542bddcb1df9f4fc31b4879af76861f6a40a8c8a62dc3bb903febea7d7"
+  "reportId": "b0b908713959dce92b6e9f660efb8952ce34ebe795e12b49788488b0add08140"
 }

@@ -27,3 +27,8 @@ export * from './consolidate.ts';
 export * from './snapshot.ts';
 export * from './advantage.ts';
 export * from './learn.ts';
+export * from './credit.ts';
+export * from './integrate.ts';
+export * from './activate.ts';
+
+export * from './trial.ts';
