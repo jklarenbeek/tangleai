@@ -712,7 +712,7 @@ export interface Forecast {
    */
   rows: Array<Row>;
   /**
-   * Schema constraints this type cannot express: minItems=6, maxItems=6
+   * Schema constraints this type cannot express: minItems=10, maxItems=10
    */
   probes: Array<Probe>;
   /**

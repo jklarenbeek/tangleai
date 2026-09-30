@@ -14,3 +14,8 @@ export * from './meter.ts';
 export * from './trace.ts';
 export * from './executor.ts';
 export * from './note.ts';
+export * from './stages.ts';
+export * from './workflow.ts';
+export * from './selection.ts';
+export * from './handlers.ts';
+export * from './host.ts';

@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "a693543814c75feee281baece167487e8e9290a6",
+    "head": "236b915898861597f45e73af2df63db15cd6b50c",
     "clean": false,
     "files": [
       {
@@ -107,11 +107,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "3ee0d90c0f26e110f5bd43be6469c76a50d9fcbabf73f8d9f9904890ed385eef"
+        "sha256": "62352c506ec4d96ca417c370b93c5d6e58a913be3b0a0c14e1c8c30aa71c7e08"
       },
       {
         "path": "package.json",
-        "sha256": "67fd9daf4625a63bcabf3ae40bb9a015502331bdd16b5ef61c4be31ceaa65e47"
+        "sha256": "3a4e61532723cd077287b3d302a6e4fd347646ffde9122ee492c18725c349acd"
       },
       {
         "path": "packages/agents/package.json",
@@ -531,11 +531,11 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "c3e2103ce95e2b387b46f966fc6f5bbf720edb91eebc02757a3d3c293f1f0563"
+        "sha256": "85df1bba00089d2df41ca828b78537948111507b765dd01542b1e10c5fc4b7bf"
       },
       {
         "path": "packages/forecast/schemas/forecast.schema.json",
-        "sha256": "f8799ad77b84e0e792b1521a9c4375b128d51d7d030bca78b277ff0abc9b525e"
+        "sha256": "1459287c6340949cb0db4e9c2cfdf86a2b5cb4812bcfb9c588a3a2b3b949700e"
       },
       {
         "path": "packages/forecast/src/adapters/choice.ts",
@@ -550,12 +550,16 @@
         "sha256": "bb2728f0f931d0b52129fbf5dfd5ba1cbf9126f073900627900d1a272810c988"
       },
       {
+        "path": "packages/forecast/src/artifacts.ts",
+        "sha256": "434bb479786d4f3e8d5d2cd23e7990273f96d3edf70049c3a5551fe785ea2389"
+      },
+      {
         "path": "packages/forecast/src/commands.ts",
-        "sha256": "e9db6197ac7d699d830e61b1a9ccf4edf7810bf7eb545bbdca2e8e3b0091c234"
+        "sha256": "edda1c1e6d98fff8359a71bea31bcbb0b4fc59eede1c449264bd552bb7b09490"
       },
       {
         "path": "packages/forecast/src/contracts.gen.ts",
-        "sha256": "4f3c038cc405bc3ff0397a53cf7dd9e9f9fced0bd635cbadde2a699103c0cac7"
+        "sha256": "d7df8f22de654c292a91c72316ef3b6d5fb10fefb79065cc89383c10b665c053"
       },
       {
         "path": "packages/forecast/src/errors.ts",
@@ -570,12 +574,20 @@
         "sha256": "5d0188c3767630a6770c3275b058b80cf9c1abc94c05383c2a2c5e81a2e2ea02"
       },
       {
+        "path": "packages/forecast/src/handlers.ts",
+        "sha256": "e8dfceffdbdd12ef1391265527ea02d31aa3e93cfc4805db1d7fe7d5c0d88380"
+      },
+      {
+        "path": "packages/forecast/src/host.ts",
+        "sha256": "56feb532f3261547e0a5058db11e468aaea187f56229ae1b1d45717518877c73"
+      },
+      {
         "path": "packages/forecast/src/identity.ts",
-        "sha256": "21161c8db140177ab90b0911d164d6b80ada2d03c5ff53c7561f62968af1fb14"
+        "sha256": "d14a0ab27cc070a1fae594324c44195f9926055809a94c4d9df6d0da689b766a"
       },
       {
         "path": "packages/forecast/src/index.ts",
-        "sha256": "fafb9a6853aa19ffc8d5f7bb90e7832d5983dc56cfa84fb348f613b10c119b66"
+        "sha256": "413d20ae4fdbb971ee52454a4b5614046a723fb2d680b08a91005b9a550947c7"
       },
       {
         "path": "packages/forecast/src/meter.ts",
@@ -592,6 +604,14 @@
       {
         "path": "packages/forecast/src/schema.ts",
         "sha256": "f6982aee38f6f92fa508fd36ad1e07a20e6375c9807d9aa3955ec43b6c3705ce"
+      },
+      {
+        "path": "packages/forecast/src/selection.ts",
+        "sha256": "7262ecd123d6e38092265c390d652e8d89f6087122f62a2c30e2ed6d1b125874"
+      },
+      {
+        "path": "packages/forecast/src/stages.ts",
+        "sha256": "8218688d68b4d4f1d0d6c75e9a1f055ed1aede03ee96a9e07b54086324134226"
       },
       {
         "path": "packages/forecast/src/store.ts",
@@ -612,6 +632,10 @@
       {
         "path": "packages/forecast/src/transitions.ts",
         "sha256": "720d436a508a79d4fe9fe93a392c719dcf59a60907dc892bbef563a7d40ae86a"
+      },
+      {
+        "path": "packages/forecast/src/workflow.ts",
+        "sha256": "001e78003b48db5f7779c558ce978d669fc2ab62d54f573c9ee6bcf8163212c1"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -1714,7 +1738,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "2ff6b3d18046a80de7d114618f5fd492e37ff3954ac7ee99affd1744cb8ab093"
+    "sha256": "854762a9d03e97f39860fbbe30ca606b8c2b47ec31aeef6be8e234cbacd16303"
   },
   "registration": {
     "schemaVersion": 1,
@@ -84900,5 +84924,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "c8e9cc33297c226bb6da0caf1aa60cbf177f913080d276610cffd4c2624e9e45"
+  "reportId": "51a0cca0dc792f3dbc5d0f5878117369e8e171fcbbb441e2e688d74d4e33c21e"
 }

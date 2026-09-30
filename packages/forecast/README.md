@@ -44,8 +44,31 @@ allowance. Both roles retain actual request digests through the injected
 client's `requestKey(request)` method, reported usage or null, and replay
 markers. Each artifact identifies its own producer prompt and toolset; the
 note builder has no tools. `forecastPromptRevisions()` computes constant-text
-revisions lazily without filesystem access. Hosts own execution scheduling,
-resumption and durable publication; these primitives start no background work.
+revisions lazily without filesystem access.
+
+`createForecastHost` validates and lowers one MAS workflow, then exposes a
+manual `tick(now)`, duplicate-aware `deliver(questionId, ordinal)` and queue
+`resume()` reconciliation. Inject the forecast store, MAS store, model factories,
+configuration/budget policy, clocks and segment adapter. The package opens no
+database and starts no timer. The host uses the existing MAS queue and worker;
+it selects the latest visible provisional, checked or seed harness as of the
+scheduled instant. Static treatment always uses the seed.
+
+Execution and note commands atomically retain stage artifacts and cumulative
+budget receipts before the MAS attempt completes. Retrying after that commit
+reuses the artifacts without calling a model. Unknown purchased usage stays
+unknown while its budget estimate survives reopening. A crash before a stage
+commits is outside this replay guarantee. MAS traces contain artifact references;
+raw forecast transcripts stay in bounded forecast traces. The revision branch
+currently reports a counted skip after the first checkpoint.
+
+Run `npm run forecast:tick -- --db /tmp/forecast.db --now
+2025-01-25T00:00:00.000Z --fixture` for three scripted checkpoints. A second
+tick starts no runs and spends nothing. Fixture mode requires an explicit clock.
+For application execution, supply `--host path/to/bindings.ts`; its async
+`forecastBindings({ db, now })` returns `profile`, `policy`, `executor` and
+`noteBuilder` bindings. Provider access requires those explicit host bindings.
+Without `--now`, the application host records its wall-clock admission instant.
 
 `forecastGet`, `forecastQuery` and `forecastTransaction` consume an opaque store
 handle. The public transaction has immutable `put` and read methods; it cannot

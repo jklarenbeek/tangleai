@@ -147,6 +147,7 @@
     "emit:hera-contract": "node scripts/hera-contract.ts",
     "hera:contract:check": "jaren-contract diff --from scripts/fixtures/hera-contract-v1.json --to packages/hera/schemas/hera.contract.json --fail-on breaking",
     "benchmark:forecast": "node benchmark/forecast.ts",
+    "forecast:tick": "node scripts/forecast-tick.ts",
     "emit:forecast": "jaren-emit --schema benchmark/schemas/forecast.schema.json --out benchmark/lib --bundle forecast.types.ts",
     "emit:forecast-contracts": "jaren-emit --schema packages/forecast/schemas/forecast.schema.json --out packages/forecast/src --bundle contracts.gen.ts",
     "test:forecast": "node --test \"test/forecast/*.test.ts\""

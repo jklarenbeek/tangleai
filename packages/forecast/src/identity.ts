@@ -19,7 +19,7 @@ export const FORECAST_RECORD_SCHEMAS: Record<ForecastTable, string> = {
 /** Not a permission list: only commands can replace an existing record. */
 const identityOmissions: Partial<Record<ForecastTable, readonly string[]>> = {
   questions: ['status','latestProvisionalVersionId'], schedules: ['status'],
-  checkpoints: ['status','startedAt','endedAt','traceId','noteId','predictionId','evidenceIds','spend','stopReason','failure','noteFailure','decisionId'],
+  checkpoints: ['status','startedAt','endedAt','traceId','noteId','predictionId','evidenceIds','spend','stopReason','failure','noteFailure','decisionId','progress'],
   harnesses: ['status','checkedVersionId'],
   // Candidates refer back to these records. Excluding the forward result links
   // avoids circular hashes; immutable publication still binds every result byte.
@@ -54,9 +54,18 @@ export async function validateForecastRecord<K extends ForecastTable>(table: K, 
     if (['static-harness','evolving-harness'].includes(c.treatment) !== (c.inputHarnessVersionId !== null)) reject('TFCT1002', 'The checkpoint treatment and harness input disagree.');
     if (c.spend.usageKnown !== (c.spend.tokens !== null)) reject('TFCT1001', 'Known usage requires a token count; unknown usage requires null.');
     if (c.startedAt && (c.startedAt < c.scheduledAt || c.endedAt && c.endedAt < c.startedAt)) reject('TFCT1004', 'Checkpoint execution times are out of order.');
-    if (c.status === 'planned' && (c.startedAt || c.endedAt || c.traceId || c.noteId || c.predictionId || c.evidenceIds.length || c.noteFailure || c.failure || c.stopReason || c.decisionId || c.spend.calls || c.spend.ms || c.spend.tokens !== 0)) reject('TFCT1004', 'A planned checkpoint cannot carry execution artifacts.');
+    if (c.status === 'planned' && (c.startedAt || c.endedAt || c.traceId || c.noteId || c.predictionId || c.evidenceIds.length || c.progress || c.noteFailure || c.failure || c.stopReason || c.decisionId || c.spend.calls || c.spend.ms || c.spend.tokens !== 0)) reject('TFCT1004', 'A planned checkpoint cannot carry execution artifacts.');
     if (c.status !== 'planned' && !c.startedAt) reject('TFCT1004', 'A started checkpoint requires its start instant.');
-    if (c.status === 'running' && (c.endedAt || c.noteFailure || c.failure || c.traceId || c.noteId || c.predictionId)) reject('TFCT1004', 'A running checkpoint cannot carry final artifacts.');
+    if (c.status === 'running' && (c.endedAt || !c.progress && (c.noteFailure || c.failure || c.traceId || c.noteId || c.predictionId))) reject('TFCT1004', 'A running checkpoint cannot carry final artifacts.');
+    if (c.progress) {
+      const p = c.progress, receipts = [p.execution,...(p.note ? [p.note] : [])];
+      if (!c.traceId || !c.stopReason || (c.predictionId === null) === (c.failure === null) || c.predictionId && c.stopReason !== 'stop') reject('TFCT1004','Durable execution progress requires its trace and prediction or failure.');
+      if (p.note === null && (c.noteId || c.noteFailure) || p.note && (!c.predictionId || (c.noteId === null) === (c.noteFailure === null))) reject('TFCT1004','Durable note progress and its retained result disagree.');
+      if (receipts.some(r => r.spend.usageKnown !== (r.spend.tokens !== null) || r.budgetSpent.turns < r.spend.calls || r.calls.length !== r.spend.calls)) reject('TFCT1001','Stage cost and budget receipts disagree.');
+      if (p.note && (p.note.budgetSpent.turns !== p.execution.budgetSpent.turns + p.note.spend.calls || p.note.budgetSpent.tokens < p.execution.budgetSpent.tokens || p.note.budgetSpent.ms < p.execution.budgetSpent.ms)) reject('TFCT1001','Note progress did not continue the execution budget.');
+      const known = receipts.every(r => r.spend.usageKnown);
+      if (c.spend.calls !== receipts.reduce((n,r) => n + r.spend.calls,0) || c.spend.ms !== receipts.reduce((n,r) => n + r.spend.ms,0) || c.spend.usageKnown !== known || c.spend.tokens !== (known ? receipts.reduce((n,r) => n + r.spend.tokens!,0) : null)) reject('TFCT1001','Checkpoint totals differ from its stage receipts.');
+    }
     if (c.status === 'finalized' && (!c.endedAt || !c.traceId || (c.noteId === null) === (c.noteFailure === null) || !c.predictionId || c.failure || c.stopReason !== 'stop')) reject('TFCT1004', 'A finalized checkpoint requires a stopped prediction, trace and either a note or its failure.');
     if (c.status === 'failed' && (!c.endedAt || !c.failure || c.predictionId || c.noteId || c.noteFailure)) reject('TFCT1004', 'A failed checkpoint requires its failure and cannot carry a successful prediction or note.');
   }

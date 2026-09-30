@@ -53,6 +53,10 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | admission-parity | true | 1152 snapshot/cutoff pairs agree with the independent oracle. |
 | adapter-score-parity | true | 75 authored predictions agree with the independent scorer. |
 | stop-reason-census | true | future: stop, cutoff refusal TFCT1006, 4 calls; length: length, TFCT1005, 3 calls; tool-limit: tool-limit, TFCT1005, 2 calls; budget-turns: budget-turns, TFCT1005, 0 calls; malformed: stop, TFCT1009, 3 calls |
+| resume-identity | true | 27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 07d953d3cd82c5305a950ad9685f8e78e63dfff08d40685cf68f97de2e3d571f. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3. |
+| duplicate-delivery | true | 3 TMAS2001 deliveries create no extra forecast artifact or spend; second ticks start zero runs. |
+| ordinal-discipline | true | One out-of-order ordinal is refused as TFCT1004 before any model purchase. |
+| revision-skipped-at-ordinal-1 | true | Checkpoint one takes revision-skip; later checkpoints return a counted not-implemented revision value. |
 
 - The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.
 - Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.
@@ -66,4 +70,4 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | no-harness | {"stop":18} | 0 | 0 | 50b556dbdc0d1db5bca07c2bbd7fac3e0ba318960d7e5fe08c57a647a391b808 / 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 |
 | static-harness | {"stop":18} | 0 | 0 | 50b556dbdc0d1db5bca07c2bbd7fac3e0ba318960d7e5fe08c57a647a391b808 / 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 |
 
-Registration: `656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667`. Source: `278d22e679d56d23a7e95c74d614988d92015280133f0971026f12f37a6522cb`. Report: `2b60782d6dd3c4998dfadbfd3af4c06a874c297de917a663b1159498ae8b2e28`.
+Registration: `656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667`. Source: `93d24c0789b94ee1596b01f84bbfba4775efc0a212bb072cb93c8cd2cab5ce28`. Report: `b3b0c7d981959eab1c7b7ebe50076ede4057853038cf80194ad237cf5d04e9f0`.

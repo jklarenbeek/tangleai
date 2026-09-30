@@ -2,10 +2,7 @@
 import { equalsJson } from '@jarenjs/core/object';
 import { sealForecastRecord, validateForecastRecord, type ForecastTables } from './identity.ts';
 import { forecastMust, reject } from './errors.ts';
-import { admitEvidence } from './evidence.ts';
-import { forecastPromptRevisions } from './prompts.ts';
-import { forecastRevision } from './identity.ts';
-import { parseForecastAnswer } from './adapters/index.ts';
+import { checkForecastPrediction, checkForecastNote, retainForecastEvidence } from './artifacts.ts';
 import { planQuestionTransition, planCheckpointTransition, planHarnessTransition, visibleHarness } from './transitions.ts';
 import { forecastCommandTransaction, type ForecastStore, type ForecastCommandTransaction } from './store.ts';
 import type { ForecastCheckpoint, ForecastQuestion, ForecastHarnessVersion, ForecastResolution, ForecastPrediction, ForecastTrace, CheckpointNote, ForecastEvidence, Spend, CheckpointFailure } from './contracts.gen.ts';
@@ -79,35 +76,20 @@ export interface ForecastFinalization {
   checkpointId: string; at: string; prediction: ForecastPrediction; trace: ForecastTrace; note: CheckpointNote | null; noteFailure?: CheckpointFailure | null;
   evidence: ForecastEvidence[]; spend: Spend; stopReason: 'stop';
 }
-async function retainEvidence(tx: ForecastCommandTransaction, checkpoint: ForecastCheckpoint, evidence: ForecastEvidence[]) {
-  if (new Set(evidence.map(e => e.id)).size !== evidence.length) reject('TFCT1001', 'Checkpoint evidence contains duplicate ids.');
-  for (const e of evidence) {
-    if (e.checkpointId !== checkpoint.id) reject('TFCT1003', 'The evidence belongs to another checkpoint.');
-    if (e.kind === 'snapshot') {
-      const gate = forecastMust(admitEvidence(e,checkpoint.cutoffAt));
-      if (e.admitted !== gate.admitted || !gate.admitted && e.refusal?.reason !== gate.reason) reject('TFCT1006', 'Replay evidence differs from its cutoff admission.');
-    }
-    await tx.put('evidence',e);
-  }
-}
 export function forecastCheckpointFinalize(store: ForecastStore, input: ForecastFinalization) {
   return forecastCommandTransaction(store,async tx => {
     const { checkpoint, question, context } = await checkpointFor(tx,input.checkpointId);
     const { prediction,trace,note } = input;
     if ([prediction,trace,...(note ? [note] : [])].some(r => r.checkpointId !== checkpoint.id)) reject('TFCT1003', 'Final artifacts cross checkpoint ownership.');
-    if (prediction.adapterId !== question.adapter.id || prediction.adapterVersion !== question.adapter.version) reject('TFCT1002', 'The prediction differs from the question adapter.');
-    if (prediction.normalized !== forecastMust(parseForecastAnswer(question.adapter,prediction.raw)) || prediction.uncertainty !== null) reject('TFCT1009', 'The prediction differs from its parsed answer or carries undeclared probability.');
-    if (note && (note.traceId !== trace.id || ['configuration','noteSchemaRevision'].some(key => !equalsJson(note[key as keyof CheckpointNote],checkpoint[key as keyof ForecastCheckpoint])))) reject('TFCT1002', 'The note differs from the checkpoint configuration, schema or trace.');
-    if (note && (note.promptRevision !== (await forecastPromptRevisions()).note || note.toolsetRevision !== await forecastRevision([]))) reject('TFCT1002', 'The note differs from its producer prompt or empty toolset.');
-    if (note && note.evidenceIds.some(id => !input.evidence.some(e => e.id === id && e.admitted))) reject('TFCT1006', 'A note cites evidence not admitted by this checkpoint.');
+    checkForecastPrediction(question,prediction);
     const noteFailure = input.noteFailure ?? null;
-    if ((note === null) === (noteFailure === null) || noteFailure && noteFailure.code !== 'TFCT1001') reject('TFCT1001', 'Retain either a note or its counted generation failure.');
+    await checkForecastNote(checkpoint,trace,note,noteFailure,input.evidence);
     const next: ForecastCheckpoint = { ...checkpoint, status: 'finalized', endedAt: input.at, traceId: trace.id, noteId: note?.id ?? null, predictionId: prediction.id,
       evidenceIds: input.evidence.map(e => e.id), spend: input.spend, stopReason: input.stopReason, failure: null, noteFailure };
     if (checkpoint.status === 'finalized') {
       if (!equalsJson(checkpoint,next)) reject('TFCT1010', 'The checkpoint already has different finalization bytes.');
     } else forecastMust(planCheckpointTransition(checkpoint,{ type: 'checkpoint.finalize',at: input.at },context));
-    await retainEvidence(tx,checkpoint,input.evidence);
+    await retainForecastEvidence(tx,checkpoint,input.evidence);
     await tx.put('predictions',prediction); await tx.put('traces',trace); if (note) await tx.put('notes',note);
     await tx.replace('checkpoints',checkpoint,next); await scheduleStatus(tx,checkpoint,'complete'); return next;
   });
@@ -123,7 +105,7 @@ export function forecastCheckpointFail(store: ForecastStore, input: ForecastChec
     if (checkpoint.status === 'failed') {
       if (!equalsJson(checkpoint,next)) reject('TFCT1010', 'The checkpoint already has different failure bytes.');
     } else forecastMust(planCheckpointTransition(checkpoint,{ type: 'checkpoint.fail',at: input.at },context));
-    await retainEvidence(tx,checkpoint,input.evidence); if (input.trace) await tx.put('traces',input.trace);
+    await retainForecastEvidence(tx,checkpoint,input.evidence); if (input.trace) await tx.put('traces',input.trace);
     await tx.replace('checkpoints',checkpoint,next); await scheduleStatus(tx,checkpoint,'complete'); return next;
   });
 }

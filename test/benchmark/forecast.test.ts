@@ -61,7 +61,7 @@ describe('registered forecasting measurement',()=>{
       assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.postCutoff,0),3);assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.undated,0),2);
       assert.ok(row.runtime!.retained.every((a:any)=>a.trace.id===a.checkpoint.traceId&&a.note.id===a.checkpoint.noteId&&a.prediction.id===a.checkpoint.predictionId));
     }
-    for(const change of [(x:Forecast)=>{x.rows[3].cost.calls--;},(x:Forecast)=>{x.rows[3].identity.notePromptRevision='a'.repeat(64);},(x:Forecast)=>{(x.rows[3].runtime!.retained[0].trace as any).messages=[];},(x:Forecast)=>{x.rows[4].cases[0].prediction='approve';}]){
+    for(const change of [(x:Forecast)=>{x.rows[3].cost.calls--;},(x:Forecast)=>{x.rows[3].identity.notePromptRevision='a'.repeat(64);},(x:Forecast)=>{(x.rows[3].runtime!.retained[0].trace as any).messages=[];},(x:Forecast)=>{x.rows[4].cases[0].prediction='approve';},(x:Forecast)=>{x.probes.find(p=>p.id==='resume-identity')!.detail='Unmeasured recovery claim.';}]){
       const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)),/runtime/);
     }
   });

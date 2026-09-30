@@ -13,12 +13,13 @@ import schema from '../schemas/forecast.schema.json' with {type:'json'};
 import identitySchema from '../../packages/config/schemas/run-identity.schema.json' with {type:'json'};
 import {admitEvidence,forecastMust,scoreForecastAnswer} from '@tangleai/forecast';
 import {measureForecastTreatment,type ForecastNegative} from './forecast-scripted.ts';
+import {measureForecastResume} from './forecast-resume.ts';
 import type {Row,Case,Probe,Source,Audit,Forecast} from './forecast.types.ts';
 
 export const REPORT_PATH='benchmark/results/forecast.json',DOCUMENT_PATH='docs/FORECAST_BENCHMARK.md';
-export const SOURCE_FILES=['benchmark/forecast.ts','benchmark/schemas/forecast.schema.json','package.json','package-lock.json'];
+export const SOURCE_FILES=['benchmark/forecast.ts','benchmark/schemas/forecast.schema.json','benchmark/scripts/forecast-runtime.ts','scripts/forecast-tick.ts','scripts/forecast-segments.ts','package.json','package-lock.json'];
 export const FORECAST_ROWS=['oracle','seeded-reference','evidence-ceiling','no-harness','static-harness','scaffold-no-harness','evolving-harness'] as const;
-export const FORECAST_SOURCE_ROOTS=['benchmark/lib','benchmark/fixtures/forecast','packages/forecast','packages/agents','packages/models','packages/context','packages/documents','packages/search'];
+export const FORECAST_SOURCE_ROOTS=['benchmark/lib','benchmark/fixtures/forecast','packages/forecast','packages/agents','packages/models','packages/context','packages/documents','packages/search','packages/mas','packages/store'];
 const validator=createReportValidator(schema,[identitySchema]);
 export const probe=(id:string,holds:boolean,detail:string):Probe=>{if(!holds)throw Error('Forecast probe failed: '+id);return {id,holds:true,detail};};
 export function forecastAudit(fixture:ForecastFixtures):Audit[]{
@@ -72,6 +73,13 @@ async function executionProbes(fixture:ForecastFixtures):Promise<Probe[]>{
   }
   return [probe('admission-parity',admissions===1152,`${admissions} snapshot/cutoff pairs agree with the independent oracle.`),probe('adapter-score-parity',scores===75,`${scores} authored predictions agree with the independent scorer.`),probe('stop-reason-census',true,census.join('; '))];
 }
+async function orchestrationProbes():Promise<Probe[]>{
+  const r=await measureForecastResume(),stops=r.stages.reduce((n,s)=>n+s.stops,0);
+  return [probe('resume-identity',r.stages.every(s=>s.extraCalls===0&&s.stops===s.resumed&&s.artifactDigest===r.artifactDigest),`${stops} stops and resumes across ${r.stages.length} committed stages; ${r.logicalCalls} calls, zero extra calls, ${r.physicalRequests} physical requests. Artifact digest ${r.artifactDigest}; executable ${r.executableRevision}. Stages: ${r.stages.map(s=>s.stage+'='+s.stops).join(', ')}.`),
+    probe('duplicate-delivery',r.duplicateDeliveries===3,`${r.duplicateDeliveries} ${r.duplicateCause} deliveries create no extra forecast artifact or spend; second ticks start zero runs.`),
+    probe('ordinal-discipline',r.ordinalRefusals===1,'One out-of-order ordinal is refused as TFCT1004 before any model purchase.'),
+    probe('revision-skipped-at-ordinal-1',r.firstRevisionSkipped,'Checkpoint one takes revision-skip; later checkpoints return a counted not-implemented revision value.')];
+}
 export async function buildForecastReport(options:{root?:string;source?:Source}={}):Promise<Forecast>{
   const root=options.root??process.cwd(),fixture=await loadForecastFixtures(root),evidenceAudit=forecastAudit(fixture);
   const revision=await canonicalSha256({scorer:'forecast-utility/v1',cutoff:'available-at-lte-cutoff/v1',policy:fixture.manifest.policy});
@@ -85,7 +93,7 @@ export async function buildForecastReport(options:{root?:string;source?:Source}=
     refusals:{postCutoff:evidenceAudit.reduce((n,a)=>n+a.postCutoff,0),undated:evidenceAudit.reduce((n,a)=>n+a.undated,0),ids:evidenceAudit.flatMap(a=>a.refused.map(r=>r.id))},band,
     probes:[probe('oracle-ceiling',rows[0].utility===1&&rows[0].counts.scored===15,'The outcome oracle scores every resolved checkpoint and leaves three pending.'),
       probe('reference-band',rows[1].utility!>=band.low&&rows[1].utility!<=band.high,'The seeded reference lies inside the enumerated central 99% band.'),
-      probe('cutoff-refusals',evidenceAudit.reduce((n,a)=>n+a.postCutoff,0)===3&&evidenceAudit.reduce((n,a)=>n+a.undated,0)===2,'The shared attachment audit counts three future and two undated items once.'),...await executionProbes(fixture)],
+      probe('cutoff-refusals',evidenceAudit.reduce((n,a)=>n+a.postCutoff,0)===3&&evidenceAudit.reduce((n,a)=>n+a.undated,0)===2,'The shared attachment audit counts three future and two undated items once.'),...await executionProbes(fixture),...await orchestrationProbes()],
     capabilities:{oracle:true,static:true,scaffold:false,evolving:false,complete:false},identity:analyticEnvelope(FORECAST_ROWS),
     limitations:['The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.','Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.','The shared audit counts unique registered attachments once. Each measured treatment separately captures three future and two undated refusals; negative scripts are separate probes.','Static rows run the real bounded agent, read-only tools, note builder and atomic memory store against authored responses. Calls and usage are scripted accounting, not purchased tokens; the injected clock gives zero elapsed time.','No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.','No live plan is registered yet.']};
   const report={...content,reportId:await canonicalSha256(content)};await validateForecastReport(report,fixture);return report;
@@ -109,7 +117,7 @@ export async function validateForecastReport(value:unknown,fixture?:ForecastFixt
   }
   const band=analyticBand(fixture.questions.flatMap(q=>{const r=fixture!.resolutions.find(r=>r.questionId===q.id);return r?q.checkpoints.map(()=>({adapter:q.adapter,outcome:r.outcome})):[];}));
   if(!equalsJson(report.identity,analyticEnvelope(FORECAST_ROWS)))throw Error('Analytic registration cannot claim a model execution identity.');
-  if(!equalsJson(report.probes.slice(3),await executionProbes(fixture)))throw Error('Forecast runtime probe drift.');
+  if(!equalsJson(report.probes.slice(3),[...await executionProbes(fixture),...await orchestrationProbes()]))throw Error('Forecast runtime probe drift.');
   if(!equalsJson(report.band,band)||!equalsJson(report.capabilities,{oracle:true,static:true,scaffold:false,evolving:false,complete:false}))throw Error('Forecast band or capability drift.');
 }
 export function requireCapability(report:Forecast,capability:string){

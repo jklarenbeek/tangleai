@@ -380,6 +380,38 @@ export type ForecastCheckpointStopReasonAnyOf1 = string;
  */
 export type ForecastCheckpointDecisionIdAnyOf1 = string;
 
+export interface ForecastBudgetSpent {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface ForecastStageReceipt {
+  spend: Spend;
+  budgetSpent: ForecastBudgetSpent;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  calls: Array<Json>;
+}
+
+
+export interface ForecastProgress {
+  execution: ForecastStageReceipt;
+  note: ForecastStageReceipt | null;
+}
+
+
 export interface ForecastCheckpoint {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
@@ -432,6 +464,7 @@ export interface ForecastCheckpoint {
   decisionId: ForecastCheckpointDecisionIdAnyOf1 | null;
   treatment: "no-harness" | "static-harness" | "scaffold-no-harness" | "evolving-harness";
   noteFailure: CheckpointFailure | null;
+  progress?: ForecastProgress;
 }
 
 
@@ -1011,5 +1044,48 @@ export interface ForecastCutoffPolicyOneOf1 {
 
 
 export type ForecastCutoffPolicy = ForecastCutoffPolicyOneOf1 | { kind: "live"; };
+
+export interface CheckpointBudget {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface ForecastWorkflowRequest {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  ordinal: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  scheduledAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  cutoffAt: string;
+  treatment: "no-harness" | "static-harness" | "scaffold-no-harness" | "evolving-harness";
+  revise: boolean;
+  budget: CheckpointBudget;
+}
+
 
 export type Forecast = unknown;

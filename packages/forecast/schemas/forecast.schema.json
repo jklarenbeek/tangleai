@@ -859,6 +859,9 @@
               "type": "null"
             }
           ]
+        },
+        "progress": {
+          "$ref": "#/$defs/forecastProgress"
         }
       },
       "required": [
@@ -1965,6 +1968,148 @@
             "kind"
           ]
         }
+      ]
+    },
+    "checkpointBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "turns",
+        "ms"
+      ]
+    },
+    "forecastBudgetSpent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "turns",
+        "tokens",
+        "ms"
+      ]
+    },
+    "forecastStageReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spend": {
+          "$ref": "#/$defs/spend"
+        },
+        "budgetSpent": {
+          "$ref": "#/$defs/forecastBudgetSpent"
+        },
+        "calls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "maxItems": 1000
+        }
+      },
+      "required": [
+        "spend",
+        "budgetSpent",
+        "calls"
+      ]
+    },
+    "forecastProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "execution": {
+          "$ref": "#/$defs/forecastStageReceipt"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/forecastStageReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "execution",
+        "note"
+      ]
+    },
+    "forecastWorkflowRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scheduledAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "cutoffAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "treatment": {
+          "enum": [
+            "no-harness",
+            "static-harness",
+            "scaffold-no-harness",
+            "evolving-harness"
+          ]
+        },
+        "revise": {
+          "type": "boolean"
+        },
+        "budget": {
+          "$ref": "#/$defs/checkpointBudget"
+        }
+      },
+      "required": [
+        "questionId",
+        "checkpointId",
+        "ordinal",
+        "scheduledAt",
+        "cutoffAt",
+        "treatment",
+        "revise",
+        "budget"
       ]
     }
   }

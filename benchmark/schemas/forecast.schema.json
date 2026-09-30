@@ -34,8 +34,8 @@
       "items": {
         "$ref": "#/$defs/probe"
       },
-      "minItems": 6,
-      "maxItems": 6
+      "minItems": 10,
+      "maxItems": 10
     },
     "evidenceAudit": {
       "type": "array",
