@@ -7,6 +7,7 @@ import { mulberry32, randomInt } from '@jarenjs/core/random';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import { recallByEmbedding } from '@tangleai/memory';
 import { gmplTextDigest, type GmplInput } from '@tangleai/gmpl';
+import type { IdentityEnvelope } from '@tangleai/config';
 import { assertTaskSplit } from '@tangleai/hera';
 import { loadLocomo, SCORABLE_CATEGORIES, INIT_COMMAND, type LoadOutcome } from './locomo.ts';
 import { conversationCorpus, transcriptUnits } from './locomo-corpus.ts';
@@ -15,6 +16,7 @@ import { officialScore, normalizeAnswer, CATEGORY_5_REASON } from './locomo-pari
 import { bootstrapInterval } from './locomo-policy.ts';
 import { sourceManifest } from './source-manifest.ts';
 import { createReportValidator, describeErrors } from './validate.ts';
+import { runHeraBaselines } from './hera-runner.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { table } from './table.ts';
 import schema from '../schemas/hera-qa.schema.json' with { type: 'json' };
@@ -126,17 +128,17 @@ export async function createHeraDatasetPlan(dataset: LoadOutcome) {
 
 export async function heraSourceId(root = process.cwd()) {
   const packs = (await readdir(join(root, 'prompts/hera'), { recursive: true })).filter(p => p.endsWith('.toml')).map(p => 'prompts/hera/' + p).sort();
-  const roots = ['benchmark/lib', 'benchmark/fixtures/hera', 'packages/mas/src', 'packages/gmpl/src', 'packages/store/src', 'packages/agents/src', 'packages/models/src', 'packages/config/src', 'packages/context/src'];
+  const roots = ['benchmark/lib', 'benchmark/fixtures/hera', 'packages'];
   const scripts: string[] = [];
   if (await stat(join(root, 'packages/hera/src')).then(s => s.isDirectory(), () => false)) {
     roots.push('packages/hera/src', 'packages/hera/schemas', 'packages/hera/artifacts');
     scripts.push('scripts/hera-artifacts.ts', 'scripts/hera-sources.ts', 'scripts/hera-schema.ts');
   }
-  const source = await sourceManifest(root, ['benchmark/hera-qa.ts', 'benchmark/schemas/hera-qa.schema.json', 'package.json', 'package-lock.json', ...scripts, ...packs], roots);
+  const source = await sourceManifest(root, ['benchmark/hera-qa.ts', 'examples/hera.ts', 'benchmark/schemas/hera-qa.schema.json', 'package.json', 'package-lock.json', ...scripts, ...packs], roots);
   return canonicalSha256({ files: source.files });
 }
-const failures = (): NonNullable<Row['failures']> => ({ skipped: 0, refusedCandidates: 0, budgetStops: 0, orphans: 0, headConflicts: 0, refusedLearningWrites: 0 });
-const emptyCost = (): NonNullable<Row['cost']> => ({ calls: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, ms: 0, unknownMsRequests: 0, money: null, trainingCalls: 0, heldOutCalls: 0 });
+const failures = (): NonNullable<Row['failures']> => ({ skipped: 0, failed: 0, refusedCandidates: 0, budgetStops: 0, orphans: 0, headConflicts: 0, refusedLearningWrites: 0 });
+const emptyCost = (): NonNullable<Row['cost']> => ({ calls: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, estimatedTokens: 0, ms: 0, unknownMsRequests: 0, money: null, trainingCalls: 0, heldOutCalls: 0 });
 const missingMechanism: Record<typeof HERA_ROWS[number], string> = {
   oracle: 'Analytic oracle pending.', reference: 'Seeded reference pending.',
   'single-turn': 'The single-turn executor is not implemented.',
@@ -166,6 +168,11 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
         byCategory: SCORABLE_CATEGORIES.map(category => { const held = cases.filter(c => c.category === category); return { category, f1: held.length ? held.reduce((n,c)=>n+c.f1,0)/held.length : 0, answered: held.length, planned: held.length }; }),
         successRate: cases.filter(c => c.success).length / cases.length, citationRecall: id === 'oracle' ? 1 : 0, answered: cases.length, planned: cases.length }, cost: emptyCost() };
   }
+  const baseline = await runHeraBaselines(fixture, root);
+  for (const row of baseline.rows) rows[HERA_ROWS.indexOf(row.id)] = row;
+  const envelope = analyticEnvelope(HERA_ROWS);
+  envelope.identities = baseline.identities;
+  envelope.rows = envelope.rows.map(row => baseline.rows.some(r => r.id === row.rowId) ? {rowId:row.rowId,identityStatus:'run' as const,identityId:baseline.identities[0].identityId} : row);
   const pairs: HeraQa['pairs'] = [];
   for (const id of HERA_ROWS.slice(2)) if (id !== 'fixed-topology') pairs.push({ treatment: id, control: 'fixed-topology', eligible: false, delta: null, interval: null });
   for (const id of HERA_ROWS.slice(2)) if (id !== 'hera-full' && id !== 'fixed-topology') pairs.push({ treatment: 'hera-full', control: id, eligible: false, delta: null, interval: null });
@@ -176,21 +183,22 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
       training: fixture.questions.filter(q => q.split === 'training').length, heldOut: fixture.questions.filter(q => q.split === 'held-out').length },
     dataset: { status: available ? 'available' as const : dataset.available ? 'invalid' as const : 'dataset-unavailable' as const,
       sha256: dataset.available ? dataset.sha256 : null, reason: dataset.available ? (dataset.valid ? null : dataset.errors.join('; ')) : INIT_COMMAND },
-    split: plan.split, evaluators: fixture.manifest.evaluators, identity: analyticEnvelope(HERA_ROWS), rows, pairs,
+    split: plan.split, evaluators: fixture.manifest.evaluators, identity: envelope, rows, pairs, scripted: baseline.scripted,
     locomo: { questions: plan.questions, oracleByCategory: plan.oracleByCategory, evidenceId: plan.evidenceId, category3UncutBelowCeiling: plan.category3UncutBelowCeiling,
       rows: HERA_ROWS.slice(2).map(id => ({ id, status: available ? 'not-run' as const : 'dataset-unavailable' as const, eligible: false as const,
-        reason: available ? 'No dataset execution has been measured.' : dataset.available && !dataset.valid ? dataset.errors.join('; ') : INIT_COMMAND })) },
+        reason: available ? 'no authorized live plan' : dataset.available && !dataset.valid ? dataset.errors.join('; ') : INIT_COMMAND })) },
     refusals: { evalSplitInLearn: fixture.questions.filter(q => !planHeraFixtureMode('learn', q).valid).length, appliedNotOffered: 0, invalidCandidates: 0 },
-    totals: { rows: rows.length, run: 2, notRun: 0, implementationMissing: 7, datasetUnavailable: 0, answered: fixture.questions.length * 2, planned: fixture.questions.length * 2, calls: 0, learningWrites: 0 },
+    totals: { rows: rows.length, run: rows.filter(r => r.status === 'run').length, notRun: 0, implementationMissing: rows.filter(r => r.status === 'implementation-missing').length, datasetUnavailable: 0, answered: rows.reduce((n,r)=>n+(r.quality?.answered??0),0), planned: rows.reduce((n,r)=>n+(r.quality?.planned??0),0), calls: rows.reduce((n,r)=>n+(r.cost?.calls??0),0), learningWrites: baseline.learningWrites },
     limitations: [
-      'This is an instrument registration, not evidence that HERA improves orchestration. All seven mechanisms are unimplemented.',
+      'The single-turn and fixed-topology rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Five learning mechanisms remain unimplemented.',
       'The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.',
       'The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.',
       'LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.',
       'Category 5 excluded: ' + CATEGORY_5_REASON,
       'Dataset text is not redistributed: reports contain only question identifiers, evidence addresses and digests. Oracle truth remains inside scoring.',
+      'The deterministic injected clock does not measure request latency. Unknown timing requests remain counted; estimated tokens are separate from reported usage. The fixed six-invocation comparison shares caps with the single-turn row; generated candidates use the separate maxAgents learning cap.',
       'No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.',
-      'No model or topology metrics are simulated. Training costs and held-out costs will be reported separately when those mechanisms execute.',
+      'Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.',
     ],
   };
   const report = { ...content, reportId: await canonicalSha256(content) } as HeraQa;
@@ -205,6 +213,13 @@ export async function validateHeraReport(value: unknown): Promise<void> {
   for (const split of [report.split.training, report.split.heldOut]) if (await canonicalSha256(split.ids) !== split.sampleId) throw new Error('Stale split identity.');
   if (report.split.training.ids.some(id => report.split.heldOut.ids.includes(id))) throw new Error('Training and held-out overlap.');
   if (report.dataset.status !== 'available' && (report.split.training.ids.length || report.split.heldOut.ids.length || report.locomo.questions.length)) throw new Error('Unavailable dataset cannot contain a synthetic replacement.');
+  if (report.scripted.requests !== report.totals.calls || report.scripted.replayCalls !== 0) throw new Error('Scripted request census mismatch.');
+  for (const row of report.rows.filter(r => r.status === 'run' && r.tier === 'scripted')) {
+    const ref = (report.identity as IdentityEnvelope).rows.find(r => r.rowId === row.id);
+    if (ref?.identityStatus !== 'run') throw new Error('Executed row has no resolved CONFIG identity.');
+    const identity = (report.identity as IdentityEnvelope).identities.find(i => i.identityId === ref.identityId);
+    if (!identity || identity.roles.chat.provider + '/' + identity.roles.chat.model !== row.identity!.model) throw new Error('Executed row identity differs from CONFIG.');
+  }
   const ids = report.locomo.questions.map(q => q.id);
   if (new Set(ids).size !== ids.length) throw new Error('Duplicate dataset question.');
   for (const [name, split] of [['training', report.split.training], ['held-out', report.split.heldOut]] as const) {
@@ -232,10 +247,11 @@ export function heraPairedInterval(deltas: readonly number[]) {
 }
 export const renderHeraReport = (report: HeraQa) => JSON.stringify(report, null, 2) + '\n';
 export function renderHeraDocument(report: HeraQa): string {
-  return ['# Experience-guided orchestration', '', 'Generated by `npm run benchmark:hera`. Keyless instrument registration; no provider calls.', '',
+  return ['# Experience-guided orchestration', '', 'Generated by `npm run benchmark:hera`. Keyless durable execution with scripted clients; no network calls.', '',
     `Fixture: ${report.fixture.passages} passages, ${report.fixture.questions} questions (${report.fixture.training} training, ${report.fixture.heldOut} held out). Licence: MIT.`, '',
     table({ head: ['Row', 'Status', 'Tier', 'F1', 'Answered / planned', 'Calls', 'Reason'], numeric: [3, 4, 5],
-      rows: report.rows.map(r => [r.id, r.status, r.tier, r.quality?.f1.toFixed(4) ?? null, r.quality ? r.quality.answered + ' / ' + r.quality.planned : null, r.cost?.calls ?? null, r.reason ?? 'analytic control']) }), '',
+      rows: report.rows.map(r => [r.id, r.status, r.tier, r.quality?.f1.toFixed(4) ?? null, r.quality ? r.quality.answered + ' / ' + r.quality.planned : null, r.cost?.calls ?? null, r.reason ?? (r.tier === 'analytic' ? 'analytic control' : 'scripted execution')]) }), '',
+    `Measured retriever concurrency: ${report.scripted.maxConcurrentRetrievers}. Replay calls: ${report.scripted.replayCalls}. Script revision: \`${report.scripted.revision}\`.`, '',
     `Dataset: ${report.dataset.status}. Training ${report.split.training.ids.length}; held out ${report.split.heldOut.ids.length}; category-3 uncut answers below their ceiling: ${report.locomo.category3UncutBelowCeiling}.`, '',
     table({ head: ['LoCoMo category', 'Questions', 'Oracle F1', 'Missing from sample'],
       rows: report.locomo.oracleByCategory.map(c => [c.category, c.questions, c.f1.toFixed(4), report.split.missingByCategory.find(m => m.category === c.category)!.missing]) }), '',

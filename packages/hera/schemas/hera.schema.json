@@ -1090,6 +1090,12 @@
               "items": {
                 "$ref": "#/$defs/heraIssue"
               }
+            },
+            "evaluator": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
             }
           },
           "required": [

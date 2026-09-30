@@ -55,10 +55,12 @@ or usage changes and emits a receipt that reconstructs the original report.
 
 The [HERA instrument](../docs/HERA_BENCHMARK.md) registers nine orchestration
 rows, an original MIT fixture and a frozen LoCoMo training/held-out split.
-`npm run benchmark:hera` publishes keyless analytic controls and names the seven
-missing mechanisms. `--require` gates each capability; `--check` verifies bytes
+`npm run benchmark:hera` publishes analytic controls and two durable scripted
+executor baselines, and names the five missing learning mechanisms. `--require` gates each capability; `--check` verifies bytes
 without writing and `--out-dir` redirects both artifacts. Scripted, wire-replay
-and live tiers are named separately; this registration makes zero provider calls.
+and live tiers are named separately. The baseline spends 160 scripted requests
+and makes zero network calls. Its separately registered script bank tests
+sensitivity; it does not measure model quality.
 
 ## Contents
 

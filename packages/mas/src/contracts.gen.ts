@@ -199,6 +199,14 @@ export interface UsageCounts {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownTokenRequests?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens?: number;
 }
 
 

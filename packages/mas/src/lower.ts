@@ -22,6 +22,7 @@
 import { compileDag, compileFsm } from '@jarenjs/flow';
 import { defineDag, defineFsm, edge, effect, input, on, output, state, task, type AnyNode, type EdgeDeclaration } from '@jarenjs/linq/flow';
 import { deepFreeze } from '@jarenjs/core/object';
+import { compileJsonQuery } from '@jarenjs/json/query';
 import flowPackage from '@jarenjs/flow/package.json' with { type: 'json' };
 import modelsPackage from '@tangleai/models/package.json' with { type: 'json' };
 import contextPackage from '@tangleai/context/package.json' with { type: 'json' };
@@ -32,7 +33,7 @@ import { masIssue, refuse, type MasValidated } from './errors.ts';
 import { masRevisionOf } from './identity.ts';
 import { partitionMasWorkflow } from './partition.ts';
 import type { ValidatedMasWorkflow } from './validate.ts';
-import type { Invocation, MasWorkflow } from './contracts.gen.ts';
+import type { Invocation, MasWorkflow, QueryDocument } from './contracts.gen.ts';
 
 export type MasRegionDescriptor =
   | {
@@ -109,7 +110,7 @@ const member = (root: string, ...names: string[]): string =>
 /** Bump the host ABI when lifecycle semantics change. Suite and registry
  * upgrades also change the declared handler identity and executable revision. */
 export function masTaskVersionOf(registryRevision: string): string {
-  return `tangle-mas/5:flow/${flowPackage.version}:models/${modelsPackage.version}:context/${contextPackage.version}:agents/${agentsPackage.version}:${registryRevision}`;
+  return `tangle-mas/6:flow/${flowPackage.version}:models/${modelsPackage.version}:context/${contextPackage.version}:agents/${agentsPackage.version}:${registryRevision}`;
 }
 
 export interface Feed {
@@ -117,6 +118,7 @@ export interface Feed {
   jarenPort: string;
   source: { kind: 'entry', member: string } | { kind: 'node', node: string, port: string };
   sameRegion: boolean;
+  select: QueryDocument | null;
 }
 
 /** Every inbound feed of one invocation, in aggregation (document) order. */
@@ -133,6 +135,7 @@ export function nodeFeeds(workflow: MasWorkflow, invocation: Invocation, regionM
       jarenPort: entry.to.port,
       source: { kind: 'entry', member: entry.port },
       sameRegion: false,
+      select: null,
     });
   }
   const seen = new Map<string, number>();
@@ -146,9 +149,15 @@ export function nodeFeeds(workflow: MasWorkflow, invocation: Invocation, regionM
       jarenPort: count > 1 ? `${edgeDoc.to.port}~${index}` : edgeDoc.to.port,
       source: { kind: 'node', node: edgeDoc.from.node, port: edgeDoc.from.port },
       sameRegion: regionMembers.has(edgeDoc.from.node),
+      select: edgeDoc.select,
     });
   }
   return feeds;
+}
+
+/** Apply a declared edge projection to the same raw output on every delivery path. */
+export function selectMasFeed(feed: Pick<Feed, 'select'>, value: unknown): unknown {
+  return feed.select === null ? value : compileJsonQuery(feed.select as Record<string, unknown>)(value);
 }
 
 /** One dag region document, authored through the pen. */

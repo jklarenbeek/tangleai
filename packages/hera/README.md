@@ -6,9 +6,11 @@ artifacts compiled through GMPL. Importing its root performs no filesystem,
 database or network work. Hosts supply storage, scope and write authority.
 
 The current measurement is the [keyless orchestration instrument](../../docs/HERA_BENCHMARK.md).
-Its analytic oracle and reference establish the fixture; its seven mechanism
-rows remain explicitly unimplemented. These contracts do not measure model
-quality or a learning improvement.
+Its analytic oracle and reference establish the fixture. Single-turn and fixed
+MAS rows execute registered scripted responses, with counted requests and zero
+learning writes. Five learning mechanisms remain explicitly unimplemented.
+Scripted quality measures fixture sensitivity, not model quality or a learning
+improvement.
 
 ## Artifacts and identities
 
@@ -28,6 +30,36 @@ Content hashes exclude lifecycle status and observation time. Those metadata
 fields change only through fenced activation; a different immutable payload
 cannot reuse an address. Snapshots retain exact experience-version ids beside
 their library revision, so a later library cannot replace a frozen membership.
+
+## Execution
+
+`createHeraExecutor(host)` binds explicit CONFIG profiles, model clients, an
+embedder, evidence provider, evaluator, clocks and the existing MAS segment
+worker. `examples/hera.ts` demonstrates a keyless SQLite host and replay after
+reopening. The package itself creates no database, client or worker.
+
+`createHeraFixedTemplate` pins the host registry and profile in one caps-only
+MAS template. Its six agent invocations include two parallel retrievers of the
+same role. `prepareHeraScaffold` also builds the single-turn comparison with
+the same limits. Host caps can only lower registered limits. The generated
+candidate learning cap is separate from this authored comparison scaffold.
+
+The candidate key includes task, snapshot, group, candidate and configuration
+revision within the store scope. Completed and failed trajectories replay with
+zero additional model requests; changing the bound payload refuses. Resume uses
+the original persisted evidence slice and frozen prompt membership.
+
+Document and memory evidence providers delegate ranking to their native recall
+functions. Model and tool identities, exact evidence digests and corpus pins
+are checked before dispatch. Only the Retriever receives `hera-evidence`.
+Unsupported citations remain counted values, and the versioned evaluator
+decides their score effect. The answer also retains a validated claim envelope.
+Unlabelled inference has null score and success; it cannot enter learning.
+
+Trajectories retain per-attempt transcripts, tool results, evidence addresses,
+reported token parts, missing-usage counts and estimated token charges. Model,
+normalization and repair requests all count. Failures retain their invocation
+and MAS cause; uncertain effects remain orphaned and are never blindly retried.
 
 ## Storage and authority
 

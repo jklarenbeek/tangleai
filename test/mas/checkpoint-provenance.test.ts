@@ -44,7 +44,7 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
   const context = (await import('@tangleai/context/package.json', { with: { type: 'json' } })).default;
   const agents = (await import('@tangleai/agents/package.json', { with: { type: 'json' } })).default;
   const current = masTaskVersionOf('registry-1');
-  assert.equal(current, `tangle-mas/5:flow/${flow.version}:models/${models.version}:context/${context.version}:agents/${agents.version}:registry-1`);
+  assert.equal(current, `tangle-mas/6:flow/${flow.version}:models/${models.version}:context/${context.version}:agents/${agents.version}:registry-1`);
   assert.notEqual(masTaskVersionOf('registry-2'), current);
   const values: Record<string, unknown> = {};
   let calls = 0, writes = 0;
@@ -63,6 +63,7 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
     });
   };
   for (const previous of [
+    current.replace('tangle-mas/6:', 'tangle-mas/5:'),
     `tangle-mas/2:flow/${flow.version}:ai/0.83.3:registry-1`,
     current.replace(`flow/${flow.version}:`, 'flow/0.84.3:'),
   ]) {
@@ -80,5 +81,5 @@ it('identifies the executed mechanisms and refuses legacy checkpoints without wr
   for (const name of Object.keys(values)) delete values[name];
   assert.equal((await run(current)).ok, true);
   assert.equal((await run(current)).ok, true);
-  assert.equal(calls, 3); assert.equal(ledger.length, 3);
+  assert.equal(calls, 4); assert.equal(ledger.length, 4);
 });

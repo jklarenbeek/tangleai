@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "899db0aff9a768d7a9b78536b189a782db15a444b754bdca6d5e8ef89dff48e2",
+  "sourceId": "d6ed1f5bf4990bdac3b09d4913624eb13324676560b77e0e36f6119e7731038b",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -189,7 +189,63 @@
     }
   ],
   "identity": {
-    "identities": [],
+    "identities": [
+      {
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227",
+        "registryRevision": "dfe05785e296f1828cf32c2b0e5dd158c6dbe3b9bc744f418a557e9909de540c",
+        "hostManifestRevision": "fe68bd42015670178ba9e51f84bafcc61c15a9824b2bae3aba8fc02f48d77d1f",
+        "requested": {
+          "kind": "profile",
+          "profile": "scripted",
+          "overrides": null
+        },
+        "roles": {
+          "chat": {
+            "provider": "ollama",
+            "base": "http://127.0.0.1:11434/v1",
+            "model": "hera-scripted",
+            "credentialSlot": null,
+            "inference": {
+              "temperature": null,
+              "maxTokens": null,
+              "retry": null,
+              "reasoning": null
+            },
+            "prompt": null,
+            "responseSchema": null,
+            "tools": {
+              "requested": [
+                "hera-evidence"
+              ],
+              "effective": [
+                {
+                  "name": "hera-evidence",
+                  "inputSchemaRevision": "da387bdec6e626f976ff6e2e340ab9103f41e09ef16ddf86fde90a0157297ec5"
+                }
+              ]
+            },
+            "rateCard": null
+          }
+        },
+        "embedding": {
+          "provider": "builtin",
+          "base": null,
+          "model": "hash-trigram-512",
+          "dims": 512,
+          "credentialSlot": null
+        },
+        "components": {
+          "policy": null,
+          "ranker": null
+        },
+        "budget": {
+          "maxCalls": 24,
+          "maxTokens": 65536,
+          "maxMs": 120000,
+          "maxConcurrency": 4
+        }
+      }
+    ],
     "rows": [
       {
         "rowId": "oracle",
@@ -201,11 +257,13 @@
       },
       {
         "rowId": "single-turn",
-        "identityStatus": "not-run"
+        "identityStatus": "run",
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227"
       },
       {
         "rowId": "fixed-topology",
-        "identityStatus": "not-run"
+        "identityStatus": "run",
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227"
       },
       {
         "rowId": "query-specific-frozen",
@@ -292,6 +350,7 @@
         "promptTokens": 0,
         "completionTokens": 0,
         "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
         "ms": 0,
         "unknownMsRequests": 0,
         "money": null,
@@ -300,6 +359,7 @@
       },
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -374,6 +434,7 @@
         "promptTokens": 0,
         "completionTokens": 0,
         "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
         "ms": 0,
         "unknownMsRequests": 0,
         "money": null,
@@ -382,6 +443,7 @@
       },
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -397,14 +459,80 @@
     {
       "id": "single-turn",
       "kind": "ablation",
-      "status": "implementation-missing",
-      "reason": "The single-turn executor is not implemented.",
+      "status": "run",
+      "reason": null,
       "tier": "scripted",
-      "identity": null,
-      "quality": null,
-      "cost": null,
+      "seeds": [
+        17753
+      ],
+      "identity": {
+        "snapshotId": "a332ce4af001616f9f094d2e5882a725d082cf7383813c4d1954eda2e140e569",
+        "model": "ollama/hera-scripted",
+        "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
+        "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
+        "evaluatorId": "fixture-exact",
+        "toolIds": [
+          "hera-evidence"
+        ],
+        "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 2,
+          "nodes": 6,
+          "depth": 6,
+          "fanOut": 4,
+          "concurrency": 4
+        }
+      },
+      "quality": {
+        "f1": 0.5,
+        "successRate": 0.5,
+        "citationRecall": 0.9166666666666666,
+        "answered": 10,
+        "planned": 10,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.3333333333333333,
+            "answered": 3,
+            "planned": 3
+          },
+          {
+            "category": 2,
+            "f1": 0,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 3,
+            "f1": 0,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 4,
+            "f1": 1,
+            "answered": 4,
+            "planned": 4
+          }
+        ]
+      },
+      "cost": {
+        "calls": 20,
+        "promptTokens": 140,
+        "completionTokens": 60,
+        "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
+        "ms": 0,
+        "unknownMsRequests": 20,
+        "money": null,
+        "trainingCalls": 10,
+        "heldOutCalls": 10
+      },
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -412,22 +540,85 @@
         "refusedLearningWrites": 0
       },
       "learning": null,
-      "topology": null,
-      "seeds": [
-        17753
-      ]
+      "topology": null
     },
     {
       "id": "fixed-topology",
       "kind": "ablation",
-      "status": "implementation-missing",
-      "reason": "The fixed MAS topology executor is not implemented.",
+      "status": "run",
+      "reason": null,
       "tier": "scripted",
-      "identity": null,
-      "quality": null,
-      "cost": null,
+      "seeds": [
+        17753
+      ],
+      "identity": {
+        "snapshotId": "a332ce4af001616f9f094d2e5882a725d082cf7383813c4d1954eda2e140e569",
+        "model": "ollama/hera-scripted",
+        "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
+        "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
+        "evaluatorId": "fixture-exact",
+        "toolIds": [
+          "hera-evidence"
+        ],
+        "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 2,
+          "nodes": 6,
+          "depth": 6,
+          "fanOut": 4,
+          "concurrency": 4
+        }
+      },
+      "quality": {
+        "f1": 0.9,
+        "successRate": 0.9,
+        "citationRecall": 0.9166666666666666,
+        "answered": 10,
+        "planned": 10,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.6666666666666666,
+            "answered": 3,
+            "planned": 3
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 3,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 4,
+            "f1": 1,
+            "answered": 4,
+            "planned": 4
+          }
+        ]
+      },
+      "cost": {
+        "calls": 140,
+        "promptTokens": 980,
+        "completionTokens": 420,
+        "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
+        "ms": 0,
+        "unknownMsRequests": 140,
+        "money": null,
+        "trainingCalls": 70,
+        "heldOutCalls": 70
+      },
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -435,10 +626,7 @@
         "refusedLearningWrites": 0
       },
       "learning": null,
-      "topology": null,
-      "seeds": [
-        17753
-      ]
+      "topology": null
     },
     {
       "id": "query-specific-frozen",
@@ -451,6 +639,7 @@
       "cost": null,
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -474,6 +663,7 @@
       "cost": null,
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -497,6 +687,7 @@
       "cost": null,
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -520,6 +711,7 @@
       "cost": null,
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -543,6 +735,7 @@
       "cost": null,
       "failures": {
         "skipped": 0,
+        "failed": 0,
         "refusedCandidates": 0,
         "budgetStops": 0,
         "orphans": 0,
@@ -635,6 +828,12 @@
       "interval": null
     }
   ],
+  "scripted": {
+    "revision": "c61220eb4c3600fa3fde828a278022dc44d79df96ede0de6dab28b3638333b2a",
+    "requests": 160,
+    "replayCalls": 0,
+    "maxConcurrentRetrievers": 2
+  },
   "locomo": {
     "questions": [
       {
@@ -6939,43 +7138,43 @@
         "id": "single-turn",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "fixed-topology",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "query-specific-frozen",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "hera-no-experience",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "hera-no-rope",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "hera-full",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       },
       {
         "id": "hera-no-mutation",
         "status": "not-run",
         "eligible": false,
-        "reason": "No dataset execution has been measured."
+        "reason": "no authorized live plan"
       }
     ]
   },
@@ -6986,24 +7185,25 @@
   },
   "totals": {
     "rows": 9,
-    "run": 2,
+    "run": 4,
     "notRun": 0,
-    "implementationMissing": 7,
+    "implementationMissing": 5,
     "datasetUnavailable": 0,
-    "answered": 20,
-    "planned": 20,
-    "calls": 0,
+    "answered": 40,
+    "planned": 40,
+    "calls": 160,
     "learningWrites": 0
   },
   "limitations": [
-    "This is an instrument registration, not evidence that HERA improves orchestration. All seven mechanisms are unimplemented.",
+    "The single-turn and fixed-topology rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Five learning mechanisms remain unimplemented.",
     "The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.",
     "The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.",
     "LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.",
     "Category 5 excluded: excluded from parity: the official evaluator scores adversarial questions by keyword (\"no information available\" / \"not mentioned\"), which marks the factually correct answer wrong; see adversarialKeywordScore",
     "Dataset text is not redistributed: reports contain only question identifiers, evidence addresses and digests. Oracle truth remains inside scoring.",
+    "The deterministic injected clock does not measure request latency. Unknown timing requests remain counted; estimated tokens are separate from reported usage. The fixed six-invocation comparison shares caps with the single-turn row; generated candidates use the separate maxAgents learning cap.",
     "No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.",
-    "No model or topology metrics are simulated. Training costs and held-out costs will be reported separately when those mechanisms execute."
+    "Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured."
   ],
-  "reportId": "a4285bbc72a49440b323b7d12bcc9c1f4b82c2c711629b2a70c202a66e526ea7"
+  "reportId": "15037418ca8cd8018f86c56efe2a3ac5b896ee5b575391f400ffa16bbd0d0113"
 }

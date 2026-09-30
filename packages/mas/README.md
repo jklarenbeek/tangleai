@@ -160,7 +160,11 @@ root ids retain their existing form. A wait ends the segment after already start
 sibling work settles; it holds no worker while awaiting the host. Reconciliation
 selects the response reserved for the next segment. Reusing a response key with
 different bytes refuses with `TMAS2007`. These semantics use checkpoint ABI
-`tangle-mas/5`; earlier executable identities cannot resume under this runtime.
+`tangle-mas/6`; earlier executable identities cannot resume under this runtime.
+Edge projections apply before live input validation and aggregation, including
+control boundaries, and persisted messages carry those same selected values.
+Agent attempt usage records unknown-token requests and estimated charges
+separately from provider-reported token parts.
 
 Runtime context limits apply to the combined content of every physical model
 request, including normalization and repair. Token spend persists the shared

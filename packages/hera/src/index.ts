@@ -9,3 +9,8 @@ export * from './registry.ts';
 export * from './heads.ts';
 export * from './modes.ts';
 export * from './store.ts';
+export * from './scaffold.ts';
+export * from './evidence.ts';
+export * from './evaluator.ts';
+export * from './trajectory.ts';
+export * from './executor.ts';

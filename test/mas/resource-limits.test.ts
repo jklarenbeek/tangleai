@@ -11,11 +11,14 @@ for(const cap of ['contextChars','traceBytes'] as const)it(`MAS enforces ${cap} 
   assert.equal(d.status,'failed');assert.equal(d.usage.physical,0);assert.equal(d.trace.run.failure!.error.code,'TMAS2009');
 });
 it('MAS persists the shared account token charge, including total_tokens and estimated usage',async()=>{
-  for(const usage of [{prompt_tokens:7,completion_tokens:3,total_tokens:99},undefined]){
+  for(const usage of [{prompt_tokens:7,completion_tokens:3,total_tokens:99},{prompt_tokens:0,completion_tokens:0},undefined]){
     const p=await prepareSingleAgent();
     const d=await driveGmplWorkflow(p,{input:{input:fixture.input},response:()=>fixture.script.result,complete:async()=>({message:{content:JSON.stringify(fixture.script.result)},usage})});
-    assert.equal(d.status,'completed');if(usage)assert.equal(d.trace.run.budget.spent.tokens,198);else assert.ok(d.trace.run.budget.spent.tokens>0);
-    assert.equal(d.trace.attempts.find(a=>a.kind==='agent')!.spend.tokens,d.trace.run.budget.spent.tokens);
+    assert.equal(d.status,'completed');if(usage?.total_tokens)assert.equal(d.trace.run.budget.spent.tokens,198);else assert.ok(d.trace.run.budget.spent.tokens>0);
+    const attempt=d.trace.attempts.find(a=>a.kind==='agent')!;
+    assert.equal(attempt.spend.tokens,d.trace.run.budget.spent.tokens);
+    assert.equal(attempt.usage.unknownTokenRequests,usage===undefined?2:0);
+    assert.equal(attempt.usage.estimatedTokens,usage?.total_tokens?0:attempt.spend.tokens);
   }
 });
 it('MAS saves active elapsed time and applies it to resumed segments',async()=>{

@@ -24,7 +24,11 @@
     "@tangleai/gmpl": "^0.31.0",
     "@tangleai/outcomes": "^0.31.0",
     "@tangleai/context": "^0.31.0",
-    "@tangleai/config": "^0.31.0"
+    "@tangleai/config": "^0.31.0",
+    "@tangleai/agents": "^0.31.0",
+    "@tangleai/models": "^0.31.0",
+    "@tangleai/documents": "^0.31.0",
+    "@tangleai/memory": "^0.31.0"
   },
   "private": false,
   "types": "./src/index.ts",

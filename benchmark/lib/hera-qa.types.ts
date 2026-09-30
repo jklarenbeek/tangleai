@@ -61,7 +61,7 @@ export interface QualityByCategoryItem {
  */
 export type Quality = { f1: number; byCategory: Array<QualityByCategoryItem>; successRate: number; citationRecall: number; answered: number; planned: number; } | null;
 
-export type Cost = { calls: number; promptTokens: number; completionTokens: number; unknownTokenRequests: number; ms: number; unknownMsRequests: number; trainingCalls: number; heldOutCalls: number; money: null; } | null;
+export type Cost = { calls: number; promptTokens: number; completionTokens: number; unknownTokenRequests: number; ms: number; unknownMsRequests: number; trainingCalls: number; heldOutCalls: number; money: null; estimatedTokens: number; } | null;
 
 export interface Failures {
   /**
@@ -88,6 +88,10 @@ export interface Failures {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   refusedLearningWrites: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
 }
 
 
@@ -318,6 +322,26 @@ export interface HeraQaTotals {
 }
 
 
+export interface HeraQaScripted {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revision: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxConcurrentRetrievers: number;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.rows[0].id","oracle"]},{"$eq":["$.rows[1].id","reference"]},{"$eq":["$.rows[2].id","single-turn"]},{"$eq":["$.rows[3].id","fixed-topology"]},{"$eq":["$.rows[4].id","query-specific-frozen"]},{"$eq":["$.rows[5].id","hera-no-experience"]},{"$eq":["$.rows[6].id","hera-no-rope"]},{"$eq":["$.rows[7].id","hera-full"]},{"$eq":["$.rows[8].id","hera-no-mutation"]},{"$eq":["$.totals.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.refusals.evalSplitInLearn","$.fixture.heldOut"]},{"$eq":["$.fixture.questions",{"$add":["$.fixture.training","$.fixture.heldOut"]}]},{"$eq":["$.totals.answered",{"$sum":"$.rows[*].quality.answered"}]},{"$eq":["$.totals.planned",{"$sum":"$.rows[*].quality.planned"}]},{"$eq":["$.totals.calls",{"$sum":"$.rows[*].cost.calls"}]},{"$eq":["$.totals.run",{"$count":"$.rows[?(@.status=='run')]"}]},{"$eq":["$.totals.notRun",{"$count":"$.rows[?(@.status=='not-run')]"}]},{"$eq":["$.totals.implementationMissing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.totals.datasetUnavailable",{"$count":"$.rows[?(@.status=='dataset-unavailable')]"}]},{"$every":{"p":"$.pairs[*]"},"$satisfies":{"$if":["$p.eligible",{"$and":[{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.treatment"]},{"$eq":["$r.status","run"]}]}},{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.control"]},{"$eq":["$r.status","run"]}]}}]},true]}},{"$eq":["$.totals.learningWrites",{"$sum":"$.rows[*].learning.writes"}]}]}
  */
@@ -351,4 +375,5 @@ export interface HeraQa {
    * Schema constraints this type cannot express: minItems=1
    */
   limitations: Array<string>;
+  scripted: HeraQaScripted;
 }

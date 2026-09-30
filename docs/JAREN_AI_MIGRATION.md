@@ -214,7 +214,7 @@ access, credential migration or global transaction across localStorage writes
 is promised. Pages conservatively uses one ledger writer on every browser.
 
 MAS executable identity is
-`tangle-mas/5:flow/<version>:models/<version>:context/<version>:agents/<version>:<registry>`.
+`tangle-mas/6:flow/<version>:models/<version>:context/<version>:agents/<version>:<registry>`.
 Mismatched executable checkpoints are refused with `TMAS2002` before effects or
 writes; repeating the attempt leaves the checkpoint intact. This includes a
 0.84.3 Flow execution identity when the runtime now uses Flow 0.90.6, as well as

@@ -614,6 +614,7 @@ export interface HeraTrajectoryMetrics {
    */
   citationRecall: number;
   unsupported: Array<HeraIssue>;
+  evaluator?: { [key: string]: number; };
 }
 
 

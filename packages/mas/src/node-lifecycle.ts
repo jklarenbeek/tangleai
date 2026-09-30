@@ -24,7 +24,7 @@ import { cloneJson } from '@jarenjs/core/object';
 import { masIssue, type MasIssue } from './errors.ts';
 import { compileEmbeddedSchema } from './schema.ts';
 import { semanticKeyOf, invocationPathOf } from './runtime-state.ts';
-import { nodeFeeds, type Feed } from './lower.ts';
+import { nodeFeeds, selectMasFeed, type Feed } from './lower.ts';
 import { runAgentNode } from './agent-executor.ts';
 import { buildEffectiveToolbox, MasUncertainEffect, type MasToolBinding } from './tools.ts';
 import { MasBudgetStop, createSharedBudgetClient, type MasBudgetAccount, type MasChatClient } from './budget.ts';
@@ -268,7 +268,8 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
 
     try {
       // 3. assemble and validate the input
-      const scope = jarenScope as Record<string, unknown>;
+      const scope = { ...jarenScope as Record<string, unknown> };
+      for (const feed of feedPlan.feeds) scope[feed.jarenPort] = selectMasFeed(feed, scope[feed.jarenPort]);
       const value: Record<string, unknown> = {};
       const units: Array<MasRenderableInput['units'][number]> = [];
       for (const [port, plan] of feedPlan.perPort) {
@@ -290,7 +291,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         units.push({
           source: feed.source.kind === 'entry' ? 'input' : feed.source.node,
           port: feed.port,
-          payload: (jarenScope as Record<string, unknown>)[feed.jarenPort],
+          payload: scope[feed.jarenPort],
         });
       }
       for (const [port, check] of feedPlan.checks) {
@@ -352,7 +353,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
         if (adapter === undefined) {
           return await fail('failed', { code: 'TMAS2004', detail: `message adapter '${node.messageAdapter}' is not bound`, cause: null });
         }
-        const callCounter = { calls: 0, promptTokens: 0, completionTokens: 0 };
+        const callCounter = { calls: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, estimatedTokens: 0 };
         const client = createSharedBudgetClient(deps.clientFor(node), deps.account, {
           maxContextChars: Math.min(node.limits?.contextChars ?? Infinity, deps.workflow.limits.contextChars, deps.contextChars ?? Infinity),
           onCall: ({ usage: callUsage, chargedTokens: charged }) => {
@@ -361,6 +362,11 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
             const shaped = callUsage as { prompt_tokens?: number, completion_tokens?: number } | undefined;
             callCounter.promptTokens += shaped?.prompt_tokens ?? 0;
             callCounter.completionTokens += shaped?.completion_tokens ?? 0;
+            if (typeof shaped?.prompt_tokens !== 'number' || typeof shaped?.completion_tokens !== 'number') {
+              callCounter.unknownTokenRequests += 1;
+            }
+            const total = (callUsage as { total_tokens?: number } | undefined)?.total_tokens;
+            if (!(typeof total === 'number' && total > 0) && !((shaped?.prompt_tokens ?? 0) + (shaped?.completion_tokens ?? 0) > 0)) callCounter.estimatedTokens += charged;
             Object.assign(failureReceipt.usage, callCounter);
             failureReceipt.spend = { turns: callCounter.calls, tokens: chargedTokens, ms: 0 };
           },

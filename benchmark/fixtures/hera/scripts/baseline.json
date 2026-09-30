@@ -1,0 +1,4059 @@
+{
+  "q01": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who first directed Lumen?",
+            "Where is Northbridge College?"
+          ]
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who first directed Lumen?",
+            "Where is Northbridge College?"
+          ]
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who first directed Lumen?",
+            "Where is Northbridge College?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "tool": {
+          "query": "Who first directed Lumen?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "tool": {
+          "query": "Where is Northbridge College?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p03"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Eastmere",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Eastmere",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q02": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "2019",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2019",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "2019",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2019",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "2019",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2019",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Where did Mira move?",
+            "When did Mira move to Westhaven?"
+          ]
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Where did Mira move?",
+            "When did Mira move to Westhaven?"
+          ]
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Where did Mira move?",
+            "When did Mira move to Westhaven?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "tool": {
+          "query": "Where did Mira move?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "tool": {
+          "query": "When did Mira move to Westhaven?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p04"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "2020",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "2020",
+              "citations": [
+                {
+                  "id": "p04",
+                  "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q03": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "What is Helix?",
+            "What does Helix study?"
+          ]
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "What is Helix?",
+            "What does Helix study?"
+          ]
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "What is Helix?",
+            "What does Helix study?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "tool": {
+          "query": "What is Helix?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "tool": {
+          "query": "What does Helix study?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p11"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "wave dynamics",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "wave dynamics",
+              "citations": [
+                {
+                  "id": "p11",
+                  "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q04": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Ivo",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Ivo",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Ivo",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Ivo",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Ivo",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Ivo",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who directed Lumen first?",
+            "Who succeeded Ivo?"
+          ]
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who directed Lumen first?",
+            "Who succeeded Ivo?"
+          ]
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who directed Lumen first?",
+            "Who succeeded Ivo?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "tool": {
+          "query": "Who directed Lumen first?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "tool": {
+          "query": "Who succeeded Ivo?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Rin",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Rin",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q05": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Lumen",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Lumen",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Lumen",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who succeeded Ivo?",
+            "Which laboratory did Rin direct?"
+          ]
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who succeeded Ivo?",
+            "Which laboratory did Rin direct?"
+          ]
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who succeeded Ivo?",
+            "Which laboratory did Rin direct?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "tool": {
+          "query": "Who succeeded Ivo?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "tool": {
+          "query": "Which laboratory did Rin direct?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p09",
+            "p10"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Helix",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Helix",
+              "citations": [
+                {
+                  "id": "p09",
+                  "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+                },
+                {
+                  "id": "p10",
+                  "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q06": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Cedar return?",
+            "Where were Cedar samples stored?"
+          ]
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Cedar return?",
+            "Where were Cedar samples stored?"
+          ]
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Cedar return?",
+            "Where were Cedar samples stored?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "tool": {
+          "query": "When did Cedar return?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "tool": {
+          "query": "Where were Cedar samples stored?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p07"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Westhaven",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Westhaven",
+              "citations": [
+                {
+                  "id": "p07",
+                  "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q07": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Lumen opening",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen opening",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Lumen opening",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen opening",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Lumen opening",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Lumen opening",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Lumen open?",
+            "When was Arc first calibrated?"
+          ]
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Lumen open?",
+            "When was Arc first calibrated?"
+          ]
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "When did Lumen open?",
+            "When was Arc first calibrated?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "tool": {
+          "query": "When did Lumen open?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "tool": {
+          "query": "When was Arc first calibrated?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p02",
+            "p12"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Arc calibration",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Arc calibration",
+              "citations": [
+                {
+                  "id": "p02",
+                  "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q08": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "Are private telephone numbers recorded?",
+            "Is a number for Mira public?"
+          ]
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "Are private telephone numbers recorded?",
+            "Is a number for Mira public?"
+          ]
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "Are private telephone numbers recorded?",
+            "Is a number for Mira public?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "tool": {
+          "query": "Are private telephone numbers recorded?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "tool": {
+          "query": "Is a number for Mira public?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p16"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q09": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who designed Arc?",
+            "Where does Sena teach?"
+          ]
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who designed Arc?",
+            "Where does Sena teach?"
+          ]
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "queries": [
+            "Who designed Arc?",
+            "Where does Sena teach?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "tool": {
+          "query": "Who designed Arc?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "tool": {
+          "query": "Where does Sena teach?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": [],
+          "selectedEvidenceIds": [
+            "p03",
+            "p12",
+            "p13"
+          ]
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        },
+        "repair": {
+          "answer": "Southpoint",
+          "disposition": "completed",
+          "claims": [
+            {
+              "text": "Southpoint",
+              "citations": [
+                {
+                  "id": "p03",
+                  "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+                },
+                {
+                  "id": "p12",
+                  "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+                },
+                {
+                  "id": "p13",
+                  "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+                }
+              ]
+            }
+          ],
+          "findings": []
+        }
+      }
+    }
+  },
+  "q10": {
+    "single-turn": {
+      "conclude": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      }
+    },
+    "fixed": {
+      "decompose": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "When did Tavi join Lumen?",
+            "Is Tavi salary recorded?"
+          ]
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "When did Tavi join Lumen?",
+            "Is Tavi salary recorded?"
+          ]
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "queries": [
+            "When did Tavi join Lumen?",
+            "Is Tavi salary recorded?"
+          ]
+        }
+      },
+      "retrieve-1": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "tool": {
+          "query": "When did Tavi join Lumen?",
+          "k": 4
+        }
+      },
+      "retrieve-2": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "tool": {
+          "query": "Is Tavi salary recorded?",
+          "k": 4
+        }
+      },
+      "select": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "selectedEvidenceIds": []
+        }
+      },
+      "answer": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      },
+      "conclude": {
+        "completion": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "normalization": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        },
+        "repair": {
+          "answer": "I do not know",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": []
+        }
+      }
+    }
+  }
+}

@@ -52,7 +52,7 @@ export interface RunAgentOptions {
   localBudget: { turns?: number, tokens?: number, ms?: number, spent?: { turns: number, tokens: number, ms: number } };
   maxToolRounds: number;
   transcriptChars: number;
-  callCounter: { calls: number, promptTokens: number, completionTokens: number };
+  callCounter: { calls: number, promptTokens: number, completionTokens: number, unknownTokenRequests?: number, estimatedTokens?: number };
 }
 
 function renderContext(reads: RunAgentOptions['contextReads']): string {
@@ -119,6 +119,8 @@ export async function runAgentNode(options: RunAgentOptions): Promise<AgentRunOu
       contextReads: options.contextReads.length,
       promptTokens: options.callCounter.promptTokens,
       completionTokens: options.callCounter.completionTokens,
+      unknownTokenRequests: options.callCounter.unknownTokenRequests ?? 0,
+      estimatedTokens: options.callCounter.estimatedTokens ?? 0,
     },
     stopReason,
   });

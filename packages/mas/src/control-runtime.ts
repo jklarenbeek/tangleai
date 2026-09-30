@@ -31,7 +31,7 @@ import { compileJsonQuery } from '@jarenjs/json/query';
 
 import { compileEmbeddedSchema } from './schema.ts';
 import { interactionIdOf, invocationPathOf, semanticKeyOf } from './runtime-state.ts';
-import { nodeFeeds, masTaskVersionOf } from './lower.ts';
+import { nodeFeeds, masTaskVersionOf, selectMasFeed } from './lower.ts';
 import { createNodeLifecycle, MasInfrastructureCrash, MasInteractionWait, type MasRuntimeObserver, type MasTaskHandlerBinding } from './node-lifecycle.ts';
 import { type MasToolBinding } from './tools.ts';
 import { executeDagRegion } from './dag-runtime.ts';
@@ -107,7 +107,7 @@ function controlNodeInput(workflow: MasWorkflow, invocation: Invocation, frame: 
       ? (frame.input as Record<string, unknown>)[feed.source.member]
       : (frame.nodes[feed.source.node] as Record<string, unknown> | undefined)?.[feed.source.port];
     const list = grouped.get(feed.port) ?? [];
-    list.push(delivered);
+    list.push(selectMasFeed(feed, delivered));
     grouped.set(feed.port, list);
   }
   const value: Record<string, unknown> = {};
@@ -228,7 +228,7 @@ async function commitControlAttempt(
       adapter: edge.adapter,
       aggregation: edge.aggregation,
       index,
-      payload: output[edge.from.port],
+      payload: edge.select === null ? output[edge.from.port] : compileJsonQuery(edge.select as Record<string, unknown>)(output[edge.from.port]),
     });
   }
   const committed = await ctx.store.commitNodeCompletion({

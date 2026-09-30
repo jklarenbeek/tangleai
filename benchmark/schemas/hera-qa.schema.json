@@ -329,6 +329,34 @@
         "type": "string"
       },
       "minItems": 1
+    },
+    "scripted": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxConcurrentRetrievers": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "revision",
+        "requests",
+        "replayCalls",
+        "maxConcurrentRetrievers"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -345,7 +373,8 @@
     "locomo",
     "refusals",
     "totals",
-    "limitations"
+    "limitations",
+    "scripted"
   ],
   "additionalProperties": false,
   "$query": {
@@ -992,6 +1021,10 @@
         },
         "money": {
           "type": "null"
+        },
+        "estimatedTokens": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -1003,7 +1036,8 @@
         "unknownMsRequests",
         "trainingCalls",
         "heldOutCalls",
-        "money"
+        "money",
+        "estimatedTokens"
       ],
       "additionalProperties": false
     },
@@ -1033,6 +1067,10 @@
         "refusedLearningWrites": {
           "type": "integer",
           "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -1041,7 +1079,8 @@
         "budgetStops",
         "orphans",
         "headConflicts",
-        "refusedLearningWrites"
+        "refusedLearningWrites",
+        "failed"
       ],
       "additionalProperties": false
     },
