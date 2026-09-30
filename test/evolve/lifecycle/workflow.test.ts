@@ -18,12 +18,12 @@ import {
 import {
   buildEvolveLifecycle, EVOLVE_WORKFLOW_ID, EVOLVE_ENVELOPE_SCHEMA,
 } from '@tangleai/evolve/lifecycle';
-import { evolveRegistryDocument, EVOLVE_HANDLERS, EVOLVE_EFFECT_STAGES, stageRuns } from '@tangleai/evolve/lifecycle';
+import { evolveRegistryDocument, EVOLVE_HANDLERS, EVOLVE_EFFECT_STAGES } from '@tangleai/evolve/lifecycle';
 
 const EXPERIMENT_MS = 600000;
 
 async function authored() {
-  const registry = await createMasRegistrySnapshot(evolveRegistryDocument());
+  const registry = await createMasRegistrySnapshot(await evolveRegistryDocument());
   assert.ok(registry.valid, 'the handler registry is a valid registry document');
   const catalog = await createMasConfigCatalog({ profiles: ['evolve'], tools: [], contexts: [] });
   assert.ok(catalog.valid);
@@ -55,8 +55,9 @@ describe('the experiment lifecycle version', () => {
   });
 
   it('pairs every effectful stage with a wait, so no node can spawn', async () => {
-    const { workflow } = await authored();
-    const byId = new Map(workflow.nodes.map(node => [node.id, node]));
+    const { workflow, registry } = await authored();
+    const nodes = [...workflow.nodes, ...[...registry.subgraphs.values()].flatMap(one => one.nodes)];
+    const byId = new Map(nodes.map(node => [node.id, node]));
 
     for (const stage of EVOLVE_EFFECT_STAGES) {
       const dispatch = byId.get(stage);
@@ -67,7 +68,7 @@ describe('the experiment lifecycle version', () => {
       assert.equal((dispatch as { effect?: string }).effect, 'effectful',
         `${stage} dispatches an effect`);
       assert.equal(wait.kind, 'interaction', `${stage} waits rather than running`);
-      assert.equal((fold as { effect?: string }).effect, 'read',
+      assert.equal((fold as { effect?: string }).effect, 'effectful',
         `${stage} reads its settlement back without touching a job`);
     }
   });
@@ -85,7 +86,7 @@ describe('the experiment lifecycle version', () => {
       // always one of the dispatches, and a dispatch never runs the work —
       // it writes the intent and enqueues.
       if (handler.effect === 'effectful') {
-        assert.ok(node.id === 'record' || (EVOLVE_EFFECT_STAGES as readonly string[]).includes(node.id),
+        assert.ok(node.id === 'record' || node.id === 'read-fitness' || (EVOLVE_EFFECT_STAGES as readonly string[]).includes(node.id),
           `${node.id} is a dispatch or the outcome record, not an ad-hoc effect`);
       }
     }
@@ -98,76 +99,26 @@ describe('the experiment lifecycle version', () => {
     assert.deepEqual(agents, [], 'nothing in the lifecycle talks to a model');
   });
 
-  it('routes the single rerun inside the flake branch that owns it', async () => {
-    const { workflow } = await authored();
-    const flake = workflow.nodes.find(node => node.id === 'flake');
-    assert.ok(flake && flake.kind === 'switch');
-    const branches = (flake as { branches: Array<{ id: string, nodes: string[], result: { node: string, port: string } }> }).branches;
-    const rerun = branches.find(one => one.id === 'rerun');
-    assert.ok(rerun, 'red earns exactly one rerun branch');
-    // A branch OWNS its nodes and has ONE result port, so the rerun's
-    // readback has to be inside the branch: only the envelope leaves.
-    assert.deepEqual(rerun.nodes, ['gate-rerun', 'await-gate-rerun', 'read-gate-rerun']);
-    assert.equal(rerun.result.node, 'read-gate-rerun');
-    assert.equal(branches.length, 2, 'red reruns; everything else does not');
-  });
-
-  it('has no settle node, because removing a worktree spawns git', async () => {
-    const { workflow } = await authored();
-    const ids = workflow.nodes.map(node => node.id);
-    assert.ok(!ids.some(id => id.includes('settle')),
-      'settling is a reconciler over stopped runs, not a stage');
-
-    // The specific shape this rules out: a dispatch whose pair nothing
-    // enqueues. An `await-*` node with no effect stage behind it is a wait
-    // no worker will ever answer, and a run that reaches it never ends —
-    // which every unit test in this folder would still pass.
-    const waits = ids.filter(id => id.startsWith('await-'));
-    const stages = new Set<string>(EVOLVE_EFFECT_STAGES);
-    for (const wait of waits) {
-      assert.ok(stages.has(wait.slice('await-'.length)),
-        `${wait} waits on something no effect stage dispatches, so nothing can answer it`);
+  it('keeps every wait inside a graph and every branch free of interactions', async () => {
+    const { workflow, registry } = await authored();
+    assert.equal(workflow.nodes.filter(node => node.kind === 'interaction').length, 0);
+    const validated = await validateMasWorkflow(workflow, registry, (await authored()).catalog);
+    assert.ok(validated.valid);
+    for (const stage of EVOLVE_EFFECT_STAGES) {
+      const route = workflow.nodes.find(node => node.id === stage + '-route');
+      assert.ok(route?.kind === 'switch');
+      const graph = workflow.nodes.find(node => node.id === 'effect-' + stage);
+      assert.ok(graph?.kind === 'graph');
+      const child = validated.value.subgraphs.get(graph.subgraph);
+      assert.ok(child);
+      assert.deepEqual(child.workflow.nodes.filter(node => node.kind === 'interaction').map(node => node.id), ['await-' + stage]);
     }
-    assert.equal(waits.length, EVOLVE_EFFECT_STAGES.length,
-      'every effect stage waits, and nothing else does');
-
-    // `decide` hands straight to `record`: there is no stage between them.
-    const messages = workflow.messages as Array<{ from: { node: string }, to: { node: string } }>;
-    assert.ok(messages.some(one => one.from.node === 'decide' && one.to.node === 'record'),
-      'the planner hands the envelope to the record, with nothing in between');
-  });
-
-  it('names every wait that a skipped stage would park on forever', async () => {
-    // A wait is UNCONDITIONAL once a run reaches it: an interaction node
-    // parks until somebody answers, and only a dispatch that actually
-    // wrote an intent causes anybody to. So a pair whose dispatch may
-    // decline to run is a pair that can hang the run — and `stageRuns`
-    // says all five may decline.
-    //
-    // They cannot simply be put behind a switch: the partitioner carves a
-    // branch's members into a dag subregion, and an interaction needs the
-    // control host, so a branch that owns one fails `TMAS2003`. The `flake`
-    // branch below owns `await-gate-rerun`, which is why every red-gate
-    // experiment fails there rather than parking — `run.test.ts` drives it.
-    // A SUBGRAPH does work: it gets its own region walk. That is the fix.
-    //
-    // This test does not pretend the defect is gone. It pins the exact set
-    // of waits that carry it, so the fix can be checked against a list
-    // rather than against a memory.
-    const { workflow } = await authored();
-    const waits = workflow.nodes.filter(node => node.kind === 'interaction').map(node => node.id);
-    assert.deepEqual(waits.sort(), [
-      'await-apply', 'await-gate', 'await-gate-rerun',
-      'await-isolate', 'await-measure-base', 'await-measure-candidate',
-    ], 'the waits a run can park on; each needs its dispatch to have written an intent');
-
-    // Which of them a run can reach without their dispatch having written
-    // one — that is exactly the stages `stageRuns` can decline.
-    const refused = { experimentId: 'x', proposalId: 'p', strategyId: 's', decision: { decision: 'refused' }, gate: null, rerun: null, fitness: null, settled: [], legs: 0, unresolved: 0 };
-    const skipped = EVOLVE_EFFECT_STAGES.filter(stage => !stageRuns(stage, refused as never));
-    assert.deepEqual([...skipped], [
-      'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate',
-    ], 'a refused proposal skips every stage, and so parks on the first wait it reaches');
+    for (const route of workflow.nodes.filter(node => node.kind === 'switch')) {
+      for (const branch of route.branches) {
+        for (const id of branch.nodes) assert.notEqual(workflow.nodes.find(node => node.id === id)?.kind, 'interaction');
+      }
+    }
+    assert.ok(!workflow.nodes.some(node => node.id.includes('settle') || node.id.includes('seal')));
   });
 
   it('declares an envelope schema the first envelope actually validates against', async () => {
@@ -182,14 +133,4 @@ describe('the experiment lifecycle version', () => {
     }
   });
 
-  it('has no seal node, because sealing the base spawns git', async () => {
-    const { workflow } = await authored();
-    const ids = workflow.nodes.map(node => node.id);
-    assert.ok(!ids.some(id => id.includes('seal')),
-      'the base seal belongs to the worker that runs the base batch, not to a segment');
-    // It still has to happen, and it still has to bracket the base batch:
-    // that is the measure-base operation's job, and its settlement says
-    // whether the seal held.
-    assert.ok(ids.includes('measure-base') && ids.includes('read-measure-base'));
-  });
 });

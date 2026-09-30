@@ -158,34 +158,17 @@ describe('the crash matrix — one answer, whatever died', () => {
     assertConverged(driven, 'before-answer:gate');
   });
 
-  // 4b — the same crash at the BASE sample batch — is deliberately absent,
-  // and what is missing is worth more than what is here.
-  //
-  // It cannot be driven to convergence yet, for a reason that has nothing
-  // to do with crashes. A lost answer on the base batch makes that
-  // experiment `uncertain`, and a decided envelope makes every later stage
-  // decline to run — at which point the run parks on `await-measure-candidate`
-  // forever, because an interaction node WAITS whether or not its dispatch
-  // wrote anything for a worker to answer.
-  //
-  // So the durable path today completes exactly the experiments that skip
-  // no stage. That is not most of them: nine of the sixteen registered
-  // proposals are refused before anything runs and skip all five, and every
-  // red-gate proposal skips both measurements. The clean run passes here
-  // only because `noop-comment` happens to run every stage.
-  //
-  // The fix is structural and is not a guard: a switch branch may not
-  // contain an interaction — the partitioner carves branch members into a
-  // dag subregion, and an interaction needs the control host, so it fails
-  // `TMAS2003`. (The `flake` branch holds `await-gate-rerun` and has the
-  // same defect today, unexercised.) What does work is a SUBGRAPH, which
-  // gets its own region walk; `test/mas/nested-interaction.test.ts` drives
-  // a durable pause and resume inside one. That is the next order's work.
-  //
-  // What the attempt did settle is kept: a worker answering from a replay
-  // reports `sealHeld: null`, because it did not take the batch and cannot
-  // say whether the base held while somebody else did. `worker.test.ts`
-  // pins it.
+  it('4b. a lost base-batch answer replays its recorded seal without new processes', async () => {
+    const driven = await matrixCase('before-answer:measure-base');
+    assert.equal(driven.failures, 1);
+    assertConverged(driven, 'before-answer:measure-base');
+  });
+
+  it('4c. an answered effect closes after redelivery without answering the next stage', async () => {
+    const driven = await matrixCase('after-effect-answer');
+    assert.equal(driven.failures, 1);
+    assertConverged(driven, 'after-effect-answer');
+  });
 
   it('5. crash after the wait was answered: the reconciler enqueues the resume', async () => {
     // The answer landed; nothing turned it into a segment. `ensurePending`

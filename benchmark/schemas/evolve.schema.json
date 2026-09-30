@@ -18,7 +18,8 @@
     "aggregate",
     "identity",
     "decision",
-    "reportId"
+    "reportId",
+    "lifecycle"
   ],
   "additionalProperties": false,
   "$query": {
@@ -441,6 +442,31 @@
             }
           ]
         }
+      },
+      {
+        "$eq": [
+          "$.lifecycle.segments",
+          {
+            "$add": [
+              "$.counts.attempted",
+              "$.lifecycle.resumes"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.lifecycle.interactions",
+          "$.lifecycle.resumes"
+        ]
+      },
+      {
+        "$eq": [
+          "$.lifecycle.unresolvedLegs",
+          {
+            "$sum": "$.rows[*].effects.unresolved"
+          }
+        ]
       }
     ]
   },
@@ -657,6 +683,59 @@
     },
     "reportId": {
       "$ref": "#/$defs/sha256"
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": [
+        "workflowVersionId",
+        "segments",
+        "resumes",
+        "interactions",
+        "cancellations",
+        "duplicateProcessRuns",
+        "duplicateBranches",
+        "duplicateModelCalls",
+        "unresolvedLegs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "workflowVersionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "segments": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resumes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interactions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cancellations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicateProcessRuns": {
+          "type": "integer",
+          "const": 0
+        },
+        "duplicateBranches": {
+          "type": "integer",
+          "const": 0
+        },
+        "duplicateModelCalls": {
+          "type": "integer",
+          "const": 0
+        },
+        "unresolvedLegs": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
     }
   },
   "$defs": {
@@ -1737,11 +1816,11 @@
           "properties": {
             "attempted": {
               "type": "integer",
-          "minimum": 0
+              "minimum": 0
             },
             "kept": {
               "type": "integer",
-          "minimum": 0
+              "minimum": 0
             },
             "value": {
               "type": "number",

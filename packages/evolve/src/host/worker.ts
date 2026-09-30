@@ -98,6 +98,11 @@ export interface WorkerInteractionStore {
 export interface WorkerJobQueue {
   claim(options: { kinds: string[], owner: string, leaseMs: number }): Promise<unknown>;
   complete(lease: unknown, result?: unknown): Promise<unknown>;
+  /** Lease-fenced evidence, retained until the answer and job settle. */
+  checkpointsFor?(job: never): {
+    load(id: string): unknown;
+    save(id: string, key: string, value: unknown): unknown;
+  };
 }
 
 /** The effect record, which is where the plan actually lives. */
@@ -161,6 +166,7 @@ export function createEffectAddressing(options: EffectAddressingOptions): Effect
 
       const waiting = await options.waitingPaths(runId);
       if (waiting.length !== 1) return undefined;
+      if (waiting[0].split('/').at(-1) !== 'await-' + stage) return undefined;
 
       // Only the base batch runs in the operator's own root, and only it
       // is bracketed. Sealing anything else would ask the worker to prove
@@ -186,6 +192,8 @@ export interface EvolveEffectWorkerOptions {
   leaseMs?: number;
   /** `<runId>:i:<path>` — the suite's own interaction addressing. */
   interactionIdOf: (runId: string, path: string) => string;
+  /** Host checks that require git, performed before a fresh effect only. */
+  beforeEffect?: (job: EvolveEffectJob) => Promise<EvolveOutcome<true>>;
 }
 
 export interface WorkerPass {
@@ -232,6 +240,14 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
       { legs?: Array<{ state: string }> } | null;
     const legs = held?.legs ?? [];
     const replays = legs.length > 0 && legs.every(one => one.state === 'confirmed' || one.state === 'rejected');
+
+    if (!replays && options.beforeEffect !== undefined) {
+      const admitted = await options.beforeEffect(job);
+      if (!admitted.ok) return ok({
+        operationId: plan.id, state: 'rejected', recordId: plan.id,
+        evidence: { issues: admitted.issues, replayed: false },
+      });
+    }
 
     // The base batch is bracketed. The seal is taken here, in the worker,
     // because taking it SPAWNS git and a workflow segment may not.
@@ -282,7 +298,7 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
       recordId: plan.id,
       evidence: {
         legs: run.value.legs,
-        replayed: run.value.prepared === 0,
+        replayed: replays,
         ...(sealHeld === undefined ? {} : { sealHeld }),
       },
     });
@@ -316,11 +332,15 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
         // was already answered and the job is a redelivery. Either way the
         // work does not belong to this pass: put the job back unclaimed
         // and leave the effect alone.
-        const address = await addressing.address(operationId);
+        const checkpoints = jobs.checkpointsFor?.(claimed as never);
+        const saved = await checkpoints?.load(operationId) as
+          { values?: { settlement?: { address: EffectAddress, answer: EvolveSettlementMessage } } } | null | undefined;
+        const receipt = saved?.values?.settlement;
+        const address = receipt?.address ?? await addressing.address(operationId);
         if (address === undefined) { pass.deferred.push(operationId); continue; }
         const job: EvolveEffectJob = { plan, ...address };
 
-        const answer = await settle(job, lease);
+        const answer = receipt === undefined ? await settle(job, lease) : ok(receipt.answer);
         if (!answer.ok) {
           // Unanswered on purpose, and left claimable: an operation nobody
           // can account for has to stay reachable, or the person
@@ -328,7 +348,12 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
           pass.unresolved.push(job.plan.id);
           continue;
         }
-        if (answer.value.evidence.replayed === true) pass.replayed += 1;
+        if (receipt !== undefined || answer.value.evidence.replayed === true) pass.replayed += 1;
+
+        // Persist the actual seal and the exact response before sending it.
+        // Replaying this receipt makes a lost response free without inventing
+        // a seal around a batch that this worker did not execute.
+        if (receipt === undefined) await checkpoints?.save(operationId, 'settlement', { address, answer: answer.value });
 
         const interactionId = interactionIdOf(job.runId, job.interactionPath);
         const waiting = await interactions.getInteraction(interactionId);
@@ -336,14 +361,14 @@ export function createEvolveEffectWorker(options: EvolveEffectWorkerOptions) {
         // A resolved interaction accepts nothing further; answering one
         // that already holds this exact key is the replay case and the
         // store settles it by key rather than by a second write.
-        await interactions.respondInteraction(
+        const responded = await interactions.respondInteraction(
           interactionId, answer.value, waiting.revision, answer.value.recordId,
-        );
+        ) as { ok?: boolean } | null;
+        if (responded?.ok !== true) { pass.unresolved.push(job.plan.id); continue; }
 
         // Only now. Everything up to here is replayable from the record;
         // closing the job is what says the answer actually landed.
-        await jobs.complete(lease, { operationId: job.plan.id, state: answer.value.state })
-          .catch(() => undefined);
+        await jobs.complete(lease, { operationId: job.plan.id, state: answer.value.state });
         pass.settled.push(job.plan.id);
       }
 

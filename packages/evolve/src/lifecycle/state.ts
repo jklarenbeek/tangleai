@@ -7,12 +7,8 @@
  * for all sixteen registered proposals, and the only way to be sure of
  * that is for the arithmetic to live in one place both can call.
  *
- * The central rule is `decided`. A stage that refuses writes a decision
- * into the envelope, and every later stage carries it through untouched
- * rather than working around it with a branch. That is what lets the
- * graph stay a straight line with one switch in it: nine of the sixteen
- * registered proposals are refused at `propose` and travel the whole
- * length of the workflow as a value, spending nothing.
+ * A decided envelope skips every later effect. Conditional graph regions
+ * make that skip include the wait, so no run parks without a queued effect.
  */
 
 import type { Decision, DecisionReason, EvolveCode } from '../contracts.gen.ts';

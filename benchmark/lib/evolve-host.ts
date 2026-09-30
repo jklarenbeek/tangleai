@@ -31,24 +31,25 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { createExternalEffects } from '@jarenjs/flow';
-import { openTangleDb, createEvolveEffectStore } from '@tangleai/store';
+import { openTangleDb, createEvolveEffectStore, createEvolveStore, type TangleDb } from '@tangleai/store';
 import { createMemoryOutcomeStore, createOutcomeService, outcomeRevision } from '@tangleai/outcomes';
 import {
   createProcessRunner, validateGitArgs, createWorktreeHost, createEffectExecutor,
   createEffectDriver, createEvolveClassifier, createTranscript, authorizeEffect, neverWriteSet,
-  runGate, earnsRerun, measureFitness, applyProposal, settleExperiment,
+  settleExperiment,
   type ProcessRunner, type WorktreeHost,
 } from '@tangleai/evolve/host';
 import {
-  compileSurfacePolicy, createPatchRefiner, createMemoryEvolveStore, sealRecord,
-  recordExperimentOutcome, resolveEvolveEvidence, createSourceRegistry, planExperimentDecision,
+  compileSurfacePolicy, createPatchRefiner, sealRecord,
+  recordExperimentOutcome, resolveEvolveEvidence, createSourceRegistry,
   DEFAULT_EVOLVE_BUDGETS, AUTOMATION_PRINCIPAL, ok, refuseOne,
   type EvolveStore, type PlannedDecision,
 } from '@tangleai/evolve';
 import { createExperimentOutcomeAdapter } from '@tangleai/evolve/adapters/experiment';
-import type { EvolveBudgets, EvolveDecision, EvolveExperiment, EvolveGateResult, EvolveMeasurement } from '@tangleai/evolve/contracts';
+import type { EvolveBudgets, EvolveDecision, EvolveExperiment, EvolveMeasurement } from '@tangleai/evolve/contracts';
 
 import { materializeEvolveFixture, FIXTURE_IDENTITY, type LoadedEvolveFixture } from './evolve-fixture.ts';
+import { driveEvolveLifecycle, type LifecycleCounts } from './evolve-lifecycle.ts';
 import type { Manifest as EvolveManifest, Row } from './evolve.types.ts';
 
 /** The registered epoch, in the millisecond form the outcome service accepts. */
@@ -82,6 +83,7 @@ export interface HostCounters {
 }
 
 export interface ExperimentHost {
+  db: TangleDb;
   repositoryRoot: string;
   worktreeRoot: string;
   baseRevision: string;
@@ -188,7 +190,7 @@ export async function withExperimentHost<T>(
     jobs: { now: () => Date.parse(FIXTURE_EPOCH), random: () => 0.5 },
   });
   const effects = createEvolveEffectStore(db, { maxLegs: Math.max(manifest.budgets.samples, 2) });
-  const evolveStore = createMemoryEvolveStore();
+  const evolveStore = createEvolveStore(db);
   const outcomeStore = createMemoryOutcomeStore();
   const adapter = await createExperimentOutcomeAdapter();
   const revision = await outcomeRevision({ instrument: 'evolve', manifest: registration.manifestRevision });
@@ -243,7 +245,7 @@ export async function withExperimentHost<T>(
 
   try {
     return await body({
-      repositoryRoot, worktreeRoot, baseRevision: materialized.baseRevision,
+      db, repositoryRoot, worktreeRoot, baseRevision: materialized.baseRevision,
       runner, host, effects, evolveStore, outcomeStore, adapter, revision,
       budgets, gateArgs, instrumentArgs, registration, counters, fenceFor, protectedRefs,
     });
@@ -255,6 +257,7 @@ export async function withExperimentHost<T>(
 }
 
 export interface ExperimentRun {
+  lifecycle: LifecycleCounts;
   row: Row;
   decision: PlannedDecision;
 }
@@ -282,11 +285,9 @@ export async function runExperiment(
   });
   const refiner = createPatchRefiner({ policy, budgets: host.budgets });
 
-  let legs = 0;
-  let unresolved = 0;
   const gateResultIds: string[] = [];
-  const effectRecordIds: string[] = [];
   let measurement: EvolveMeasurement | null = null;
+  let sealedDecision: EvolveDecision | null = null;
 
   /** The experiment record, advanced under its own compare-and-swap. */
   const seeded = await sealRecord<EvolveExperiment>({
@@ -307,16 +308,22 @@ export async function runExperiment(
   await host.evolveStore.putRecord(experiment);
 
   const advance = async (command: 'isolate' | 'apply' | 'gate' | 'measure' | 'decide'): Promise<void> => {
+    const held = await host.evolveStore.getExperiment(experimentId);
+    if (!held.ok || held.value === null) throw new Error('Experiment missing.');
+    experiment = held.value;
+    const order = ['proposed', 'isolated', 'applied', 'gated', 'measured', 'decided'];
+    const target = { isolate: 'isolated', apply: 'applied', gate: 'gated', measure: 'measured', decide: 'decided' }[command];
+    if (order.indexOf(experiment.status) >= order.indexOf(target)) return;
     const moved = await host.evolveStore.transitionExperiment(experimentId, command, experiment.revision);
-    if (!moved.ok) throw new Error('the lifecycle refused ' + command + ': ' + JSON.stringify(moved.issues));
+    if (!moved.ok) throw new Error('The lifecycle refused ' + command + ': ' + JSON.stringify(moved.issues));
     experiment = moved.value;
   };
 
   const worktreePath = join(host.worktreeRoot, experimentId);
 
-  /** Settle, record the outcome, and answer the row. */
-  const finish = async (decision: PlannedDecision): Promise<ExperimentRun> => {
-    const sealedDecision = await sealRecord<EvolveDecision>({
+  /** Persist decision and outcome inside the workflow, before host cleanup. */
+  const record = async (decision: PlannedDecision): Promise<void> => {
+    const sealed = await sealRecord<EvolveDecision>({
       schemaVersion: 1,
       kind: 'decision',
       experimentId,
@@ -326,33 +333,16 @@ export async function runExperiment(
       evidenceIds: [...gateResultIds, ...(measurement === null ? [] : [measurement.id])],
       budgets: host.budgets,
     });
-    if (!sealedDecision.ok) throw new Error('the decision does not seal: ' + JSON.stringify(sealedDecision.issues));
-    await host.evolveStore.putRecord(sealedDecision.value);
+    if (!sealed.ok) throw new Error('the decision does not seal: ' + JSON.stringify(sealed.issues));
+    sealedDecision = sealed.value;
+    const written = await host.evolveStore.putRecord(sealedDecision);
+    if (!written.ok) throw new Error(JSON.stringify(written.issues));
 
     if (decision.decision === 'kept') {
       // A keep is the only path that has to reach `decided` first, because
       // `record` is the one transition the lifecycle grants from there.
       await advance('decide');
     }
-
-    const had = existsSync(worktreePath);
-    const settled = await settleExperiment({
-      host: host.host,
-      store: host.evolveStore,
-      experiment,
-      decision,
-      worktreePath: had ? worktreePath : undefined,
-      bundle: decision.decision !== 'kept' ? undefined : {
-        gateResultIds,
-        measurementId: measurement?.id ?? '',
-        decisionId: sealedDecision.value.id,
-        runIdentityId: registration.manifestRevision,
-        effectRecordIds,
-      },
-    });
-    if (!settled.ok) throw new Error('settling refused: ' + JSON.stringify(settled.issues));
-    if (settled.value.worktreeRemoved) host.counters.worktreesRemoved += 1;
-    if (had && !settled.value.branchDeleted) host.counters.branchesLeft += 1;
 
     // What the experiment MEANT, through the outcome lifecycle. The ids it
     // produces stay out of the row: they are evidence, not a measurement.
@@ -373,7 +363,7 @@ export async function runExperiment(
       service: service as never,
       registry,
       experiment: { experimentId, strategyId: document.strategyId, baseRevision: host.baseRevision },
-      decision: sealedDecision.value,
+      decision: sealedDecision,
       measurement,
       strategy: { memoryId: MEMORY_OF(document.strategyId) },
       configuration: { kind: 'scripted', revision: registration.manifestRevision },
@@ -383,21 +373,6 @@ export async function runExperiment(
     });
     if (!recorded.ok) throw new Error('recording the outcome refused: ' + JSON.stringify(recorded.issues));
 
-    const actual = { decision: decision.decision, reason: decision.reason, code: decision.code } as Row['actual'];
-    return {
-      decision,
-      row: {
-        proposalId: document.id,
-        strategyId: document.strategyId,
-        state: 'run',
-        actual,
-        matches: decision.decision === entry.expect.decision
-          && decision.reason === entry.expect.reason
-          && decision.code === entry.expect.code,
-        budgets: entry.budgets,
-        effects: { legs, unresolved },
-      },
-    };
   };
 
   // ---- prepare -----------------------------------------------------------
@@ -409,99 +384,78 @@ export async function runExperiment(
     origin: 'hand-authored',
     patch: document.patch,
   });
-  if (!prepared.ok) {
-    // Refused before anything ran: no worktree, no spawn, no effect.
-    return finish(refiner.decide(prepared.issues));
-  }
-
-  // ---- isolate and apply -------------------------------------------------
-  const applied = await applyProposal({
-    driver,
-    host: host.host,
-    experimentId,
-    baseRevision: host.baseRevision,
-    worktreePath,
-    plan: prepared.value.plan,
-    message: 'Apply ' + document.id,
-    baseFiles,
-    verify: (previous, next, status) => refiner.verifyStaged(previous, next, status),
-  });
-  legs += 3;
-  if (existsSync(worktreePath)) host.counters.worktreesCreated += 1;
-  if (!applied.ok) {
-    if (applied.issues.some(issue => issue.code === 'TEVO1009')) unresolved += 1;
-    return finish(refiner.decide(applied.issues));
-  }
-  await advance('isolate');
-  await advance('apply');
-  effectRecordIds.push(...applied.value.effectRecordIds);
-
-  // ---- gate, and the single rerun red earns ------------------------------
-  const gate = await runGate({
-    driver, effects: host.effects, host: host.host, experimentId,
-    worktreePath, args: host.gateArgs, budgets: host.budgets, leg: 'gate', transcript,
-  });
-  legs += 1;
-  if (!gate.ok) {
-    unresolved += 1;
-    return finish({ decision: 'uncertain', reason: 'uncertain-effect', code: 'TEVO1009' });
-  }
-  gateResultIds.push(gate.value.record.id);
-  effectRecordIds.push(experimentId + '/gate');
-  await advance('gate');
-
-  let rerun: typeof gate.value.verdict | null = null;
-  if (earnsRerun(gate.value.verdict)) {
-    const second = await runGate({
-      driver, effects: host.effects, host: host.host, experimentId,
-      worktreePath, args: host.gateArgs, budgets: host.budgets, leg: 'gate-rerun', transcript,
-    });
-    legs += 1;
-    if (!second.ok) {
-      unresolved += 1;
-      return finish({ decision: 'uncertain', reason: 'uncertain-effect', code: 'TEVO1009' });
-    }
-    rerun = second.value.verdict;
-    gateResultIds.push(second.value.record.id);
-    effectRecordIds.push(experimentId + '/gate-rerun');
-  }
-
-  // ---- measure, only behind a green gate ---------------------------------
-  let fitness: 'improved' | 'equal' | 'regression' | 'unverifiable' | null = null;
-  if (gate.value.verdict === 'green') {
-    const measured = await measureFitness({
-      driver, effects: host.effects, host: host.host, experimentId,
-      worktreePath, repositoryRoot: host.repositoryRoot,
-      args: host.instrumentArgs,
+  const driven = await driveEvolveLifecycle({
+    db: host.db, driver, proposalId: document.id, strategyId: document.strategyId, epoch: epochFor(entry.index),
+    context: {
+      preparer: driver, effects: host.effects, host: host.host, transcript,
+      experimentId, worktreePath, repositoryRoot: host.repositoryRoot, baseRevision: host.baseRevision,
+      budgets: host.budgets, gateArgs: host.gateArgs, instrumentArgs: host.instrumentArgs,
       metric: { name: manifest.policy.truth.metric, direction: manifest.policy.thresholds.direction },
-      samples: host.budgets.samples,
-      baseRevision: host.baseRevision,
-      truth: manifest.policy.truth.value,
-      minDelta: manifest.policy.thresholds.minDelta,
-      transcript,
-    });
-    legs += host.budgets.samples * 2;
-    if (measured.ok) {
-      measurement = measured.value.record;
-      fitness = measured.value.comparison;
-      await host.evolveStore.putRecord(measurement);
-      effectRecordIds.push(experimentId + '/measure-base', experimentId + '/measure-candidate');
-      await advance('measure');
-    }
-    else if (measured.issues.some(issue => issue.code === 'TEVO1003' || issue.code === 'TEVO1009')) {
-      // The base moved, or a leg was lost. Either way nothing measured here
-      // is worth anything, and a person looks rather than a retry running.
-      unresolved += 1;
-      return finish({ decision: 'uncertain', reason: 'uncertain-effect', code: 'TEVO1009' });
-    }
-    else {
-      // Nothing readable. Not a regression — an absence of evidence.
-      fitness = 'unverifiable';
-      await advance('measure');
-    }
-  }
+      truth: manifest.policy.truth.value, minDelta: manifest.policy.thresholds.minDelta, prepared,
+      decideRefusal: refiner.decide,
+      persist: async (stage, value) => {
+        if (value !== undefined) {
+          const written = await host.evolveStore.putRecord(value);
+          if (!written.ok) throw new Error(JSON.stringify(written.issues));
+          if (value.kind === 'gate-result' && !gateResultIds.includes(value.id)) gateResultIds.push(value.id);
+          if (value.kind === 'measurement') measurement = value;
+        }
+        if (stage === 'isolate' || stage === 'apply' || stage === 'gate') await advance(stage);
+        if (stage === 'fitness') await advance('measure');
+      },
+      record: async env => {
+        if (env.decision === null) throw new Error('Completed experiment has no decision.');
+        await record(env.decision);
+      },
+    },
+    beforeEffect: async job => {
+      if (!job.plan.id.endsWith('/apply')) return ok(true as const);
+      const status = await host.host.status(worktreePath);
+      if (!status.ok) return status as never;
+      const next = await host.host.fileMap(worktreePath);
+      if (!next.ok) return next as never;
+      return refiner.verifyStaged(baseFiles, next.value.files, status.value);
+    },
+  });
+  const decision = driven.env.decision;
+  if (decision === null || sealedDecision === null) throw new Error('Experiment decision was not recorded.');
+  const effectRecordIds = driven.env.settled;
+  const legs = driven.env.legs;
+  const unresolved = driven.env.unresolved;
+  if (existsSync(worktreePath)) host.counters.worktreesCreated++;
+  const had = existsSync(worktreePath);
+  const settled = await settleExperiment({
+    host: host.host,
+    store: host.evolveStore,
+    experiment,
+    decision,
+    worktreePath: had ? worktreePath : undefined,
+    bundle: decision.decision !== 'kept' ? undefined : {
+      gateResultIds,
+      measurementId: (measurement as EvolveMeasurement | null)?.id ?? '',
+      decisionId: (sealedDecision as EvolveDecision).id,
+      runIdentityId: registration.manifestRevision,
+      effectRecordIds,
+    },
+  });
+  if (!settled.ok) throw new Error('settling refused: ' + JSON.stringify(settled.issues));
+  if (settled.value.worktreeRemoved) host.counters.worktreesRemoved += 1;
+  if (had && !settled.value.branchDeleted) host.counters.branchesLeft += 1;
 
-  // The campaign's one planner, over records. Everything above this line
-  // gathered evidence; nothing above it decided what the evidence meant.
-  return finish(planExperimentDecision({ gate: gate.value.verdict, rerun, fitness }));
+  const actual = { decision: decision.decision, reason: decision.reason, code: decision.code } as Row['actual'];
+  return {
+    decision,
+    lifecycle: driven.lifecycle,
+    row: {
+      proposalId: document.id,
+      strategyId: document.strategyId,
+      state: 'run',
+      actual,
+      matches: decision.decision === entry.expect.decision
+        && decision.reason === entry.expect.reason
+        && decision.code === entry.expect.code,
+      budgets: entry.budgets,
+      effects: { legs, unresolved },
+    },
+  };
 }

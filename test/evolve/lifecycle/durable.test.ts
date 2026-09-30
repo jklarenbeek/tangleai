@@ -29,7 +29,7 @@ import { buildEvolveLifecycle, evolveRegistryDocument, EVOLVE_WORKFLOW_ID } from
 const EXECUTABLE = 'e'.repeat(64);
 
 async function lifecycleVersion() {
-  const registry = await createMasRegistrySnapshot(evolveRegistryDocument());
+  const registry = await createMasRegistrySnapshot(await evolveRegistryDocument());
   assert.ok(registry.valid);
   const catalog = await createMasConfigCatalog({ profiles: ['evolve'], tools: [], contexts: [] });
   assert.ok(catalog.valid);

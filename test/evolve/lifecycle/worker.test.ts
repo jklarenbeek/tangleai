@@ -76,6 +76,19 @@ const rigFor = (job: EvolveEffectJob) => ({
 const hostStub = {} as never;
 
 describe('the effect worker', () => {
+  it('keeps a refused response claimable instead of closing the job', async () => {
+    const rig = rigFor(jobFor('exp-1/gate'));
+    const worker = createEvolveEffectWorker({
+      ...rig,
+      driver: { run: async () => ok({ planId: 'exp-1/gate', prepared: 1, state: 'complete', legs: [{ id: 'gate', state: 'confirmed' }] }) },
+      interactions: { ...interactionRig(), respondInteraction: async () => ({ ok: false }) },
+      host: hostStub, owner: 'test', interactionIdOf,
+    });
+    const pass = await worker.drain();
+    assert.deepEqual(pass.settled, []);
+    assert.deepEqual(pass.unresolved, ['exp-1/gate']);
+    assert.deepEqual(rig.jobs.closed, []);
+  });
   it('answers the wait under the effect record id, so a replay is the same response', async () => {
     const interactions = interactionRig(7);
     const worker = createEvolveEffectWorker({
@@ -117,6 +130,7 @@ describe('the effect worker', () => {
     const interactions = interactionRig();
     const worker = createEvolveEffectWorker({
       ...rigFor(jobFor('exp-3/gate')),
+      effects: { get: async () => ({ plan: planFor('exp-3/gate'), legs: [{ id: 'gate', state: 'confirmed' }] }) },
       // `prepared: 0` is the store saying it already held this plan: the
       // legs replayed and nothing spawned.
       driver: { run: async () => ok({ planId: 'exp-3/gate', prepared: 0, state: 'complete', legs: [{ id: 'gate', state: 'confirmed' }] }) },
@@ -248,6 +262,8 @@ describe('addressing an operation to the wait it answers', () => {
   });
 
   it('refuses to guess when the run is parked on more than one wait, or none', async () => {
+    assert.equal(await addressing(['effect-apply/await-apply']).address('exp-1/gate'), undefined,
+      'an older effect may never answer the next stage');
     assert.equal(await addressing([]).address('exp-1/gate'), undefined,
       'nothing is waiting, so there is nothing to answer');
     assert.equal(await addressing(['await-gate', 'await-apply']).address('exp-1/gate'), undefined,

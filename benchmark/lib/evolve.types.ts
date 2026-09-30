@@ -779,9 +779,49 @@ export interface EvolveRegistration {
 }
 
 
+export interface EvolveLifecycle {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  workflowVersionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  segments: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resumes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  interactions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cancellations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  duplicateProcessRuns: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  duplicateBranches: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  duplicateModelCalls: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unresolvedLegs: number;
+}
+
+
 /**
  * What `benchmark/evolve.ts` writes. The registration is immutable input: a fixture repository pinned by file digests and one constant base revision, an immutable-surface policy and budget set held outside that repository, a hand-authored strategy library, and sixteen adversarial proposals each carrying the exact decision, reason and refusal code it must produce — true improvement, no-op, regression, flake, edits to tests, CI, the gate script, the registered threshold and the fitness instrument, a rename, a generated file, a path escape, an oversized patch, and three hostile runtimes. Rows are replaced by id as a mechanism lands and never change the registration or its denominators; `implementation-missing` is the honest state while no executor exists. Two analytic controls license every other number: an oracle that reads the registration back, and a seeded random selection. The census reconciles by `$query` at validation time, protected-ref writes and live model calls are literal zeros, and `reportId` is the canonical SHA-256 of the document with that field excluded. No clock, hostname, temporary path or duration has a representable member anywhere in this document.
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.proposals[*].id"},{"$count":{"$distinct":"$.registration.proposals[*].id"}}]},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.registration.experiments"]},{"$eq":[{"$count":"$.rows[*]"},"$.registration.experiments"]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.id"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.proposalId"}]]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.strategyId"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.strategyId"}]]},{"$eq":[{"$count":"$.hostProbes[*]"},{"$count":"$.registration.hostProbes[*]"}]},{"$every":{"r":"$.rows[?(@.state=='implementation-missing')]"},"$satisfies":{"$and":[{"$eq":["$r.actual",null]},{"$eq":["$r.matches",null]},{"$eq":["$r.effects.legs",0]},{"$eq":["$r.effects.unresolved",0]}]}},{"$every":{"r":"$.rows[?(@.state=='run')]"},"$satisfies":{"$and":[{"$ne":["$r.actual",null]},{"$ne":["$r.matches",null]}]}},{"$eq":[{"$count":"$.rows[?(@.state=='run')]"},"$.counts.attempted"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='kept')]"},"$.counts.kept"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='abandoned')]"},"$.counts.abandoned.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='refused')]"},"$.counts.refused.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='uncertain')]"},"$.counts.uncertain"]},{"$eq":[{"$sum":"$.counts.abandoned.byReason.*"},"$.counts.abandoned.total"]},{"$eq":[{"$sum":"$.counts.refused.byReason.*"},"$.counts.refused.total"]},{"$eq":["$.counts.attempted",{"$add":[{"$add":["$.counts.kept","$.counts.abandoned.total"]},{"$add":["$.counts.refused.total","$.counts.uncertain"]}]}]},{"$not":{"$lt":["$.counts.worktreesCreated","$.counts.worktreesRemoved"]}},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.controls.oracle.attempted"]},{"$eq":[{"$count":"$.registration.proposals[?(@.expect.decision=='kept')]"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.oracle.strategies[*]"},{"$count":"$.registration.strategies[*]"}]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].attempted"},"$.controls.oracle.attempted"]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].kept"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.random.selected[*]"},"$.controls.random.selects"]},{"$eq":["$.controls.random.attempted","$.controls.random.selects"]},{"$or":[{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]},{"$eq":["$.decision","implementation-missing"]}]},{"$or":[{"$ne":["$.decision","implementation-missing"]},{"$not":{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]}}]},{"$or":[{"$ne":["$.decision","oracle-exact"]},{"$and":[{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.matches",true]}},{"$every":{"p":"$.hostProbes[*]"},"$satisfies":{"$eq":["$p.state","pass"]}}]}]},{"$or":[{"$ne":["$.decision","executor-conformant"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.state","run"]}}]},{"$eq":[{"$add":["$.aggregate.failures","$.counts.kept"]},"$.counts.attempted"]},{"$eq":[{"$add":["$.aggregate.systematic","$.aggregate.incidental"]},"$.aggregate.failures"]},{"$eq":["$.aggregate.score.attempted","$.counts.attempted"]},{"$eq":["$.aggregate.score.kept","$.counts.kept"]},{"$every":{"p":"$.aggregate.mechanisms[*]"},"$satisfies":{"$eq":[{"$count":{"$distinct":"$p.instances[*]"}},{"$count":"$p.instances[*]"}]}}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.registration.proposals[*].id"},{"$count":{"$distinct":"$.registration.proposals[*].id"}}]},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.registration.experiments"]},{"$eq":[{"$count":"$.rows[*]"},"$.registration.experiments"]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.id"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.proposalId"}]]},{"$eq":[[{"$for":{"p":"$.registration.proposals[*]"},"$return":"$p.strategyId"}],[{"$for":{"r":"$.rows[*]"},"$return":"$r.strategyId"}]]},{"$eq":[{"$count":"$.hostProbes[*]"},{"$count":"$.registration.hostProbes[*]"}]},{"$every":{"r":"$.rows[?(@.state=='implementation-missing')]"},"$satisfies":{"$and":[{"$eq":["$r.actual",null]},{"$eq":["$r.matches",null]},{"$eq":["$r.effects.legs",0]},{"$eq":["$r.effects.unresolved",0]}]}},{"$every":{"r":"$.rows[?(@.state=='run')]"},"$satisfies":{"$and":[{"$ne":["$r.actual",null]},{"$ne":["$r.matches",null]}]}},{"$eq":[{"$count":"$.rows[?(@.state=='run')]"},"$.counts.attempted"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='kept')]"},"$.counts.kept"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='abandoned')]"},"$.counts.abandoned.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='refused')]"},"$.counts.refused.total"]},{"$eq":[{"$count":"$.rows[?(@.actual.decision=='uncertain')]"},"$.counts.uncertain"]},{"$eq":[{"$sum":"$.counts.abandoned.byReason.*"},"$.counts.abandoned.total"]},{"$eq":[{"$sum":"$.counts.refused.byReason.*"},"$.counts.refused.total"]},{"$eq":["$.counts.attempted",{"$add":[{"$add":["$.counts.kept","$.counts.abandoned.total"]},{"$add":["$.counts.refused.total","$.counts.uncertain"]}]}]},{"$not":{"$lt":["$.counts.worktreesCreated","$.counts.worktreesRemoved"]}},{"$eq":[{"$count":"$.registration.proposals[*]"},"$.controls.oracle.attempted"]},{"$eq":[{"$count":"$.registration.proposals[?(@.expect.decision=='kept')]"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.oracle.strategies[*]"},{"$count":"$.registration.strategies[*]"}]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].attempted"},"$.controls.oracle.attempted"]},{"$eq":[{"$sum":"$.controls.oracle.strategies[*].kept"},"$.controls.oracle.kept"]},{"$eq":[{"$count":"$.controls.random.selected[*]"},"$.controls.random.selects"]},{"$eq":["$.controls.random.attempted","$.controls.random.selects"]},{"$or":[{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]},{"$eq":["$.decision","implementation-missing"]}]},{"$or":[{"$ne":["$.decision","implementation-missing"]},{"$not":{"$eq":[{"$count":"$.rows[?(@.state=='implementation-missing')]"},0]}}]},{"$or":[{"$ne":["$.decision","oracle-exact"]},{"$and":[{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.matches",true]}},{"$every":{"p":"$.hostProbes[*]"},"$satisfies":{"$eq":["$p.state","pass"]}}]}]},{"$or":[{"$ne":["$.decision","executor-conformant"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.state","run"]}}]},{"$eq":[{"$add":["$.aggregate.failures","$.counts.kept"]},"$.counts.attempted"]},{"$eq":[{"$add":["$.aggregate.systematic","$.aggregate.incidental"]},"$.aggregate.failures"]},{"$eq":["$.aggregate.score.attempted","$.counts.attempted"]},{"$eq":["$.aggregate.score.kept","$.counts.kept"]},{"$every":{"p":"$.aggregate.mechanisms[*]"},"$satisfies":{"$eq":[{"$count":{"$distinct":"$p.instances[*]"}},{"$count":"$p.instances[*]"}]}},{"$eq":["$.lifecycle.segments",{"$add":["$.counts.attempted","$.lifecycle.resumes"]}]},{"$eq":["$.lifecycle.interactions","$.lifecycle.resumes"]},{"$eq":["$.lifecycle.unresolvedLegs",{"$sum":"$.rows[*].effects.unresolved"}]}]}
  */
 export interface Evolve {
   benchmark: "evolve";
@@ -819,4 +859,5 @@ export interface Evolve {
    */
   decision: "implementation-missing" | "executor-conformant" | "oracle-exact";
   reportId: Sha256;
+  lifecycle: EvolveLifecycle;
 }

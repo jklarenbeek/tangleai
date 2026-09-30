@@ -218,33 +218,34 @@ another process. Writing the intent IS the enqueue: the fenced store creates
 the operation's job in the same transaction, under the plan's own id, with a
 payload of one field.
 
-Two consequences are worth knowing before reading the graph. A switch branch
-*owns* its nodes and has one result port, so the single rerun a red gate
-earns lives inside the flake branch together with the readback that folds its
-settlement back into the envelope. And there is no seal node: sealing the base
-root spawns git, so the seal belongs to the worker running the base sample
-batch, which brackets that batch on both sides and reports whether the base
-held. A base that moved voids every number in the run, flattering ones
-included. There is no settle node either, for the same reason and one more:
-removing a worktree spawns git, and settling is already idempotent through
-the experiment's own compare-and-swap, so putting it behind the effect fence
-would give one operation two idempotency mechanisms that could disagree.
+Each dispatch is followed by a conditional graph invocation: a stage that
+prepared no effect skips its wait as well. Each interaction has its own graph
+region, so refusals and the single red-gate rerun resume through the same MAS
+path. The worker brackets the base sample batch with revision and tracked-byte
+checks. A changed base invalidates the measurement.
 
-Authoring is deterministic — no clock, no random source — so the same options
-produce the same version id, and the version is safe to store once and reuse.
+Author the registry with `await evolveRegistryDocument({ experimentMs, profile })`,
+then pass its snapshot revision and the same options to `buildEvolveLifecycle`.
+Registry authoring is asynchronous because the embedded wait graphs have
+content-addressed versions. The same options produce the same registry and
+workflow identities; neither reads a clock or a random source.
 
-`createEvolveEffectWorker` claims those jobs and answers the waits. It reads
-the plan out of the effect record and the address out of the run rather than
-out of the message, so a crash that lost every process that knew them loses
-nothing; `createEffectAddressing` answers the path the run is actually parked
-on, and refuses to answer when it is parked on none or on more than one.
-It uses the effect record id as the response key, which is what makes a crash cheap: a
-worker that dies after running and before answering will, next pass, prepare
-the same semantic plan id, find every leg settled, replay without spawning,
-and answer with the same key — the same response, not a conflict. The one
-case it will not answer is an unresolved leg: the wait stands, and a person
-reconciles it, because inventing a settlement would turn "nobody can account
-for this" into a confident record.
+`createEvolveEffectWorker` reads the plan from the effect record and matches its
+stage to the actual waiting interaction path. It refuses missing or ambiguous
+addresses. With the suite job queue's `checkpointsFor` binding, it persists the
+exact settlement and base seal before answering. A redelivered job reuses that
+evidence and closes only after the response was accepted. It cannot answer a
+later stage with an earlier stage's result. A replay without a persisted base
+seal reports that seal as unknown; it does not claim a new check covers an old
+measurement. Unresolved effects remain for operator reconciliation.
+
+`LifecycleContext.persist` stores readback records and domain transitions;
+`record` writes the evidenced outcome. Both callbacks must be idempotent. The
+keyless instrument drives the workflow against SQLite, checks every registered
+row against its frozen predecessor, and reports its segment and interaction
+counts in [the generated measurement](../../docs/EVOLVE_BENCHMARK.md).
+Workspace settlement runs after the recorded workflow completes. It uses the
+experiment's compare-and-swap and retains uncertain work for review.
 
 ## Stopping one, and cleaning up
 

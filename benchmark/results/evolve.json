@@ -1,9 +1,20 @@
 {
+  "lifecycle": {
+    "workflowVersionId": "fb9ffd51b9e12e3466eef78db298a4c4a21a864e7c61120447b951446d30e086",
+    "segments": 43,
+    "resumes": 27,
+    "interactions": 27,
+    "cancellations": 0,
+    "duplicateProcessRuns": 0,
+    "duplicateBranches": 0,
+    "duplicateModelCalls": 0,
+    "unresolvedLegs": 0
+  },
   "benchmark": "evolve",
   "instrument": {
     "name": "evolve",
     "entry": "benchmark/evolve.ts",
-    "contractRevision": "4c0165dd3641878e9410ed8fffd9a4c27698add642f78ab6960764804c486d5a"
+    "contractRevision": "fe7f79dc0c240f3f27b4020e976fa2de8b83d9595ef701b20c4b5824660ed2f8"
   },
   "source": {
     "files": [
@@ -25,7 +36,11 @@
       },
       {
         "path": "benchmark/lib/evolve-host.ts",
-        "sha256": "c427e346ad13682655486eb0cb2ca07532eee568f3d42835d0eaa2dda6841b04"
+        "sha256": "6dff83a8ccdb35126e008cfbec69ca43e2c2d454bb8cde212602a5232367b9b0"
+      },
+      {
+        "path": "benchmark/lib/evolve-lifecycle.ts",
+        "sha256": "d2543554f519201bd8d893f74e1885ee5162262a26162c4c5f0cd6481de877b5"
       },
       {
         "path": "benchmark/lib/evolve-probes.ts",
@@ -33,11 +48,11 @@
       },
       {
         "path": "benchmark/lib/evolve.ts",
-        "sha256": "26e88d3e868b134840617fe4491f9cbe8aea1b9347f7af72b8bd3dc2bd3cca6a"
+        "sha256": "2720771bf826ac5443aecc5db68723bbd6ad56ea16044149fc494ecb7590e54d"
       },
       {
         "path": "benchmark/lib/evolve.types.ts",
-        "sha256": "caf74e5ef071faaa4d0a72548d0619568a997f8af059a7961d782e3a0c9a62c3"
+        "sha256": "14109947dacd1761efdf64669ba5f15d9634ab0a433bcf28898f3ba3b2bd7d6c"
       },
       {
         "path": "benchmark/lib/report-envelope.ts",
@@ -57,7 +72,7 @@
       },
       {
         "path": "benchmark/schemas/evolve.schema.json",
-        "sha256": "ccebc8b21fa15bf56416ede4b809464809c0517dc7abd2cc0da8d3de08f272a6"
+        "sha256": "2b8640e8f88d10ffeec9a4a4b69998b2af038b7c084de4da1d4a0f50066acdd3"
       },
       {
         "path": "benchmark/scripts/evolve-fixture.ts",
@@ -153,7 +168,7 @@
       },
       {
         "path": "packages/evolve/src/host/worker.ts",
-        "sha256": "81151709a1bd70d84141fe35802c5daafb0a8fd014980a3277072c9aaacfa8d4"
+        "sha256": "2f576b71285601e641a03d40f83c1f81f77c45741925d3ebd1dc501936edcec8"
       },
       {
         "path": "packages/evolve/src/host/worktree.ts",
@@ -169,7 +184,7 @@
       },
       {
         "path": "packages/evolve/src/lifecycle/handlers.ts",
-        "sha256": "cce4f6c4a4ca0d9b20e9917c06ec608687b2e0241542bfa19218e7a6ae4d9648"
+        "sha256": "57dbe44bc11be64aa08c144168d5d71a48c30e23c8af4ee084679ad6464529fc"
       },
       {
         "path": "packages/evolve/src/lifecycle/index.ts",
@@ -177,15 +192,15 @@
       },
       {
         "path": "packages/evolve/src/lifecycle/registry.ts",
-        "sha256": "075977883cdac4b3f425201c17a8deccca51658d34b48d8b058d3cd58791b4e9"
+        "sha256": "102b70c2fe0a07e73ab2abb1fb3252ba8ed5d703eba4507af8ed2f718a3ffd26"
       },
       {
         "path": "packages/evolve/src/lifecycle/state.ts",
-        "sha256": "6a66ada46492a66ae3a4a8d515346f7c808b13f3e1ec1a3f7799bfe74e4da6cc"
+        "sha256": "46770b930c948c99c981f0afd39713e0b573a88ee3e52ba633b4b7734ffc7e8f"
       },
       {
         "path": "packages/evolve/src/lifecycle/workflow.ts",
-        "sha256": "14ce163fe44906cb619b88646fef67763fe020fb7778d2c7ac44e70ddfdecb05"
+        "sha256": "f7175fabc4abdab41e4e62fdd16eee6e3f26fd508c312e9807479bcd9b02da8b"
       },
       {
         "path": "packages/evolve/src/manifest.ts",
@@ -229,10 +244,10 @@
       },
       {
         "path": "test/benchmark/evolve.test.ts",
-        "sha256": "125b37f678bb9cfc241d75f175968fbb60ff7157ced04962ab50aa8b4a8b66f2"
+        "sha256": "1b35b9772c50a55a3f2da2d76c5db2952662b5b70d9776e89c6a44a337d388d8"
       }
     ],
-    "sha256": "5d47c7696cc9297649ae387ac6e0299ff616d20169475c91a51f33ae819f2e8a"
+    "sha256": "2621e1e0ec15cb6feacc4ef7ed8dce8a686fea32eb4898d6fc04fc6e93eafad3"
   },
   "suite": {
     "packages": [
@@ -1303,5 +1318,5 @@
     ]
   },
   "decision": "oracle-exact",
-  "reportId": "c55569154f6d882a6d11e2be8ce174fa55f863dc9d4125d6983ed6194616cc35"
+  "reportId": "a1e3d3d76b5e4310a6037cba8ed81cf8396e16c247bc83eb8e06c844350519ed"
 }

@@ -13,14 +13,14 @@
  * reproduce its measurement instead of taking it again.
  *
  * Nothing here decides what evidence MEANS. `evolve-decide` calls the
- * campaign's one planner, and the planner is the only place a verdict
+ * experiment decision planner, and the planner is the only place a verdict
  * becomes a decision.
  */
 
 import type { MasTaskHandlerBinding, MasTaskInput } from '@tangleai/mas';
 
 import type { EvolveOutcome, EvolveIssue } from '../errors.ts';
-import type { EvolveBudgets, Direction } from '../contracts.gen.ts';
+import type { EvolveBudgets, Direction, EvolveGateResult, EvolveMeasurement } from '../contracts.gen.ts';
 import { planExperimentDecision } from '../decide.ts';
 import type { PreparedPatch } from '../patch.ts';
 import type { EffectPlan, EffectPreparation } from '../host/driver.ts';
@@ -61,7 +61,7 @@ export interface LifecycleContext {
   metric: { name: string, direction: Direction };
   truth: number;
   minDelta?: number;
-  /** Prepared by the caller: 04's refiner output, or its refusal. */
+  /** Prepared by the caller: the refiner output, or its refusal. */
   prepared: EvolveOutcome<PreparedPatch>;
   /** Turn a refusal into the decision the planner would have reached. */
   decideRefusal: (issues: EvolveIssue[]) => {
@@ -71,6 +71,8 @@ export interface LifecycleContext {
   };
   /** Record the outcome. Idempotent by key in the outcome service. */
   record: (env: EvolveEnvelope) => Promise<void>;
+  /** Idempotently persist a readback and its domain transition. Never spawns. */
+  persist?: (stage: EvolveEffectStage | 'fitness', record?: EvolveGateResult | EvolveMeasurement) => Promise<void>;
 }
 
 const envelopeOf = (input: MasTaskInput): EvolveEnvelope =>
@@ -81,7 +83,7 @@ export function planFor(stage: EvolveEffectStage, context: LifecycleContext): Ef
   const { experimentId, worktreePath } = context;
   switch (stage) {
     case 'isolate':
-      // The write plan is 04's, already validated against the immutable
+      // The write plan is the refiner's, already validated against the immutable
       // surface. A dispatch cannot invent one.
       if (!context.prepared.ok) return null;
       return isolatePlan({
@@ -138,7 +140,7 @@ export function createEvolveLifecycleHandlers(
 
   handlers['evolve-propose'] = (input: MasTaskInput) => {
     const env = envelopeOf(input);
-    // 04 already decided whether this patch may be applied at all. A
+    // The refiner already decided whether this patch may be applied at all. A
     // refusal here is the whole reason nine of the sixteen registered
     // proposals never reach a worktree: they are refused before anything
     // could run, at zero process cost.
@@ -173,11 +175,22 @@ export function createEvolveLifecycleHandlers(
       const answer = readSettlement(input.value.settled);
       // A leg nobody can account for is terminal and is NOT a verdict
       // about the change: the worker deliberately leaves it unanswered.
-      if (answer === null || answer.state === 'unresolved') return { env: uncertain(env) };
+      if (answer === null || answer.state === 'unresolved'
+        || answer.operationId !== context.experimentId + '/' + stage) return { env: uncertain(env) };
 
       const plan = planFor(stage, context);
       let next = counted(env, legsFor(stage, context.budgets));
       if (plan !== null) next = settled(next, plan.id);
+
+      if (stage === 'isolate' || stage === 'apply') {
+        if (answer.state === 'rejected') {
+          const issues = answer.evidence?.issues as EvolveIssue[] | undefined;
+          return { env: decide(next, context.decideRefusal(issues ?? [{
+            code: 'TEVO1003', path: '/effects/' + stage, detail: 'escape: workspace operation refused',
+          }])) };
+        }
+        await context.persist?.(stage);
+      }
 
       if (stage === 'gate' || stage === 'gate-rerun') {
         const read = await readGateResult({
@@ -186,6 +199,7 @@ export function createEvolveLifecycleHandlers(
           budgets: context.budgets, leg: stage as GateLeg, transcript: context.transcript,
         });
         if (!read.ok) return { env: uncertain(next) };
+        await context.persist?.(stage, read.value.record);
         next = stage === 'gate'
           ? { ...next, gate: read.value.verdict }
           : { ...next, rerun: read.value.verdict };
@@ -231,15 +245,17 @@ export function createEvolveLifecycleHandlers(
       // ABSENCE of evidence, which the planner reads as unverifiable
       // rather than as a regression.
       const fatal = measured.issues.some(one => one.code === 'TEVO1003' || one.code === 'TEVO1009');
+      if (!fatal) await context.persist?.('fitness');
       return { env: fatal ? uncertain(env) : { ...env, fitness: 'unverifiable' } };
     }
+    await context.persist?.('fitness', measured.value.record);
     return { env: { ...env, fitness: measured.value.comparison } };
   };
 
   handlers['evolve-decide'] = (input: MasTaskInput) => {
     const env = envelopeOf(input);
     if (decided(env)) return { env };
-    // The campaign's one planner, over records. Everything before this
+    // The experiment decision planner, over records. Everything before this
     // gathered evidence; nothing before it decided what the evidence meant.
     const planned = planExperimentDecision({
       gate: env.gate, rerun: env.rerun, fitness: env.fitness,

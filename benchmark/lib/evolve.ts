@@ -45,6 +45,7 @@ import runIdentitySchema from '../../packages/config/schemas/run-identity.schema
 import { count, table } from './table.ts';
 import type { Controls, Counts, Evolve, HostProbe, Row, SourceManifest } from './evolve.types.ts';
 import { runHostProbes } from './evolve-probes.ts';
+import type { LifecycleCounts } from './evolve-lifecycle.ts';
 import { withExperimentHost, runExperiment } from './evolve-host.ts';
 import { aggregateFailures, roundScore } from '@tangleai/evolve';
 
@@ -71,6 +72,7 @@ export const SOURCE_MANIFEST: readonly string[] = [
   'benchmark/lib/args.ts',
   'benchmark/lib/evolve-fixture.ts',
   'benchmark/lib/evolve-host.ts',
+  'benchmark/lib/evolve-lifecycle.ts',
   'benchmark/lib/evolve-probes.ts',
   'benchmark/lib/evolve.ts',
   'benchmark/lib/evolve.types.ts',
@@ -277,6 +279,7 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
   // produced — this file counts what came back and judges nothing.
   const baseFiles = await fixtureFileMap(root);
   const rows: Row[] = [];
+  let lifecycle: LifecycleCounts | undefined;
   const spent = await withExperimentHost(root, loaded, async (host) => {
     const before = await host.protectedRefs();
 
@@ -295,6 +298,15 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
         expect,
       }, host, baseFiles);
       rows.push(run.row);
+      if (lifecycle === undefined) lifecycle = { ...run.lifecycle };
+      else {
+        if (lifecycle.workflowVersionId !== run.lifecycle.workflowVersionId) throw new Error('Lifecycle changed during the run.');
+        lifecycle.segments += run.lifecycle.segments;
+        lifecycle.resumes += run.lifecycle.resumes;
+        lifecycle.interactions += run.lifecycle.interactions;
+        lifecycle.cancellations += run.lifecycle.cancellations;
+        lifecycle.unresolvedLegs += run.lifecycle.unresolvedLegs;
+      }
     }
 
     // Read back rather than asserted: whether anything reached a protected
@@ -314,7 +326,9 @@ export async function buildReport(options: BuildOptions = {}): Promise<Evolve> {
   const hostProbes: HostProbe[] = (await runHostProbes(loaded.manifest.hostProbes))
     .map((probe): HostProbe => ({ id: probe.id as HostProbe['id'], state: probe.state, detail: probe.detail }));
 
+  if (lifecycle === undefined) throw new Error('No lifecycle ran.');
   const report: Evolve = {
+    lifecycle,
     benchmark: 'evolve',
     instrument: {
       name: 'evolve',
@@ -478,6 +492,13 @@ export function renderDocument(report: Evolve): string {
   }));
   lines.push('');
   lines.push('Every reason keeps its column whether or not it happened: an absent column is how a losing row disappears. Protected-ref writes and live model calls are literal zeros the schema asserts, so a report of a run that wrote a protected ref or bought a completion cannot validate at all.');
+  lines.push('');
+
+  lines.push('## Durable lifecycle');
+  lines.push('');
+  lines.push(`The registered workflow ran ${report.lifecycle.segments} segments with ${report.lifecycle.resumes} resumes and ${report.lifecycle.interactions} answered interactions. Cancelled: ${report.lifecycle.cancellations}; unresolved legs: ${report.lifecycle.unresolvedLegs}. Duplicate process runs: ${report.lifecycle.duplicateProcessRuns}; duplicate branches: ${report.lifecycle.duplicateBranches}; duplicate model calls: ${report.lifecycle.duplicateModelCalls}. These counts describe this keyless run; the crash matrix separately checks replay without duplicate spend.`);
+  lines.push('');
+  lines.push(`Workflow version: \`${report.lifecycle.workflowVersionId}\`.`);
   lines.push('');
 
   const { aggregate } = report;

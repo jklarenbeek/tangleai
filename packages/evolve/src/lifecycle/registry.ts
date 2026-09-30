@@ -15,7 +15,8 @@
  * command by key.
  */
 
-import { EVOLVE_WORKFLOW_ID } from './workflow.ts';
+import { EVOLVE_WORKFLOW_ID, EVOLVE_EFFECT_STAGES, buildEvolveEffectGraphs, type EvolveLifecycleOptions } from './workflow.ts';
+export { EVOLVE_EFFECT_STAGES } from './workflow.ts';
 
 export interface EvolveHandlerDeclaration {
   id: string;
@@ -33,10 +34,6 @@ export interface EvolveHandlerDeclaration {
  * in the effect fence would give one operation two idempotency mechanisms
  * that could disagree. It is a reconciler over runs that have stopped.
  */
-export const EVOLVE_EFFECT_STAGES = [
-  'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate',
-] as const;
-
 export type EvolveEffectStage = (typeof EVOLVE_EFFECT_STAGES)[number];
 
 const dispatchHandler = (stage: string): EvolveHandlerDeclaration => ({
@@ -48,16 +45,16 @@ const dispatchHandler = (stage: string): EvolveHandlerDeclaration => ({
 
 const readHandler = (stage: string): EvolveHandlerDeclaration => ({
   id: 'evolve-read-' + stage,
-  title: 'Read what the ' + stage + ' operation settled',
-  effect: 'read',
-  idempotency: 'not-required',
+  title: 'Persist what the ' + stage + ' operation settled',
+  effect: 'effectful',
+  idempotency: 'honored',
 });
 
 const DECLARED: EvolveHandlerDeclaration[] = [
   { id: 'evolve-propose', title: 'Load and validate the registered proposal', effect: 'read', idempotency: 'not-required' },
   ...EVOLVE_EFFECT_STAGES.flatMap(stage => [dispatchHandler(stage), readHandler(stage)]),
   { id: 'evolve-no-rerun', title: 'Carry the envelope past the flake branch unchanged', effect: 'pure', idempotency: 'not-required' },
-  { id: 'evolve-read-fitness', title: 'Read both sample batches as one measurement', effect: 'read', idempotency: 'not-required' },
+  { id: 'evolve-read-fitness', title: 'Persist both sample batches as one measurement', effect: 'effectful', idempotency: 'honored' },
   { id: 'evolve-decide', title: 'Plan the experiment decision over the collected records', effect: 'pure', idempotency: 'not-required' },
   { id: 'evolve-record', title: 'Record the outcome through the outcome service', effect: 'effectful', idempotency: 'honored' },
 ];
@@ -67,7 +64,10 @@ export const EVOLVE_HANDLERS: readonly EvolveHandlerDeclaration[] =
   Object.freeze([...DECLARED].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)));
 
 /** The registry document the lifecycle validates against. */
-export function evolveRegistryDocument(): Record<string, unknown> {
+export async function evolveRegistryDocument(
+  options: Pick<EvolveLifecycleOptions, 'experimentMs' | 'profile'> = { experimentMs: 600000, profile: 'evolve' },
+): Promise<Record<string, unknown>> {
+  const graphs = await buildEvolveEffectGraphs(options);
   return {
     $masRegistry: '0.1',
     registryId: EVOLVE_WORKFLOW_ID,
@@ -82,6 +82,6 @@ export function evolveRegistryDocument(): Record<string, unknown> {
     messageAdapters: [{ id: 'json-schema', version: '0.1' }],
     contextAdapters: [],
     templates: [],
-    subgraphs: [],
+    subgraphs: graphs.map(workflow => ({ id: workflow.workflowId, versionId: workflow.versionId, workflow })),
   };
 }

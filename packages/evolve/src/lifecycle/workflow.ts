@@ -1,37 +1,11 @@
 /**
- * The experiment lifecycle as one immutable workflow version.
- *
- * The shape is forced by a single rule: **no spawn ever happens inside a
- * MAS segment.** A segment handler is not given the suite job lease, and
- * the effect store asserts that the lease's `jobId` is the plan's, so an
- * effect operation is always its own job. Every effectful stage is
- * therefore a PAIR — a task that writes the intent and enqueues it, and an
- * interaction that waits for a worker in another process to answer.
- *
- * Two consequences that are not obvious from the stage list:
- *
- * A switch branch OWNS its nodes rather than routing to them, and has one
- * result port per branch. The flake branch therefore holds the rerun pair
- * AND the fold that turns its settlement back into an envelope, because
- * only the envelope can leave the branch.
- *
- * The base seal is NOT a node. Sealing the base root spawns git —
- * `rev-parse`, `status`, a tracked digest — and a spawn may not happen in
- * a segment, so a seal node would break the same rule the pairs exist to
- * keep. It belongs to the worker instead: the base batch is the one
- * operation that runs in the operator's own root, and the worker brackets
- * that batch with the seal on both sides and reports whether it held. The
- * bracket stays exactly where the sequential path put it, and the
- * workflow keeps its promise that nothing here reaches a process.
- *
- * One envelope schema travels every edge. That is deliberate: a closed
- * per-stage payload would multiply into a dozen near-identical schemas
- * whose only real invariant is that the next stage can read what the last
- * one wrote.
+ * One durable experiment. Dispatches persist intents; conditional subgraphs
+ * wait only for operations that were actually prepared. Interactions belong
+ * to graph regions, never to a switch branch's DAG region.
  */
 
 import {
-  defineMasWorkflow, taskInvocation, interactionInvocation, switchInvocation, masMessage,
+  defineMasWorkflow, taskInvocation, interactionInvocation, switchInvocation, graphInvocation, masMessage,
   type MasWorkflow,
 } from '@tangleai/mas';
 
@@ -135,30 +109,46 @@ const await_ = (id: string, expiryMs: number) => interactionInvocation({
 const fold = (id: string, handler: string) => taskInvocation({
   id,
   handler,
-  effect: 'read',
+  effect: 'effectful',
   input: { env: envelope as never, settled: settlement as never },
   output: { env: envelope as never },
 });
 
-/** One dispatch → wait → fold triple, and the edges that wire it. */
-function stage(name: string, expiryMs: number) {
-  const dispatchId = name;
-  const waitId = 'await-' + name;
-  const foldId = 'read-' + name;
-  return {
-    nodes: [
-      dispatch(dispatchId, 'evolve-dispatch-' + name),
-      await_(waitId, expiryMs),
-      fold(foldId, 'evolve-read-' + name),
+/** Registered operations, shared by authoring, handlers and the worker. */
+export const EVOLVE_EFFECT_STAGES = [
+  'isolate', 'apply', 'gate', 'gate-rerun', 'measure-base', 'measure-candidate',
+] as const;
+
+const limitsFor = (ms: number) => ({
+  calls: 32, tokens: 200000, ms, toolRounds: 4, fanOut: 8,
+  concurrency: 8, iterations: 8, contextChars: 40000, traceBytes: 1000000,
+});
+
+/** The same predicates as stageRuns, expressed in the workflow vocabulary. */
+function enabled(stage: string): Record<string, unknown> {
+  const open = { $eq: ['$.env.decision', null] };
+  if (stage === 'gate-rerun') return { $and: [open, { $eq: ['$.env.gate', 'red'] }] };
+  if (stage.startsWith('measure-')) return { $and: [open, { $eq: ['$.env.gate', 'green'] }] };
+  return open;
+}
+
+/** Each wait has its own resumable region, entered only after dispatch. */
+export async function buildEvolveEffectGraphs(options: Pick<EvolveLifecycleOptions, 'experimentMs' | 'profile'>): Promise<MasWorkflow[]> {
+  return Promise.all(EVOLVE_EFFECT_STAGES.map(name => defineMasWorkflow({
+    workflowId: EVOLVE_WORKFLOW_ID + '-' + name,
+    title: 'Await ' + name,
+    description: 'Read one fenced settlement without running a process.',
+    registryRevision: null, configRegistryRevision: null,
+    profile: options.profile, limits: limitsFor(options.experimentMs),
+    input: carrier as never, output: carrier as never,
+    entry: [
+      { port: 'env', to: { node: 'await-' + name, port: 'env' } },
+      { port: 'env', to: { node: 'read-' + name, port: 'env' } },
     ],
-    messages: [
-      masMessage([dispatchId, 'env'], [waitId, 'env']),
-      masMessage([dispatchId, 'env'], [foldId, 'env']),
-      masMessage([waitId, 'settled'], [foldId, 'settled']),
-    ],
-    entryId: dispatchId,
-    exitId: foldId,
-  };
+    exit: [{ port: 'env', from: { node: 'read-' + name, port: 'env' } }],
+    nodes: [await_('await-' + name, options.experimentMs), fold('read-' + name, 'evolve-read-' + name)],
+    messages: [masMessage(['await-' + name, 'settled'], ['read-' + name, 'settled'])],
+  })));
 }
 
 export interface EvolveLifecycleOptions {
@@ -178,131 +168,50 @@ export interface EvolveLifecycleOptions {
  * version safe to store once and reuse forever.
  */
 export async function buildEvolveLifecycle(options: EvolveLifecycleOptions): Promise<MasWorkflow> {
-  const { experimentMs } = options;
-
-  const isolate = stage('isolate', experimentMs);
-  const apply = stage('apply', experimentMs);
-  const gate = stage('gate', experimentMs);
-  const rerun = stage('gate-rerun', experimentMs);
-  const measureBase = stage('measure-base', experimentMs);
-  const measureCandidate = stage('measure-candidate', experimentMs);
-
+  const stages = EVOLVE_EFFECT_STAGES.map(name => ({
+    name, route: name + '-route', graph: 'effect-' + name, skip: 'skip-' + name,
+  }));
   return defineMasWorkflow({
     workflowId: EVOLVE_WORKFLOW_ID,
     title: 'Repository experiment lifecycle',
-    description:
-      'Propose, isolate, apply, gate, measure, decide and record one isolated '
-      + 'repository experiment. Every process effect is a typed wait answered '
-      + 'by the effect worker; nothing here spawns. Settling the workspace is '
-      + 'a reconciler over stopped runs, not a stage.',
+    description: 'Propose, dispatch bounded effects, await their settlements, decide and record. Workspace settlement is a host reconciler.',
     registryRevision: options.registryRevision,
     configRegistryRevision: options.configRegistryRevision,
-    profile: options.profile,
-    // `ms` is the registered `experimentMs` CEILING, not a target: the
-    // keyless matrix spends nothing and the cap is asserted, never
-    // consumed. The model budgets are the suite defaults because this
-    // workflow calls no model at all.
-    limits: {
-      calls: 32, tokens: 200000, ms: experimentMs,
-      toolRounds: 4, fanOut: 8, concurrency: 8, iterations: 8,
-      contextChars: 40000, traceBytes: 1000000,
-    },
-    input: carrier as never,
-    output: carrier as never,
+    profile: options.profile, limits: limitsFor(options.experimentMs),
+    input: carrier as never, output: carrier as never,
     entry: [{ port: 'env', to: { node: 'propose', port: 'env' } }],
     exit: [{ port: 'env', from: { node: 'record', port: 'env' } }],
     nodes: [
-      // Loading and validating a proposal reads the base file map and
-      // decides nothing about the world. A refusal here ends the run with
-      // zero effects, which is why nine of the sixteen registered rows
-      // never reach a worktree.
       reads('propose', 'evolve-propose'),
-
-      ...isolate.nodes,
-      ...apply.nodes,
-      ...gate.nodes,
-
-      // The flake switch. Its branches OWN their nodes, and each branch
-      // has exactly one result port — so the rerun's fold is inside the
-      // branch, not after it.
-      switchInvocation({
-        id: 'flake',
-        // Disjoint port names on purpose: `env` is the port whose value is
-        // RELAYED to the branch members, and `next` is the one branch
-        // result that leaves. Sharing a name makes relay addressing
-        // ambiguous and the validator refuses it.
-        input: { env: envelope as never },
-        output: { next: envelope as never },
-        mode: 'one-of',
-        default: 'straight',
-        branches: [
-          {
-            id: 'rerun',
-            when: { $eq: ['$.env.gate', 'red'] },
-            nodes: [rerun.entryId, 'await-gate-rerun', rerun.exitId],
-            result: { node: rerun.exitId, port: 'env' },
-          },
-          {
-            id: 'straight',
-            when: { $ne: ['$.env.gate', 'red'] },
-            nodes: ['no-rerun'],
-            result: { node: 'no-rerun', port: 'env' },
-          },
-        ],
-      }),
-      ...rerun.nodes,
-      pure('no-rerun', 'evolve-no-rerun'),
-
-      // Measurement. The base batch carries its own seal, taken by the
-      // worker on both sides of it; `read-measure-base` refuses when the
-      // settlement says the seal did not hold.
-      ...measureBase.nodes,
-      ...measureCandidate.nodes,
-      reads('read-fitness', 'evolve-read-fitness'),
-
-      // The campaign's one planner. Everything above gathered evidence;
-      // nothing above decided what the evidence meant.
+      ...stages.flatMap(({ name, route, graph, skip }) => [
+        dispatch(name, 'evolve-dispatch-' + name),
+        switchInvocation({
+          id: route, input: { env: envelope as never }, output: { next: envelope as never },
+          mode: 'one-of', default: 'skip',
+          branches: [
+            { id: 'run', when: enabled(name) as never, nodes: [graph], result: { node: graph, port: 'env' } },
+            { id: 'skip', when: { $not: enabled(name) } as never, nodes: [skip], result: { node: skip, port: 'env' } },
+          ],
+        }),
+        graphInvocation({
+          id: graph, subgraph: EVOLVE_WORKFLOW_ID + '-' + name,
+          input: { env: envelope as never }, output: { env: envelope as never },
+        }),
+        pure(skip, 'evolve-no-rerun'),
+      ]),
+      dispatch('read-fitness', 'evolve-read-fitness'),
       pure('decide', 'evolve-decide'),
-
-      // Idempotent because the outcome service reserves and replays every
-      // command by key.
-      taskInvocation({
-        id: 'record',
-        handler: 'evolve-record',
-        effect: 'effectful',
-        input: { env: envelope as never },
-        output: { env: envelope as never },
-      }),
+      dispatch('record', 'evolve-record'),
     ],
     messages: [
-      ...isolate.messages,
-      ...apply.messages,
-      ...gate.messages,
-      ...rerun.messages,
-      ...measureBase.messages,
-      ...measureCandidate.messages,
-
-      masMessage(['propose', 'env'], [isolate.entryId, 'env']),
-      masMessage([isolate.exitId, 'env'], [apply.entryId, 'env']),
-      masMessage([apply.exitId, 'env'], [gate.entryId, 'env']),
-      masMessage([gate.exitId, 'env'], ['flake', 'env']),
-
-      // A switch's branch members source from the switch's own INPUT port.
-      masMessage(['flake', 'env'], [rerun.entryId, 'env']),
-      masMessage(['flake', 'env'], ['no-rerun', 'env']),
-
-      masMessage(['flake', 'next'], [measureBase.entryId, 'env']),
-      masMessage([measureBase.exitId, 'env'], [measureCandidate.entryId, 'env']),
-      masMessage([measureCandidate.exitId, 'env'], ['read-fitness', 'env']),
+      masMessage(['propose', 'env'], [stages[0].name, 'env']),
+      ...stages.flatMap(({ name, route, graph, skip }, index) => [
+        masMessage([name, 'env'], [route, 'env']),
+        masMessage([route, 'env'], [graph, 'env']),
+        masMessage([route, 'env'], [skip, 'env']),
+        masMessage([route, 'next'], [stages[index + 1]?.name ?? 'read-fitness', 'env']),
+      ]),
       masMessage(['read-fitness', 'env'], ['decide', 'env']),
-
-      // Settling is NOT a stage. Removing a worktree and deleting a branch
-      // spawn git, and a segment may not spawn — so a settle task would
-      // break the same rule the pairs exist to keep, while a settle PAIR
-      // would stack the effect fence on top of the compare-and-swap that
-      // already makes settling idempotent. It is a reconciler over runs
-      // that have stopped, exactly as cancellation's cleanup is, and for
-      // the same reason: a stopped run executes no further segment.
       masMessage(['decide', 'env'], ['record', 'env']),
     ],
   });

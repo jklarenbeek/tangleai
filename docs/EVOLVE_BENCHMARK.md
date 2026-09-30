@@ -92,6 +92,12 @@ Refusals that cannot be written as a patch over the worktree file map and must b
 
 Every reason keeps its column whether or not it happened: an absent column is how a losing row disappears. Protected-ref writes and live model calls are literal zeros the schema asserts, so a report of a run that wrote a protected ref or bought a completion cannot validate at all.
 
+## Durable lifecycle
+
+The registered workflow ran 43 segments with 27 resumes and 27 answered interactions. Cancelled: 0; unresolved legs: 0. Duplicate process runs: 0; duplicate branches: 0; duplicate model calls: 0. These counts describe this keyless run; the crash matrix separately checks replay without duplicate spend.
+
+Workflow version: `fb9ffd51b9e12e3466eef78db298a4c4a21a864e7c61120447b951446d30e086`.
+
 ## What the round amounts to
 
 A census counts failures; it does not say which of them are worth changing anything over. A mechanism that revised itself once per observed failure would bend around whatever it happened to see — narrowing what it accepts and getting worse at cases nobody showed it. What separates evidence about the MECHANISM from evidence about one PROPOSAL is recurrence across distinct instances, so a failure group is called `systematic` only when at least two unrelated proposals produced it. That threshold is an inductive bias and not a proof of cause; single-instance groups are kept below as evidence rather than discarded.
@@ -116,4 +122,4 @@ Of 15 failures, 14 belong to a group that recurs across distinct proposals and 1
 
 Round score 1/16 (0.0625). `compareRounds` states the rule this number exists for — a candidate mechanism is accepted only on a strict improvement of it, and a tie is rejected because equal evidence is not a reason to move — because per-instance acceptance cannot see a change that fixes the case in front of it and quietly breaks two others. It also refuses to compare two rounds that answered a different number of experiments at all: an experiment that never ran is not an attempt, so dropping the hard instances raises the ratio and padding it with easy ones raises it too, and neither repaired anything. Nothing calls that comparator yet: every acceptance in this run was decided one experiment at a time by `planExperimentDecision`, and the score above is published as evidence, not as a gate. The rule is here so that the loop which will need it does not have to invent one.
 
-Report `c55569154f6d…`, contract `4c0165dd3641…`, source `5d47c7696cc9…`, decision **oracle-exact**.
+Report `a1e3d3d76b5e…`, contract `fe7f79dc0c24…`, source `2621e1e0ec15…`, decision **oracle-exact**.

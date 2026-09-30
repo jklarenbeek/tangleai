@@ -529,6 +529,10 @@ describe('the committed measurement claims exactly what it measured', () => {
 describe('two runs render the same bytes and no clock', () => {
   it('renders byte-identical JSON and Markdown over a frozen source', async () => {
     const first = await buildReport({ source: FROZEN_SOURCE });
+    const pinnedRows = JSON.parse(await readFile(new URL('../fixtures/evolve-rows.json', import.meta.url), 'utf8'));
+    assert.deepEqual(first.rows, pinnedRows, 'the executing workflow preserves the sequential oracle row bytes');
+    assert.ok(first.lifecycle.interactions > 0);
+    assert.equal(first.lifecycle.segments, first.counts.attempted + first.lifecycle.resumes);
     const second = await buildReport({ source: FROZEN_SOURCE });
     assert.equal(renderReport(first), renderReport(second));
     assert.equal(renderDocument(first), renderDocument(second));

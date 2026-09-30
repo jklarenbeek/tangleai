@@ -56,6 +56,7 @@ export type CrashPoint =
   | `before-answer:${string}`
   /** The wait is answered; the resume segment was never enqueued. */
   | 'after-answer'
+  | 'after-effect-answer'
   /** The resume segment is enqueued; nobody claimed it that round. */
   | 'before-resume'
   /** The run reached its terminal status; its job never completed. */
@@ -110,7 +111,7 @@ export async function preparedProposal(id = PROPOSAL): Promise<PreparedPatch> {
 
 /** The lifecycle version, its registry snapshot and its executable plan. */
 export async function lifecycleVersion(experimentMs = 600_000) {
-  const registry = await createMasRegistrySnapshot(evolveRegistryDocument());
+  const registry = await createMasRegistrySnapshot(await evolveRegistryDocument());
   assert.ok(registry.valid, JSON.stringify(registry));
   const catalog = await createMasConfigCatalog({ profiles: ['evolve'], tools: [], contexts: [] });
   assert.ok(catalog.valid);
@@ -260,7 +261,13 @@ export async function driveExperiment(
   const deferred: string[] = [];
 
   const worker = createEvolveEffectWorker({
-    jobs: jobs as never,
+    jobs: {
+      ...jobs,
+      complete: async (lease: never, result: unknown) => {
+        if (fires('after-effect-answer')) throw new Error('crash after answering before job completion');
+        return jobs.complete(lease, result);
+      },
+    } as never,
     effects: fixture.store as never,
     addressing: createEffectAddressing({
       waitingPaths: async (id) => {
