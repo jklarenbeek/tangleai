@@ -25,6 +25,7 @@
     "packages/evolve",
     "packages/gmpl",
     "packages/hera",
+    "packages/forecast",
     "packages/store"
   ],
   "privateWorkspaces": [

@@ -2,12 +2,20 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "94503b3326a6415287adfee3a4a612eba6504022",
+    "head": "161701ded7cf5977ece6aa1393e722cde8c2d22e",
     "clean": false,
     "files": [
       {
+        "path": "benchmark/fixtures/forecast/harness/candidates.json",
+        "sha256": "bcaa0268e6dde9d43edacf1ab613224ae1a558a17024045e0704a46b3b51a970"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/harness/seed.json",
+        "sha256": "f6a974a43638889b5c02c993622870957a32bb9e82ff4d68744df4582ea1a9c0"
+      },
+      {
         "path": "benchmark/fixtures/forecast/manifest.json",
-        "sha256": "7dfdd87a8ada2bc1482bd2e409ebe1cfec3b069c16c2aec19e374481469cc774"
+        "sha256": "f7a145fa51645c2f990840874d84763c766f72c5ee146e07592945c618fccd57"
       },
       {
         "path": "benchmark/fixtures/forecast/questions.json",
@@ -15,7 +23,7 @@
       },
       {
         "path": "benchmark/fixtures/forecast/resolutions.json",
-        "sha256": "b2666164f3a47fa1c643f843da1c7c35b4738f8da315ef262c2eda6514cbf591"
+        "sha256": "afae79da3829a58ef2a6eed9e4031e6839056e50282e1ce54ba63976fde4f5c2"
       },
       {
         "path": "benchmark/fixtures/forecast/scripted/duplicates.json",
@@ -39,7 +47,7 @@
       },
       {
         "path": "benchmark/fixtures/forecast/snapshots.json",
-        "sha256": "db3c79570a864cf6acb78630f2eeb7c49a3029f8fa35e7e8c0c7f984bf529cac"
+        "sha256": "056084446e40d191b1c673c0da19afa617d8f2097454ca02191e4d7f5810ebb2"
       },
       {
         "path": "benchmark/forecast.ts",
@@ -151,15 +159,23 @@
       },
       {
         "path": "benchmark/lib/forecast-fixtures.ts",
-        "sha256": "b1515945e3be864aa3f4c6e28605a27db3be06dd29f531defafd9796cdec8cc0"
+        "sha256": "fd2aca7dbb84f620a69265802409eef8bc8ab658158f7747f0f6e28fb098c59c"
       },
       {
         "path": "benchmark/lib/forecast-oracle.ts",
-        "sha256": "bb7e05ef357c3b78864963af22d9cc19b4fa6ec11d971a776887cd872ca5d145"
+        "sha256": "98dc6a4a95bee26c92f77cf6263315056f8e6e8d2042aced3dacdfb48307ab3e"
       },
       {
         "path": "benchmark/lib/forecast-report.ts",
         "sha256": "202454a0ccd30e77bfb48acb30b6326262173328a71fa8a2516a8a6cacffad00"
+      },
+      {
+        "path": "benchmark/lib/forecast-store-fixture.ts",
+        "sha256": "7257e5ab31a60deecab0b6815590bcf888f801642d2f8badc50ae99cba9699bd"
+      },
+      {
+        "path": "benchmark/lib/forecast-store-probes.ts",
+        "sha256": "e4c1dff2185e0b7c65b1ef316e4b04e43ab6cf65dad98a4ffebe747ebacdc497"
       },
       {
         "path": "benchmark/lib/forecast.types.ts",
@@ -587,16 +603,16 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "f66bce8d4a23dcf650666c0e5bdb400f258757ad9a9f748aff835a23699cea63"
+        "sha256": "4bf59aecef171550fbfd51eccf2068679fa443f3afd9c7e4c46b1c25945da9cf"
       },
       {
         "path": "package.json",
-        "sha256": "c70f59f47d452734f7e301aa8fc7299a7274f234a72bdc819b22346699fbb9f8"
+        "sha256": "67fd9daf4625a63bcabf3ae40bb9a015502331bdd16b5ef61c4be31ceaa65e47"
       }
     ],
-    "sha256": "217555b4ec7cedd9a61d041aa5a6c5aaa094a46700b2ab4b493438f157d22749"
+    "sha256": "7c3913bfe02931a2583d0b33bc761dc32d887197959080fc596915aee88bd143"
   },
-  "registrationId": "cdc0d6cd4b53dc5100e22bdeed372ad008ad42c4b78d061d036d0374dfb4a4b4",
+  "registrationId": "656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667",
   "fixture": {
     "questions": 6,
     "checkpoints": 18,
@@ -4693,5 +4709,5 @@
     "No provider is called. Analytic revisions identify the scorer/cutoff policy, with no prompt or tool execution. Missing mechanism identities are null until actual executors supply them.",
     "No live plan is registered yet."
   ],
-  "reportId": "e42361e6157b35daa947b693c26264d9c6e5964cbffef2f8062883ebd093f400"
+  "reportId": "9606156dd2d4ecd968fe4b37d080f0c717496ae7b172dc72cdf7c3f0e00665b5"
 }

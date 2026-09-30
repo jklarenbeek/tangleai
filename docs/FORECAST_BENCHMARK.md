@@ -57,4 +57,4 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 - No provider is called. Analytic revisions identify the scorer/cutoff policy, with no prompt or tool execution. Missing mechanism identities are null until actual executors supply them.
 - No live plan is registered yet.
 
-Registration: `cdc0d6cd4b53dc5100e22bdeed372ad008ad42c4b78d061d036d0374dfb4a4b4`. Source: `217555b4ec7cedd9a61d041aa5a6c5aaa094a46700b2ab4b493438f157d22749`. Report: `e42361e6157b35daa947b693c26264d9c6e5964cbffef2f8062883ebd093f400`.
+Registration: `656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667`. Source: `7c3913bfe02931a2583d0b33bc761dc32d887197959080fc596915aee88bd143`. Report: `9606156dd2d4ecd968fe4b37d080f0c717496ae7b172dc72cdf7c3f0e00665b5`.

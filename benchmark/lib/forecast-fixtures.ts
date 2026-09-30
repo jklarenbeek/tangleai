@@ -6,7 +6,7 @@ import {canonicalSha256} from '@jarenjs/json/canonical';
 import {applyJSONPatch} from '@jarenjs/json/patch';
 import {equalsJson} from '@jarenjs/core/object';
 import {createReportValidator} from './validate.ts';
-import {cutoffAdmits} from './forecast-oracle.ts';
+import {cutoffAdmits,forecastInstant} from './forecast-oracle.ts';
 import schema from '../schemas/forecast.schema.json' with {type:'json'};
 import type {Manifest,Question,Snapshot,Resolution,HarnessDocument,Candidate} from './forecast.types.ts';
 
@@ -42,11 +42,14 @@ export async function loadForecastFixtures(root=process.cwd()){
   }
   let postCutoff=0,undated=0;
   for(const snapshot of snapshots){
+    if(snapshot.availableAt!==null)forecastInstant(snapshot.availableAt);
     if(!questions.some(q=>q.id===snapshot.questionId)||createHash('sha256').update(snapshot.excerpt).digest('hex')!==snapshot.sha256)throw Error('Snapshot ownership or excerpt digest mismatch.');
   }
   for(const question of questions){
+    forecastInstant(question.issuedAt);forecastInstant(question.expectedResolutionAt);
     let previous=question.issuedAt;
     for(const [index,checkpoint] of question.checkpoints.entries()){
+      forecastInstant(checkpoint.scheduledAt);forecastInstant(checkpoint.cutoffAt);
       if(checkpoint.ordinal!==index+1||checkpoint.scheduledAt<=previous||checkpoint.cutoffAt>checkpoint.scheduledAt||checkpoint.scheduledAt>question.expectedResolutionAt)throw Error('Checkpoint chronology drift.');
       previous=checkpoint.scheduledAt;let admitted=0;
       for(const id of checkpoint.snapshotIds){const snapshot=snapshots.find(s=>s.id===id);if(!snapshot||snapshot.questionId!==question.id)throw Error('Checkpoint evidence pool crosses a question.');
@@ -56,6 +59,7 @@ export async function loadForecastFixtures(root=process.cwd()){
     }
   }
   for(const resolution of resolutions){const question=questions.find(q=>q.id===resolution.questionId);
+    forecastInstant(resolution.observedAt);
     if(!question||question.checkpoints.some(c=>c.scheduledAt>=resolution.observedAt)||resolution.evidence.some(id=>!snapshots.some(s=>s.id===id&&s.questionId===question.id)))throw Error('Resolution chronology or evidence mismatch.');
   }
   const pending=questions.filter(q=>!resolutions.some(r=>r.questionId===q.id)).length,census={questions:questions.length,checkpoints:checkpoints.length,resolutions:resolutions.length,pending,resolvedCheckpoints:checkpoints.length-pending*3,snapshots:snapshots.length,postCutoff,undated};

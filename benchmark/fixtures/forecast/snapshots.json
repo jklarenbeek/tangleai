@@ -544,7 +544,7 @@
     "questionId": "q02",
     "url": "https://fixtures.tangleai.dev/forecast/q02-resolution",
     "title": "Tidewater observation q02-resolution",
-    "availableAt": "2025-02-29T00:00:00.000Z",
+    "availableAt": "2025-03-01T00:00:00.000Z",
     "excerpt": "The fictional Tidewater resolution is 60.",
     "sha256": "45b48dd0d091be38d2b8b6289e24b3e70375b7efebe0fcf6c74fcd2d37b7de21"
   },

@@ -1,0 +1,1852 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/forecast",
+  "title": "Forecasting lifecycle contracts",
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          }
+        }
+      ]
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "forecastIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "TFCT1001",
+            "TFCT1002",
+            "TFCT1003",
+            "TFCT1004",
+            "TFCT1005",
+            "TFCT1006",
+            "TFCT1007",
+            "TFCT1008",
+            "TFCT1009",
+            "TFCT1010",
+            "TFCT1011",
+            "TFCT1012"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail",
+        "retryable"
+      ]
+    },
+    "forecastResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "value": {
+              "$ref": "#/$defs/json"
+            },
+            "writes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "ok",
+            "value",
+            "writes"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ok": {
+              "const": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/forecastIssue"
+              },
+              "minItems": 1,
+              "maxItems": 10000
+            }
+          },
+          "required": [
+            "ok",
+            "issues"
+          ]
+        }
+      ]
+    },
+    "configuration": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "scripted"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "revision"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "model"
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "identityId"
+          ]
+        }
+      ]
+    },
+    "forecastAdapter": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "choice/v1"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "minItems": 2,
+              "maxItems": 1000,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "options"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "numeric/v1"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "tolerance": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "range": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "id",
+            "version",
+            "tolerance",
+            "range"
+          ]
+        }
+      ]
+    },
+    "checkpointPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ordinals": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "scheduledAt": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "minItems": 1,
+          "maxItems": 1000,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "ordinals",
+        "scheduledAt"
+      ]
+    },
+    "spend": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "usageKnown": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "usageKnown"
+      ]
+    },
+    "checkpointFailure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "code",
+        "detail"
+      ]
+    },
+    "evidenceAddress": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "corpus": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "snapshotId": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "corpus",
+            "snapshotId"
+          ]
+        }
+      ]
+    },
+    "noteSections": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "questionState": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "keyEvidence": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "mainJudgmentTrajectory": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "helpfulSignals": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "misleadingOrFragileSignals": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "unresolvedRisks": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "questionState",
+        "keyEvidence",
+        "mainJudgmentTrajectory",
+        "helpfulSignals",
+        "misleadingOrFragileSignals",
+        "unresolvedRisks"
+      ]
+    },
+    "harnessDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "factorTracking": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        },
+        "evidenceHandling": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        },
+        "uncertaintyHandling": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "factorTracking",
+        "evidenceHandling",
+        "uncertaintyHandling"
+      ]
+    },
+    "guidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(note|revision|trace):[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "sources"
+      ]
+    },
+    "patchOperation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "enum": [
+                "add",
+                "replace",
+                "test"
+              ]
+            },
+            "path": {
+              "type": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/json"
+            }
+          },
+          "required": [
+            "op",
+            "path",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "remove"
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "path"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "enum": [
+                "move",
+                "copy"
+              ]
+            },
+            "path": {
+              "type": "string"
+            },
+            "from": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "path",
+            "from"
+          ]
+        }
+      ]
+    },
+    "head": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "versionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "versionId",
+        "revision"
+      ]
+    },
+    "forecastQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scopeKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "issuedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "expectedResolutionAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "resolved",
+            "disputed"
+          ]
+        },
+        "adapter": {
+          "$ref": "#/$defs/forecastAdapter"
+        },
+        "checkpointPolicy": {
+          "$ref": "#/$defs/checkpointPolicy"
+        },
+        "startedFromCheckedVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "latestProvisionalVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolsetRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "scopeKey",
+        "prompt",
+        "issuedAt",
+        "expectedResolutionAt",
+        "status",
+        "adapter",
+        "checkpointPolicy",
+        "startedFromCheckedVersionId",
+        "latestProvisionalVersionId",
+        "promptRevision",
+        "toolsetRevision"
+      ]
+    },
+    "forecastSchedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scheduledAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "cutoffAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "status": {
+          "enum": [
+            "due",
+            "running",
+            "complete",
+            "skipped"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "ordinal",
+        "scheduledAt",
+        "cutoffAt",
+        "status"
+      ]
+    },
+    "forecastCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scheduledAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "cutoffAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "startedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputHarnessVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputHarnessDigest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "traceId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "noteId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "predictionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "spend": {
+          "$ref": "#/$defs/spend"
+        },
+        "stopReason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "running",
+            "finalized",
+            "failed"
+          ]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/checkpointFailure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "configuration": {
+          "$ref": "#/$defs/configuration"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolsetRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "noteSchemaRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "decisionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "ordinal",
+        "scheduledAt",
+        "cutoffAt",
+        "startedAt",
+        "endedAt",
+        "inputHarnessVersionId",
+        "inputHarnessDigest",
+        "traceId",
+        "noteId",
+        "predictionId",
+        "evidenceIds",
+        "spend",
+        "stopReason",
+        "status",
+        "failure",
+        "configuration",
+        "promptRevision",
+        "toolsetRevision",
+        "noteSchemaRevision",
+        "decisionId"
+      ]
+    },
+    "forecastEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "enum": [
+            "snapshot",
+            "live"
+          ]
+        },
+        "address": {
+          "$ref": "#/$defs/evidenceAddress"
+        },
+        "availableAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fetchedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claimedPublishedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "citationId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "admitted": {
+          "type": "boolean"
+        },
+        "refusal": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "code",
+                "reason"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "checkpointId",
+        "kind",
+        "address",
+        "availableAt",
+        "fetchedAt",
+        "claimedPublishedAt",
+        "sha256",
+        "bytes",
+        "excerpt",
+        "citationId",
+        "admitted",
+        "refusal"
+      ]
+    },
+    "forecastPrediction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "raw": {
+          "type": "string"
+        },
+        "normalized": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "adapterId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "adapterVersion": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "probability": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "probability"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "checkpointId",
+        "raw",
+        "normalized",
+        "adapterId",
+        "adapterVersion",
+        "uncertainty"
+      ]
+    },
+    "forecastTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "minItems": 0,
+          "maxItems": 10000
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "steps": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "chars": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "steps",
+            "chars"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "checkpointId",
+        "messages",
+        "steps",
+        "bytes",
+        "truncated"
+      ]
+    },
+    "checkpointNote": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "configuration": {
+          "$ref": "#/$defs/configuration"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolsetRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "noteSchemaRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sections": {
+          "$ref": "#/$defs/noteSections"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "traceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "checkpointId",
+        "configuration",
+        "promptRevision",
+        "toolsetRevision",
+        "noteSchemaRevision",
+        "sections",
+        "evidenceIds",
+        "traceId"
+      ]
+    },
+    "forecastHarnessVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scopeKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "questionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parentVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "document": {
+          "$ref": "#/$defs/harnessDocument"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "status": {
+          "enum": [
+            "staged",
+            "provisional",
+            "rejected",
+            "archived",
+            "checked-ref"
+          ]
+        },
+        "checkedVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "revisionId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "retrospectiveId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "seed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "revisionId",
+            "retrospectiveId",
+            "seed"
+          ]
+        },
+        "recordedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        }
+      },
+      "required": [
+        "id",
+        "scopeKey",
+        "questionId",
+        "parentVersionId",
+        "document",
+        "digest",
+        "status",
+        "checkedVersionId",
+        "provenance",
+        "recordedAt"
+      ]
+    },
+    "harnessRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "comparedNoteIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "provisionalDiagnoses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/guidance"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "committedGuidance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/guidance"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "deferredFeedback": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/guidance"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "patch": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/patchOperation"
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "candidateVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "volatileFact": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "refused": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "minItems": 0,
+                  "maxItems": 1000
+                }
+              },
+              "required": [
+                "refused",
+                "items"
+              ]
+            },
+            "semantic": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "stage": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "revision": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "result": {
+                  "$ref": "#/$defs/json"
+                }
+              },
+              "required": [
+                "stage",
+                "revision",
+                "result"
+              ]
+            }
+          },
+          "required": [
+            "volatileFact",
+            "semantic"
+          ]
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ok": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/forecastIssue"
+              },
+              "minItems": 0,
+              "maxItems": 1000
+            }
+          },
+          "required": [
+            "ok",
+            "issues"
+          ]
+        },
+        "traceReads": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "configuration": {
+          "$ref": "#/$defs/configuration"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolsetRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "noteSchemaRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "checkpointId",
+        "comparedNoteIds",
+        "provisionalDiagnoses",
+        "committedGuidance",
+        "deferredFeedback",
+        "patch",
+        "candidateVersionId",
+        "gate",
+        "validation",
+        "traceReads",
+        "configuration",
+        "promptRevision",
+        "toolsetRevision",
+        "noteSchemaRevision"
+      ]
+    },
+    "forecastResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "observedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "receivedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "address": {
+                "$ref": "#/$defs/evidenceAddress"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "excerpt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "address",
+              "sha256",
+              "excerpt"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "scorerId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "scorerVersion": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "losses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "resolutionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scoreId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "category": {
+                "enum": [
+                  "success",
+                  "partial",
+                  "failure"
+                ]
+              },
+              "utility": {
+                "enum": [
+                  0,
+                  0.5,
+                  1
+                ]
+              }
+            },
+            "required": [
+              "checkpointId",
+              "decisionId",
+              "resolutionId",
+              "scoreId",
+              "category",
+              "utility"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "reason": {
+                "enum": [
+                  "post-resolution",
+                  "failed",
+                  "no-decision"
+                ]
+              }
+            },
+            "required": [
+              "checkpointId",
+              "reason"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "observedAt",
+        "receivedAt",
+        "outcome",
+        "evidence",
+        "scorerId",
+        "scorerVersion",
+        "losses",
+        "skipped"
+      ]
+    },
+    "retrospectiveCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resolutionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "revisionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "noteIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "minItems": 0,
+          "maxItems": 10000,
+          "uniqueItems": true
+        },
+        "verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "guidanceRef": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "verdict": {
+                "enum": [
+                  "validate",
+                  "refine",
+                  "reject"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 1,
+                "maxItems": 32,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "guidanceRef",
+              "verdict",
+              "reason",
+              "sources"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "candidateVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reflect": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reflectionId": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "versionId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "noOp": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "reflectionId",
+                "versionId",
+                "noOp"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "evaluationId": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "eligible": {
+                  "type": "boolean"
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/json"
+                  },
+                  "minItems": 0,
+                  "maxItems": 1000
+                }
+              },
+              "required": [
+                "evaluationId",
+                "eligible",
+                "issues"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "promotion": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "approvalId": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "activationEventId": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "head": {
+                  "$ref": "#/$defs/head"
+                }
+              },
+              "required": [
+                "approvalId",
+                "activationEventId",
+                "head"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "promoted",
+            "retained",
+            "rejected",
+            "ineligible"
+          ]
+        },
+        "configuration": {
+          "$ref": "#/$defs/configuration"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolsetRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "noteSchemaRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "resolutionId",
+        "revisionIds",
+        "noteIds",
+        "verdicts",
+        "candidateVersionId",
+        "reflect",
+        "evaluation",
+        "promotion",
+        "outcome",
+        "configuration",
+        "promptRevision",
+        "toolsetRevision",
+        "noteSchemaRevision"
+      ]
+    }
+  }
+}

@@ -22,6 +22,7 @@
       "@tangleai/evolve",
       "@tangleai/gmpl",
       "@tangleai/hera",
+      "@tangleai/forecast",
       "@tangleai/store"
     ]
   ],

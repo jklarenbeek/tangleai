@@ -107,6 +107,16 @@ No backfill runs automatically. See the
 [public temporal guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/TEMPORAL.md)
 and [SQLite example](https://github.com/jklarenbeek/tangleai/blob/main/examples/temporal.ts).
 
+## Forecast lifecycle storage
+
+Forecast lifecycle storage uses `createForecastStore(db)` with eleven
+`forecast_*` collections. The `@tangleai/forecast` package validates records,
+derives their question/scope indexes and owns immutable puts and lifecycle
+commands; this adapter supplies immediate SQLite transactions. A finalized
+checkpoint publishes its prediction, trace, evidence and note atomically.
+Faults roll back every member, and replay after reopening writes zero new rows.
+Adding the collections preserves existing memory rows on Node and Bun.
+
 ## Atomic outcome storage
 
 `createOutcomeStore(db)` implements `@tangleai/outcomes`' atomic owner over Jaren

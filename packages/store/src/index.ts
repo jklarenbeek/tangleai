@@ -52,3 +52,5 @@ export { createEvolveEffectStore } from './evolve-effects.ts';
 export type { EvolveEffectStoreOptions } from './evolve-effects.ts';
 export { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
 export { createHeraStore, type HeraStoreOptions } from './hera-store.ts';
+export { createForecastStore, type ForecastStoreOptions } from './forecast-store.ts';
+export { FORECAST_COLLECTIONS } from './forecast-model.ts';

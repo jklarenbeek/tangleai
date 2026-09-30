@@ -4,7 +4,7 @@ import {canonicalSha256} from '@jarenjs/json/canonical';
 import {applyJSONPatch} from '@jarenjs/json/patch';
 
 export async function authorForecastFixture(){
-  const instant=(month:number,day:number)=>`2025-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}T00:00:00.000Z`;
+  const instant=(month:number,day:number)=>new Date(Date.UTC(2025,month-1,day)).toISOString();
   const sha=(text:string)=>createHash('sha256').update(text).digest('hex');
   const seed={factorTracking:'List the factors that could change the answer.',evidenceHandling:'Check the source and availability of each observation.',uncertaintyHandling:'State the uncertainty that remains before answering.'};
   const guidance={evidence:'Compare independent observations before updating the judgment.',uncertainty:'Revisit the strongest alternative before committing to an answer.'};

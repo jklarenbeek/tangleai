@@ -9,7 +9,7 @@
   },
   {
     "questionId": "q02",
-    "observedAt": "2025-02-29T00:00:00.000Z",
+    "observedAt": "2025-03-01T00:00:00.000Z",
     "outcome": 60,
     "evidence": [
       "q02-resolution"

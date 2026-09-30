@@ -17,7 +17,7 @@ const rehash=async(r:Forecast)=>{const {reportId:_,...body}=r;r.reportId=await c
 describe('registered forecasting measurement',()=>{
   it('freezes six questions, eighteen checkpoints, five resolutions and the authored harnesses',async()=>{
     const f=await loadForecastFixtures();assert.deepEqual(f.manifest.census,{questions:6,checkpoints:18,resolutions:5,pending:1,resolvedCheckpoints:15,snapshots:64,postCutoff:3,undated:2});
-    assert.equal(f.manifest.registrationId,'cdc0d6cd4b53dc5100e22bdeed372ad008ad42c4b78d061d036d0374dfb4a4b4');
+    assert.equal(f.manifest.registrationId,'656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667');
     assert.equal(f.manifest.seedHarnessDigest,'314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb');
     assert.deepEqual(f.manifest.candidateDigests,['1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0','c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d']);
     for(const [path,value] of Object.entries(await authorForecastFixture()))assert.deepEqual(JSON.parse(await readFile(join('benchmark/fixtures/forecast',path),'utf8')),value,path);
@@ -68,6 +68,16 @@ describe('registered forecasting measurement',()=>{
   it('renders two clock-free runs byte-identically',async()=>{
     const a=await buildForecastReport({source}),b=await buildForecastReport({source});assert.equal(renderReport(a),renderReport(b));assert.equal(renderDocument(a),renderDocument(b));
     assert.doesNotMatch(renderReport(a),/hostname|\/tmp\/|recordedAt/);assert.match(renderDocument(a),/1\.000 over 15\/18/);
+  });
+  it('refuses an impossible calendar date even after the fixture is rehashed',async()=>{
+    const dir=await mkdtemp(join(tmpdir(),'forecast-calendar-'));try{
+      await cp('benchmark/fixtures/forecast',join(dir,'benchmark/fixtures/forecast'),{recursive:true});
+      const base=join(dir,'benchmark/fixtures/forecast'),path=join(base,'snapshots.json'),snapshots=JSON.parse(await readFile(path,'utf8'));
+      snapshots.find((s:{id:string})=>s.id==='q02-resolution').availableAt='2025-02-29T00:00:00.000Z';await writeFile(path,JSON.stringify(snapshots));
+      const mp=join(base,'manifest.json'),manifest=JSON.parse(await readFile(mp,'utf8'));manifest.files.find((f:{path:string})=>f.path==='snapshots.json').digest=await canonicalSha256(snapshots);
+      const {registrationId:_,...body}=manifest;manifest.registrationId=await canonicalSha256(body);await writeFile(mp,JSON.stringify(manifest));
+      await assert.rejects(loadForecastFixtures(dir),/valid normalized UTC/);
+    }finally{await rm(dir,{recursive:true,force:true});}
   });
   it('publishes a valid current-source report and its exact generated document',async()=>{
     const report=JSON.parse(await readFile('benchmark/results/forecast.json','utf8')) as Forecast;await validateForecastReport(report);

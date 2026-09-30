@@ -16,10 +16,15 @@ export function parseBoxed(text:string):string{
   const matches=[...text.matchAll(/\\boxed\{([^{}]*)\}/g)],answer=matches.at(-1)?.[1].trim();
   if(!answer)throw Error('Forecast answer lacks a nonempty boxed value.');return answer;
 }
+export function forecastInstant(value:string):number{
+  const instant=Date.parse(value);
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)||!Number.isFinite(instant)||new Date(instant).toISOString()!==value)throw Error('Forecast chronology requires a valid normalized UTC instant.');
+  return instant;
+}
 export function cutoffAdmits(item:Pick<Snapshot,'availableAt'>,cutoffAt:string):{admitted:true;reason:null}|{admitted:false;reason:'post-cutoff'|'undated'}{
+  const cutoff=forecastInstant(cutoffAt);
   if(item.availableAt===null)return {admitted:false,reason:'undated'};
-  const available=Date.parse(item.availableAt),cutoff=Date.parse(cutoffAt);
-  if(!Number.isFinite(available)||!Number.isFinite(cutoff))throw Error('Cutoff admission requires finite timestamps.');
+  const available=forecastInstant(item.availableAt);
   return available<=cutoff?{admitted:true,reason:null}:{admitted:false,reason:'post-cutoff'};
 }
 /** Convolve the exact probabilities of 0, half and full utility. */
