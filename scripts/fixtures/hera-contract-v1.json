@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://tangleai.dev/schemas/hera",
-  "title": "Experience-guided orchestration contracts",
+  "$contract": "0.1",
+  "id": "tangle-hera",
+  "version": "1",
   "$defs": {
     "heraIssue": {
       "type": "object",
@@ -2437,6 +2437,36 @@
     "heraQueryDecomposerOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "queries": {
           "type": "array",
           "items": {
@@ -2447,6 +2477,10 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "queries"
       ],
       "additionalProperties": false
@@ -2454,6 +2488,36 @@
     "heraRetrieverOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "selectedEvidenceIds": {
           "type": "array",
           "items": {
@@ -2464,19 +2528,89 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "selectedEvidenceIds"
       ],
       "additionalProperties": false
     },
     "heraAnswerGeneratorOutput": {
       "type": "object",
-      "properties": {},
-      "required": [],
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
       "additionalProperties": false
     },
     "heraQueryRewriterOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "queries": {
           "type": "array",
           "items": {
@@ -2487,6 +2621,10 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "queries"
       ],
       "additionalProperties": false
@@ -2494,6 +2632,36 @@
     "heraEvidenceSelectorOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "selectedEvidenceIds": {
           "type": "array",
           "items": {
@@ -2504,6 +2672,10 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "selectedEvidenceIds"
       ],
       "additionalProperties": false
@@ -2511,6 +2683,36 @@
     "heraContextValidatorOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "sufficient": {
           "type": "boolean"
         },
@@ -2522,6 +2724,10 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "sufficient",
         "missing"
       ],
@@ -2530,6 +2736,36 @@
     "heraReflectAgentOutput": {
       "type": "object",
       "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
         "problems": {
           "type": "array",
           "items": {
@@ -2538,14 +2774,54 @@
         }
       },
       "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings",
         "problems"
       ],
       "additionalProperties": false
     },
     "heraConcludeAgentOutput": {
       "type": "object",
-      "properties": {},
-      "required": [],
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          },
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          },
+          "type": "array"
+        },
+        "outstandingQuestions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
       "additionalProperties": false
     },
     "heraPlanOutput": {
@@ -4603,6 +4879,289 @@
             "additionalProperties": false
           }
         ]
+      }
+    },
+    "gmplCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "type": "object"
+    },
+    "gmplClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "text": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "type": "object"
+    },
+    "gmplFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contradictory": {
+          "type": "boolean"
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "origin": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "disposition",
+        "reason",
+        "citations"
+      ],
+      "type": "object"
+    }
+  },
+  "operations": {
+    "hera.agents.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceEmpty"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceAgents"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.snapshots.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceScope"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceSnapshots"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.snapshots.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceSnapshot"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.experiences.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceExperienceQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceExperiences"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.experiences.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceExperience"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.prompts.history": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceRole"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfacePromptHistory"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.prompts.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfacePrompt"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.prompts.diff": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceDiffInput"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceDiff"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.groups.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceGroup"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.trajectories.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceTrajectory"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.trajectories.mermaid": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceMermaid"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.trials.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceRole"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceTrials"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.trials.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceLookup"
+      },
+      "output": {
+        "$ref": "#/$defs/heraPromptTrial"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
+      }
+    },
+    "hera.mutations.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/heraSurfaceScope"
+      },
+      "output": {
+        "$ref": "#/$defs/heraSurfaceMutations"
+      },
+      "errors": {
+        "not-found": {
+          "status": 404
+        }
       }
     }
   }

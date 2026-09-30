@@ -4207,6 +4207,680 @@
       ],
       "additionalProperties": false
     },
+    "heraSurfaceEmpty": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "heraSurfaceLookup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceScope": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceRole": {
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "agentId"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceExperienceQuery": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "active",
+            "archived"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      },
+      "required": [
+        "scope",
+        "limit"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceEvidence": {
+      "type": "object",
+      "properties": {
+        "trajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "stepIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "trajectoryIds",
+        "stepIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceAgent": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "$ref": "#/$defs/heraAgentDefinition"
+        },
+        "head": {
+          "$ref": "#/$defs/heraHead"
+        },
+        "promptVersion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/heraPromptVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "agent",
+        "head",
+        "promptVersion"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceSnapshot": {
+      "type": "object",
+      "properties": {
+        "snapshot": {
+          "$ref": "#/$defs/heraLearningSnapshot"
+        },
+        "head": {
+          "$ref": "#/$defs/heraHead"
+        }
+      },
+      "required": [
+        "snapshot",
+        "head"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceExperience": {
+      "type": "object",
+      "properties": {
+        "experience": {
+          "$ref": "#/$defs/heraExperience"
+        },
+        "advantage": {
+          "$ref": "#/$defs/heraSemanticAdvantage"
+        },
+        "source": {
+          "$ref": "#/$defs/heraSurfaceEvidence"
+        }
+      },
+      "required": [
+        "experience",
+        "advantage",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceRule": {
+      "type": "object",
+      "properties": {
+        "block": {
+          "enum": [
+            "operationalRules",
+            "behavioralPrinciples"
+          ]
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/heraSurfaceEvidence"
+        }
+      },
+      "required": [
+        "block",
+        "index",
+        "text",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfacePrompt": {
+      "type": "object",
+      "properties": {
+        "promptVersion": {
+          "$ref": "#/$defs/heraPromptVersion"
+        },
+        "trials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraPromptTrial"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceRule"
+          }
+        }
+      },
+      "required": [
+        "promptVersion",
+        "trials",
+        "rules"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceDiffInput": {
+      "type": "object",
+      "properties": {
+        "fromId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "toId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "fromId",
+        "toId"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceDiff": {
+      "type": "object",
+      "properties": {
+        "fromId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "toId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "patch": {
+          "$ref": "#/$defs/heraSurfacePatch"
+        },
+        "fromLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lengthUnit": {
+          "const": "utf8-bytes"
+        }
+      },
+      "required": [
+        "fromId",
+        "toId",
+        "patch",
+        "fromLength",
+        "toLength",
+        "lengthUnit"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceStage": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "enabled",
+            "disabled",
+            "refused"
+          ]
+        },
+        "operationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "stage",
+        "state",
+        "operationIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceGroup": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/$defs/heraRolloutGroup"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraOperation"
+          }
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceStage"
+          }
+        }
+      },
+      "required": [
+        "group",
+        "operations",
+        "stages"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceTrajectory": {
+      "type": "object",
+      "properties": {
+        "trajectory": {
+          "$ref": "#/$defs/heraTrajectory"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraTrajectoryStep"
+          }
+        }
+      },
+      "required": [
+        "trajectory",
+        "steps"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceMutation": {
+      "type": "object",
+      "properties": {
+        "mutation": {
+          "$ref": "#/$defs/heraMutation"
+        },
+        "topology": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/heraTopology"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parentTopology": {
+          "$ref": "#/$defs/heraTopology"
+        }
+      },
+      "required": [
+        "mutation",
+        "topology",
+        "parentTopology"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceRegion": {
+      "type": "object",
+      "properties": {
+        "regionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "dag",
+            "fsm-switch",
+            "fsm-loop",
+            "interaction-wait"
+          ]
+        },
+        "mermaid": {
+          "type": "string"
+        },
+        "expandable": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "invocation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "subgraph": {
+                "type": "string",
+                "minLength": 1
+              },
+              "childExecutableRevision": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "invocation",
+              "subgraph",
+              "childExecutableRevision"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "regionId",
+        "kind",
+        "mermaid",
+        "expandable"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfacePlanProjection": {
+      "type": "object",
+      "properties": {
+        "executableRevision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceRegion"
+          }
+        },
+        "subplans": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/heraSurfacePlanProjection"
+          }
+        }
+      },
+      "required": [
+        "executableRevision",
+        "regions",
+        "subplans"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceRoleNode": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roleId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "promptVersionId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "roleId",
+        "dependsOn",
+        "promptVersionId"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceMermaid": {
+      "type": "object",
+      "properties": {
+        "trajectoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topologyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executable": {
+          "$ref": "#/$defs/heraSurfacePlanProjection"
+        },
+        "roles": {
+          "type": "object",
+          "properties": {
+            "mermaid": {
+              "type": "string"
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/heraSurfaceRoleNode"
+              }
+            }
+          },
+          "required": [
+            "mermaid",
+            "nodes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "trajectoryId",
+        "topologyId",
+        "executable",
+        "roles"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceAgents": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceAgent"
+          }
+        }
+      },
+      "required": [
+        "agents"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceExperiences": {
+      "type": "object",
+      "properties": {
+        "experiences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceExperience"
+          }
+        }
+      },
+      "required": [
+        "experiences"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfacePromptHistory": {
+      "type": "object",
+      "properties": {
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfacePrompt"
+          }
+        }
+      },
+      "required": [
+        "versions"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceTrials": {
+      "type": "object",
+      "properties": {
+        "trials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraPromptTrial"
+          }
+        }
+      },
+      "required": [
+        "trials"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceMutations": {
+      "type": "object",
+      "properties": {
+        "mutations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraSurfaceMutation"
+          }
+        }
+      },
+      "required": [
+        "mutations"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfaceSnapshots": {
+      "type": "object",
+      "properties": {
+        "snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraLearningSnapshot"
+          }
+        },
+        "head": {
+          "$ref": "#/$defs/heraHead"
+        }
+      },
+      "required": [
+        "snapshots",
+        "head"
+      ],
+      "additionalProperties": false
+    },
+    "heraSurfacePatch": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)(/.*)?$"
+              },
+              "value": {}
+            },
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "remove"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/(operationalRules|behavioralPrinciples)(/.*)?$"
+              }
+            },
+            "required": [
+              "op",
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
     "gmplCitation": {
       "additionalProperties": false,
       "properties": {

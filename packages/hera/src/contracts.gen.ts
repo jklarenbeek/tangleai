@@ -2480,4 +2480,308 @@ export interface HeraTopologyView {
 }
 
 
+export type HeraSurfaceEmpty = Record<string, never>;
+
+export interface HeraSurfaceLookup {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+}
+
+
+export interface HeraSurfaceScope {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=10000
+   */
+  limit?: number;
+}
+
+
+export interface HeraSurfaceRole {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  agentId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=10000
+   */
+  limit?: number;
+}
+
+
+export interface HeraSurfaceExperienceQuery {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  status?: "active" | "archived";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=10000
+   */
+  limit: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraSurfaceEvidenceTrajectoryIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraSurfaceEvidenceStepIdsItem = string;
+
+export interface HeraSurfaceEvidence {
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  trajectoryIds: Array<HeraSurfaceEvidenceTrajectoryIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  stepIds: Array<HeraSurfaceEvidenceStepIdsItem>;
+}
+
+
+export interface HeraSurfaceAgent {
+  agent: HeraAgentDefinition;
+  head: HeraHead;
+  promptVersion: HeraPromptVersion | null;
+}
+
+
+export interface HeraSurfaceSnapshot {
+  snapshot: HeraLearningSnapshot;
+  head: HeraHead;
+}
+
+
+export interface HeraSurfaceExperience {
+  experience: HeraExperience;
+  advantage: HeraSemanticAdvantage;
+  source: HeraSurfaceEvidence;
+}
+
+
+export interface HeraSurfaceRule {
+  block: "operationalRules" | "behavioralPrinciples";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  index: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  source: HeraSurfaceEvidence;
+}
+
+
+export interface HeraSurfacePrompt {
+  promptVersion: HeraPromptVersion;
+  trials: Array<HeraPromptTrial>;
+  rules: Array<HeraSurfaceRule>;
+}
+
+
+export interface HeraSurfaceDiffInput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  fromId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  toId: string;
+}
+
+
+export interface HeraSurfacePatchItemOneOf1 {
+  op: "add" | "replace";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)(/.*)?$"
+   */
+  path: string;
+  value: unknown;
+}
+
+
+export interface HeraSurfacePatchItemOneOf2 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^/(operationalRules|behavioralPrinciples)(/.*)?$"
+   */
+  path: string;
+}
+
+
+export type HeraSurfacePatch = Array<HeraSurfacePatchItemOneOf1 | HeraSurfacePatchItemOneOf2>;
+
+export interface HeraSurfaceDiff {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  fromId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  toId: string;
+  patch: HeraSurfacePatch;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fromLength: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toLength: number;
+  lengthUnit: "utf8-bytes";
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraSurfaceStageOperationIdsItem = string;
+
+export interface HeraSurfaceStage {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  stage: string;
+  state: "enabled" | "disabled" | "refused";
+  operationIds: Array<HeraSurfaceStageOperationIdsItem>;
+}
+
+
+export interface HeraSurfaceGroup {
+  group: HeraRolloutGroup;
+  operations: Array<HeraOperation>;
+  stages: Array<HeraSurfaceStage>;
+}
+
+
+export interface HeraSurfaceTrajectory {
+  trajectory: HeraTrajectory;
+  steps: Array<HeraTrajectoryStep>;
+}
+
+
+export interface HeraSurfaceMutation {
+  mutation: HeraMutation;
+  topology: HeraTopology | null;
+  parentTopology: HeraTopology;
+}
+
+
+export interface HeraSurfaceRegionExpandableItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  invocation: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  subgraph: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  childExecutableRevision: string;
+}
+
+
+export interface HeraSurfaceRegion {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  regionId: string;
+  kind: "dag" | "fsm-switch" | "fsm-loop" | "interaction-wait";
+  mermaid: string;
+  expandable: Array<HeraSurfaceRegionExpandableItem>;
+}
+
+
+export interface HeraSurfacePlanProjection {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  executableRevision: string;
+  regions: Array<HeraSurfaceRegion>;
+  subplans: { [key: string]: HeraSurfacePlanProjection; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraSurfaceRoleNodeDependsOnItem = string;
+
+export interface HeraSurfaceRoleNode {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  roleId: string;
+  dependsOn: Array<HeraSurfaceRoleNodeDependsOnItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  promptVersionId: string;
+}
+
+
+export interface HeraSurfaceMermaid {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  trajectoryId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topologyId: string;
+  executable: HeraSurfacePlanProjection;
+  roles: { mermaid: string; nodes: Array<HeraSurfaceRoleNode>; };
+}
+
+
+export interface HeraSurfaceAgents {
+  agents: Array<HeraSurfaceAgent>;
+}
+
+
+export interface HeraSurfaceExperiences {
+  experiences: Array<HeraSurfaceExperience>;
+}
+
+
+export interface HeraSurfacePromptHistory {
+  versions: Array<HeraSurfacePrompt>;
+}
+
+
+export interface HeraSurfaceTrials {
+  trials: Array<HeraPromptTrial>;
+}
+
+
+export interface HeraSurfaceMutations {
+  mutations: Array<HeraSurfaceMutation>;
+}
+
+
+export interface HeraSurfaceSnapshots {
+  snapshots: Array<HeraLearningSnapshot>;
+  head: HeraHead;
+}
+
+
 export type Hera = unknown;

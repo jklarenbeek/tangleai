@@ -274,6 +274,48 @@ repeat counts in training costs and all-event quality; held-out quality remains
 the separate five-task frozen-snapshot measurement. The scripted topology win
 does not erase the declared held-out prompt loss or establish model quality.
 
+## Read-only review contract
+
+`@tangleai/hera/contract` exports `createHeraContract`,
+`heraContractDocument` and `createHeraHandlers({ store })`. Bind the handlers to
+an explicitly scoped `HeraStore`; the host owns transport and authorization.
+The versioned `tangle-hera` document contains fourteen read operations with
+closed schemas and declared `not-found` errors. It has no commands or
+subscriptions. Handlers receive only the store's read capabilities.
+
+| Operation | Retained result |
+| --- | --- |
+| `hera.agents.list` | Agent envelopes, current prompt heads and active versions |
+| `hera.snapshots.list` | Scoped snapshots and current snapshot head |
+| `hera.snapshots.get` | Requested snapshot and current head, separately |
+| `hera.experiences.list` | Scoped versions, optional status filter and required limit |
+| `hera.experiences.get` | Experience, semantic advantage and trajectory/step provenance |
+| `hera.prompts.history` | Role versions, trials and rule provenance |
+| `hera.prompts.get` | One version with its trials and source-backed rules |
+| `hera.prompts.diff` | RFC 6902 block patch and effective-prompt lengths in UTF-8 bytes |
+| `hera.groups.get` | Ranking, budgets, failures and recorded learning-stage states |
+| `hera.trajectories.get` | Trajectory, invocation steps, citations, scores and costs |
+| `hera.trajectories.mermaid` | Executed MAS plan projection and role projection |
+| `hera.trials.list` | Scoped role trial history |
+| `hera.trials.get` | Trial pins, paired delta, candidate rules and decision |
+| `hera.mutations.list` | Mutations with parent and candidate topologies |
+
+Experience insights and prompt rules join retained evaluated trajectories and
+their steps. Missing evidence returns `not-found`. List limits range from zero
+to 10,000 and default to 1,000 where optional; lists are bounded history views.
+Group stage states (`enabled`, `disabled`, `refused`) derive from operation
+receipts, with failed receipts taking precedence within a stage.
+
+Before a new MAS run, the executor retains its compiled plan and actual prompt
+version map in an immutable operational receipt. Diagram reads pass that exact
+plan to `projectMasPlan`; prompt-trial diagrams include the substituted version.
+Historical runs without a saved plan return `not-found`. Reading does not
+recompile workflows, call providers or write learning state.
+
+`npm run emit:hera-contract` emits the contract document;
+`npm run hera:contract:check` checks it against the frozen v1 fixture. Both drift
+and compatibility checks participate in `npm run check`.
+
 ## Building and checking
 
 `npm run emit:hera` composes the HERA definitions with GMPL's evidence schema and

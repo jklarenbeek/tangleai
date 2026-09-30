@@ -19,6 +19,7 @@ import { assertHeraCorpus, validateHeraEvidenceUnits, createHeraContextBindings,
 import { assembleHeraTrajectory } from './trajectory.ts';
 import { toMasWorkflow } from './topology.ts';
 import { validateHeraEvaluator, validateHeraTaskScore, type HeraTaskAdapter } from './evaluator.ts';
+import {emptyHeraUsage} from './operations.ts';
 import type { HeraStore } from './store.ts';
 import type { HeraTask, HeraLearningSnapshot, HeraMode, HeraTopology, HeraAgentDefinition, HeraTrajectory, HeraTrajectoryStep,HeraPromptVersion } from './contracts.gen.ts';
 export interface HeraExecutorHost {
@@ -180,6 +181,8 @@ export function createHeraExecutor(host:HeraExecutorHost) {
         taskHandlers:{'hera-validate-answer':async({value})=>({result:await validateHeraAnswer(value.answer as GmplPatternResult,units)})}});
       if(!compiled.valid)refuse('THERA1009','/bindings','The host cannot bind the frozen workflow.',compiled.issues);
       if(!run){
+        must(await host.store.putOperation({id:runId+':plan',scope:task.scope,taskId:task.id,snapshotId:snapshot.id,groupId:await heraRevisionOf([task.id,snapshot.id,request.groupIndex,request.configRevision]),binding,stage:'execution.plan',phase:'result',status:'completed',
+          value:{plan:scaffold.plan,executableRevision:scaffold.plan.executableRevision,promptVersionIds:{...snapshot.activePromptVersionIds,...(trial?{[trial.candidate.agentId]:trial.candidate.id}:{})}},usage:emptyHeraUsage(),issues:[]},authority));
         for(const saved of [await host.masStore.putWorkflowVersion(workflow),await host.masStore.putRegistrySnapshot(prepared.registry.document as unknown as Record<string,unknown>,prepared.registry.revision)])
           if(!saved.ok)refuse('THERA1007','/persistence','The workflow identity could not be persisted.',saved.issue);
         const created=await host.masStore.createRun({runId,workflowId:workflow.workflowId,workflowVersionId:workflow.versionId,registryRevision:prepared.registry.revision,

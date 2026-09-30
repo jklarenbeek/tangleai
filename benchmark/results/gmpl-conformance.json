@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "da00db989ed198ccdb0f2e6541ccf1d6833f0b68",
+    "head": "3612a48999ee8e6d5c2abb529e05a6e6494c7a42",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a81a3f92ebcba0bad6bbfc642965655ccaf7da339452ee1968a6e0184fcd9c89"
+        "sha256": "aa400d3cbb3f127d6ca3bd43f84c1a83ab1d9840a1d67e5007f0c55b2af6d891"
       },
       {
         "path": "package.json",
-        "sha256": "7b5e5ee618bd21b82eda8dc9061d03297f8458de381b256badc4922615a8805e"
+        "sha256": "8ee10e8c2c5606e05db64cfac68b8d8c0c32ce32db2e40c3f5603a00cdca68f9"
       },
       {
         "path": "packages/agents/package.json",
@@ -515,7 +515,7 @@
       },
       {
         "path": "packages/hera/package.json",
-        "sha256": "2fcf7e4e80b6b48bdf35bfae2a8133bb9a26d964d9f29139a4b2244debff41e8"
+        "sha256": "f7a4812849d596402a3ea427478daad734e67f1662655001181f93c2fa48edf9"
       },
       {
         "path": "packages/jaren/package.json",
@@ -1010,7 +1010,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "86f70998eecdaca03ab5d655b45bb342bdff511f27821360f48df023e6081609"
+    "sha256": "d6a2aeb52d34e21086ef63afc0f0b6af4640c4c1d8b3325e26c5c523d7978390"
   },
   "ablations": [
     {
@@ -76564,5 +76564,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "33994b9997462d8575d29663b4b190d69d00077fed975b744e62c258965565e8"
+  "reportId": "6eefd5bad774e19098b288d45a6f407c2f3b7d9aad9266821f8da0ce3cb64ac9"
 }

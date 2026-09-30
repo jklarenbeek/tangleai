@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "5003b04afa11fb66ced812e6292bb25ef7734e2bb4230b6f06c8218be14b482c",
+  "sourceId": "59f986b39f125f98dafb145fa0bfd281247d953fd0c3035e7e3252e7ebb3ebe5",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -8465,5 +8465,5 @@
     "Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.",
     "Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean."
   ],
-  "reportId": "e37c815e0115666f92b2312571c77683efa390d83067215f755fc457c47f7e89"
+  "reportId": "7a53d256163a3fc192ec136f598c22e5bed3b792cce8ac736830541079bba379"
 }

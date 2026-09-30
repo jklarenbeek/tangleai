@@ -10,7 +10,9 @@
     "./contracts": "./src/contracts.gen.ts",
     "./artifacts": "./artifacts/catalog.json",
     "./package.json": "./package.json",
-    "./schemas/hera": "./schemas/hera.schema.json"
+    "./schemas/hera": "./schemas/hera.schema.json",
+    "./contract": "./src/contract.ts",
+    "./schemas/contract": "./schemas/hera.contract.json"
   },
   "engines": {
     "node": ">=24"
@@ -28,7 +30,9 @@
     "@tangleai/agents": "^0.31.0",
     "@tangleai/models": "^0.31.0",
     "@tangleai/documents": "^0.31.0",
-    "@tangleai/memory": "^0.31.0"
+    "@tangleai/memory": "^0.31.0",
+    "@jarenjs/contract": "0.91.4",
+    "@jarenjs/mermaid": "0.91.4"
   },
   "private": false,
   "types": "./src/index.ts",
