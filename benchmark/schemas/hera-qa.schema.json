@@ -1227,9 +1227,32 @@
           "additionalProperties": false
         },
         "mutationAcceptance": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
+          "type": "object",
+          "properties": {
+            "proposed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "validated": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "accepted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rejected": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "proposed",
+            "validated",
+            "accepted",
+            "rejected"
+          ],
+          "additionalProperties": false
         },
         "negativeTransferByProfile": {
           "type": "array",
@@ -1345,6 +1368,45 @@
             "unevaluated"
           ],
           "additionalProperties": false
+        },
+        "structuralCurve": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "taskId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "groupId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "bestScore": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1
+              },
+              "topology": {
+                "$ref": "#/$defs/topology"
+              }
+            },
+            "required": [
+              "step",
+              "taskId",
+              "groupId",
+              "bestScore",
+              "topology"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
@@ -1362,7 +1424,8 @@
         "libraryOperations",
         "flags",
         "libraryCap",
-        "trials"
+        "trials",
+        "structuralCurve"
       ],
       "additionalProperties": false,
       "$query": {
@@ -1469,34 +1532,53 @@
       ],
       "properties": {
         "entropy": {
-          "type": "number",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0
         },
         "distinctRoles": {
-          "type": "integer",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0
         },
         "nodeEfficiency": {
-          "type": "number",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0
         },
         "selfLoops": {
-          "type": "integer",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0
         },
         "cycles": {
-          "type": "integer",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": 0
         },
         "diameter": {
           "type": [
-            "integer",
+            "number",
             "null"
           ],
           "minimum": 0
         },
         "includesFailed": {
           "type": "boolean"
+        },
+        "trajectories": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -1506,7 +1588,8 @@
         "selfLoops",
         "cycles",
         "diameter",
-        "includesFailed"
+        "includesFailed",
+        "trajectories"
       ],
       "additionalProperties": false
     },

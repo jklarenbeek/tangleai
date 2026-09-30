@@ -43,14 +43,14 @@ const recordSchemas = {
   operation: 'heraOperation', agent: 'heraAgentDefinition', promptVersion: 'heraPromptVersion', experience: 'heraExperience',
   topology: 'heraTopology', rolloutGroup: 'heraRolloutGroup', trajectory: 'heraTrajectory',
   trajectoryStep: 'heraTrajectoryStep', advantage: 'heraSemanticAdvantage', promptTrial: 'heraPromptTrial',
-  snapshot: 'heraLearningSnapshot', head: 'heraHead',failureBuffer:'heraFailureBuffer',
+  snapshot: 'heraLearningSnapshot', head: 'heraHead',failureBuffer:'heraFailureBuffer',mutation:'heraMutation',
 } as const;
 /** Execution ids bind their semantic key; learning payloads bind their full immutable content. */
 export async function validateHeraRecord<K extends HeraRecordKind>(kind: K, value: unknown): Promise<HeraOutcome<HeraRecords[K]>> {
   const shape = validateHeraShape<HeraRecords[K]>(recordSchemas[kind], value);
   if (!shape.valid) return shape;
   const record = shape.value;
-  if (['promptVersion', 'experience', 'snapshot', 'advantage', 'promptTrial','failureBuffer'].includes(kind) && record.id !== await heraContentIdOf(record))
+  if (['promptVersion', 'experience', 'snapshot', 'advantage', 'promptTrial','failureBuffer','mutation'].includes(kind) && record.id !== await heraContentIdOf(record))
     return heraRefuse('THERA1002', '/id', 'The immutable content identity is stale.');
   if (kind === 'snapshot') {
     const snapshot = record as HeraRecords['snapshot'];

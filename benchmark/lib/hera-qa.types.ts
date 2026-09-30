@@ -168,6 +168,26 @@ export interface LearningReplayCost {
 }
 
 
+export interface LearningMutationAcceptance {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  proposed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  validated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  accepted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+}
+
+
 export interface LearningLibraryOperations {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
@@ -208,12 +228,33 @@ export interface LearningTrials {
 }
 
 
+export type Topology = { entropy: number | null; distinctRoles: number | null; nodeEfficiency: number | null; selfLoops: number | null; cycles: number | null; diameter: number | null; includesFailed: boolean; trajectories: number; } | null;
+
+export interface LearningStructuralCurveItem {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  step: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  groupId: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  bestScore: number | null;
+  topology: Topology;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$if":[{"$ne":["$",null]},{"$and":[{"$eq":["$.evaluatedGroups",{"$add":["$.mixedGroups","$.groupsWithoutMixedOutcome"]}]},{"$eq":["$.mixedGroupRate",{"$if":[{"$gt":["$.evaluatedGroups",0]},{"$div":["$.mixedGroups","$.evaluatedGroups"]},0]}]},{"$eq":["$.libraryChurn",{"$add":[{"$add":["$.libraryOperations.add","$.libraryOperations.merge"]},"$.libraryOperations.prune"]}]},{"$le":["$.librarySize","$.libraryCap"]},{"$eq":[{"$sum":"$.promptChurn[*].activated"},"$.trials.activated"]},{"$eq":[{"$sum":"$.promptChurn[*].rejected"},{"$add":["$.trials.rejected",{"$add":["$.trials.malformed","$.trials.unevaluated"]}]}]}]},true]}
  */
-export type Learning = { mixedGroupRate: number; librarySize: number; libraryChurn: number; promptChurn: Array<LearningPromptChurnItem>; replayCost: LearningReplayCost; mutationAcceptance: number; negativeTransferByProfile: Array<{ profile: string; delta: number; }>; writes: number; groupsWithoutMixedOutcome: number; evaluatedGroups: number; mixedGroups: number; libraryOperations: LearningLibraryOperations; flags: { experience: boolean; rope: boolean; mutation: boolean; }; libraryCap: number; trials: LearningTrials; } | null;
-
-export type Topology = { entropy: number; distinctRoles: number; nodeEfficiency: number; selfLoops: number; cycles: number; diameter: number | null; includesFailed: boolean; } | null;
+export type Learning = { mixedGroupRate: number; librarySize: number; libraryChurn: number; promptChurn: Array<LearningPromptChurnItem>; replayCost: LearningReplayCost; mutationAcceptance: LearningMutationAcceptance; negativeTransferByProfile: Array<{ profile: string; delta: number; }>; writes: number; groupsWithoutMixedOutcome: number; evaluatedGroups: number; mixedGroups: number; libraryOperations: LearningLibraryOperations; flags: { experience: boolean; rope: boolean; mutation: boolean; }; libraryCap: number; trials: LearningTrials; structuralCurve: Array<LearningStructuralCurveItem>; } | null;
 
 /**
  * Schema constraints this type cannot express: type="integer", minimum=0

@@ -11,7 +11,8 @@ MAS and query-specific frozen rows execute registered scripted responses, with
 counted requests and zero learning writes. The experience-only row trains a
 library and then evaluates held-out tasks against its final snapshot. Prompt-only
 and combined experience/prompt rows run whole-topology paired trials and publish
-a scripted held-out loss. The full topology-mutation row remains unimplemented.
+a scripted held-out loss. The full row also measures a persistent-failure
+topology intervention, with costs and structural curves for every training event.
 Scripted quality measures fixture sensitivity, not model quality or a learning
 improvement.
 
@@ -177,8 +178,7 @@ including after SQLite reopen or later snapshot activation.
 
 Learning stage operations are append-only. The returned group view composes
 their ids with the original rollout group's ids; it does not rewrite completed
-execution evidence. `topology.mutate` remains disabled; enabling its flag
-currently refuses `THERA1008`. Refused training requests
+execution evidence. Refused training requests
 record operational `refusedLearningWrites` counters, separate from the store's
 counts of attempted forbidden writes. Evaluations pinned to old snapshots keep
 reading their exact archived membership.
@@ -226,6 +226,53 @@ version and derives a new snapshot under the same version/revision fences;
 old snapshots keep their original pins. No domain learning records are written
 before the final transaction, so a competing loser retains only operational
 evidence and purchases.
+
+## Topology mutation and diagnostics
+
+Enable `snapshot.config.flags.mutation` to record the versioned
+`score-zero-consecutive-v1` predicate. `heraProfileBucket` groups normalized,
+deduplicated task tags under `profile-tags-v1`. The best evaluated group score
+must be exactly zero for `consecutiveFailures` events. The threshold fires once
+until a positive score resets it; unevaluated groups neither count nor reset.
+The bounded streak and trigger latch live in `snapshot.failureState`.
+
+`proposeMutation` offers only registered roles absent from the failing topology.
+`applyMutation` replaces a retained failed invocation or inserts a role at an
+explicit dependency boundary, rewiring its consumers before the existing
+topology validator runs. These intervention targets cite actual failed
+trajectory steps; they do not assert causal blame. Roles, tools, prompt pins,
+terminal shape, graph acyclicity and structural caps remain host-owned.
+The candidate records `parentTopologyId` and `generator.kind: mutation`.
+
+The complete candidate executes inside the original rollout group, using the
+control's exact initial evidence slice, frozen prompt identities and per-execution limits. Proposal and
+execution costs consume the same explicit refinement allowance as subsequent
+learning, recorded separately in `group.refinementBudget`. Acceptance requires
+first place in task-first ranking and a strictly higher task score; a cheaper
+equal-score mutation is rejected. Invalid, losing and unevaluated outcomes keep
+their proposal, scores, spend, execution ids and operation receipts. The mutation
+record and next snapshot commit with the existing library and prompt fences.
+
+An accepted mutation adds a profile-bucket entry to `preferredTopologyIds`.
+Future orchestration sees the topology as a hint under current prompt pins,
+subject to the usual role, tool and cap checks. It grants no execution authority.
+The source trajectory and old snapshots retain their original identities.
+
+`metrics.ts` owns the pure structural diagnostics. Sequential role lists use
+adjacent transitions; DAG projections use dependency edges within sliding
+invocation windows (default eight). Entropy is Shannon bits, averaged over
+nonempty windows. Self-loops count adjacent equal roles. Cycles count unique
+role-projected DFS back edges in first-invocation order. Diameter is the longest
+directed invocation path in edges, or null for cyclic input. Node efficiency is
+the evaluated task score divided by distinct roles. `summarizeTopology` uses
+Jaren `mean`, omits null values per metric and explicitly reports whether failed
+partial trajectories are included.
+
+The registered learning schedule has seven events over five distinct training
+tasks, including three q08 repetitions, followed by five held-out tasks. Every
+repeat counts in training costs and all-event quality; held-out quality remains
+the separate five-task frozen-snapshot measurement. The scripted topology win
+does not erase the declared held-out prompt loss or establish model quality.
 
 ## Building and checking
 

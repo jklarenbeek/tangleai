@@ -32,3 +32,6 @@ export * from './integrate.ts';
 export * from './activate.ts';
 
 export * from './trial.ts';
+export * from './metrics.ts';
+export * from './predicate.ts';
+export * from './mutate.ts';

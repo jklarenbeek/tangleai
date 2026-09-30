@@ -176,7 +176,7 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
   if(!baseline.identities.some(i=>i.identityId===frozen.identity.identityId))baseline.identities.push(frozen.identity);
   baseline.scripted.requests+=frozen.requests;baseline.scripted.replayCalls+=frozen.replayCalls;
   baseline.learningWrites+=frozen.learningWrites;
-  for(const flags of [{experience:true,rope:false,mutation:false},{experience:false,rope:true,mutation:false},{experience:true,rope:true,mutation:false}]){
+  for(const flags of [{experience:true,rope:false,mutation:false},{experience:false,rope:true,mutation:false},{experience:true,rope:true,mutation:false},{experience:true,rope:true,mutation:true}]){
     const learned=await runHeraExperience(fixture,root,flags);baseline.rows.push(learned.row);
     if(!baseline.identities.some(i=>i.identityId===learned.identity.identityId))baseline.identities.push(learned.identity);
     baseline.scripted.requests+=learned.requests;baseline.scripted.replayCalls+=learned.replayCalls;baseline.learningWrites+=learned.learningWrites;
@@ -202,7 +202,7 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
     refusals: { evalSplitInLearn: fixture.questions.filter(q => !planHeraFixtureMode('learn', q).valid).length, ...frozen.refusals },
     totals: { rows: rows.length, run: rows.filter(r => r.status === 'run').length, notRun: 0, implementationMissing: rows.filter(r => r.status === 'implementation-missing').length, datasetUnavailable: 0, answered: rows.reduce((n,r)=>n+(r.quality?.answered??0),0), planned: rows.reduce((n,r)=>n+(r.quality?.planned??0),0), calls: rows.reduce((n,r)=>n+(r.cost?.calls??0),0), learningWrites: baseline.learningWrites },
     limitations: [
-      'The single-turn, fixed-topology, query-specific frozen and bounded experience/prompt learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. The full row still requires topology mutation.',
+      'All seven ablation rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement.',
       'The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.',
       'The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.',
       'LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.',
@@ -212,10 +212,12 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
       'No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.',
       'Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.',
       'The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.',
-      'The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.',
+      'Every learning row uses seven registered training events over five distinct training tasks, including three consecutive q08 repetitions, then five held-out tasks against its final snapshot. Each repetition contributes to training costs and all-event quality; held-out quality counts the five unique held-out tasks. Three initial mixed groups exercise ADD, PRUNE, MERGE and KEEP. PRUNE uses an authored, source-backed host conflict policy.',
       'Prompt variants run one deterministic credited role per mixed training group. The registered axes are efficiency, thoroughness, risk-sensitivity, error-correction and heuristic-injection; group index selects the axis. Proposal and contrast calls, rejected trials and complete control/replay executions are charged. Each learning row declares the same separate refinement budget in addition to its rollout budget.',
       'The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.',
       'Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.',
+      'Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.',
+      'Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean.',
     ],
   };
   const report = { ...content, reportId: await canonicalSha256(content) } as HeraQa;
@@ -242,6 +244,9 @@ export async function validateHeraReport(value: unknown): Promise<void> {
         throw new Error('Prompt trials and replay spend must belong to the measured training rows.');
       if(!learning.flags.rope&&(total||learning.promptChurn.length||Object.values(learning.replayCost).some(Boolean)))throw new Error('A disabled prompt learner cannot claim trial work.');
       if(!row.identity!.learningBudget)throw new Error('Learning rows must declare their separate refinement allocation.');
+      const mutation=learning.mutationAcceptance;
+      if(mutation.proposed!==mutation.accepted+mutation.rejected||mutation.validated>mutation.proposed||mutation.accepted>mutation.validated||(!learning.flags.mutation&&Object.values(mutation).some(Boolean)))throw new Error('Mutation counts require validated, measured training evidence.');
+      if(!row.topology||!row.topology.includesFailed||learning.structuralCurve.length!==learning.evaluatedGroups||learning.structuralCurve.some((point,index)=>point.step!==index||!point.topology?.includesFailed))throw new Error('Every training event requires its declared topology diagnostics.');
     }
   }
   for (const row of report.rows.filter(r => r.status === 'run' && r.tier === 'scripted')) {
@@ -288,6 +293,8 @@ export function renderHeraDocument(report: HeraQa): string {
     table({ head: ['LoCoMo category', 'Questions', 'Oracle F1', 'Missing from sample'],
       rows: report.locomo.oracleByCategory.map(c => [c.category, c.questions, c.f1.toFixed(4), report.split.missingByCategory.find(m => m.category === c.category)!.missing]) }), '',
     table({head:['Prompt row','Role','Activated / rejected versions','Activated / rejected / malformed / unevaluated trials','Whole replay calls / tokens','Held-out F1'],rows:report.rows.filter(r=>r.learning?.flags.rope).flatMap(r=>r.learning!.promptChurn.map(p=>[r.id,p.agentId,p.activated+' / '+p.rejected,[r.learning!.trials.activated,r.learning!.trials.rejected,r.learning!.trials.malformed,r.learning!.trials.unevaluated].join(' / '),r.learning!.replayCost.calls+' / '+r.learning!.replayCost.tokens,r.heldOutQuality!.f1]))}), '',
+    table({head:['Topology row','Proposed / validated / accepted / rejected','Entropy','Distinct roles','Node efficiency','Self-loops','Role cycles','DAG diameter'],rows:report.rows.filter(r=>r.learning).map(r=>[r.id,Object.values(r.learning!.mutationAcceptance).join(' / '),r.topology!.entropy,r.topology!.distinctRoles,r.topology!.nodeEfficiency,r.topology!.selfLoops,r.topology!.cycles,r.topology!.diameter])}), '',
+    table({head:['Learning row','Training step','Task','Best task score','Entropy','Distinct roles','Node efficiency','Failed included'],rows:report.rows.filter(r=>r.learning).flatMap(r=>r.learning!.structuralCurve.map(point=>[r.id,point.step,point.taskId,point.bestScore,point.topology!.entropy,point.topology!.distinctRoles,point.topology!.nodeEfficiency,String(point.topology!.includesFailed)]))}), '',
     `Held-out learning attempts refused: ${report.refusals.evalSplitInLearn}. Learning writes: ${report.totals.learningWrites}. Dataset comparisons remain ineligible.`, '',
     ...report.limitations.map(l => '- ' + l), '', `Fixture revision: \`${report.fixture.revision}\`. Source: \`${report.sourceId}\`. Report: \`${report.reportId}\`.`, ''].join('\n');
 }

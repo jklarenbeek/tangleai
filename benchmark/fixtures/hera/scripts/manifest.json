@@ -1,5 +1,5 @@
 {
-  "kind": "hera-scripted/v4",
+  "kind": "hera-scripted/v5",
   "files": [
     {
       "path": "baseline.json",
@@ -19,11 +19,15 @@
     },
     {
       "path": "rope.json",
-      "sha256": "b9296a97097f3771ed72868fd466d62bd297797136735f371edc8a1e4affd44a"
+      "sha256": "db6b6a4f08b042544ce26d2465e4ed0eed7811285d50286bb0ce907e80ce6b5d"
+    },
+    {
+      "path": "mutation.json",
+      "sha256": "530c6e46aa63cdace99fd3036c3d15613d6f6dda6f59746d46a6c472ff7871ea"
     },
     {
       "path": "../sequence.json",
-      "sha256": "e93cae14ea7e53c81bf565ff28816816221bcd85d39def6f2c3e367133902a4c"
+      "sha256": "827ae12ce81b70f50f604e287ca0f677d9989380585701e3034ab75e239e5ded"
     }
   ]
 }

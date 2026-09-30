@@ -33,7 +33,7 @@ export async function executorFixture(options:ExecutorFixtureOptions={}) {
         if(normalization){normalizations.set(node.id,count+1);if(options.repairNode===node.id&&count===0)return {...usage,message:{role:'assistant',content:'not-json'},finishReason:'stop'};}
         const citations=options.unsupported&&node.role==='conclude-agent'?[{id:'invented',digest:'f'.repeat(64)}]:units.map(({id,digest})=>({id,digest}));
         const result={answer:'Eastmere',disposition:'completed',claims:[{text:'The director studied in Eastmere.',citations}],findings:[],
-          ...(node.role==='query-decomposer'?{queries:['Who directed Lumen?','Where did Ivo study?']}:['retriever','evidence-selector'].includes(node.role)?{selectedEvidenceIds:units.map(e=>e.id)}:{})};
+          ...(['query-decomposer','query-rewriter'].includes(node.role)?{queries:['Who directed Lumen?','Where did Ivo study?']}:['retriever','evidence-selector'].includes(node.role)?{selectedEvidenceIds:units.map(e=>e.id)}:{})};
         return {...usage,message:{role:'assistant',content:JSON.stringify(options.transformResult?options.transformResult(node,request,result):result)},finishReason:'stop'};
       }})};
     const request:HeraExecuteRequest={task,snapshot:state.snapshot,topology:'fixed',mode:'evaluate',groupIndex:0,candidateIndex:0,configRevision:await heraRevisionOf({kind:'fixed-fixture'})};

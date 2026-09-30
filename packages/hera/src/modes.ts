@@ -1,7 +1,7 @@
 import { heraRefuse, type HeraOutcome } from './errors.ts';
 import type { HeraMode, HeraTask } from './contracts.gen.ts';
 export interface HeraAuthority { scope: string; mode: HeraMode; }
-const learningKinds = new Set(['agent', 'promptVersion', 'experience', 'advantage', 'promptTrial', 'snapshot', 'head','failureBuffer']);
+const learningKinds = new Set(['agent', 'promptVersion', 'experience', 'advantage', 'promptTrial', 'snapshot', 'head','failureBuffer','mutation']);
 export const isHeraLearningKind = (kind: string): boolean => learningKinds.has(kind);
 export function assertLearningWrite(mode: HeraMode, kind: string): HeraOutcome<null> {
   return isHeraLearningKind(kind) && mode !== 'learn'

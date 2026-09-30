@@ -11,27 +11,29 @@ Fixture: 16 passages, 10 questions (5 training, 5 held out). Licence: MIT.
 | single-turn | run | scripted | 0.5000 | 10 / 10 | 20 | scripted execution |
 | fixed-topology | run | scripted | 0.9000 | 10 / 10 | 140 | scripted execution |
 | query-specific-frozen | run | scripted | 0.9000 | 10 / 10 | 203 | scripted execution |
-| hera-no-experience | run | scripted | 0.7000 | 10 / 10 | 223 | scripted execution |
-| hera-no-rope | run | scripted | 0.8000 | 10 / 10 | 206 | scripted execution |
-| hera-full | implementation-missing | scripted | — | — | — | Experience, prompt and topology learning together are not implemented. |
-| hera-no-mutation | run | scripted | 0.7000 | 10 / 10 | 226 | scripted execution |
+| hera-no-experience | run | scripted | 0.5833 | 12 / 12 | 263 | scripted execution |
+| hera-no-rope | run | scripted | 0.6667 | 12 / 12 | 246 | scripted execution |
+| hera-full | run | scripted | 0.6667 | 12 / 12 | 280 | scripted execution |
+| hera-no-mutation | run | scripted | 0.5833 | 12 / 12 | 266 | scripted execution |
 
 | Row | Held-out F1 | Held-out answered / planned | Training calls | Held-out calls |
 |---|---:|---:|---:|---:|
 | single-turn | 0.4000 | 5 / 5 | 10 | 10 |
 | fixed-topology | 0.8000 | 5 / 5 | 70 | 70 |
 | query-specific-frozen | 0.8000 | 5 / 5 | 101 | 102 |
-| hera-no-experience | 0.6000 | 5 / 5 | 123 | 100 |
-| hera-no-rope | 0.8000 | 5 / 5 | 106 | 100 |
-| hera-no-mutation | 0.6000 | 5 / 5 | 126 | 100 |
+| hera-no-experience | 0.6000 | 5 / 5 | 163 | 100 |
+| hera-no-rope | 0.8000 | 5 / 5 | 146 | 100 |
+| hera-full | 0.6000 | 5 / 5 | 180 | 100 |
+| hera-no-mutation | 0.6000 | 5 / 5 | 166 | 100 |
 
 | Learning row | Mixed / evaluated | Unmixed groups | Library size | ADD / MERGE / PRUNE / KEEP | Head conflicts | Refused learning |
 |---|---:|---:|---:|---:|---:|---:|
-| hera-no-experience | 3 / 5 | 2 | 0 | 0 / 0 / 0 / 0 | 0 | 5 |
-| hera-no-rope | 3 / 5 | 2 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
-| hera-no-mutation | 3 / 5 | 2 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
+| hera-no-experience | 3 / 7 | 4 | 0 | 0 / 0 / 0 / 0 | 0 | 5 |
+| hera-no-rope | 3 / 7 | 4 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
+| hera-full | 4 / 7 | 3 | 2 | 4 / 1 / 1 / 2 | 0 | 5 |
+| hera-no-mutation | 3 / 7 | 4 | 2 | 4 / 1 / 1 / 1 | 0 | 5 |
 
-Measured retriever concurrency: 2. Replay calls: 0. Script revision: `fcbfb4c7544912d695a239d96a19b89ac84ea0ee659d4129ca85aaf3dda60bca`.
+Measured retriever concurrency: 2. Replay calls: 0. Script revision: `7b0071729ed6df73bca47fa7365c5e7c1ecddcf6bed345ca46fe5c6275d0e808`.
 
 Dataset: available. Training 64; held out 64; category-3 uncut answers below their ceiling: 4.
 
@@ -45,11 +47,50 @@ Dataset: available. Training 64; held out 64; category-3 uncut answers below the
 | Prompt row | Role | Activated / rejected versions | Activated / rejected / malformed / unevaluated trials | Whole replay calls / tokens | Held-out F1 |
 |---|---:|---:|---:|---:|---:|
 | hera-no-experience | conclude-agent | 1 / 2 | 1 / 1 / 1 / 0 | 14 / 140 | 0.6 |
+| hera-full | conclude-agent | 1 / 3 | 1 / 1 / 2 / 0 | 14 / 140 | 0.6 |
 | hera-no-mutation | conclude-agent | 1 / 2 | 1 / 1 / 1 / 0 | 14 / 140 | 0.6 |
 
-Held-out learning attempts refused: 5. Learning writes: 143. Dataset comparisons remain ineligible.
+| Topology row | Proposed / validated / accepted / rejected | Entropy | Distinct roles | Node efficiency | Self-loops | Role cycles | DAG diameter |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| hera-no-experience | 0 / 0 / 0 / 0 | 1.5 | 3.5 | 0.12847222222222224 | 0 | 0 | 2 |
+| hera-no-rope | 0 / 0 / 0 / 0 | 1.5 | 3.5 | 0.1527777777777778 | 0 | 0 | 2 |
+| hera-full | 1 / 1 / 1 / 0 | 1.5033985000288461 | 3.52 | 0.13333333333333333 | 0 | 0 | 2.04 |
+| hera-no-mutation | 0 / 0 / 0 / 0 | 1.5 | 3.5 | 0.12847222222222224 | 0 | 0 | 2 |
 
-- The single-turn, fixed-topology, query-specific frozen and bounded experience/prompt learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. The full row still requires topology mutation.
+| Learning row | Training step | Task | Best task score | Entropy | Distinct roles | Node efficiency | Failed included |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| hera-no-experience | 0 | q01 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-experience | 1 | q02 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-experience | 2 | q03 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-experience | 3 | q04 | 1 | 1.5 | 3.5 | 0.29166666666666663 | true |
+| hera-no-experience | 4 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-experience | 5 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-experience | 6 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-rope | 0 | q01 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-rope | 1 | q02 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-rope | 2 | q03 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-rope | 3 | q04 | 1 | 1.5 | 3.5 | 0.29166666666666663 | true |
+| hera-no-rope | 4 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-rope | 5 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-rope | 6 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-full | 0 | q01 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-full | 1 | q02 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-full | 2 | q03 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-full | 3 | q04 | 1 | 1.5 | 3.5 | 0.29166666666666663 | true |
+| hera-full | 4 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-full | 5 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-full | 6 | q08 | 1 | 1.5283208335737186 | 3.6666666666666665 | 0.08333333333333333 | true |
+| hera-no-mutation | 0 | q01 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-mutation | 1 | q02 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-mutation | 2 | q03 | 1 | 1.5 | 3.5 | 0.125 | true |
+| hera-no-mutation | 3 | q04 | 1 | 1.5 | 3.5 | 0.29166666666666663 | true |
+| hera-no-mutation | 4 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-mutation | 5 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+| hera-no-mutation | 6 | q08 | 0 | 1.5 | 3.5 | 0 | true |
+
+Held-out learning attempts refused: 5. Learning writes: 265. Dataset comparisons remain ineligible.
+
+- All seven ablation rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement.
 - The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.
 - The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.
 - LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.
@@ -59,9 +100,11 @@ Held-out learning attempts refused: 5. Learning writes: 143. Dataset comparisons
 - No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.
 - Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.
 - The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.
-- The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.
+- Every learning row uses seven registered training events over five distinct training tasks, including three consecutive q08 repetitions, then five held-out tasks against its final snapshot. Each repetition contributes to training costs and all-event quality; held-out quality counts the five unique held-out tasks. Three initial mixed groups exercise ADD, PRUNE, MERGE and KEEP. PRUNE uses an authored, source-backed host conflict policy.
 - Prompt variants run one deterministic credited role per mixed training group. The registered axes are efficiency, thoroughness, risk-sensitivity, error-correction and heuristic-injection; group index selects the axis. Proposal and contrast calls, rejected trials and complete control/replay executions are charged. Each learning row declares the same separate refinement budget in addition to its rollout budget.
 - The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.
 - Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.
+- Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.
+- Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean.
 
-Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `805b9d235d4dadf7b6a9bb7dfe29cae92a73daac1a51009eec61fd079d47358c`. Report: `b0b908713959dce92b6e9f660efb8952ce34ebe795e12b49788488b0add08140`.
+Fixture revision: `0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203`. Source: `5003b04afa11fb66ced812e6292bb25ef7734e2bb4230b6f06c8218be14b482c`. Report: `e37c815e0115666f92b2312571c77683efa390d83067215f755fc457c47f7e89`.

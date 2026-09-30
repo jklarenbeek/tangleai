@@ -12,6 +12,10 @@
     "q03": {
       "text": "Apply an unretained replay claim.",
       "outcome": "unsupported"
+    },
+    "q08": {
+      "text": "Apply an unretained mutation replay claim.",
+      "outcome": "unsupported"
     }
   },
   "replayImproves": [

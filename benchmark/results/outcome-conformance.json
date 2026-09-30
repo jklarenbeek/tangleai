@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "30e2ada872e20f04d56d806edd4b55dd2cd0bacb",
+    "head": "da00db989ed198ccdb0f2e6541ccf1d6833f0b68",
     "clean": false,
     "files": [
       {
@@ -647,7 +647,7 @@
       },
       {
         "path": "packages/hera/artifacts/catalog.json",
-        "sha256": "2f6e0a35e2998382b451b37541978e91085c4c35cf0f05e3eab758e7bb33c88f"
+        "sha256": "b18c1a9557f15ff59facdb603aa46c6d8587227ca0af9c6ecdd3c3a90d6011ff"
       },
       {
         "path": "packages/hera/package.json",
@@ -655,11 +655,11 @@
       },
       {
         "path": "packages/hera/schemas/hera-definition.json",
-        "sha256": "1519814cdbfa157f9483567e5a47fb40b0781b6c03e9cd78736554bdff629339"
+        "sha256": "923d587ae3af544cd11dc3928cc4101cb3697ad0db8409cff9af30a555689a26"
       },
       {
         "path": "packages/hera/schemas/hera.schema.json",
-        "sha256": "a5d5824fdc8335596701f46506225fe0bd8e439eddbfb563a477b3c875e38452"
+        "sha256": "0255351b25c503d582c03f5cf1c25a5278665174dc48ba749f1b357df3d2e9b7"
       },
       {
         "path": "packages/hera/src/activate.ts",
@@ -679,7 +679,7 @@
       },
       {
         "path": "packages/hera/src/contracts.gen.ts",
-        "sha256": "3e8a266ca4596c907630b228090798a7f888bca4e109dc408fc3c41c9cc37b28"
+        "sha256": "06d3b2159c65e415878f721643c51337426f6db0c161413345ff8a5ea8623041"
       },
       {
         "path": "packages/hera/src/credit.ts",
@@ -699,11 +699,11 @@
       },
       {
         "path": "packages/hera/src/executor.ts",
-        "sha256": "416c8fde20f38d74c20f9ca27e98c8c67f696ba06d16c5d2df38448e1e8b4175"
+        "sha256": "117552c52407d6e05c3f88c1c1f8ce74e8bde3b313f54547c47ea7ca209ec4c5"
       },
       {
         "path": "packages/hera/src/group.ts",
-        "sha256": "055e23c50bf023a78ea191286b25f2c8a3166a3bbc904f7b8b6da009e2fd25a1"
+        "sha256": "35e7f1f2937a984df447ebbac96850dbfb17da65aa06a03beb1c577e066ff384"
       },
       {
         "path": "packages/hera/src/heads.ts",
@@ -715,7 +715,7 @@
       },
       {
         "path": "packages/hera/src/index.ts",
-        "sha256": "33d379a763ec8fe2951d8a040d0150853043116565a27ca8000faa17b78c32be"
+        "sha256": "e1ca152db520f805b6134f815ab3331c93fa99cceb8a3cf5423c1e32100e8849"
       },
       {
         "path": "packages/hera/src/integrate.ts",
@@ -723,11 +723,19 @@
       },
       {
         "path": "packages/hera/src/learn.ts",
-        "sha256": "ad33353decd0c02d4d7c5483997df50b0561e846043861eab5d2e8a852e6f860"
+        "sha256": "e4dfe6d94534fc83fe50eff8d76d8d345fdbf5a7d99dcf837402d75f15939f1e"
+      },
+      {
+        "path": "packages/hera/src/metrics.ts",
+        "sha256": "f0f5f98f71db2e0905c830893d96734d24299a589ca9f58aa2cb471b20295c07"
       },
       {
         "path": "packages/hera/src/modes.ts",
-        "sha256": "c6a64d6e690859f5b913c9e93ea3660daae89cb4dcc2317edd101e634c33f2e5"
+        "sha256": "7f790b2342ee36e49e78c266b48401e692d131ae24ab31cf42615c709efb57fa"
+      },
+      {
+        "path": "packages/hera/src/mutate.ts",
+        "sha256": "e0733edb261e3afcf873fff99c8d43809ea778ae880f7c4955c39c4d03fda7aa"
       },
       {
         "path": "packages/hera/src/operations.ts",
@@ -735,11 +743,15 @@
       },
       {
         "path": "packages/hera/src/orchestrate.ts",
-        "sha256": "f4343c71d344d2aff2324bd83036d1ca7304a364f12519d1f7ece78b874958ab"
+        "sha256": "2b31c29f0a89cba7a8f9863cf8b0f0be3a861388554b317f6c32b6a38b0b4050"
+      },
+      {
+        "path": "packages/hera/src/predicate.ts",
+        "sha256": "5d2952551230434263c24102ed01e65535e786c76ae26551c0097da7609785e0"
       },
       {
         "path": "packages/hera/src/profile.ts",
-        "sha256": "336c17d3afc67d4681662ac8f1da5ed71ecde3825a2d688c426ba1c9853c07fe"
+        "sha256": "ed92798592e3ae15d0c6ce2cd8b7b20bd2481bcdfebab4f241f1147c718af814"
       },
       {
         "path": "packages/hera/src/prompt.ts",
@@ -763,7 +775,7 @@
       },
       {
         "path": "packages/hera/src/schema.ts",
-        "sha256": "a8a2f313d7a44f01aa808f06001dee964f9b0bef55ea2b689787dc4c0084df93"
+        "sha256": "3c84e9de62e98b01671cabb7271f0fca9103f0ee08eed867a699393017a1756c"
       },
       {
         "path": "packages/hera/src/select.ts",
@@ -771,11 +783,11 @@
       },
       {
         "path": "packages/hera/src/snapshot.ts",
-        "sha256": "89777c429723eb143089bbdd71d467623cbd3c4d04f4e626f177ba55fc9c8b5d"
+        "sha256": "f8d267f6ef89b852145f85ebec184808983efc42b5863dab2dcfa6a68913b087"
       },
       {
         "path": "packages/hera/src/store.ts",
-        "sha256": "b085470d6eb9fcbc4d763606948f18b5d1493214d5ebb61e5a8b3f7f2e826f17"
+        "sha256": "695b3fe2e047504f444cc4c16aa780ea7f1e3cc45fa135e0b2db539a0280afee"
       },
       {
         "path": "packages/hera/src/topology.ts",
@@ -795,7 +807,7 @@
       },
       {
         "path": "packages/hera/src/views.ts",
-        "sha256": "133c0bba7b43d3a39ccd064f6fc67b042dd49910725bbec4834c1799eb088ad3"
+        "sha256": "579cb337b5cf3c3ad6dc902f6f588d67c49aeb2dcf6687e0ac0e641dc1676bb7"
       },
       {
         "path": "packages/jaren/package.json",
@@ -1399,11 +1411,11 @@
       },
       {
         "path": "packages/store/src/hera-model.ts",
-        "sha256": "d0ee554349c289f9cc994b6251c073745f3f9c0175f0a118735b834a77052e20"
+        "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
       },
       {
         "path": "packages/store/src/hera-store.ts",
-        "sha256": "0d657cfdf1c08feed12d64cfa9aeb71345d53a05a6c5b007b60b7253295c5eb7"
+        "sha256": "c775eb635822bec772cd39addff5b6632ce3fa047387d41124cffbd57f106387"
       },
       {
         "path": "packages/store/src/identities.ts",
@@ -1598,7 +1610,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "98520e03c26e4bf6e375c46da53d47fcde86fdb161d7d562f30390d660c04c21"
+    "sha256": "c203b6874957aa32305e1fcc0d6ccc6146c60b74993b322872c5e1eeaa113848"
   },
   "registration": {
     "schemaVersion": 1,
@@ -84784,5 +84796,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "d27a9a72403f0d3af2a10b9eae5bf964ce050dab2a0056df50aeb98310f311eb"
+  "reportId": "311126633c618f73acc7d7c30e206bbbd5dc83ee65a7f340006a706b3af10a79"
 }

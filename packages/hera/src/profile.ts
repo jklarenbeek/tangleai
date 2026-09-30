@@ -10,7 +10,7 @@ import type {HeraControlReceipts} from './operations.ts';
 import {heraProfileView} from './views.ts';
 export async function profileQuery(task:HeraTask,snapshot:HeraLearningSnapshot,host:{artifact:GmplPromptArtifact;client:MasChatClient;embedder:Embedder;receipts:HeraControlReceipts},caps:HeraBudget):Promise<HeraProfile> {
   const initial:HeraProfile={text:task.query,tags:[],embedding:[],embeddedBy:snapshot.identities.embeddedBy};
-  const rendered=renderGmplPrompt(host.artifact,{phase:'profile',query:task.query,profile:heraProfileView(initial),offered_experiences:[],agents:[],caps});
+  const rendered=renderGmplPrompt(host.artifact,{phase:'profile',query:task.query,profile:heraProfileView(initial),offered_experiences:[],agents:[],caps,preferred_topologies:[]});
   if(!rendered.valid)throw new HeraRefusal(rendered.issues.map(i=>heraIssue('THERA1001',i.path,i.detail,i)));
   const result=await createStructuredOutput({client:host.receipts.client('profile',host.client),schema:heraSchemaOf('heraQueryProfileOutput'),maxRepairs:1})
     .generate([{role:'system',content:rendered.value.system},{role:'user',content:rendered.value.user}]);

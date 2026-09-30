@@ -35,11 +35,12 @@ export interface HeraExecuteRequest {
   groupIndex:number;candidateIndex:number;configRevision:string;caps?:Partial<WorkflowLimits>;
   /** A retained proposal changes one role in the same whole-run topology. */
   promptTrial?:{candidate:HeraPromptVersion;controlTrajectoryId:string;proposalOperationId:string};
+  mutationTrial?:{controlTrajectoryId:string;proposalOperationId:string};
 }
 export interface HeraExecution {trajectory:HeraTrajectory;steps:HeraTrajectoryStep[];}
 export function heraExecutionId(request:HeraExecuteRequest):Promise<string>{
   const trial=request.promptTrial;
-  return heraRevisionOf([request.task.scope,request.task.id,request.snapshot.id,request.groupIndex,request.candidateIndex,request.configRevision,...(trial?[trial.candidate.id,trial.controlTrajectoryId,trial.proposalOperationId]:[])]);
+  return heraRevisionOf([request.task.scope,request.task.id,request.snapshot.id,request.groupIndex,request.candidateIndex,request.configRevision,...(trial?[trial.candidate.id,trial.controlTrajectoryId,trial.proposalOperationId]:[]),...(request.mutationTrial?['mutation',request.mutationTrial.controlTrajectoryId,request.mutationTrial.proposalOperationId]:[])]);
 }
 const must=<T>(r:HeraOutcome<T>):T=>{if(!r.valid)throw new HeraRefusal(r.issues);return r.value;};
 function refuse(code:Parameters<typeof heraIssue>[0],path:string,detail:string,cause?:unknown):never {throw new HeraRefusal([heraIssue(code,path,detail,cause)]);}
@@ -118,6 +119,17 @@ export function createHeraExecutor(host:HeraExecutorHost) {
       let scaffold=await buildScaffold();
       let controlInput:{query:string;evidence:HeraEvidenceUnit[];binding:string}|undefined;
       const trial=request.promptTrial;
+      if(request.mutationTrial){
+        if(trial||request.mode!=='learn'||!supplied||supplied.generator.kind!=='mutation')refuse('THERA1004','/mutationTrial','A mutation replay requires learning authority and one retained candidate topology.');
+        const mutation=request.mutationTrial,retained=await host.store.getTopology(supplied.id),control=await host.store.getTrajectory(mutation.controlTrajectoryId),proposal=await host.store.getOperation(mutation.proposalOperationId),source=control?await host.masStore.getRun(control.masRunId):undefined;
+        if(!retained||!equalsJson(retained,supplied)||!control||!source||control.scope!==task.scope||control.taskId!==task.id||control.snapshotId!==snapshot.id||control.topologyId!==supplied.parentTopologyId||control.identityId!==identity.identityId||control.primaryScore!==0)
+          refuse('THERA1002','/mutationTrial/control','A mutation requires its retained failed parent and frozen identities.');
+        if(!proposal||proposal.scope!==task.scope||proposal.taskId!==task.id||proposal.snapshotId!==snapshot.id||proposal.groupId!==control.groupId||proposal.stage!=='mutation.proposal'||proposal.status!=='completed'||!equalsJson((proposal.value as {candidate?:HeraTopology}).candidate,{...supplied,workflowVersionId:null}))
+          refuse('THERA1003','/mutationTrial/proposal','The candidate differs from its retained registered-role intervention.');
+        const expected=await heraRevisionOf({task,snapshotId:snapshot.id,workflowVersionId:source.workflowVersionId,identityId:identity.identityId,evidenceRevision:host.evidence.revision,contextAdapter:host.evidence.contextAdapter??'documents'});
+        controlInput=source.input as typeof controlInput;
+        if(controlInput?.binding!==expected||!equalsJson(source.budget.limits,scaffold.validated.workflow.limits))refuse('THERA1002','/mutationTrial/pins','The control evidence policy and full execution limits must match the mutation.');
+      }
       if(trial){
         if(request.mode!=='learn'||!supplied)refuse('THERA1004','/promptTrial','A prompt replay requires learning authority and a retained whole topology.');
         const candidate=must(await validateHeraRecord('promptVersion',trial.candidate));

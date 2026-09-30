@@ -552,6 +552,10 @@ export interface HeraTopology {
   validation: { valid: boolean; issues: Array<HeraIssue>; };
   workflowVersionId: HeraTopologyWorkflowVersionIdAnyOf1 | null;
   rawProposal?: unknown;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  parentTopologyId?: string;
 }
 
 
@@ -908,6 +912,22 @@ export interface HeraRolloutGroupRefusals {
 }
 
 
+export interface HeraRolloutGroupRefinementBudgetSpent {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
 export interface HeraRolloutGroup {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -973,6 +993,11 @@ export interface HeraRolloutGroup {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   groupIndex?: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  mutationOperationId?: string;
+  refinementBudget?: { limits: HeraBudget; spent: HeraRolloutGroupRefinementBudgetSpent; controlUsage: HeraUsage; };
 }
 
 
@@ -1447,6 +1472,44 @@ export interface HeraLearningSnapshotIdentities {
  */
 export type HeraLearningSnapshotFailureBufferIdsAdditional = string;
 
+export interface HeraFailureStateBucketsAdditional {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  zeroStreak: number;
+  triggered: boolean;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  lastGroupId: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  lastScore: number;
+}
+
+
+export interface HeraFailureState {
+  predicateId: "score-zero-consecutive-v1";
+  bucketPolicy: "profile-tags-v1";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  threshold: number;
+  buckets: { [key: string]: HeraFailureStateBucketsAdditional; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraLearningSnapshotPreferredTopologyIdsAdditional = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraLearningSnapshotPreferredMutationIdsAdditional = string;
+
 export interface HeraLearningSnapshot {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1474,6 +1537,9 @@ export interface HeraLearningSnapshot {
   config: HeraLearningConfig;
   status: "staged" | "active" | "archived";
   failureBufferIds?: { [key: string]: HeraLearningSnapshotFailureBufferIdsAdditional; };
+  failureState?: HeraFailureState;
+  preferredTopologyIds?: { [key: string]: HeraLearningSnapshotPreferredTopologyIdsAdditional; };
+  preferredMutationIds?: { [key: string]: HeraLearningSnapshotPreferredMutationIdsAdditional; };
 }
 
 
@@ -1881,27 +1947,18 @@ export interface HeraRopeOutput {
 
 
 /**
+ * Schema constraints this type cannot express: if={"properties":{"action":{"const":"replace"}}}, then={"required":["removeInvocationId"]}, else={"not":{"required":["removeInvocationId"]}}
+ */
+export type HeraMutationProposalPart1 = unknown;
+
+/**
  * Schema constraints this type cannot express: minLength=1
  */
-export type HeraMutationOutputDependsOnItem = string;
+export type HeraMutationProposalDependsOnItem = string;
 
-export interface HeraMutationOutput {
-  action: "replace" | "augment";
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  removeInvocationId?: string;
-  addAgentId: "query-decomposer" | "retriever" | "answer-generator" | "query-rewriter" | "evidence-selector" | "context-validator" | "reflect-agent" | "conclude-agent";
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  dependsOn: Array<HeraMutationOutputDependsOnItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
+export type HeraMutationProposal = HeraMutationProposalPart1 & { action: "replace" | "augment"; removeInvocationId?: string; addAgentId: "query-decomposer" | "retriever" | "answer-generator" | "query-rewriter" | "evidence-selector" | "context-validator" | "reflect-agent" | "conclude-agent"; dependsOn: Array<HeraMutationProposalDependsOnItem>; reason: string; };
 
+export type HeraMutationOutput = HeraMutationProposal;
 
 /**
  * Schema constraints this type cannot express: minLength=1
@@ -2162,5 +2219,265 @@ export interface HeraPromptPatchItemOneOf4 {
 
 
 export type HeraPromptPatch = Array<HeraPromptPatchItemOneOf1 | HeraPromptPatchItemOneOf2 | HeraPromptPatchItemOneOf3 | HeraPromptPatchItemOneOf4>;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraMutationCandidateTopologyIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraMutationCandidateTrajectoryIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraMutationCreditItemStepIdsItem = string;
+
+export interface HeraMutationCreditItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  trajectoryId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  invocationId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  stepIds: Array<HeraMutationCreditItemStepIdsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HeraMutationCandidateScoreAnyOf1 = number;
+
+export interface HeraMutationSpent {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraMutationExecutionRunIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraMutationOperationIdsItem = string;
+
+export interface HeraMutation {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  snapshotId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  groupId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  profileBucket: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  parentTopologyId: string;
+  candidateTopologyId: HeraMutationCandidateTopologyIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  controlTrajectoryId: string;
+  candidateTrajectoryId: HeraMutationCandidateTrajectoryIdAnyOf1 | null;
+  proposal: HeraMutationProposal | null;
+  rawProposal: unknown;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  credit: Array<HeraMutationCreditItem>;
+  decision: "accepted" | "rejected" | "invalid" | "unevaluated";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  validation: { valid: boolean; issues: Array<HeraIssue>; };
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  controlScore: number;
+  candidateScore: HeraMutationCandidateScoreAnyOf1 | null;
+  spent: HeraMutationSpent;
+  pins: HeraPromptTrialPins;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  executionRunIds: Array<HeraMutationExecutionRunIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  operationIds: Array<HeraMutationOperationIdsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type HeraTopologyMetricsEntropyAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type HeraTopologyMetricsNodeEfficiencyAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type HeraTopologyMetricsDiameterAnyOf1 = number;
+
+export interface HeraTopologyMetrics {
+  entropy: HeraTopologyMetricsEntropyAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  distinctRoles: number;
+  nodeEfficiency: HeraTopologyMetricsNodeEfficiencyAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  selfLoops: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cycles: number;
+  diameter: HeraTopologyMetricsDiameterAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraTopologyViewNodesItemDependsOnItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraTopologyViewNodesItemToolsItem = string;
+
+export interface HeraTopologyViewNodesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  agentId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  promptVersionId: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  dependsOn: Array<HeraTopologyViewNodesItemDependsOnItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  tools?: Array<HeraTopologyViewNodesItemToolsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraTopologyViewOfferedExperienceIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraTopologyViewAppliedExperienceIdsItem = string;
+
+export interface HeraTopologyViewGenerator {
+  kind: "fixed" | "orchestrator" | "mutation";
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  configRevision: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type HeraTopologyViewWorkflowVersionIdAnyOf1 = string;
+
+export interface HeraTopologyView {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  snapshotId: string;
+  profile: HeraProfileView;
+  /**
+   * Schema constraints this type cannot express: minItems=0
+   */
+  nodes: Array<HeraTopologyViewNodesItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  offeredExperienceIds: Array<HeraTopologyViewOfferedExperienceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  appliedExperienceIds: Array<HeraTopologyViewAppliedExperienceIdsItem>;
+  generator: HeraTopologyViewGenerator;
+  validation: { valid: boolean; issues: Array<HeraIssue>; };
+  workflowVersionId: HeraTopologyViewWorkflowVersionIdAnyOf1 | null;
+  rawProposal?: unknown;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  parentTopologyId?: string;
+}
+
 
 export type Hera = unknown;

@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "805b9d235d4dadf7b6a9bb7dfe29cae92a73daac1a51009eec61fd079d47358c",
+  "sourceId": "5003b04afa11fb66ced812e6292bb25ef7734e2bb4230b6f06c8218be14b482c",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -282,7 +282,8 @@
       },
       {
         "rowId": "hera-full",
-        "identityStatus": "not-run"
+        "identityStatus": "run",
+        "identityId": "5db0a8549bdd7a25ec1ba6ed9f908382fc6ad18a1387477a1444c8dc38929227"
       },
       {
         "rowId": "hera-no-mutation",
@@ -470,7 +471,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "eac1fa3caab3addc7f1f15455cc632eae502a6299d60868dfbc01134e6c02a53",
+        "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -589,7 +590,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "eac1fa3caab3addc7f1f15455cc632eae502a6299d60868dfbc01134e6c02a53",
+        "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -708,7 +709,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "092d16e34a440e418c354d4bf9045a9ea8cffd2f80c3fef6c2d8de8f77e26c3f",
+        "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -827,7 +828,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "1865a26bcdf97574053e1f500637a3e9f3d6910d2ca0b9729a9f7ea47a7502a4",
+        "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -857,11 +858,11 @@
         }
       },
       "quality": {
-        "f1": 0.7,
-        "successRate": 0.7,
-        "citationRecall": 0.9166666666666666,
-        "answered": 10,
-        "planned": 10,
+        "f1": 0.5833333333333334,
+        "successRate": 0.5833333333333334,
+        "citationRecall": 0.9305555555555555,
+        "answered": 12,
+        "planned": 12,
         "byCategory": [
           {
             "category": 1,
@@ -883,9 +884,9 @@
           },
           {
             "category": 4,
-            "f1": 0.5,
-            "answered": 4,
-            "planned": 4
+            "f1": 0.3333333333333333,
+            "answered": 6,
+            "planned": 6
           }
         ]
       },
@@ -923,15 +924,15 @@
         ]
       },
       "cost": {
-        "calls": 223,
-        "promptTokens": 1561,
-        "completionTokens": 669,
+        "calls": 263,
+        "promptTokens": 1841,
+        "completionTokens": 789,
         "unknownTokenRequests": 0,
         "estimatedTokens": 0,
         "ms": 0,
-        "unknownMsRequests": 223,
+        "unknownMsRequests": 263,
         "money": null,
-        "trainingCalls": 123,
+        "trainingCalls": 163,
         "heldOutCalls": 100
       },
       "failures": {
@@ -944,10 +945,10 @@
         "refusedLearningWrites": 5
       },
       "learning": {
-        "mixedGroupRate": 0.6,
+        "mixedGroupRate": 0.42857142857142855,
         "mixedGroups": 3,
-        "evaluatedGroups": 5,
-        "groupsWithoutMixedOutcome": 2,
+        "evaluatedGroups": 7,
+        "groupsWithoutMixedOutcome": 4,
         "librarySize": 0,
         "libraryCap": 32,
         "libraryChurn": 0,
@@ -975,7 +976,126 @@
           "malformed": 1,
           "unevaluated": 0
         },
-        "mutationAcceptance": 0,
+        "mutationAcceptance": {
+          "proposed": 0,
+          "validated": 0,
+          "accepted": 0,
+          "rejected": 0
+        },
+        "structuralCurve": [
+          {
+            "step": 0,
+            "taskId": "q01",
+            "groupId": "468944cb2affefd3a8ba6df6c6b4ce78d99f5814411f6f6653f200ca4ac539ef",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 1,
+            "taskId": "q02",
+            "groupId": "15dd126e070ecb569e747e3832c5eb244d362d5c28941e07abe8acd945efff1e",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 2,
+            "taskId": "q03",
+            "groupId": "ef1f3116130bc663f8246bf1b5a8eb49c686f9b3d5439890c127a4243387e7e3",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 3,
+            "taskId": "q04",
+            "groupId": "4964c79284940bae7048d727485fe485c4402b5822e0a6b2692657ed8e3a69b4",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.29166666666666663,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 4,
+            "taskId": "q08",
+            "groupId": "4c4e88c4fd31ce29ec1048367a8869f691cc019b51fa869a9fa33232b2b683bf",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 5,
+            "taskId": "q08",
+            "groupId": "7d3452d1da2be50edf23dcccc0120cbdb2bf3cce1fa215f0518d3fdc5d894618",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 6,
+            "taskId": "q08",
+            "groupId": "0b52a0a3608be14738887e5827b8d6606c64baaed2097fbde0297d694120e5ef",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          }
+        ],
         "negativeTransferByProfile": [],
         "writes": 26,
         "flags": {
@@ -984,7 +1104,16 @@
           "mutation": false
         }
       },
-      "topology": null
+      "topology": {
+        "entropy": 1.5,
+        "distinctRoles": 3.5,
+        "nodeEfficiency": 0.12847222222222224,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 2,
+        "includesFailed": true,
+        "trajectories": 24
+      }
     },
     {
       "id": "hera-no-rope",
@@ -996,7 +1125,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "84806f34efc6a46a12f04a8076ada70e12e0e16300bdbfac6ee90335fe2c3361",
+        "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -1026,11 +1155,11 @@
         }
       },
       "quality": {
-        "f1": 0.8,
-        "successRate": 0.8,
-        "citationRecall": 0.9166666666666666,
-        "answered": 10,
-        "planned": 10,
+        "f1": 0.6666666666666666,
+        "successRate": 0.6666666666666666,
+        "citationRecall": 0.9305555555555555,
+        "answered": 12,
+        "planned": 12,
         "byCategory": [
           {
             "category": 1,
@@ -1052,9 +1181,9 @@
           },
           {
             "category": 4,
-            "f1": 0.75,
-            "answered": 4,
-            "planned": 4
+            "f1": 0.5,
+            "answered": 6,
+            "planned": 6
           }
         ]
       },
@@ -1092,15 +1221,15 @@
         ]
       },
       "cost": {
-        "calls": 206,
-        "promptTokens": 1442,
-        "completionTokens": 618,
+        "calls": 246,
+        "promptTokens": 1722,
+        "completionTokens": 738,
         "unknownTokenRequests": 0,
         "estimatedTokens": 0,
         "ms": 0,
-        "unknownMsRequests": 206,
+        "unknownMsRequests": 246,
         "money": null,
-        "trainingCalls": 106,
+        "trainingCalls": 146,
         "heldOutCalls": 100
       },
       "failures": {
@@ -1113,10 +1242,10 @@
         "refusedLearningWrites": 5
       },
       "learning": {
-        "mixedGroupRate": 0.6,
+        "mixedGroupRate": 0.42857142857142855,
         "mixedGroups": 3,
-        "evaluatedGroups": 5,
-        "groupsWithoutMixedOutcome": 2,
+        "evaluatedGroups": 7,
+        "groupsWithoutMixedOutcome": 4,
         "librarySize": 2,
         "libraryCap": 32,
         "libraryChurn": 6,
@@ -1138,43 +1267,147 @@
           "malformed": 0,
           "unevaluated": 0
         },
-        "mutationAcceptance": 0,
+        "mutationAcceptance": {
+          "proposed": 0,
+          "validated": 0,
+          "accepted": 0,
+          "rejected": 0
+        },
+        "structuralCurve": [
+          {
+            "step": 0,
+            "taskId": "q01",
+            "groupId": "51e11ceeccf91d6b8fde3bb71564d3a56b7e67198b288fc996bb93a892af0954",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 1,
+            "taskId": "q02",
+            "groupId": "d502ffcc39978a83787f79f16bb29e28ed4cc834b9a367728fd4338a8deecc27",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 2,
+            "taskId": "q03",
+            "groupId": "ade1f08859ee73f287c7a0d7cab2426974e678fa457d9ba92e5020fa3c35cf06",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 3,
+            "taskId": "q04",
+            "groupId": "d400cdc940ff3ff6cd780f7d320c379027bfaa7a373f646341b2a8a29b1129c1",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.29166666666666663,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 4,
+            "taskId": "q08",
+            "groupId": "f73ab2aa602134e8fd938d8f46eac29ca40e682d9cd76fd0eed7bb831cd7a22f",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 5,
+            "taskId": "q08",
+            "groupId": "1c9ef223f88eb85da96433bf0b54ba6bb3ddab82915a85c1486c3d5b3dfd02b7",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 6,
+            "taskId": "q08",
+            "groupId": "4e34902e76827d0e0e7c0f50ca684dded701b5aa44b3874d45253702bf9be0a6",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          }
+        ],
         "negativeTransferByProfile": [],
-        "writes": 53,
+        "writes": 71,
         "flags": {
           "experience": true,
           "rope": false,
           "mutation": false
         }
       },
-      "topology": null
+      "topology": {
+        "entropy": 1.5,
+        "distinctRoles": 3.5,
+        "nodeEfficiency": 0.1527777777777778,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 2,
+        "includesFailed": true,
+        "trajectories": 24
+      }
     },
     {
       "id": "hera-full",
-      "kind": "ablation",
-      "status": "implementation-missing",
-      "reason": "Experience, prompt and topology learning together are not implemented.",
-      "tier": "scripted",
-      "identity": null,
-      "quality": null,
-      "cost": null,
-      "failures": {
-        "skipped": 0,
-        "failed": 0,
-        "refusedCandidates": 0,
-        "budgetStops": 0,
-        "orphans": 0,
-        "headConflicts": 0,
-        "refusedLearningWrites": 0
-      },
-      "learning": null,
-      "topology": null,
-      "seeds": [
-        17753
-      ]
-    },
-    {
-      "id": "hera-no-mutation",
       "kind": "ablation",
       "status": "run",
       "reason": null,
@@ -1183,7 +1416,7 @@
         17753
       ],
       "identity": {
-        "snapshotId": "5a739d06aac18caa499ee438b2e28c00c63f0f03c160f92827e486e2d76d34c4",
+        "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
         "model": "ollama/hera-scripted",
         "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
         "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
@@ -1213,11 +1446,11 @@
         }
       },
       "quality": {
-        "f1": 0.7,
-        "successRate": 0.7,
-        "citationRecall": 0.9166666666666666,
-        "answered": 10,
-        "planned": 10,
+        "f1": 0.6666666666666666,
+        "successRate": 0.6666666666666666,
+        "citationRecall": 0.9305555555555555,
+        "answered": 12,
+        "planned": 12,
         "byCategory": [
           {
             "category": 1,
@@ -1240,8 +1473,8 @@
           {
             "category": 4,
             "f1": 0.5,
-            "answered": 4,
-            "planned": 4
+            "answered": 6,
+            "planned": 6
           }
         ]
       },
@@ -1279,15 +1512,15 @@
         ]
       },
       "cost": {
-        "calls": 226,
-        "promptTokens": 1582,
-        "completionTokens": 678,
+        "calls": 280,
+        "promptTokens": 1960,
+        "completionTokens": 840,
         "unknownTokenRequests": 0,
         "estimatedTokens": 0,
         "ms": 0,
-        "unknownMsRequests": 226,
+        "unknownMsRequests": 280,
         "money": null,
-        "trainingCalls": 126,
+        "trainingCalls": 180,
         "heldOutCalls": 100
       },
       "failures": {
@@ -1300,10 +1533,307 @@
         "refusedLearningWrites": 5
       },
       "learning": {
-        "mixedGroupRate": 0.6,
+        "mixedGroupRate": 0.5714285714285714,
+        "mixedGroups": 4,
+        "evaluatedGroups": 7,
+        "groupsWithoutMixedOutcome": 3,
+        "librarySize": 2,
+        "libraryCap": 32,
+        "libraryChurn": 6,
+        "libraryOperations": {
+          "add": 4,
+          "merge": 1,
+          "prune": 1,
+          "keep": 2
+        },
+        "promptChurn": [
+          {
+            "agentId": "conclude-agent",
+            "activated": 1,
+            "rejected": 3
+          }
+        ],
+        "replayCost": {
+          "calls": 14,
+          "tokens": 140,
+          "ms": 0
+        },
+        "trials": {
+          "activated": 1,
+          "rejected": 1,
+          "malformed": 2,
+          "unevaluated": 0
+        },
+        "mutationAcceptance": {
+          "proposed": 1,
+          "validated": 1,
+          "accepted": 1,
+          "rejected": 0
+        },
+        "structuralCurve": [
+          {
+            "step": 0,
+            "taskId": "q01",
+            "groupId": "8450573d421f3538579717f45fe2570dd2ec3acb12378c3d4de12c844cff2cb8",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 1,
+            "taskId": "q02",
+            "groupId": "b2afa79480528845bf83c745e565a6c62576988ed8df318647a9f8d3077fb7b9",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 2,
+            "taskId": "q03",
+            "groupId": "0c8ccfcc895c8b867c362608ba998762ebacc83c4fd755916998a0a5a19d24a3",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 3,
+            "taskId": "q04",
+            "groupId": "6590e907179f02a2ce477a52835230eb397ae068eac2a5e0b3b1e9a1594bb34e",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.29166666666666663,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 4,
+            "taskId": "q08",
+            "groupId": "647c01eda97971c8cb06407ec5d3f06fb0ed258ecea70060c8353d4ce23ce427",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 5,
+            "taskId": "q08",
+            "groupId": "c342c6f26dac817f026dd865605fb611479fc1981ee58756010419f5bd153b52",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 6,
+            "taskId": "q08",
+            "groupId": "6c3ffff273102136cf8ba89fcbb6b5c97dd98cdc4f02de2226830931485c0ce7",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5283208335737186,
+              "distinctRoles": 3.6666666666666665,
+              "nodeEfficiency": 0.08333333333333333,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2.3333333333333335,
+              "includesFailed": true,
+              "trajectories": 3
+            }
+          }
+        ],
+        "negativeTransferByProfile": [],
+        "writes": 86,
+        "flags": {
+          "experience": true,
+          "rope": true,
+          "mutation": true
+        }
+      },
+      "topology": {
+        "entropy": 1.5033985000288461,
+        "distinctRoles": 3.52,
+        "nodeEfficiency": 0.13333333333333333,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 2.04,
+        "includesFailed": true,
+        "trajectories": 25
+      }
+    },
+    {
+      "id": "hera-no-mutation",
+      "kind": "ablation",
+      "status": "run",
+      "reason": null,
+      "tier": "scripted",
+      "seeds": [
+        17753
+      ],
+      "identity": {
+        "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+        "model": "ollama/hera-scripted",
+        "decoder": "20985d4f6e4f463566e92261ac084ea529809fc47182f895494d1bfeef5689f0",
+        "corpusRevision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
+        "evaluatorId": "fixture-exact",
+        "toolIds": [
+          "hera-evidence"
+        ],
+        "budget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        },
+        "learningBudget": {
+          "calls": 24,
+          "tokens": 65536,
+          "ms": 120000,
+          "turns": 6,
+          "nodes": 15,
+          "depth": 15,
+          "fanOut": 12,
+          "concurrency": 4
+        }
+      },
+      "quality": {
+        "f1": 0.5833333333333334,
+        "successRate": 0.5833333333333334,
+        "citationRecall": 0.9305555555555555,
+        "answered": 12,
+        "planned": 12,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.6666666666666666,
+            "answered": 3,
+            "planned": 3
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 3,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 4,
+            "f1": 0.3333333333333333,
+            "answered": 6,
+            "planned": 6
+          }
+        ]
+      },
+      "heldOutQuality": {
+        "f1": 0.6,
+        "successRate": 0.6,
+        "citationRecall": 0.9333333333333332,
+        "answered": 5,
+        "planned": 5,
+        "byCategory": [
+          {
+            "category": 1,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          },
+          {
+            "category": 2,
+            "f1": 1,
+            "answered": 1,
+            "planned": 1
+          },
+          {
+            "category": 3,
+            "f1": 0,
+            "answered": 0,
+            "planned": 0
+          },
+          {
+            "category": 4,
+            "f1": 0.5,
+            "answered": 2,
+            "planned": 2
+          }
+        ]
+      },
+      "cost": {
+        "calls": 266,
+        "promptTokens": 1862,
+        "completionTokens": 798,
+        "unknownTokenRequests": 0,
+        "estimatedTokens": 0,
+        "ms": 0,
+        "unknownMsRequests": 266,
+        "money": null,
+        "trainingCalls": 166,
+        "heldOutCalls": 100
+      },
+      "failures": {
+        "skipped": 0,
+        "failed": 0,
+        "refusedCandidates": 0,
+        "budgetStops": 0,
+        "orphans": 0,
+        "headConflicts": 0,
+        "refusedLearningWrites": 5
+      },
+      "learning": {
+        "mixedGroupRate": 0.42857142857142855,
         "mixedGroups": 3,
-        "evaluatedGroups": 5,
-        "groupsWithoutMixedOutcome": 2,
+        "evaluatedGroups": 7,
+        "groupsWithoutMixedOutcome": 4,
         "librarySize": 2,
         "libraryCap": 32,
         "libraryChurn": 6,
@@ -1331,16 +1861,144 @@
           "malformed": 1,
           "unevaluated": 0
         },
-        "mutationAcceptance": 0,
+        "mutationAcceptance": {
+          "proposed": 0,
+          "validated": 0,
+          "accepted": 0,
+          "rejected": 0
+        },
+        "structuralCurve": [
+          {
+            "step": 0,
+            "taskId": "q01",
+            "groupId": "4d734d8e6a36d86c75f1b145d6b35dbf60aff1aaff63c598ddc1f1186291947f",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 1,
+            "taskId": "q02",
+            "groupId": "4af30f0b62b90db80124e8298b515d8b2f58c41c9db501c952d14d3cb86c9992",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 2,
+            "taskId": "q03",
+            "groupId": "059c3b7a4b881e7fc9e0359652a8a0c4be8a35e2cd064ed4fae8426a9d059fd1",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.125,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 3,
+            "taskId": "q04",
+            "groupId": "26c96578b3c0b1863dd436e036bc8e4e55819ca94a66db02ecb54a6a2b604d4e",
+            "bestScore": 1,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0.29166666666666663,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 4,
+            "taskId": "q08",
+            "groupId": "8551ae64ba1b0828a1a97946f33985073aae74b9f3fa3b5b8122f5d1bcdf2295",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 5,
+            "taskId": "q08",
+            "groupId": "6fcfb5899a5d8416c9c64fc3b0fb759917316d4d6c035a30d19fe446e06a40cf",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          },
+          {
+            "step": 6,
+            "taskId": "q08",
+            "groupId": "67f04684b02c98d53a5e070f714ef4f62ad686a0fd9bae6a9d661da1c4d8719e",
+            "bestScore": 0,
+            "topology": {
+              "entropy": 1.5,
+              "distinctRoles": 3.5,
+              "nodeEfficiency": 0,
+              "selfLoops": 0,
+              "cycles": 0,
+              "diameter": 2,
+              "includesFailed": true,
+              "trajectories": 2
+            }
+          }
+        ],
         "negativeTransferByProfile": [],
-        "writes": 64,
+        "writes": 82,
         "flags": {
           "experience": true,
           "rope": true,
           "mutation": false
         }
       },
-      "topology": null
+      "topology": {
+        "entropy": 1.5,
+        "distinctRoles": 3.5,
+        "nodeEfficiency": 0.12847222222222224,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 2,
+        "includesFailed": true,
+        "trajectories": 24
+      }
     }
   ],
   "pairs": [
@@ -1423,8 +2081,8 @@
     }
   ],
   "scripted": {
-    "revision": "fcbfb4c7544912d695a239d96a19b89ac84ea0ee659d4129ca85aaf3dda60bca",
-    "requests": 1018,
+    "revision": "7b0071729ed6df73bca47fa7365c5e7c1ecddcf6bed345ca46fe5c6275d0e808",
+    "requests": 1418,
     "replayCalls": 0,
     "maxConcurrentRetrievers": 2
   },
@@ -7780,17 +8438,17 @@
   },
   "totals": {
     "rows": 9,
-    "run": 8,
+    "run": 9,
     "notRun": 0,
-    "implementationMissing": 1,
+    "implementationMissing": 0,
     "datasetUnavailable": 0,
-    "answered": 80,
-    "planned": 80,
-    "calls": 1018,
-    "learningWrites": 143
+    "answered": 98,
+    "planned": 98,
+    "calls": 1418,
+    "learningWrites": 265
   },
   "limitations": [
-    "The single-turn, fixed-topology, query-specific frozen and bounded experience/prompt learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. The full row still requires topology mutation.",
+    "All seven ablation rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement.",
     "The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.",
     "The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.",
     "LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.",
@@ -7800,10 +8458,12 @@
     "No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.",
     "Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.",
     "The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.",
-    "The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.",
+    "Every learning row uses seven registered training events over five distinct training tasks, including three consecutive q08 repetitions, then five held-out tasks against its final snapshot. Each repetition contributes to training costs and all-event quality; held-out quality counts the five unique held-out tasks. Three initial mixed groups exercise ADD, PRUNE, MERGE and KEEP. PRUNE uses an authored, source-backed host conflict policy.",
     "Prompt variants run one deterministic credited role per mixed training group. The registered axes are efficiency, thoroughness, risk-sensitivity, error-correction and heuristic-injection; group index selects the axis. Proposal and contrast calls, rejected trials and complete control/replay executions are charged. Each learning row declares the same separate refinement budget in addition to its rollout budget.",
     "The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.",
-    "Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost."
+    "Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.",
+    "Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.",
+    "Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean."
   ],
-  "reportId": "b0b908713959dce92b6e9f660efb8952ce34ebe795e12b49788488b0add08140"
+  "reportId": "e37c815e0115666f92b2312571c77683efa390d83067215f755fc457c47f7e89"
 }

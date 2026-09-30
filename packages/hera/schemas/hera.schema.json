@@ -855,7 +855,11 @@
             }
           ]
         },
-        "rawProposal": {}
+        "rawProposal": {},
+        "parentTopologyId": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "required": [
         "id",
@@ -1606,6 +1610,50 @@
         "groupIndex": {
           "type": "integer",
           "minimum": 0
+        },
+        "mutationOperationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "refinementBudget": {
+          "type": "object",
+          "properties": {
+            "limits": {
+              "$ref": "#/$defs/heraBudget"
+            },
+            "spent": {
+              "type": "object",
+              "properties": {
+                "calls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "calls",
+                "tokens",
+                "ms"
+              ],
+              "additionalProperties": false
+            },
+            "controlUsage": {
+              "$ref": "#/$defs/heraUsage"
+            }
+          },
+          "required": [
+            "limits",
+            "spent",
+            "controlUsage"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -2348,6 +2396,23 @@
           ]
         },
         "failureBufferIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "failureState": {
+          "$ref": "#/$defs/heraFailureState"
+        },
+        "preferredTopologyIds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "preferredMutationIds": {
           "type": "object",
           "additionalProperties": {
             "type": "string",
@@ -3102,50 +3167,7 @@
       "additionalProperties": false
     },
     "heraMutationOutput": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "enum": [
-            "replace",
-            "augment"
-          ]
-        },
-        "removeInvocationId": {
-          "type": "string",
-          "minLength": 1
-        },
-        "addAgentId": {
-          "enum": [
-            "query-decomposer",
-            "retriever",
-            "answer-generator",
-            "query-rewriter",
-            "evidence-selector",
-            "context-validator",
-            "reflect-agent",
-            "conclude-agent"
-          ]
-        },
-        "dependsOn": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "uniqueItems": true
-        },
-        "reason": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "required": [
-        "action",
-        "addAgentId",
-        "dependsOn",
-        "reason"
-      ],
-      "additionalProperties": false
+      "$ref": "#/$defs/heraMutationProposal"
     },
     "heraQueryProfileOutput": {
       "type": "object",
@@ -3629,6 +3651,559 @@
         "evidenceRevision",
         "contextAdapter",
         "limits"
+      ],
+      "additionalProperties": false
+    },
+    "heraFailureState": {
+      "type": "object",
+      "properties": {
+        "predicateId": {
+          "const": "score-zero-consecutive-v1"
+        },
+        "bucketPolicy": {
+          "const": "profile-tags-v1"
+        },
+        "threshold": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "buckets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "zeroStreak": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "triggered": {
+                "type": "boolean"
+              },
+              "lastGroupId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lastScore": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "zeroStreak",
+              "triggered",
+              "lastGroupId",
+              "lastScore"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "predicateId",
+        "bucketPolicy",
+        "threshold",
+        "buckets"
+      ],
+      "additionalProperties": false
+    },
+    "heraMutationProposal": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "replace",
+            "augment"
+          ]
+        },
+        "removeInvocationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "addAgentId": {
+          "enum": [
+            "query-decomposer",
+            "retriever",
+            "answer-generator",
+            "query-rewriter",
+            "evidence-selector",
+            "context-validator",
+            "reflect-agent",
+            "conclude-agent"
+          ]
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "addAgentId",
+        "dependsOn",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "replace"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "removeInvocationId"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "removeInvocationId"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "heraMutation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "groupId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileBucket": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "parentTopologyId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateTopologyId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "controlTrajectoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidateTrajectoryId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "proposal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/heraMutationProposal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rawProposal": {},
+        "credit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trajectoryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "invocationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true,
+                "minItems": 1
+              }
+            },
+            "required": [
+              "trajectoryId",
+              "invocationId",
+              "stepIds"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "decision": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "invalid",
+            "unevaluated"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/heraIssue"
+              }
+            }
+          },
+          "required": [
+            "valid",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "controlScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "candidateScore": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spent": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "pins": {
+          "$ref": "#/$defs/heraPromptTrialPins"
+        },
+        "executionRunIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "operationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "groupId",
+        "profileBucket",
+        "parentTopologyId",
+        "candidateTopologyId",
+        "controlTrajectoryId",
+        "candidateTrajectoryId",
+        "proposal",
+        "rawProposal",
+        "credit",
+        "decision",
+        "reason",
+        "validation",
+        "controlScore",
+        "candidateScore",
+        "spent",
+        "pins",
+        "executionRunIds",
+        "operationIds"
+      ],
+      "additionalProperties": false
+    },
+    "heraTopologyMetrics": {
+      "type": "object",
+      "properties": {
+        "entropy": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "distinctRoles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodeEfficiency": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selfLoops": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cycles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diameter": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entropy",
+        "distinctRoles",
+        "nodeEfficiency",
+        "selfLoops",
+        "cycles",
+        "diameter"
+      ],
+      "additionalProperties": false
+    },
+    "heraTopologyView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "profile": {
+          "$ref": "#/$defs/heraProfileView"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "agentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "promptVersionId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "dependsOn": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "agentId",
+              "promptVersionId",
+              "dependsOn"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "offeredExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "appliedExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "generator": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "fixed",
+                "orchestrator",
+                "mutation"
+              ]
+            },
+            "configRevision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "configRevision"
+          ],
+          "additionalProperties": false
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/heraIssue"
+              }
+            }
+          },
+          "required": [
+            "valid",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        "workflowVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rawProposal": {},
+        "parentTopologyId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "profile",
+        "nodes",
+        "offeredExperienceIds",
+        "appliedExperienceIds",
+        "generator",
+        "validation",
+        "workflowVersionId"
       ],
       "additionalProperties": false
     },

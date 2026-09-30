@@ -5,12 +5,12 @@ import { assertLearningWrite, isHeraLearningKind, type HeraAuthority } from './m
 import { validateHeraRecord } from './schema.ts';
 import { planHeraHeadTransition, planPromptActivation, planPromptRollback, planSnapshotActivation, planHeraLibraryTransition, type HeraHeadPlan } from './heads.ts';
 import type { HeraAgentDefinition, HeraPromptVersion, HeraExperience, HeraTopology, HeraRolloutGroup,
-  HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead,HeraFailureBuffer } from './contracts.gen.ts';
+  HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead,HeraFailureBuffer,HeraMutation } from './contracts.gen.ts';
 export interface HeraRecords {
   operation: HeraOperation; agent: HeraAgentDefinition; promptVersion: HeraPromptVersion; experience: HeraExperience;
   topology: HeraTopology; rolloutGroup: HeraRolloutGroup; trajectory: HeraTrajectory;
   trajectoryStep: HeraTrajectoryStep; advantage: HeraSemanticAdvantage; promptTrial: HeraPromptTrial;
-  snapshot: HeraLearningSnapshot; head: HeraHead;failureBuffer:HeraFailureBuffer;
+  snapshot: HeraLearningSnapshot; head: HeraHead;failureBuffer:HeraFailureBuffer;mutation:HeraMutation;
 }
 export type HeraRecordKind = keyof HeraRecords;
 type HeraMutableKind = Exclude<HeraRecordKind, 'head'>;
@@ -19,7 +19,7 @@ export type HeraRecordMethods = {
 } & {
   [K in HeraRecordKind as `get${Capitalize<K>}`]: (id: string) => Promise<HeraRecords[K] | undefined>;
 };
-export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['operation','agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head','failureBuffer'];
+export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['operation','agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head','failureBuffer','mutation'];
 export interface HeraQuery { scope?: string; status?: string; agentId?: string; groupId?: string; taskId?: string; limit?: number; }
 export interface HeraPersistenceView {
   get<K extends HeraRecordKind>(kind: K, id: string): Promise<HeraRecords[K] | undefined>;
@@ -124,6 +124,11 @@ export function createHeraStoreAdapter(persistence: HeraPersistence, scope: stri
               for(const [agentId,id] of Object.entries(candidate.failureBufferIds??{})){
                 const buffer=await raw.get('failureBuffer',id);
                 if(!buffer||buffer.agentId!==agentId||buffer.scope!==candidate.scope)return refuse('THERA1002','/failureBufferIds/'+agentId,'The frozen role buffer is missing or foreign.');
+              }
+              for(const [bucket,id] of Object.entries(candidate.preferredTopologyIds??{})){
+                const topology=await raw.get('topology',id),mutationId=candidate.preferredMutationIds?.[bucket],mutation=mutationId?await raw.get('mutation',mutationId):undefined;
+                if(!topology||topology.scope!==candidate.scope||!mutation||mutation.scope!==candidate.scope||mutation.profileBucket!==bucket||mutation.candidateTopologyId!==id||mutation.decision!=='accepted')
+                  return refuse('THERA1002','/preferredTopologyIds/'+bucket,'A topology hint requires its scoped accepted mutation.');
               }
               expected = must(planSnapshotActivation(actual, plan.expected, candidate, actual.versionId ? await raw.get('snapshot', actual.versionId) : undefined));
             } else if(actual.kind==='library'&&plan.membership){

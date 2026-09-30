@@ -7,6 +7,8 @@ import {extractSemanticAdvantage,type HeraReflectionEvidence} from './advantage.
 import {assignFailureCredit} from './credit.ts';
 import {runHeraPromptTrial,type HeraPromptTrialResult} from './trial.ts';
 import {activatePromptVersion} from './activate.ts';
+import {persistentFailure,heraProfileBucket} from './predicate.ts';
+import {rankTrajectories} from './rank.ts';
 import {recordApplications} from './utility.ts';
 import {proposeConsolidation,type HeraConflictEvidence,type HeraConsolidationApplication} from './consolidate.ts';
 import {prepareHeraSnapshot,activateSnapshot} from './snapshot.ts';
@@ -17,7 +19,7 @@ import {validateHeraRecord,validateHeraShape} from './schema.ts';
 import {heraRevisionOf} from './identity.ts';
 import {createHeraControlReceipts,emptyHeraUsage} from './operations.ts';
 import {HeraRefusal,heraIssue,type HeraOutcome} from './errors.ts';
-import type {HeraExperience,HeraHead,HeraLearningSnapshot,HeraOperation,HeraSemanticAdvantage,HeraRolloutGroup,HeraTask,HeraUsage,HeraBudget,HeraFailureBuffer} from './contracts.gen.ts';
+import type {HeraExperience,HeraHead,HeraLearningSnapshot,HeraOperation,HeraSemanticAdvantage,HeraRolloutGroup,HeraTask,HeraUsage,HeraBudget,HeraFailureBuffer,HeraMutation} from './contracts.gen.ts';
 const must=<T>(value:HeraOutcome<T>):T=>{if(!value.valid)throw new HeraRefusal(value.issues);return value.value;};
 export interface HeraLearningHost extends HeraGroupHost {
   /** This host policy admits source-backed contradictions; absence admits none. */
@@ -32,11 +34,12 @@ export interface HeraLearningResult {
   mixedGroup:boolean;groupsWithoutMixedOutcome:number;libraryChurn:HeraConsolidationApplication['churn'];
   usage:HeraUsage;spent:{calls:number;tokens:number;ms:number};operationIds:string[];
   promptTrialIds:string[];promptChurn:Record<string,{activated:number;rejected:number}>;trials:Record<"activated"|"rejected"|"malformed"|"unevaluated",number>;replayCost:{calls:number;tokens:number;ms:number};
+  mutationIds:string[];
 }
 interface LearningBinding {libraryHead:HeraHead;snapshotHead:HeraHead;library:HeraExperience[];promptHeads:HeraHead[];buffers:HeraFailureBuffer[];}
 interface LearningPreparation {
   advantage:HeraSemanticAdvantage|null;library:HeraExperience[];versions:HeraExperience[];snapshot:HeraLearningSnapshot;noOp:boolean;
-  buffers:HeraFailureBuffer[];promptTrials:HeraPromptTrialResult[];churn:HeraConsolidationApplication['churn'];usage:HeraUsage;spent:{calls:number;tokens:number;ms:number};operationIds:string[];
+  buffers:HeraFailureBuffer[];promptTrials:HeraPromptTrialResult[];mutation:HeraMutation|null;churn:HeraConsolidationApplication['churn'];usage:HeraUsage;spent:{calls:number;tokens:number;ms:number};operationIds:string[];
 }
 export function createHeraLearner(host:HeraLearningHost){
   const runner=createHeraGroupRunner(host),pending=new Map<string,Promise<HeraOutcome<HeraLearningResult>>>();
@@ -52,8 +55,8 @@ export function createHeraLearner(host:HeraLearningHost){
       binding=await heraRevisionOf({request,policy:host.consolidationPolicy?.revision??'no-conflicts/v1'});
       if(request.mode!=='learn'||task.scope!==host.store.scope||snapshot.scope!==host.store.scope)throw new HeraRefusal([heraIssue('THERA1004','/mode','The learner requires scoped learn authority.')]);
       must(assertTaskSplit(task,'learn'));must(validateHeraEvaluator(task,snapshot,host.evaluator,'learn'));
-      if(snapshot.config.flags.mutation)throw new HeraRefusal([heraIssue('THERA1008','/config/flags','Topology mutation is not available.')]);
       const {learningBudget,...groupRequest}=request;
+      if(snapshot.config.flags.mutation&&learningBudget)groupRequest.mutationBudget=learningBudget;
       if(learningBudget){const value=must(validateHeraShape<HeraBudget>('heraBudget',learningBudget));if(!Object.values(value).every(Number.isSafeInteger))throw new HeraRefusal([heraIssue('THERA1001','/learningBudget','Refinement budgets require safe integers.')]);}
       if(host.consolidationPolicy&&!host.consolidationPolicy.revision.trim())throw new HeraRefusal([heraIssue('THERA1002','/policy/revision','A consolidation policy must be versioned.')]);
       const execution=must(await prepareHeraExecutionSnapshot(host.store,snapshot)),profile=execution.agents[0]?.profile;
@@ -68,6 +71,9 @@ export function createHeraLearner(host:HeraLearningHost){
           ||(result.advantageId&&!await host.store.getAdvantage(result.advantageId))||(await Promise.all(result.operationIds.map(id=>host.store.getOperation(id)))).some(o=>!o))
           throw new HeraRefusal([heraIssue('THERA1007','/learning/evidence','A completed learning result has missing durable evidence.')]);
         must(await runner.run(groupRequest));await readHeraFrozenLibrary(host,result.snapshot);
+        for(const id of result.mutationIds){const mutation=await host.store.getMutation(id);
+          if(!mutation||(await Promise.all(mutation.executionRunIds.map(id=>host.masStore.getRun(id)))).some(run=>!run)||(await Promise.all(mutation.operationIds.map(id=>host.store.getOperation(id)))).some(op=>!op))
+            throw new HeraRefusal([heraIssue('THERA1007','/learning/mutation','A completed mutation has missing durable evidence.')]);}
         for(const id of result.promptTrialIds){const trial=await host.store.getPromptTrial(id);
           if(trial&&(await Promise.all((trial.executionRunIds??[]).map(id=>host.masStore.getRun(id)))).some(run=>!run))throw new HeraRefusal([heraIssue('THERA1007','/learning/trial','A completed trial has missing execution evidence.')]);
           if(!trial||(trial.candidatePromptVersionId&&!await host.store.getPromptVersion(trial.candidatePromptVersionId))||(trial.replayTrajectoryId&&!await host.store.getTrajectory(trial.replayTrajectoryId)))
@@ -100,7 +106,9 @@ export function createHeraLearner(host:HeraLearningHost){
         let remaining={...evidence.group.budget.limits,calls:Math.max(0,evidence.group.budget.limits.calls-evidence.group.budget.spent.calls),
           tokens:Math.max(0,evidence.group.budget.limits.tokens-evidence.group.budget.spent.tokens),ms:Math.max(0,evidence.group.budget.limits.ms-evidence.group.budget.spent.ms)};
         if(learningBudget)remaining={...learningBudget,calls:Math.min(learningBudget.calls,resolved.identity.budget.maxCalls??Infinity),tokens:Math.min(learningBudget.tokens,resolved.identity.budget.maxTokens??Infinity),ms:Math.min(learningBudget.ms,resolved.identity.budget.maxMs??Infinity),concurrency:Math.min(learningBudget.concurrency,resolved.identity.budget.maxConcurrency??Infinity,host.concurrency)};
+        if(evidence.group.refinementBudget)remaining=evidence.group.refinementBudget.limits;
         const receipts=createHeraControlReceipts({store:host.store,authority,taskId:task.id,snapshotId:snapshot.id,groupId,binding,identity:resolved.identity,budget:remaining,clock:host.clock});
+        if(evidence.mutation)receipts.chargeExecution(evidence.mutation.operationId,evidence.mutation.mutation.spent);
         let library=frozen.library,advantage:HeraSemanticAdvantage|null=null,versions:HeraExperience[]=[],churn={add:0,merge:0,prune:0,keep:0};
         const stageIds=[bound.id];
         let bufferVersions:HeraFailureBuffer[]=[],buffers=frozen.buffers,promptTrials:HeraPromptTrialResult[]=[];
@@ -142,13 +150,18 @@ export function createHeraLearner(host:HeraLearningHost){
           stageIds.push((await save('rope.run',{trialIds:promptTrials.map(p=>p.trial.id),bufferIds:buffers.map(b=>b.id)})).id);
           if(!equalsJson(promptIds,snapshot.activePromptVersionIds))registryRevision=must(await prepareHeraPromptRegistry(host.store,task.scope,promptIds,promptTrials.flatMap(p=>p.candidate?[p.candidate]:[]))).registry.revision;
         }else stageIds.push((await save('rope.run',null,'disabled')).id);
-        stageIds.push((await save('topology.mutate',null,'disabled')).id);
-        const next=must(await prepareHeraSnapshot(snapshot,{experienceIds:library.map(e=>e.id),activePromptVersionIds:promptIds,registryRevision,...(buffers.length?{failureBufferIds:Object.fromEntries(buffers.map(b=>[b.agentId,b.id]))}:{})}));
+        const mutation=evidence.mutation?.mutation??null;
+        stageIds.push((await save('topology.mutate',mutation?{mutationId:mutation.id,decision:mutation.decision}:null,snapshot.config.flags.mutation?'completed':'disabled')).id);
+        let topologyChanges={};
+        if(snapshot.config.flags.mutation){const bucket=await heraProfileBucket(evidence.group.profile!),failure=must(persistentFailure(snapshot.failureState,{profileBucket:bucket,groupId,primaryScore:rankTrajectories(evidence.trajectories).ranked[0]?.primaryScore??null},snapshot.config));
+          topologyChanges={failureState:failure.state,...(mutation?.decision==='accepted'?{preferredTopologyIds:{...snapshot.preferredTopologyIds,[bucket]:mutation.candidateTopologyId!},preferredMutationIds:{...snapshot.preferredMutationIds,[bucket]:mutation.id}}:{})};}
+        const next=must(await prepareHeraSnapshot(snapshot,{experienceIds:library.map(e=>e.id),activePromptVersionIds:promptIds,registryRevision,...topologyChanges,...(buffers.length?{failureBufferIds:Object.fromEntries(buffers.map(b=>[b.agentId,b.id]))}:{})}));
         stageIds.push((await save('snapshot.stage',{snapshotId:next.snapshot.id,noOp:next.noOp})).id);
         // Intermediate utility versions consumed by consolidation remain archived provenance.
         versions=versions.map(e=>({...e,status:library.some(n=>n.id===e.id)?'active' as const:'archived' as const}));
         const usage=receipts.usage();for(const trial of promptTrials)for(const key of Object.keys(usage) as Array<keyof HeraUsage>)usage[key]=(usage[key]??0)+(trial.usage[key]??0);
-        const value:LearningPreparation={advantage,library,versions,buffers:bufferVersions,promptTrials,snapshot:next.snapshot,noOp:next.noOp,churn,usage,spent:receipts.spent(),operationIds:[...stageIds,...receipts.operationIds()]};
+        if(evidence.mutation)for(const key of Object.keys(usage) as Array<keyof HeraUsage>)usage[key]=(usage[key]??0)+(evidence.mutation.controlUsage[key]??0);
+        const value:LearningPreparation={advantage,library,versions,buffers:bufferVersions,promptTrials,mutation,snapshot:next.snapshot,noOp:next.noOp,churn,usage,spent:receipts.spent(),operationIds:[...stageIds,...receipts.operationIds()]};
         prepared=await save('learning.prepared',value);
       }
       if(prepared.binding!==binding)throw new HeraRefusal([heraIssue('THERA1007','/learning/binding','The prepared learning transaction binds different input.')]);
@@ -158,7 +171,7 @@ export function createHeraLearner(host:HeraLearningHost){
       for(const {trial,replayCost:cost} of plan.promptTrials){trials[trial.decision]++;const counts=promptChurn[trial.agentId]??={activated:0,rejected:0};counts[trial.decision==='activated'?'activated':'rejected']++;for(const key of ['calls','tokens','ms'] as const)replayCost[key]+=cost[key];}
       const result:HeraLearningResult={group:{...evidence.group,operationIds},snapshot:{...plan.snapshot,status:'active'},advantageId:plan.advantage?.id??null,librarySize:plan.library.length,
         mixedGroup:evidence.group.mixedOutcome.value,groupsWithoutMixedOutcome:Number(!evidence.group.mixedOutcome.value&&evidence.trajectories.some(t=>t.primaryScore!==null)),libraryChurn:plan.churn,
-        usage:plan.usage,spent:{calls:evidence.group.budget.spent.calls+plan.spent.calls,tokens:evidence.group.budget.spent.tokens+plan.spent.tokens,ms:evidence.group.budget.spent.ms+plan.spent.ms},operationIds,promptTrialIds:plan.promptTrials.map(p=>p.trial.id),promptChurn,trials,replayCost};
+        usage:plan.usage,spent:{calls:evidence.group.budget.spent.calls+plan.spent.calls,tokens:evidence.group.budget.spent.tokens+plan.spent.tokens,ms:evidence.group.budget.spent.ms+plan.spent.ms},operationIds,promptTrialIds:plan.promptTrials.map(p=>p.trial.id),promptChurn,trials,replayCost,mutationIds:plan.mutation?[plan.mutation.id]:[]};
       return await host.store.transaction(authority,async tx=>{
         const replay=await tx.get('operation',finalId);if(replay){if(replay.binding!==binding)throw new HeraRefusal([heraIssue('THERA1007','/learning/binding','A competing result binds different input.')]);return replay.value as HeraLearningResult;}
         const actualSnapshot=await tx.get('head',frozen.snapshotHead.id)??emptyHeraHead(task.scope,'snapshot'),actualLibrary=await tx.get('head',frozen.libraryHead.id)??emptyHeraHead(task.scope,'library');
@@ -166,6 +179,7 @@ export function createHeraLearner(host:HeraLearningHost){
         must(planHeraHeadTransition(actualLibrary,frozen.libraryHead,snapshot.libraryRevision));
         for(const expected of frozen.promptHeads)must(planHeraHeadTransition(await tx.get('head',expected.id)??{...expected,versionId:null,revision:0},expected,expected.versionId!));
         for(const buffer of plan.buffers)await tx.put('failureBuffer',buffer);
+        if(plan.mutation)await tx.put('mutation',plan.mutation);
         for(const {trial,candidate} of plan.promptTrials){
           if(candidate){await tx.put('promptVersion',{...candidate,status:trial.decision==='activated'?'candidate':'rejected'});
             if(trial.decision==='activated')await activatePromptVersion(tx,frozen.promptHeads.find(h=>h.versionId===candidate.parentId)!,candidate);}

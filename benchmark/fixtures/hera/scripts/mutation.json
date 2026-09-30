@@ -1,0 +1,14 @@
+{
+  "kind": "hera-scripted-mutation/v1",
+  "taskId": "q08",
+  "proposal": {
+    "action": "augment",
+    "addAgentId": "query-rewriter",
+    "dependsOn": [
+      "b"
+    ],
+    "reason": "Revisit the evidence boundary of the retained zero-scoring control."
+  },
+  "consolidation": "keep",
+  "referenceRecipe": "The third evaluated zero-scoring q08 group inserts a registered query rewriter in the serial DAG. Its role output reuses the registered decomposition response and the concluding answer reuses the registered baseline response. All original candidates remain zero-scoring. No scorer truth is shown to clients."
+}

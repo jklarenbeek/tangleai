@@ -16,8 +16,10 @@ import {createHeraControlReceipts,emptyHeraUsage} from './operations.ts';
 import {profileQuery} from './profile.ts';
 import {selectExperiences} from './select.ts';
 import {orchestrate,type HeraOrchestration} from './orchestrate.ts';
-import {toMasWorkflow} from './topology.ts';
+import {toMasWorkflow,validateHeraTopology} from './topology.ts';
 import {rankTrajectories,mixedOutcome} from './rank.ts';
+import {persistentFailure,heraProfileBucket} from './predicate.ts';
+import {runHeraMutation,type HeraMutationExecution} from './mutate.ts';
 import type {HeraBudget,HeraTask,HeraLearningSnapshot,HeraMode,HeraExperience,HeraRolloutGroup,HeraTrajectory,HeraTopology,HeraProfile,HeraUsage} from './contracts.gen.ts';
 const must=<T>(r:HeraOutcome<T>):T=>{if(!r.valid)throw new HeraRefusal(r.issues);return r.value;};
 function refuse(code:Parameters<typeof heraIssue>[0],path:string,detail:string,cause?:unknown):never{throw new HeraRefusal([heraIssue(code,path,detail,cause)]);}
@@ -25,8 +27,8 @@ export interface HeraGroupHost extends HeraExecutorHost {
   /** Resolves the same CONFIG identity as role calls; stage is a durable diagnostic label. */
   controlClientFor(profile:string,identity:RunIdentity,stage:string):MasChatClient;
 }
-export interface HeraGroupRequest {task:HeraTask;snapshot:HeraLearningSnapshot;mode:HeraMode;groupIndex:number;budget:HeraBudget;groupConcurrency:number;}
-export interface HeraGroupExecution {group:HeraRolloutGroup;trajectories:HeraTrajectory[];topologies:HeraTopology[];}
+export interface HeraGroupRequest {task:HeraTask;snapshot:HeraLearningSnapshot;mode:HeraMode;groupIndex:number;budget:HeraBudget;groupConcurrency:number;mutationBudget?:HeraBudget;}
+export interface HeraGroupExecution {group:HeraRolloutGroup;trajectories:HeraTrajectory[];topologies:HeraTopology[];mutation?:HeraMutationExecution;}
 interface HeraPreparedGroup {profileValue:HeraProfile;offeredExperienceIds:string[];proposed:HeraOrchestration;share:HeraBudget;
   controlSpend:{calls:number;tokens:number;ms:number};controlUsage:HeraUsage;operationIds:string[];}
 /** Snapshot membership remains readable after later library versions archive its entries. */
@@ -80,7 +82,9 @@ export function createHeraGroupRunner(host:HeraGroupHost) {
           if(!await host.masStore.getRun(trajectory!.masRunId)||(await Promise.all(trajectory!.stepIds.map(id=>host.store.getTrajectoryStep(id)))).some(s=>!s))
             refuse('THERA1007','/group/trajectory','The replay is missing its MAS execution or step evidence.');
         }
-        return {valid:true,value:{group:prior,trajectories:trajectories as HeraTrajectory[],topologies:topologies as HeraTopology[]}};
+        const mutation=prior.mutationOperationId?await host.store.getOperation(prior.mutationOperationId):undefined;
+        if(prior.mutationOperationId&&!mutation)refuse('THERA1007','/group/mutation','The retained mutation receipt is missing.');
+        return {valid:true,value:{group:prior,trajectories:trajectories as HeraTrajectory[],topologies:topologies as HeraTopology[],...(mutation?{mutation:mutation.value as HeraMutationExecution}:{})}};
       }
       const authority={scope:task.scope,mode:request.mode},preparationId=await heraRevisionOf([task.scope,id,'prepared']);
       let preparation=await host.store.getOperation(preparationId);
@@ -88,8 +92,14 @@ export function createHeraGroupRunner(host:HeraGroupHost) {
         const receipts=createHeraControlReceipts({store:host.store,authority,taskId:task.id,snapshotId:snapshot.id,groupId:id,binding,identity,budget,clock:host.clock});
         const profileValue=await profileQuery(task,snapshot,{artifact,client:host.controlClientFor(profile,identity,'profile'),embedder:host.embedder,receipts},budget);
         const selected=must(selectExperiences(await readHeraFrozenLibrary(host,snapshot),profileValue,{...snapshot.config,scope:task.scope}));
+        const preferredTopologies:HeraTopology[]=[],hintId=snapshot.preferredTopologyIds?.[await heraProfileBucket(profileValue)];
+        if(hintId){const retained=await host.store.getTopology(hintId);
+          if(!retained||retained.scope!==task.scope)refuse('THERA1002','/preferredTopologyIds','The frozen topology hint is missing or foreign.');
+          const hint={...retained,taskId:task.id,snapshotId:snapshot.id,profile:profileValue,offeredExperienceIds:[],appliedExperienceIds:[],workflowVersionId:null,nodes:retained.nodes.map(n=>({...n,promptVersionId:snapshot.activePromptVersionIds[n.agentId]}))};
+          if(validateHeraTopology(hint,snapshot,prepared,budget).valid)preferredTopologies.push(hint);
+        }
         const proposed=await orchestrate(task,snapshot,profileValue,selected.experiences,{...prepared,artifact,receipts,clientFor:index=>host.controlClientFor(profile,identity,'plan/'+index)},
-          {groupId:id,configRevision,caps:budget});
+          {groupId:id,configRevision,caps:budget,preferredTopologies});
         const operations=await host.store.listOperations({groupId:id,limit:10000}),responseIds=new Set(operations.filter(o=>o.phase==='response').map(o=>o.id));
         if(operations.some(o=>o.phase==='dispatch'&&!responseIds.has(o.id.slice(0,-9)+':response')))
           refuse('THERA1007','/operation','A control dispatch has no retained response; its physical spend is uncertain.');
@@ -132,11 +142,24 @@ export function createHeraGroupRunner(host:HeraGroupHost) {
         if(!execution.valid){if(execution.issues.some(i=>i.code==='THERA1007'))throw new HeraRefusal(execution.issues);failures.push(...execution.issues);continue;}
         trajectories.push(execution.value.trajectory);if(execution.value.trajectory.failure)failures.push(execution.value.trajectory.failure.issue);
       }
-      const ranked=rankTrajectories(trajectories),group:HeraRolloutGroup={id,scope:task.scope,taskId:task.id,snapshotId:snapshot.id,groupIndex:request.groupIndex,requestedSize:snapshot.config.groupSize,
+      let mutation:HeraMutationExecution|undefined,refinementBudget:HeraRolloutGroup['refinementBudget'];
+      if(request.mode==='learn'&&snapshot.config.flags.mutation){
+        const profileBucket=await heraProfileBucket(profileValue),failure=must(persistentFailure(snapshot.failureState,{profileBucket,groupId:id,primaryScore:rankTrajectories(trajectories).ranked[0]?.primaryScore??null},snapshot.config));
+        if(failure.trigger){
+          const allocation=request.mutationBudget?must(validateHeraShape<HeraBudget>('heraBudget',request.mutationBudget)):{...budget,calls:Math.max(0,budget.calls-spent.calls),tokens:Math.max(0,budget.tokens-spent.tokens),ms:Math.max(0,budget.ms-spent.ms)};
+          if(!Object.values(allocation).every(Number.isSafeInteger))refuse('THERA1001','/mutationBudget','Mutation allowances require safe integers.');
+          const limits={...allocation,calls:Math.min(allocation.calls,identity.budget.maxCalls??Infinity),tokens:Math.min(allocation.tokens,identity.budget.maxTokens??Infinity),ms:Math.min(allocation.ms,identity.budget.maxMs??Infinity),concurrency:Math.min(allocation.concurrency,identity.budget.maxConcurrency??Infinity,host.concurrency)};
+          mutation=await runHeraMutation({task,snapshot,groupId:id,groupIndex:request.groupIndex,configRevision,binding,profileBucket,trajectories,budget:limits,identity},host);
+          if(mutation.topology)topologies.push(mutation.topology);if(mutation.trajectory)trajectories.push(mutation.trajectory);
+          refinementBudget={limits,spent:mutation.mutation.spent,controlUsage:mutation.controlUsage};
+          if(!mutation.mutation.validation.valid){failures.push(...mutation.mutation.validation.issues);proposed.refusals.invalidCandidates++;}
+        }
+      }
+      const ranked=rankTrajectories(trajectories),group:HeraRolloutGroup={id,scope:task.scope,taskId:task.id,snapshotId:snapshot.id,groupIndex:request.groupIndex,requestedSize:snapshot.config.groupSize+Number(mutation!==undefined),
         candidateTrajectoryIds:trajectories.map(t=>t.id),failures,skips,ranking:ranked.ranked.map(t=>t.id),mixedOutcome:mixedOutcome(trajectories),budget:{limits:budget,spent},
         state:trajectories.some(t=>t.status==='orphan')?'orphan':trajectories.length?'completed':'failed',configRevision,requestBinding:binding,profile:profileValue,
-        offeredExperienceIds,topologyIds:topologies.map(t=>t.id),operationIds:[...operationIds,preparationId],unevaluatedTrajectoryIds:ranked.unevaluatedIds,controlUsage,refusals:proposed.refusals};
-      must(await host.store.putRolloutGroup(group,authority));return {valid:true,value:{group,trajectories,topologies}};
+        offeredExperienceIds,topologyIds:topologies.map(t=>t.id),operationIds:[...operationIds,preparationId,...(mutation?[...mutation.mutation.operationIds,mutation.operationId]:[])],unevaluatedTrajectoryIds:ranked.unevaluatedIds,controlUsage,refusals:proposed.refusals,...(mutation?{mutationOperationId:mutation.operationId,refinementBudget}: {})};
+      must(await host.store.putRolloutGroup(group,authority));return {valid:true,value:{group,trajectories,topologies,...(mutation?{mutation}:{})}};
     }catch(error){if(error instanceof HeraRefusal)return {valid:false,issues:error.issues};throw error;}
   };
   return {run(request:HeraGroupRequest){

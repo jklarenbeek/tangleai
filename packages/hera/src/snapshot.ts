@@ -4,18 +4,19 @@ import {heraContentIdOf,heraLibraryRevisionOf} from './identity.ts';
 import {validateHeraRecord} from './schema.ts';
 import {planSnapshotActivation} from './heads.ts';
 import {HeraRefusal,heraRefuse,type HeraOutcome} from './errors.ts';
-import type {HeraLearningSnapshot,HeraHead} from './contracts.gen.ts';
+import type {HeraLearningSnapshot,HeraHead,HeraFailureState} from './contracts.gen.ts';
 import type {HeraTransaction} from './store.ts';
-export interface HeraSnapshotChanges {experienceIds?:readonly string[];activePromptVersionIds?:Record<string,string>;registryRevision?:string;failureBufferIds?:Record<string,string>;}
+export interface HeraSnapshotChanges {experienceIds?:readonly string[];activePromptVersionIds?:Record<string,string>;registryRevision?:string;failureBufferIds?:Record<string,string>;failureState?:HeraFailureState;preferredTopologyIds?:Record<string,string>;preferredMutationIds?:Record<string,string>;}
 export async function prepareHeraSnapshot(parent:HeraLearningSnapshot,changes:HeraSnapshotChanges):Promise<HeraOutcome<{snapshot:HeraLearningSnapshot;noOp:boolean}>>{
   const checked=await validateHeraRecord('snapshot',parent);if(!checked.valid)return checked;
   const experienceIds=[...(changes.experienceIds??parent.experienceIds)].sort();
   if(new Set(experienceIds).size!==experienceIds.length)return heraRefuse('THERA1002','/experienceIds','Snapshot membership cannot repeat a version.');
   const libraryRevision=await heraLibraryRevisionOf(experienceIds),activePromptVersionIds=structuredClone(changes.activePromptVersionIds??parent.activePromptVersionIds),registryRevision=changes.registryRevision??parent.registryRevision;
   const failureBufferIds=changes.failureBufferIds??parent.failureBufferIds;
-  const noOp=libraryRevision===parent.libraryRevision&&registryRevision===parent.registryRevision&&equalsJson(activePromptVersionIds,parent.activePromptVersionIds)&&equalsJson(failureBufferIds??{},parent.failureBufferIds??{});
+  const failureState=changes.failureState??parent.failureState,preferredTopologyIds=changes.preferredTopologyIds??parent.preferredTopologyIds,preferredMutationIds=changes.preferredMutationIds??parent.preferredMutationIds;
+  const noOp=libraryRevision===parent.libraryRevision&&registryRevision===parent.registryRevision&&equalsJson(activePromptVersionIds,parent.activePromptVersionIds)&&equalsJson(failureBufferIds??{},parent.failureBufferIds??{})&&equalsJson(failureState??null,parent.failureState??null)&&equalsJson(preferredTopologyIds??{},parent.preferredTopologyIds??{})&&equalsJson(preferredMutationIds??{},parent.preferredMutationIds??{});
   if(noOp)return {valid:true,value:{snapshot:structuredClone(parent),noOp:true}};
-  const content={...parent,parentId:parent.id,experienceIds,libraryRevision,activePromptVersionIds,registryRevision,...(failureBufferIds?{failureBufferIds:structuredClone(failureBufferIds)}:{}),status:'staged' as const};
+  const content={...parent,parentId:parent.id,experienceIds,libraryRevision,activePromptVersionIds,registryRevision,...(failureBufferIds?{failureBufferIds:structuredClone(failureBufferIds)}:{}),...(failureState?{failureState:structuredClone(failureState)}:{}),...(preferredTopologyIds?{preferredTopologyIds:structuredClone(preferredTopologyIds)}:{}),...(preferredMutationIds?{preferredMutationIds:structuredClone(preferredMutationIds)}:{}),status:'staged' as const};
   const snapshot={...content,id:await heraContentIdOf(content)},shape=await validateHeraRecord('snapshot',snapshot);if(!shape.valid)return shape;
   return {valid:true,value:{snapshot,noOp:false}};
 }

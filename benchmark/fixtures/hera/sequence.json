@@ -1,14 +1,67 @@
 {
-  "kind": "hera-training-sequence/v1",
+  "kind": "hera-training-sequence/v2",
   "training": [
-    { "taskId": "q01", "serial": "incorrect", "parallel": "registered", "consolidation": "seed" },
-    { "taskId": "q02", "serial": "incorrect", "parallel": "registered", "consolidation": "prune-merge" },
-    { "taskId": "q03", "serial": "incorrect", "parallel": "registered", "consolidation": "keep" },
-    { "taskId": "q04", "serial": "registered", "parallel": "registered", "consolidation": null },
-    { "taskId": "q08", "serial": "incorrect", "parallel": "incorrect", "consolidation": null }
+    {
+      "taskId": "q01",
+      "serial": "incorrect",
+      "parallel": "registered",
+      "consolidation": "seed"
+    },
+    {
+      "taskId": "q02",
+      "serial": "incorrect",
+      "parallel": "registered",
+      "consolidation": "prune-merge"
+    },
+    {
+      "taskId": "q03",
+      "serial": "incorrect",
+      "parallel": "registered",
+      "consolidation": "keep"
+    },
+    {
+      "taskId": "q04",
+      "serial": "registered",
+      "parallel": "registered",
+      "consolidation": null
+    },
+    {
+      "taskId": "q08",
+      "serial": "incorrect",
+      "parallel": "incorrect",
+      "consolidation": null
+    },
+    {
+      "taskId": "q08",
+      "serial": "incorrect",
+      "parallel": "incorrect",
+      "consolidation": null
+    },
+    {
+      "taskId": "q08",
+      "serial": "incorrect",
+      "parallel": "incorrect",
+      "consolidation": null
+    }
   ],
-  "heldOut": ["q05", "q06", "q07", "q09", "q10"],
+  "heldOut": [
+    "q05",
+    "q06",
+    "q07",
+    "q09",
+    "q10"
+  ],
   "incorrectAnswer": "Unresolved in this scripted branch.",
-  "application": { "serial": "older", "parallel": "newer" },
-  "conflict": { "taskId": "q02", "targets": ["older", "newer"], "reason": "The registered temporal fixture contrasts older-source and newer-source precedence, with failure and success retained in the same query group." }
+  "application": {
+    "serial": "older",
+    "parallel": "newer"
+  },
+  "conflict": {
+    "taskId": "q02",
+    "targets": [
+      "older",
+      "newer"
+    ],
+    "reason": "The registered temporal fixture contrasts older-source and newer-source precedence, with failure and success retained in the same query group."
+  }
 }

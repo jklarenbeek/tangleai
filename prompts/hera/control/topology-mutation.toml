@@ -1,6 +1,6 @@
 [meta]
 id = "hera-topology-mutation"
-version = "1"
+version = "2"
 pattern = "hera"
 role = "mutation-proposer"
 
