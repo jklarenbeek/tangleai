@@ -1,11 +1,11 @@
 [meta]
 id = "hera-plan-generation"
-version = "1"
+version = "2"
 pattern = "hera"
 role = "orchestrator"
 
 [system]
-content = "Design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
+content = "For the profile phase, describe the query in text and concise task tags without answering it. For the plan phase, design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
 
 [user]
-content = "Query: {{query}}\nProfile: {{profile}}\nOffered experiences: {{offered_experiences}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"
+content = "Phase: {{phase}}\nQuery: {{query}}\nProfile: {{profile}}\nOffered experiences: {{offered_experiences}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"

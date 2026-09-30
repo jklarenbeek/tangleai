@@ -11,13 +11,15 @@ import {officialScore,normalizeAnswer} from './locomo-parity.ts';
 import {SCORABLE_CATEGORIES} from './locomo.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
+import type {HeraPlanOutput} from '@tangleai/hera';
 type Script=Record<string,Record<'single-turn'|'fixed',Record<string,{completion:unknown;normalization:unknown;repair:unknown;tool?:{query:string;k:number}}>>>;
+export interface HeraOrchestratorScript {kind:string;profile:{text:string;tags:string[]};plans:Record<string,HeraPlanOutput>;proposals:Record<string,string[]>;}
 export async function loadHeraScripts(root:string) {
   const directory=join(root,'benchmark/fixtures/hera/scripts'),manifest=JSON.parse(await readFile(join(directory,'manifest.json'),'utf8')) as {kind:string;files:Array<{path:string;sha256:string}>};
-  if(manifest.kind!=='hera-scripted-baseline/v1'||manifest.files.length!==1||manifest.files[0].path!=='baseline.json')throw Error('Invalid HERA script registration.');
-  const bytes=await readFile(join(directory,manifest.files[0].path),'utf8');
-  if(createHash('sha256').update(bytes).digest('hex')!==manifest.files[0].sha256)throw Error('HERA script bytes changed.');
-  return {revision:await heraRevisionOf(manifest),scripts:JSON.parse(bytes) as Script};
+  if(manifest.kind!=='hera-scripted/v2'||JSON.stringify(manifest.files.map(f=>f.path))!==JSON.stringify(['baseline.json','orchestrator.json']))throw Error('Invalid HERA script registration.');
+  const files=new Map<string,string>();
+  for(const file of manifest.files){const bytes=await readFile(join(directory,file.path),'utf8');if(createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw Error('HERA script bytes changed.');files.set(file.path,bytes);}
+  return {revision:await heraRevisionOf(manifest),scripts:JSON.parse(files.get('baseline.json')!) as Script,orchestrator:JSON.parse(files.get('orchestrator.json')!) as HeraOrchestratorScript};
 }
 /** The native document store and recall implementation own ranking and identity gates. */
 export async function createHeraFixtureEvidence(db:TangleDb,corpus:HeraFixture['corpus'],corpusRevision:string) {

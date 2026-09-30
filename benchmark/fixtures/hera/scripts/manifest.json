@@ -1,9 +1,13 @@
 {
-  "kind": "hera-scripted-baseline/v1",
+  "kind": "hera-scripted/v2",
   "files": [
     {
       "path": "baseline.json",
       "sha256": "9b012e6866bbeadf2803a68dabe8d1ef2d595fb85ff6a576abf4b761b8893ccb"
+    },
+    {
+      "path": "orchestrator.json",
+      "sha256": "1621e88dad16fba315ab57dae9a44b770e6207269f1faae0a5268010f750a67c"
     }
   ]
 }

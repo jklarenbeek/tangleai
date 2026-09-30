@@ -5,9 +5,9 @@ import { assertLearningWrite, isHeraLearningKind, type HeraAuthority } from './m
 import { validateHeraRecord } from './schema.ts';
 import { planHeraHeadTransition, planPromptActivation, planSnapshotActivation, type HeraHeadPlan } from './heads.ts';
 import type { HeraAgentDefinition, HeraPromptVersion, HeraExperience, HeraTopology, HeraRolloutGroup,
-  HeraTrajectory, HeraTrajectoryStep, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead } from './contracts.gen.ts';
+  HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead } from './contracts.gen.ts';
 export interface HeraRecords {
-  agent: HeraAgentDefinition; promptVersion: HeraPromptVersion; experience: HeraExperience;
+  operation: HeraOperation; agent: HeraAgentDefinition; promptVersion: HeraPromptVersion; experience: HeraExperience;
   topology: HeraTopology; rolloutGroup: HeraRolloutGroup; trajectory: HeraTrajectory;
   trajectoryStep: HeraTrajectoryStep; advantage: HeraSemanticAdvantage; promptTrial: HeraPromptTrial;
   snapshot: HeraLearningSnapshot; head: HeraHead;
@@ -19,7 +19,7 @@ export type HeraRecordMethods = {
 } & {
   [K in HeraRecordKind as `get${Capitalize<K>}`]: (id: string) => Promise<HeraRecords[K] | undefined>;
 };
-export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head'];
+export const HERA_RECORD_KINDS: readonly HeraRecordKind[] = ['operation','agent','promptVersion','experience','topology','rolloutGroup','trajectory','trajectoryStep','advantage','promptTrial','snapshot','head'];
 export interface HeraQuery { scope?: string; status?: string; agentId?: string; groupId?: string; taskId?: string; limit?: number; }
 export interface HeraPersistenceView {
   get<K extends HeraRecordKind>(kind: K, id: string): Promise<HeraRecords[K] | undefined>;
@@ -40,6 +40,7 @@ export interface HeraStore extends HeraRecordMethods {
   readHead(id: string): Promise<HeraHead | undefined>;
   transitionHead(plan: HeraHeadPlan, authority: HeraAuthority): Promise<HeraOutcome<HeraHead>>;
   transaction<T>(authority: HeraAuthority, fn: (view: HeraTransaction) => Promise<T>): Promise<HeraOutcome<T>>;
+  listOperations(query: HeraQuery & {groupId: string}): Promise<HeraOperation[]>;
   listExperiences(query: HeraQuery & {scope: string}): Promise<HeraExperience[]>;
   listPromptVersions(query: HeraQuery & {agentId: string}): Promise<HeraPromptVersion[]>;
   listTrajectories(query: HeraQuery & {groupId: string}): Promise<HeraTrajectory[]>;
@@ -159,6 +160,7 @@ export function createHeraStoreAdapter(persistence: HeraPersistence, scope: stri
     query, transaction,
     readHead: id => persistence.transaction(tx => tx.get('head', id)),
     transitionHead: (plan, authority) => transaction(authority, tx => tx.transitionHead(plan)),
+    listOperations: q => query('operation', q),
     listExperiences: q => query('experience', q), listPromptVersions: q => query('promptVersion', q),
     listTrajectories: q => query('trajectory', q), listSnapshots: q => query('snapshot', q),
     counters: () => ({ learningWrites, refusedLearningWrites }),

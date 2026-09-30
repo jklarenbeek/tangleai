@@ -22,6 +22,7 @@ import { table } from './table.ts';
 import schema from '../schemas/hera-qa.schema.json' with { type: 'json' };
 import runIdentitySchema from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import type { HeraQa, Row, DatasetQuestion } from './hera-qa.types.ts';
+import { runHeraFrozen } from './hera-frozen.ts';
 
 export const HERA_REPORT_PATH = 'benchmark/results/hera-qa.json';
 export const HERA_DOCUMENT_PATH = 'docs/HERA_BENCHMARK.md';
@@ -169,6 +170,11 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
         successRate: cases.filter(c => c.success).length / cases.length, citationRecall: id === 'oracle' ? 1 : 0, answered: cases.length, planned: cases.length }, cost: emptyCost() };
   }
   const baseline = await runHeraBaselines(fixture, root);
+  const frozen = await runHeraFrozen(fixture, root);
+  baseline.rows.push(frozen.row);
+  if(!baseline.identities.some(i=>i.identityId===frozen.identity.identityId))baseline.identities.push(frozen.identity);
+  baseline.scripted.requests+=frozen.requests;baseline.scripted.replayCalls+=frozen.replayCalls;
+  baseline.learningWrites+=frozen.learningWrites;
   for (const row of baseline.rows) rows[HERA_ROWS.indexOf(row.id)] = row;
   const envelope = analyticEnvelope(HERA_ROWS);
   envelope.identities = baseline.identities;
@@ -187,10 +193,10 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
     locomo: { questions: plan.questions, oracleByCategory: plan.oracleByCategory, evidenceId: plan.evidenceId, category3UncutBelowCeiling: plan.category3UncutBelowCeiling,
       rows: HERA_ROWS.slice(2).map(id => ({ id, status: available ? 'not-run' as const : 'dataset-unavailable' as const, eligible: false as const,
         reason: available ? 'no authorized live plan' : dataset.available && !dataset.valid ? dataset.errors.join('; ') : INIT_COMMAND })) },
-    refusals: { evalSplitInLearn: fixture.questions.filter(q => !planHeraFixtureMode('learn', q).valid).length, appliedNotOffered: 0, invalidCandidates: 0 },
+    refusals: { evalSplitInLearn: fixture.questions.filter(q => !planHeraFixtureMode('learn', q).valid).length, ...frozen.refusals },
     totals: { rows: rows.length, run: rows.filter(r => r.status === 'run').length, notRun: 0, implementationMissing: rows.filter(r => r.status === 'implementation-missing').length, datasetUnavailable: 0, answered: rows.reduce((n,r)=>n+(r.quality?.answered??0),0), planned: rows.reduce((n,r)=>n+(r.quality?.planned??0),0), calls: rows.reduce((n,r)=>n+(r.cost?.calls??0),0), learningWrites: baseline.learningWrites },
     limitations: [
-      'The single-turn and fixed-topology rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Five learning mechanisms remain unimplemented.',
+      'The single-turn, fixed-topology and query-specific frozen rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Four learning variants remain unimplemented.',
       'The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.',
       'The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.',
       'LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.',
@@ -199,6 +205,7 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
       'The deterministic injected clock does not measure request latency. Unknown timing requests remain counted; estimated tokens are separate from reported usage. The fixed six-invocation comparison shares caps with the single-turn row; generated candidates use the separate maxAgents learning cap.',
       'No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.',
       'Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.',
+      'The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.',
     ],
   };
   const report = { ...content, reportId: await canonicalSha256(content) } as HeraQa;

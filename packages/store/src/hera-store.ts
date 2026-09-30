@@ -2,7 +2,7 @@
 import { createHeraStoreAdapter, type HeraStore, type HeraPersistence, type HeraPersistenceView, type HeraRecords, type HeraRecordKind } from '@tangleai/hera';
 import type { TangleDb } from './db.ts';
 import { asRows } from './memory-store.ts';
-const names: Record<HeraRecordKind,string> = {agent:'hera_agents',promptVersion:'hera_prompt_versions',experience:'hera_experiences',topology:'hera_topologies',rolloutGroup:'hera_rollout_groups',trajectory:'hera_trajectories',trajectoryStep:'hera_trajectory_steps',advantage:'hera_advantages',promptTrial:'hera_prompt_trials',snapshot:'hera_snapshots',head:'hera_heads'};
+const names: Record<HeraRecordKind,string> = {operation:'hera_operations',agent:'hera_agents',promptVersion:'hera_prompt_versions',experience:'hera_experiences',topology:'hera_topologies',rolloutGroup:'hera_rollout_groups',trajectory:'hera_trajectories',trajectoryStep:'hera_trajectory_steps',advantage:'hera_advantages',promptTrial:'hera_prompt_trials',snapshot:'hera_snapshots',head:'hera_heads'};
 export interface HeraStoreOptions { scope: string; applyProbe?: (step: string) => void; }
 interface HeraStored<K extends HeraRecordKind> { id: string; scope: string; payload: HeraRecords[K]; }
 /** Logical role ids may repeat across scopes; physical tuple keys cannot collide. */

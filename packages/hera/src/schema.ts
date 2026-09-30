@@ -40,7 +40,7 @@ export function validateHeraShape<T>(name: HeraSchemaName, value: unknown): Hera
   } catch (error) { return heraRefuse('THERA1001', '', `Invalid ${name}.`, error instanceof Error ? error.message : String(error)); }
 }
 const recordSchemas = {
-  agent: 'heraAgentDefinition', promptVersion: 'heraPromptVersion', experience: 'heraExperience',
+  operation: 'heraOperation', agent: 'heraAgentDefinition', promptVersion: 'heraPromptVersion', experience: 'heraExperience',
   topology: 'heraTopology', rolloutGroup: 'heraRolloutGroup', trajectory: 'heraTrajectory',
   trajectoryStep: 'heraTrajectoryStep', advantage: 'heraSemanticAdvantage', promptTrial: 'heraPromptTrial',
   snapshot: 'heraLearningSnapshot', head: 'heraHead',

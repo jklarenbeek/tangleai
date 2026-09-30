@@ -76,6 +76,10 @@ export interface HeraUsage {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   unknownMsRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingRequests?: number;
 }
 
 
@@ -513,7 +517,7 @@ export interface HeraTopologyGenerator {
 export type HeraTopologyWorkflowVersionIdAnyOf1 = string;
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.nodes[*].id"},{"$count":{"$distinct":"$.nodes[*].id"}}]},{"$every":{"n":"$.nodes[*]"},"$satisfies":{"$every":{"dependency":"$n.dependsOn[*]"},"$satisfies":{"$some":{"other":"$.nodes[*]"},"$satisfies":{"$eq":["$other.id","$dependency"]}}}}]}
+ * Schema constraints this type cannot express: $query={"$if":["$.validation.valid",{"$and":[{"$gt":[{"$count":"$.nodes"},0]},{"$and":[{"$eq":[{"$count":"$.nodes[*].id"},{"$count":{"$distinct":"$.nodes[*].id"}}]},{"$every":{"n":"$.nodes[*]"},"$satisfies":{"$every":{"dependency":"$n.dependsOn[*]"},"$satisfies":{"$some":{"other":"$.nodes[*]"},"$satisfies":{"$eq":["$other.id","$dependency"]}}}}]}]},true]}
  */
 export interface HeraTopology {
   /**
@@ -534,7 +538,7 @@ export interface HeraTopology {
   snapshotId: string;
   profile: HeraTopologyProfile;
   /**
-   * Schema constraints this type cannot express: minItems=1
+   * Schema constraints this type cannot express: minItems=0
    */
   nodes: Array<HeraTopologyNodesItem>;
   /**
@@ -548,6 +552,7 @@ export interface HeraTopology {
   generator: HeraTopologyGenerator;
   validation: { valid: boolean; issues: Array<HeraIssue>; };
   workflowVersionId: HeraTopologyWorkflowVersionIdAnyOf1 | null;
+  rawProposal?: unknown;
 }
 
 
@@ -865,26 +870,42 @@ export interface HeraRolloutGroupBudgetSpent {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   ms: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraRolloutGroupOfferedExperienceIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraRolloutGroupTopologyIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraRolloutGroupOperationIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraRolloutGroupUnevaluatedTrajectoryIdsItem = string;
+
+export interface HeraRolloutGroupRefusals {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  turns: number;
+  invalidCandidates: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  nodes: number;
+  duplicateCandidates: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  depth: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  fanOut: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  concurrency: number;
+  appliedNotOffered: number;
 }
 
 
@@ -922,6 +943,33 @@ export interface HeraRolloutGroup {
   mixedOutcome: { value: boolean; reason: string; };
   budget: { limits: HeraRolloutGroupBudgetLimits; spent: HeraRolloutGroupBudgetSpent; };
   state: "completed" | "failed" | "orphan";
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  configRevision?: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  requestBinding?: string;
+  profile?: HeraProfile;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  offeredExperienceIds?: Array<HeraRolloutGroupOfferedExperienceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  topologyIds?: Array<HeraRolloutGroupTopologyIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  operationIds?: Array<HeraRolloutGroupOperationIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  unevaluatedTrajectoryIds?: Array<HeraRolloutGroupUnevaluatedTrajectoryIdsItem>;
+  controlUsage?: HeraUsage;
+  refusals?: HeraRolloutGroupRefusals;
 }
 
 
@@ -1128,7 +1176,7 @@ export interface HeraExperienceInheritedCountsAnyOf1 {
 
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.successCount","$.useCount"]},{"$eq":["$.utility",{"$if":[{"$gt":["$.useCount",0]},{"$div":["$.successCount","$.useCount"]},0]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.successCount","$.useCount"]},{"$eq":["$.utility",{"$if":[{"$gt":["$.useCount",0]},{"$div":["$.successCount","$.useCount"]},0]}]},{"$eq":[{"$count":"$.insightEmbedding[*]"},"$.profile.embeddedBy.dims"]},{"$eq":[{"$count":"$.profile.embedding[*]"},"$.profile.embeddedBy.dims"]}]}
  */
 export interface HeraExperience {
   /**
@@ -1167,6 +1215,10 @@ export interface HeraExperience {
    */
   parents: Array<HeraExperienceParentsItem>;
   inheritedCounts: HeraExperienceInheritedCountsAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  insightEmbedding: Array<number>;
 }
 
 
@@ -1781,6 +1833,62 @@ export interface HeraMutationOutput {
    * Schema constraints this type cannot express: minLength=1
    */
   reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraQueryProfileOutputTagsItem = string;
+
+export interface HeraQueryProfileOutput {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=32768
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=16, uniqueItems=true
+   */
+  tags: Array<HeraQueryProfileOutputTagsItem>;
+}
+
+
+export type HeraOrchestratorOutput = HeraQueryProfileOutput | HeraPlanOutput;
+
+export interface HeraOperation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  snapshotId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  groupId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  stage: string;
+  phase: "dispatch" | "response" | "result";
+  status: "pending" | "completed" | "failed" | "orphan" | "disabled";
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  binding: string;
+  value: unknown;
+  usage: HeraUsage;
+  issues: Array<HeraIssue>;
 }
 
 

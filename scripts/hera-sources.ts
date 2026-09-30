@@ -5,6 +5,6 @@ export function heraPromptFiles(): string[] {
   return [...HERA_ROLE_SOURCES.map(id => `prompts/hera/roles/${id}.toml`), ...HERA_CONTROL_SOURCES.map(id => `prompts/hera/control/${id}.toml`)];
 }
 export function heraOutputName(id: string): string {
-  const controls: Record<string,string> = { 'plan-generation':'heraPlanOutput', reflection:'heraReflectionOutput', consolidation:'heraConsolidationOutput', 'rope-evolution':'heraRopeOutput', 'topology-mutation':'heraMutationOutput' };
+  const controls: Record<string,string> = { 'plan-generation':'heraOrchestratorOutput', reflection:'heraReflectionOutput', consolidation:'heraConsolidationOutput', 'rope-evolution':'heraRopeOutput', 'topology-mutation':'heraMutationOutput' };
   return controls[id] ?? 'hera' + id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('') + 'Output';
 }

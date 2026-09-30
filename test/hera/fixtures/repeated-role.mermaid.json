@@ -1,0 +1,3 @@
+[
+  "flowchart TD\nscope([scope])\nt:a[[t:a]]\nt:b[[t:b]]\nt:c[[t:c]]\nt:hera-validate-repeated-rol[[t:hera-validate-repeated-rol]]\nexpose(((expose)))\nscope -->|query · $.input['query']| t:a\nt:a -->|a| expose\nscope -->|query · $.input['query']| t:b\nt:a -->|context · $['result']| t:b\nt:b -->|b| expose\nscope -->|query · $.input['query']| t:c\nt:b -->|context · $['result']| t:c\nt:c -->|c| expose\nt:c -->|answer · $['result']| t:hera-validate-repeated-rol\nt:hera-validate-repeated-rol -->|hera-validate-repeated-rol| expose\n"
+]

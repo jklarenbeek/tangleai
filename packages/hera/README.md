@@ -6,9 +6,10 @@ artifacts compiled through GMPL. Importing its root performs no filesystem,
 database or network work. Hosts supply storage, scope and write authority.
 
 The current measurement is the [keyless orchestration instrument](../../docs/HERA_BENCHMARK.md).
-Its analytic oracle and reference establish the fixture. Single-turn and fixed
-MAS rows execute registered scripted responses, with counted requests and zero
-learning writes. Five learning mechanisms remain explicitly unimplemented.
+Its analytic oracle and reference establish the fixture. Single-turn, fixed
+MAS and query-specific frozen rows execute registered scripted responses, with
+counted requests and zero learning writes. Four learning variants remain
+explicitly unimplemented.
 Scripted quality measures fixture sensitivity, not model quality or a learning
 improvement.
 
@@ -90,6 +91,50 @@ token. Lost fences return `THERA1006`.
 A refusal or exception rolls back the entire transaction, even when the callback
 catches a content refusal. Unexpected host errors propagate. `counters()` reports
 committed learning writes and refused write attempts for measurement.
+
+## Frozen query groups
+
+`createHeraGroupRunner(host).run({task, snapshot, mode, groupIndex, budget,
+groupConcurrency})` profiles the query, selects the pinned experience library,
+proposes `snapshot.config.groupSize` plans, and executes the valid distinct
+candidates through the same MAS executor. The host additionally supplies
+`controlClientFor(profile, identity, stage)`; it resolves the same CONFIG model
+and decoder as the roles. The authored plan-generation artifact has separate
+closed profile and plan output phases. Neither receives gold or split metadata.
+
+`selectExperiences` uses snapshot weights, profile cosine similarity, empirical
+utility, insight-vector novelty and repeated-selection penalties. Ties use
+ascending immutable ids. Experience records retain `insightEmbedding` under
+their profile's embedding identity. Frozen membership remains usable after
+later versions archive it; selection writes no counters.
+
+`validateHeraTopology` checks invocation identities, frozen prompts, tool grants,
+experience application, acyclicity, one concluding terminal and structural
+caps. `toMasWorkflow` lowers valid plans with ordered fan-in. Structured output
+may repair a proposal once. Invalid survivors retain their raw proposal and
+issues; duplicate proposals spend generation calls but never execute twice.
+
+The group caps also bound profiling and proposal generation. After control
+spend, candidates receive equal integer shares of the remaining budget, lowered
+again to CONFIG and runtime limits. Calls, charged tokens and elapsed time are
+retained separately from structural ceilings. Token reservations retain the
+shared runtime's possible final-call overshoot; reported provider parts,
+estimated charges and requests with unknown usage remain separate measurements.
+The prepared group and its shares are persisted before any candidate executes;
+restarting cannot change a workflow identity by recalculating elapsed time.
+
+`hera_operations` stores immutable dispatch and response receipts for control
+requests and profile embeddings. A completed receipt replays at zero new spend.
+A dispatch without a response is explicitly uncertain (`THERA1007`) and is
+never automatically purchased again. Remote embedding requests have their own
+count and unknown usage; the injected builtin embedder performs no provider
+request. Failed candidate executions remain counted group values.
+
+Groups retain task-first ranking, null-score inference candidates and their
+mixed-outcome gate. Evaluator score precedes provider tokens and then id; this
+is an evaluated selection, not an oracle available to unlabelled inference.
+`evaluate` and `infer` write only execution evidence. Group `learn` currently
+refuses `THERA1008`; experience and prompt learning stages are not yet available.
 
 ## Building and checking
 

@@ -16,6 +16,7 @@ import { prepareHeraScaffold, HERA_FIXED_NODES, HERA_DEFAULT_LIMITS } from './sc
 import { assertHeraCorpus, validateHeraEvidenceUnits, createHeraContextBindings, createHeraEvidenceTool, validateHeraAnswer,
   type HeraEvidenceProvider, type HeraEvidenceUnit, type HeraAnswerEvidence } from './evidence.ts';
 import { assembleHeraTrajectory } from './trajectory.ts';
+import { toMasWorkflow } from './topology.ts';
 import { validateHeraEvaluator, validateHeraTaskScore, type HeraTaskAdapter } from './evaluator.ts';
 import type { HeraStore } from './store.ts';
 import type { HeraTask, HeraLearningSnapshot, HeraMode, HeraTopology, HeraAgentDefinition, HeraTrajectory, HeraTrajectoryStep } from './contracts.gen.ts';
@@ -29,7 +30,7 @@ export interface HeraExecutorHost {
   now:()=>string;clock:()=>number;concurrency:number;observer?:MasRuntimeObserver;
 }
 export interface HeraExecuteRequest {
-  task:HeraTask;snapshot:HeraLearningSnapshot;topology:'fixed'|'single-turn';mode:HeraMode;
+  task:HeraTask;snapshot:HeraLearningSnapshot;topology:'fixed'|'single-turn'|HeraTopology;mode:HeraMode;
   groupIndex:number;candidateIndex:number;configRevision:string;caps?:Partial<WorkflowLimits>;
 }
 export interface HeraExecution {trajectory:HeraTrajectory;steps:HeraTrajectoryStep[];}
@@ -62,7 +63,8 @@ export function createHeraExecutor(host:HeraExecutorHost) {
   const pending=new Map<string,Promise<HeraOutcome<HeraExecution>>>();
   const perform=async(request:HeraExecuteRequest):Promise<HeraOutcome<HeraExecution>>=>{
     try {
-      if(!['learn','evaluate','infer'].includes(request.mode)||!['fixed','single-turn'].includes(request.topology))refuse('THERA1001','/request','Execution requires a registered mode and scaffold.');
+      if(!['learn','evaluate','infer'].includes(request.mode)||request.topology===null||!['string','object'].includes(typeof request.topology)
+        ||(typeof request.topology==='string'&&!['fixed','single-turn'].includes(request.topology)))refuse('THERA1001','/request','Execution requires a registered mode and topology.');
       const task=must(validateHeraShape<HeraTask>('heraTask',request.task)),snapshot=must(await validateHeraRecord('snapshot',request.snapshot));
       must(assertTaskSplit(task,request.mode));
       if(task.scope!==host.store.scope||snapshot.scope!==task.scope)refuse('THERA1004','/scope','Task, snapshot and store must share scope.');
@@ -91,7 +93,13 @@ export function createHeraExecutor(host:HeraExecutorHost) {
       for(const [field,limit] of [['calls',identity.budget.maxCalls],['tokens',identity.budget.maxTokens],['ms',identity.budget.maxMs]] as const)
         if(limit!==null)caps[field]=Math.min(caps[field]??HERA_DEFAULT_LIMITS[field],limit);
       const config=await heraConfigCatalog(profile,{...HERA_DEFAULT_LIMITS});if(!config.valid)refuse('THERA1009','/config','The MAS profile catalog is invalid.',config.issues);
-      const scaffold=must(await prepareHeraScaffold({...prepared,config:config.value},{kind:request.topology,caps}));
+      const supplied=typeof request.topology==='object'?must(await validateHeraRecord('topology',request.topology)):null;
+      if(supplied&&(supplied.taskId!==task.id||!supplied.validation.valid))refuse('THERA1003','/topology','Only a valid candidate for this task can execute.');
+      const scaffold=must(supplied?await toMasWorkflow(supplied,snapshot,{...prepared,config:config.value},
+        {calls:caps.calls??HERA_DEFAULT_LIMITS.calls,tokens:caps.tokens??HERA_DEFAULT_LIMITS.tokens,ms:caps.ms??HERA_DEFAULT_LIMITS.ms,
+          turns:caps.toolRounds??HERA_DEFAULT_LIMITS.toolRounds,nodes:snapshot.config.maxAgents,depth:snapshot.config.maxAgents,
+          fanOut:caps.fanOut??HERA_DEFAULT_LIMITS.fanOut,concurrency:caps.concurrency!})
+        :await prepareHeraScaffold({...prepared,config:config.value},{kind:request.topology as 'fixed'|'single-turn',caps}));
       const workflow=scaffold.validated.workflow;
       const key=[task.id,snapshot.id,request.groupIndex,request.candidateIndex,request.configRevision],id=await heraRevisionOf([task.scope,...key]),runId='hera:'+id;
       const binding=await heraRevisionOf({task,snapshotId:snapshot.id,workflowVersionId:workflow.versionId,identityId:identity.identityId,evidenceRevision:host.evidence.revision,contextAdapter:host.evidence.contextAdapter??'documents'});
@@ -108,7 +116,9 @@ export function createHeraExecutor(host:HeraExecutorHost) {
       const payload={scope:task.scope,taskId:task.id,snapshotId:snapshot.id,profile:{text:task.query,tags:[],embedding:[],embeddedBy:snapshot.identities.embeddedBy},
         nodes:declarations.map(n=>({...n,dependsOn:[...n.dependsOn],promptVersionId:snapshot.activePromptVersionIds[n.agentId]})),offeredExperienceIds:[],appliedExperienceIds:[],
         generator:{kind:'fixed' as const,configRevision:request.configRevision},validation:{valid:true,issues:[]},workflowVersionId:workflow.versionId};
-      const topology:HeraTopology={...payload,id:await heraContentIdOf(payload)};
+      const topology:HeraTopology=supplied??{...payload,id:await heraContentIdOf(payload)};
+      if(supplied?.workflowVersionId!==null&&supplied?.workflowVersionId!==undefined&&supplied.workflowVersionId!==workflow.versionId)
+        refuse('THERA1003','/workflowVersionId','The retained workflow differs from the compiled candidate.');
       const authority={scope:task.scope,mode:request.mode};must(await host.store.putTopology(topology,authority));
       const adapters=new Map<string,MasMessageAdapter>([[jsonSchemaAdapter.id,jsonSchemaAdapter]]);
       for(const artifact of prepared.catalog.document.prompts)adapters.set('hera-'+artifact.id,{id:'hera-'+artifact.id,version:artifact.revision,render(input){

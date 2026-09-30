@@ -1,0 +1,3 @@
+[
+  "flowchart TD\nscope([scope])\nt:a[[t:a]]\nt:b[[t:b]]\nt:c[[t:c]]\nt:hera-validate-serial[[t:hera-validate-serial]]\nexpose(((expose)))\nscope -->|query · $.input['query']| t:a\nt:a -->|a| expose\nscope -->|query · $.input['query']| t:b\nt:a -->|context · $['result']| t:b\nt:b -->|b| expose\nscope -->|query · $.input['query']| t:c\nt:b -->|context · $['result']| t:c\nt:c -->|c| expose\nt:c -->|answer · $['result']| t:hera-validate-serial\nt:hera-validate-serial -->|hera-validate-serial| expose\n"
+]

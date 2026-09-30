@@ -279,6 +279,10 @@ export interface HeraQaRefusals {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   invalidCandidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateCandidates: number;
 }
 
 

@@ -2491,102 +2491,141 @@
     {
       "id": "hera-plan-generation",
       "outputSchema": {
-        "$defs": {},
-        "$id": "https://tangleai.dev/schemas/hera/heraPlanOutput",
-        "additionalProperties": false,
-        "properties": {
-          "appliedExperienceIds": {
-            "items": {
-              "minLength": 1,
-              "type": "string"
-            },
-            "type": "array",
-            "uniqueItems": true
-          },
-          "nodes": {
-            "items": {
-              "additionalProperties": false,
-              "properties": {
-                "agentId": {
-                  "enum": [
-                    "query-decomposer",
-                    "retriever",
-                    "answer-generator",
-                    "query-rewriter",
-                    "evidence-selector",
-                    "context-validator",
-                    "reflect-agent",
-                    "conclude-agent"
-                  ]
-                },
-                "dependsOn": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "id": {
+        "$defs": {
+          "heraPlanOutput": {
+            "additionalProperties": false,
+            "properties": {
+              "appliedExperienceIds": {
+                "items": {
                   "minLength": 1,
                   "type": "string"
                 },
-                "tools": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                }
+                "type": "array",
+                "uniqueItems": true
               },
-              "required": [
-                "id",
-                "agentId",
-                "dependsOn"
-              ],
-              "type": "object"
+              "nodes": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "agentId": {
+                      "enum": [
+                        "query-decomposer",
+                        "retriever",
+                        "answer-generator",
+                        "query-rewriter",
+                        "evidence-selector",
+                        "context-validator",
+                        "reflect-agent",
+                        "conclude-agent"
+                      ]
+                    },
+                    "dependsOn": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    },
+                    "id": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "tools": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array",
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "agentId",
+                    "dependsOn"
+                  ],
+                  "type": "object"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
             },
-            "minItems": 1,
-            "type": "array"
+            "required": [
+              "nodes",
+              "appliedExperienceIds"
+            ],
+            "type": "object"
+          },
+          "heraQueryProfileOutput": {
+            "additionalProperties": false,
+            "properties": {
+              "tags": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 16,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "text": {
+                "maxLength": 32768,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "tags"
+            ],
+            "type": "object"
           }
         },
-        "required": [
-          "nodes",
-          "appliedExperienceIds"
-        ],
-        "type": "object"
+        "$id": "https://tangleai.dev/schemas/hera/heraOrchestratorOutput",
+        "anyOf": [
+          {
+            "$ref": "#/$defs/heraQueryProfileOutput"
+          },
+          {
+            "$ref": "#/$defs/heraPlanOutput"
+          }
+        ]
       },
       "pack": {
         "meta": {
           "id": "hera-plan-generation",
           "pattern": "hera",
           "role": "orchestrator",
-          "version": "1"
+          "version": "2"
         },
         "system": {
-          "content": "Design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
+          "content": "For the profile phase, describe the query in text and concise task tags without answering it. For the plan phase, design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
         },
         "user": {
-          "content": "Query: {{query}}\nProfile: {{profile}}\nOffered experiences: {{offered_experiences}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"
+          "content": "Phase: {{phase}}\nQuery: {{query}}\nProfile: {{profile}}\nOffered experiences: {{offered_experiences}}\nRegistered agents: {{agents}}\nHost caps: {{caps}}"
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "777db2fbf8c795256aad86d1173fde6e481f53b35ce30942b2127e3fea6981a0",
+      "revision": "31d5bb9fc1bbd7151775dcf7d2a17f2a52694ef6716a6e86139bcad5ad41de55",
       "role": {
         "id": "orchestrator",
-        "instructions": "Design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output.",
-        "revision": "a4bc9144bb2dbc793c7c8ee792c3c694d911e2d8fc170afb5c4229486ef1744c",
+        "instructions": "For the profile phase, describe the query in text and concise task tags without answering it. For the plan phase, design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output.",
+        "revision": "284fb629e7fdbcf16f53ba8fafa948f3b1b15381bca1957dcd6ebee6d6867cbd",
         "title": "orchestrator"
       },
-      "sourceDigest": "3bef3389fece6311ffe49faa3378d6d15719110161703f263357d780321c1486",
+      "sourceDigest": "c8e49ba14efb584cdcb69b7bec352233e8ae4690a6820b832ca371a72ec99835",
       "userStylesheet": {
         "$jtlt": "0.1",
         "output": "text",
         "rules": [
           {
             "body": [
-              "Query: ",
+              "Phase: ",
+              {
+                "$json": "$.variables.phase"
+              },
+              "\nQuery: ",
               "$.variables.query",
               "\nProfile: ",
               {
@@ -2701,6 +2740,22 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.insightEmbedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.profile.embedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
                   }
                 ]
               },
@@ -2738,6 +2793,13 @@
                 "insight": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "insightEmbedding": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 1,
+                  "type": "array"
                 },
                 "parents": {
                   "items": {
@@ -2852,11 +2914,19 @@
                 "selectionCount",
                 "status",
                 "parents",
-                "inheritedCounts"
+                "inheritedCounts",
+                "insightEmbedding"
               ],
               "type": "object"
             },
             "type": "array"
+          },
+          "phase": {
+            "enum": [
+              "profile",
+              "plan"
+            ],
+            "type": "string"
           },
           "profile": {
             "$defs": {},
@@ -2916,6 +2986,7 @@
           "agents",
           "caps",
           "offered_experiences",
+          "phase",
           "profile",
           "query"
         ],
@@ -3019,6 +3090,22 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.insightEmbedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.profile.embedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
                   }
                 ]
               },
@@ -3056,6 +3143,13 @@
                 "insight": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "insightEmbedding": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 1,
+                  "type": "array"
                 },
                 "parents": {
                   "items": {
@@ -3170,11 +3264,22 @@
                 "selectionCount",
                 "status",
                 "parents",
-                "inheritedCounts"
+                "inheritedCounts",
+                "insightEmbedding"
               ],
               "type": "object"
             },
             "type": "array"
+          }
+        },
+        "phase": {
+          "render": "json",
+          "schema": {
+            "enum": [
+              "profile",
+              "plan"
+            ],
+            "type": "string"
           }
         },
         "profile": {
@@ -3654,7 +3759,7 @@
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "ea67922cdae1ae4be8278f5174c2d6479cc829a4f7f05003983ef9a185d7ea94",
+      "revision": "86306ce2a74b6afbbb7f9381001e9057286eb493926574d16cf65d83679cbff3",
       "role": {
         "id": "consolidation-proposer",
         "instructions": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output.",
@@ -3862,6 +3967,22 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.insightEmbedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.profile.embedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
                   }
                 ]
               },
@@ -3899,6 +4020,13 @@
                 "insight": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "insightEmbedding": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 1,
+                  "type": "array"
                 },
                 "parents": {
                   "items": {
@@ -4013,7 +4141,8 @@
                 "selectionCount",
                 "status",
                 "parents",
-                "inheritedCounts"
+                "inheritedCounts",
+                "insightEmbedding"
               ],
               "type": "object"
             },
@@ -4213,6 +4342,22 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.insightEmbedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.profile.embedding[*]"
+                      },
+                      "$.profile.embeddedBy.dims"
+                    ]
                   }
                 ]
               },
@@ -4250,6 +4395,13 @@
                 "insight": {
                   "minLength": 1,
                   "type": "string"
+                },
+                "insightEmbedding": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 1,
+                  "type": "array"
                 },
                 "parents": {
                   "items": {
@@ -4364,7 +4516,8 @@
                 "selectionCount",
                 "status",
                 "parents",
-                "inheritedCounts"
+                "inheritedCounts",
+                "insightEmbedding"
               ],
               "type": "object"
             },
@@ -4645,7 +4798,7 @@
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "5535e0eb07f96f09a2b66cb72afe186f4a64a41f238954776e39bba8002d17e3",
+      "revision": "02e4b205d82737e99c3e13bd84480d7c844d1d94c12caed6eaa65fcd5c57655f",
       "role": {
         "id": "mutation-proposer",
         "instructions": "Propose one replace or augment operation using registered agents at an explicit dependency boundary. Identify the failed invocation and preserve a valid terminal DAG. Do not invent roles, tools or a task score. The host evaluates the complete candidate before acceptance. Return only the declared structured output.",
@@ -4781,40 +4934,58 @@
             },
             "$id": "https://tangleai.dev/schemas/hera/heraTopology",
             "$query": {
-              "$and": [
+              "$if": [
+                "$.validation.valid",
                 {
-                  "$eq": [
+                  "$and": [
                     {
-                      "$count": "$.nodes[*].id"
+                      "$gt": [
+                        {
+                          "$count": "$.nodes"
+                        },
+                        0
+                      ]
                     },
                     {
-                      "$count": {
-                        "$distinct": "$.nodes[*].id"
-                      }
+                      "$and": [
+                        {
+                          "$eq": [
+                            {
+                              "$count": "$.nodes[*].id"
+                            },
+                            {
+                              "$count": {
+                                "$distinct": "$.nodes[*].id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "$every": {
+                            "n": "$.nodes[*]"
+                          },
+                          "$satisfies": {
+                            "$every": {
+                              "dependency": "$n.dependsOn[*]"
+                            },
+                            "$satisfies": {
+                              "$satisfies": {
+                                "$eq": [
+                                  "$other.id",
+                                  "$dependency"
+                                ]
+                              },
+                              "$some": {
+                                "other": "$.nodes[*]"
+                              }
+                            }
+                          }
+                        }
+                      ]
                     }
                   ]
                 },
-                {
-                  "$every": {
-                    "n": "$.nodes[*]"
-                  },
-                  "$satisfies": {
-                    "$every": {
-                      "dependency": "$n.dependsOn[*]"
-                    },
-                    "$satisfies": {
-                      "$satisfies": {
-                        "$eq": [
-                          "$other.id",
-                          "$dependency"
-                        ]
-                      },
-                      "$some": {
-                        "other": "$.nodes[*]"
-                      }
-                    }
-                  }
-                }
+                true
               ]
             },
             "additionalProperties": false,
@@ -4893,7 +5064,7 @@
                   ],
                   "type": "object"
                 },
-                "minItems": 1,
+                "minItems": 0,
                 "type": "array"
               },
               "offeredExperienceIds": {
@@ -4951,6 +5122,7 @@
                 ],
                 "type": "object"
               },
+              "rawProposal": {},
               "scope": {
                 "minLength": 1,
                 "type": "string"
@@ -5128,40 +5300,58 @@
             },
             "$id": "https://tangleai.dev/schemas/hera/heraTopology",
             "$query": {
-              "$and": [
+              "$if": [
+                "$.validation.valid",
                 {
-                  "$eq": [
+                  "$and": [
                     {
-                      "$count": "$.nodes[*].id"
+                      "$gt": [
+                        {
+                          "$count": "$.nodes"
+                        },
+                        0
+                      ]
                     },
                     {
-                      "$count": {
-                        "$distinct": "$.nodes[*].id"
-                      }
+                      "$and": [
+                        {
+                          "$eq": [
+                            {
+                              "$count": "$.nodes[*].id"
+                            },
+                            {
+                              "$count": {
+                                "$distinct": "$.nodes[*].id"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "$every": {
+                            "n": "$.nodes[*]"
+                          },
+                          "$satisfies": {
+                            "$every": {
+                              "dependency": "$n.dependsOn[*]"
+                            },
+                            "$satisfies": {
+                              "$satisfies": {
+                                "$eq": [
+                                  "$other.id",
+                                  "$dependency"
+                                ]
+                              },
+                              "$some": {
+                                "other": "$.nodes[*]"
+                              }
+                            }
+                          }
+                        }
+                      ]
                     }
                   ]
                 },
-                {
-                  "$every": {
-                    "n": "$.nodes[*]"
-                  },
-                  "$satisfies": {
-                    "$every": {
-                      "dependency": "$n.dependsOn[*]"
-                    },
-                    "$satisfies": {
-                      "$satisfies": {
-                        "$eq": [
-                          "$other.id",
-                          "$dependency"
-                        ]
-                      },
-                      "$some": {
-                        "other": "$.nodes[*]"
-                      }
-                    }
-                  }
-                }
+                true
               ]
             },
             "additionalProperties": false,
@@ -5240,7 +5430,7 @@
                   ],
                   "type": "object"
                 },
-                "minItems": 1,
+                "minItems": 0,
                 "type": "array"
               },
               "offeredExperienceIds": {
@@ -5298,6 +5488,7 @@
                 ],
                 "type": "object"
               },
+              "rawProposal": {},
               "scope": {
                 "minLength": 1,
                 "type": "string"
@@ -5361,5 +5552,5 @@
     }
   ],
   "recipes": [],
-  "revision": "8b2f12a392d322ad79bc0f5e06aefbdb530f2c6b528e76659a406a4863e6de9c"
+  "revision": "5a6ac34a08bdce85be0c3b95f2b7d37cf7ce47c108c6f72f9450c2c92bbd1856"
 }

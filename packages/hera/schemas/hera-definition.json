@@ -119,6 +119,10 @@
         "unknownMsRequests": {
           "type": "integer",
           "minimum": 0
+        },
+        "embeddingRequests": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -773,7 +777,7 @@
             ],
             "additionalProperties": false
           },
-          "minItems": 1
+          "minItems": 0
         },
         "offeredExperienceIds": {
           "type": "array",
@@ -841,7 +845,8 @@
               "type": "null"
             }
           ]
-        }
+        },
+        "rawProposal": {}
       },
       "required": [
         "id",
@@ -858,40 +863,58 @@
       ],
       "additionalProperties": false,
       "$query": {
-        "$and": [
+        "$if": [
+          "$.validation.valid",
           {
-            "$eq": [
+            "$and": [
               {
-                "$count": "$.nodes[*].id"
+                "$gt": [
+                  {
+                    "$count": "$.nodes"
+                  },
+                  0
+                ]
               },
               {
-                "$count": {
-                  "$distinct": "$.nodes[*].id"
-                }
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.nodes[*].id"
+                      },
+                      {
+                        "$count": {
+                          "$distinct": "$.nodes[*].id"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$every": {
+                      "n": "$.nodes[*]"
+                    },
+                    "$satisfies": {
+                      "$every": {
+                        "dependency": "$n.dependsOn[*]"
+                      },
+                      "$satisfies": {
+                        "$some": {
+                          "other": "$.nodes[*]"
+                        },
+                        "$satisfies": {
+                          "$eq": [
+                            "$other.id",
+                            "$dependency"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
               }
             ]
           },
-          {
-            "$every": {
-              "n": "$.nodes[*]"
-            },
-            "$satisfies": {
-              "$every": {
-                "dependency": "$n.dependsOn[*]"
-              },
-              "$satisfies": {
-                "$some": {
-                  "other": "$.nodes[*]"
-                },
-                "$satisfies": {
-                  "$eq": [
-                    "$other.id",
-                    "$dependency"
-                  ]
-                }
-              }
-            }
-          }
+          true
         ]
       }
     },
@@ -1479,37 +1502,12 @@
                 "ms": {
                   "type": "integer",
                   "minimum": 0
-                },
-                "turns": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "nodes": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "depth": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "fanOut": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "concurrency": {
-                  "type": "integer",
-                  "minimum": 0
                 }
               },
               "required": [
                 "calls",
                 "tokens",
-                "ms",
-                "turns",
-                "nodes",
-                "depth",
-                "fanOut",
-                "concurrency"
+                "ms"
               ],
               "additionalProperties": false
             }
@@ -1526,6 +1524,75 @@
             "failed",
             "orphan"
           ]
+        },
+        "configRevision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requestBinding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "profile": {
+          "$ref": "#/$defs/heraProfile"
+        },
+        "offeredExperienceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "topologyIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "operationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "unevaluatedTrajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "controlUsage": {
+          "$ref": "#/$defs/heraUsage"
+        },
+        "refusals": {
+          "type": "object",
+          "properties": {
+            "invalidCandidates": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "duplicateCandidates": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "appliedNotOffered": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "invalidCandidates",
+            "duplicateCandidates",
+            "appliedNotOffered"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1869,6 +1936,13 @@
               "type": "null"
             }
           ]
+        },
+        "insightEmbedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1
         }
       },
       "required": [
@@ -1883,7 +1957,8 @@
         "selectionCount",
         "status",
         "parents",
-        "inheritedCounts"
+        "inheritedCounts",
+        "insightEmbedding"
       ],
       "additionalProperties": false,
       "$query": {
@@ -1914,6 +1989,22 @@
                   0
                 ]
               }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.insightEmbedding[*]"
+              },
+              "$.profile.embeddedBy.dims"
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.profile.embedding[*]"
+              },
+              "$.profile.embeddedBy.dims"
             ]
           }
         ]
@@ -2706,6 +2797,114 @@
         "addAgentId",
         "dependsOn",
         "reason"
+      ],
+      "additionalProperties": false
+    },
+    "heraQueryProfileOutput": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32768
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "text",
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "heraOrchestratorOutput": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/heraQueryProfileOutput"
+        },
+        {
+          "$ref": "#/$defs/heraPlanOutput"
+        }
+      ]
+    },
+    "heraOperation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "groupId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stage": {
+          "type": "string",
+          "minLength": 1
+        },
+        "phase": {
+          "enum": [
+            "dispatch",
+            "response",
+            "result"
+          ]
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "completed",
+            "failed",
+            "orphan",
+            "disabled"
+          ]
+        },
+        "binding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "value": {},
+        "usage": {
+          "$ref": "#/$defs/heraUsage"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/heraIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "taskId",
+        "snapshotId",
+        "groupId",
+        "stage",
+        "phase",
+        "status",
+        "binding",
+        "value",
+        "usage",
+        "issues"
       ],
       "additionalProperties": false
     }

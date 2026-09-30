@@ -1,0 +1,198 @@
+{
+  "kind": "hera-orchestrator/v1",
+  "profile": {
+    "text": "Identify the subject and the evidence links needed to answer the question.",
+    "tags": [
+      "evidence"
+    ]
+  },
+  "plans": {
+    "serial": {
+      "nodes": [
+        {
+          "id": "a",
+          "agentId": "query-decomposer",
+          "dependsOn": []
+        },
+        {
+          "id": "b",
+          "agentId": "retriever",
+          "dependsOn": [
+            "a"
+          ]
+        },
+        {
+          "id": "c",
+          "agentId": "conclude-agent",
+          "dependsOn": [
+            "b"
+          ]
+        }
+      ],
+      "appliedExperienceIds": []
+    },
+    "parallel": {
+      "nodes": [
+        {
+          "id": "p-a",
+          "agentId": "query-decomposer",
+          "dependsOn": []
+        },
+        {
+          "id": "p-b",
+          "agentId": "retriever",
+          "dependsOn": [
+            "p-a"
+          ]
+        },
+        {
+          "id": "p-c",
+          "agentId": "evidence-selector",
+          "dependsOn": [
+            "p-a"
+          ]
+        },
+        {
+          "id": "p-d",
+          "agentId": "conclude-agent",
+          "dependsOn": [
+            "p-b",
+            "p-c"
+          ]
+        }
+      ],
+      "appliedExperienceIds": []
+    },
+    "cycle": {
+      "nodes": [
+        {
+          "id": "a",
+          "agentId": "query-decomposer",
+          "dependsOn": [
+            "b"
+          ]
+        },
+        {
+          "id": "b",
+          "agentId": "retriever",
+          "dependsOn": [
+            "a"
+          ]
+        },
+        {
+          "id": "c",
+          "agentId": "conclude-agent",
+          "dependsOn": [
+            "b"
+          ]
+        }
+      ],
+      "appliedExperienceIds": []
+    },
+    "unoffered": {
+      "nodes": [
+        {
+          "id": "a",
+          "agentId": "query-decomposer",
+          "dependsOn": []
+        },
+        {
+          "id": "b",
+          "agentId": "retriever",
+          "dependsOn": [
+            "a"
+          ]
+        },
+        {
+          "id": "c",
+          "agentId": "conclude-agent",
+          "dependsOn": [
+            "b"
+          ]
+        }
+      ],
+      "appliedExperienceIds": [
+        "unoffered"
+      ]
+    },
+    "tool": {
+      "nodes": [
+        {
+          "id": "a",
+          "agentId": "query-decomposer",
+          "dependsOn": []
+        },
+        {
+          "id": "b",
+          "agentId": "retriever",
+          "dependsOn": [
+            "a"
+          ],
+          "tools": [
+            "shell"
+          ]
+        },
+        {
+          "id": "c",
+          "agentId": "conclude-agent",
+          "dependsOn": [
+            "b"
+          ]
+        }
+      ],
+      "appliedExperienceIds": []
+    }
+  },
+  "proposals": {
+    "q01": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q02": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q03": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q04": [
+      "serial",
+      "parallel",
+      "cycle"
+    ],
+    "q05": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q06": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q07": [
+      "serial",
+      "parallel",
+      "unoffered"
+    ],
+    "q08": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q09": [
+      "serial",
+      "parallel",
+      "serial"
+    ],
+    "q10": [
+      "serial",
+      "parallel",
+      "tool"
+    ]
+  }
+}

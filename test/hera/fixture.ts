@@ -14,7 +14,7 @@ export async function fixture() {
   const content = {scope,parentId:null,activePromptVersionIds:Object.fromEntries(created.value.prompts.map(p=>[p.agentId,p.id])),libraryRevision:await heraLibraryRevisionOf([]),experienceIds:[],registryRevision:pinned.value.revision,
     identities:{model:'scripted/hera-fixture',decoder:await heraRevisionOf({temperature:0}),tools:['hera-evidence'],corpusRevision:'c'.repeat(64),embeddedBy:{model:'test',dims:2},evaluator:{id:'fixture-exact',version:'1',successRuleId:'exact-v1'}},config,status:'staged' as const};
   const snapshot: HeraLearningSnapshot = {...content,id:await heraContentIdOf(content)};
-  const entry = {scope,profile:{text:'question',tags:[],embedding:[1,0],embeddedBy:{model:'test',dims:2}},insight:'Cite the visible record.',provenance:{advantageId:'fixture-advantage',groupId:'fixture-group'},useCount:0,successCount:0,utility:0,selectionCount:0,status:'active' as const,parents:[],inheritedCounts:null};
+  const entry = {scope,profile:{text:'question',tags:[],embedding:[1,0],embeddedBy:{model:'test',dims:2}},insight:'Cite the visible record.',insightEmbedding:[1,0],provenance:{advantageId:'fixture-advantage',groupId:'fixture-group'},useCount:0,successCount:0,utility:0,selectionCount:0,status:'active' as const,parents:[],inheritedCounts:null};
   const experience: HeraExperience = {...entry,id:await heraContentIdOf(entry)};
   return {...created.value,catalog:catalog.value,registry:pinned.value,snapshot,experience};
 }
