@@ -1,0 +1,128 @@
+{
+  "q01-c1": {
+    "no-harness": "reject",
+    "scaffold-no-harness": "reject",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "reject",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "approve",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "approve"
+  },
+  "q01-c2": {
+    "no-harness": "reject",
+    "scaffold-no-harness": "approve",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "approve",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "approve",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "approve"
+  },
+  "q01-c3": {
+    "no-harness": "approve",
+    "scaffold-no-harness": "reject",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "reject",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "approve",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "approve"
+  },
+  "q02-c1": {
+    "no-harness": 0,
+    "scaffold-no-harness": 0,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 0,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 60,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 60
+  },
+  "q02-c2": {
+    "no-harness": 0,
+    "scaffold-no-harness": 60,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 60,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 60,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 60
+  },
+  "q02-c3": {
+    "no-harness": 60,
+    "scaffold-no-harness": 0,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 0,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 60,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 60
+  },
+  "q03-c1": {
+    "no-harness": "North",
+    "scaffold-no-harness": "North",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "North",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "North",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "North"
+  },
+  "q03-c2": {
+    "no-harness": "North",
+    "scaffold-no-harness": "South",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "South",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "South",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "South"
+  },
+  "q03-c3": {
+    "no-harness": "South",
+    "scaffold-no-harness": "South",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "South",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "South",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "South"
+  },
+  "q04-c1": {
+    "no-harness": "launch",
+    "scaffold-no-harness": "launch",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "launch",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "launch",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "launch"
+  },
+  "q04-c2": {
+    "no-harness": "launch",
+    "scaffold-no-harness": "delay",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "delay",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "delay",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "launch"
+  },
+  "q04-c3": {
+    "no-harness": "delay",
+    "scaffold-no-harness": "delay",
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": "delay",
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": "delay",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": "launch"
+  },
+  "q05-c1": {
+    "no-harness": 0,
+    "scaffold-no-harness": 0,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 0,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 0,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 0
+  },
+  "q05-c2": {
+    "no-harness": 0,
+    "scaffold-no-harness": 18,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 18,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 0,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 18
+  },
+  "q05-c3": {
+    "no-harness": 18,
+    "scaffold-no-harness": 18,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 18,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 0,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 18
+  },
+  "q06-c1": {
+    "no-harness": 0,
+    "scaffold-no-harness": 0,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 0,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 0,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 0
+  },
+  "q06-c2": {
+    "no-harness": 0,
+    "scaffold-no-harness": 15,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 15,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 15,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 15
+  },
+  "q06-c3": {
+    "no-harness": 15,
+    "scaffold-no-harness": 15,
+    "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb": 15,
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0": 15,
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d": 15
+  }
+}

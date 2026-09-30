@@ -1,0 +1,578 @@
+[
+  {
+    "id": "q01-c1-a",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c1-a",
+    "title": "Tidewater observation q01-c1-a",
+    "availableAt": "2025-01-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q01-c1-b",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c1-b",
+    "title": "Tidewater observation q01-c1-b",
+    "availableAt": "2025-01-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q01-c1-c",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c1-c",
+    "title": "Tidewater observation q01-c1-c",
+    "availableAt": "2025-01-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q01-c1-future",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c1-future",
+    "title": "Tidewater observation q01-c1-future",
+    "availableAt": "2025-01-11T00:00:00.000Z",
+    "excerpt": "A later Tidewater bulletin describes a change after this checkpoint.",
+    "sha256": "4b0d12bac375e60ce0e9db03d3db1042255bc2ef3926c062015b7f1ceb0cfc45"
+  },
+  {
+    "id": "q01-c2-a",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c2-a",
+    "title": "Tidewater observation q01-c2-a",
+    "availableAt": "2025-01-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q01-c2-b",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c2-b",
+    "title": "Tidewater observation q01-c2-b",
+    "availableAt": "2025-01-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q01-c2-c",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c2-c",
+    "title": "Tidewater observation q01-c2-c",
+    "availableAt": "2025-01-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q01-c3-a",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c3-a",
+    "title": "Tidewater observation q01-c3-a",
+    "availableAt": "2025-01-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q01-c3-b",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c3-b",
+    "title": "Tidewater observation q01-c3-b",
+    "availableAt": "2025-01-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q01-c3-c",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-c3-c",
+    "title": "Tidewater observation q01-c3-c",
+    "availableAt": "2025-01-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q02-c1-a",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c1-a",
+    "title": "Tidewater observation q02-c1-a",
+    "availableAt": "2025-02-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q02-c1-b",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c1-b",
+    "title": "Tidewater observation q02-c1-b",
+    "availableAt": "2025-02-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q02-c1-c",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c1-c",
+    "title": "Tidewater observation q02-c1-c",
+    "availableAt": "2025-02-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q02-c2-a",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c2-a",
+    "title": "Tidewater observation q02-c2-a",
+    "availableAt": "2025-02-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q02-c2-b",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c2-b",
+    "title": "Tidewater observation q02-c2-b",
+    "availableAt": "2025-02-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q02-c2-c",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c2-c",
+    "title": "Tidewater observation q02-c2-c",
+    "availableAt": "2025-02-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q02-c2-future",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c2-future",
+    "title": "Tidewater observation q02-c2-future",
+    "availableAt": "2025-02-19T00:00:00.000Z",
+    "excerpt": "A later Tidewater bulletin describes a change after this checkpoint.",
+    "sha256": "4b0d12bac375e60ce0e9db03d3db1042255bc2ef3926c062015b7f1ceb0cfc45"
+  },
+  {
+    "id": "q02-c3-a",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c3-a",
+    "title": "Tidewater observation q02-c3-a",
+    "availableAt": "2025-02-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q02-c3-b",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c3-b",
+    "title": "Tidewater observation q02-c3-b",
+    "availableAt": "2025-02-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q02-c3-c",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-c3-c",
+    "title": "Tidewater observation q02-c3-c",
+    "availableAt": "2025-02-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q03-c1-a",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c1-a",
+    "title": "Tidewater observation q03-c1-a",
+    "availableAt": "2025-03-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q03-c1-b",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c1-b",
+    "title": "Tidewater observation q03-c1-b",
+    "availableAt": "2025-03-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q03-c1-c",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c1-c",
+    "title": "Tidewater observation q03-c1-c",
+    "availableAt": "2025-03-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q03-c1-undated",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c1-undated",
+    "title": "Tidewater observation q03-c1-undated",
+    "availableAt": null,
+    "excerpt": "An undated Tidewater memo offers an unattributed expectation.",
+    "sha256": "68a2ff3e932caa631bebe1e237e043f9510e35df488a8f271da133b3f47f23fc"
+  },
+  {
+    "id": "q03-c2-a",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c2-a",
+    "title": "Tidewater observation q03-c2-a",
+    "availableAt": "2025-03-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q03-c2-b",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c2-b",
+    "title": "Tidewater observation q03-c2-b",
+    "availableAt": "2025-03-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q03-c2-c",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c2-c",
+    "title": "Tidewater observation q03-c2-c",
+    "availableAt": "2025-03-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q03-c3-a",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c3-a",
+    "title": "Tidewater observation q03-c3-a",
+    "availableAt": "2025-03-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q03-c3-b",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c3-b",
+    "title": "Tidewater observation q03-c3-b",
+    "availableAt": "2025-03-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q03-c3-c",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-c3-c",
+    "title": "Tidewater observation q03-c3-c",
+    "availableAt": "2025-03-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q04-c1-a",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c1-a",
+    "title": "Tidewater observation q04-c1-a",
+    "availableAt": "2025-04-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q04-c1-b",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c1-b",
+    "title": "Tidewater observation q04-c1-b",
+    "availableAt": "2025-04-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q04-c1-c",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c1-c",
+    "title": "Tidewater observation q04-c1-c",
+    "availableAt": "2025-04-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q04-c2-a",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c2-a",
+    "title": "Tidewater observation q04-c2-a",
+    "availableAt": "2025-04-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q04-c2-b",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c2-b",
+    "title": "Tidewater observation q04-c2-b",
+    "availableAt": "2025-04-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q04-c2-c",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c2-c",
+    "title": "Tidewater observation q04-c2-c",
+    "availableAt": "2025-04-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q04-c3-a",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c3-a",
+    "title": "Tidewater observation q04-c3-a",
+    "availableAt": "2025-04-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q04-c3-b",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c3-b",
+    "title": "Tidewater observation q04-c3-b",
+    "availableAt": "2025-04-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q04-c3-c",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c3-c",
+    "title": "Tidewater observation q04-c3-c",
+    "availableAt": "2025-04-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q04-c3-future",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-c3-future",
+    "title": "Tidewater observation q04-c3-future",
+    "availableAt": "2025-04-26T00:00:00.000Z",
+    "excerpt": "A later Tidewater bulletin describes a change after this checkpoint.",
+    "sha256": "4b0d12bac375e60ce0e9db03d3db1042255bc2ef3926c062015b7f1ceb0cfc45"
+  },
+  {
+    "id": "q05-c1-a",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c1-a",
+    "title": "Tidewater observation q05-c1-a",
+    "availableAt": "2025-05-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q05-c1-b",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c1-b",
+    "title": "Tidewater observation q05-c1-b",
+    "availableAt": "2025-05-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q05-c1-c",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c1-c",
+    "title": "Tidewater observation q05-c1-c",
+    "availableAt": "2025-05-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q05-c2-a",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c2-a",
+    "title": "Tidewater observation q05-c2-a",
+    "availableAt": "2025-05-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q05-c2-b",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c2-b",
+    "title": "Tidewater observation q05-c2-b",
+    "availableAt": "2025-05-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q05-c2-c",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c2-c",
+    "title": "Tidewater observation q05-c2-c",
+    "availableAt": "2025-05-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q05-c2-undated",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c2-undated",
+    "title": "Tidewater observation q05-c2-undated",
+    "availableAt": null,
+    "excerpt": "An undated Tidewater memo offers an unattributed expectation.",
+    "sha256": "68a2ff3e932caa631bebe1e237e043f9510e35df488a8f271da133b3f47f23fc"
+  },
+  {
+    "id": "q05-c3-a",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c3-a",
+    "title": "Tidewater observation q05-c3-a",
+    "availableAt": "2025-05-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q05-c3-b",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c3-b",
+    "title": "Tidewater observation q05-c3-b",
+    "availableAt": "2025-05-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q05-c3-c",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-c3-c",
+    "title": "Tidewater observation q05-c3-c",
+    "availableAt": "2025-05-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q06-c1-a",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c1-a",
+    "title": "Tidewater observation q06-c1-a",
+    "availableAt": "2025-06-08T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q06-c1-b",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c1-b",
+    "title": "Tidewater observation q06-c1-b",
+    "availableAt": "2025-06-09T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q06-c1-c",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c1-c",
+    "title": "Tidewater observation q06-c1-c",
+    "availableAt": "2025-06-10T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q06-c2-a",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c2-a",
+    "title": "Tidewater observation q06-c2-a",
+    "availableAt": "2025-06-16T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q06-c2-b",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c2-b",
+    "title": "Tidewater observation q06-c2-b",
+    "availableAt": "2025-06-17T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q06-c2-c",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c2-c",
+    "title": "Tidewater observation q06-c2-c",
+    "availableAt": "2025-06-18T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q06-c3-a",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c3-a",
+    "title": "Tidewater observation q06-c3-a",
+    "availableAt": "2025-06-23T00:00:00.000Z",
+    "excerpt": "The Tidewater working group lists supporting and opposing arguments.",
+    "sha256": "c3bc45b077efcfd470da4e903c6e84ddedaa936af7074a8f03db50ad4855289a"
+  },
+  {
+    "id": "q06-c3-b",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c3-b",
+    "title": "Tidewater observation q06-c3-b",
+    "availableAt": "2025-06-24T00:00:00.000Z",
+    "excerpt": "The review log says that unresolved dependencies remain under examination.",
+    "sha256": "18b0c01c730e2ad2a2c016aa36b87821bf2d7fc10d7efe895928cb3a4e1e4cb2"
+  },
+  {
+    "id": "q06-c3-c",
+    "questionId": "q06",
+    "url": "https://fixtures.tangleai.dev/forecast/q06-c3-c",
+    "title": "Tidewater observation q06-c3-c",
+    "availableAt": "2025-06-25T00:00:00.000Z",
+    "excerpt": "The latest public briefing records new observations without declaring a final outcome.",
+    "sha256": "d65e2d31abfd94d62b60fe2c91338700920ec264310c3dfbe3c0f63c9ff39ac6"
+  },
+  {
+    "id": "q01-resolution",
+    "questionId": "q01",
+    "url": "https://fixtures.tangleai.dev/forecast/q01-resolution",
+    "title": "Tidewater observation q01-resolution",
+    "availableAt": "2025-01-29T00:00:00.000Z",
+    "excerpt": "The fictional Tidewater resolution is approve.",
+    "sha256": "cd4ff3dc9d7af90a290bfc77bf15afa2a293e1476787538226523f851836e31e"
+  },
+  {
+    "id": "q02-resolution",
+    "questionId": "q02",
+    "url": "https://fixtures.tangleai.dev/forecast/q02-resolution",
+    "title": "Tidewater observation q02-resolution",
+    "availableAt": "2025-02-29T00:00:00.000Z",
+    "excerpt": "The fictional Tidewater resolution is 60.",
+    "sha256": "45b48dd0d091be38d2b8b6289e24b3e70375b7efebe0fcf6c74fcd2d37b7de21"
+  },
+  {
+    "id": "q03-resolution",
+    "questionId": "q03",
+    "url": "https://fixtures.tangleai.dev/forecast/q03-resolution",
+    "title": "Tidewater observation q03-resolution",
+    "availableAt": "2025-03-29T00:00:00.000Z",
+    "excerpt": "The fictional Tidewater resolution is South.",
+    "sha256": "92fa415725da4d3f9f2fb22a7a211da87b239e219f6eed08be17c2eb196dfdbe"
+  },
+  {
+    "id": "q04-resolution",
+    "questionId": "q04",
+    "url": "https://fixtures.tangleai.dev/forecast/q04-resolution",
+    "title": "Tidewater observation q04-resolution",
+    "availableAt": "2025-04-29T00:00:00.000Z",
+    "excerpt": "The fictional Tidewater resolution is delay.",
+    "sha256": "a92028b44c87bf095a10eae1cbc9312103f3688aadcd88dc86fa0b8b2838e871"
+  },
+  {
+    "id": "q05-resolution",
+    "questionId": "q05",
+    "url": "https://fixtures.tangleai.dev/forecast/q05-resolution",
+    "title": "Tidewater observation q05-resolution",
+    "availableAt": "2025-05-29T00:00:00.000Z",
+    "excerpt": "The fictional Tidewater resolution is 18.",
+    "sha256": "97c6b1063d3f68f5082fc7514e82d20502bf4a3e32868e2dd07a14622bbe26df"
+  }
+]

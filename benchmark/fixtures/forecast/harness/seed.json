@@ -1,0 +1,5 @@
+{
+  "factorTracking": "List the factors that could change the answer.",
+  "evidenceHandling": "Check the source and availability of each observation.",
+  "uncertaintyHandling": "State the uncertainty that remains before answering."
+}

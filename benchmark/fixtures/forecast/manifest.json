@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "license": "MIT",
+  "authorship": "Tangle-authored fiction for this repository; no real municipality, third-party text or real outcome is represented.",
+  "namespace": "forecast-fixture",
+  "subject": "Tidewater",
+  "files": [
+    {
+      "path": "harness/candidates.json",
+      "digest": "6c8b94df82cff991129d2f7ca7f15dccba3bc5fc78a362d8704a7a07c87e1742"
+    },
+    {
+      "path": "harness/seed.json",
+      "digest": "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb"
+    },
+    {
+      "path": "questions.json",
+      "digest": "03a9b956b991c4b2d1e63acf2fed66aaac7405a91ca7f04b2f73abef148b345f"
+    },
+    {
+      "path": "resolutions.json",
+      "digest": "f04d53b98ca5beb00f6a85b8f076bc3f17d2b1705203c668d4494a26ba8ce468"
+    },
+    {
+      "path": "scripted/duplicates.json",
+      "digest": "4a9372d984a9a2ff3dfa2baf51f306a73c35df40e2824775b754290a07488c2f"
+    },
+    {
+      "path": "scripted/feedback.json",
+      "digest": "05d2a2676084a4e0b65e18cfb7300e0e8eee6c2b7601c9b7b1030e7f051d0a74"
+    },
+    {
+      "path": "scripted/leaks.json",
+      "digest": "adddaa6429f72dc46bf793619ad0f395525165e27e4857c10559feecb2002b8b"
+    },
+    {
+      "path": "scripted/notes.json",
+      "digest": "eb2b12c0ec4d21d129437f43a67022116080f3128b1746840504ca7c52c4997b"
+    },
+    {
+      "path": "scripted/predictions.json",
+      "digest": "5846f03d87674a3e251f1a46283224925bc5fd540a7b9aa84a6ef77fc265f55c"
+    },
+    {
+      "path": "snapshots.json",
+      "digest": "c7f490b745f7575834ccdbac31560e64ae47286e06bf871982d28d443eee98ef"
+    }
+  ],
+  "census": {
+    "questions": 6,
+    "checkpoints": 18,
+    "resolutions": 5,
+    "pending": 1,
+    "resolvedCheckpoints": 15,
+    "snapshots": 64,
+    "postCutoff": 3,
+    "undated": 2
+  },
+  "policy": {
+    "seed": 17753,
+    "maxHarnessComponentBytes": 4096,
+    "maxHarnessBytes": 32768,
+    "maxPatchOperations": 32,
+    "maxGuidanceItems": 5,
+    "maxGuidanceBytes": 512,
+    "maxPhysicalRequests": 0
+  },
+  "seedHarnessDigest": "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb",
+  "candidateDigests": [
+    "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0",
+    "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d"
+  ],
+  "registrationId": "cdc0d6cd4b53dc5100e22bdeed372ad008ad42c4b78d061d036d0374dfb4a4b4"
+}

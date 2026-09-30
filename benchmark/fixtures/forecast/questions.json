@@ -1,0 +1,362 @@
+[
+  {
+    "id": "q01",
+    "scopeKey": "tidewater/civic-votes",
+    "prompt": "Will Tidewater approve the Canal Library proposal?",
+    "issuedAt": "2025-01-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-01-28T00:00:00.000Z",
+    "adapter": {
+      "id": "choice/v1",
+      "options": [
+        "approve",
+        "reject"
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q01-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-01-10T00:00:00.000Z",
+        "cutoffAt": "2025-01-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q01-c1-a",
+          "q01-c1-b",
+          "q01-c1-c",
+          "q01-c1-future"
+        ],
+        "decisiveSnapshotIds": [
+          "q01-c1-c",
+          "q01-c1-future"
+        ]
+      },
+      {
+        "id": "q01-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-01-18T00:00:00.000Z",
+        "cutoffAt": "2025-01-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q01-c2-a",
+          "q01-c2-b",
+          "q01-c2-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q01-c2-c"
+        ]
+      },
+      {
+        "id": "q01-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-01-25T00:00:00.000Z",
+        "cutoffAt": "2025-01-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q01-c3-a",
+          "q01-c3-b",
+          "q01-c3-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q01-c3-c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "q02",
+    "scopeKey": "tidewater/civic-votes",
+    "prompt": "What percentage will support the Tidewater Grove proposal?",
+    "issuedAt": "2025-02-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-02-28T00:00:00.000Z",
+    "adapter": {
+      "id": "numeric/v1",
+      "tolerance": 5,
+      "range": [
+        0,
+        100
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q02-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-02-10T00:00:00.000Z",
+        "cutoffAt": "2025-02-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q02-c1-a",
+          "q02-c1-b",
+          "q02-c1-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q02-c1-c"
+        ]
+      },
+      {
+        "id": "q02-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-02-18T00:00:00.000Z",
+        "cutoffAt": "2025-02-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q02-c2-a",
+          "q02-c2-b",
+          "q02-c2-c",
+          "q02-c2-future"
+        ],
+        "decisiveSnapshotIds": [
+          "q02-c2-c",
+          "q02-c2-future"
+        ]
+      },
+      {
+        "id": "q02-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-02-25T00:00:00.000Z",
+        "cutoffAt": "2025-02-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q02-c3-a",
+          "q02-c3-b",
+          "q02-c3-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q02-c3-c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "q03",
+    "scopeKey": "tidewater/civic-votes",
+    "prompt": "Which site will Tidewater choose for the civic hall?",
+    "issuedAt": "2025-03-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-03-28T00:00:00.000Z",
+    "adapter": {
+      "id": "choice/v1",
+      "options": [
+        "North",
+        "South",
+        "East"
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q03-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-03-10T00:00:00.000Z",
+        "cutoffAt": "2025-03-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q03-c1-a",
+          "q03-c1-b",
+          "q03-c1-c",
+          "q03-c1-undated"
+        ],
+        "decisiveSnapshotIds": [
+          "q03-c1-c",
+          "q03-c1-undated"
+        ]
+      },
+      {
+        "id": "q03-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-03-18T00:00:00.000Z",
+        "cutoffAt": "2025-03-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q03-c2-a",
+          "q03-c2-b",
+          "q03-c2-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q03-c2-c"
+        ]
+      },
+      {
+        "id": "q03-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-03-25T00:00:00.000Z",
+        "cutoffAt": "2025-03-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q03-c3-a",
+          "q03-c3-b",
+          "q03-c3-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q03-c3-c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "q04",
+    "scopeKey": "tidewater/release-dates",
+    "prompt": "Will the Tidewater Lantern portal launch or be delayed?",
+    "issuedAt": "2025-04-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-04-28T00:00:00.000Z",
+    "adapter": {
+      "id": "choice/v1",
+      "options": [
+        "launch",
+        "delay"
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q04-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-04-10T00:00:00.000Z",
+        "cutoffAt": "2025-04-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q04-c1-a",
+          "q04-c1-b",
+          "q04-c1-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q04-c1-c"
+        ]
+      },
+      {
+        "id": "q04-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-04-18T00:00:00.000Z",
+        "cutoffAt": "2025-04-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q04-c2-a",
+          "q04-c2-b",
+          "q04-c2-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q04-c2-c"
+        ]
+      },
+      {
+        "id": "q04-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-04-25T00:00:00.000Z",
+        "cutoffAt": "2025-04-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q04-c3-a",
+          "q04-c3-b",
+          "q04-c3-c",
+          "q04-c3-future"
+        ],
+        "decisiveSnapshotIds": [
+          "q04-c3-c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "q05",
+    "scopeKey": "tidewater/release-dates",
+    "prompt": "How many days will the Tidewater Harbor release take?",
+    "issuedAt": "2025-05-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-05-28T00:00:00.000Z",
+    "adapter": {
+      "id": "numeric/v1",
+      "tolerance": 2,
+      "range": [
+        0,
+        30
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q05-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-05-10T00:00:00.000Z",
+        "cutoffAt": "2025-05-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q05-c1-a",
+          "q05-c1-b",
+          "q05-c1-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q05-c1-c"
+        ]
+      },
+      {
+        "id": "q05-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-05-18T00:00:00.000Z",
+        "cutoffAt": "2025-05-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q05-c2-a",
+          "q05-c2-b",
+          "q05-c2-c",
+          "q05-c2-undated"
+        ],
+        "decisiveSnapshotIds": [
+          "q05-c2-c"
+        ]
+      },
+      {
+        "id": "q05-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-05-25T00:00:00.000Z",
+        "cutoffAt": "2025-05-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q05-c3-a",
+          "q05-c3-b",
+          "q05-c3-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q05-c3-c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "q06",
+    "scopeKey": "tidewater/release-dates",
+    "prompt": "How many days will the Tidewater Beacon trial take?",
+    "issuedAt": "2025-06-01T00:00:00.000Z",
+    "expectedResolutionAt": "2025-06-28T00:00:00.000Z",
+    "adapter": {
+      "id": "numeric/v1",
+      "tolerance": 1,
+      "range": [
+        0,
+        30
+      ]
+    },
+    "checkpoints": [
+      {
+        "id": "q06-c1",
+        "ordinal": 1,
+        "scheduledAt": "2025-06-10T00:00:00.000Z",
+        "cutoffAt": "2025-06-10T00:00:00.000Z",
+        "snapshotIds": [
+          "q06-c1-a",
+          "q06-c1-b",
+          "q06-c1-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q06-c1-c"
+        ]
+      },
+      {
+        "id": "q06-c2",
+        "ordinal": 2,
+        "scheduledAt": "2025-06-18T00:00:00.000Z",
+        "cutoffAt": "2025-06-18T00:00:00.000Z",
+        "snapshotIds": [
+          "q06-c2-a",
+          "q06-c2-b",
+          "q06-c2-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q06-c2-c"
+        ]
+      },
+      {
+        "id": "q06-c3",
+        "ordinal": 3,
+        "scheduledAt": "2025-06-25T00:00:00.000Z",
+        "cutoffAt": "2025-06-25T00:00:00.000Z",
+        "snapshotIds": [
+          "q06-c3-a",
+          "q06-c3-b",
+          "q06-c3-c"
+        ],
+        "decisiveSnapshotIds": [
+          "q06-c3-c"
+        ]
+      }
+    ]
+  }
+]

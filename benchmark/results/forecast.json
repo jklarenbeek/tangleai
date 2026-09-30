@@ -1,0 +1,4697 @@
+{
+  "instrument": "forecast",
+  "schemaVersion": 1,
+  "source": {
+    "head": "94503b3326a6415287adfee3a4a612eba6504022",
+    "clean": false,
+    "files": [
+      {
+        "path": "benchmark/fixtures/forecast/manifest.json",
+        "sha256": "7dfdd87a8ada2bc1482bd2e409ebe1cfec3b069c16c2aec19e374481469cc774"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/questions.json",
+        "sha256": "1cb8dc9b3f73f6df06aa36244aa1dbbf7140015f41a27234ac280db9c783ea6a"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/resolutions.json",
+        "sha256": "b2666164f3a47fa1c643f843da1c7c35b4738f8da315ef262c2eda6514cbf591"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/scripted/duplicates.json",
+        "sha256": "60f2f95165e43b3448a2d3fe565a373fc926800ba8b21f13ba83527511c30acb"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/scripted/feedback.json",
+        "sha256": "d48819b5cf282cf2e50aceccdc3da771997e0d4dc00c5af335a845b85acce402"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/scripted/leaks.json",
+        "sha256": "36d1e9719d45dcc279b97a5499d18824281d1583da370ec2123e9525cf5081db"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/scripted/notes.json",
+        "sha256": "7eac4b64185e46cc94319199279f186d820eff28aa9df780250009fd52bd5731"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/scripted/predictions.json",
+        "sha256": "50fca49641d9e13bff72fe9778d6494086c36629fec046495edc9c904df4275a"
+      },
+      {
+        "path": "benchmark/fixtures/forecast/snapshots.json",
+        "sha256": "db3c79570a864cf6acb78630f2eeb7c49a3029f8fa35e7e8c0c7f984bf529cac"
+      },
+      {
+        "path": "benchmark/forecast.ts",
+        "sha256": "f1247fe7615f57dd29eb5f20d19f810bf7222d487d8f075797584881724fd306"
+      },
+      {
+        "path": "benchmark/lib/ai-env.ts",
+        "sha256": "5b584540fdfe9b0a879d2b0476eb46ab0a9babc8d2a187a2811ba6cf1f332a2a"
+      },
+      {
+        "path": "benchmark/lib/args.ts",
+        "sha256": "d243ac26d4beb119ec3254786a79140cf34d30373c3655714c08b96159707ab0"
+      },
+      {
+        "path": "benchmark/lib/authoring-probes.ts",
+        "sha256": "158e96d802343a5d296d2936e4340f1af64f9f5bde1a42abba3f18839f56e9a8"
+      },
+      {
+        "path": "benchmark/lib/authoring-schema.ts",
+        "sha256": "58c7d010302d60a51614051c46a5234c59222fff271d2da5a76c52632df811bc"
+      },
+      {
+        "path": "benchmark/lib/authoring.ts",
+        "sha256": "e31459abcb6361842149aebb40425f668a675a9f2f2c52bf32b4d7dc892b1fcd"
+      },
+      {
+        "path": "benchmark/lib/config-conformance.ts",
+        "sha256": "9a27ce957cec7933c5ef5c27e37676893469ae803f2f52a1c45c2c960902ece5"
+      },
+      {
+        "path": "benchmark/lib/config-conformance.types.ts",
+        "sha256": "03538ba9422b2eb9e40d4621778f965900735f800f714289c37ec6c987b59775"
+      },
+      {
+        "path": "benchmark/lib/consolidate-bm25-reference.ts",
+        "sha256": "872b57c846c8d3971cd28eb6c8598d2fde2f82b2f179d6f38edce63bd201e59b"
+      },
+      {
+        "path": "benchmark/lib/consolidate-candidates.ts",
+        "sha256": "b35974157440ba19a2b402bce217de85593d3f11d12653ae4db8669200a73cbf"
+      },
+      {
+        "path": "benchmark/lib/consolidate-execution-probes.ts",
+        "sha256": "b7ba8f7ce3cc9ea5089dcebc7e57cdc08568969bc3eb0c6af99637510886dd70"
+      },
+      {
+        "path": "benchmark/lib/consolidate-scripted.ts",
+        "sha256": "c24b8fe788faf1f5f615f037fbdaacbae0dfe369dbf081160808fa9ce5c63f30"
+      },
+      {
+        "path": "benchmark/lib/consolidate-source.ts",
+        "sha256": "3db969d41408234dfb0e4a0b42c16653c39758c2f1f8a8721fbabf25f4e9d373"
+      },
+      {
+        "path": "benchmark/lib/consolidate-storage.ts",
+        "sha256": "ed0147f1c96517e4b1a576fcede9202b49524a569a31f4fab3ad2003da43c97a"
+      },
+      {
+        "path": "benchmark/lib/consolidate-store-probes.ts",
+        "sha256": "5f8ad9b7d3c5ebd61c1d679243d33d2271ebcdd8eaa49bc7506510b1994fa176"
+      },
+      {
+        "path": "benchmark/lib/consolidate-trigger-probes.ts",
+        "sha256": "0446ed544d41ce03d3ddb6f363919070e5bdd1df6aad4719c4ef3f741af06b26"
+      },
+      {
+        "path": "benchmark/lib/consolidate.ts",
+        "sha256": "698cbe12b50893bd508258a9ff6596872dd4e8d51a5823b49226d98192cff75f"
+      },
+      {
+        "path": "benchmark/lib/env.ts",
+        "sha256": "37d73b655e24a2e7d8753bd93e5ae486e900cfa826e81d834ac992f9e2e2b97b"
+      },
+      {
+        "path": "benchmark/lib/evolve-fixture.ts",
+        "sha256": "3a75d927433926f987564b743aa786571af280734aed8d9ff61a928570a0fb82"
+      },
+      {
+        "path": "benchmark/lib/evolve-host.ts",
+        "sha256": "250a07c35fb8d3f36384caf5367448d0303a2ebc2f3a735f49767fc8b48fb78e"
+      },
+      {
+        "path": "benchmark/lib/evolve-lifecycle.ts",
+        "sha256": "d2543554f519201bd8d893f74e1885ee5162262a26162c4c5f0cd6481de877b5"
+      },
+      {
+        "path": "benchmark/lib/evolve-probes.ts",
+        "sha256": "2be05a7d37a84f9cc6778c4fd023632160b003a6b90576bb8ab338d240fc7f4d"
+      },
+      {
+        "path": "benchmark/lib/evolve-selection.ts",
+        "sha256": "600584aa0fcc4b35aca7a2abdb3301a1edb3cbd0e2179ae1bbed4626d3f77bcb"
+      },
+      {
+        "path": "benchmark/lib/evolve-selection.types.ts",
+        "sha256": "3e7d1afb0f13affeb4c04b51dd01745a152e02c8a2b8e25ba1dfb5e957277ef0"
+      },
+      {
+        "path": "benchmark/lib/evolve.ts",
+        "sha256": "2720771bf826ac5443aecc5db68723bbd6ad56ea16044149fc494ecb7590e54d"
+      },
+      {
+        "path": "benchmark/lib/evolve.types.ts",
+        "sha256": "14109947dacd1761efdf64669ba5f15d9634ab0a433bcf28898f3ba3b2bd7d6c"
+      },
+      {
+        "path": "benchmark/lib/fmt.ts",
+        "sha256": "a748d11d0aca0d388c8e7fe59c9a05e8767f879219047261a9cfbedd491fa332"
+      },
+      {
+        "path": "benchmark/lib/forecast-fixtures.ts",
+        "sha256": "b1515945e3be864aa3f4c6e28605a27db3be06dd29f531defafd9796cdec8cc0"
+      },
+      {
+        "path": "benchmark/lib/forecast-oracle.ts",
+        "sha256": "bb7e05ef357c3b78864963af22d9cc19b4fa6ec11d971a776887cd872ca5d145"
+      },
+      {
+        "path": "benchmark/lib/forecast-report.ts",
+        "sha256": "202454a0ccd30e77bfb48acb30b6326262173328a71fa8a2516a8a6cacffad00"
+      },
+      {
+        "path": "benchmark/lib/forecast.types.ts",
+        "sha256": "2d97ba802602fc2424105d53dd02e897481aece5778b12d2bb7db5942ecab689"
+      },
+      {
+        "path": "benchmark/lib/gmpl-ablations.ts",
+        "sha256": "730245ca42be7cf8dd0a5591dd39802716669c26325038bb781cf8390d2b75ac"
+      },
+      {
+        "path": "benchmark/lib/gmpl-analysis.ts",
+        "sha256": "74b22282c09371cd15bb98e63eba72dcd11be246a791cfaeb172662e22798055"
+      },
+      {
+        "path": "benchmark/lib/gmpl-conformance.ts",
+        "sha256": "3955cac16ccfc30f68e74aac9b7e67e95fd6c2752e72ae27cecc34ad7d12fbe1"
+      },
+      {
+        "path": "benchmark/lib/gmpl-conformance.types.ts",
+        "sha256": "20e0e21e3a882ae5edf99236cd8d77846f896ed7ebc26b3fbe6feba3e65f4401"
+      },
+      {
+        "path": "benchmark/lib/gmpl-contracts.ts",
+        "sha256": "3fce9d6e60cb2b4816690b7b2dfbb1b1f2fec45426b9cface9242963299502ca"
+      },
+      {
+        "path": "benchmark/lib/gmpl-critique.ts",
+        "sha256": "d653050cb055fa0197d35f36145f09bbdcc4594981fb18989b5f894beb09b62a"
+      },
+      {
+        "path": "benchmark/lib/gmpl-interaction.ts",
+        "sha256": "a982563f3605fde6df2db1406eddffd613e7aa461655bab0067c95c04baa282a"
+      },
+      {
+        "path": "benchmark/lib/gmpl-locomo.ts",
+        "sha256": "fa0165cea1215fb5bdf7d14b4f05263c63f09b5fd5e670b83c0e774b75b1bb27"
+      },
+      {
+        "path": "benchmark/lib/gmpl-locomo.types.ts",
+        "sha256": "9677f7141ce1b171015f5e27316dc0486a08df03bdb92fd629bd7681878eac17"
+      },
+      {
+        "path": "benchmark/lib/gmpl-oracle.ts",
+        "sha256": "e3925b8975cc7cada9a3234e84eb2db1870e24ee68958bd966536dbdd11603c8"
+      },
+      {
+        "path": "benchmark/lib/gmpl-patterns.ts",
+        "sha256": "5ee61cd880b8857a3784ef3a3d4469aefa357a8393f76629058fde7e337f8a57"
+      },
+      {
+        "path": "benchmark/lib/gmpl-receipts.ts",
+        "sha256": "d663455854f687d372519f1f1dbb7ad985ddda7d17bc3acf0259284641f93375"
+      },
+      {
+        "path": "benchmark/lib/gmpl-runner.ts",
+        "sha256": "96ac1ce13d7d04896a9b941a4f43ffd74742fade47acd8e33dc63ba9c7fa8eab"
+      },
+      {
+        "path": "benchmark/lib/gmpl-scripts.ts",
+        "sha256": "7b0f3a71c65d3e674e7a395e83b5ee42b98883b1ac027d88380846173f9a5efd"
+      },
+      {
+        "path": "benchmark/lib/grounding-run.ts",
+        "sha256": "82857273f5472646d05d5873a328e1e739ef6317a73e1dac58a73773af754cce"
+      },
+      {
+        "path": "benchmark/lib/grounding-web.ts",
+        "sha256": "11d5b4062a76b3a40a1ba3b9e10514bae5358247164529d772a3b071c8a3941f"
+      },
+      {
+        "path": "benchmark/lib/grounding.ts",
+        "sha256": "27a65054deca03aa5654ae527486cec8af474757e337e3809c43bb5f9870a1cd"
+      },
+      {
+        "path": "benchmark/lib/grounding.types.ts",
+        "sha256": "701783b9717a0ef7f7cf300690e4964e2c97c41f0f9051a5b0a8120b9e9fba4e"
+      },
+      {
+        "path": "benchmark/lib/hera-frozen.ts",
+        "sha256": "f5f452a7b6dec87e97890da431797493cdc13c77918cc9ac510cc0de3a0637e4"
+      },
+      {
+        "path": "benchmark/lib/hera-learning-scripts.ts",
+        "sha256": "ed6ea4131f5400d11d066af23817d90edc4cef4eb2b7c96dedd29968838dfc1a"
+      },
+      {
+        "path": "benchmark/lib/hera-learning.ts",
+        "sha256": "84820248772eea75deaa98a2b6ca1bfac0f12c104da829a9e5a87a8b04438041"
+      },
+      {
+        "path": "benchmark/lib/hera-measurement.ts",
+        "sha256": "6571a907ca9a759c10aeabc55c0c2de35fcf2afcfc8efea25995630d1eb877ae"
+      },
+      {
+        "path": "benchmark/lib/hera-qa.ts",
+        "sha256": "57e2fd9e51529d29d9fbe82424588efac2e5fa1b693ce44bc1eb3d24c7fbad0f"
+      },
+      {
+        "path": "benchmark/lib/hera-qa.types.ts",
+        "sha256": "743528af6ce9085efeeefe7a9123133dfea06d64c780ccbdf6d09a5ca630d82a"
+      },
+      {
+        "path": "benchmark/lib/hera-quality.ts",
+        "sha256": "538bd94675ff3df744eb0996303ae0c8e7720dc9cbc2f181c452da89ef7cc8c9"
+      },
+      {
+        "path": "benchmark/lib/hera-runner.ts",
+        "sha256": "35054b3138b1e459a85bbdfeada3200ca78688c16924cd55183e210197abd866"
+      },
+      {
+        "path": "benchmark/lib/hierarchical.ts",
+        "sha256": "e5544101407fc466c9384646da5bfae85c034085b431ab45d873387576a37f70"
+      },
+      {
+        "path": "benchmark/lib/horizon-agent.ts",
+        "sha256": "5e899c4067c915da72f60de723f774a6e850041c5cb4b8e41fae3b3e6e889f12"
+      },
+      {
+        "path": "benchmark/lib/horizon-summary.ts",
+        "sha256": "3c8456db3ae8f46a88ee44a5048da29393b47285b1435c04b95cff276358f8b5"
+      },
+      {
+        "path": "benchmark/lib/horizon.ts",
+        "sha256": "fcbe5bd9bdc2b2a7b017a30d1977864369fc978f16768145ac371cde961ef8cc"
+      },
+      {
+        "path": "benchmark/lib/http-capture.ts",
+        "sha256": "18144d9dd4ee623348390f8487cdcbf5755b52eec58d2bc733ce827d9c883a6e"
+      },
+      {
+        "path": "benchmark/lib/ledger-db.ts",
+        "sha256": "8327cf26450eb4172b5a03e3471c51e3eea997ec54c10675b94ea08802fd420d"
+      },
+      {
+        "path": "benchmark/lib/locomo-corpus.ts",
+        "sha256": "a2a43eec8d899e8489b475b2a0d42fff8f604cd4189aba14739643325a50c0ee"
+      },
+      {
+        "path": "benchmark/lib/locomo-ingest.ts",
+        "sha256": "eb56e161493325a360686cc318420f533d6b6f7c4e316d2627c0e711a74f4740"
+      },
+      {
+        "path": "benchmark/lib/locomo-parity.ts",
+        "sha256": "8c92e307ef4a25a70984f55ae1684b41e93c3373f13a5b3095de2887ec716f0c"
+      },
+      {
+        "path": "benchmark/lib/locomo-policy.ts",
+        "sha256": "5fc696f362c6335c5dbd80be35ede024f6d70620f04cb2b35c6ab50ed60a419d"
+      },
+      {
+        "path": "benchmark/lib/locomo-policy.types.ts",
+        "sha256": "946b806b9ae7adb6ab637d210f5fe7f0113198877e482cf1ec051584f85f6c2a"
+      },
+      {
+        "path": "benchmark/lib/locomo-qa.ts",
+        "sha256": "dd6c781b0a0f2d21340f768f1e419afe36b6addd963f8b43536aac63ae9ca367"
+      },
+      {
+        "path": "benchmark/lib/locomo-recall.ts",
+        "sha256": "c35883253b06ab78cd574bf840320c6e6fae07416328a7e23588530087e56981"
+      },
+      {
+        "path": "benchmark/lib/locomo.ts",
+        "sha256": "ef799e4e534af0ba5cc09d53d7210e49154b8fe385a6ac2a5eec11eeacc5e59b"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-qa.ts",
+        "sha256": "ecf8eecdf2ec6342f70a7fa846bb85ce0ba6bcd276c9b7fd28c0ea16806b68e4"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-report.ts",
+        "sha256": "bc4d4e610a06d9e0a20d4014a241d60d8fc53b0b04970b6699e7bbf4ff33b13b"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-roundtrip.ts",
+        "sha256": "c49323fa32233f27659f76a468d511b6d25410741fac2120d86d4720d2318274"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-runtime.ts",
+        "sha256": "8f53ae2f14c6b951b706916be8441053d415752f1b8fff92dd74e12c8eff502d"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-scoring.ts",
+        "sha256": "35811821db1b0d6566430614973dfe75c079f91e114f6f6be4453802b26ebfb3"
+      },
+      {
+        "path": "benchmark/lib/longmemeval-source.ts",
+        "sha256": "e8f4be5719eda90837aaa524dfef86d6ddc93faf163ce6259f4b9393fa0ff126"
+      },
+      {
+        "path": "benchmark/lib/longmemeval.ts",
+        "sha256": "1218d9e4e8e1133f91107f06e2125f7e48372d44c1bd12b1864c2d6ffe1848eb"
+      },
+      {
+        "path": "benchmark/lib/mas-conformance.ts",
+        "sha256": "3cb90313457d34c21ab16bc242a381369669344de5f015342073bea113dbf76b"
+      },
+      {
+        "path": "benchmark/lib/mas-conformance.types.ts",
+        "sha256": "6c7000a5f3ca7fb57e3e766ba76af97aebbfa1eee5d71894174ea4dcc2c29f7e"
+      },
+      {
+        "path": "benchmark/lib/mas-runner.ts",
+        "sha256": "3095fb821848f5a0cc901d3e4837f045c11f2af7b68d5c71947777efd0c2f733"
+      },
+      {
+        "path": "benchmark/lib/outcome-activation-trace.ts",
+        "sha256": "550f5a3ae03df53c5a2ed0bcd9bad412f32fc413652d2b7116c3a26f848a7689"
+      },
+      {
+        "path": "benchmark/lib/outcome-conformance.ts",
+        "sha256": "ea4b9d212ad7581bccf5911a0f861cefc665327f6fedd1fddbf9c1ac085bb509"
+      },
+      {
+        "path": "benchmark/lib/outcome-conformance.types.ts",
+        "sha256": "b898d3c77a0dd3545d8ed3c927b5b3a1e219021fc7cb3858b694592d0377bd53"
+      },
+      {
+        "path": "benchmark/lib/outcome-fixtures.ts",
+        "sha256": "8c053062bda5ff61145da32155efd962a4538a8d1f30d98b7266df4923b56fc4"
+      },
+      {
+        "path": "benchmark/lib/outcome-guard-probes.ts",
+        "sha256": "0344fd42bfcffa00c584ffa0e9d44b19a0de19eb1ad6350b03027e6e39d2cd45"
+      },
+      {
+        "path": "benchmark/lib/outcome-model-fixture.ts",
+        "sha256": "0c96dca52adc10b2626c0ed938f1db008d0d866548a4a5c65ca292a6f49d5392"
+      },
+      {
+        "path": "benchmark/lib/outcome-resolution-probes.ts",
+        "sha256": "4157cf8db618e1f552f824079ef998fd42b2acd67670dd81aef9e6a4d3c7e705"
+      },
+      {
+        "path": "benchmark/lib/outcome-runtime.ts",
+        "sha256": "9e3122dc8cf9685415e0fd65adc5d62ba39cc274b8c96e7ac39d1ca2eb8e5db5"
+      },
+      {
+        "path": "benchmark/lib/outcome-scenarios.ts",
+        "sha256": "30290703bbd4f014b5bd5f2626fc58b8aacfeb48a0aeb1d68287199ca7c90e5e"
+      },
+      {
+        "path": "benchmark/lib/outcome-storage.ts",
+        "sha256": "97237bd621c05730cdea47602a7af55332f93e2b32489c6a465770c5ec29c927"
+      },
+      {
+        "path": "benchmark/lib/outcome-trace.ts",
+        "sha256": "3ebe8b976208f55238b539011f9b0ace6aadb0f6aa97f85d686bf6fdea7d6db6"
+      },
+      {
+        "path": "benchmark/lib/outcome-transports.ts",
+        "sha256": "a973ff47da145f059646d178ab9e80254df44ee8706a5f041398164a226591b6"
+      },
+      {
+        "path": "benchmark/lib/paid-refresh.ts",
+        "sha256": "a3776dee6663c1dc360ecc80a47ccf6c97f7b337444aca207145ee9f8ba20833"
+      },
+      {
+        "path": "benchmark/lib/policy-execution.ts",
+        "sha256": "7d70d7d93a44dff2bf419b276c59325258696df603ed64c51736cd6aeaccd618"
+      },
+      {
+        "path": "benchmark/lib/porter.ts",
+        "sha256": "fedb3b07a8af014f62948cb6dc075a89cf9e09457525deacc4785dc1881eb967"
+      },
+      {
+        "path": "benchmark/lib/question-stream.ts",
+        "sha256": "0e6e571aa607dffa5605140bffbbb4b12301fb746efd94bc1b8112901615dfe9"
+      },
+      {
+        "path": "benchmark/lib/recall.ts",
+        "sha256": "a5640069e2617cb642e40ded56582669e26407d451c5dc32e94896f0188e9610"
+      },
+      {
+        "path": "benchmark/lib/refinement-pressure.ts",
+        "sha256": "483304d52f523e17544f288c438208691022fd71642fe6c4b1f3faa89f667c66"
+      },
+      {
+        "path": "benchmark/lib/relevance-ann.ts",
+        "sha256": "13488d2affc5aa14e65e445e7a4be8c2dc0d70ea1d192d02420dc48af1d62def"
+      },
+      {
+        "path": "benchmark/lib/relevance-cache.ts",
+        "sha256": "568de7cec1ef287df11241921ee0e87b705946bcb95aed68b38665a4cf640781"
+      },
+      {
+        "path": "benchmark/lib/relevance-live.ts",
+        "sha256": "587208d7b83c501fdeb89c2c94baf2cba6d66209fdcde524e8f88ee2955f461e"
+      },
+      {
+        "path": "benchmark/lib/relevance.ts",
+        "sha256": "2fbafbddee5b66a6a53eb4384986ef9541e338658c464c6a82e424cd82c52dcb"
+      },
+      {
+        "path": "benchmark/lib/replay-cache.ts",
+        "sha256": "5f0dc7910fd6ee0022eecbbc1397b4a84e88d498ba19da0b156cabcf1bcc90bf"
+      },
+      {
+        "path": "benchmark/lib/report-envelope.ts",
+        "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
+      },
+      {
+        "path": "benchmark/lib/retention.ts",
+        "sha256": "4968b177ae551bcc53e45587d8873aa0532d32f6cf877461491030e79a702015"
+      },
+      {
+        "path": "benchmark/lib/retrieval.ts",
+        "sha256": "d140712cd2085f4d176d8526305d2a4bc742aa5f9da5d49910481e13eff2531a"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/stats.ts",
+        "sha256": "36bda7652aba14360e699adb9ef45cba11cfbeb062ee653a444dfa06390d0dee"
+      },
+      {
+        "path": "benchmark/lib/table.ts",
+        "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
+      },
+      {
+        "path": "benchmark/lib/temporal-analysis.ts",
+        "sha256": "b46c481ac9b1dc0b897bfdb796f24d19f2123c6a1ad71ccb13583b9e40514cde"
+      },
+      {
+        "path": "benchmark/lib/temporal-conformance-source.ts",
+        "sha256": "40e6d6029c260b23e6c2965851ee0a746279697b5a4d2c408d87d870a823405d"
+      },
+      {
+        "path": "benchmark/lib/temporal-conformance.ts",
+        "sha256": "9adfeadcf13aaedd8dd47824c576c6404c75a6d399d93b9422062835ba6852fa"
+      },
+      {
+        "path": "benchmark/lib/temporal-controls.ts",
+        "sha256": "b3d1b1ce0b15aab516a4447afa04602edadee32dc8ce5d8708da2a5f3bcb3214"
+      },
+      {
+        "path": "benchmark/lib/temporal-experiment.ts",
+        "sha256": "1e746548042ee5ba1d0b9e63fc8717b05636ec73b327791733a13fc81934cd11"
+      },
+      {
+        "path": "benchmark/lib/temporal-live.ts",
+        "sha256": "758d285b0a8d73b4589c5256990cc6f3652db2ad1512a22a695aca2618fa98d4"
+      },
+      {
+        "path": "benchmark/lib/temporal-locomo.ts",
+        "sha256": "4c70f20b3b3b3b4309b5bfbfbfd9e2b41261fe7de5b2cda1396293ec110feebc"
+      },
+      {
+        "path": "benchmark/lib/temporal-registration.ts",
+        "sha256": "0fedd45a1b8f4bde2db4b93f877d87ceda2fc623013795963cd26d50525b7852"
+      },
+      {
+        "path": "benchmark/lib/temporal-report.ts",
+        "sha256": "20ee8228dd4710b0f377f69f8b282e80499e46845f97dfb301f7032b4b787d40"
+      },
+      {
+        "path": "benchmark/lib/temporal-report.types.ts",
+        "sha256": "f226da6a4c63cf35541754015cba2d55b4f517d428611bee3aa2edeb1f1f9b60"
+      },
+      {
+        "path": "benchmark/lib/temporal-runtime-fixtures.ts",
+        "sha256": "fcd0d333783b4d7ef24334c709195c7f1a1dfb4db2159d9cf839faca42d92ead"
+      },
+      {
+        "path": "benchmark/lib/temporal-runtime.ts",
+        "sha256": "93fe84f92de44da0b5a6aef3612448a244eb0fc70ee0e630ea3f988f149ceb11"
+      },
+      {
+        "path": "benchmark/lib/temporal-scripted.ts",
+        "sha256": "f7251eabc8f2edca3137e2a62b2285e15707b5cb6167436d637a02e250bf98b6"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-ablations.ts",
+        "sha256": "636efaaeb971151018f3e0bc88386133e33d5af71a2bcd444337acc147e8f467"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-adapter.ts",
+        "sha256": "7e087e19c4529366981f94079eb0e62d26f3f3cc359eaa3e463098183da37687"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-cli.ts",
+        "sha256": "51b882d92a75627ae3e0ac568deedfb0d055242ed2d14545e9868a8486456b6e"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-fixture.ts",
+        "sha256": "76048b3c09c29401ab81609ed750e72bf17eff7995098562d5a62c1a143df8ad"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-live.ts",
+        "sha256": "2dd7213a3ff818b473d842ef3f98eb90f4bc483f9d0d1d978f8a321b4a34be71"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-live.types.ts",
+        "sha256": "6ff57b8be78153908ef95707a1a12a4074476e39735a7abb44ecd3fb5fe1f219"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-oracle.ts",
+        "sha256": "1cd0a7e2e5f91de7726f1fe994652013451a7e58da4d103763d2938b581153ab"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-report.ts",
+        "sha256": "ff875c06e38d733d1eb6a241e250fa0d9d207d89db01aa91dbd1965cc85c0774"
+      },
+      {
+        "path": "benchmark/lib/trace2skill-script.ts",
+        "sha256": "370b23c4125ee3648ac39914382b2b8abc05c8543792921236acb164ec77e222"
+      },
+      {
+        "path": "benchmark/lib/trace2skill.types.ts",
+        "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/lib/wire-cache.ts",
+        "sha256": "7f266b9e108f36bdaed7ad52988cb04cda018360766379ee23335e7d8172d0de"
+      },
+      {
+        "path": "benchmark/schemas/forecast.schema.json",
+        "sha256": "d41bfe9b72fc68eacc0e323f449bc78a598f674804cad1cb9346f23d590dd677"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "f66bce8d4a23dcf650666c0e5bdb400f258757ad9a9f748aff835a23699cea63"
+      },
+      {
+        "path": "package.json",
+        "sha256": "c70f59f47d452734f7e301aa8fc7299a7274f234a72bdc819b22346699fbb9f8"
+      }
+    ],
+    "sha256": "217555b4ec7cedd9a61d041aa5a6c5aaa094a46700b2ab4b493438f157d22749"
+  },
+  "registrationId": "cdc0d6cd4b53dc5100e22bdeed372ad008ad42c4b78d061d036d0374dfb4a4b4",
+  "fixture": {
+    "questions": 6,
+    "checkpoints": 18,
+    "resolutions": 5,
+    "pending": 1,
+    "resolvedCheckpoints": 15,
+    "snapshots": 64,
+    "postCutoff": 3,
+    "undated": 2
+  },
+  "rows": [
+    {
+      "id": "oracle",
+      "status": "measured",
+      "treatment": "oracle",
+      "identity": {
+        "configuration": {
+          "kind": "analytic",
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "toolset": {
+          "names": [],
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "promptRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "noteSchemaRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "approve",
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "approve",
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "approve",
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 60,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 60,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 60,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "South",
+          "outcome": "South",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "South",
+          "outcome": "South",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "South",
+          "outcome": "South",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "delay",
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "delay",
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "delay",
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 18,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 18,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 18,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 15,
+        "failed": 0,
+        "notRun": 0
+      },
+      "utility": 1,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 1,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 1,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 1,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "seeded-reference",
+      "status": "measured",
+      "treatment": "seeded-reference",
+      "identity": {
+        "configuration": {
+          "kind": "analytic",
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "toolset": {
+          "names": [],
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "promptRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "noteSchemaRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "reject",
+          "outcome": "approve",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "approve",
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "approve",
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 4.13522208109498,
+          "outcome": 60,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 59.34420898556709,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 20.062686316668987,
+          "outcome": 60,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "North",
+          "outcome": "South",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "East",
+          "outcome": "South",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "North",
+          "outcome": "South",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "launch",
+          "outcome": "delay",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "launch",
+          "outcome": "delay",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": "launch",
+          "outcome": "delay",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 4.620182979851961,
+          "outcome": 18,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 7.15846327599138,
+          "outcome": 18,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": 28.857340996619314,
+          "outcome": 18,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 15,
+        "failed": 0,
+        "notRun": 0
+      },
+      "utility": 0.2,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 0,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 0.4,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 0.2,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "evidence-ceiling",
+      "status": "measured",
+      "treatment": "evidence-ceiling",
+      "identity": {
+        "configuration": {
+          "kind": "analytic",
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "toolset": {
+          "names": [],
+          "revision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d"
+        },
+        "promptRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "noteSchemaRevision": "68b92afa0ef742177791f787a895473e78afbfc8f7260320152a74c63bc8893d",
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": "failure",
+          "utility": 0,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "scored",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": "success",
+          "utility": 1,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 15,
+        "failed": 0,
+        "notRun": 0
+      },
+      "utility": 0.8,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 0.6,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 0.8,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 5,
+          "utility": 1,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "no-harness",
+      "status": "implementation-missing",
+      "treatment": "no-harness",
+      "identity": {
+        "configuration": null,
+        "toolset": null,
+        "promptRevision": null,
+        "noteSchemaRevision": null,
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 0,
+        "failed": 0,
+        "notRun": 15
+      },
+      "utility": null,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "static-harness",
+      "status": "implementation-missing",
+      "treatment": "static-harness",
+      "identity": {
+        "configuration": null,
+        "toolset": null,
+        "promptRevision": null,
+        "noteSchemaRevision": null,
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 0,
+        "failed": 0,
+        "notRun": 15
+      },
+      "utility": null,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "scaffold-no-harness",
+      "status": "implementation-missing",
+      "treatment": "scaffold-no-harness",
+      "identity": {
+        "configuration": null,
+        "toolset": null,
+        "promptRevision": null,
+        "noteSchemaRevision": null,
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 0,
+        "failed": 0,
+        "notRun": 15
+      },
+      "utility": null,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    },
+    {
+      "id": "evolving-harness",
+      "status": "implementation-missing",
+      "treatment": "evolving-harness",
+      "identity": {
+        "configuration": null,
+        "toolset": null,
+        "promptRevision": null,
+        "noteSchemaRevision": null,
+        "scorer": "forecast-utility/v1",
+        "cutoffPolicy": "available-at-lte-cutoff/v1"
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0,
+        "usageKnown": true
+      },
+      "cases": [
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c1-a",
+            "q01-c1-b",
+            "q01-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q01-c1-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c2-a",
+            "q01-c2-b",
+            "q01-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q01",
+          "checkpointId": "q01-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-01-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "approve",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q01-c3-a",
+            "q01-c3-b",
+            "q01-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c1-a",
+            "q02-c1-b",
+            "q02-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c2-a",
+            "q02-c2-b",
+            "q02-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q02-c2-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q02",
+          "checkpointId": "q02-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-02-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 60,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q02-c3-a",
+            "q02-c3-b",
+            "q02-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c1-a",
+            "q03-c1-b",
+            "q03-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q03-c1-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c2-a",
+            "q03-c2-b",
+            "q03-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q03",
+          "checkpointId": "q03-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/civic-votes",
+          "cutoffAt": "2025-03-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "South",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q03-c3-a",
+            "q03-c3-b",
+            "q03-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c1-a",
+            "q04-c1-b",
+            "q04-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c2-a",
+            "q04-c2-b",
+            "q04-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q04",
+          "checkpointId": "q04-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-04-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": "delay",
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q04-c3-a",
+            "q04-c3-b",
+            "q04-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 1,
+            "undated": 0
+          },
+          "refused": [
+            {
+              "id": "q04-c3-future",
+              "reason": "post-cutoff"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-10T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c1-a",
+            "q05-c1-b",
+            "q05-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-18T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c2-a",
+            "q05-c2-b",
+            "q05-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 1
+          },
+          "refused": [
+            {
+              "id": "q05-c2-undated",
+              "reason": "undated"
+            }
+          ]
+        },
+        {
+          "questionId": "q05",
+          "checkpointId": "q05-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-05-25T00:00:00.000Z",
+          "available": true,
+          "status": "not-run",
+          "failure": null,
+          "prediction": null,
+          "outcome": 18,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q05-c3-a",
+            "q05-c3-b",
+            "q05-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c1",
+          "ordinal": 1,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-10T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c1-a",
+            "q06-c1-b",
+            "q06-c1-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c2",
+          "ordinal": 2,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-18T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c2-a",
+            "q06-c2-b",
+            "q06-c2-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        },
+        {
+          "questionId": "q06",
+          "checkpointId": "q06-c3",
+          "ordinal": 3,
+          "scopeKey": "tidewater/release-dates",
+          "cutoffAt": "2025-06-25T00:00:00.000Z",
+          "available": false,
+          "status": "pending",
+          "failure": null,
+          "prediction": null,
+          "outcome": null,
+          "category": null,
+          "utility": null,
+          "evidenceAdmitted": [
+            "q06-c3-a",
+            "q06-c3-b",
+            "q06-c3-c"
+          ],
+          "evidenceRefused": {
+            "postCutoff": 0,
+            "undated": 0
+          },
+          "refused": []
+        }
+      ],
+      "counts": {
+        "planned": 18,
+        "available": 15,
+        "pending": 3,
+        "scored": 0,
+        "failed": 0,
+        "notRun": 15
+      },
+      "utility": null,
+      "byHorizon": [
+        {
+          "ordinal": 1,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.6
+        },
+        {
+          "ordinal": 2,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 0.8
+        },
+        {
+          "ordinal": 3,
+          "available": 5,
+          "planned": 6,
+          "scored": 0,
+          "utility": null,
+          "evidenceCeiling": 1
+        }
+      ],
+      "probes": []
+    }
+  ],
+  "evidenceAudit": [
+    {
+      "questionId": "q01",
+      "checkpointId": "q01-c1",
+      "admitted": [
+        "q01-c1-a",
+        "q01-c1-b",
+        "q01-c1-c"
+      ],
+      "refused": [
+        {
+          "id": "q01-c1-future",
+          "reason": "post-cutoff"
+        }
+      ],
+      "postCutoff": 1,
+      "undated": 0,
+      "decisiveAdmitted": false
+    },
+    {
+      "questionId": "q01",
+      "checkpointId": "q01-c2",
+      "admitted": [
+        "q01-c2-a",
+        "q01-c2-b",
+        "q01-c2-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q01",
+      "checkpointId": "q01-c3",
+      "admitted": [
+        "q01-c3-a",
+        "q01-c3-b",
+        "q01-c3-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q02",
+      "checkpointId": "q02-c1",
+      "admitted": [
+        "q02-c1-a",
+        "q02-c1-b",
+        "q02-c1-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q02",
+      "checkpointId": "q02-c2",
+      "admitted": [
+        "q02-c2-a",
+        "q02-c2-b",
+        "q02-c2-c"
+      ],
+      "refused": [
+        {
+          "id": "q02-c2-future",
+          "reason": "post-cutoff"
+        }
+      ],
+      "postCutoff": 1,
+      "undated": 0,
+      "decisiveAdmitted": false
+    },
+    {
+      "questionId": "q02",
+      "checkpointId": "q02-c3",
+      "admitted": [
+        "q02-c3-a",
+        "q02-c3-b",
+        "q02-c3-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q03",
+      "checkpointId": "q03-c1",
+      "admitted": [
+        "q03-c1-a",
+        "q03-c1-b",
+        "q03-c1-c"
+      ],
+      "refused": [
+        {
+          "id": "q03-c1-undated",
+          "reason": "undated"
+        }
+      ],
+      "postCutoff": 0,
+      "undated": 1,
+      "decisiveAdmitted": false
+    },
+    {
+      "questionId": "q03",
+      "checkpointId": "q03-c2",
+      "admitted": [
+        "q03-c2-a",
+        "q03-c2-b",
+        "q03-c2-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q03",
+      "checkpointId": "q03-c3",
+      "admitted": [
+        "q03-c3-a",
+        "q03-c3-b",
+        "q03-c3-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q04",
+      "checkpointId": "q04-c1",
+      "admitted": [
+        "q04-c1-a",
+        "q04-c1-b",
+        "q04-c1-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q04",
+      "checkpointId": "q04-c2",
+      "admitted": [
+        "q04-c2-a",
+        "q04-c2-b",
+        "q04-c2-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q04",
+      "checkpointId": "q04-c3",
+      "admitted": [
+        "q04-c3-a",
+        "q04-c3-b",
+        "q04-c3-c"
+      ],
+      "refused": [
+        {
+          "id": "q04-c3-future",
+          "reason": "post-cutoff"
+        }
+      ],
+      "postCutoff": 1,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q05",
+      "checkpointId": "q05-c1",
+      "admitted": [
+        "q05-c1-a",
+        "q05-c1-b",
+        "q05-c1-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q05",
+      "checkpointId": "q05-c2",
+      "admitted": [
+        "q05-c2-a",
+        "q05-c2-b",
+        "q05-c2-c"
+      ],
+      "refused": [
+        {
+          "id": "q05-c2-undated",
+          "reason": "undated"
+        }
+      ],
+      "postCutoff": 0,
+      "undated": 1,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q05",
+      "checkpointId": "q05-c3",
+      "admitted": [
+        "q05-c3-a",
+        "q05-c3-b",
+        "q05-c3-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q06",
+      "checkpointId": "q06-c1",
+      "admitted": [
+        "q06-c1-a",
+        "q06-c1-b",
+        "q06-c1-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q06",
+      "checkpointId": "q06-c2",
+      "admitted": [
+        "q06-c2-a",
+        "q06-c2-b",
+        "q06-c2-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    },
+    {
+      "questionId": "q06",
+      "checkpointId": "q06-c3",
+      "admitted": [
+        "q06-c3-a",
+        "q06-c3-b",
+        "q06-c3-c"
+      ],
+      "refused": [],
+      "postCutoff": 0,
+      "undated": 0,
+      "decisiveAdmitted": true
+    }
+  ],
+  "refusals": {
+    "postCutoff": 3,
+    "undated": 2,
+    "ids": [
+      "q01-c1-future",
+      "q02-c2-future",
+      "q03-c1-undated",
+      "q04-c3-future",
+      "q05-c2-undated"
+    ]
+  },
+  "band": {
+    "level": 0.99,
+    "low": 0.1,
+    "high": 0.6666666666666666,
+    "expected": 0.3600000000000001,
+    "distribution": [
+      {
+        "utility": 0,
+        "probability": 0.00034300000000000015
+      },
+      {
+        "utility": 0.03333333333333333,
+        "probability": 0.0007513333333333337
+      },
+      {
+        "utility": 0.06666666666666667,
+        "probability": 0.003627425925925929
+      },
+      {
+        "utility": 0.1,
+        "probability": 0.006638593964334709
+      },
+      {
+        "utility": 0.13333333333333333,
+        "probability": 0.017143766460905357
+      },
+      {
+        "utility": 0.16666666666666666,
+        "probability": 0.026550331275720176
+      },
+      {
+        "utility": 0.2,
+        "probability": 0.0480434967421125
+      },
+      {
+        "utility": 0.23333333333333334,
+        "probability": 0.06353013065843625
+      },
+      {
+        "utility": 0.26666666666666666,
+        "probability": 0.08917307253086423
+      },
+      {
+        "utility": 0.3,
+        "probability": 0.10128227160493831
+      },
+      {
+        "utility": 0.3333333333333333,
+        "probability": 0.11583555658436219
+      },
+      {
+        "utility": 0.36666666666666664,
+        "probability": 0.11337116872427988
+      },
+      {
+        "utility": 0.4,
+        "probability": 0.10838945061728399
+      },
+      {
+        "utility": 0.43333333333333335,
+        "probability": 0.09146835802469139
+      },
+      {
+        "utility": 0.4666666666666667,
+        "probability": 0.0740195483539095
+      },
+      {
+        "utility": 0.5,
+        "probability": 0.053736213305898506
+      },
+      {
+        "utility": 0.5333333333333333,
+        "probability": 0.0369444022633745
+      },
+      {
+        "utility": 0.5666666666666667,
+        "probability": 0.02294130041152264
+      },
+      {
+        "utility": 0.6,
+        "probability": 0.013355657750342937
+      },
+      {
+        "utility": 0.6333333333333333,
+        "probability": 0.007021465020576134
+      },
+      {
+        "utility": 0.6666666666666666,
+        "probability": 0.0034258672839506173
+      },
+      {
+        "utility": 0.7,
+        "probability": 0.0014995987654320992
+      },
+      {
+        "utility": 0.7333333333333333,
+        "probability": 0.000601775205761317
+      },
+      {
+        "utility": 0.7666666666666667,
+        "probability": 0.00021353806584362148
+      },
+      {
+        "utility": 0.8,
+        "probability": 0.00006829475308641977
+      },
+      {
+        "utility": 0.8333333333333334,
+        "probability": 0.000018790123456790128
+      },
+      {
+        "utility": 0.8666666666666667,
+        "probability": 0.0000045380658436214
+      },
+      {
+        "utility": 0.9,
+        "probability": 8.902606310013719e-7
+      },
+      {
+        "utility": 0.9333333333333333,
+        "probability": 1.4609053497942386e-7
+      },
+      {
+        "utility": 0.9666666666666667,
+        "probability": 1.646090534979424e-8
+      },
+      {
+        "utility": 1,
+        "probability": 1.3717421124828533e-9
+      }
+    ]
+  },
+  "probes": [
+    {
+      "id": "oracle-ceiling",
+      "holds": true,
+      "detail": "The outcome oracle scores every resolved checkpoint and leaves three pending."
+    },
+    {
+      "id": "reference-band",
+      "holds": true,
+      "detail": "The seeded reference lies inside the enumerated central 99% band."
+    },
+    {
+      "id": "cutoff-refusals",
+      "holds": true,
+      "detail": "The shared attachment audit counts three future and two undated items once."
+    }
+  ],
+  "capabilities": {
+    "oracle": true,
+    "static": false,
+    "scaffold": false,
+    "evolving": false,
+    "complete": false
+  },
+  "identity": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "oracle",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "seeded-reference",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "evidence-ceiling",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "no-harness",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "static-harness",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "scaffold-no-harness",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "evolving-harness",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
+  "limitations": [
+    "The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.",
+    "Pending checkpoints remain in planned denominators but have no utility.",
+    "Evidence refusal totals count unique registered checkpoint attachments once; treatment rows reuse that same audit.",
+    "No provider is called. Analytic revisions identify the scorer/cutoff policy, with no prompt or tool execution. Missing mechanism identities are null until actual executors supply them.",
+    "No live plan is registered yet."
+  ],
+  "reportId": "e42361e6157b35daa947b693c26264d9c6e5964cbffef2f8062883ebd093f400"
+}

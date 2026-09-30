@@ -1,0 +1,13 @@
+[
+  {
+    "questionId": "q01",
+    "scheduledAt": "2025-01-10T00:00:00.000Z",
+    "kind": "same-input"
+  },
+  {
+    "questionId": "q01",
+    "scheduledAt": "2025-01-10T00:00:00.000Z",
+    "kind": "different-input",
+    "changedPrompt": "A conflicting question under the same delivery key."
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "c1",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/evidenceHandling",
+        "value": "Check the source and availability of each observation.\nCompare independent observations before updating the judgment."
+      }
+    ],
+    "document": {
+      "factorTracking": "List the factors that could change the answer.",
+      "evidenceHandling": "Check the source and availability of each observation.\nCompare independent observations before updating the judgment.",
+      "uncertaintyHandling": "State the uncertainty that remains before answering."
+    },
+    "digest": "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0"
+  },
+  {
+    "id": "c2",
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/evidenceHandling",
+        "value": "Check the source and availability of each observation.\nCompare independent observations before updating the judgment."
+      },
+      {
+        "op": "replace",
+        "path": "/uncertaintyHandling",
+        "value": "State the uncertainty that remains before answering.\nRevisit the strongest alternative before committing to an answer."
+      }
+    ],
+    "document": {
+      "factorTracking": "List the factors that could change the answer.",
+      "evidenceHandling": "Check the source and availability of each observation.\nCompare independent observations before updating the judgment.",
+      "uncertaintyHandling": "State the uncertainty that remains before answering.\nRevisit the strongest alternative before committing to an answer."
+    },
+    "digest": "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d"
+  }
+]

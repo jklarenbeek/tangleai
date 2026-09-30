@@ -1,0 +1,42 @@
+[
+  {
+    "questionId": "q01",
+    "observedAt": "2025-01-29T00:00:00.000Z",
+    "outcome": "approve",
+    "evidence": [
+      "q01-resolution"
+    ]
+  },
+  {
+    "questionId": "q02",
+    "observedAt": "2025-02-29T00:00:00.000Z",
+    "outcome": 60,
+    "evidence": [
+      "q02-resolution"
+    ]
+  },
+  {
+    "questionId": "q03",
+    "observedAt": "2025-03-29T00:00:00.000Z",
+    "outcome": "South",
+    "evidence": [
+      "q03-resolution"
+    ]
+  },
+  {
+    "questionId": "q04",
+    "observedAt": "2025-04-29T00:00:00.000Z",
+    "outcome": "delay",
+    "evidence": [
+      "q04-resolution"
+    ]
+  },
+  {
+    "questionId": "q05",
+    "observedAt": "2025-05-29T00:00:00.000Z",
+    "outcome": 18,
+    "evidence": [
+      "q05-resolution"
+    ]
+  }
+]
