@@ -1,5 +1,17 @@
 # Tangle releases
 
+## 0.31.0
+
+Upgrade the Bun toolchain to 1.4.2 and allow documentation-only branch pushes
+without a version bump while retaining source checks, Pages builds and the full
+release gate for package, source, configuration and toolchain changes.
+
+Complete conditional experiment workflows over durable MAS jobs, preserve settled worker evidence across response loss, and match effect responses to their own stages. Registry consumers now await evolveRegistryDocument with the workflow profile and experiment ceiling to pin its embedded graph versions.
+
+Add deterministic strategy selectors and an injected, budgeted structured proposal seam. Publish the registered keyless selection comparison with an inconclusive result and retain the unranked default. Surface workspace census and effect-job lease failures.
+
+Semantic key kinds now reject empty values, whitespace and NUL with TEVO1001 in both evolve stores, preventing namespace collisions. Existing valid key encodings and opaque key values remain compatible.
+
 ## 0.30.1
 
 Move the store onto the Jaren 0.91.4 registry foundation and source pin. The new foundation fixes four quirks of the native store's relational entity path: a declared index on a foreign-key column is the key's own index, a set-null foreign key reopens, session capture decodes a table that gained a column by `ADD COLUMN`, and an additive migration on a table with a foreign key or an enum check is accepted. They are evaluated and have nothing to change in Tangle: its database model declares document collections only, with no entity, relation or foreign key, so no Tangle path reached the defects and there was no local workaround to remove. Every keyless benchmark document is requalified against the new foundation.

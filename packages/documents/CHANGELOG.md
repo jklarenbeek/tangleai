@@ -1,5 +1,16 @@
 # @tangleai/documents
 
+## 0.31.0
+
+### Patch Changes
+
+- d6bc2fd: Upgrade the Bun toolchain to 1.4.2 and allow documentation-only branch pushes
+  without a version bump while retaining source checks, Pages builds and the full
+  release gate for package, source, configuration and toolchain changes.
+- @tangleai/context@0.31.0
+  - @tangleai/core@0.31.0
+  - @tangleai/models@0.31.0
+
 ## 0.30.1
 
 ### Patch Changes
