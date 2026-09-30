@@ -53,30 +53,32 @@ the refreshed reports and their renderings without making model requests.
 from cached responses with the network disabled. It refuses score, coverage
 or usage changes and emits a receipt that reconstructs the original report.
 
-The [HERA instrument](../docs/HERA_BENCHMARK.md) registers nine orchestration
-rows, an original MIT fixture and a frozen LoCoMo training/held-out split.
-`npm run benchmark:hera` publishes analytic controls, two durable scripted
-executor baselines, frozen query-specific candidate groups and an experience-only
-learning sequence. Prompt-only and combined experience/prompt rows also execute;
-the full row still requires topology mutation.
-`--require` gates each capability; `--check` verifies bytes
-without writing and `--out-dir` redirects both artifacts. Scripted, wire-replay
-and live tiers are named separately. The baselines spend 160 scripted requests;
-frozen groups add 203, including profile and plan repairs, with zero learning
-writes. Experience learning adds 206 requests (106 training, 100 held out), 53
-committed learning writes, and exercises ADD/MERGE/PRUNE/KEEP. Its mixed-group
-rate is 3/5 and its final library has two entries. Held-out F1 is 0.8, equal to
-both fixed and frozen controls; the intervened all-question score is lower at
-0.8 versus 0.9. All rows make zero network calls. The separately registered
-script bank tests mechanics and sensitivity; it does not measure model quality
-or transfer. Duplicate and invalid proposals remain counted, and completed
-groups and learning transactions replay without new purchases. Prompt-only and
-combined rows cost 223 and 226 requests respectively; each spends 14 calls and
-140 reported tokens on whole replays. Each activates one prompt, rejects one
-comparison and refuses one unsupported proposal. Both publish held-out F1 0.6
-against 0.8 for the fixed, frozen and experience-only controls. This scripted
-loss is part of the registered sensitivity check. All three learning rows
-declare the same additional refinement allowance beside their rollout caps.
+The [HERA instrument](../docs/HERA_BENCHMARK.md) runs seven orchestration
+ablations and two analytic controls on an original MIT fixture. All mechanisms
+execute through durable MAS with injected scripted clients and zero network
+calls. `npm run benchmark:hera -- --require complete` generates the report;
+`--check` verifies bytes without writing and `--out-dir` redirects both outputs.
+
+The frozen learning schedule has seven training events over five distinct tasks
+and five held-out questions. All repeats, rejected proposals and whole-run
+replays count toward phase costs. The report retains per-question F1, identical
+held-out pairing, category/success/citation scores, provider token parts,
+estimates and missing usage, prompt bytes, library/churn figures, topology
+metrics including failed runs, and negative transfer by host question-type tag.
+Every row uses the same CONFIG identity and registered allocation policy;
+row-specific structural caps and the extra bounded learning allowance remain
+explicit. Replays spend zero new calls; held-out execution writes no learned
+state. The final full row uses 280 calls (180 training, 100 held out) and accepts
+one measured topology intervention.
+
+Full held-out F1 is 0.6 versus fixed/frozen/experience-only 0.8. Its paired
+fixture delta is -0.2 with interval [-0.6, 0.0], from 2,000 resamples at seed
+17753 and 95% coverage. The interval diagnoses scripted sensitivity; the
+schema-owned claim is `not-measured-live`. Scripted execution uses one seed
+because it is deterministic. Wire replay is not run without a matching receipt
+bundle; live cells say `no authorized live plan`. A stochastic live plan needs
+new spend authorization and at least three sampling seeds. These states never
+turn fixture success into a claim about model quality or paper results.
 
 ## Contents
 

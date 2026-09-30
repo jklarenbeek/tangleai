@@ -3,6 +3,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
+import {equalsJson} from '@jarenjs/core/object';
 import { mulberry32, randomInt } from '@jarenjs/core/random';
 import { createOfflineEmbedder } from '@tangleai/pipeline';
 import { recallByEmbedding } from '@tangleai/memory';
@@ -13,10 +14,9 @@ import { loadLocomo, SCORABLE_CATEGORIES, INIT_COMMAND, type LoadOutcome } from 
 import { conversationCorpus, transcriptUnits } from './locomo-corpus.ts';
 import { questionsOf, sampleQuestions, type QaQuestion } from './locomo-qa.ts';
 import { officialScore, normalizeAnswer, CATEGORY_5_REASON } from './locomo-parity.ts';
-import { bootstrapInterval } from './locomo-policy.ts';
 import { sourceManifest } from './source-manifest.ts';
 import { createReportValidator, describeErrors } from './validate.ts';
-import { runHeraBaselines } from './hera-runner.ts';
+import { runHeraBaselines,loadHeraScripts } from './hera-runner.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { table } from './table.ts';
 import schema from '../schemas/hera-qa.schema.json' with { type: 'json' };
@@ -24,10 +24,15 @@ import runIdentitySchema from '../../packages/config/schemas/run-identity.schema
 import type { HeraQa, Row, DatasetQuestion } from './hera-qa.types.ts';
 import { runHeraFrozen } from './hera-frozen.ts';
 import { runHeraExperience } from './hera-learning.ts';
+import {heraQuality} from './hera-quality.ts';
+import {HERA_BASELINE_BUDGET,HERA_GROUP_BUDGET,heraCosts,heraBudgetPolicyId,heraPhaseCosts,heraMeasuredPairs,heraNegativeTransfer,heraSafetyCensus,heraClaim} from './hera-measurement.ts';
+export {heraPairedInterval} from './hera-measurement.ts';
 
 export const HERA_REPORT_PATH = 'benchmark/results/hera-qa.json';
 export const HERA_DOCUMENT_PATH = 'docs/HERA_BENCHMARK.md';
 export const HERA_ROWS = ['oracle', 'reference', 'single-turn', 'fixed-topology', 'query-specific-frozen', 'hera-no-experience', 'hera-no-rope', 'hera-full', 'hera-no-mutation'] as const;
+const HERA_TIERS:HeraQa['tiers']=[{id:'scripted',status:'run',reason:'scripted tier is deterministic'},
+  {id:'wire-replay',status:'not-run',reason:'no recorded HERA receipt bundle'},{id:'live',status:'not-run',reason:'no authorized live plan'}];
 const FIXTURE = 'benchmark/fixtures/hera';
 const validate = createReportValidator(schema, [runIdentitySchema]);
 const digest = (text: string) => createHash('sha256').update(text).digest('hex');
@@ -140,7 +145,7 @@ export async function heraSourceId(root = process.cwd()) {
   return canonicalSha256({ files: source.files });
 }
 const failures = (): NonNullable<Row['failures']> => ({ skipped: 0, failed: 0, refusedCandidates: 0, budgetStops: 0, orphans: 0, headConflicts: 0, refusedLearningWrites: 0 });
-const emptyCost = (): NonNullable<Row['cost']> => ({ calls: 0, promptTokens: 0, completionTokens: 0, unknownTokenRequests: 0, estimatedTokens: 0, ms: 0, unknownMsRequests: 0, money: null, trainingCalls: 0, heldOutCalls: 0 });
+const emptyCost = (): NonNullable<Row['cost']> => heraCosts([]);
 const missingMechanism: Record<typeof HERA_ROWS[number], string> = {
   oracle: 'Analytic oracle pending.', reference: 'Seeded reference pending.',
   'single-turn': 'The single-turn executor is not implemented.',
@@ -151,7 +156,7 @@ const missingMechanism: Record<typeof HERA_ROWS[number], string> = {
   'hera-full': 'Experience, prompt and topology learning together are not implemented.',
   'hera-no-mutation': 'Experience and prompt learning without topology mutation are not implemented.',
 };
-const missingRow = (id: typeof HERA_ROWS[number]): Row => ({ id, kind: 'ablation', status: 'implementation-missing', reason: missingMechanism[id], tier: 'scripted', identity: null, quality: null, cost: null, failures: failures(), learning: null, topology: null, seeds: [17753] });
+const missingRow = (id: typeof HERA_ROWS[number]): Row => ({ id, kind: 'ablation', status: 'implementation-missing', reason: missingMechanism[id], tier: 'scripted', identity: null, quality: null, cost: null, failures: failures(), learning: null, topology: null, seeds: [17753],measurements:[],promptSizes:[] });
 export async function buildHeraReport(options: { root?: string, sourceId?: string, dataset?: LoadOutcome } = {}): Promise<HeraQa> {
   const root = options.root ?? process.cwd(), fixture = await loadHeraFixture(root);
   const dataset = options.dataset ?? await loadLocomo(root), plan = await createHeraDatasetPlan(dataset);
@@ -185,9 +190,8 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
   const envelope = analyticEnvelope(HERA_ROWS);
   envelope.identities = baseline.identities;
   envelope.rows = envelope.rows.map(row => baseline.rows.some(r => r.id === row.rowId) ? {rowId:row.rowId,identityStatus:'run' as const,identityId:baseline.identities[0].identityId} : row);
-  const pairs: HeraQa['pairs'] = [];
-  for (const id of HERA_ROWS.slice(2)) if (id !== 'fixed-topology') pairs.push({ treatment: id, control: 'fixed-topology', eligible: false, delta: null, interval: null });
-  for (const id of HERA_ROWS.slice(2)) if (id !== 'hera-full' && id !== 'fixed-topology') pairs.push({ treatment: 'hera-full', control: id, eligible: false, delta: null, interval: null });
+  const pairs=heraMeasuredPairs(rows),safety=heraSafetyCensus(rows),registration=await loadHeraScripts(root);
+  for(const row of rows)if(row.learning)row.learning.negativeTransferByProfile=heraNegativeTransfer(row,rows.find(r=>r.id==='fixed-topology')!);
   const available = dataset.available && dataset.valid;
   const content = {
     instrument: 'hera-qa' as const, sourceId: options.sourceId ?? await heraSourceId(root),
@@ -196,6 +200,9 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
     dataset: { status: available ? 'available' as const : dataset.available ? 'invalid' as const : 'dataset-unavailable' as const,
       sha256: dataset.available ? dataset.sha256 : null, reason: dataset.available ? (dataset.valid ? null : dataset.errors.join('; ')) : INIT_COMMAND },
     split: plan.split, evaluators: fixture.manifest.evaluators, identity: envelope, rows, pairs, scripted: baseline.scripted,
+    ablation:{trainingSequence:registration.sequence.training.map(t=>t.taskId),trainingSequenceId:await canonicalSha256(registration.sequence.training.map(t=>t.taskId)),heldOutIds:registration.sequence.heldOut,
+      heldOutSampleId:await canonicalSha256(registration.sequence.heldOut),budgetPolicyId:await heraBudgetPolicyId(),seeds:[17753],seedReason:'scripted tier is deterministic'},
+    tiers:HERA_TIERS,...safety,claim:heraClaim({rows,pairs,...safety}),
     locomo: { questions: plan.questions, oracleByCategory: plan.oracleByCategory, evidenceId: plan.evidenceId, category3UncutBelowCeiling: plan.category3UncutBelowCeiling,
       rows: HERA_ROWS.slice(2).map(id => ({ id, status: available ? 'not-run' as const : 'dataset-unavailable' as const, eligible: false as const,
         reason: available ? 'no authorized live plan' : dataset.available && !dataset.valid ? dataset.errors.join('; ') : INIT_COMMAND })) },
@@ -218,6 +225,9 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
       'Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.',
       'Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.',
       'Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean.',
+      'Paired intervals resample the five identical held-out fixture questions 2000 times at seed 17753 and level 0.95. They diagnose scripted sensitivity and cannot establish model quality. Profile diagnostics use the original question type as an immutable host profile tag; they do not infer a category from the answer.',
+      'All runtime rows share the registered budget-policy identity and resolved CONFIG budget. Actual allocations remain explicit: fixed runs have six-invocation caps; generated groups have separate structural caps; learning additionally receives one bounded refinement allowance. The budget census checks each observed event, including failed and rejected purchases, against its registered allocation.',
+      'Evaluated operational failures receive zero score and success false before answer scoring; an empty failure placeholder cannot earn correct-abstention credit. Completed answers remain under the declared host scorer. Unlabelled inference remains unscored.',
     ],
   };
   const report = { ...content, reportId: await canonicalSha256(content) } as HeraQa;
@@ -233,8 +243,14 @@ export async function validateHeraReport(value: unknown): Promise<void> {
   if (report.split.training.ids.some(id => report.split.heldOut.ids.includes(id))) throw new Error('Training and held-out overlap.');
   if (report.dataset.status !== 'available' && (report.split.training.ids.length || report.split.heldOut.ids.length || report.locomo.questions.length)) throw new Error('Unavailable dataset cannot contain a synthetic replacement.');
   if (report.scripted.requests !== report.totals.calls || report.scripted.replayCalls !== 0) throw new Error('Scripted request census mismatch.');
-  if(report.pairs.some(pair=>pair.eligible&&(report.dataset.status!=='available'||[pair.treatment,pair.control].some(id=>report.rows.find(row=>row.id===id)?.tier!=='live'))))
-    throw new Error('A scripted fixture cannot establish an eligible live dataset comparison.');
+  if(!equalsJson(report.pairs,heraMeasuredPairs(report.rows)))throw new Error('Paired deltas and intervals must reproduce from identical held-out cases.');
+  const census=heraSafetyCensus(report.rows);
+  if(!equalsJson(census.violations,report.violations)||!equalsJson(census.budgets,report.budgets)||!equalsJson(report.claim,heraClaim({rows:report.rows,pairs:report.pairs,...census})))throw new Error('Claim, budget or violation census drift.');
+  if(report.ablation.budgetPolicyId!==await heraBudgetPolicyId()||report.ablation.heldOutSampleId!==await canonicalSha256(report.ablation.heldOutIds)
+    ||report.ablation.trainingSequenceId!==await canonicalSha256(report.ablation.trainingSequence)||report.ablation.heldOutIds.length!==report.fixture.heldOut
+    ||new Set(report.ablation.trainingSequence).size!==report.fixture.training||report.ablation.trainingSequence.some(id=>report.ablation.heldOutIds.includes(id)))throw new Error('Ablation registration drift.');
+  if(!equalsJson(report.tiers,HERA_TIERS)||!equalsJson(report.ablation.seeds,[17753])||report.ablation.seedReason!=='scripted tier is deterministic'
+    ||report.rows.some(r=>r.kind==='ablation'&&r.tier!=='scripted'))throw new Error('This instrument has no authorized live or wire-replay execution receipt.');
   for(const row of report.rows){
     if(row.heldOutQuality&&(row.status!=='run'||row.heldOutQuality.planned!==report.fixture.heldOut||row.heldOutQuality.answered>row.quality!.answered))
       throw new Error('Held-out quality must belong to an executed row and the registered held-out fold.');
@@ -250,11 +266,23 @@ export async function validateHeraReport(value: unknown): Promise<void> {
     }
   }
   for (const row of report.rows.filter(r => r.status === 'run' && r.tier === 'scripted')) {
+    const held=row.measurements.filter(c=>c.split==='held-out'),trained=row.measurements.filter(c=>c.split==='training'),phases=heraPhaseCosts(row.measurements);
+    if(!equalsJson(row.seeds,report.ablation.seeds)||!equalsJson(held.map(c=>c.taskId),report.ablation.heldOutIds)||!equalsJson(trained.map(c=>c.taskId),row.learning?report.ablation.trainingSequence:[...new Set(report.ablation.trainingSequence)])
+      ||!equalsJson(row.quality,heraQuality(row.measurements))||!equalsJson(row.heldOutQuality,heraQuality(held)))throw new Error('Row quality differs from its registered measured cases.');
+    if(!equalsJson(row.cost!.training,phases.training)||!equalsJson(row.cost!.heldOut,phases.heldOut))throw new Error('Phase spend differs from actual measured purchases.');
+    const budget=row.id==='single-turn'||row.id==='fixed-topology'?HERA_BASELINE_BUDGET:HERA_GROUP_BUDGET;
+    if(!equalsJson(row.identity!.budget,budget)||(row.learning&&!equalsJson(row.identity!.learningBudget,HERA_GROUP_BUDGET)))throw new Error('A row changes the registered allocation policy.');
+    for(const c of row.measurements){const multiplier=row.learning&&c.split==='training'?2:1;
+      if(!equalsJson(c.allowance,{calls:budget.calls*multiplier,tokens:budget.tokens*multiplier,ms:budget.ms*multiplier}))throw new Error('A case changes its registered budget.');
+      if(c.split==='held-out'&&c.snapshotId!==row.identity!.snapshotId)throw new Error('Held-out tasks did not use the frozen final snapshot.');}
+    if(row.learning&&!equalsJson(row.learning.negativeTransferByProfile,heraNegativeTransfer(row,report.rows.find(r=>r.id==='fixed-topology')!)))throw new Error('Profile transfer differs from measured held-out pairs.');
+    if(!row.topology?.includesFailed||new Set(row.promptSizes.map(p=>p.agentId)).size!==8||row.promptSizes.some(p=>p.bytes===0))throw new Error('A runtime row lacks structural or prompt diagnostics.');
     const ref = (report.identity as IdentityEnvelope).rows.find(r => r.rowId === row.id);
     if (ref?.identityStatus !== 'run') throw new Error('Executed row has no resolved CONFIG identity.');
     const identity = (report.identity as IdentityEnvelope).identities.find(i => i.identityId === ref.identityId);
     if (!identity || identity.roles.chat.provider + '/' + identity.roles.chat.model !== row.identity!.model) throw new Error('Executed row identity differs from CONFIG.');
   }
+  for(const row of report.rows.filter(r=>r.status==='run'&&r.tier!=='analytic'))if(report.tiers.find(t=>t.id===row.tier)?.status!=='run')throw new Error('A measured row has no executed tier.');
   const ids = report.locomo.questions.map(q => q.id);
   if (new Set(ids).size !== ids.length) throw new Error('Duplicate dataset question.');
   for (const [name, split] of [['training', report.split.training], ['held-out', report.split.heldOut]] as const) {
@@ -276,24 +304,31 @@ export function requireHeraCapability(report: HeraQa, capability: string): void 
   const missing = gates[capability].filter(id => report.rows.find(r => r.id === id)?.status !== 'run');
   if (missing.length) throw new Error('HERA capability not implemented: ' + missing.join(', '));
 }
-/** Reuses the existing paired bootstrap; never estimates a missing comparison. */
-export function heraPairedInterval(deltas: readonly number[]) {
-  return bootstrapInterval(deltas, { resamples: 2000, seed: 17753, level: 0.95 });
-}
 export const renderHeraReport = (report: HeraQa) => JSON.stringify(report, null, 2) + '\n';
 export function renderHeraDocument(report: HeraQa): string {
   return ['# Experience-guided orchestration', '', 'Generated by `npm run benchmark:hera`. Keyless durable execution with scripted clients; no network calls.', '',
+    `Claim: **${report.claim.decision}**. ${report.claim.reason}`, '',
+    `The registration began with unmeasured runtime mechanisms. Current coverage: ${report.rows.filter(r=>r.kind==='ablation'&&r.status==='run').length} of ${report.rows.filter(r=>r.kind==='ablation').length} runtime rows executed.`, '',
+    table({head:['Tier','Status','Reason'],rows:report.tiers.map(t=>[t.id,t.status,t.reason])}), '',
     `Fixture: ${report.fixture.passages} passages, ${report.fixture.questions} questions (${report.fixture.training} training, ${report.fixture.heldOut} held out). Licence: MIT.`, '',
+    `Training event sequence: ${report.ablation.trainingSequence.join(', ')}. Held-out questions: ${report.ablation.heldOutIds.join(', ')}. ${report.ablation.seedReason}; seed ${report.ablation.seeds.join(', ')}.`, '',
     table({ head: ['Row', 'Status', 'Tier', 'F1', 'Answered / planned', 'Calls', 'Reason'], numeric: [3, 4, 5],
       rows: report.rows.map(r => [r.id, r.status, r.tier, r.quality?.f1.toFixed(4) ?? null, r.quality ? r.quality.answered + ' / ' + r.quality.planned : null, r.cost?.calls ?? null, r.reason ?? (r.tier === 'analytic' ? 'analytic control' : 'scripted execution')]) }), '',
     table({head:['Row','Held-out F1','Held-out answered / planned','Training calls','Held-out calls'],numeric:[1,2,3,4],rows:report.rows.filter(r=>r.heldOutQuality).map(r=>[r.id,r.heldOutQuality!.f1.toFixed(4),r.heldOutQuality!.answered+' / '+r.heldOutQuality!.planned,r.cost!.trainingCalls,r.cost!.heldOutCalls])}), '',
+    table({head:['Held-out row','Success rate','Citation recall','Category 1 F1','Category 2 F1','Category 3 F1','Category 4 F1'],rows:report.rows.filter(r=>r.heldOutQuality).map(r=>[r.id,r.heldOutQuality!.successRate,r.heldOutQuality!.citationRecall,...r.heldOutQuality!.byCategory.map(c=>c.planned?c.f1:null)])}), '',
+    table({head:['Treatment','Control','Held-out delta','95% paired interval','Model-quality eligible'],rows:report.pairs.map(p=>[p.treatment,p.control,p.delta,p.interval?'['+p.interval.low+', '+p.interval.high+']':null,String(p.eligible)])}), '',
+    table({head:['Runtime row','Phase','Calls','Provider input / output tokens','Estimated tokens','Unknown token requests','Recorded ms','Unknown timing requests'],rows:report.rows.filter(r=>r.kind==='ablation'&&r.cost).flatMap(r=>(['training','heldOut'] as const).map(phase=>{
+      const cost=r.cost![phase];return [r.id,phase,cost.calls,cost.promptTokens+' / '+cost.completionTokens,cost.estimatedTokens,cost.unknownTokenRequests,cost.ms,cost.unknownMsRequests];}))}), '',
+    `Registered budgets satisfied: ${report.budgets.within}. Over-budget events: ${report.budgets.overruns.length}. Split / scope / tool violations: ${report.violations.split} / ${report.violations.scope} / ${report.violations.tool}.`, '',
+    table({head:['Runtime row','Failed / skipped rollouts','Active prompt bytes','Largest role prompt bytes','Frozen snapshot'],rows:report.rows.filter(r=>r.kind==='ablation'&&r.identity).map(r=>[r.id,r.failures.failed+' / '+r.failures.skipped,r.promptSizes.reduce((n,p)=>n+p.bytes,0),Math.max(0,...r.promptSizes.map(p=>p.bytes)),r.identity!.snapshotId])}), '',
     table({head:['Learning row','Mixed / evaluated','Unmixed groups','Library size','ADD / MERGE / PRUNE / KEEP','Head conflicts','Refused learning'],rows:report.rows.filter(r=>r.learning).map(r=>[r.id,r.learning!.mixedGroups+' / '+r.learning!.evaluatedGroups,r.learning!.groupsWithoutMixedOutcome,r.learning!.librarySize,[r.learning!.libraryOperations.add,r.learning!.libraryOperations.merge,r.learning!.libraryOperations.prune,r.learning!.libraryOperations.keep].join(' / '),r.failures.headConflicts,r.failures.refusedLearningWrites])}), '',
     `Measured retriever concurrency: ${report.scripted.maxConcurrentRetrievers}. Replay calls: ${report.scripted.replayCalls}. Script revision: \`${report.scripted.revision}\`.`, '',
     `Dataset: ${report.dataset.status}. Training ${report.split.training.ids.length}; held out ${report.split.heldOut.ids.length}; category-3 uncut answers below their ceiling: ${report.locomo.category3UncutBelowCeiling}.`, '',
     table({ head: ['LoCoMo category', 'Questions', 'Oracle F1', 'Missing from sample'],
       rows: report.locomo.oracleByCategory.map(c => [c.category, c.questions, c.f1.toFixed(4), report.split.missingByCategory.find(m => m.category === c.category)!.missing]) }), '',
     table({head:['Prompt row','Role','Activated / rejected versions','Activated / rejected / malformed / unevaluated trials','Whole replay calls / tokens','Held-out F1'],rows:report.rows.filter(r=>r.learning?.flags.rope).flatMap(r=>r.learning!.promptChurn.map(p=>[r.id,p.agentId,p.activated+' / '+p.rejected,[r.learning!.trials.activated,r.learning!.trials.rejected,r.learning!.trials.malformed,r.learning!.trials.unevaluated].join(' / '),r.learning!.replayCost.calls+' / '+r.learning!.replayCost.tokens,r.heldOutQuality!.f1]))}), '',
-    table({head:['Topology row','Proposed / validated / accepted / rejected','Entropy','Distinct roles','Node efficiency','Self-loops','Role cycles','DAG diameter'],rows:report.rows.filter(r=>r.learning).map(r=>[r.id,Object.values(r.learning!.mutationAcceptance).join(' / '),r.topology!.entropy,r.topology!.distinctRoles,r.topology!.nodeEfficiency,r.topology!.selfLoops,r.topology!.cycles,r.topology!.diameter])}), '',
+    table({head:['Topology row','Proposed / validated / accepted / rejected','Entropy','Distinct roles','Node efficiency','Self-loops','Role cycles','DAG diameter','Failed included'],rows:report.rows.filter(r=>r.topology).map(r=>[r.id,r.learning?Object.values(r.learning.mutationAcceptance).join(' / '):'0 / 0 / 0 / 0',r.topology!.entropy,r.topology!.distinctRoles,r.topology!.nodeEfficiency,r.topology!.selfLoops,r.topology!.cycles,r.topology!.diameter,String(r.topology!.includesFailed)])}), '',
+    table({head:['Learning row','Host profile tag','Held-out delta versus fixed'],rows:report.rows.filter(r=>r.learning).flatMap(r=>r.learning!.negativeTransferByProfile.map(p=>[r.id,p.profile,p.delta]))}), '',
     table({head:['Learning row','Training step','Task','Best task score','Entropy','Distinct roles','Node efficiency','Failed included'],rows:report.rows.filter(r=>r.learning).flatMap(r=>r.learning!.structuralCurve.map(point=>[r.id,point.step,point.taskId,point.bestScore,point.topology!.entropy,point.topology!.distinctRoles,point.topology!.nodeEfficiency,String(point.topology!.includesFailed)]))}), '',
     `Held-out learning attempts refused: ${report.refusals.evalSplitInLearn}. Learning writes: ${report.totals.learningWrites}. Dataset comparisons remain ineligible.`, '',
     ...report.limitations.map(l => '- ' + l), '', `Fixture revision: \`${report.fixture.revision}\`. Source: \`${report.sourceId}\`. Report: \`${report.reportId}\`.`, ''].join('\n');

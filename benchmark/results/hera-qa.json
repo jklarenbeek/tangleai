@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "59f986b39f125f98dafb145fa0bfd281247d953fd0c3035e7e3252e7ebb3ebe5",
+  "sourceId": "3199b30c2a35c4b97fae61dee5d79c522a9018d42603da06e76ae28456547e5d",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -354,13 +354,31 @@
         "calls": 0,
         "promptTokens": 0,
         "completionTokens": 0,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 0,
-        "money": null,
+        "training": {
+          "calls": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 0
+        },
+        "heldOut": {
+          "calls": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 0
+        },
         "trainingCalls": 0,
-        "heldOutCalls": 0
+        "heldOutCalls": 0,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -375,7 +393,9 @@
       "topology": null,
       "seeds": [
         17753
-      ]
+      ],
+      "measurements": [],
+      "promptSizes": []
     },
     {
       "id": "reference",
@@ -438,13 +458,31 @@
         "calls": 0,
         "promptTokens": 0,
         "completionTokens": 0,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 0,
-        "money": null,
+        "training": {
+          "calls": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 0
+        },
+        "heldOut": {
+          "calls": 0,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 0
+        },
         "trainingCalls": 0,
-        "heldOutCalls": 0
+        "heldOutCalls": 0,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -459,7 +497,9 @@
       "topology": null,
       "seeds": [
         17753
-      ]
+      ],
+      "measurements": [],
+      "promptSizes": []
     },
     {
       "id": "single-turn",
@@ -469,6 +509,450 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "89f510f4a8f5247fcac4cd03241c12c997bf76875be209015b0057faaa2f476b"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "ec3563fa742e47f90e72de8a33ec92c4008655c7cbf93f9ba77752d5f50b64b7"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "7ec63b619ec152292c2c28853ff8a5d98f8284da6e48686890e640a14863fe8b"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "bba6e25b8db7ba21b8165d139afd2427b1d3b923f43d0b66439e06c5241828a6"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "1a1945aad338a137b69c94008d4284f4cd6651ae69a6a2610d24df66fc9d53b9"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "b0fb15ee996e101143e5fa06bb58004f78e97d2ec44dbbb555c7d2cfad8269fa"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "a0fb0b4d85f192c4676cbdf92419de0f0901b08e5dd1dd13f6e33babf6adb48d"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "dc40020382c629d9a51ec5eab071822ec453efabd47377b5eaf6aa190c1f881c"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "d9beafe930ff380c840625ab55a61b925564ced91d6f5ed2c3c2919e0473d60d"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "5db3423a1fd03b80ae6d0032d1b3b49da8287bc697b094f4b4e475fc2266a777"
+          ],
+          "spent": {
+            "calls": 2,
+            "tokens": 20,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 2,
+            "promptTokens": 14,
+            "completionTokens": 6,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 2
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "e15e9321ff27a743406019b66775fabe9b4b3050a283f0588e2149467ac47fda",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "9e04e5c38044776ede1563371ab5172d1d819a011c37a225383014d2d72e7f78",
+          "bytes": 309
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "0931cf48e31d58af3ee25c1005dffbe189cf6387125476523330b51a944c21c9",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "2d650546007fd803a394c7e6b56a7d5cc26689e290c096b636eae3cd31e2c3b0",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "ba9d1490609be800dcb5aa88b1eeb0310fa3a2ec74bdac5797a8e26980e5a9aa",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "6938976829aae60610f25af35ffc127ce476832dd9ebb84049b5273623166e22",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "e9aacce5b755ab88f44b9157d9c58c1c391f587bdb77882e3799f52238c42767",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "38f2355e9ced807ebcc83dc1c8f6efda56b2a084a5608fdd6bf326068721f37d",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
@@ -488,7 +972,8 @@
           "depth": 6,
           "fanOut": 4,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "heldOutQuality": {
         "f1": 0.4,
@@ -560,13 +1045,31 @@
         "calls": 20,
         "promptTokens": 140,
         "completionTokens": 60,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 20,
-        "money": null,
+        "training": {
+          "calls": 10,
+          "promptTokens": 70,
+          "completionTokens": 30,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 10
+        },
+        "heldOut": {
+          "calls": 10,
+          "promptTokens": 70,
+          "completionTokens": 30,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 10
+        },
         "trainingCalls": 10,
-        "heldOutCalls": 10
+        "heldOutCalls": 10,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -578,7 +1081,16 @@
         "refusedLearningWrites": 0
       },
       "learning": null,
-      "topology": null
+      "topology": {
+        "entropy": null,
+        "distinctRoles": 1,
+        "nodeEfficiency": 0.5,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 0,
+        "includesFailed": true,
+        "trajectories": 10
+      }
     },
     {
       "id": "fixed-topology",
@@ -588,6 +1100,450 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "44eddf49365d6928ce33f5a46f4caae9e9bb19b0b2c088c6ff8ebd5a2725b882"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "0b50fc954cfbb15410bea1ee44e1da5839932e53ac047af493bcfaefda5b058a"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "8b324cfe7ba3e465ebc6d97bcc7d99b00af9756304b968c0d79d1b398e474d2f"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "f4d7f774d3e7149a2188d2ec5f9234540fdedee0ccc711667f77347516d63786"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "9d94543e3a7fce771ddf15eaf31bfcb116f944313781959d495f4ec8fd585fe9"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "a9c8352945d1e188bd16b0d60545b6548bdc523a3d82643e0c97ff7af058f26c"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "7352dda8d36e9bc7e0eafbb10c2d277b0acc59ff1a89063db9bc1978cf250c42"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "aead10bf824990c6eab68948b6293ed71f5dd3b4274dcd652efaf8044d6f426e"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "3d828e23d37307bc2bd43be326823197e9e8facf6d3836b036e113228f4bc6bf"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
+          "trajectoryIds": [
+            "f99cc54ae729e1b1988069b14a6873e7ef91ceb1c398f25bd5772865ff53335a"
+          ],
+          "spent": {
+            "calls": 14,
+            "tokens": 140,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 14,
+            "promptTokens": 98,
+            "completionTokens": 42,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 14
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "e15e9321ff27a743406019b66775fabe9b4b3050a283f0588e2149467ac47fda",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "9e04e5c38044776ede1563371ab5172d1d819a011c37a225383014d2d72e7f78",
+          "bytes": 309
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "0931cf48e31d58af3ee25c1005dffbe189cf6387125476523330b51a944c21c9",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "2d650546007fd803a394c7e6b56a7d5cc26689e290c096b636eae3cd31e2c3b0",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "ba9d1490609be800dcb5aa88b1eeb0310fa3a2ec74bdac5797a8e26980e5a9aa",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "6938976829aae60610f25af35ffc127ce476832dd9ebb84049b5273623166e22",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "e9aacce5b755ab88f44b9157d9c58c1c391f587bdb77882e3799f52238c42767",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "38f2355e9ced807ebcc83dc1c8f6efda56b2a084a5608fdd6bf326068721f37d",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "dd6a81f0b889c31a54fc74d8418e6a5928030d016d68359ae41106af8632d4f2",
@@ -607,7 +1563,8 @@
           "depth": 6,
           "fanOut": 4,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "heldOutQuality": {
         "f1": 0.8,
@@ -679,13 +1636,31 @@
         "calls": 140,
         "promptTokens": 980,
         "completionTokens": 420,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 140,
-        "money": null,
+        "training": {
+          "calls": 70,
+          "promptTokens": 490,
+          "completionTokens": 210,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 70
+        },
+        "heldOut": {
+          "calls": 70,
+          "promptTokens": 490,
+          "completionTokens": 210,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 70
+        },
         "trainingCalls": 70,
-        "heldOutCalls": 70
+        "heldOutCalls": 70,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -697,7 +1672,16 @@
         "refusedLearningWrites": 0
       },
       "learning": null,
-      "topology": null
+      "topology": {
+        "entropy": 1.9182958340544896,
+        "distinctRoles": 5,
+        "nodeEfficiency": 0.18,
+        "selfLoops": 1,
+        "cycles": 0,
+        "diameter": 4,
+        "includesFailed": true,
+        "trajectories": 10
+      }
     },
     {
       "id": "query-specific-frozen",
@@ -707,6 +1691,460 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "ff87198775e889daa4fd2e2c614ec62a6f9fd9a30c98d63766264e28534ad592",
+            "242c57e62a55920dcf0245e07ffeb68ef91f6202344037b8b90d6439219e143a"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "8d24a99616be5226919b861294aec06d91e95432b992d1ee0abcd469debc3dbb",
+            "1c3414a5581543665dae0175399398ed06d2d217d618f0a9c07f908cc7eac722"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "694acdf21f4eb5b44a031929950cd7eb9bf1f632497c2935463ea5dac0e8ac0d",
+            "c665dac251e5272a7f9cb1ff3c1bfb5558f157b28853b2fd74fcc483750ad39b"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "29086310a5ec2da802396af6a6b8a408daa94ed0b6598acea4a053d59aa54cfd",
+            "8155d18da569e2366cda235c61db9f45a751dc4895c011fb4f53c0251cc378b4"
+          ],
+          "spent": {
+            "calls": 21,
+            "tokens": 210,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 21,
+            "promptTokens": 147,
+            "completionTokens": 63,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 21
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "c1814c8f8f3c6dca9201fc0f06de1939657206cac0bfb8403e769d64d0d7932e",
+            "3d2ea6c3e714af6140a3d719db4b07b561991e5947e52102cea528471e258181"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "6071b7c5197733c985893853415a3f15592643cd6cc06eb21a0784762911fa06",
+            "25274f61db4ddb0c9259af103266e5fb59c3a272d77be1c6d813c4f04a82586f"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "950424545f8a67d2559c172c910ce854408fe2bc8008732d42c2ab37d2214711",
+            "29682acdc88f7776b2fd8660c98daac8aac139405afdf87e852e04620f30bdc0"
+          ],
+          "spent": {
+            "calls": 21,
+            "tokens": 210,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 21,
+            "promptTokens": 147,
+            "completionTokens": 63,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 21
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "7f37df0ca93aa40bbd07e0535f3b780781aa9eded95875412a7328e23f1a843f",
+            "ff82555a9bbfd6843fea744e1132f849aed92c9ade2c14ec8e07ba28c07f4d16"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "0ee43dbe69b973d2d3ebf583c2eae8cf3f2baeb08165b919d5600e36a5e46355",
+            "3b066391bc0d52a1fba51571fbe0f8d052aacfd88af806837e61f30f28b22667"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
+          "trajectoryIds": [
+            "0b9936aab1f713b1b4a358e7b69fd8a3c9e740ae33b8a79383b2957b9b459c4a",
+            "b4cb282919af35c3641061bad88fc6d8fa493c78929cadfaad3ecad0cdd626a4"
+          ],
+          "spent": {
+            "calls": 21,
+            "tokens": 210,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 21,
+            "promptTokens": 147,
+            "completionTokens": 63,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 21
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "0d3c7ce8ef64d4f3b95890a290b8dd4f4608d174817646b0778dcf572715643c",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "b47f153cac153f5a847cd1ed9199d19f3818c506dca37b5d572d22a4d1d75763",
+          "bytes": 309
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "841ae4a6ffd48ae4a42ca61f6a31e697604292fcba073ac582fb82606487bae7",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "cfb62af28a4a994df71ff4913a51f98f3d03f524455fffa40f6f93e67e763abd",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "e4d5579ca3a5663faf3db296f461f77e323d9ac0a8b8c8cf1a36f608cce02ae0",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "c7ab48bbb08f816a30a567a8ca6e15051de5ef38db40a3c841c4a04daba669cc",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "29318fb52482ec86c119de1ca9f29fe6461ea6899d6e097a07c1011294376816",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "24efd52ee1dec23e724c346dc1a2784aee49b12c7363a20f5a9c48873d2cbe0d",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "a41464682c31771107df74702f6ce5fa901844d03e31456a98600ffc4af86973",
@@ -726,7 +2164,8 @@
           "depth": 15,
           "fanOut": 12,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "heldOutQuality": {
         "f1": 0.8,
@@ -798,13 +2237,31 @@
         "calls": 203,
         "promptTokens": 1421,
         "completionTokens": 609,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 203,
-        "money": null,
+        "training": {
+          "calls": 101,
+          "promptTokens": 707,
+          "completionTokens": 303,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 101
+        },
+        "heldOut": {
+          "calls": 102,
+          "promptTokens": 714,
+          "completionTokens": 306,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 102
+        },
         "trainingCalls": 101,
-        "heldOutCalls": 102
+        "heldOutCalls": 102,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -816,7 +2273,16 @@
         "refusedLearningWrites": 0
       },
       "learning": null,
-      "topology": null
+      "topology": {
+        "entropy": 1.5,
+        "distinctRoles": 3.5,
+        "nodeEfficiency": 0.2625,
+        "selfLoops": 0,
+        "cycles": 0,
+        "diameter": 2,
+        "includesFailed": true,
+        "trajectories": 20
+      }
     },
     {
       "id": "hera-no-experience",
@@ -826,6 +2292,542 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "a093ff62fe0b284350894f12134508d6824810b2ca9a4c9270968caa78d0bdcb",
+          "trajectoryIds": [
+            "f4faecc85932a533c52a43da28bb2b5ff847926b9dd14e2dd9f8b1730136dfa2",
+            "f88da10dd3d7ad1eb65819435ace802ad05e46412b10780c83a69d2c3d1d1039"
+          ],
+          "spent": {
+            "calls": 30,
+            "tokens": 300,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 30,
+            "promptTokens": 210,
+            "completionTokens": 90,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 30
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "e36fbbba79c55b2c5a593f22f71a2e11de54e60f6a58253c1d418d1b491f439e",
+          "trajectoryIds": [
+            "c8b8ac0828fcb1dceb623a4021890749aaac2f276888735951ee38e280eb94ee",
+            "f87f6e492a83cb504497e437afa94707b4218c3b54a9e1bca4cad7ed51f7a795"
+          ],
+          "spent": {
+            "calls": 30,
+            "tokens": 300,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 30,
+            "promptTokens": 210,
+            "completionTokens": 90,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 30
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "130a07a6d09de471c292b2e6e8eb6f31656d64a4f9b0c90cc49ca1499053329f",
+          "trajectoryIds": [
+            "0cd61c4e0715d2940ae72c6371413ff677ae0fbe9d525d3f5d2c8c9b9247f1ee",
+            "38f884f8710b3c4942afcd4b4a3044adaaeb2e8387bac2920f55fd8bed5b7043"
+          ],
+          "spent": {
+            "calls": 23,
+            "tokens": 230,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 23,
+            "promptTokens": 161,
+            "completionTokens": 69,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 23
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "c018ccd98f6eb33da63580f0aa2354f922158d62aaaff80bbfeb2508cf17bdb7",
+            "0a9fe35555b2b0292274465187307c0bdc9a109179fef6caded827e3c81c3e0c"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "ee4b94190fccd5f6c3238e95afb60f4f46e8e5f64d22bffa1ca95c0b00341e32",
+            "1689f2924029f381dd27b1a9102a3b481cdca67c88ae22136e358bd686663e76"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "2668bbe41f5c6cb721c9c46baf6a724bc2f7f1a88e86967dae25b443f6222572",
+            "46f65f204b163158d393b810982743b0d6cb1857d3a793c4bd521e99122e2cae"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "963efebe6cbd805a9c6120618040cde7f812c84fdcbe7034256830a54f64d49a",
+            "9ec1843b3eff0d4f4fe086e3ec69782273892b8c9dd366f50a805005e91a352c"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "b7c1277c4f22f9383bc3c7aa8ac8820de4756429068f25fadc3dde88f34bce64",
+            "3414e67be37a5068d3896dafcdbd20d42aa5f1ee94e581756ca957a551a63d9f"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "5bb435102e988efe142fb449ad9efba7b0b0647fe4128f5faaeda4cee8aaa6e9",
+            "0c6db4f4f8805c4c9540739efdf71e0216a5b4b13cfd502da7a843ce8adead2d"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "694bae8bde1458e306a3e60a3c76520001177df72ba7568f58d2ea18cb0a116b",
+            "47548c34c98bb190f2b9ee7ed044f02c669b236dcd9461d49ee58fdead051c7f"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "e2dbf82b9a12b10e8a885ac76bc97ce449054952c5c334403bfa7fe9f7c8470a",
+            "85a1577219ea6c0544a6bde9ff0db6bc4cb98f74f007f98485f26d7f2dafac57"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
+          "trajectoryIds": [
+            "146292d9012644c9e58cd948e33d0a7f7764948fedb45f19800427b750719c40",
+            "7ef9917d1ef5bde267f8877edfb57531088511a307204cb1c10134206420804f"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "45107bc6bc64826d013f92279f73c6cd0d45e89e8578bb1b428ba18e7fca6f1d",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "5e84f9390a25ffcae80cd5462c2aec64584a14614d607bf4ee5fea6e5d9d63b0",
+          "bytes": 396
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "8cc20d072865b2953e755d58b1406bf1eb984e9e28c948058edb87ba9d7ec90a",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "c877a9a123711eb86277f56a9f93e930c36001eeaeaeb0bd137d3ae1210ac994",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "e3b4797ea4b0da18e043c57e5923d42f1c531e8cb811c387923fc58fc7d6da69",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "f1449584a3763f7c2490101b941d7b99c88e789cefbef48d44645a37a8e9397b",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "9336fce1f7239beae173a59f15d504ca7131f9de52609fd5f777538841324a15",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "60d1412f93d114d60d4013ab01fc8a8b62e9d564593637bc6db826c932b503be",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "3dfdf6340692f38f7efe3f74dc89c0c5b5bc7cb658b46dab561540a42100bd45",
@@ -855,7 +2857,8 @@
           "depth": 15,
           "fanOut": 12,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "quality": {
         "f1": 0.5833333333333334,
@@ -927,13 +2930,31 @@
         "calls": 263,
         "promptTokens": 1841,
         "completionTokens": 789,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 263,
-        "money": null,
+        "training": {
+          "calls": 163,
+          "promptTokens": 1141,
+          "completionTokens": 489,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 163
+        },
+        "heldOut": {
+          "calls": 100,
+          "promptTokens": 700,
+          "completionTokens": 300,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 100
+        },
         "trainingCalls": 163,
-        "heldOutCalls": 100
+        "heldOutCalls": 100,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -1096,7 +3117,24 @@
             }
           }
         ],
-        "negativeTransferByProfile": [],
+        "negativeTransferByProfile": [
+          {
+            "profile": "multi-hop",
+            "delta": 0
+          },
+          {
+            "profile": "single-hop",
+            "delta": -1
+          },
+          {
+            "profile": "temporal",
+            "delta": 0
+          },
+          {
+            "profile": "unanswerable",
+            "delta": 0
+          }
+        ],
         "writes": 26,
         "flags": {
           "experience": false,
@@ -1123,6 +3161,542 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "69213dbba7cb42501516757726b3759fb4ba62ca72995b741730c7902eed71a4",
+          "trajectoryIds": [
+            "1f44b6b5b41bc23ec3765a00af43c12028328604baaf3f4715f0d636cb5b1308",
+            "b6148ca9d64178b419317c9319882c674bc09c5ebf40707b0b8909c000156332"
+          ],
+          "spent": {
+            "calls": 22,
+            "tokens": 220,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 22,
+            "promptTokens": 154,
+            "completionTokens": 66,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 22
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "2a3783ad460e16ecaa7ae69d1ff88e39a9b2d7016b40cb7ee5fe3fc0ad17d101",
+          "trajectoryIds": [
+            "261612e5c4ae3bda0df96818d81fdc264ff4d9f94249c3e49a1c341014b48feb",
+            "52ea94af1c566f234d02fd817b86a5cb01a6bc8516dbd523097474e6ded64487"
+          ],
+          "spent": {
+            "calls": 22,
+            "tokens": 220,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 22,
+            "promptTokens": 154,
+            "completionTokens": 66,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 22
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "1d7f6c636cd2548535c9423b3025da5080bca843117fddf7edb0d979ee2200ef",
+          "trajectoryIds": [
+            "cbbc8c9086870a1c5872b600c4b80fe015501d778b461c2a20bf7263d9ccda54",
+            "959cc1b171e6504e9099c83d89d654224f44624567a55be177db85104a1eedec"
+          ],
+          "spent": {
+            "calls": 22,
+            "tokens": 220,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 22,
+            "promptTokens": 154,
+            "completionTokens": 66,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 22
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "11fb30e2da3b16f177d2ed6e19b4706d17cb5429cec70b1de70d57f35e7afc18",
+          "trajectoryIds": [
+            "bcebf79e52db88200dfb2a0fafa70a5b51ee019cc3338bb786bfb5bea5f3c402",
+            "604cede865f33d3e8d5e3f1888a4328a7412afafafaca88f41cf91fc88ee40ca"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "e82b2f1be9e2df0af7289a74ec906c6e72482744388f41ce324d9cb567485d35",
+          "trajectoryIds": [
+            "29287146698e0adc59e41d0690ac6eb7103b3b2f4b5501d3231948fb7ea963e6",
+            "266a962c9c82a0418f7bbf95eda1c4bba36fcadfcf59af4bf0ccfe50f0d4d916"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "6d3300008cdcbf411fc77d44f9e9f1b0c085c02ada96fe3d9200e88acea66f7e",
+          "trajectoryIds": [
+            "e06d3eeb4a8317da1afa391c4ad545b5909143ae1a0d19f035965c5aa27c7d2b",
+            "383d8aa26befbe7cfafeef3733e21a5f382738ed3d4cae50262c474708ef19ea"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "467c90bf85b8a228a00915c30cdc687ebf6b56c66134dc8b43405dee2ee4959e",
+          "trajectoryIds": [
+            "cec6b1c5063ab0afd83830d7454dc0f59b7adc3d497d4f763c986d23e63d2895",
+            "cce767ea1fda7e517e9f0f01a531ff946fe132f3c26226bfdda10ed4417697e5"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
+          "trajectoryIds": [
+            "305aaefb43baefd156e385e12c4f1161300cb08c10696069539dd130cf02ccc5",
+            "365bd4a5c656ab342acaee01355bfb5c3474422a38402ac865434ebeedec8c0a"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
+          "trajectoryIds": [
+            "97952fd17cc557ddc97c219293f80adea1e7e4c2cbabcddce0843ba87ad6a364",
+            "91948aefe2463b91f3f6f97ab615b50d83187aa9448e65bc5d8923f099c02524"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
+          "trajectoryIds": [
+            "d5aabbc69a86b348cb148f92414c36c5aa9d5d3a832fa9c1f3c9a37d6ab08705",
+            "c609d17e21ca315881df741d3e5ce67a3688f04fca28ca514bb915340d9e2f79"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
+          "trajectoryIds": [
+            "979dd9653bc15703c6f6d62c09f85553c0241129103daea856686fb8dc365209",
+            "b2cb6ffbe7950dc16427c9cc07499d139da21882e435473a7897c2c22cc4dbe3"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
+          "trajectoryIds": [
+            "8912e77b836f764d0332b9fb94c8daae7e6c5c62cb0b59c116a51df402150624",
+            "9e880ab479b027be73e3b34f09b1c75782aec9a8c3269c9550b89874b20b6659"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "5910cb59e1cb1ecb4177583f9a94713b3bffe9ef0f307b8a759f73058278973c",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "198f64925b36efaf3d15a021282eb8d28100c2c54c2a896324b61c2b8d438562",
+          "bytes": 309
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "a9f8d2c1b7db736cef70a5690767e9b8560010912ed82b2589d26e545ef9d3a6",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "e3b5f265453b9dde8b61b2b4f5038baa80cb2b9bbe212199e23011c29202a51a",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "f1d90635c86eaf8033524f486fd39c9b6d265172716f61062a822fb4cfda7d6d",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "9724325c68db6eb545ac202d5bf2c8a04555d92ce986275c4e5213bbf0734553",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "278bd8ad7402a5a4bb0dbbd4ec8d6b076adf27115aaa0d18c494db033619bfcc",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "5481c98c6f87e59487f353b74b76f5a68026dcdeb5840c3d89c30f6ab02b381c",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "77910d9bee62d14e5e8b9ef691f6426612d883a2d30a4ea0fd19c5fc589cc422",
@@ -1152,7 +3726,8 @@
           "depth": 15,
           "fanOut": 12,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "quality": {
         "f1": 0.6666666666666666,
@@ -1224,13 +3799,31 @@
         "calls": 246,
         "promptTokens": 1722,
         "completionTokens": 738,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 246,
-        "money": null,
+        "training": {
+          "calls": 146,
+          "promptTokens": 1022,
+          "completionTokens": 438,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 146
+        },
+        "heldOut": {
+          "calls": 100,
+          "promptTokens": 700,
+          "completionTokens": 300,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 100
+        },
         "trainingCalls": 146,
-        "heldOutCalls": 100
+        "heldOutCalls": 100,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -1387,7 +3980,24 @@
             }
           }
         ],
-        "negativeTransferByProfile": [],
+        "negativeTransferByProfile": [
+          {
+            "profile": "multi-hop",
+            "delta": 0
+          },
+          {
+            "profile": "single-hop",
+            "delta": 0
+          },
+          {
+            "profile": "temporal",
+            "delta": 0
+          },
+          {
+            "profile": "unanswerable",
+            "delta": 0
+          }
+        ],
         "writes": 71,
         "flags": {
           "experience": true,
@@ -1414,6 +4024,543 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "83a3586c797c8783e772435070e89e73505ba382c09f8e68c42b66a3efbb9d5a",
+          "trajectoryIds": [
+            "cee4f36481860086ace5ee43d0694979cc83e017c394c750a806b233a1e5dbc8",
+            "fa17ee3b09a40ce75824844367a39f2922e694f68cce0fddbc9931aa4f11f76e"
+          ],
+          "spent": {
+            "calls": 31,
+            "tokens": 310,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 31,
+            "promptTokens": 217,
+            "completionTokens": 93,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 31
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "981ce72bf771e137fbffa5aa2397f96004404233ba8122d2dfa36e503ab3d071",
+          "trajectoryIds": [
+            "412d104b153b9969868f9f17137eb675a0585137b22a8812789bef2acbef6788",
+            "b0f9c7b567927237dc1f0d23cc5a2c7c92d9565d5315724d91dea5a454ba5f79"
+          ],
+          "spent": {
+            "calls": 31,
+            "tokens": 310,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 31,
+            "promptTokens": 217,
+            "completionTokens": 93,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 31
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "c908e995e0c9a4f551b8d50743d49443f41e0b07bdbeb8afd8a61589960710d9",
+          "trajectoryIds": [
+            "ab0fa7fffab0dda56017d5ba69c34b4642ec5fc7f8d0519e9a7d34bb11557c75",
+            "7c4aeb6ca7b2319c4aa6f0f544c6b61987ac83cd37c4d57d56bef889fd46f6bf"
+          ],
+          "spent": {
+            "calls": 24,
+            "tokens": 240,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 24,
+            "promptTokens": 168,
+            "completionTokens": 72,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 24
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "abaef82e395cedcdf2555b62c25544eb99002867d0e2809d9772781961ab5b6b",
+          "trajectoryIds": [
+            "530c42fc45fa2289941919d41cbc1c8f6085918a807c0db0fe9eec0b049a66e9",
+            "b34493b85dc15b5111e0a3605238cf455db8805ea13576f3ffd04ac67c2f7c36"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "c106989925d634496913941e0376aa86bd04eb1d9d3f253e6db1d6fb364faaea",
+          "trajectoryIds": [
+            "1de50fdbfbabe3e171c9e6dcb51437673c3c0d8547e0b15fcb083a706d9c0ec8",
+            "43aa47648cdd36f55c159247548ab5e5035d9c9119089e30b1a90c4011b6b262"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "de9383f2bab8c1b30c75f7753395237bb4760a00778fa992c8585af75add0c44",
+          "trajectoryIds": [
+            "3fecfd27c659c8e577ec988b635abc942eb4d7acc0fca0fe38b234e32fccc50a",
+            "38c8d32a9a454d26e2ec7f1dee9faecb4988eb5d6bce6ec00179876183b69b0d"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "42fedd623ab816d9aa46b60e7d54baebc9e6647016a693f3eb4c75548363f5b7",
+          "trajectoryIds": [
+            "1a788250c6d9cb85c68af10781b19bbc9969e58716b4f8d81e7ebb9c33bb1127",
+            "1867e6f30a652e41c78701ecc7f52ee7b40799ee89cad72de9106e7a27191869",
+            "9037b1ce97c370bebebd6c6213213e868f409f7314c855a5635beb1a143d9224"
+          ],
+          "spent": {
+            "calls": 34,
+            "tokens": 340,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 34,
+            "promptTokens": 238,
+            "completionTokens": 102,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 34
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
+          "trajectoryIds": [
+            "bb6aa93d2a188c82dcaacdcdbf0c5c4815babb4e89ae49dfc039ddeef6225ac3",
+            "0d23f1609efc5d3769d7bccea87a88a07f1dc7bbaa7a4f9c1f7a51a92b101f88"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
+          "trajectoryIds": [
+            "0aa8749723604d7c1f68c69d8a80d241f2fb4415425835b144b8a8a4dfe11518",
+            "bd72fc0cbcfe40c7a0a3bbbfa80a1a1b8406f1e675c6a1ba6dad1017843fcdb6"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
+          "trajectoryIds": [
+            "40f31ce51813faaaf89a24b9412aab3c2c23ebe5b5c61c7f310e9d3bc9c69c85",
+            "82accc1395feedead8401f6cb259f13c66eb17e878f3e7dfb480b8e388a7a637"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
+          "trajectoryIds": [
+            "e8136c9b21fa535a134915734bb795242ff07fb0297d44bd988089f703432201",
+            "0b832764cc002c9ebbe937746c4f3fc3d7ba30c3b3a5fe5c5d031a7ce7a964c0"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
+          "trajectoryIds": [
+            "20cac94cbcab9da3461688690ec1662b02063dc7c21e50dae791ab6c40a2d6a7",
+            "bab363ebbe07dadcd1708ab947e14d926b0052a00c6aa075fbdf01f3fada30cc"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "aeaa545746c07d9189e5bf53e33e3e3585ecdc89ee95298659ee30907b1775a9",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "658630b5f830ef86889827e67693c02501aeb1f9556ac2e8c82aeb924e146862",
+          "bytes": 396
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "f3e3da314cfbb59b40101baecbbd8af29c0e4550c919d282b1e80d902b6714e0",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "76670aa2027c135759db28edbb89e2aff4f75651ba3cdda724d78cc0cc21d3d6",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "d8322badc1a61c78ee472bc5099b9c9dc17e4bdf152127046695fe521808fb00",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "abce0567fbccfc844bd730ea3a3e0d438b1a6b5ff12a37ee018ffa561bff91c6",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "bcc94fdad9987783fbe047c0602d077f615bf81d2ad0b4ea570af912b28cab8e",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "5cfa0827ca67a38cc42e2d4bff97cf37336fc6f26e8e9b51360801133896c122",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "a4f22400d638f57e60396c0f3a4d6dc50ee1c25e56a15c264b1d436a77ff19fc",
@@ -1443,7 +4590,8 @@
           "depth": 15,
           "fanOut": 12,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "quality": {
         "f1": 0.6666666666666666,
@@ -1515,13 +4663,31 @@
         "calls": 280,
         "promptTokens": 1960,
         "completionTokens": 840,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 280,
-        "money": null,
+        "training": {
+          "calls": 180,
+          "promptTokens": 1260,
+          "completionTokens": 540,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 180
+        },
+        "heldOut": {
+          "calls": 100,
+          "promptTokens": 700,
+          "completionTokens": 300,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 100
+        },
         "trainingCalls": 180,
-        "heldOutCalls": 100
+        "heldOutCalls": 100,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -1684,7 +4850,24 @@
             }
           }
         ],
-        "negativeTransferByProfile": [],
+        "negativeTransferByProfile": [
+          {
+            "profile": "multi-hop",
+            "delta": 0
+          },
+          {
+            "profile": "single-hop",
+            "delta": -1
+          },
+          {
+            "profile": "temporal",
+            "delta": 0
+          },
+          {
+            "profile": "unanswerable",
+            "delta": 0
+          }
+        ],
         "writes": 86,
         "flags": {
           "experience": true,
@@ -1711,6 +4894,542 @@
       "tier": "scripted",
       "seeds": [
         17753
+      ],
+      "measurements": [
+        {
+          "taskId": "q01",
+          "split": "training",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 0.5,
+          "answered": true,
+          "snapshotId": "17a060c8f7da9337a514bcb00efb23235ff178cc432a22e1a5c77b7470d1af02",
+          "trajectoryIds": [
+            "923417b19c25179a9fa2c897b150a176ca01fe8940a3836238521c56e0302f4c",
+            "a7324687cf1b309589dce8683b7d596d4d440af2bdaf4848f8b4840a37f05185"
+          ],
+          "spent": {
+            "calls": 31,
+            "tokens": 310,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 31,
+            "promptTokens": 217,
+            "completionTokens": 93,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 31
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q02",
+          "split": "training",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "c647c0943cf6566dbe416178f7dace95f5afcc25da639fac27c202ce058deb04",
+          "trajectoryIds": [
+            "1334f5d58786ce6481b877f4b23dcbd9a7a211cfd7383fef87e3eec751d7f29c",
+            "000ba83d8a18f98af80786066341903574f2774e9d0a1b732022b19369dc3fda"
+          ],
+          "spent": {
+            "calls": 31,
+            "tokens": 310,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 31,
+            "promptTokens": 217,
+            "completionTokens": 93,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 31
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q03",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "dd566f5c18b8fbc410cab31ac92ee80f8cb3ab5798862169626b737ef76db61a",
+          "trajectoryIds": [
+            "f83858f336ac9455287fa7fa77e343aee2a8522c49be930360cb6fbc3eb54225",
+            "75fb6551c60807a256dce6d8bd1ca3e833259c6322a1aa8c582b166364579250"
+          ],
+          "spent": {
+            "calls": 24,
+            "tokens": 240,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 24,
+            "promptTokens": 168,
+            "completionTokens": 72,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 24
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q04",
+          "split": "training",
+          "category": 3,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "7c04646fa7e2af3e274115eddace85d9d16086f0148711e91a4ee2335cd7ab95",
+          "trajectoryIds": [
+            "c044754e80969109ce0d6d89039f7bc95bc5fbacb772108d521e72f082d11ab8",
+            "fbb73fd5d1df7d5be3ef4da61c3f25dff89a190069e1a40a98c4d36c39c43c48"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "b19c212a5970a8e0382f661a8e2bae7a7a35f90aa466e4b1fc7ed34482498b22",
+          "trajectoryIds": [
+            "bde584fdc7c81065b4a1521ac2f67a7a03875e38ffc1e654d681a1fc0a96f48b",
+            "55c41ca2924648ee774d56584a69b5a93c230429b72646f817e4cdc0d7d0362b"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "448fcb4a0a4fe604ed74d5f479eb080c9d0a4f5ba126cfbb721261307506c59f",
+          "trajectoryIds": [
+            "de8dc463700b5827af6e6f5a0c743e111323d83853a5bfeec7ba2892f239158a",
+            "98ebaefc30b302db7b63384eb00fcce3c227ec36eeab27df0e2ab2236ee3e0ff"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q08",
+          "split": "training",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "f50565ac6a8dff376656141b82cbdcf0fcf90ae3e326b7875dea6390271a9059",
+          "trajectoryIds": [
+            "bf9b80f42546d6490ede938dd95dc9346e339700779cf10e1797ff150017bc60",
+            "9c5dbd4f1a26846ea8ab5c5a4bd97eb9dfc0d003430039362c004b1304bcfbe4"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 48,
+            "tokens": 131072,
+            "ms": 240000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q05",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+          "trajectoryIds": [
+            "fa9140c454391609360e3ed6c7e8640959232281478512983f1eacc3b797fe6c",
+            "01c4fcf39aaad51c671f7acb25e494bf012954194398036ae89c2eeec2e3c73d"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q06",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "single-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+          "trajectoryIds": [
+            "8d180a9c71f0f7d383fabe8170685e7fda924a32e580a9c02ad3c1c8355bfefb",
+            "9c5ed083f2a10bf06df97e99d8651ca071d4e971654f7002436084dbccecd4d2"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q07",
+          "split": "held-out",
+          "category": 2,
+          "profiles": [
+            "temporal"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+          "trajectoryIds": [
+            "9eb57ca1da67e552192abc6e96df563b90357da3e258b04c63ca917a2438a80f",
+            "5f76717260b8df598cbb3013adff1f702eee5097612971daea93895606747a2f"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q09",
+          "split": "held-out",
+          "category": 1,
+          "profiles": [
+            "multi-hop"
+          ],
+          "f1": 0,
+          "success": 0,
+          "citationRecall": 0.6666666666666666,
+          "answered": true,
+          "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+          "trajectoryIds": [
+            "c14c5b81596e0a771c1b32d96c221bd60f3685bacbb6d594e62596900a45c9fc",
+            "1b1a25bb98782556b193041bf9c888a9a0a4858340d79c341464aa2692cc9d24"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        },
+        {
+          "taskId": "q10",
+          "split": "held-out",
+          "category": 4,
+          "profiles": [
+            "unanswerable"
+          ],
+          "f1": 1,
+          "success": 1,
+          "citationRecall": 1,
+          "answered": true,
+          "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
+          "trajectoryIds": [
+            "3c8c9178184c2c8bc716832b728aa074086d6ddae20e107eae97b7d504785b50",
+            "0e75bd4758e76fd2c9f625a9d39361d483db110830b937884aa9941b3e42a5ae"
+          ],
+          "spent": {
+            "calls": 20,
+            "tokens": 200,
+            "ms": 0
+          },
+          "allowance": {
+            "calls": 24,
+            "tokens": 65536,
+            "ms": 120000
+          },
+          "usage": {
+            "calls": 20,
+            "promptTokens": 140,
+            "completionTokens": 60,
+            "estimatedTokens": 0,
+            "unknownTokenRequests": 0,
+            "ms": 0,
+            "unknownMsRequests": 20
+          },
+          "violations": {
+            "split": 0,
+            "scope": 0,
+            "tool": 0
+          }
+        }
+      ],
+      "promptSizes": [
+        {
+          "agentId": "answer-generator",
+          "versionId": "f8c0db06ff001a1fc4a435b2b3a2abe619ad04f642d90d9b07f482a338df008f",
+          "bytes": 268
+        },
+        {
+          "agentId": "conclude-agent",
+          "versionId": "7923ec7c449d50ff55aadf6bfa74a410663bff26ddee0c5ec89cceb75d49e258",
+          "bytes": 396
+        },
+        {
+          "agentId": "context-validator",
+          "versionId": "852cf96074c6e42f5f2e7f4db0809c65aeed2697de6733d8a5dff044eaeefe06",
+          "bytes": 254
+        },
+        {
+          "agentId": "evidence-selector",
+          "versionId": "97a3be2b65356276c69dcc824523b62131027ec264980b0a17d98cf41cfdd3db",
+          "bytes": 268
+        },
+        {
+          "agentId": "query-decomposer",
+          "versionId": "a7837b5fcd8ba9525e71f95b41704a22d166eb47b07cf1cb98c3bc67e2670189",
+          "bytes": 295
+        },
+        {
+          "agentId": "query-rewriter",
+          "versionId": "ff2af0003a42222eb8d93e76b32167be6945ad565162ad5f15ed0aac00dcdb0e",
+          "bytes": 241
+        },
+        {
+          "agentId": "reflect-agent",
+          "versionId": "6a779b0fb9feb01b65e6bd8827b028412b74a4086ebfa27a4c7abc97702d80bc",
+          "bytes": 263
+        },
+        {
+          "agentId": "retriever",
+          "versionId": "9280491c4d90e10a90416a950685a8864dac688ca6cf9dc154d8c7e17960144f",
+          "bytes": 281
+        }
       ],
       "identity": {
         "snapshotId": "ba4b2c841bfdb23d9d98cd7684018b6799b06b995828e70ed4e624c5fed668e6",
@@ -1740,7 +5459,8 @@
           "depth": 15,
           "fanOut": 12,
           "concurrency": 4
-        }
+        },
+        "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182"
       },
       "quality": {
         "f1": 0.5833333333333334,
@@ -1812,13 +5532,31 @@
         "calls": 266,
         "promptTokens": 1862,
         "completionTokens": 798,
-        "unknownTokenRequests": 0,
         "estimatedTokens": 0,
+        "unknownTokenRequests": 0,
         "ms": 0,
         "unknownMsRequests": 266,
-        "money": null,
+        "training": {
+          "calls": 166,
+          "promptTokens": 1162,
+          "completionTokens": 498,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 166
+        },
+        "heldOut": {
+          "calls": 100,
+          "promptTokens": 700,
+          "completionTokens": 300,
+          "estimatedTokens": 0,
+          "unknownTokenRequests": 0,
+          "ms": 0,
+          "unknownMsRequests": 100
+        },
         "trainingCalls": 166,
-        "heldOutCalls": 100
+        "heldOutCalls": 100,
+        "money": null
       },
       "failures": {
         "skipped": 0,
@@ -1981,7 +5719,24 @@
             }
           }
         ],
-        "negativeTransferByProfile": [],
+        "negativeTransferByProfile": [
+          {
+            "profile": "multi-hop",
+            "delta": 0
+          },
+          {
+            "profile": "single-hop",
+            "delta": -1
+          },
+          {
+            "profile": "temporal",
+            "delta": 0
+          },
+          {
+            "profile": "unanswerable",
+            "delta": 0
+          }
+        ],
         "writes": 82,
         "flags": {
           "experience": true,
@@ -2005,79 +5760,343 @@
     {
       "treatment": "single-turn",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        -1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "delta": -0.4,
+      "interval": {
+        "low": -0.8,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "query-specific-frozen",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "delta": 0,
+      "interval": {
+        "low": 0,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-no-experience",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "delta": -0.2,
+      "interval": {
+        "low": -0.6,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-no-rope",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "delta": 0,
+      "interval": {
+        "low": 0,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "delta": -0.2,
+      "interval": {
+        "low": -0.6,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-no-mutation",
       "control": "fixed-topology",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "delta": -0.2,
+      "interval": {
+        "low": -0.6,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "single-turn",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        1,
+        -1,
+        1,
+        0,
+        0
+      ],
+      "delta": 0.2,
+      "interval": {
+        "low": -0.4,
+        "high": 0.8,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "query-specific-frozen",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "delta": -0.2,
+      "interval": {
+        "low": -0.6,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "hera-no-experience",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "delta": 0,
+      "interval": {
+        "low": 0,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "hera-no-rope",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "delta": -0.2,
+      "interval": {
+        "low": -0.6,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     },
     {
       "treatment": "hera-full",
       "control": "hera-no-mutation",
+      "tier": "scripted",
       "eligible": false,
-      "delta": null,
-      "interval": null
+      "identityMatch": true,
+      "budgetPolicyMatch": true,
+      "questionIds": [
+        "q05",
+        "q06",
+        "q07",
+        "q09",
+        "q10"
+      ],
+      "deltas": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "delta": 0,
+      "interval": {
+        "low": 0,
+        "high": 0,
+        "resamples": 2000,
+        "seed": 17753,
+        "level": 0.95
+      },
+      "reason": "scripted fixture diagnostic; model quality is ineligible"
     }
   ],
   "scripted": {
@@ -2085,6 +6104,61 @@
     "requests": 1418,
     "replayCalls": 0,
     "maxConcurrentRetrievers": 2
+  },
+  "ablation": {
+    "trainingSequence": [
+      "q01",
+      "q02",
+      "q03",
+      "q04",
+      "q08",
+      "q08",
+      "q08"
+    ],
+    "trainingSequenceId": "2b1ee2a14f74908194dcd5147bba66f0d35afab8b2edfed6670ab5873c360e22",
+    "heldOutIds": [
+      "q05",
+      "q06",
+      "q07",
+      "q09",
+      "q10"
+    ],
+    "heldOutSampleId": "0d78b61a380d84a784d74ee7e49fc4d5ff9248a4e3d85c7af2b28299c7ced1db",
+    "budgetPolicyId": "a23553d3ac7615a4fc040babc563ab61f98a6c08213c42d4e1e8e4dd99141182",
+    "seeds": [
+      17753
+    ],
+    "seedReason": "scripted tier is deterministic"
+  },
+  "tiers": [
+    {
+      "id": "scripted",
+      "status": "run",
+      "reason": "scripted tier is deterministic"
+    },
+    {
+      "id": "wire-replay",
+      "status": "not-run",
+      "reason": "no recorded HERA receipt bundle"
+    },
+    {
+      "id": "live",
+      "status": "not-run",
+      "reason": "no authorized live plan"
+    }
+  ],
+  "violations": {
+    "split": 0,
+    "scope": 0,
+    "tool": 0
+  },
+  "budgets": {
+    "within": true,
+    "overruns": []
+  },
+  "claim": {
+    "decision": "not-measured-live",
+    "reason": "Only scripted fixture execution is measured; live and wire-replay quality remain unmeasured."
   },
   "locomo": {
     "questions": [
@@ -8463,7 +12537,10 @@
     "The prompt script activates a q01 whole-run improvement, rejects an equal-score q02 variant, and refuses unsupported q03 provenance. Its active rule deliberately loses held-out q06, so the lower frozen score is published rather than treated as transfer. Trial rules retain actual control/replay ids; candidate rules retain their original failure evidence and proposal receipt.",
     "Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.",
     "Topology mutation uses score-zero-consecutive-v1 with threshold 3 and normalized profile-tag buckets. The third evaluated zero-score q08 group proposes a registered query-rewriter insertion, executes it beside the original candidates with the same frozen prompts and per-execution caps, and activates a hint only after a strict measured score improvement. Retained failed invocation references identify intervention targets without asserting causal blame.",
-    "Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean."
+    "Topology entropy uses dependency-edge role transitions within windows of eight observed invocations, averaging nonempty windows. Sequential role-list diagnostics use adjacent transitions. Self-loops count adjacent equal roles; cycles count unique DFS back edges in the role projection, visiting roles in first-invocation order. Diameter is the longest directed invocation path in edges. Structural aggregates use Jaren mean, include failed partial trajectories and exclude null measurements from each mean.",
+    "Paired intervals resample the five identical held-out fixture questions 2000 times at seed 17753 and level 0.95. They diagnose scripted sensitivity and cannot establish model quality. Profile diagnostics use the original question type as an immutable host profile tag; they do not infer a category from the answer.",
+    "All runtime rows share the registered budget-policy identity and resolved CONFIG budget. Actual allocations remain explicit: fixed runs have six-invocation caps; generated groups have separate structural caps; learning additionally receives one bounded refinement allowance. The budget census checks each observed event, including failed and rejected purchases, against its registered allocation.",
+    "Evaluated operational failures receive zero score and success false before answer scoring; an empty failure placeholder cannot earn correct-abstention credit. Completed answers remain under the declared host scorer. Unlabelled inference remains unscored."
   ],
-  "reportId": "7a53d256163a3fc192ec136f598c22e5bed3b792cce8ac736830541079bba379"
+  "reportId": "b15c59ca4286eabecc6732f500fc8891d6c65a36d6b88a73a95ebb92ae89d3c5"
 }

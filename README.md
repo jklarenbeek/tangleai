@@ -27,8 +27,13 @@ npm run benchmark:gmpl:locomo -- --plan
 The [conformance report](docs/GMPL_BENCHMARK.md) retains all 288 comparisons,
 seven diagnostic ablations and their costs, including clarification's loss.
 The [LoCoMo plan](docs/GMPL_LOCOMO.md) freezes 64 questions and shared evidence;
-live pattern-versus-single-agent quality remains unmeasured. Domain learning,
-HERA and trading/research applications remain separate roadmap work.
+live pattern-versus-single-agent quality remains unmeasured.
+
+`@tangleai/hera` adds scoped experience learning, whole-run role-prompt trials
+and measured topology mutations over the same runtime. Its
+[scripted ablation](docs/HERA_BENCHMARK.md) publishes a held-out loss and an
+explicit `not-measured-live` decision. Fourteen read operations expose the
+retained evidence. Trading and research applications remain roadmap work.
 
 ## What runs today
 

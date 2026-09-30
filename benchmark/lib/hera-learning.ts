@@ -6,13 +6,14 @@ import {createHeraExampleState,createHeraExampleSegments,heraValue,HERA_EXAMPLE_
 import {loadHeraScripts,createHeraFixtureEvidence} from './hera-runner.ts';
 import {heraPromptField,heraScriptedReflection,heraScriptedConsolidation,heraScriptedRope} from './hera-learning-scripts.ts';
 import {heraQuality} from './hera-quality.ts';
+import {HERA_GROUP_BUDGET,heraBudgetPolicyId,heraPromptSizes,measureHeraCase,heraCosts} from './hera-measurement.ts';
 import {officialScore,normalizeAnswer} from './locomo-parity.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
 export async function runHeraExperience(fixture:HeraFixture,root:string,flags={experience:true,rope:false,mutation:false}){
   const registration=await loadHeraScripts(root),{sequence,consolidation}=registration,db=await openTangleDb({jobs:{now:()=>1000000,random:()=>0.5}});
   let tick=0,requests=0,replayCalls=0;const now=()=>`tick-${String(tick++).padStart(6,'0')}`;
-  const budget={calls:24,tokens:65536,ms:120000,turns:6,nodes:15,depth:15,fanOut:12,concurrency:4},config={...HERA_EXAMPLE_CONFIG,flags},rowId=flags.mutation?'hera-full':flags.rope?(flags.experience?'hera-no-mutation':'hera-no-experience'):'hera-no-rope';
+  const budget=HERA_GROUP_BUDGET,config={...HERA_EXAMPLE_CONFIG,flags},rowId=flags.mutation?'hera-full':flags.rope?(flags.experience?'hera-no-mutation':'hera-no-experience'):'hera-no-rope';
   const trainingIds=sequence.training.map(t=>t.taskId),heldOutIds=sequence.heldOut;
   for(const [split,ids] of [['training',trainingIds],['held-out',heldOutIds]] as const)if(JSON.stringify([...new Set(ids)].sort())!==JSON.stringify(fixture.questions.filter(q=>q.split===split).map(q=>q.id).sort()))throw Error('The learning sequence differs from the registered task split.');
   try{
@@ -21,7 +22,7 @@ export async function runHeraExperience(fixture:HeraFixture,root:string,flags={e
     const resolved=await resolveProfile({...state.profiles,request:{kind:'profile',profile:'scripted',overrides:null}});if(!resolved.ok)throw Error(JSON.stringify(resolved.issues));
     const truth=new Map(fixture.questions.map(q=>[q.id,q.gold.answer]));
     const evaluator={identity:state.snapshot.identities.evaluator,async score(task:HeraTask,answer:string){const success=normalizeAnswer(answer)===normalizeAnswer(truth.get(task.id)!);return {primaryScore:Number(success),success};}};
-    const initialWrites=store.counters().learningWrites,executions:Array<{question:HeraFixture['questions'][number];result:HeraGroupExecution;learning:HeraLearningResult|null}>=[];
+    const initialWrites=store.counters().learningWrites,executions:Array<{question:HeraFixture['questions'][number];result:HeraGroupExecution;learning:HeraLearningResult|null;learningWrites:number}>=[];
     const guard=(request:unknown)=>{if(/"(?:gold|goldAddress|split)"\s*:/.test(JSON.stringify(request)))throw Error('Scoring metadata leaked into a learning prompt.');};
     for(const [index,id] of [...trainingIds,...heldOutIds].entries()){
       let mutationSeen=false;
@@ -73,10 +74,10 @@ export async function runHeraExperience(fixture:HeraFixture,root:string,flags={e
         result=heraValue(await runner.run(request));const before=requests;heraValue(await runner.run(request));replayCalls+=requests-before;
         if(store.counters().learningWrites!==beforeWrites)throw Error('Held-out evaluation wrote learning state.');
       }
-      executions.push({question,result,learning});
+      executions.push({question,result,learning,learningWrites:store.counters().learningWrites-beforeWrites});
     }
-    const all=executions.flatMap(e=>e.result.trajectories),controls=executions.flatMap(e=>[e.result.group.controlUsage!,...(e.learning?[e.learning.usage]:[])]),trained=executions.flatMap(e=>e.learning?[e.learning]:[]);
-    const scored=executions.map(({question,result})=>{const best=result.trajectories.find(t=>t.id===result.group.ranking[0]),score=officialScore({category:question.category,prediction:best?.answer??'',answer:truth.get(question.id)!});return {category:question.category,split:question.split,f1:score.scored?score.f1:0,success:Number(best?.success===true),citationRecall:best?.metrics.citationRecall??0,answered:best?.status==='completed'};});
+    const all=executions.flatMap(e=>e.result.trajectories),trained=executions.flatMap(e=>e.learning?[e.learning]:[]);
+    const scored=executions.map(({question,result})=>{const best=result.trajectories.find(t=>t.id===result.group.ranking[0]),score=officialScore({category:question.category,prediction:best?.answer??'',answer:truth.get(question.id)!});return {category:question.category,split:question.split,f1:score.scored&&best?.status==='completed'?score.f1:0,success:Number(best?.success===true),citationRecall:best?.metrics.citationRecall??0,answered:best?.status==='completed'};});
     const sum=(read:(entry:typeof executions[number])=>number)=>executions.reduce((n,e)=>n+read(e),0),spent=(e:typeof executions[number])=>e.learning?.spent??e.result.group.budget.spent;
     const refused=(await store.query('operation',{limit:10000})).filter(o=>o.stage.startsWith('learning.refused/')),learningWrites=store.counters().learningWrites-initialWrites;
     const churn=trained.reduce((n,r)=>({add:n.add+r.libraryChurn.add,merge:n.merge+r.libraryChurn.merge,prune:n.prune+r.libraryChurn.prune,keep:n.keep+r.libraryChurn.keep}),{add:0,merge:0,prune:0,keep:0});
@@ -86,13 +87,14 @@ export async function runHeraExperience(fixture:HeraFixture,root:string,flags={e
     const promptChurn=new Map<string,{agentId:string;activated:number;rejected:number}>(),trials={activated:0,rejected:0,malformed:0,unevaluated:0},replayCost={calls:0,tokens:0,ms:0};
     for(const result of trained){for(const [agentId,counts] of Object.entries(result.promptChurn)){const total=promptChurn.get(agentId)??{agentId,activated:0,rejected:0};total.activated+=counts.activated;total.rejected+=counts.rejected;promptChurn.set(agentId,total);}
       for(const key of ['activated','rejected','malformed','unevaluated'] as const)trials[key]+=result.trials[key];for(const key of ['calls','tokens','ms'] as const)replayCost[key]+=result.replayCost[key];}
+    const measurements=await Promise.all(executions.map((entry,index)=>measureHeraCase({question:entry.question,score:scored[index],store,trajectories:entry.result.trajectories,snapshotId:entry.result.group.snapshotId,
+      spent:spent(entry),allowance:{calls:budget.calls*(entry.learning?2:1),tokens:budget.tokens*(entry.learning?2:1),ms:budget.ms*(entry.learning?2:1)},
+      controls:[entry.result.group.controlUsage!,...(entry.learning?[entry.learning.usage]:[])],learningWrites:entry.learningWrites})));
     const row:Row={id:rowId,kind:'ablation',status:'run',reason:null,tier:'scripted',seeds:[17753],
-      identity:{snapshotId:snapshot.id,model:snapshot.identities.model,decoder:snapshot.identities.decoder,corpusRevision:fixture.manifest.revision,evaluatorId:evaluator.identity.id,toolIds:snapshot.identities.tools,budget,learningBudget:budget},
+      measurements,promptSizes:await heraPromptSizes(store,snapshot),
+      identity:{snapshotId:snapshot.id,model:snapshot.identities.model,decoder:snapshot.identities.decoder,corpusRevision:fixture.manifest.revision,evaluatorId:evaluator.identity.id,toolIds:snapshot.identities.tools,budget,learningBudget:budget,budgetPolicyId:await heraBudgetPolicyId()},
       quality:heraQuality(scored),heldOutQuality:heraQuality(scored.filter(s=>s.split==='held-out')),
-      cost:{calls:sum(e=>spent(e).calls),promptTokens:all.reduce((n,t)=>n+t.tokens.prompt,0)+controls.reduce((n,c)=>n+c.promptTokens,0),completionTokens:all.reduce((n,t)=>n+t.tokens.completion,0)+controls.reduce((n,c)=>n+c.completionTokens,0),
-        unknownTokenRequests:all.reduce((n,t)=>n+t.tokens.unknownRequests,0)+controls.reduce((n,c)=>n+c.unknownTokenRequests,0),estimatedTokens:all.reduce((n,t)=>n+t.tokens.estimated,0)+controls.reduce((n,c)=>n+c.estimatedTokens,0),
-        ms:sum(e=>spent(e).ms),unknownMsRequests:all.reduce((n,t)=>n+t.calls,0)+controls.reduce((n,c)=>n+c.unknownMsRequests,0),money:null,
-        trainingCalls:sum(e=>e.question.split==='training'?spent(e).calls:0),heldOutCalls:sum(e=>e.question.split==='held-out'?spent(e).calls:0)},
+      cost:heraCosts(measurements),
       failures:{skipped:0,failed:all.filter(t=>t.status==='failed').length,refusedCandidates:sum(e=>e.result.group.refusals!.invalidCandidates),budgetStops:all.filter(t=>t.stopReason==='TMAS2009').length,orphans:all.filter(t=>t.status==='orphan').length,
         headConflicts:refused.filter(o=>o.issues.some(i=>i.code==='THERA1006')).length,refusedLearningWrites:refused.filter(o=>o.issues.some(i=>i.code==='THERA1004')).length},
       learning:{mixedGroupRate:mixed/trained.length,mixedGroups:mixed,evaluatedGroups:trained.length,groupsWithoutMixedOutcome:trained.reduce((n,r)=>n+r.groupsWithoutMixedOutcome,0),librarySize:snapshot.experienceIds.length,libraryCap:config.libraryCap,

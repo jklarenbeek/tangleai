@@ -244,24 +244,19 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   questions and evidence slices and exposes a fail-closed wire replay seam.
   *Closes on:* a separately approved live comparison publishing paired answer
   quality, eligibility, original physical/token/latency costs and losses beside
-  gains. HERA learning and trading/research domain applications remain separate.
-- [ ] **Experience-guided orchestration and prompt evolution (HERA).** *Wanted:*
-  an eight-role pool executing a validated query-specific serial/parallel
-  topology under frozen, pinned models, prompts, tools, corpus and budgets;
-  same-query candidate groups persisting per-agent trajectories, real task scores
-  and named failures; profile / insight / utility experience whose utility comes
-  from explicit applied-experience outcomes, not model opinion, with a bounded,
-  versioned, source-backed ADD/MERGE/PRUNE/KEEP; failure credit pointing at
-  invocation evidence; whole-run prompt-variant evaluation that keeps operational
-  rules apart from behavioral principles and activates only a paired improvement;
-  validated topology mutations accepted only after evaluation; learning,
-  evaluation and inference isolated by immutable snapshots with a held-out split
-  that performs zero learning writes. *Constraint:* a folder of role prompts is
-  not a multi-agent runtime and a dynamic DAG is not experience-guided policy
-  improvement; three of the loop's parts are self-evolving writes and are
-  hard-gated on an instrument and a published fixed-topology baseline that must
-  exist first. *Closes on:* the controlled ablation, topology metrics and costs
-  published, including a loss if the mechanism does not beat its scaffold.
+  gains. Trading/research domain applications remain separate.
+- [ ] **Live orchestration quality and HERA extensions.** The eight-role
+  executor, scoped experience and prompt learning, registered-role topology
+  mutation, and fourteen-operation read contract ship with a scripted
+  [ablation](HERA_BENCHMARK.md). Full held-out F1 is 0.6 versus the fixed
+  scaffold's 0.8, with paired diagnostic interval [-0.6, 0.0]; this does not
+  measure model quality. *Open:* a separately approved live comparison with
+  matched identities and explicit budgets; a paper-parity dataset lane;
+  mounting the package's review contract in the desktop's existing
+  run-addressed surface; and model-invented roles under a new admission policy.
+  *Closes on:* measured live held-out improvement with the paired interval
+  excluding zero, complete cost/violation accounting and losses reported,
+  followed by separate evidence for each additional capability.
 - [ ] **Staged workflow authoring and its operator surface (the open half of
   MASFactory).** *Wanted:* natural-language workflow authoring as three
   durable, human-reviewed stages — a `RolePlan`, a `TopologyPlan` and a

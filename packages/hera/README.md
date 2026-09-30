@@ -59,6 +59,10 @@ are checked before dispatch. Only the Retriever receives `hera-evidence`.
 Unsupported citations remain counted values, and the versioned evaluator
 decides their score effect. The answer also retains a validated claim envelope.
 Unlabelled inference has null score and success; it cannot enter learning.
+An evaluated failed or orphaned execution receives zero task score and success
+false, with an `executionFailure` metric. It has no completed answer to pass
+to the answer scorer; a synthetic empty placeholder cannot earn abstention
+credit. Completed answers retain the host's versioned scoring rule.
 
 Trajectories retain per-attempt transcripts, tool results, evidence addresses,
 reported token parts, missing-usage counts and estimated token charges. Model,
@@ -81,6 +85,14 @@ Writes take `{scope, mode}` authority. Learning records can be written only in
 learning writes with `THERA1004`. `assertTaskSplit(task, mode)` also refuses a
 held-out or unlabelled task offered to learning. The task adapter owns its split;
 a model cannot grant itself write authority.
+
+| Record family | `learn` | `evaluate` | `infer` |
+| --- | --- | --- | --- |
+| Operations, topologies, rollout groups, trajectories and steps | Write | Write | Write |
+| Agents, prompt versions, experiences, advantages and trials | Write under authority | Refuse | Refuse |
+| Failure buffers, mutations, snapshots and heads | Fenced learning transition | Refuse | Refuse |
+
+The read contract has no write authority in any mode.
 
 Named `putAgent`, `putPromptVersion` and the other puts are immutable: identical
 bytes are a no-op and conflicting bytes return `THERA1002`. Stage prompt and
@@ -317,6 +329,17 @@ recompile workflows, call providers or write learning state.
 and compatibility checks participate in `npm run check`.
 
 ## Building and checking
+
+The final scripted ablation compares the same five held-out tasks under frozen
+snapshots. The full row's F1 is 0.6 versus the fixed scaffold's 0.8: paired delta
+-0.2, interval [-0.6, 0.0] from 2,000 resamples at seed 17753 and 95% coverage.
+The schema-owned claim is `not-measured-live`. Per-event budget checks and
+split/scope/tool violation counts accompany quality, phase costs, prompt bytes,
+negative transfer by host question-type tag and topology diagnostics. A shared
+allocation-policy identity does not conceal different structural caps or the
+additional bounded training allowance. The fifty-event regression sequence
+keeps its library within capacity and rejects every tied-score prompt replay.
+Live and paper-parity measurements remain separate work.
 
 `npm run emit:hera` composes the HERA definitions with GMPL's evidence schema and
 emits the public contract and TypeScript declarations. `npm run hera:artifacts`

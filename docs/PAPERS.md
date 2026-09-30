@@ -101,7 +101,12 @@ implementing any single one.
   prediction harnesses with retrospective validation. Harness evolution for forecasting.
   - 📄 [`refs/2604.15719v2.pdf`](refs/2604.15719v2.pdf)
 - **HERA: Experience as a Compass** (arXiv:2604.00901v2, Li & Ramakrishnan, Apr 2026) —
-  reward-guided topology + prompt evolution. Experience-guided orchestration.
+  experience-guided topology and prompt evolution. The bounded mechanism ships:
+  eight registered roles, evaluated experience/prompt updates, topology mutation
+  and a read-only evidence surface. The [scripted ablation](HERA_BENCHMARK.md)
+  gives full held-out F1 0.6 versus fixed 0.8, paired interval [-0.6, 0.0].
+  Its decision is `not-measured-live`; live improvement and paper-parity
+  measurement remain open, so this entry stays Planned.
   - 📄 [`refs/2604.00901v2.pdf`](refs/2604.00901v2.pdf)
 - **MASFactory** (arXiv:2603.06007v1, Zhou et al., Mar 2026) — intent-to-workflow
   compilation; Tangle's version targets @jarenjs/flow documents. The runtime

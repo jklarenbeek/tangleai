@@ -41,6 +41,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       (registry + request + credential-free host manifest →
                       an immutable identity or stable TCFG refusals), and
                       every host resolves through it — see CONFIGURATION.md
+@tangleai/hera        evaluated query-specific orchestration over MAS:
+                      scoped experience, role-prompt and topology learning,
+                      immutable snapshots and read-only evidence review
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,
@@ -204,6 +207,44 @@ and numeric domain data and resumes a two-turn clarification after SQLite reopen
 [GMPL_BENCHMARK.md](GMPL_BENCHMARK.md) reports scripted protocol conformance and
 matched comparison costs; [GMPL_LOCOMO.md](GMPL_LOCOMO.md) describes the seeded
 plan and exact-request replay seam. Neither establishes live model improvement.
+
+## Evaluated orchestration learning
+
+`@tangleai/hera` composes eight GMPL role artifacts and five control artifacts
+with CONFIG identities and the existing durable MAS executor. Hosts inject
+clients, an embedder, an evidence provider, an evaluator, storage, scope and
+clocks. A generated invocation DAG passes role/tool/prompt, reachability,
+acyclicity, terminal-answer and budget gates before MAS lowering. Repeated roles
+remain distinct invocations. Profiling, repairs, duplicate proposals, candidate
+execution and refinement purchases have retained receipts and explicit costs.
+
+Frozen snapshots name exact prompts, experience versions, registry and model,
+tool, corpus and evaluator identities. `learn` accepts only labelled training
+tasks; `evaluate` and `infer` cannot write learned state. Completed answers use
+the host's versioned task scorer. Failed or orphaned evaluated runs receive zero
+credit, so a missing answer cannot masquerade as correct abstention.
+
+Mixed evaluated groups supply source-backed semantic advantages. Experience
+utility counts actual applications and successes; deterministic MMR selection
+and bounded ADD/MERGE/PRUNE/KEEP preserve ancestry and explicit conflict proof.
+Failure buffers name exact invocation steps. Prompt proposals change one role's
+operational/behavioral blocks and must win a complete pinned replay. Persistent
+zero-score groups can propose registered-role replacements or augmentations;
+only a strictly improving candidate installs a future topology hint. Library,
+prompt and snapshot heads compare both version and revision in one transaction.
+Operational receipts survive losing fences and prevent duplicate purchases.
+
+The portable contract exposes fourteen scoped reads. Experiences and rules join
+evaluated trajectory evidence; diagrams project the compiled plan retained for
+the actual run. Transport and desktop mounting belong to the host. There is no
+additional scheduler, provider layer, graph database or learning command on
+the read surface.
+
+[HERA_BENCHMARK.md](HERA_BENCHMARK.md) reports all seven scripted ablations,
+including the full row's held-out loss: F1 0.6 against fixed 0.8, paired interval
+[-0.6, 0.0]. The claim remains `not-measured-live`. Phase costs, budgets, missing
+usage, violation counts, prompt/library changes and structural metrics accompany
+the result; these fixtures do not reproduce the paper's model-quality claims.
 
 ## Evidenced temporal memory
 

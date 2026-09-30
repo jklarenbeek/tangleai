@@ -362,6 +362,169 @@
         "maxConcurrentRetrievers"
       ],
       "additionalProperties": false
+    },
+    "ablation": {
+      "type": "object",
+      "properties": {
+        "trainingSequence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "trainingSequenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "heldOutIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "heldOutSampleId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "budgetPolicyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "seedReason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "trainingSequence",
+        "trainingSequenceId",
+        "heldOutIds",
+        "heldOutSampleId",
+        "budgetPolicyId",
+        "seeds",
+        "seedReason"
+      ],
+      "additionalProperties": false
+    },
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "enum": [
+              "scripted",
+              "wire-replay",
+              "live"
+            ]
+          },
+          "status": {
+            "enum": [
+              "run",
+              "not-run"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "violations": {
+      "$ref": "#/$defs/violations"
+    },
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "within": {
+          "type": "boolean"
+        },
+        "overruns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rowId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "taskId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "split": {
+                "enum": [
+                  "training",
+                  "held-out"
+                ]
+              },
+              "spent": {
+                "$ref": "#/$defs/measuredSpend"
+              },
+              "allowance": {
+                "$ref": "#/$defs/measuredSpend"
+              }
+            },
+            "required": [
+              "rowId",
+              "taskId",
+              "split",
+              "spent",
+              "allowance"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "within",
+        "overruns"
+      ],
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "enum": [
+            "improves",
+            "does-not-improve",
+            "not-measured-live"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "decision",
+        "reason"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -379,7 +542,12 @@
     "refusals",
     "totals",
     "limitations",
-    "scripted"
+    "scripted",
+    "ablation",
+    "tiers",
+    "violations",
+    "budgets",
+    "claim"
   ],
   "additionalProperties": false,
   "$query": {
@@ -583,6 +751,224 @@
             "$sum": "$.rows[*].learning.writes"
           }
         ]
+      },
+      {
+        "$eq": [
+          "$.claim.decision",
+          {
+            "$if": [
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.rows[7].status",
+                      "run"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.rows[3].status",
+                      "run"
+                    ]
+                  },
+                  {
+                    "$or": [
+                      {
+                        "$eq": [
+                          "$.rows[7].tier",
+                          "live"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$.rows[7].tier",
+                          "wire-replay"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.rows[7].tier",
+                      "$.rows[3].tier"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$if": [
+                  {
+                    "$and": [
+                      {
+                        "$some": {
+                          "p": "$.pairs[*]"
+                        },
+                        "$satisfies": {
+                          "$and": [
+                            {
+                              "$eq": [
+                                "$p.treatment",
+                                "hera-full"
+                              ]
+                            },
+                            {
+                              "$eq": [
+                                "$p.control",
+                                "fixed-topology"
+                              ]
+                            },
+                            "$p.eligible",
+                            {
+                              "$gt": [
+                                "$p.interval.low",
+                                0
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "$.budgets.within",
+                      {
+                        "$eq": [
+                          "$.violations.split",
+                          0
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$.violations.scope",
+                          0
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$.violations.tool",
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "improves",
+                  "does-not-improve"
+                ]
+              },
+              "not-measured-live"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.violations.split",
+          {
+            "$sum": "$.rows[*].measurements[*].violations.split"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.violations.scope",
+          {
+            "$sum": "$.rows[*].measurements[*].violations.scope"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.violations.tool",
+          {
+            "$sum": "$.rows[*].measurements[*].violations.tool"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.budgets.within",
+          {
+            "$every": {
+              "m": "$.rows[*].measurements[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$le": [
+                    "$m.spent.calls",
+                    "$m.allowance.calls"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$m.spent.tokens",
+                    "$m.allowance.tokens"
+                  ]
+                },
+                {
+                  "$le": [
+                    "$m.spent.ms",
+                    "$m.allowance.ms"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.budgets.within",
+          {
+            "$eq": [
+              {
+                "$count": "$.budgets.overruns[*]"
+              },
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "$every": {
+          "r": "$.rows[*]"
+        },
+        "$satisfies": {
+          "$if": [
+            {
+              "$and": [
+                {
+                  "$eq": [
+                    "$r.status",
+                    "run"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.kind",
+                    "ablation"
+                  ]
+                }
+              ]
+            },
+            {
+              "$and": [
+                {
+                  "$eq": [
+                    {
+                      "$count": "$r.measurements[*]"
+                    },
+                    "$r.quality.planned"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.identity.budgetPolicyId",
+                    "$.ablation.budgetPolicyId"
+                  ]
+                }
+              ]
+            },
+            true
+          ]
+        }
       }
     ]
   },
@@ -659,6 +1045,38 @@
         },
         "heldOutQuality": {
           "$ref": "#/$defs/quality"
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/caseMeasurement"
+          }
+        },
+        "promptSizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "agentId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "versionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "agentId",
+              "versionId",
+              "bytes"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
@@ -673,7 +1091,9 @@
         "failures",
         "learning",
         "topology",
-        "seeds"
+        "seeds",
+        "measurements",
+        "promptSizes"
       ],
       "additionalProperties": false,
       "$query": {
@@ -903,6 +1323,10 @@
             "concurrency"
           ],
           "additionalProperties": false
+        },
+        "budgetPolicyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
         }
       },
       "required": [
@@ -1099,6 +1523,12 @@
         "estimatedTokens": {
           "type": "integer",
           "minimum": 0
+        },
+        "training": {
+          "$ref": "#/$defs/phaseCost"
+        },
+        "heldOut": {
+          "$ref": "#/$defs/phaseCost"
         }
       },
       "required": [
@@ -1111,9 +1541,115 @@
         "trainingCalls",
         "heldOutCalls",
         "money",
-        "estimatedTokens"
+        "estimatedTokens",
+        "training",
+        "heldOut"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$if": [
+          {
+            "$ne": [
+              "$",
+              null
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.calls",
+                  {
+                    "$add": [
+                      "$.training.calls",
+                      "$.heldOut.calls"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.promptTokens",
+                  {
+                    "$add": [
+                      "$.training.promptTokens",
+                      "$.heldOut.promptTokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.completionTokens",
+                  {
+                    "$add": [
+                      "$.training.completionTokens",
+                      "$.heldOut.completionTokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.estimatedTokens",
+                  {
+                    "$add": [
+                      "$.training.estimatedTokens",
+                      "$.heldOut.estimatedTokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.unknownTokenRequests",
+                  {
+                    "$add": [
+                      "$.training.unknownTokenRequests",
+                      "$.heldOut.unknownTokenRequests"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.ms",
+                  {
+                    "$add": [
+                      "$.training.ms",
+                      "$.heldOut.ms"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.unknownMsRequests",
+                  {
+                    "$add": [
+                      "$.training.unknownMsRequests",
+                      "$.heldOut.unknownMsRequests"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.trainingCalls",
+                  "$.training.calls"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.heldOutCalls",
+                  "$.heldOut.calls"
+                ]
+              }
+            ]
+          },
+          true
+        ]
+      }
     },
     "failures": {
       "type": "object",
@@ -1665,6 +2201,40 @@
             "seed"
           ],
           "additionalProperties": false
+        },
+        "tier": {
+          "enum": [
+            "scripted",
+            "wire-replay",
+            "live",
+            "unmeasured"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "questionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "deltas": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1
+          }
+        },
+        "identityMatch": {
+          "type": "boolean"
+        },
+        "budgetPolicyMatch": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1672,32 +2242,103 @@
         "control",
         "eligible",
         "delta",
-        "interval"
+        "interval",
+        "tier",
+        "reason",
+        "questionIds",
+        "deltas",
+        "identityMatch",
+        "budgetPolicyMatch"
       ],
       "additionalProperties": false,
       "$query": {
-        "$if": [
-          "$.eligible",
+        "$and": [
           {
-            "$ne": [
-              "$.delta",
-              null
+            "$eq": [
+              {
+                "$count": "$.questionIds[*]"
+              },
+              {
+                "$count": "$.deltas[*]"
+              }
             ]
           },
           {
-            "$and": [
+            "$if": [
               {
-                "$eq": [
-                  "$.delta",
-                  null
+                "$gt": [
+                  {
+                    "$count": "$.questionIds[*]"
+                  },
+                  0
                 ]
               },
               {
-                "$eq": [
-                  "$.interval",
-                  null
+                "$and": [
+                  {
+                    "$ne": [
+                      "$.delta",
+                      null
+                    ]
+                  },
+                  {
+                    "$ne": [
+                      "$.interval",
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.delta",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.interval",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.eligible",
+                      false
+                    ]
+                  }
                 ]
               }
+            ]
+          },
+          {
+            "$if": [
+              "$.eligible",
+              {
+                "$and": [
+                  {
+                    "$or": [
+                      {
+                        "$eq": [
+                          "$.tier",
+                          "live"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$.tier",
+                          "wire-replay"
+                        ]
+                      }
+                    ]
+                  },
+                  "$.identityMatch",
+                  "$.budgetPolicyMatch"
+                ]
+              },
+              true
             ]
           }
         ]
@@ -1889,6 +2530,293 @@
         "evidence"
       ],
       "additionalProperties": false
+    },
+    "phaseCost": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimatedTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownMsRequests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "promptTokens",
+        "completionTokens",
+        "estimatedTokens",
+        "unknownTokenRequests",
+        "ms",
+        "unknownMsRequests"
+      ],
+      "additionalProperties": false
+    },
+    "measuredSpend": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms"
+      ],
+      "additionalProperties": false
+    },
+    "violations": {
+      "type": "object",
+      "properties": {
+        "split": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "split",
+        "scope",
+        "tool"
+      ],
+      "additionalProperties": false
+    },
+    "caseMeasurement": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "split": {
+          "enum": [
+            "training",
+            "held-out"
+          ]
+        },
+        "category": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "f1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "success": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "citationRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "answered": {
+          "type": "boolean"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "trajectoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "spent": {
+          "$ref": "#/$defs/measuredSpend"
+        },
+        "allowance": {
+          "$ref": "#/$defs/measuredSpend"
+        },
+        "usage": {
+          "$ref": "#/$defs/phaseCost"
+        },
+        "violations": {
+          "$ref": "#/$defs/violations"
+        }
+      },
+      "required": [
+        "taskId",
+        "split",
+        "category",
+        "profiles",
+        "f1",
+        "success",
+        "citationRecall",
+        "answered",
+        "snapshotId",
+        "trajectoryIds",
+        "spent",
+        "allowance",
+        "usage",
+        "violations"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.usage.calls",
+          "$.spent.calls"
+        ]
+      }
     }
+  },
+  "x-claim-query": {
+    "$if": [
+      {
+        "$and": [
+          {
+            "$eq": [
+              "$.rows[7].status",
+              "run"
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[3].status",
+              "run"
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.rows[7].tier",
+                  "live"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.rows[7].tier",
+                  "wire-replay"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rows[7].tier",
+              "$.rows[3].tier"
+            ]
+          }
+        ]
+      },
+      {
+        "$if": [
+          {
+            "$and": [
+              {
+                "$some": {
+                  "p": "$.pairs[*]"
+                },
+                "$satisfies": {
+                  "$and": [
+                    {
+                      "$eq": [
+                        "$p.treatment",
+                        "hera-full"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        "$p.control",
+                        "fixed-topology"
+                      ]
+                    },
+                    "$p.eligible",
+                    {
+                      "$gt": [
+                        "$p.interval.low",
+                        0
+                      ]
+                    }
+                  ]
+                }
+              },
+              "$.budgets.within",
+              {
+                "$eq": [
+                  "$.violations.split",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.violations.scope",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.violations.tool",
+                  0
+                ]
+              }
+            ]
+          },
+          "improves",
+          "does-not-improve"
+        ]
+      },
+      "not-measured-live"
+    ]
   }
 }

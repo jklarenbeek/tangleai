@@ -5,15 +5,15 @@ import {createHash} from 'node:crypto';
 import {resolveProfile,type RunIdentity} from '@tangleai/config';
 import {createOfflineEmbedder} from '@tangleai/pipeline';
 import {openTangleDb,createDocumentStore,createHeraStore,createMasStore,type TangleDb} from '@tangleai/store';
-import {createHeraDocumentEvidenceProvider,createHeraExecutor,heraRevisionOf,HERA_DEFAULT_LIMITS,type HeraTask,type HeraExecution} from '@tangleai/hera';
+import {createHeraDocumentEvidenceProvider,createHeraExecutor,heraRevisionOf,summarizeTopology,type HeraTask,type HeraExecution} from '@tangleai/hera';
 import {createHeraExampleState,createHeraExampleSegments,heraValue} from '../../examples/hera.ts';
 import {officialScore,normalizeAnswer} from './locomo-parity.ts';
-import {SCORABLE_CATEGORIES} from './locomo.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
 import type {HeraPlanOutput} from '@tangleai/hera';
 import type {HeraTrainingSequence,HeraReflectionScript,HeraConsolidationScript,HeraRopeScript} from './hera-learning-scripts.ts';
 import {heraQuality} from './hera-quality.ts';
+import {HERA_BASELINE_BUDGET,heraBudgetPolicyId,heraPromptSizes,measureHeraCase,heraCosts} from './hera-measurement.ts';
 type Script=Record<string,Record<'single-turn'|'fixed',Record<string,{completion:unknown;normalization:unknown;repair:unknown;tool?:{query:string;k:number}}>>>;
 export interface HeraOrchestratorScript {kind:string;profile:{text:string;tags:string[]};plans:Record<string,HeraPlanOutput>;proposals:Record<string,string[]>;}
 export async function loadHeraScripts(root:string) {
@@ -47,9 +47,9 @@ export async function runHeraBaselines(fixture:HeraFixture,root:string) {
     const resolved=await resolveProfile({...state.profiles,request:{kind:'profile',profile:'scripted',overrides:null}});if(!resolved.ok)throw Error(JSON.stringify(resolved.issues));identities.push(resolved.identity);
     const truth=new Map(fixture.questions.map(q=>[q.id,q.gold.answer]));
     const evaluator={identity:state.snapshot.identities.evaluator,async score(task:HeraTask,answer:string){const success=normalizeAnswer(answer)===normalizeAnswer(truth.get(task.id)!);return {primaryScore:success?1:0,success};}};
-    const initialWrites=store.counters().learningWrites;
+    const initialWrites=store.counters().learningWrites,budgetPolicyId=await heraBudgetPolicyId();
     for(const kind of ['single-turn','fixed'] as const){
-      const executions:Array<{question:HeraFixture['questions'][number];result:HeraExecution;ms:number}>=[];
+      const executions:Array<{question:HeraFixture['questions'][number];result:HeraExecution;ms:number;tokens:number}>=[];
       for(const question of fixture.questions){
         const bank=registration.scripts[question.id]?.[kind];if(!bank)throw Error('Missing registered HERA script: '+question.id+'/'+kind);
         const task:HeraTask={id:question.id,scope:store.scope,query:question.query,corpusRevision:fixture.manifest.revision,split:question.split,evaluator:evaluator.identity,goldAddress:'fixture:'+question.id};
@@ -67,18 +67,20 @@ export async function runHeraBaselines(fixture:HeraFixture,root:string) {
         const request={task,snapshot:state.snapshot,topology:kind,mode:'evaluate' as const,groupIndex:0,candidateIndex:0,configRevision:await heraRevisionOf({kind,script:registration.revision})};
         const result=heraValue(await executor.execute(request)),before=requests,replay=heraValue(await executor.execute(request));replayCalls+=requests-before;
         if(await heraRevisionOf(result)!==await heraRevisionOf(replay))throw Error('HERA replay changed its durable trajectory.');
-        const run=(await masStore.getRun(result.trajectory.masRunId))!;executions.push({question,result,ms:run.budget.spent.ms});
+        const run=(await masStore.getRun(result.trajectory.masRunId))!;executions.push({question,result,ms:run.budget.spent.ms,tokens:run.budget.spent.tokens});
       }
-      const sum=(fn:(e:typeof executions[number])=>number)=>executions.reduce((n,e)=>n+fn(e),0),n=executions.length;
-      const scored=executions.map(({question,result})=>{const score=officialScore({category:question.category,prediction:result.trajectory.answer,answer:truth.get(question.id)!});return {category:question.category,f1:score.scored?score.f1:0,answered:result.trajectory.status==='completed',split:question.split,success:Number(result.trajectory.success),citationRecall:result.trajectory.metrics.citationRecall};});
+      const sum=(fn:(e:typeof executions[number])=>number)=>executions.reduce((n,e)=>n+fn(e),0);
+      const scored=executions.map(({question,result})=>{const score=officialScore({category:question.category,prediction:result.trajectory.answer,answer:truth.get(question.id)!});return {category:question.category,f1:score.scored&&result.trajectory.status==='completed'?score.f1:0,answered:result.trajectory.status==='completed',split:question.split,success:Number(result.trajectory.success),citationRecall:result.trajectory.metrics.citationRecall};});
+      const measurements=await Promise.all(executions.map((entry,index)=>measureHeraCase({question:entry.question,score:scored[index],store,trajectories:[entry.result.trajectory],snapshotId:state.snapshot.id,
+        spent:{calls:entry.result.trajectory.calls,tokens:entry.tokens,ms:entry.ms},allowance:{calls:HERA_BASELINE_BUDGET.calls,tokens:HERA_BASELINE_BUDGET.tokens,ms:HERA_BASELINE_BUDGET.ms}})));
       rows.push({id:kind==='fixed'?'fixed-topology':'single-turn',kind:'ablation',status:'run',reason:null,tier:'scripted',seeds:[17753],
+        measurements,promptSizes:await heraPromptSizes(store,state.snapshot),
         identity:{snapshotId:state.snapshot.id,model:state.snapshot.identities.model,decoder:state.snapshot.identities.decoder,corpusRevision:fixture.manifest.revision,evaluatorId:evaluator.identity.id,toolIds:state.snapshot.identities.tools,
-          budget:{calls:HERA_DEFAULT_LIMITS.calls,tokens:HERA_DEFAULT_LIMITS.tokens,ms:HERA_DEFAULT_LIMITS.ms,turns:HERA_DEFAULT_LIMITS.toolRounds,nodes:6,depth:6,fanOut:4,concurrency:4}},
-        heldOutQuality:heraQuality(scored.filter(c=>c.split==='held-out')),quality:{f1:scored.reduce((n,c)=>n+c.f1,0)/n,successRate:sum(e=>Number(e.result.trajectory.success))/n,citationRecall:sum(e=>e.result.trajectory.metrics.citationRecall)/n,answered:scored.filter(c=>c.answered).length,planned:n,
-          byCategory:SCORABLE_CATEGORIES.map(category=>{const cases=scored.filter(c=>c.category===category);return {category,f1:cases.length?cases.reduce((n,c)=>n+c.f1,0)/cases.length:0,answered:cases.filter(c=>c.answered).length,planned:cases.length};})},
-        cost:{calls:sum(e=>e.result.trajectory.calls),promptTokens:sum(e=>e.result.trajectory.tokens.prompt),completionTokens:sum(e=>e.result.trajectory.tokens.completion),unknownTokenRequests:sum(e=>e.result.trajectory.tokens.unknownRequests),estimatedTokens:sum(e=>e.result.trajectory.tokens.estimated),ms:sum(e=>e.ms),unknownMsRequests:sum(e=>e.result.steps.reduce((n,s)=>n+s.usage.unknownMsRequests,0)),money:null,
-          trainingCalls:sum(e=>e.question.split==='training'?e.result.trajectory.calls:0),heldOutCalls:sum(e=>e.question.split==='held-out'?e.result.trajectory.calls:0)},
-        failures:{skipped:0,failed:sum(e=>Number(e.result.trajectory.status==='failed')),refusedCandidates:0,budgetStops:sum(e=>Number(e.result.trajectory.stopReason==='TMAS2009')),orphans:sum(e=>Number(e.result.trajectory.status==='orphan')),headConflicts:0,refusedLearningWrites:store.counters().refusedLearningWrites},learning:null,topology:null});
+          budget:HERA_BASELINE_BUDGET,budgetPolicyId},
+        heldOutQuality:heraQuality(scored.filter(c=>c.split==='held-out')),quality:heraQuality(scored),
+        cost:heraCosts(measurements),
+      failures:{skipped:0,failed:sum(e=>Number(e.result.trajectory.status==='failed')),refusedCandidates:0,budgetStops:sum(e=>Number(e.result.trajectory.stopReason==='TMAS2009')),orphans:sum(e=>Number(e.result.trajectory.status==='orphan')),headConflicts:0,refusedLearningWrites:store.counters().refusedLearningWrites},learning:null,
+        topology:summarizeTopology(executions.map(e=>e.result.trajectory),await store.query('topology',{scope:store.scope,limit:10000}),{includeFailed:true})});
     }
     const learningWrites=store.counters().learningWrites-initialWrites;
     if(learningWrites||replayCalls||requests!==rows.reduce((n,r)=>n+r.cost!.calls,0))throw Error('HERA operational cost or learning-write census mismatch.');

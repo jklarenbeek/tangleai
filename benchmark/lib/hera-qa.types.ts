@@ -78,7 +78,7 @@ export interface RowIdentityLearningBudget {
 }
 
 
-export type RowIdentity = { snapshotId: string; model: string; decoder: string; corpusRevision: string; evaluatorId: string; toolIds: Array<string>; budget: RowIdentityBudget; learningBudget?: RowIdentityLearningBudget; } | null;
+export type RowIdentity = { snapshotId: string; model: string; decoder: string; corpusRevision: string; evaluatorId: string; toolIds: Array<string>; budget: RowIdentityBudget; learningBudget?: RowIdentityLearningBudget; budgetPolicyId?: string; } | null;
 
 export interface QualityByCategoryItem {
   category: 1 | 2 | 3 | 4;
@@ -102,7 +102,42 @@ export interface QualityByCategoryItem {
  */
 export type Quality = { f1: number; byCategory: Array<QualityByCategoryItem>; successRate: number; citationRecall: number; answered: number; planned: number; } | null;
 
-export type Cost = { calls: number; promptTokens: number; completionTokens: number; unknownTokenRequests: number; ms: number; unknownMsRequests: number; trainingCalls: number; heldOutCalls: number; money: null; estimatedTokens: number; } | null;
+export interface PhaseCost {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownTokenRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownMsRequests: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$if":[{"$ne":["$",null]},{"$and":[{"$eq":["$.calls",{"$add":["$.training.calls","$.heldOut.calls"]}]},{"$eq":["$.promptTokens",{"$add":["$.training.promptTokens","$.heldOut.promptTokens"]}]},{"$eq":["$.completionTokens",{"$add":["$.training.completionTokens","$.heldOut.completionTokens"]}]},{"$eq":["$.estimatedTokens",{"$add":["$.training.estimatedTokens","$.heldOut.estimatedTokens"]}]},{"$eq":["$.unknownTokenRequests",{"$add":["$.training.unknownTokenRequests","$.heldOut.unknownTokenRequests"]}]},{"$eq":["$.ms",{"$add":["$.training.ms","$.heldOut.ms"]}]},{"$eq":["$.unknownMsRequests",{"$add":["$.training.unknownMsRequests","$.heldOut.unknownMsRequests"]}]},{"$eq":["$.trainingCalls","$.training.calls"]},{"$eq":["$.heldOutCalls","$.heldOut.calls"]}]},true]}
+ */
+export type Cost = { calls: number; promptTokens: number; completionTokens: number; unknownTokenRequests: number; ms: number; unknownMsRequests: number; trainingCalls: number; heldOutCalls: number; money: null; estimatedTokens: number; training: PhaseCost; heldOut: PhaseCost; } | null;
 
 export interface Failures {
   /**
@@ -262,14 +297,121 @@ export type Learning = { mixedGroupRate: number; librarySize: number; libraryChu
 export type RowSeedsItem = number;
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type CaseMeasurementProfilesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type CaseMeasurementTrajectoryIdsItem = string;
+
+export interface MeasuredSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface Violations {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  split: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scope: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tool: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.usage.calls","$.spent.calls"]}
+ */
+export interface CaseMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  split: "training" | "held-out";
+  category: 1 | 2 | 3 | 4;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  profiles: Array<CaseMeasurementProfilesItem>;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  f1: number;
+  success: 0 | 1;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  citationRecall: number;
+  answered: boolean;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  snapshotId: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  trajectoryIds: Array<CaseMeasurementTrajectoryIdsItem>;
+  spent: MeasuredSpend;
+  allowance: MeasuredSpend;
+  usage: PhaseCost;
+  violations: Violations;
+}
+
+
+export interface RowPromptSizesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  agentId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  versionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bytes: number;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$if":[{"$eq":["$.status","run"]},{"$and":[{"$ne":["$.identity",null]},{"$ne":["$.quality",null]},{"$ne":["$.cost",null]},{"$le":["$.quality.answered","$.quality.planned"]},{"$eq":["$.cost.calls",{"$add":["$.cost.trainingCalls","$.cost.heldOutCalls"]}]}]},{"$and":[{"$eq":["$.identity",null]},{"$eq":["$.quality",null]},{"$eq":["$.cost",null]},{"$eq":["$.learning",null]},{"$eq":["$.topology",null]}]}]}
  */
-export type Row = RowPart1 & { id: "oracle" | "reference" | "single-turn" | "fixed-topology" | "query-specific-frozen" | "hera-no-experience" | "hera-no-rope" | "hera-full" | "hera-no-mutation"; kind: "oracle" | "reference" | "ablation"; status: "run" | "not-run" | "implementation-missing" | "dataset-unavailable"; reason: string | null; tier: "scripted" | "wire-replay" | "live" | "analytic"; identity: RowIdentity; quality: Quality; cost: Cost; failures: Failures; learning: Learning; topology: Topology; seeds: Array<RowSeedsItem>; heldOutQuality?: Quality; };
+export type Row = RowPart1 & { id: "oracle" | "reference" | "single-turn" | "fixed-topology" | "query-specific-frozen" | "hera-no-experience" | "hera-no-rope" | "hera-full" | "hera-no-mutation"; kind: "oracle" | "reference" | "ablation"; status: "run" | "not-run" | "implementation-missing" | "dataset-unavailable"; reason: string | null; tier: "scripted" | "wire-replay" | "live" | "analytic"; identity: RowIdentity; quality: Quality; cost: Cost; failures: Failures; learning: Learning; topology: Topology; seeds: Array<RowSeedsItem>; heldOutQuality?: Quality; measurements: Array<CaseMeasurement>; promptSizes: Array<RowPromptSizesItem>; };
 
 export type PairInterval = { low: number; high: number; level: number; resamples: number; seed: number; } | null;
 
 /**
- * Schema constraints this type cannot express: $query={"$if":["$.eligible",{"$ne":["$.delta",null]},{"$and":[{"$eq":["$.delta",null]},{"$eq":["$.interval",null]}]}]}
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PairQuestionIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minimum=-1, maximum=1
+ */
+export type PairDeltasItem = number;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.questionIds[*]"},{"$count":"$.deltas[*]"}]},{"$if":[{"$gt":[{"$count":"$.questionIds[*]"},0]},{"$and":[{"$ne":["$.delta",null]},{"$ne":["$.interval",null]}]},{"$and":[{"$eq":["$.delta",null]},{"$eq":["$.interval",null]},{"$eq":["$.eligible",false]}]}]},{"$if":["$.eligible",{"$and":[{"$or":[{"$eq":["$.tier","live"]},{"$eq":["$.tier","wire-replay"]}]},"$.identityMatch","$.budgetPolicyMatch"]},true]}]}
  */
 export interface Pair {
   treatment: "oracle" | "reference" | "single-turn" | "fixed-topology" | "query-specific-frozen" | "hera-no-experience" | "hera-no-rope" | "hera-full" | "hera-no-mutation";
@@ -277,6 +419,18 @@ export interface Pair {
   eligible: boolean;
   delta: number | null;
   interval: PairInterval;
+  tier: "scripted" | "wire-replay" | "live" | "unmeasured";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  questionIds: Array<PairQuestionIdsItem>;
+  deltas: Array<PairDeltasItem>;
+  identityMatch: boolean;
+  budgetPolicyMatch: boolean;
 }
 
 
@@ -490,7 +644,88 @@ export interface HeraQaScripted {
 
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.rows[0].id","oracle"]},{"$eq":["$.rows[1].id","reference"]},{"$eq":["$.rows[2].id","single-turn"]},{"$eq":["$.rows[3].id","fixed-topology"]},{"$eq":["$.rows[4].id","query-specific-frozen"]},{"$eq":["$.rows[5].id","hera-no-experience"]},{"$eq":["$.rows[6].id","hera-no-rope"]},{"$eq":["$.rows[7].id","hera-full"]},{"$eq":["$.rows[8].id","hera-no-mutation"]},{"$eq":["$.totals.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.refusals.evalSplitInLearn","$.fixture.heldOut"]},{"$eq":["$.fixture.questions",{"$add":["$.fixture.training","$.fixture.heldOut"]}]},{"$eq":["$.totals.answered",{"$sum":"$.rows[*].quality.answered"}]},{"$eq":["$.totals.planned",{"$sum":"$.rows[*].quality.planned"}]},{"$eq":["$.totals.calls",{"$sum":"$.rows[*].cost.calls"}]},{"$eq":["$.totals.run",{"$count":"$.rows[?(@.status=='run')]"}]},{"$eq":["$.totals.notRun",{"$count":"$.rows[?(@.status=='not-run')]"}]},{"$eq":["$.totals.implementationMissing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.totals.datasetUnavailable",{"$count":"$.rows[?(@.status=='dataset-unavailable')]"}]},{"$every":{"p":"$.pairs[*]"},"$satisfies":{"$if":["$p.eligible",{"$and":[{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.treatment"]},{"$eq":["$r.status","run"]}]}},{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.control"]},{"$eq":["$r.status","run"]}]}}]},true]}},{"$eq":["$.totals.learningWrites",{"$sum":"$.rows[*].learning.writes"}]}]}
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraQaAblationTrainingSequenceItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraQaAblationHeldOutIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type HeraQaAblationSeedsItem = number;
+
+export interface HeraQaAblation {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  trainingSequence: Array<HeraQaAblationTrainingSequenceItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  trainingSequenceId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  heldOutIds: Array<HeraQaAblationHeldOutIdsItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  heldOutSampleId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  budgetPolicyId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  seeds: Array<HeraQaAblationSeedsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  seedReason: string;
+}
+
+
+export interface HeraQaTiersItem {
+  id: "scripted" | "wire-replay" | "live";
+  status: "run" | "not-run";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface HeraQaBudgetsOverrunsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rowId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taskId: string;
+  split: "training" | "held-out";
+  spent: MeasuredSpend;
+  allowance: MeasuredSpend;
+}
+
+
+export interface HeraQaClaim {
+  decision: "improves" | "does-not-improve" | "not-measured-live";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.rows[0].id","oracle"]},{"$eq":["$.rows[1].id","reference"]},{"$eq":["$.rows[2].id","single-turn"]},{"$eq":["$.rows[3].id","fixed-topology"]},{"$eq":["$.rows[4].id","query-specific-frozen"]},{"$eq":["$.rows[5].id","hera-no-experience"]},{"$eq":["$.rows[6].id","hera-no-rope"]},{"$eq":["$.rows[7].id","hera-full"]},{"$eq":["$.rows[8].id","hera-no-mutation"]},{"$eq":["$.totals.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.refusals.evalSplitInLearn","$.fixture.heldOut"]},{"$eq":["$.fixture.questions",{"$add":["$.fixture.training","$.fixture.heldOut"]}]},{"$eq":["$.totals.answered",{"$sum":"$.rows[*].quality.answered"}]},{"$eq":["$.totals.planned",{"$sum":"$.rows[*].quality.planned"}]},{"$eq":["$.totals.calls",{"$sum":"$.rows[*].cost.calls"}]},{"$eq":["$.totals.run",{"$count":"$.rows[?(@.status=='run')]"}]},{"$eq":["$.totals.notRun",{"$count":"$.rows[?(@.status=='not-run')]"}]},{"$eq":["$.totals.implementationMissing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.totals.datasetUnavailable",{"$count":"$.rows[?(@.status=='dataset-unavailable')]"}]},{"$every":{"p":"$.pairs[*]"},"$satisfies":{"$if":["$p.eligible",{"$and":[{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.treatment"]},{"$eq":["$r.status","run"]}]}},{"$some":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.id","$p.control"]},{"$eq":["$r.status","run"]}]}}]},true]}},{"$eq":["$.totals.learningWrites",{"$sum":"$.rows[*].learning.writes"}]},{"$eq":["$.claim.decision",{"$if":[{"$and":[{"$eq":["$.rows[7].status","run"]},{"$eq":["$.rows[3].status","run"]},{"$or":[{"$eq":["$.rows[7].tier","live"]},{"$eq":["$.rows[7].tier","wire-replay"]}]},{"$eq":["$.rows[7].tier","$.rows[3].tier"]}]},{"$if":[{"$and":[{"$some":{"p":"$.pairs[*]"},"$satisfies":{"$and":[{"$eq":["$p.treatment","hera-full"]},{"$eq":["$p.control","fixed-topology"]},"$p.eligible",{"$gt":["$p.interval.low",0]}]}},"$.budgets.within",{"$eq":["$.violations.split",0]},{"$eq":["$.violations.scope",0]},{"$eq":["$.violations.tool",0]}]},"improves","does-not-improve"]},"not-measured-live"]}]},{"$eq":["$.violations.split",{"$sum":"$.rows[*].measurements[*].violations.split"}]},{"$eq":["$.violations.scope",{"$sum":"$.rows[*].measurements[*].violations.scope"}]},{"$eq":["$.violations.tool",{"$sum":"$.rows[*].measurements[*].violations.tool"}]},{"$eq":["$.budgets.within",{"$every":{"m":"$.rows[*].measurements[*]"},"$satisfies":{"$and":[{"$le":["$m.spent.calls","$m.allowance.calls"]},{"$le":["$m.spent.tokens","$m.allowance.tokens"]},{"$le":["$m.spent.ms","$m.allowance.ms"]}]}}]},{"$eq":["$.budgets.within",{"$eq":[{"$count":"$.budgets.overruns[*]"},0]}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$if":[{"$and":[{"$eq":["$r.status","run"]},{"$eq":["$r.kind","ablation"]}]},{"$and":[{"$eq":[{"$count":"$r.measurements[*]"},"$r.quality.planned"]},{"$eq":["$r.identity.budgetPolicyId","$.ablation.budgetPolicyId"]}]},true]}}]}
  */
 export interface HeraQa {
   instrument: "hera-qa";
@@ -523,4 +758,12 @@ export interface HeraQa {
    */
   limitations: Array<string>;
   scripted: HeraQaScripted;
+  ablation: HeraQaAblation;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  tiers: Array<HeraQaTiersItem>;
+  violations: Violations;
+  budgets: { within: boolean; overruns: Array<HeraQaBudgetsOverrunsItem>; };
+  claim: HeraQaClaim;
 }

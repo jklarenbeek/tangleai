@@ -11,6 +11,7 @@ import { buildHeraReport, validateHeraReport, renderHeraReport, renderHeraDocume
 import { INIT_COMMAND, type LoadOutcome, type LocomoSample } from '../../benchmark/lib/locomo.ts';
 import { createGmplLocomoPlan } from '../../benchmark/lib/gmpl-locomo.ts';
 import type { HeraQa } from '../../benchmark/lib/hera-qa.types.ts';
+import {heraClaim} from '../../benchmark/lib/hera-measurement.ts';
 
 const absent = { available: false as const, reason: 'test fixture absent', hint: INIT_COMMAND };
 const sourceId = 'a'.repeat(64);
@@ -76,12 +77,43 @@ describe('the HERA registration', () => {
       (r: HeraQa) => { r.rows[7].learning!.mutationAcceptance.accepted++; },
       (r: HeraQa) => { r.rows[7].learning!.structuralCurve.pop(); },
       (r: HeraQa) => { r.rows[6].learning!.mutationAcceptance={proposed:1,validated:1,accepted:1,rejected:0}; },
+      (r:HeraQa)=>{r.claim.decision='improves';},
+      (r:HeraQa)=>{r.pairs[4].interval!.low=0.1;},
+      (r:HeraQa)=>{r.rows[7].measurements[0].f1=0.5;},
+      (r:HeraQa)=>{r.rows[7].cost!.training.promptTokens--;},
+      (r:HeraQa)=>{r.rows[7].measurements[0].allowance.calls++;},
+      (r:HeraQa)=>{r.violations.scope++;},
+      (r:HeraQa)=>{r.budgets.within=false;},
+      (r:HeraQa)=>{r.rows[7].learning!.negativeTransferByProfile[0].delta=0.5;},
+      (r:HeraQa)=>{r.ablation.trainingSequenceId='b'.repeat(64);},
+      (r:HeraQa)=>{r.rows[7].seeds=[42];},
+      (r:HeraQa)=>{r.rows[7].tier='live';r.tiers[2].status='run';},
     ]) {
       const changed = structuredClone(report); mutate(changed);
       const { reportId: _, ...content } = changed;
       changed.reportId = await canonicalSha256(content);
       await assert.rejects(validateHeraReport(changed));
     }
+  });
+  it('derives the scripted loss, phase census and frozen comparison without claiming model quality',()=>{
+    assert.equal(report.claim.decision,'not-measured-live');assert.deepEqual(report.violations,{split:0,scope:0,tool:0});assert.deepEqual(report.budgets,{within:true,overruns:[]});
+    assert.equal(report.ablation.seedReason,'scripted tier is deterministic');assert.equal(report.ablation.trainingSequence.length,7);
+    const pair=report.pairs.find(p=>p.treatment==='hera-full'&&p.control==='fixed-topology')!;
+    assert.deepEqual(pair.questionIds,['q05','q06','q07','q09','q10']);assert.deepEqual(pair.deltas,[0,-1,0,0,0]);assert.equal(pair.delta,-0.2);
+    assert.deepEqual(pair.interval,{low:-0.6,high:0,resamples:2000,seed:17753,level:0.95});assert.equal(pair.eligible,false);assert.ok(pair.identityMatch&&pair.budgetPolicyMatch);
+    const row=report.rows[7];assert.equal(row.cost!.training.calls,180);assert.equal(row.cost!.heldOut.calls,100);assert.equal(row.cost!.training.promptTokens,1260);
+    assert.equal(row.learning!.negativeTransferByProfile.find(p=>p.profile==='single-hop')!.delta,-1);
+    assert.ok(report.rows.filter(r=>r.kind==='ablation').every(r=>r.promptSizes.length===8&&r.topology?.includesFailed));
+    const doc=renderHeraDocument(report);for(const text of ['not-measured-live','[-0.6, 0]','Provider input / output tokens','Host profile tag','Frozen snapshot'])assert.ok(doc.includes(text),text);
+  });
+  it('the schema-owned claim requires a positive eligible measured interval, budget compliance and zero violations',()=>{
+    const input=structuredClone(report),pair=input.pairs.find(p=>p.treatment==='hera-full'&&p.control==='fixed-topology')!;
+    input.rows[3].tier='live';input.rows[7].tier='live';pair.eligible=true;
+    assert.equal(heraClaim(input).decision,'does-not-improve');pair.interval!.low=0.1;pair.interval!.high=0.5;
+    assert.equal(heraClaim(input).decision,'improves');input.budgets.within=false;assert.equal(heraClaim(input).decision,'does-not-improve');input.budgets.within=true;
+    for(const kind of ['split','scope','tool'] as const){input.violations[kind]=1;assert.equal(heraClaim(input).decision,'does-not-improve');input.violations[kind]=0;}
+    pair.eligible=false;assert.equal(heraClaim(input).decision,'does-not-improve');pair.eligible=true;
+    input.rows[7].tier='scripted';assert.equal(heraClaim(input).decision,'not-measured-live');
   });
   it('validates the published artifact and reproduces its document', async () => {
     const published = JSON.parse(await readFile('benchmark/results/hera-qa.json', 'utf8')) as HeraQa;

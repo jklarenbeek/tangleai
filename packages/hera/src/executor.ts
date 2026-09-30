@@ -193,7 +193,11 @@ export function createHeraExecutor(host:HeraExecutorHost) {
       const trace=await host.masStore.readTrace(runId);if(!trace)refuse('THERA1007','/trace','The durable candidate trace is missing.');
       const answer=trace.run.status==='completed'?(trace.run.output as {result:HeraAnswerEvidence}).result
         :await validateHeraAnswer({answer:'',disposition:'needs-information',claims:[],findings:[]},[]);
-      const score=must(validateHeraTaskScore(task.evaluator===null?{primaryScore:null,success:null}:await host.evaluator.score(task,answer.answer,answer)));
+      // A failed execution has no answer to score; an empty placeholder must not
+      // earn abstention credit or become evidence for successful behavior.
+      const score=must(validateHeraTaskScore(task.evaluator===null?{primaryScore:null,success:null}
+        :trace.run.status!=='completed'?{primaryScore:0,success:false,metrics:{executionFailure:1}}
+        :await host.evaluator.score(task,answer.answer,answer)));
       if(task.evaluator!==null&&score.primaryScore===null)refuse('THERA1001','/score','An evaluated task cannot discard its score.');
       const result=await assembleHeraTrajectory({id,groupId:await heraRevisionOf([task.id,snapshot.id,request.groupIndex,request.configRevision]),task,snapshot,topology,trace,
         workflow,identityId:identity.identityId,answer,score,maxChars:workflow.limits.contextChars,...(trial?{promptVersionIds:{...snapshot.activePromptVersionIds,[trial.candidate.agentId]:trial.candidate.id}}:{})});
