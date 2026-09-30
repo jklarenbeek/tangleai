@@ -278,6 +278,18 @@ export interface ManifestPolicy {
  */
 export type ManifestCandidateDigestsItem = string;
 
+export interface ManifestBaseline {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  registrationId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  feedbackDigest: string;
+}
+
+
 export interface Manifest {
   schemaVersion: 1;
   license: "MIT";
@@ -305,6 +317,7 @@ export interface Manifest {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   registrationId: string;
+  baseline?: ManifestBaseline;
 }
 
 
@@ -589,6 +602,136 @@ export interface RowRuntimeAnyOf1 {
 }
 
 
+export interface RevisionCensusGateRefusals {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  date: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  "named-entity": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  "exact-outcome": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  "number-with-unit": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  "copied-evidence": number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  identifier: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  semantic: number;
+}
+
+
+export interface RevisionCensusEditorRefusals {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBudget: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  foreignReads: number;
+}
+
+
+export interface RevisionCensusPatchOpsItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revisionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  operations: number;
+}
+
+
+export interface RevisionCensusHarnessBytesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  versionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  digest: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bytes: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.attempted",{"$add":[{"$add":["$.staged","$.deferred"]},"$.refused"]}]}
+ */
+export interface RevisionCensus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  staged: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  deferred: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refused: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceCommitted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceDeferred: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedGuidance: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceReads: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  editorCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  classifierCalls: number;
+  usageKnown: boolean;
+  gateRefusals: RevisionCensusGateRefusals;
+  editorRefusals: RevisionCensusEditorRefusals;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  patchOps: Array<RevisionCensusPatchOpsItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  harnessBytes: Array<RevisionCensusHarnessBytesItem>;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.counts.planned",{"$count":"$.cases[*]"}]},{"$eq":["$.counts.planned",{"$add":["$.counts.available","$.counts.pending"]}]},{"$eq":["$.counts.available",{"$add":[{"$add":["$.counts.scored","$.counts.failed"]},"$.counts.notRun"]}]},{"$eq":[{"$count":"$.cases[*].checkpointId"},{"$count":{"$distinct":"$.cases[*].checkpointId"}}]},{"$if":[{"$eq":["$.status","measured"]},{"$and":[{"$ne":["$.identity.configuration",null]},{"$ne":["$.identity.toolset",null]},{"$ne":["$.identity.promptRevision",null]},{"$ne":["$.identity.noteSchemaRevision",null]},{"$ne":["$.identity.scorer",null]},{"$ne":["$.identity.cutoffPolicy",null]}]},true]}]}
  */
@@ -613,6 +756,8 @@ export interface Row {
   byHorizon: Array<Horizon>;
   probes: Array<Probe>;
   runtime: RowRuntimeAnyOf1 | null;
+  revisions?: RevisionCensus;
+  lifecycle?: null;
 }
 
 
@@ -712,7 +857,7 @@ export interface Forecast {
    */
   rows: Array<Row>;
   /**
-   * Schema constraints this type cannot express: minItems=10, maxItems=10
+   * Schema constraints this type cannot express: minItems=16, maxItems=16
    */
   probes: Array<Probe>;
   /**

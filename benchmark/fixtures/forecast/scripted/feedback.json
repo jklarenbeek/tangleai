@@ -1,185 +1,77 @@
 {
-  "q01-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q01-c2": {
+  "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb:2": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "evidenceHandling",
         "text": "Compare independent observations before updating the judgment.",
         "sources": [
-          "note:q01-c2"
+          "current-note"
         ]
       }
     ],
     "deferredFeedback": []
   },
-  "q01-c3": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "uncertaintyHandling",
-        "text": "Revisit the strongest alternative before committing to an answer.",
-        "sources": [
-          "note:q01-c3"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q02-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q02-c2": {
+  "314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb:3": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "evidenceHandling",
         "text": "Compare independent observations before updating the judgment.",
         "sources": [
-          "note:q02-c2"
+          "current-note"
         ]
       }
     ],
     "deferredFeedback": []
   },
-  "q02-c3": {
+  "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0:2": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "uncertaintyHandling",
         "text": "Revisit the strongest alternative before committing to an answer.",
         "sources": [
-          "note:q02-c3"
+          "current-note"
         ]
       }
     ],
     "deferredFeedback": []
   },
-  "q03-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q03-c2": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "evidenceHandling",
-        "text": "Compare independent observations before updating the judgment.",
-        "sources": [
-          "note:q03-c2"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q03-c3": {
+  "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0:3": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "uncertaintyHandling",
         "text": "Revisit the strongest alternative before committing to an answer.",
         "sources": [
-          "note:q03-c3"
+          "current-note"
         ]
       }
     ],
     "deferredFeedback": []
   },
-  "q04-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q04-c2": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "evidenceHandling",
-        "text": "Compare independent observations before updating the judgment.",
-        "sources": [
-          "note:q04-c2"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q04-c3": {
+  "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d:2": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "uncertaintyHandling",
         "text": "Revisit the strongest alternative before committing to an answer.",
         "sources": [
-          "note:q04-c3"
+          "current-note"
         ]
       }
     ],
     "deferredFeedback": []
   },
-  "q05-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q05-c2": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "evidenceHandling",
-        "text": "Compare independent observations before updating the judgment.",
-        "sources": [
-          "note:q05-c2"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q05-c3": {
+  "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d:3": {
     "provisionalDiagnoses": [],
     "committedGuidance": [
       {
         "component": "uncertaintyHandling",
         "text": "Revisit the strongest alternative before committing to an answer.",
         "sources": [
-          "note:q05-c3"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q06-c1": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [],
-    "deferredFeedback": []
-  },
-  "q06-c2": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "evidenceHandling",
-        "text": "Compare independent observations before updating the judgment.",
-        "sources": [
-          "note:q06-c2"
-        ]
-      }
-    ],
-    "deferredFeedback": []
-  },
-  "q06-c3": {
-    "provisionalDiagnoses": [],
-    "committedGuidance": [
-      {
-        "component": "uncertaintyHandling",
-        "text": "Revisit the strongest alternative before committing to an answer.",
-        "sources": [
-          "note:q06-c3"
+          "current-note"
         ]
       }
     ],

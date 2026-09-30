@@ -59,5 +59,11 @@ export async function authorForecastFixture(){
     census:{questions:6,checkpoints:18,resolutions:5,pending:1,resolvedCheckpoints:15,snapshots:snapshots.length,postCutoff:3,undated:2},
     policy:{seed:17753,maxHarnessComponentBytes:4096,maxHarnessBytes:32768,maxPatchOperations:32,maxGuidanceItems:5,maxGuidanceBytes:512,maxPhysicalRequests:0},
     seedHarnessDigest,candidateDigests:candidates.map(c=>c.digest)};
-  return {...files,'manifest.json':{...manifest,registrationId:await canonicalSha256(manifest)}};
+  const baseline={registrationId:await canonicalSha256(manifest),feedbackDigest:await canonicalSha256(feedback)};
+  const feedbackBank=Object.fromEntries([seedHarnessDigest,...candidates.map(c=>c.digest)].flatMap(digest=>[2,3].map(ordinal=>[digest+':'+ordinal,{
+    provisionalDiagnoses:[],committedGuidance:[{component:digest===seedHarnessDigest?'evidenceHandling':'uncertaintyHandling',text:digest===seedHarnessDigest?guidance.evidence:guidance.uncertainty,sources:['current-note']}],deferredFeedback:[],
+  }])));
+  const amended={...manifest,baseline,files:manifest.files.map(file=>file.path==='scripted/feedback.json'?{...file,digest:''}:file)};
+  amended.files.find(file=>file.path==='scripted/feedback.json')!.digest=await canonicalSha256(feedbackBank);
+  return {...files,'scripted/feedback.json':feedbackBank,'manifest.json':{...amended,registrationId:await canonicalSha256(amended)}};
 }

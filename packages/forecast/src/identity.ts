@@ -58,11 +58,13 @@ export async function validateForecastRecord<K extends ForecastTable>(table: K, 
     if (c.status !== 'planned' && !c.startedAt) reject('TFCT1004', 'A started checkpoint requires its start instant.');
     if (c.status === 'running' && (c.endedAt || !c.progress && (c.noteFailure || c.failure || c.traceId || c.noteId || c.predictionId))) reject('TFCT1004', 'A running checkpoint cannot carry final artifacts.');
     if (c.progress) {
-      const p = c.progress, receipts = [p.execution,...(p.note ? [p.note] : [])];
+      const p = c.progress, receipts = [p.execution,...(p.note ? [p.note] : []),...(p.revision ? [p.revision] : [])];
       if (!c.traceId || !c.stopReason || (c.predictionId === null) === (c.failure === null) || c.predictionId && c.stopReason !== 'stop') reject('TFCT1004','Durable execution progress requires its trace and prediction or failure.');
       if (p.note === null && (c.noteId || c.noteFailure) || p.note && (!c.predictionId || (c.noteId === null) === (c.noteFailure === null))) reject('TFCT1004','Durable note progress and its retained result disagree.');
+      if (p.revision && !p.note) reject('TFCT1004','Durable revision progress requires the preceding note stage.');
       if (receipts.some(r => r.spend.usageKnown !== (r.spend.tokens !== null) || r.budgetSpent.turns < r.spend.calls || r.calls.length !== r.spend.calls)) reject('TFCT1001','Stage cost and budget receipts disagree.');
       if (p.note && (p.note.budgetSpent.turns !== p.execution.budgetSpent.turns + p.note.spend.calls || p.note.budgetSpent.tokens < p.execution.budgetSpent.tokens || p.note.budgetSpent.ms < p.execution.budgetSpent.ms)) reject('TFCT1001','Note progress did not continue the execution budget.');
+      if (p.revision && (p.revision.budgetSpent.turns !== p.note!.budgetSpent.turns + p.revision.spend.calls || p.revision.budgetSpent.tokens < p.note!.budgetSpent.tokens || p.revision.budgetSpent.ms < p.note!.budgetSpent.ms)) reject('TFCT1001','Revision progress did not continue the note budget.');
       const known = receipts.every(r => r.spend.usageKnown);
       if (c.spend.calls !== receipts.reduce((n,r) => n + r.spend.calls,0) || c.spend.ms !== receipts.reduce((n,r) => n + r.spend.ms,0) || c.spend.usageKnown !== known || c.spend.tokens !== (known ? receipts.reduce((n,r) => n + r.spend.tokens!,0) : null)) reject('TFCT1001','Checkpoint totals differ from its stage receipts.');
     }

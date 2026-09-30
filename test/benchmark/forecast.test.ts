@@ -17,7 +17,8 @@ const rehash=async(r:Forecast)=>{const {reportId:_,...body}=r;r.reportId=await c
 describe('registered forecasting measurement',()=>{
   it('freezes six questions, eighteen checkpoints, five resolutions and the authored harnesses',async()=>{
     const f=await loadForecastFixtures();assert.deepEqual(f.manifest.census,{questions:6,checkpoints:18,resolutions:5,pending:1,resolvedCheckpoints:15,snapshots:64,postCutoff:3,undated:2});
-    assert.equal(f.manifest.registrationId,'656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667');
+    assert.equal(f.manifest.registrationId,'f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3');
+    assert.equal(f.manifest.baseline!.registrationId,'656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667');
     assert.equal(f.manifest.seedHarnessDigest,'314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb');
     assert.deepEqual(f.manifest.candidateDigests,['1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0','c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d']);
     for(const [path,value] of Object.entries(await authorForecastFixture()))assert.deepEqual(JSON.parse(await readFile(join('benchmark/fixtures/forecast',path),'utf8')),value,path);
@@ -40,7 +41,9 @@ describe('registered forecasting measurement',()=>{
     const fetch=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Keyless forecasting reached fetch.');};
     try{const r=await buildForecastReport({source});assert.equal(r.rows[0].utility,1);assert.deepEqual(r.rows[0].counts,{planned:18,available:15,pending:3,scored:15,failed:0,notRun:0});
       assert.equal(r.rows[1].utility,.2);assert.equal(r.band.low,.1);assert.equal(r.band.high,2/3);assert.equal(r.rows[2].utility,.8);assert.deepEqual(r.rows[2].byHorizon.map(h=>h.utility),[.6,.8,1]);
-      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.ok(r.rows.slice(5).every(row=>row.status==='implementation-missing'&&row.utility===null&&row.counts.notRun===15));
+      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.equal(r.rows[5].status,'implementation-missing');assert.equal(r.rows[5].counts.notRun,15);
+      assert.equal(r.rows[6].status,'measured');assert.equal(r.rows[6].revisions!.attempted,12);assert.equal(r.rows[6].revisions!.staged,12);assert.equal(r.rows[6].cost.calls,84);assert.equal(r.rows[6].lifecycle,null);
+      assert.throws(()=>requireCapability(r,'evolving'),/evolving-harness lifecycle census/);
       requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/scaffold-no-harness, evolving-harness/);
     }finally{globalThis.fetch=fetch;}
   });
@@ -54,6 +57,7 @@ describe('registered forecasting measurement',()=>{
   });
   it('measures both static rows through retained runtime artifacts and rejects rehashed producer or cost substitutions',async()=>{
     const r=await buildForecastReport({source});requireCapability(r,'static');
+    assert.equal(await canonicalSha256(r.rows[4]),'be33fc21badf82f749a56ce49b81de83329844483d775820cf6955e1593e1247');
     for(const row of r.rows.slice(3,5)){
       assert.equal(row.status,'measured');assert.equal(row.counts.scored,15);assert.equal(row.counts.pending,3);
       assert.equal(row.cost.calls,72);assert.equal(row.cost.tokens,2340);assert.equal(row.cost.usageKnown,true);
@@ -61,7 +65,7 @@ describe('registered forecasting measurement',()=>{
       assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.postCutoff,0),3);assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.undated,0),2);
       assert.ok(row.runtime!.retained.every((a:any)=>a.trace.id===a.checkpoint.traceId&&a.note.id===a.checkpoint.noteId&&a.prediction.id===a.checkpoint.predictionId));
     }
-    for(const change of [(x:Forecast)=>{x.rows[3].cost.calls--;},(x:Forecast)=>{x.rows[3].identity.notePromptRevision='a'.repeat(64);},(x:Forecast)=>{(x.rows[3].runtime!.retained[0].trace as any).messages=[];},(x:Forecast)=>{x.rows[4].cases[0].prediction='approve';},(x:Forecast)=>{x.probes.find(p=>p.id==='resume-identity')!.detail='Unmeasured recovery claim.';}]){
+    for(const change of [(x:Forecast)=>{x.rows[3].cost.calls--;},(x:Forecast)=>{x.rows[3].identity.notePromptRevision='a'.repeat(64);},(x:Forecast)=>{(x.rows[3].runtime!.retained[0].trace as any).messages=[];},(x:Forecast)=>{x.rows[4].cases[0].prediction='approve';},(x:Forecast)=>{x.rows[6].revisions!.editorCalls--;},(x:Forecast)=>{(x.rows[6].runtime!.retained[1].revision as any).committedGuidance=[];},(x:Forecast)=>{x.probes.find(p=>p.id==='resume-identity')!.detail='Unmeasured recovery claim.';}]){
       const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)),/runtime/);
     }
   });

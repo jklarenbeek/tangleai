@@ -10,8 +10,9 @@ import { FORECAST_TABLES, forecastMust, forecastQuery, forecastRunId, forecastRe
 import { fixtureForecastHost, type ForecastScriptCounter } from './forecast-host-fixture.ts';
 
 export const FORECAST_RESUME_STAGES = ['checkpoint-run','note-create','checkpoint-complete','mas:checkpoint-plan','mas:checkpoint-run','mas:note-create','mas:revision-run','mas:revision-skip','mas:revision-gate','mas:checkpoint-complete'] as const;
-export type ForecastResumeStage = typeof FORECAST_RESUME_STAGES[number];
-export async function driveForecastResume(databasePath: string, stop?: ForecastResumeStage) {
+export const FORECAST_REVISION_RESUME_STAGES = ['put:forecast_revisions','put:forecast_harnesses'] as const;
+export type ForecastResumeStage = typeof FORECAST_RESUME_STAGES[number] | typeof FORECAST_REVISION_RESUME_STAGES[number];
+export async function driveForecastResume(databasePath: string, stop?: ForecastResumeStage, options: { evolving?: boolean } = {}) {
   let instant = '2025-01-25T00:00:00.000Z', leaseClock = 1_000_000, crashes = 0, reopens = 0, duplicates = 0;
   const stopped = new Set<number>(), counters: ForecastScriptCounter[] = [], open = () => openTangleDb({ path: databasePath,jobs: { now: () => leaseClock,random: () => .5 } });
   let db = await open(), ordinal = 1;
@@ -23,7 +24,7 @@ export async function driveForecastResume(databasePath: string, stop?: ForecastR
       if (result.ok) crash('mas:' + result.value.attempt.invocationId);
       return result;
     } };
-    return fixtureForecastHost({ db,masStore,instant: () => instant,counters,afterStage: stage => crash(stage) });
+    return fixtureForecastHost({ db,masStore,instant: () => instant,counters,afterStage: stage => crash(stage),evolving: options.evolving });
   };
   try {
     let f = await make();
@@ -57,11 +58,23 @@ export async function driveForecastResume(databasePath: string, stop?: ForecastR
     }
     const records = Object.fromEntries(await Promise.all(FORECAST_TABLES.map(async table => [table,forecastMust(await forecastQuery(f.store,table))])));
     const logicalCalls = counters.reduce((n,c) => n + c.calls(),0), physicalRequests = counters.reduce((n,c) => n + c.physicalCalls(),0);
-    assert.equal(logicalCalls,12); assert.equal(physicalRequests,0); assert.ok(revisions.includes('1:revision-skip')); assert.ok(!revisions.includes('1:revision-run'));
+    assert.equal(logicalCalls,options.evolving ? 14 : 12); assert.equal(physicalRequests,0); assert.ok(revisions.includes('1:revision-skip')); assert.ok(!revisions.includes('1:revision-run'));
     const report = { records,outputs,logicalCalls,physicalRequests }, bytes = canonicalizeJson(report), digest = await forecastRevision(report);
     assert.equal((await db.integrityCheck()).ok,true);
     return { bytes,digest,logicalCalls,physicalRequests,crashes,reopens,duplicates,ordinalRefusals: 1,firstRevisionSkipped: true,revisions,executableRevision: f.host.plan.executableRevision };
   } finally { await db.close(); }
+}
+export async function measureForecastRevisionResume() {
+  const root = await mkdtemp(join(tmpdir(),'forecast-revision-resume-'));
+  try {
+    const baseline = await driveForecastResume(join(root,'baseline.db'),undefined,{ evolving: true }), stages = [];
+    for (const stage of FORECAST_REVISION_RESUME_STAGES) {
+      const result = await driveForecastResume(join(root,stage.replace(':','-') + '.db'),stage,{ evolving: true });
+      assert.equal(result.bytes,baseline.bytes,stage); assert.equal(result.crashes,2,stage); assert.equal(result.logicalCalls,baseline.logicalCalls);
+      stages.push({ stage,stops: result.crashes,resumed: result.crashes,extraCalls: result.logicalCalls - baseline.logicalCalls,artifactDigest: result.digest });
+    }
+    return { checkpoints: 3,logicalCalls: baseline.logicalCalls,physicalRequests: baseline.physicalRequests,duplicateDeliveries: baseline.duplicates,artifactDigest: baseline.digest,executableRevision: baseline.executableRevision,stages };
+  } finally { await rm(root,{ recursive: true,force: true,maxRetries: 8,retryDelay: 50 }); }
 }
 export async function measureForecastResume(directory?: string) {
   const owned = directory === undefined, root = directory ?? await mkdtemp(join(tmpdir(),'forecast-resume-'));

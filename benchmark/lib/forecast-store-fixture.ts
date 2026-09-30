@@ -30,7 +30,7 @@ export async function makeForecastFixture(suffix = ''): Promise<ForecastTables> 
   const traces = await sealForecastRecord('traces', { checkpointId: checkpoints.id, ...trace, bytes: forecastBytes(trace), truncated: { steps: 0, chars: 0 } });
   const notes = await sealForecastRecord('notes', { checkpointId: checkpoints.id, ...identity, promptRevision: (await forecastPromptRevisions()).note, toolsetRevision: await forecastRevision([]), sections: f.notes['q01-c1'] as ForecastTables['notes']['sections'], evidenceIds: [evidence.id], traceId: traces.id });
   const revisions = await sealForecastRecord('revisions', { questionId: questions.id, checkpointId: checkpoints.id, comparedNoteIds: [notes.id], provisionalDiagnoses: [],
-    committedGuidance: [{ text: 'Keep independent evidence and uncertainty separate.', sources: ['note:' + notes.id] }], deferredFeedback: [], patch: [], candidateVersionId: null,
+    committedGuidance: [{ component: 'evidenceHandling', text: 'Keep independent evidence and uncertainty separate.', sources: ['note:' + notes.id] }], deferredFeedback: [], patch: [], candidateVersionId: null,
     gate: { volatileFact: { refused: 0, items: [] }, semantic: { stage: 'skipped', revision, result: null } }, validation: { ok: true, issues: [] }, traceReads: 0, ...identity });
   const resolutions = await sealForecastRecord('resolutions', { questionId: questions.id, observedAt: f.resolutions[0].observedAt, receivedAt: f.resolutions[0].observedAt,
     outcome: f.resolutions[0].outcome, evidence: [{ address: evidence.address, sha256: evidence.sha256, excerpt: evidence.excerpt }], scorerId: 'forecast-utility', scorerVersion: '1', losses: [], skipped: [] });

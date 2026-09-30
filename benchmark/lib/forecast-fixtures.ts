@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {canonicalSha256} from '@jarenjs/json/canonical';
 import {applyJSONPatch} from '@jarenjs/json/patch';
 import {equalsJson} from '@jarenjs/core/object';
+import {checkShape,type Feedback} from '@tangleai/forecast';
 import {createReportValidator} from './validate.ts';
 import {cutoffAdmits,forecastInstant} from './forecast-oracle.ts';
 import schema from '../schemas/forecast.schema.json' with {type:'json'};
@@ -66,8 +67,23 @@ export async function loadForecastFixtures(root=process.cwd()){
   if(!equalsJson(census,manifest.census)||postCutoff!==3||undated!==2||pending!==1)throw Error('Forecast census drift.');
   const predictions=files.get('scripted/predictions.json') as Record<string,Record<string,string|number>>,notes=files.get('scripted/notes.json') as Record<string,unknown>,feedback=files.get('scripted/feedback.json') as Record<string,unknown>;
   const treatments=['no-harness','scaffold-no-harness',manifest.seedHarnessDigest,...manifest.candidateDigests].sort();
-  for(const record of [predictions,notes,feedback])if(!record||!equalsJson(Object.keys(record).sort(),checkpoints.map(c=>c.id).sort()))throw Error('Scripted checkpoint coverage drift.');
+  for(const record of [predictions,notes])if(!record||!equalsJson(Object.keys(record).sort(),checkpoints.map(c=>c.id).sort()))throw Error('Scripted checkpoint coverage drift.');
+  const keys=[manifest.seedHarnessDigest,...manifest.candidateDigests].flatMap(digest=>[2,3].map(ordinal=>digest+':'+ordinal)).sort();
+  if(!feedback||!equalsJson(Object.keys(feedback).sort(),keys))throw Error('Scripted feedback harness and ordinal coverage drift.');
+  for(const raw of Object.values(feedback)){
+    const data=raw as Feedback;
+    if(!data||!equalsJson(Object.keys(data).sort(),['committedGuidance','deferredFeedback','provisionalDiagnoses']))throw Error('Feedback script fields drift.');
+    const bound=Object.fromEntries(Object.entries(data).map(([key,items])=>[key,(items as Feedback['provisionalDiagnoses']).map(item=>{
+      if(!equalsJson(item.sources,['current-note']))throw Error('Feedback scripts may bind only the current retained note.');
+      return {...item,sources:['note:'+'0'.repeat(64)]};
+    })]));
+    checkShape('feedback',bound);
+  }
   for(const checkpoint of checkpoints)if(!equalsJson(Object.keys(predictions[checkpoint.id]).sort(),treatments)||Object.values(predictions[checkpoint.id]).some(v=>typeof v!=='string'&&(typeof v!=='number'||!Number.isFinite(v))))throw Error('Scripted prediction coverage or value drift.');
+  if(!manifest.baseline)throw Error('The feedback amendment requires its registered static baseline anchor.');
+  const {baseline,...ancestor}=payload;
+  ancestor.files=ancestor.files.map(file=>file.path==='scripted/feedback.json'?{...file,digest:manifest.baseline!.feedbackDigest}:file);
+  if(await canonicalSha256(ancestor)!==manifest.baseline.registrationId)throw Error('The feedback amendment changes registered baseline inputs.');
   return {manifest,questions,snapshots,resolutions,seed,candidates,predictions,notes,feedback,leaks:files.get('scripted/leaks.json'),duplicates:files.get('scripted/duplicates.json')};
 }
 export type ForecastFixtures=Awaited<ReturnType<typeof loadForecastFixtures>>;

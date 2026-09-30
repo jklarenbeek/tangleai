@@ -14,6 +14,7 @@ import identitySchema from '../../packages/config/schemas/run-identity.schema.js
 import {admitEvidence,forecastMust,scoreForecastAnswer} from '@tangleai/forecast';
 import {measureForecastTreatment,type ForecastNegative} from './forecast-scripted.ts';
 import {measureForecastResume} from './forecast-resume.ts';
+import {measureEvolvingForecast,forecastEditingProbes} from './forecast-evolving.ts';
 import type {Row,Case,Probe,Source,Audit,Forecast} from './forecast.types.ts';
 
 export const REPORT_PATH='benchmark/results/forecast.json',DOCUMENT_PATH='docs/FORECAST_BENCHMARK.md';
@@ -59,6 +60,11 @@ async function runtimeRow(fixture:ForecastFixtures,id:'no-harness'|'static-harne
   const names=['web_search','web_read',...(id==='static-harness'?['harness_read']:[]),'evidence_read'];
   return {id,treatment:id,status:'measured',identity:measured.identity,cost:measured.cost,cases:measured.cases,...finalizeRow(measured.cases,fixture),runtime:{retained:measured.retained,stopReasons:measured.stops,logicalCalls:measured.logicalCalls,physicalCalls:measured.physicalCalls as 0},probes:[probe('toolbox-names',measured.retained.every(r=>equalsJson(r.tools.names,names)&&r.tools.revision===measured.identity.toolset.revision&&r.executorCalls.length===3&&r.noteCalls.length===1),'Every checkpoint uses the registered closed toolbox and one bounded note call.')]};
 }
+async function evolvingRow(fixture:ForecastFixtures):Promise<Row>{
+  const measured=await measureEvolvingForecast(fixture);
+  if(measured.physicalCalls!==0)throw Error('Keyless evolving forecast reached transport.');
+  return {id:'evolving-harness',treatment:'evolving-harness',status:'measured',identity:measured.identity,cost:measured.cost,cases:measured.cases,...finalizeRow(measured.cases,fixture),runtime:{retained:measured.retained,stopReasons:measured.stops,logicalCalls:measured.logicalCalls,physicalCalls:0},revisions:measured.revisions,lifecycle:measured.lifecycle,probes:await forecastEditingProbes(fixture,measured)};
+}
 async function executionProbes(fixture:ForecastFixtures):Promise<Probe[]>{
   let admissions=0,scores=0;
   for(const q of fixture.questions)for(const c of q.checkpoints){
@@ -85,6 +91,7 @@ export async function buildForecastReport(options:{root?:string;source?:Source}=
   const revision=await canonicalSha256({scorer:'forecast-utility/v1',cutoff:'available-at-lte-cutoff/v1',policy:fixture.manifest.policy});
   const rows:Row[]=await Promise.all(FORECAST_ROWS.map(async id=>{
     if(id==='no-harness'||id==='static-harness')return runtimeRow(fixture,id);
+    if(id==='evolving-harness')return evolvingRow(fixture);
     const cases=forecastCases(fixture,id,evidenceAudit),measured=['oracle','seeded-reference','evidence-ceiling'].includes(id);
     return {id,status:measured?'measured':'implementation-missing',treatment:id,identity:{configuration:measured?{kind:'analytic',revision}:null,toolset:measured?{names:[],revision}:null,promptRevision:measured?revision:null,noteSchemaRevision:measured?revision:null,notePromptRevision:null,noteToolsetRevision:null,scorer:'forecast-utility/v1',cutoffPolicy:'available-at-lte-cutoff/v1'},cost:{calls:0,tokens:0,ms:0,usageKnown:true},cases,...finalizeRow(cases,fixture),runtime:null,probes:[]};
   }));
@@ -93,9 +100,9 @@ export async function buildForecastReport(options:{root?:string;source?:Source}=
     refusals:{postCutoff:evidenceAudit.reduce((n,a)=>n+a.postCutoff,0),undated:evidenceAudit.reduce((n,a)=>n+a.undated,0),ids:evidenceAudit.flatMap(a=>a.refused.map(r=>r.id))},band,
     probes:[probe('oracle-ceiling',rows[0].utility===1&&rows[0].counts.scored===15,'The outcome oracle scores every resolved checkpoint and leaves three pending.'),
       probe('reference-band',rows[1].utility!>=band.low&&rows[1].utility!<=band.high,'The seeded reference lies inside the enumerated central 99% band.'),
-      probe('cutoff-refusals',evidenceAudit.reduce((n,a)=>n+a.postCutoff,0)===3&&evidenceAudit.reduce((n,a)=>n+a.undated,0)===2,'The shared attachment audit counts three future and two undated items once.'),...await executionProbes(fixture),...await orchestrationProbes()],
+      probe('cutoff-refusals',evidenceAudit.reduce((n,a)=>n+a.postCutoff,0)===3&&evidenceAudit.reduce((n,a)=>n+a.undated,0)===2,'The shared attachment audit counts three future and two undated items once.'),...await executionProbes(fixture),...await orchestrationProbes(),...rows[6].probes],
     capabilities:{oracle:true,static:true,scaffold:false,evolving:false,complete:false},identity:analyticEnvelope(FORECAST_ROWS),
-    limitations:['The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.','Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.','The shared audit counts unique registered attachments once. Each measured treatment separately captures three future and two undated refusals; negative scripts are separate probes.','Static rows run the real bounded agent, read-only tools, note builder and atomic memory store against authored responses. Calls and usage are scripted accounting, not purchased tokens; the injected clock gives zero elapsed time.','No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.','No live plan is registered yet.']};
+    limitations:['The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.','Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.','The shared audit counts unique registered attachments once. Each measured treatment separately captures three future and two undated refusals; negative scripts are separate probes.','Static rows run the real bounded agent, read-only tools, note builder and atomic memory store against authored responses. Calls and usage are scripted accounting, not purchased tokens; the injected clock gives zero elapsed time.','The evolving row measures pre-resolution editing through the durable MAS host. Lifecycle evaluation and outcome-gated promotion remain absent; the evolving capability is false. The optional semantic classifier is not injected in this keyless row.','A proven parent-registration anchor preserves static inputs and row bytes while feedback is re-keyed by harness digest and ordinal.','No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.','No live plan is registered yet.']};
   const report={...content,reportId:await canonicalSha256(content)};await validateForecastReport(report,fixture);return report;
 }
 export async function validateForecastReport(value:unknown,fixture?:ForecastFixtures){
@@ -106,24 +113,31 @@ export async function validateForecastReport(value:unknown,fixture?:ForecastFixt
   if(report.registrationId!==fixture.manifest.registrationId||!equalsJson(report.fixture,fixture.manifest.census)||!equalsJson(report.rows.map(r=>r.id),FORECAST_ROWS))throw Error('Forecast registration or row coverage drift.');
   const audit=forecastAudit(fixture);if(!equalsJson(report.evidenceAudit,audit)||!equalsJson(report.refusals.ids,audit.flatMap(a=>a.refused.map(r=>r.id))))throw Error('Forecast evidence audit drift.');
   for(const row of report.rows){
+    if(row.id==='evolving-harness'){
+      if(!equalsJson(row,await evolvingRow(fixture)))throw Error('Forecast evolving runtime revision, receipt, visibility or score drift.');
+      continue;
+    }
     if(row.id==='no-harness'||row.id==='static-harness'){
       if(!equalsJson(row,await runtimeRow(fixture,row.id)))throw Error('Forecast runtime evidence, identity, cost or score drift.');
       continue;
     }
     if(!equalsJson(row.cases,forecastCases(fixture,row.id,audit)))throw Error('Forecast analytic case or unimplemented state was fabricated.');
+    if(Object.hasOwn(row,'revisions')||Object.hasOwn(row,'lifecycle'))throw Error('Analytic registration cannot claim runtime revisions.');
     const measured=finalizeRow(row.cases,fixture);if(!equalsJson({counts:row.counts,utility:row.utility,byHorizon:row.byHorizon},measured))throw Error('Forecast counts or score drift.');
     if(['oracle','seeded-reference','evidence-ceiling'].includes(row.id)?row.status!=='measured':row.status!=='implementation-missing')throw Error('Unsupported forecast mechanism claim.');
     if(row.cost.calls||row.cost.tokens||row.cost.ms||!row.cost.usageKnown||row.runtime!==null)throw Error('Analytic registration cannot claim provider spend or retained execution.');
   }
   const band=analyticBand(fixture.questions.flatMap(q=>{const r=fixture!.resolutions.find(r=>r.questionId===q.id);return r?q.checkpoints.map(()=>({adapter:q.adapter,outcome:r.outcome})):[];}));
   if(!equalsJson(report.identity,analyticEnvelope(FORECAST_ROWS)))throw Error('Analytic registration cannot claim a model execution identity.');
-  if(!equalsJson(report.probes.slice(3),[...await executionProbes(fixture),...await orchestrationProbes()]))throw Error('Forecast runtime probe drift.');
+  if(!equalsJson(report.probes.slice(3),[...await executionProbes(fixture),...await orchestrationProbes(),...report.rows[6].probes]))throw Error('Forecast runtime probe drift.');
   if(!equalsJson(report.band,band)||!equalsJson(report.capabilities,{oracle:true,static:true,scaffold:false,evolving:false,complete:false}))throw Error('Forecast band or capability drift.');
 }
 export function requireCapability(report:Forecast,capability:string){
   const gates:Record<string,string[]>={oracle:['oracle','seeded-reference','evidence-ceiling'],static:['no-harness','static-harness'],scaffold:['scaffold-no-harness'],evolving:['evolving-harness'],complete:[...FORECAST_ROWS]};
   if(!Object.hasOwn(gates,capability))throw Error('Unknown forecast capability: '+capability);
-  const missing=gates[capability].filter(id=>report.rows.find(r=>r.id===id)?.status!=='measured');if(missing.length)throw Error('Forecast implementation missing: '+missing.join(', '));
+  const missing=gates[capability].filter(id=>report.rows.find(r=>r.id===id)?.status!=='measured');
+  if(gates[capability].includes('evolving-harness')&&report.rows.find(r=>r.id==='evolving-harness')?.lifecycle==null)missing.push('evolving-harness lifecycle census');
+  if(missing.length)throw Error('Forecast implementation missing: '+missing.join(', '));
 }
 export const renderReport=(report:Forecast)=>JSON.stringify(report,null,2)+'\n';
 export function renderDocument(report:Forecast){
@@ -136,5 +150,6 @@ export function renderDocument(report:Forecast){
     table({head:['Refused snapshot','Reason'],rows:report.evidenceAudit.flatMap(a=>a.refused.map(r=>[r.id,r.reason]))}), '',
     table({head:['Probe','Holds','Evidence'],rows:report.probes.map(p=>[p.id,String(p.holds),p.detail])}), '',...report.limitations.map(s=>'- '+s), '',
     table({head:['Runtime row','Stops','Note failures','Physical calls','Note prompt / empty toolset'],rows:report.rows.filter(r=>r.runtime).map(r=>[r.id,JSON.stringify(r.runtime!.stopReasons),r.runtime!.retained.filter((a:any)=>a.checkpoint.noteFailure!==null).length,r.runtime!.physicalCalls,r.identity.notePromptRevision+' / '+r.identity.noteToolsetRevision])}), '',
+    ...report.rows.filter(r=>r.revisions).flatMap(r=>{const c=r.revisions!;return [table({head:['Revision row','Attempted / staged / deferred / refused','Guidance committed / deferred / refused','Trace reads / exhausted','Editor / classifier calls','Usage known','Lifecycle'],rows:[[r.id,[c.attempted,c.staged,c.deferred,c.refused].join(' / '),[c.guidanceCommitted,c.guidanceDeferred,c.refusedGuidance].join(' / '),c.traceReads+' / '+c.editorRefusals.traceBudget,c.editorCalls+' / '+c.classifierCalls,String(c.usageKnown),'unmeasured']]}),'',table({head:['Gate kind','Refused guidance'],rows:Object.entries(c.gateRefusals).map(([kind,count])=>[kind,count])}),'',table({head:['Revision','Patch operations'],rows:c.patchOps.map(p=>[p.revisionId,p.operations])}),'',table({head:['Harness version','Digest','Canonical bytes'],rows:c.harnessBytes.map(h=>[h.versionId,h.digest,h.bytes])}),''];}),
     `Registration: \`${report.registrationId}\`. Source: \`${report.source.sha256}\`. Report: \`${report.reportId}\`.`, ''].join('\n');
 }

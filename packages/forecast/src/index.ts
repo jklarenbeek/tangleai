@@ -19,3 +19,8 @@ export * from './workflow.ts';
 export * from './selection.ts';
 export * from './handlers.ts';
 export * from './host.ts';
+export * from './gate.ts';
+export * from './refiner.ts';
+export * from './editor-toolbox.ts';
+export * from './feedback.ts';
+export * from './revision.ts';

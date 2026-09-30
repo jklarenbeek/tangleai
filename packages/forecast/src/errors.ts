@@ -11,6 +11,7 @@ export function refuse(code: ForecastIssue['code'], detail: string, path = '', r
 export class ForecastRefusal extends Error {
   readonly issues: ForecastIssue[];
   get code() { return this.issues[0].code; }
+  get docPath() { return this.issues[0].path; }
   constructor(issues: ForecastIssue[], options?: ErrorOptions) {
     super(issues[0]?.detail ?? 'Forecast operation refused.', options);
     this.issues = issues;

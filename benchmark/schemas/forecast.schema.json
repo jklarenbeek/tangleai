@@ -34,8 +34,8 @@
       "items": {
         "$ref": "#/$defs/probe"
       },
-      "minItems": 10,
-      "maxItems": 10
+      "minItems": 16,
+      "maxItems": 16
     },
     "evidenceAudit": {
       "type": "array",
@@ -662,6 +662,24 @@
         "registrationId": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "baseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "registrationId",
+            "feedbackDigest"
+          ],
+          "properties": {
+            "registrationId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "feedbackDigest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
       },
       "required": [
@@ -1307,6 +1325,12 @@
               "type": "null"
             }
           ]
+        },
+        "revisions": {
+          "$ref": "#/$defs/revisionCensus"
+        },
+        "lifecycle": {
+          "type": "null"
         }
       },
       "required": [
@@ -1519,6 +1543,198 @@
         "distribution"
       ],
       "additionalProperties": false
+    },
+    "revisionCensus": {
+      "type": "object",
+      "properties": {
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "staged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deferred": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guidanceCommitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guidanceDeferred": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedGuidance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceReads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "editorCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classifierCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usageKnown": {
+          "type": "boolean"
+        },
+        "gateRefusals": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "named-entity": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "exact-outcome": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "number-with-unit": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "copied-evidence": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "identifier": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "semantic": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "date",
+            "named-entity",
+            "exact-outcome",
+            "number-with-unit",
+            "copied-evidence",
+            "identifier",
+            "semantic"
+          ],
+          "additionalProperties": false
+        },
+        "editorRefusals": {
+          "type": "object",
+          "properties": {
+            "traceBudget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "foreignReads": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "traceBudget",
+            "foreignReads"
+          ],
+          "additionalProperties": false
+        },
+        "patchOps": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "object",
+            "properties": {
+              "revisionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "operations": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "revisionId",
+              "operations"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "harnessBytes": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "object",
+            "properties": {
+              "versionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "versionId",
+              "digest",
+              "bytes"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "attempted",
+        "staged",
+        "deferred",
+        "refused",
+        "guidanceCommitted",
+        "guidanceDeferred",
+        "refusedGuidance",
+        "traceReads",
+        "editorCalls",
+        "classifierCalls",
+        "usageKnown",
+        "gateRefusals",
+        "editorRefusals",
+        "patchOps",
+        "harnessBytes"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          "$.attempted",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.staged",
+                  "$.deferred"
+                ]
+              },
+              "$.refused"
+            ]
+          }
+        ]
+      }
     }
   }
 }

@@ -12,6 +12,8 @@ import { forecastCheckpointRecordExecution, forecastCheckpointRecordNote } from 
 import { createForecastExecutor } from './executor.ts';
 import { createForecastToolbox, type ForecastToolboxOptions } from './toolbox.ts';
 import { createNoteBuilder } from './note.ts';
+import { createInternalFeedbackEditor, type InternalFeedbackOptions } from './feedback.ts';
+import { forecastRevisionCommit } from './revision.ts';
 import type { ForecastChatClient } from './meter.ts';
 import type { ForecastQuestion, ForecastCheckpoint, ForecastHarnessVersion, ForecastWorkflowRequest } from './contracts.gen.ts';
 
@@ -20,8 +22,9 @@ export interface ForecastHandlerOptions {
   forecastStore: ForecastStore; masStore: MasStore; executableRevision: string;
   executor: (context: ForecastHandlerContext) => Pick<ForecastToolboxOptions,'cutoffPolicy'|'search'|'fetcher'|'extract'> & { client: ForecastChatClient };
   noteBuilder: (context: ForecastHandlerContext) => { client: ForecastChatClient };
+  feedbackEditor?: (context: ForecastHandlerContext) => Pick<InternalFeedbackOptions,'client'|'classifier'|'limits'|'gate'>;
   now: () => string; clock: () => number;
-  afterStage?: (stage: 'checkpoint-run' | 'note-create' | 'checkpoint-complete', checkpoint: ForecastCheckpoint) => void | Promise<void>;
+  afterStage?: (stage: 'checkpoint-run' | 'note-create' | 'checkpoint-complete' | 'put:forecast_revisions' | 'put:forecast_harnesses', checkpoint: ForecastCheckpoint) => void | Promise<void>;
 }
 export const forecastRunId = (questionId: string,scheduledAt: string) => forecastRevision({ questionId,scheduledAt });
 export function createForecastHandlers(options: ForecastHandlerOptions): Record<string,MasTaskHandlerBinding> {
@@ -78,7 +81,24 @@ export function createForecastHandlers(options: ForecastHandlerOptions): Record<
       const saved = forecastMust(await forecastCheckpointRecordNote(store,checkpoint.id,result));
       await afterStage('note-create',saved); return { request };
     },
-    'revision-run': async input => { const value = await context(input); return { revision: { checkpointId: value.checkpoint.id,status: 'skipped',reason: value.checkpoint.failure ? 'execution-failed' : 'not-implemented',revisionId: null } }; },
+    'revision-run': async input => {
+      const value = await context(input), { checkpoint } = value;
+      if (checkpoint.failure || !options.feedbackEditor) return { revision: { checkpointId: checkpoint.id,status: 'skipped',reason: checkpoint.failure ? 'execution-failed' : 'not-implemented',revisionId: null } };
+      const previous = forecastMust(await forecastQuery(store,'revisions',{ checkpointId: checkpoint.id,limit: 2 }));
+      if (previous.length || checkpoint.progress?.revision) {
+        if (previous.length !== 1 || !equalsJson(previous[0].receipt,checkpoint.progress?.revision)) reject('TFCT1010','The revision artifact and durable purchase receipt disagree.');
+        const revision = previous[0];
+        if (revision.candidateVersionId && !forecastMust(await forecastGet(store,'harnesses',revision.candidateVersionId))) reject('TFCT1002','The retained revision candidate is missing.');
+        return { revision: { checkpointId: checkpoint.id,status: !revision.validation.ok ? 'refused' : revision.candidateVersionId ? 'staged' : 'deferred',reason: revision.validation.issues[0]?.code ?? null,revisionId: revision.id } };
+      }
+      if (!checkpoint.noteId || !checkpoint.progress?.note) return { revision: { checkpointId: checkpoint.id,status: 'skipped',reason: 'note-failed',revisionId: null } };
+      await beforePurchase(input,value);
+      const result = await createInternalFeedbackEditor({ ...options.feedbackEditor(value),store,now: options.now,clock: options.clock }).run({ question: value.question,checkpoint },{ ...value.request.budget,spent: checkpoint.progress.note.budgetSpent },input.signal);
+      const saved = forecastMust(await forecastRevisionCommit(store,result));
+      await afterStage('put:forecast_revisions',saved.checkpoint);
+      if (saved.candidate) await afterStage('put:forecast_harnesses',saved.checkpoint);
+      return { revision: { checkpointId: checkpoint.id,status: saved.status,reason: saved.revision.validation.issues[0]?.code ?? null,revisionId: saved.revision.id } };
+    },
     'revision-skip': async input => { const value = await context(input); return { revision: { checkpointId: value.checkpoint.id,status: 'skipped',reason: value.request.ordinal === 1 ? 'first-checkpoint' : 'disabled',revisionId: null } }; },
     'checkpoint-complete': async input => {
       const value = await context(input), { checkpoint } = value;

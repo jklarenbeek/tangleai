@@ -1341,7 +1341,7 @@
         "committedGuidance": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/guidance"
+            "$ref": "#/$defs/committedGuidance"
           },
           "minItems": 0,
           "maxItems": 32
@@ -1349,7 +1349,7 @@
         "deferredFeedback": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/guidance"
+            "$ref": "#/$defs/deferredGuidance"
           },
           "minItems": 0,
           "maxItems": 32
@@ -1470,6 +1470,27 @@
         "noteSchemaRevision": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "receipt": {
+          "$ref": "#/$defs/forecastStageReceipt"
+        },
+        "editorRefusals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "traceBudget",
+            "foreignReads"
+          ],
+          "properties": {
+            "traceBudget": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "foreignReads": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
       },
       "required": [
@@ -2055,6 +2076,9 @@
               "type": "null"
             }
           ]
+        },
+        "revision": {
+          "$ref": "#/$defs/forecastStageReceipt"
         }
       },
       "required": [
@@ -2110,6 +2134,178 @@
         "treatment",
         "revise",
         "budget"
+      ]
+    },
+    "committedGuidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(note|revision|trace):[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "component": {
+          "enum": [
+            "factorTracking",
+            "evidenceHandling",
+            "uncertaintyHandling"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "sources",
+        "component"
+      ]
+    },
+    "deferredGuidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(note|revision|trace):[a-f0-9]{64}$"
+          },
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "component": {
+          "enum": [
+            "factorTracking",
+            "evidenceHandling",
+            "uncertaintyHandling"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "text",
+        "sources",
+        "reason"
+      ]
+    },
+    "feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provisionalDiagnoses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/guidance"
+          },
+          "maxItems": 32
+        },
+        "committedGuidance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/committedGuidance"
+          },
+          "maxItems": 32
+        },
+        "deferredFeedback": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/deferredGuidance"
+          },
+          "maxItems": 32
+        }
+      },
+      "required": [
+        "provisionalDiagnoses",
+        "committedGuidance",
+        "deferredFeedback"
+      ]
+    },
+    "harnessPatch": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "enum": [
+              "add",
+              "replace"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/skills/[0-2]/(instructions|when)$"
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "op",
+          "path",
+          "value"
+        ]
+      }
+    },
+    "volatileFactVerdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "verdicts": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 31
+              },
+              "verdict": {
+                "enum": [
+                  "reusable",
+                  "question-specific"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "index",
+              "verdict",
+              "reason"
+            ]
+          }
+        }
+      },
+      "required": [
+        "verdicts"
       ]
     }
   }

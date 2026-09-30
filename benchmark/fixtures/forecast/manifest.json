@@ -27,7 +27,7 @@
     },
     {
       "path": "scripted/feedback.json",
-      "digest": "05d2a2676084a4e0b65e18cfb7300e0e8eee6c2b7601c9b7b1030e7f051d0a74"
+      "digest": "60f394866723eb82cb63fe01fd4040244179fa9f1b5365e69bbc6ca5b0f9115f"
     },
     {
       "path": "scripted/leaks.json",
@@ -70,5 +70,9 @@
     "1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0",
     "c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d"
   ],
-  "registrationId": "656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667"
+  "baseline": {
+    "registrationId": "656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667",
+    "feedbackDigest": "05d2a2676084a4e0b65e18cfb7300e0e8eee6c2b7601c9b7b1030e7f051d0a74"
+  },
+  "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3"
 }

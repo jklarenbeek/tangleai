@@ -1,7 +1,7 @@
 /** Keyless model seams consume only registered visible inputs and authored responses. */
 import { createChatClient } from '@tangleai/models';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
-import { createMemoryForecastStore, forecastMust, forecastQuestionCreate, forecastHarnessStage, forecastCheckpointPlan, forecastCheckpointStart, forecastCheckpointFinalize, forecastCheckpointFail, sealForecastRecord, forecastPromptRevisions, forecastExecutorToolset, createForecastToolbox, createForecastExecutor, createNoteBuilder, combineForecastSpend, forecastQuery, FORECAST_TABLES, type ForecastCheckpoint, type ForecastChatClient } from '@tangleai/forecast';
+import { createMemoryForecastStore, forecastMust, forecastQuestionCreate, forecastHarnessStage, forecastCheckpointPlan, forecastCheckpointStart, forecastCheckpointFinalize, forecastCheckpointFail, sealForecastRecord, forecastPromptRevisions, forecastExecutorToolset, createForecastToolbox, createForecastExecutor, createNoteBuilder, combineForecastSpend, forecastQuery, FORECAST_TABLES, reject, checkShape, type ForecastCheckpoint, type ForecastChatClient, type Feedback } from '@tangleai/forecast';
 import type { ForecastFixtures } from './forecast-fixtures.ts';
 import type { Row, Case } from './forecast.types.ts';
 import { scoreForecast } from './forecast-oracle.ts';
@@ -14,13 +14,13 @@ export function createScriptedForecastClient(fixture: ForecastScriptInputs, trea
   const wire = createChatClient({ ...SCRIPTED_FORECAST_CONFIGURATION,fetch: async () => { physicalCalls++; throw Error('Scripted forecast reached transport.'); } });
   let calls = 0;
   const client: ForecastChatClient = { endpoint: wire.endpoint,requestKey: wire.requestKey,async complete(request) {
+    calls++;
     const visible = request.messages.map((m: any) => { try { return m.role === 'user' ? JSON.parse(m.content) : null; } catch { return null; } }).find(m => m?.checkpointId === binding.checkpointId);
     if (!visible) throw Error('Scripted forecast has no bound checkpoint input.');
     const checkpoint = fixture.questions.flatMap(q => q.checkpoints).find(c => c.id === binding.fixtureCheckpointId)!;
     const pool = fixture.snapshots.filter(s => checkpoint.snapshotIds.includes(s.id));
     const key = binding.harnessDigest ?? treatment, prediction = fixture.predictions[binding.fixtureCheckpointId]?.[key];
-    if (prediction === undefined) throw Error('No authored forecast response for the bound checkpoint and harness.');
-    calls++;
+    if (prediction === undefined) reject('TFCT1002','No authored forecast response for the bound checkpoint and harness.');
     const tool = (name: string,args: unknown) => ({ id: `${name}-${calls}`,name,arguments: JSON.stringify(args) });
     let toolCalls: any[] | null = null, content = '';
     if (calls === 1) toolCalls = [...(binding.harnessDigest ? [tool('harness_read',{})] : []),tool('web_search',{ query: 'Tidewater' })];
@@ -46,11 +46,29 @@ export function createScriptedNoteClient(fixture: Pick<ForecastFixtures,'notes'>
   } };
   return { client,calls: () => calls,physicalCalls: () => physicalCalls };
 }
+export function createScriptedFeedbackClient(fixture: Pick<ForecastFixtures,'feedback'>, binding: { checkpointId: string; ordinal: number; harnessDigest: string; noteId: string }) {
+  let physicalCalls = 0, calls = 0;
+  const wire = createChatClient({ ...SCRIPTED_FORECAST_CONFIGURATION,fetch: async () => { physicalCalls++; throw Error('Scripted feedback reached transport.'); } });
+  const client: ForecastChatClient = { endpoint: wire.endpoint,requestKey: wire.requestKey,async complete(request) {
+    const visible = request.messages.flatMap((m: any) => { try { return m.role === 'user' ? [JSON.parse(m.content)] : []; } catch { return []; } }).find(m => m.checkpoint?.id === binding.checkpointId);
+    if (!visible || visible.checkpoint.ordinal !== binding.ordinal || visible.harness.digest !== binding.harnessDigest || !visible.notes.some((n: any) => n.id === binding.noteId && n.checkpointId === binding.checkpointId)) reject('TFCT1002','Scripted feedback differs from its visible harness, ordinal or retained note.');
+    const entry = fixture.feedback[binding.harnessDigest + ':' + binding.ordinal] as Feedback | undefined;
+    if (!entry) reject('TFCT1002','No authored feedback exists for this harness and ordinal.');
+    const response = checkShape('feedback',Object.fromEntries(Object.entries(entry).map(([key,items]) => [key,(items as Feedback['provisionalDiagnoses']).map(item => {
+      if (item.sources.length !== 1 || item.sources[0] !== 'current-note') reject('TFCT1002','Feedback source selector drift.');
+      return { ...item,sources: ['note:' + binding.noteId] };
+    })])));
+    calls++;
+    return { message: { role: 'assistant',content: JSON.stringify(response) },finishReason: 'stop',usage: { total_tokens: 50 } };
+  } };
+  return { client,calls: () => calls,physicalCalls: () => physicalCalls };
+}
 
 export async function measureForecastTreatment(fixture: ForecastFixtures, treatment: 'no-harness' | 'static-harness', negative?: ForecastNegative) {
   const store = createMemoryForecastStore(), prompts = await forecastPromptRevisions(), tools = await forecastExecutorToolset(treatment);
   const scripts: ForecastScriptInputs = { predictions: fixture.predictions,notes: fixture.notes,questions: fixture.questions,snapshots: fixture.snapshots };
-  const configuration = { kind: 'scripted' as const,revision: await canonicalSha256({ ...SCRIPTED_FORECAST_CONFIGURATION,registrationId: fixture.manifest.registrationId,treatment,budget: { turns: 8,ms: 1000 } }) };
+  const registrationId = fixture.manifest.baseline!.registrationId;
+  const configuration = { kind: 'scripted' as const,revision: await canonicalSha256({ ...SCRIPTED_FORECAST_CONFIGURATION,registrationId,treatment,budget: { turns: 8,ms: 1000 } }) };
   const cases: Case[] = [], retained: any[] = [], spends: ReturnType<typeof combineForecastSpend>[] = [], stops: Record<string,number> = {};
   const runtimeQuestions = negative ? fixture.questions.slice(0,1) : fixture.questions;
   let logicalCalls = 0, physicalCalls = 0;
@@ -64,7 +82,7 @@ export async function measureForecastTreatment(fixture: ForecastFixtures, treatm
       forecastMust(await forecastCheckpointPlan(store,planned));
       const checkpoint = forecastMust(await forecastCheckpointStart(store,planned.id,scheduled.scheduledAt)), now = () => Date.parse(scheduled.scheduledAt);
       const snapshots = fixture.snapshots.filter(s => scheduled.snapshotIds.includes(s.id)).map(s => ({ ...s,questionId: question.id }));
-      const toolbox = await createForecastToolbox({ store,checkpoint,harness,cutoffPolicy: { kind: 'replay',corpus: fixture.manifest.registrationId,snapshots },now: () => scheduled.scheduledAt });
+      const toolbox = await createForecastToolbox({ store,checkpoint,harness,cutoffPolicy: { kind: 'replay',corpus: registrationId,snapshots },now: () => scheduled.scheduledAt });
       const binding = { checkpointId: checkpoint.id,fixtureCheckpointId: scheduled.id,harnessDigest: harness?.digest ?? null }, executorClient = createScriptedForecastClient(scripts,treatment,binding,negative), noteClient = createScriptedNoteClient({ notes: scripts.notes },binding);
       const budget = { turns: negative === 'budget-turns' ? 0 : 8,ms: 1000 };
       const execution = await createForecastExecutor({ client: executorClient.client,toolbox,harness,budget,now,limits: { maxToolRounds: negative === 'tool-limit' ? 1 : 25 } }).run({ question,checkpoint });

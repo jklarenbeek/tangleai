@@ -409,6 +409,7 @@ export interface ForecastStageReceipt {
 export interface ForecastProgress {
   execution: ForecastStageReceipt;
   note: ForecastStageReceipt | null;
+  revision?: ForecastStageReceipt;
 }
 
 
@@ -691,6 +692,46 @@ export interface ForecastHarnessVersion {
 export type HarnessRevisionComparedNoteIdsItem = string;
 
 /**
+ * Schema constraints this type cannot express: pattern="^(note|revision|trace):[a-f0-9]{64}$"
+ */
+export type CommittedGuidanceSourcesItem = string;
+
+export interface CommittedGuidance {
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
+   */
+  sources: Array<CommittedGuidanceSourcesItem>;
+  component: "factorTracking" | "evidenceHandling" | "uncertaintyHandling";
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^(note|revision|trace):[a-f0-9]{64}$"
+ */
+export type DeferredGuidanceSourcesItem = string;
+
+export interface DeferredGuidance {
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
+   */
+  sources: Array<DeferredGuidanceSourcesItem>;
+  component?: "factorTracking" | "evidenceHandling" | "uncertaintyHandling";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512
+   */
+  reason: string;
+}
+
+
+/**
  * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
  */
 export type HarnessRevisionCandidateVersionIdAnyOf1 = string;
@@ -734,6 +775,18 @@ export interface HarnessRevisionValidation {
 }
 
 
+export interface HarnessRevisionEditorRefusals {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBudget: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  foreignReads: number;
+}
+
+
 export interface HarnessRevision {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
@@ -758,11 +811,11 @@ export interface HarnessRevision {
   /**
    * Schema constraints this type cannot express: minItems=0, maxItems=32
    */
-  committedGuidance: Array<Guidance>;
+  committedGuidance: Array<CommittedGuidance>;
   /**
    * Schema constraints this type cannot express: minItems=0, maxItems=32
    */
-  deferredFeedback: Array<Guidance>;
+  deferredFeedback: Array<DeferredGuidance>;
   /**
    * Schema constraints this type cannot express: minItems=0, maxItems=32
    */
@@ -787,6 +840,8 @@ export interface HarnessRevision {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   noteSchemaRevision: string;
+  receipt?: ForecastStageReceipt;
+  editorRefusals?: HarnessRevisionEditorRefusals;
 }
 
 
@@ -1085,6 +1140,61 @@ export interface ForecastWorkflowRequest {
   treatment: "no-harness" | "static-harness" | "scaffold-no-harness" | "evolving-harness";
   revise: boolean;
   budget: CheckpointBudget;
+}
+
+
+export interface Feedback {
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  provisionalDiagnoses: Array<Guidance>;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  committedGuidance: Array<CommittedGuidance>;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  deferredFeedback: Array<DeferredGuidance>;
+}
+
+
+export interface HarnessPatchItem {
+  op: "add" | "replace";
+  /**
+   * Schema constraints this type cannot express: pattern="^/skills/[0-2]/(instructions|when)$"
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  value: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxItems=32
+ */
+export type HarnessPatch = Array<HarnessPatchItem>;
+
+export interface VolatileFactVerdictVerdictsItem {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=31
+   */
+  index: number;
+  verdict: "reusable" | "question-specific";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512
+   */
+  reason: string;
+}
+
+
+export interface VolatileFactVerdict {
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  verdicts: Array<VolatileFactVerdictVerdictsItem>;
 }
 
 
