@@ -209,6 +209,8 @@ export function createChatClient(options: {
     model: string;
   };
   complete: (request: ChatRequest) => Promise<any>;
+  /** Credential-free replay identity after applying the client's wire defaults; no I/O. */
+  requestKey: (request: ChatRequest) => string;
 } {
   const endpoint = resolveEndpoint(options);
   const maxTokensField = options.maxTokensField ?? 'max_tokens';
@@ -258,6 +260,11 @@ export function createChatClient(options: {
         };
     }
     return body;
+  }
+
+  function requestKey(request: ChatRequest): string {
+    const { stream: _stream, ...keyed } = requestBody(request);
+    return replayKey('chat', endpoint, keyed);
   }
 
   /**
@@ -387,8 +394,7 @@ export function createChatClient(options: {
     // the key is the body the wire would see, minus `stream`: a reply
     // streamed or answered whole is the same reply, and the callbacks
     // are fired on a replay so a streaming caller sees one path
-    const { stream: _stream, ...keyed } = requestBody(request);
-    const key = replayKey('chat', endpoint, keyed);
+    const key = requestKey(request);
     const hit = await cache.get(key);
     if (hit !== undefined) {
       const { value, ms } = verifyChatEntry(hit);
@@ -410,7 +416,7 @@ export function createChatClient(options: {
     return result;
   }
 
-  return { endpoint, complete };
+  return { endpoint, complete, requestKey };
 }
 
 export type ChatRequest = { /**

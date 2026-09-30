@@ -34,8 +34,8 @@
       "items": {
         "$ref": "#/$defs/probe"
       },
-      "minItems": 3,
-      "maxItems": 3
+      "minItems": 6,
+      "maxItems": 6
     },
     "evidenceAudit": {
       "type": "array",
@@ -1063,6 +1063,28 @@
               "type": "null"
             }
           ]
+        },
+        "notePromptRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "noteToolsetRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1071,7 +1093,9 @@
         "promptRevision",
         "noteSchemaRevision",
         "scorer",
-        "cutoffPolicy"
+        "cutoffPolicy",
+        "notePromptRevision",
+        "noteToolsetRevision"
       ],
       "additionalProperties": false
     },
@@ -1241,6 +1265,48 @@
           "items": {
             "$ref": "#/$defs/probe"
           }
+        },
+        "runtime": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "retained": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "minItems": 18,
+                  "maxItems": 18
+                },
+                "stopReasons": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "logicalCalls": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "physicalCalls": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "retained",
+                "stopReasons",
+                "logicalCalls",
+                "physicalCalls"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1253,7 +1319,8 @@
         "counts",
         "utility",
         "byHorizon",
-        "probes"
+        "probes",
+        "runtime"
       ],
       "additionalProperties": false,
       "$query": {

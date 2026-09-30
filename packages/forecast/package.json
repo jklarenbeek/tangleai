@@ -19,7 +19,12 @@
     "@jarenjs/core": "0.91.4",
     "@jarenjs/json": "0.91.4",
     "@jarenjs/validate": "0.91.4",
-    "@tangleai/outcomes": "^0.32.0"
+    "@tangleai/outcomes": "^0.32.0",
+    "@tangleai/agents": "^0.32.0",
+    "@tangleai/models": "^0.32.0",
+    "@tangleai/context": "^0.32.0",
+    "@tangleai/search": "^0.32.0",
+    "@tangleai/documents": "^0.32.0"
   },
   "private": false,
   "types": "./src/index.ts",

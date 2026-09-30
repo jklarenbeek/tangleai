@@ -11,8 +11,8 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | oracle | measured | 15 / 18 | 1 | 1 / 1 / 1 | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
 | seeded-reference | measured | 15 / 18 | 0.2 | 0 / 0.4 / 0.2 | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
 | evidence-ceiling | measured | 15 / 18 | 0.8 | 0.6 / 0.8 / 1 | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
-| no-harness | implementation-missing | 15 / 18 | — | unmeasured / unmeasured / unmeasured | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
-| static-harness | implementation-missing | 15 / 18 | — | unmeasured / unmeasured / unmeasured | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
+| no-harness | measured | 15 / 18 | 0.3333333333333333 | 0 / 0 / 1 | 0.8 | 3 / 2 | true | 72 / 2340 / 0 |
+| static-harness | measured | 15 / 18 | 0.5333333333333333 | 0 / 1 / 0.6 | 0.8 | 3 / 2 | true | 72 / 2340 / 0 |
 | scaffold-no-harness | implementation-missing | 15 / 18 | — | unmeasured / unmeasured / unmeasured | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
 | evolving-harness | implementation-missing | 15 / 18 | — | unmeasured / unmeasured / unmeasured | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
 
@@ -50,11 +50,20 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | oracle-ceiling | true | The outcome oracle scores every resolved checkpoint and leaves three pending. |
 | reference-band | true | The seeded reference lies inside the enumerated central 99% band. |
 | cutoff-refusals | true | The shared attachment audit counts three future and two undated items once. |
+| admission-parity | true | 1152 snapshot/cutoff pairs agree with the independent oracle. |
+| adapter-score-parity | true | 75 authored predictions agree with the independent scorer. |
+| stop-reason-census | true | future: stop, cutoff refusal TFCT1006, 4 calls; length: length, TFCT1005, 3 calls; tool-limit: tool-limit, TFCT1005, 2 calls; budget-turns: budget-turns, TFCT1005, 0 calls; malformed: stop, TFCT1009, 3 calls |
 
 - The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.
-- Pending checkpoints remain in planned denominators but have no utility.
-- Evidence refusal totals count unique registered checkpoint attachments once; treatment rows reuse that same audit.
-- No provider is called. Analytic revisions identify the scorer/cutoff policy, with no prompt or tool execution. Missing mechanism identities are null until actual executors supply them.
+- Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.
+- The shared audit counts unique registered attachments once. Each measured treatment separately captures three future and two undated refusals; negative scripts are separate probes.
+- Static rows run the real bounded agent, read-only tools, note builder and atomic memory store against authored responses. Calls and usage are scripted accounting, not purchased tokens; the injected clock gives zero elapsed time.
+- No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.
 - No live plan is registered yet.
 
-Registration: `656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667`. Source: `7c3913bfe02931a2583d0b33bc761dc32d887197959080fc596915aee88bd143`. Report: `9606156dd2d4ecd968fe4b37d080f0c717496ae7b172dc72cdf7c3f0e00665b5`.
+| Runtime row | Stops | Note failures | Physical calls | Note prompt / empty toolset |
+|---|---:|---:|---:|---:|
+| no-harness | {"stop":18} | 0 | 0 | 50b556dbdc0d1db5bca07c2bbd7fac3e0ba318960d7e5fe08c57a647a391b808 / 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 |
+| static-harness | {"stop":18} | 0 | 0 | 50b556dbdc0d1db5bca07c2bbd7fac3e0ba318960d7e5fe08c57a647a391b808 / 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 |
+
+Registration: `656de7530b30d06eb1f4a3b56dcd13224f42b760ac5f8f14c2e122e9f8163667`. Source: `278d22e679d56d23a7e95c74d614988d92015280133f0971026f12f37a6522cb`. Report: `2b60782d6dd3c4998dfadbfd3af4c06a874c297de917a663b1159498ae8b2e28`.

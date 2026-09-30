@@ -114,6 +114,12 @@ the round limit): they plan the document in the reasoning channel, so removing i
 the planning. Turn it off for classification, extraction and rewriting; leave it on for
 tool use.
 
+`client.requestKey(request)` returns the same credential-free replay identity
+used by `complete`, with all model, reasoning, output-budget and response-format
+defaults applied. It performs no cache or transport calls. Stream selection,
+callbacks, signals and headers are excluded. Hash this complete key when a
+fixed-width request digest is needed.
+
 **A replay is a seam, and the client keys it.** `createChatClient({ …, cache })` takes
 `{ get(key), set(key, value) }` — each sync or async, a `Map` in a test, SQLite or a
 directory of files in a host — and answers a repeated request from it with **zero**

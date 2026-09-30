@@ -42,7 +42,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       an immutable identity or stable TCFG refusals), and
                       every host resolves through it — see CONFIGURATION.md
 @tangleai/forecast    closed question/checkpoint/harness contracts, immutable
-                      records and atomic lifecycle commands over injected stores
+                      records and atomic lifecycle commands over injected stores;
+                      bounded agents, cutoff-audited read tools and six-section notes
 @tangleai/hera        evaluated query-specific orchestration over MAS:
                       scoped experience, role-prompt and topology learning,
                       immutable snapshots and read-only evidence review

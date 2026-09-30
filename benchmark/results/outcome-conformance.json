@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "161701ded7cf5977ece6aa1393e722cde8c2d22e",
+    "head": "a693543814c75feee281baece167487e8e9290a6",
     "clean": false,
     "files": [
       {
@@ -107,7 +107,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "4bf59aecef171550fbfd51eccf2068679fa443f3afd9c7e4c46b1c25945da9cf"
+        "sha256": "3ee0d90c0f26e110f5bd43be6469c76a50d9fcbabf73f8d9f9904890ed385eef"
       },
       {
         "path": "package.json",
@@ -531,31 +531,63 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "7660499673b069f46140dcb1d6cf448ed4c9f9641ff933644350e7aa6f5dcd77"
+        "sha256": "c3e2103ce95e2b387b46f966fc6f5bbf720edb91eebc02757a3d3c293f1f0563"
       },
       {
         "path": "packages/forecast/schemas/forecast.schema.json",
-        "sha256": "72363e1a7158dccfdbbccbc2dda3251544541b7529a250417663ccc460dc9891"
+        "sha256": "f8799ad77b84e0e792b1521a9c4375b128d51d7d030bca78b277ff0abc9b525e"
+      },
+      {
+        "path": "packages/forecast/src/adapters/choice.ts",
+        "sha256": "8c5e7a523fe3ea1e233ed620738f5765032dc052dd868c27c5c9f86804e8fc43"
+      },
+      {
+        "path": "packages/forecast/src/adapters/index.ts",
+        "sha256": "84dcc0c4eb377257dcfd338216e3f91f139c4ca1e8572c00f27829c3f93051b0"
+      },
+      {
+        "path": "packages/forecast/src/adapters/numeric.ts",
+        "sha256": "bb2728f0f931d0b52129fbf5dfd5ba1cbf9126f073900627900d1a272810c988"
       },
       {
         "path": "packages/forecast/src/commands.ts",
-        "sha256": "d48d1130d9886d0f7120d198675bae12f525222197719dd98be3d721447fcd75"
+        "sha256": "e9db6197ac7d699d830e61b1a9ccf4edf7810bf7eb545bbdca2e8e3b0091c234"
       },
       {
         "path": "packages/forecast/src/contracts.gen.ts",
-        "sha256": "80c661e2a57b738ddc47e06839a6005b8ba0e3131bae1eafff0e9613b437129f"
+        "sha256": "4f3c038cc405bc3ff0397a53cf7dd9e9f9fced0bd635cbadde2a699103c0cac7"
       },
       {
         "path": "packages/forecast/src/errors.ts",
         "sha256": "383d46c1c6f519493ea85d1229803a6f2f7b8a90bd0a98ccd497b748edcec18a"
       },
       {
+        "path": "packages/forecast/src/evidence.ts",
+        "sha256": "76563246dd4a65abd98b68fbd9f05ccd4925e1800b4fbeee9bdb3341c2a3569c"
+      },
+      {
+        "path": "packages/forecast/src/executor.ts",
+        "sha256": "5d0188c3767630a6770c3275b058b80cf9c1abc94c05383c2a2c5e81a2e2ea02"
+      },
+      {
         "path": "packages/forecast/src/identity.ts",
-        "sha256": "12b20ce4d19f7b867c6597e4030dbe0ab8f7a5d78cef45b17dbf5b588e57bfaa"
+        "sha256": "21161c8db140177ab90b0911d164d6b80ada2d03c5ff53c7561f62968af1fb14"
       },
       {
         "path": "packages/forecast/src/index.ts",
-        "sha256": "08ae013debb46c2c4242d9cd59c41ad917c9416dcd319d589fbe6f4e7145a53f"
+        "sha256": "fafb9a6853aa19ffc8d5f7bb90e7832d5983dc56cfa84fb348f613b10c119b66"
+      },
+      {
+        "path": "packages/forecast/src/meter.ts",
+        "sha256": "db2001dc9a1af36eedd65251cc5784ea11d3f443af39dd632d4200d7ab7aaa82"
+      },
+      {
+        "path": "packages/forecast/src/note.ts",
+        "sha256": "9625921217523a1426820bcf0e3a8a167205887dbcd54ff9418f65d4b7a15f22"
+      },
+      {
+        "path": "packages/forecast/src/prompts.ts",
+        "sha256": "d6b19390ae255a6c5b471bb66295d1322ca9ee37aefdd93df9fb4026b7cf9318"
       },
       {
         "path": "packages/forecast/src/schema.ts",
@@ -563,7 +595,19 @@
       },
       {
         "path": "packages/forecast/src/store.ts",
-        "sha256": "9a28324f0086c0499be3d473da786a59cde7dadfb97f0b336903512d50c8467d"
+        "sha256": "1b34f5d1b365dd45077a9e9085b584746970c40d9f7d57b8efae699a640f6955"
+      },
+      {
+        "path": "packages/forecast/src/text.ts",
+        "sha256": "d3e7b49da82514db1635d8987bfe958b57b34870236fbc663dff08eba23fc207"
+      },
+      {
+        "path": "packages/forecast/src/toolbox.ts",
+        "sha256": "ba3260923b5b7388ad81ff550a565ce3b0f092a543eac88787243229cb2b23e2"
+      },
+      {
+        "path": "packages/forecast/src/trace.ts",
+        "sha256": "c90ea3a012c5cf950b660fd91414a65a34add669ca44f1e7a729329d50e682d3"
       },
       {
         "path": "packages/forecast/src/transitions.ts",
@@ -1215,7 +1259,7 @@
       },
       {
         "path": "packages/models/src/client.ts",
-        "sha256": "c1d9840e03530b85e9860c031c6e3f1a4f4c2e9f0579c7d91a89adfbf130231d"
+        "sha256": "16c5fe1ef149df3fd08c88170b17f5d1a4b852bc0db867c0af25e215536b7c09"
       },
       {
         "path": "packages/models/src/embed.ts",
@@ -1670,7 +1714,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "924003018ceb289ce5b1ef3da11635538f2760b22f35fde5c7219c027bee541b"
+    "sha256": "2ff6b3d18046a80de7d114618f5fd492e37ff3954ac7ee99affd1744cb8ab093"
   },
   "registration": {
     "schemaVersion": 1,
@@ -84856,5 +84900,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "4f76d113c27c592c82db12434043108f4fed2372023d5358659aa85d971e8872"
+  "reportId": "c8e9cc33297c226bb6da0caf1aa60cbf177f913080d276610cffd4c2624e9e45"
 }

@@ -217,6 +217,11 @@
               },
               "minItems": 2,
               "maxItems": 2
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
             }
           },
           "required": [
@@ -836,6 +841,24 @@
               "type": "null"
             }
           ]
+        },
+        "treatment": {
+          "enum": [
+            "no-harness",
+            "static-harness",
+            "scaffold-no-harness",
+            "evolving-harness"
+          ]
+        },
+        "noteFailure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/checkpointFailure"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -860,7 +883,9 @@
         "promptRevision",
         "toolsetRevision",
         "noteSchemaRevision",
-        "decisionId"
+        "decisionId",
+        "treatment",
+        "noteFailure"
       ]
     },
     "forecastEvidence": {
@@ -1846,6 +1871,100 @@
         "promptRevision",
         "toolsetRevision",
         "noteSchemaRevision"
+      ]
+    },
+    "forecastSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "availableAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "excerpt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "url",
+        "title",
+        "availableAt",
+        "sha256",
+        "excerpt"
+      ]
+    },
+    "forecastCutoffPolicy": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "replay"
+            },
+            "corpus": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "snapshots": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "$ref": "#/$defs/forecastSnapshot"
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "corpus",
+            "snapshots"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "live"
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        }
       ]
     }
   }

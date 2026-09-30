@@ -493,6 +493,16 @@ export type RowIdentityScorerAnyOf1 = string;
  */
 export type RowIdentityCutoffPolicyAnyOf1 = string;
 
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type RowIdentityNotePromptRevisionAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type RowIdentityNoteToolsetRevisionAnyOf1 = string;
+
 export interface RowIdentity {
   configuration: RowIdentityConfigurationAnyOf1 | null;
   toolset: RowIdentityToolsetAnyOf1 | null;
@@ -500,6 +510,8 @@ export interface RowIdentity {
   noteSchemaRevision: RowIdentityNoteSchemaRevisionAnyOf1 | null;
   scorer: RowIdentityScorerAnyOf1 | null;
   cutoffPolicy: RowIdentityCutoffPolicyAnyOf1 | null;
+  notePromptRevision: RowIdentityNotePromptRevisionAnyOf1 | null;
+  noteToolsetRevision: RowIdentityNoteToolsetRevisionAnyOf1 | null;
 }
 
 
@@ -559,6 +571,25 @@ export interface Horizon {
 export type RowUtilityAnyOf1 = number;
 
 /**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type RowRuntimeAnyOf1StopReasonsAdditional = number;
+
+export interface RowRuntimeAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: minItems=18, maxItems=18
+   */
+  retained: Array<{ [key: string]: unknown; }>;
+  stopReasons: { [key: string]: RowRuntimeAnyOf1StopReasonsAdditional; };
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  logicalCalls: number;
+  physicalCalls: 0;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.counts.planned",{"$count":"$.cases[*]"}]},{"$eq":["$.counts.planned",{"$add":["$.counts.available","$.counts.pending"]}]},{"$eq":["$.counts.available",{"$add":[{"$add":["$.counts.scored","$.counts.failed"]},"$.counts.notRun"]}]},{"$eq":[{"$count":"$.cases[*].checkpointId"},{"$count":{"$distinct":"$.cases[*].checkpointId"}}]},{"$if":[{"$eq":["$.status","measured"]},{"$and":[{"$ne":["$.identity.configuration",null]},{"$ne":["$.identity.toolset",null]},{"$ne":["$.identity.promptRevision",null]},{"$ne":["$.identity.noteSchemaRevision",null]},{"$ne":["$.identity.scorer",null]},{"$ne":["$.identity.cutoffPolicy",null]}]},true]}]}
  */
 export interface Row {
@@ -581,6 +612,7 @@ export interface Row {
    */
   byHorizon: Array<Horizon>;
   probes: Array<Probe>;
+  runtime: RowRuntimeAnyOf1 | null;
 }
 
 
@@ -680,7 +712,7 @@ export interface Forecast {
    */
   rows: Array<Row>;
   /**
-   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   * Schema constraints this type cannot express: minItems=6, maxItems=6
    */
   probes: Array<Probe>;
   /**

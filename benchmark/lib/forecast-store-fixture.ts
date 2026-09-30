@@ -1,5 +1,5 @@
 import { loadForecastFixtures } from './forecast-fixtures.ts';
-import { sealForecastRecord, forecastRevision, forecastBytes, type ForecastTables, type ForecastCommandResult } from '@tangleai/forecast';
+import { sealForecastRecord, forecastRevision, forecastBytes, forecastPromptRevisions, type ForecastTables, type ForecastCommandResult } from '@tangleai/forecast';
 
 export const at = '2025-01-10T00:00:00.000Z', end = '2025-01-10T00:00:01.000Z';
 export const revision = 'a'.repeat(64), hash = 'b'.repeat(64);
@@ -20,7 +20,7 @@ export async function makeForecastFixture(suffix = ''): Promise<ForecastTables> 
     status: 'staged', checkedVersionId: null, provenance: { seed: true, revisionId: null, retrospectiveId: null }, recordedAt: q.issuedAt });
   const checkpoints = await sealForecastRecord('checkpoints', { questionId: questions.id, ordinal: 1, scheduledAt: at, cutoffAt: at, startedAt: null, endedAt: null,
     inputHarnessVersionId: harnesses.id, inputHarnessDigest: harnesses.digest, traceId: null, noteId: null, predictionId: null, evidenceIds: [],
-    spend: { calls: 0, tokens: 0, ms: 0, usageKnown: true }, stopReason: null, status: 'planned', failure: null, ...identity, decisionId: null });
+    spend: { calls: 0, tokens: 0, ms: 0, usageKnown: true }, stopReason: null, status: 'planned', failure: null, noteFailure: null, treatment: 'static-harness', ...identity, decisionId: null });
   const snapshot = f.snapshots.find(s => s.id === q.checkpoints[0].snapshotIds[0])!;
   const evidence = await sealForecastRecord('evidence', { checkpointId: checkpoints.id, kind: 'snapshot', address: { corpus: 'tidewater', snapshotId: snapshot.id },
     availableAt: snapshot.availableAt, fetchedAt: null, claimedPublishedAt: null, sha256: snapshot.sha256, bytes: new TextEncoder().encode(snapshot.excerpt).length,
@@ -28,7 +28,7 @@ export async function makeForecastFixture(suffix = ''): Promise<ForecastTables> 
   const predictions = await sealForecastRecord('predictions', { checkpointId: checkpoints.id, raw: '\\boxed{approve}', normalized: 'approve', adapterId: q.adapter.id, adapterVersion: '1', uncertainty: null });
   const trace = { messages: [{ role: 'assistant', content: predictions.raw }], steps: [] };
   const traces = await sealForecastRecord('traces', { checkpointId: checkpoints.id, ...trace, bytes: forecastBytes(trace), truncated: { steps: 0, chars: 0 } });
-  const notes = await sealForecastRecord('notes', { checkpointId: checkpoints.id, ...identity, sections: f.notes['q01-c1'] as ForecastTables['notes']['sections'], evidenceIds: [evidence.id], traceId: traces.id });
+  const notes = await sealForecastRecord('notes', { checkpointId: checkpoints.id, ...identity, promptRevision: (await forecastPromptRevisions()).note, toolsetRevision: await forecastRevision([]), sections: f.notes['q01-c1'] as ForecastTables['notes']['sections'], evidenceIds: [evidence.id], traceId: traces.id });
   const revisions = await sealForecastRecord('revisions', { questionId: questions.id, checkpointId: checkpoints.id, comparedNoteIds: [notes.id], provisionalDiagnoses: [],
     committedGuidance: [{ text: 'Keep independent evidence and uncertainty separate.', sources: ['note:' + notes.id] }], deferredFeedback: [], patch: [], candidateVersionId: null,
     gate: { volatileFact: { refused: 0, items: [] }, semantic: { stage: 'skipped', revision, result: null } }, validation: { ok: true, issues: [] }, traceReads: 0, ...identity });

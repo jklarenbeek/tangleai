@@ -4,6 +4,7 @@ import { FORECAST_TABLES, FORECAST_RECORD_SCHEMAS, validateForecastRecord, type 
 import { checkShape } from './schema.ts';
 import { failure, forecastMust, reject, type ForecastCommandResult } from './errors.ts';
 import { planCheckpointTransition, visibleHarness } from './transitions.ts';
+import { admitEvidence } from './evidence.ts';
 
 export interface ForecastQuery { questionId?: string; scopeKey?: string; checkpointId?: string; status?: string; after?: string; limit?: number; }
 export interface ForecastStored<K extends ForecastTable = ForecastTable> {
@@ -51,6 +52,14 @@ async function storageRow<K extends ForecastTable>(tx: ForecastPersistenceView, 
     if (!checkpoint) reject('TFCT1002', 'The referenced checkpoint is missing.', '/checkpointId');
     if (questionId && questionId !== checkpoint.questionId) reject('TFCT1003', 'The record crosses checkpoint question ownership.');
     questionId = checkpoint.questionId;
+    if (table === 'evidence') {
+      const e = value as ForecastTables['evidence'];
+      if (['finalized','failed'].includes(checkpoint.payload.status)) reject('TFCT1006', 'Evidence cannot attach after checkpoint completion.');
+      if (e.kind === 'snapshot') {
+        const gate = forecastMust(admitEvidence(e,checkpoint.payload.cutoffAt));
+        if (e.admitted !== gate.admitted || !gate.admitted && e.refusal?.reason !== gate.reason) reject('TFCT1006', 'Replay evidence differs from its cutoff admission.');
+      }
+    }
   }
   let scopeKey = typeof data.scopeKey === 'string' ? data.scopeKey : null;
   if (questionId && table !== 'questions') {

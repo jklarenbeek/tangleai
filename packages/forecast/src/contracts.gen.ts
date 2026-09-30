@@ -97,6 +97,10 @@ export interface ForecastAdapterOneOf2 {
    * Schema constraints this type cannot express: minItems=2, maxItems=2
    */
   range: Array<number>;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  unit?: string;
 }
 
 
@@ -426,6 +430,8 @@ export interface ForecastCheckpoint {
    */
   noteSchemaRevision: string;
   decisionId: ForecastCheckpointDecisionIdAnyOf1 | null;
+  treatment: "no-harness" | "static-harness" | "scaffold-no-harness" | "evolving-harness";
+  noteFailure: CheckpointFailure | null;
 }
 
 
@@ -959,5 +965,51 @@ export interface RetrospectiveCheck {
   noteSchemaRevision: string;
 }
 
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastSnapshotAvailableAtAnyOf1 = string;
+
+export interface ForecastSnapshot {
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  url: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  title: string;
+  availableAt: ForecastSnapshotAvailableAtAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+  excerpt: string;
+}
+
+
+export interface ForecastCutoffPolicyOneOf1 {
+  kind: "replay";
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  corpus: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=100
+   */
+  snapshots: Array<ForecastSnapshot>;
+}
+
+
+export type ForecastCutoffPolicy = ForecastCutoffPolicyOneOf1 | { kind: "live"; };
 
 export type Forecast = unknown;

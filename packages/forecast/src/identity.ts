@@ -19,7 +19,7 @@ export const FORECAST_RECORD_SCHEMAS: Record<ForecastTable, string> = {
 /** Not a permission list: only commands can replace an existing record. */
 const identityOmissions: Partial<Record<ForecastTable, readonly string[]>> = {
   questions: ['status','latestProvisionalVersionId'], schedules: ['status'],
-  checkpoints: ['status','startedAt','endedAt','traceId','noteId','predictionId','evidenceIds','spend','stopReason','failure','decisionId'],
+  checkpoints: ['status','startedAt','endedAt','traceId','noteId','predictionId','evidenceIds','spend','stopReason','failure','noteFailure','decisionId'],
   harnesses: ['status','checkedVersionId'],
   // Candidates refer back to these records. Excluding the forward result links
   // avoids circular hashes; immutable publication still binds every result byte.
@@ -51,17 +51,18 @@ export async function validateForecastRecord<K extends ForecastTable>(table: K, 
   if (table === 'checkpoints') {
     const c = value as ForecastCheckpoint;
     if ((c.inputHarnessVersionId === null) !== (c.inputHarnessDigest === null)) reject('TFCT1002', 'Harness version and digest must both be present or absent.');
+    if (['static-harness','evolving-harness'].includes(c.treatment) !== (c.inputHarnessVersionId !== null)) reject('TFCT1002', 'The checkpoint treatment and harness input disagree.');
     if (c.spend.usageKnown !== (c.spend.tokens !== null)) reject('TFCT1001', 'Known usage requires a token count; unknown usage requires null.');
     if (c.startedAt && (c.startedAt < c.scheduledAt || c.endedAt && c.endedAt < c.startedAt)) reject('TFCT1004', 'Checkpoint execution times are out of order.');
-    if (c.status === 'planned' && (c.startedAt || c.endedAt || c.traceId || c.noteId || c.predictionId || c.evidenceIds.length || c.failure || c.stopReason || c.decisionId || c.spend.calls || c.spend.ms || c.spend.tokens !== 0)) reject('TFCT1004', 'A planned checkpoint cannot carry execution artifacts.');
+    if (c.status === 'planned' && (c.startedAt || c.endedAt || c.traceId || c.noteId || c.predictionId || c.evidenceIds.length || c.noteFailure || c.failure || c.stopReason || c.decisionId || c.spend.calls || c.spend.ms || c.spend.tokens !== 0)) reject('TFCT1004', 'A planned checkpoint cannot carry execution artifacts.');
     if (c.status !== 'planned' && !c.startedAt) reject('TFCT1004', 'A started checkpoint requires its start instant.');
-    if (c.status === 'running' && (c.endedAt || c.failure || c.traceId || c.noteId || c.predictionId)) reject('TFCT1004', 'A running checkpoint cannot carry final artifacts.');
-    if (c.status === 'finalized' && (!c.endedAt || !c.traceId || !c.noteId || !c.predictionId || c.failure || c.stopReason !== 'stop')) reject('TFCT1004', 'A finalized checkpoint requires a stopped prediction, trace and note.');
-    if (c.status === 'failed' && (!c.endedAt || !c.failure || c.predictionId || c.noteId)) reject('TFCT1004', 'A failed checkpoint requires its failure and cannot carry a successful prediction or note.');
+    if (c.status === 'running' && (c.endedAt || c.noteFailure || c.failure || c.traceId || c.noteId || c.predictionId)) reject('TFCT1004', 'A running checkpoint cannot carry final artifacts.');
+    if (c.status === 'finalized' && (!c.endedAt || !c.traceId || (c.noteId === null) === (c.noteFailure === null) || !c.predictionId || c.failure || c.stopReason !== 'stop')) reject('TFCT1004', 'A finalized checkpoint requires a stopped prediction, trace and either a note or its failure.');
+    if (c.status === 'failed' && (!c.endedAt || !c.failure || c.predictionId || c.noteId || c.noteFailure)) reject('TFCT1004', 'A failed checkpoint requires its failure and cannot carry a successful prediction or note.');
   }
   if (table === 'evidence') {
     const e = value as ForecastEvidence;
-    if (e.admitted === (e.refusal !== null) || e.bytes !== new TextEncoder().encode(e.excerpt).length) reject('TFCT1001', 'Evidence byte count or admission explanation differs.');
+    if (e.admitted === (e.refusal !== null)) reject('TFCT1001', 'Evidence admission explanation differs.');
     if (e.kind === 'live' && (!e.fetchedAt || e.availableAt !== null) || e.kind === 'snapshot' && e.fetchedAt !== null) reject('TFCT1006', 'Evidence provenance mixes live capture and replay availability.');
   }
   if (table === 'traces') {

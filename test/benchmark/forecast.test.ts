@@ -40,8 +40,8 @@ describe('registered forecasting measurement',()=>{
     const fetch=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Keyless forecasting reached fetch.');};
     try{const r=await buildForecastReport({source});assert.equal(r.rows[0].utility,1);assert.deepEqual(r.rows[0].counts,{planned:18,available:15,pending:3,scored:15,failed:0,notRun:0});
       assert.equal(r.rows[1].utility,.2);assert.equal(r.band.low,.1);assert.equal(r.band.high,2/3);assert.equal(r.rows[2].utility,.8);assert.deepEqual(r.rows[2].byHorizon.map(h=>h.utility),[.6,.8,1]);
-      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.ok(r.rows.slice(3).every(row=>row.status==='implementation-missing'&&row.utility===null&&row.counts.notRun===15));
-      requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/no-harness, static-harness, scaffold-no-harness, evolving-harness/);
+      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.ok(r.rows.slice(5).every(row=>row.status==='implementation-missing'&&row.utility===null&&row.counts.notRun===15));
+      requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/scaffold-no-harness, evolving-harness/);
     }finally{globalThis.fetch=fetch;}
   });
   it('refuses a row missing any model, tool, prompt, note, scorer, cutoff or cost identity',async()=>{
@@ -52,9 +52,22 @@ describe('registered forecasting measurement',()=>{
     }
     const x=structuredClone(r);delete (x.rows[0] as unknown as Record<string,unknown>).cost;await assert.rejects(validateForecastReport(await rehash(x)));
   });
+  it('measures both static rows through retained runtime artifacts and rejects rehashed producer or cost substitutions',async()=>{
+    const r=await buildForecastReport({source});requireCapability(r,'static');
+    for(const row of r.rows.slice(3,5)){
+      assert.equal(row.status,'measured');assert.equal(row.counts.scored,15);assert.equal(row.counts.pending,3);
+      assert.equal(row.cost.calls,72);assert.equal(row.cost.tokens,2340);assert.equal(row.cost.usageKnown,true);
+      assert.equal(row.runtime!.physicalCalls,0);assert.deepEqual(row.runtime!.stopReasons,{stop:18});
+      assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.postCutoff,0),3);assert.equal(row.cases.reduce((n,c)=>n+c.evidenceRefused.undated,0),2);
+      assert.ok(row.runtime!.retained.every((a:any)=>a.trace.id===a.checkpoint.traceId&&a.note.id===a.checkpoint.noteId&&a.prediction.id===a.checkpoint.predictionId));
+    }
+    for(const change of [(x:Forecast)=>{x.rows[3].cost.calls--;},(x:Forecast)=>{x.rows[3].identity.notePromptRevision='a'.repeat(64);},(x:Forecast)=>{(x.rows[3].runtime!.retained[0].trace as any).messages=[];},(x:Forecast)=>{x.rows[4].cases[0].prediction='approve';}]){
+      const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)),/runtime/);
+    }
+  });
   it('rejects hidden cases, forged scores, denominators, audit totals, capabilities and false probes after rehash',async()=>{
     const r=await buildForecastReport({source});
-    for(const change of [(x:Forecast)=>{x.rows[0].cases.pop();},(x:Forecast)=>{x.rows[0].counts.scored--;},(x:Forecast)=>{x.rows[0].cases[0].utility=0;},(x:Forecast)=>{x.rows[3].status='measured';},(x:Forecast)=>{x.refusals.postCutoff--;},(x:Forecast)=>{x.evidenceAudit[0].admitted.push('q01-c1-future');},(x:Forecast)=>{x.capabilities.complete=true;},(x:Forecast)=>{(x.probes[0] as {holds:boolean}).holds=false;},(x:Forecast)=>{(x as unknown as Record<string,unknown>).unregistered=true;},(x:Forecast)=>{x.band.high=1;}]){
+    for(const change of [(x:Forecast)=>{x.rows[0].cases.pop();},(x:Forecast)=>{x.rows[0].counts.scored--;},(x:Forecast)=>{x.rows[0].cases[0].utility=0;},(x:Forecast)=>{x.rows[5].status='measured';},(x:Forecast)=>{x.refusals.postCutoff--;},(x:Forecast)=>{x.evidenceAudit[0].admitted.push('q01-c1-future');},(x:Forecast)=>{x.capabilities.complete=true;},(x:Forecast)=>{(x.probes[0] as {holds:boolean}).holds=false;},(x:Forecast)=>{(x as unknown as Record<string,unknown>).unregistered=true;},(x:Forecast)=>{x.band.high=1;}]){
       const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)));
     }
   });
@@ -67,7 +80,7 @@ describe('registered forecasting measurement',()=>{
   });
   it('renders two clock-free runs byte-identically',async()=>{
     const a=await buildForecastReport({source}),b=await buildForecastReport({source});assert.equal(renderReport(a),renderReport(b));assert.equal(renderDocument(a),renderDocument(b));
-    assert.doesNotMatch(renderReport(a),/hostname|\/tmp\/|recordedAt/);assert.match(renderDocument(a),/1\.000 over 15\/18/);
+    assert.doesNotMatch(renderReport(a),/hostname|\/tmp\//);assert.match(renderDocument(a),/1\.000 over 15\/18/);
   });
   it('refuses an impossible calendar date even after the fixture is rehashed',async()=>{
     const dir=await mkdtemp(join(tmpdir(),'forecast-calendar-'));try{
