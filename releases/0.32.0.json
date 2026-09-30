@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "version": "0.32.0",
+  "baseVersion": "0.31.0",
+  "baseCommit": "26d2dc14fe31166f29ac27fcf8ccfef4c41b9232",
+  "preparationCommit": "93058e48d6c3d27e423f94d92d873f9781b6c3a0",
+  "initial": false,
+  "inputHash": "62164664c734485996521e9af8750942bd8fca2a26f5f4f51becdc3c01253a2c",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        }
+      ],
+      "summary": "Execute cited orchestration through durable MAS jobs, retain unknown usage and apply edge projections consistently to live delivery and persisted messages.",
+      "id": "cited-orchestration-runtime"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Execute mixed-group reflection and empirical experience learning with durable\ncontrol receipts, bounded consolidation, atomic library and snapshot activation,\nand replay across SQLite reopen. Publish the scripted experience-only benchmark\nwith training costs, held-out scores, operation counts and explicit refusals.",
+      "id": "durable-experience-learning"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        }
+      ],
+      "summary": "Introduce evaluated orchestration contracts, immutable role artifacts and scope-bound learning state with version-and-revision activation fences. GMPL prompt artifacts accept namespaced pattern identifiers while its six executable recipe families remain closed.",
+      "id": "evaluated-orchestration"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Generate validated query-specific candidate groups from frozen experience and prompt state, retain durable control-call receipts, and rank evaluated trajectories by task score before provider cost.",
+      "id": "frozen-query-orchestration"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Evaluate bounded registered-role topology mutations after persistent failure,\nretain measured outcomes and activate improving hints with the learning snapshot.\nExpose pure structural diagnostics and durable scoped mutation records.",
+      "id": "measured-topology-mutations"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add scoped failure buffers, source-backed prompt proposals, whole-topology paired replay, guarded block integration and fenced activation or rollback. Retain trial decisions and complete purchase receipts, including failures and restart replay, with explicit refinement budgets. Measure prompt-only and combined learning rows with per-role churn, replay costs and a declared held-out loss.",
+      "id": "paired-role-prompt-evolution"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        }
+      ],
+      "summary": "Qualify bounded orchestration learning with frozen held-out paired diagnostics,\nexplicit phase costs and a schema-derived claim that preserves scripted losses.\nPrevent failed executions from receiving successful empty-answer credit and\nexercise the installed execution and evidence-review APIs on Node and Bun.",
+      "id": "qualified-orchestration-learning"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/hera",
+          "type": "minor"
+        }
+      ],
+      "summary": "Expose fourteen scoped read operations for orchestration and learning evidence.\nRetain compiled execution plans for faithful diagrams, including prompt-trial\nsubstitutions, and link experience and rule reviews to evaluated trajectories.",
+      "id": "retained-orchestration-review"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.32.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.32.0"
+    }
+  ]
+}

@@ -1,5 +1,13 @@
 # @tangleai/gmpl
 
+## 0.32.0
+
+### Patch Changes
+
+- 9ca82cd: Introduce evaluated orchestration contracts, immutable role artifacts and scope-bound learning state with version-and-revision activation fences. GMPL prompt artifacts accept namespaced pattern identifiers while its six executable recipe families remain closed.
+- Updated dependencies [a2b9c9d]
+  - @tangleai/mas@0.32.0
+
 ## 0.31.0
 
 ### Patch Changes

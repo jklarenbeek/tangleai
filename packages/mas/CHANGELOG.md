@@ -1,5 +1,14 @@
 # @tangleai/mas
 
+## 0.32.0
+
+### Patch Changes
+
+- a2b9c9d: Execute cited orchestration through durable MAS jobs, retain unknown usage and apply edge projections consistently to live delivery and persisted messages.
+- @tangleai/agents@0.32.0
+  - @tangleai/context@0.32.0
+  - @tangleai/models@0.32.0
+
 ## 0.31.0
 
 ### Patch Changes

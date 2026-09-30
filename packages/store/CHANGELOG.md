@@ -1,5 +1,40 @@
 # @tangleai/store
 
+## 0.32.0
+
+### Minor Changes
+
+- 30e2ada: Execute mixed-group reflection and empirical experience learning with durable
+  control receipts, bounded consolidation, atomic library and snapshot activation,
+  and replay across SQLite reopen. Publish the scripted experience-only benchmark
+  with training costs, held-out scores, operation counts and explicit refusals.
+- 9ca82cd: Introduce evaluated orchestration contracts, immutable role artifacts and scope-bound learning state with version-and-revision activation fences. GMPL prompt artifacts accept namespaced pattern identifiers while its six executable recipe families remain closed.
+- 52e3d5a: Generate validated query-specific candidate groups from frozen experience and prompt state, retain durable control-call receipts, and rank evaluated trajectories by task score before provider cost.
+- 3612a48: Evaluate bounded registered-role topology mutations after persistent failure,
+  retain measured outcomes and activate improving hints with the learning snapshot.
+  Expose pure structural diagnostics and durable scoped mutation records.
+- da00db9: Add scoped failure buffers, source-backed prompt proposals, whole-topology paired replay, guarded block integration and fenced activation or rollback. Retain trial decisions and complete purchase receipts, including failures and restart replay, with explicit refinement budgets. Measure prompt-only and combined learning rows with per-role churn, replay costs and a declared held-out loss.
+
+### Patch Changes
+
+- Updated dependencies [a2b9c9d]
+- Updated dependencies [30e2ada]
+- Updated dependencies [9ca82cd]
+- Updated dependencies [52e3d5a]
+- Updated dependencies [3612a48]
+- Updated dependencies [da00db9]
+- Updated dependencies [93058e4]
+- Updated dependencies [cd88cec]
+  - @tangleai/hera@0.32.0
+  - @tangleai/mas@0.32.0
+  - @tangleai/config@0.32.0
+  - @tangleai/core@0.32.0
+  - @tangleai/documents@0.32.0
+  - @tangleai/evolve@0.32.0
+  - @tangleai/memory@0.32.0
+  - @tangleai/outcomes@0.32.0
+  - @tangleai/trace2skill@0.32.0
+
 ## 0.31.0
 
 ### Patch Changes
