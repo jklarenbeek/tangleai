@@ -1,0 +1,10 @@
+{
+  "id": "tool-not-allowlisted",
+  "expectedCode": "THERA1003",
+  "input": {
+    "roleId": "retriever",
+    "tools": [
+      "shell"
+    ]
+  }
+}

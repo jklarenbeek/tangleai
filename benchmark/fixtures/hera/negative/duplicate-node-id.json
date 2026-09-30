@@ -1,0 +1,14 @@
+{
+  "id": "duplicate-node-id",
+  "expectedCode": "THERA1003",
+  "input": {
+    "nodes": [
+      {
+        "id": "a"
+      },
+      {
+        "id": "a"
+      }
+    ]
+  }
+}

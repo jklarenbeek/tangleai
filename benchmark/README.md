@@ -53,6 +53,13 @@ the refreshed reports and their renderings without making model requests.
 from cached responses with the network disabled. It refuses score, coverage
 or usage changes and emits a receipt that reconstructs the original report.
 
+The [HERA instrument](../docs/HERA_BENCHMARK.md) registers nine orchestration
+rows, an original MIT fixture and a frozen LoCoMo training/held-out split.
+`npm run benchmark:hera` publishes keyless analytic controls and names the seven
+missing mechanisms. `--require` gates each capability; `--check` verifies bytes
+without writing and `--out-dir` redirects both artifacts. Scripted, wire-replay
+and live tiers are named separately; this registration makes zero provider calls.
+
 ## Contents
 
 | Instrument | What it answers | Command |

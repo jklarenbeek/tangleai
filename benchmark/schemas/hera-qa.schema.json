@@ -1,0 +1,1462 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/hera-qa",
+  "title": "HERA orchestration instrument",
+  "type": "object",
+  "properties": {
+    "instrument": {
+      "const": "hera-qa"
+    },
+    "reportId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "fixture": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "licence": {
+          "const": "MIT"
+        },
+        "passages": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "training": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "heldOut": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "revision",
+        "licence",
+        "passages",
+        "questions",
+        "training",
+        "heldOut"
+      ],
+      "additionalProperties": false
+    },
+    "dataset": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "available",
+            "invalid",
+            "dataset-unavailable"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "sha256",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "split": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "const": 17753
+        },
+        "perCategory": {
+          "const": 32
+        },
+        "training": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "sampleId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "ids",
+            "sampleId"
+          ],
+          "additionalProperties": false
+        },
+        "heldOut": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "sampleId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "ids",
+            "sampleId"
+          ],
+          "additionalProperties": false
+        },
+        "missingByCategory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "missing": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "category",
+              "missing"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "$query": {
+            "$and": [
+              {
+                "$eq": [
+                  "$[0].category",
+                  1
+                ]
+              },
+              {
+                "$eq": [
+                  "$[1].category",
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$[2].category",
+                  3
+                ]
+              },
+              {
+                "$eq": [
+                  "$[3].category",
+                  4
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "seed",
+        "perCategory",
+        "training",
+        "heldOut",
+        "missingByCategory"
+      ],
+      "additionalProperties": false
+    },
+    "evaluators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "scorer": {
+            "type": "string"
+          },
+          "successRuleId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "scorer",
+          "successRuleId"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "identity": {
+      "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/row"
+      },
+      "minItems": 9,
+      "maxItems": 9
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pair"
+      }
+    },
+    "locomo": {
+      "$ref": "#/$defs/locomo"
+    },
+    "refusals": {
+      "type": "object",
+      "properties": {
+        "evalSplitInLearn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "appliedNotOffered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invalidCandidates": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "evalSplitInLearn",
+        "appliedNotOffered",
+        "invalidCandidates"
+      ],
+      "additionalProperties": false
+    },
+    "totals": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "run": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notRun": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "implementationMissing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "datasetUnavailable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "answered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "planned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "learningWrites": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "rows",
+        "run",
+        "notRun",
+        "implementationMissing",
+        "datasetUnavailable",
+        "answered",
+        "planned",
+        "calls",
+        "learningWrites"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "instrument",
+    "reportId",
+    "sourceId",
+    "fixture",
+    "dataset",
+    "split",
+    "evaluators",
+    "identity",
+    "rows",
+    "pairs",
+    "locomo",
+    "refusals",
+    "totals",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$query": {
+    "$and": [
+      {
+        "$eq": [
+          "$.rows[0].id",
+          "oracle"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[1].id",
+          "reference"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[2].id",
+          "single-turn"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[3].id",
+          "fixed-topology"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[4].id",
+          "query-specific-frozen"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[5].id",
+          "hera-no-experience"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[6].id",
+          "hera-no-rope"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[7].id",
+          "hera-full"
+        ]
+      },
+      {
+        "$eq": [
+          "$.rows[8].id",
+          "hera-no-mutation"
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.rows",
+          {
+            "$count": "$.rows[*]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.refusals.evalSplitInLearn",
+          "$.fixture.heldOut"
+        ]
+      },
+      {
+        "$eq": [
+          "$.fixture.questions",
+          {
+            "$add": [
+              "$.fixture.training",
+              "$.fixture.heldOut"
+            ]
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.answered",
+          {
+            "$sum": "$.rows[*].quality.answered"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.planned",
+          {
+            "$sum": "$.rows[*].quality.planned"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.calls",
+          {
+            "$sum": "$.rows[*].cost.calls"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.run",
+          {
+            "$count": "$.rows[?(@.status=='run')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.notRun",
+          {
+            "$count": "$.rows[?(@.status=='not-run')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.implementationMissing",
+          {
+            "$count": "$.rows[?(@.status=='implementation-missing')]"
+          }
+        ]
+      },
+      {
+        "$eq": [
+          "$.totals.datasetUnavailable",
+          {
+            "$count": "$.rows[?(@.status=='dataset-unavailable')]"
+          }
+        ]
+      },
+      {
+        "$every": {
+          "p": "$.pairs[*]"
+        },
+        "$satisfies": {
+          "$if": [
+            "$p.eligible",
+            {
+              "$and": [
+                {
+                  "$some": {
+                    "r": "$.rows[*]"
+                  },
+                  "$satisfies": {
+                    "$and": [
+                      {
+                        "$eq": [
+                          "$r.id",
+                          "$p.treatment"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$r.status",
+                          "run"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "$some": {
+                    "r": "$.rows[*]"
+                  },
+                  "$satisfies": {
+                    "$and": [
+                      {
+                        "$eq": [
+                          "$r.id",
+                          "$p.control"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$r.status",
+                          "run"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            true
+          ]
+        }
+      },
+      {
+        "$eq": [
+          "$.totals.learningWrites",
+          {
+            "$sum": "$.rows[*].learning.writes"
+          }
+        ]
+      }
+    ]
+  },
+  "$defs": {
+    "row": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "oracle",
+            "reference",
+            "single-turn",
+            "fixed-topology",
+            "query-specific-frozen",
+            "hera-no-experience",
+            "hera-no-rope",
+            "hera-full",
+            "hera-no-mutation"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "oracle",
+            "reference",
+            "ablation"
+          ]
+        },
+        "status": {
+          "enum": [
+            "run",
+            "not-run",
+            "implementation-missing",
+            "dataset-unavailable"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "scripted",
+            "wire-replay",
+            "live",
+            "analytic"
+          ]
+        },
+        "identity": {
+          "$ref": "#/$defs/rowIdentity"
+        },
+        "quality": {
+          "$ref": "#/$defs/quality"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "failures": {
+          "$ref": "#/$defs/failures"
+        },
+        "learning": {
+          "$ref": "#/$defs/learning"
+        },
+        "topology": {
+          "$ref": "#/$defs/topology"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "status",
+        "reason",
+        "tier",
+        "identity",
+        "quality",
+        "cost",
+        "failures",
+        "learning",
+        "topology",
+        "seeds"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$if": [
+          {
+            "$eq": [
+              "$.status",
+              "run"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$ne": [
+                  "$.identity",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.quality",
+                  null
+                ]
+              },
+              {
+                "$ne": [
+                  "$.cost",
+                  null
+                ]
+              },
+              {
+                "$le": [
+                  "$.quality.answered",
+                  "$.quality.planned"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.cost.calls",
+                  {
+                    "$add": [
+                      "$.cost.trainingCalls",
+                      "$.cost.heldOutCalls"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.identity",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.quality",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.cost",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.learning",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.topology",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "rowIdentity": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "model": {
+          "type": "string"
+        },
+        "decoder": {
+          "type": "string"
+        },
+        "corpusRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evaluatorId": {
+          "type": "string"
+        },
+        "toolIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "nodes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "turns",
+            "nodes",
+            "depth",
+            "fanOut",
+            "concurrency"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "snapshotId",
+        "model",
+        "decoder",
+        "corpusRevision",
+        "evaluatorId",
+        "toolIds",
+        "budget"
+      ],
+      "additionalProperties": false
+    },
+    "quality": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "f1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "byCategory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "f1": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "answered": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "planned": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "category",
+              "f1",
+              "answered",
+              "planned"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "successRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "citationRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "answered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "planned": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "f1",
+        "byCategory",
+        "successRate",
+        "citationRecall",
+        "answered",
+        "planned"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$if": [
+          {
+            "$ne": [
+              "$",
+              null
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$le": [
+                  "$.answered",
+                  "$.planned"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.answered",
+                  {
+                    "$sum": "$.byCategory[*].answered"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.planned",
+                  {
+                    "$sum": "$.byCategory[*].planned"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.byCategory[0].category",
+                  1
+                ]
+              },
+              {
+                "$eq": [
+                  "$.byCategory[1].category",
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$.byCategory[2].category",
+                  3
+                ]
+              },
+              {
+                "$eq": [
+                  "$.byCategory[3].category",
+                  4
+                ]
+              }
+            ]
+          },
+          true
+        ]
+      }
+    },
+    "cost": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownTokenRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownMsRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trainingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "heldOutCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "money": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "calls",
+        "promptTokens",
+        "completionTokens",
+        "unknownTokenRequests",
+        "ms",
+        "unknownMsRequests",
+        "trainingCalls",
+        "heldOutCalls",
+        "money"
+      ],
+      "additionalProperties": false
+    },
+    "failures": {
+      "type": "object",
+      "properties": {
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedCandidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budgetStops": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "orphans": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "headConflicts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedLearningWrites": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "skipped",
+        "refusedCandidates",
+        "budgetStops",
+        "orphans",
+        "headConflicts",
+        "refusedLearningWrites"
+      ],
+      "additionalProperties": false
+    },
+    "learning": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "mixedGroupRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "librarySize": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "libraryChurn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptChurn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayCost": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mutationAcceptance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "negativeTransferByProfile": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "profile": {
+                "type": "string"
+              },
+              "delta": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "profile",
+              "delta"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "mixedGroupRate",
+        "librarySize",
+        "libraryChurn",
+        "promptChurn",
+        "replayCost",
+        "mutationAcceptance",
+        "negativeTransferByProfile",
+        "writes"
+      ],
+      "additionalProperties": false
+    },
+    "topology": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "entropy": {
+          "type": "number",
+          "minimum": 0
+        },
+        "distinctRoles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nodeEfficiency": {
+          "type": "number",
+          "minimum": 0
+        },
+        "selfLoops": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cycles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diameter": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "includesFailed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entropy",
+        "distinctRoles",
+        "nodeEfficiency",
+        "selfLoops",
+        "cycles",
+        "diameter",
+        "includesFailed"
+      ],
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "properties": {
+        "treatment": {
+          "enum": [
+            "oracle",
+            "reference",
+            "single-turn",
+            "fixed-topology",
+            "query-specific-frozen",
+            "hera-no-experience",
+            "hera-no-rope",
+            "hera-full",
+            "hera-no-mutation"
+          ]
+        },
+        "control": {
+          "enum": [
+            "oracle",
+            "reference",
+            "single-turn",
+            "fixed-topology",
+            "query-specific-frozen",
+            "hera-no-experience",
+            "hera-no-rope",
+            "hera-full",
+            "hera-no-mutation"
+          ]
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "delta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "interval": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "low": {
+              "type": "number"
+            },
+            "high": {
+              "type": "number"
+            },
+            "level": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "resamples": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "low",
+            "high",
+            "level",
+            "resamples",
+            "seed"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "treatment",
+        "control",
+        "eligible",
+        "delta",
+        "interval"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$if": [
+          "$.eligible",
+          {
+            "$ne": [
+              "$.delta",
+              null
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.delta",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.interval",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "locomo": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/datasetQuestion"
+          }
+        },
+        "oracleByCategory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "questions": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "f1": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "category",
+              "questions",
+              "f1"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "$query": {
+            "$and": [
+              {
+                "$eq": [
+                  "$[0].category",
+                  1
+                ]
+              },
+              {
+                "$eq": [
+                  "$[1].category",
+                  2
+                ]
+              },
+              {
+                "$eq": [
+                  "$[2].category",
+                  3
+                ]
+              },
+              {
+                "$eq": [
+                  "$[3].category",
+                  4
+                ]
+              }
+            ]
+          }
+        },
+        "category3UncutBelowCeiling": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "single-turn",
+                  "fixed-topology",
+                  "query-specific-frozen",
+                  "hera-no-experience",
+                  "hera-no-rope",
+                  "hera-full",
+                  "hera-no-mutation"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "not-run",
+                  "dataset-unavailable"
+                ]
+              },
+              "eligible": {
+                "const": false
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "eligible",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 7,
+          "maxItems": 7
+        }
+      },
+      "required": [
+        "questions",
+        "oracleByCategory",
+        "category3UncutBelowCeiling",
+        "evidenceId",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "datasetQuestion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "split": {
+          "enum": [
+            "training",
+            "held-out"
+          ]
+        },
+        "inputId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "id",
+              "digest"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "split",
+        "inputId",
+        "evidenceId",
+        "evidence"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

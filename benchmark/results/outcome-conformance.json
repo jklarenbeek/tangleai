@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "8ccdc4ff3c757d68b83b248f2eaedd88740833f7",
+    "head": "26d2dc14fe31166f29ac27fcf8ccfef4c41b9232",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "56c95b86bed9fa161101882a1bce0aebdda3abbd831440aac4d6b8842cbe1b9e"
+        "sha256": "1e95a11409f0a9359911a26a629b2faeacf49496e260811ea58df8a7e22eb10b"
       },
       {
         "path": "packages/agents/package.json",
@@ -1438,7 +1438,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "24c9d7af5cd071826074072f0ce5b9354a85ab2f9df46bbbbc86cfcf4cac109e"
+    "sha256": "cbaf9038acf9018133a5eb1bcb06a6891e3a76b97ca4c6787a25c8945f65532a"
   },
   "registration": {
     "schemaVersion": 1,
@@ -84624,5 +84624,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "34c28124ae9bd8a90db6d7b676bcc79c0abfca70f1c4e7c83cf4c21adaef743d"
+  "reportId": "a08e7f077cfa7ca2166181e5300fe93c02f3454438ef757c7908921b5ae5779f"
 }

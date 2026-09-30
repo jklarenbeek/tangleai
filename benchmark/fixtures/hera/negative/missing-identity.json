@@ -1,0 +1,7 @@
+{
+  "id": "missing-identity",
+  "expectedCode": "THERA1002",
+  "input": {
+    "snapshotId": null
+  }
+}

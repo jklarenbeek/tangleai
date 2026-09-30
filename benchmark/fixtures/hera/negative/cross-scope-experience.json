@@ -1,0 +1,8 @@
+{
+  "id": "cross-scope-experience",
+  "expectedCode": "THERA1004",
+  "input": {
+    "scope": "a",
+    "experienceScope": "b"
+  }
+}

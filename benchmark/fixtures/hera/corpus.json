@@ -1,0 +1,82 @@
+[
+  {
+    "id": "p01",
+    "text": "Mira founded the Lumen observatory. The observatory is in Alder Bay.",
+    "digest": "b590363969d76c2797c64db1791f1f0742ade35b73ac73ece10b789c6b4606fa"
+  },
+  {
+    "id": "p02",
+    "text": "The Lumen observatory opened in 2018. Its first director was Ivo.",
+    "digest": "bc3a585df25666ac2975c322fd6fbf8519d7f2f24b1275f73605f8980684dedf"
+  },
+  {
+    "id": "p03",
+    "text": "Ivo studied optics at Northbridge College. Northbridge College is in Eastmere.",
+    "digest": "dd9230981807739f42f6da22024870a6581d74d05dae36e06e59c0264ae4c2b1"
+  },
+  {
+    "id": "p04",
+    "text": "Mira moved from Alder Bay to Westhaven in 2020. She still works for Lumen.",
+    "digest": "b6758d29cb6f0235e7986fab3210af96919fe88435cb34111e6dcf52e02aa1eb"
+  },
+  {
+    "id": "p05",
+    "text": "The Cedar expedition departed in March 2021. Its leader was Tavi.",
+    "digest": "b78385fa4c0c71264d23d70ed68b342b7865d40d3a1999298d31380aa02ba228"
+  },
+  {
+    "id": "p06",
+    "text": "Tavi joined the Lumen observatory in 2019 as a marine sensor engineer.",
+    "digest": "2e40ac0d7fdcf1977ca3093fd79bd9e53e8fa016bbe4a8fd358a730cb50e1118"
+  },
+  {
+    "id": "p07",
+    "text": "The Cedar expedition returned in October 2021. Its samples were stored in Westhaven.",
+    "digest": "ec253a77de7a0480032cdcf2140c756b08b31c19001d4f21cf582fdf6fccedb5"
+  },
+  {
+    "id": "p08",
+    "text": "The Alder Bay archive acquired the Cedar logbook in 2022.",
+    "digest": "767e3225d5209d68e134516dbde844ee2166ca6b32e088693609f044fe9fe77b"
+  },
+  {
+    "id": "p09",
+    "text": "Rin became the Lumen director in 2023, succeeding Ivo.",
+    "digest": "81d5cc53041aa78e17bc0ff77a55658e9e023745ffd93d3c362a6a70d6a5f52e"
+  },
+  {
+    "id": "p10",
+    "text": "Rin previously directed the Helix laboratory in Southpoint.",
+    "digest": "b4044945dc091be22d1f760ba4dbf822eaf71dcc35411b7df34768c4c25ed792"
+  },
+  {
+    "id": "p11",
+    "text": "The Helix laboratory studies wave dynamics. Its main instrument is the Arc scanner.",
+    "digest": "511c48ed44ae684d06041f237ae01f8d3c0d49552a83aa597ed04aaa9ee5825c"
+  },
+  {
+    "id": "p12",
+    "text": "The Arc scanner was designed by Sena and first calibrated in 2017.",
+    "digest": "1fb76bbacc6fa35f807d7b53127bcc345d082c2a6c4325b50e16945fb531e888"
+  },
+  {
+    "id": "p13",
+    "text": "Sena teaches at Northbridge College. Her public notes describe optical calibration.",
+    "digest": "92480d829d9a4b74ee6671b951e652d6d0626c1b297990e91506123014f3ac1d"
+  },
+  {
+    "id": "p14",
+    "text": "The Westhaven repository opened in 2016 and stores marine samples.",
+    "digest": "0f8e08ba6615bbd9d30afd6ecbc70bc0bff94df5456a0905ead4b6b24d365ad9"
+  },
+  {
+    "id": "p15",
+    "text": "Aster is a library in Eastmere. It holds the printed Northbridge course catalogue.",
+    "digest": "c59adf815f2ae0754973d189226bdf16c5a335f295fe6bb735cfcf9098b7974d"
+  },
+  {
+    "id": "p16",
+    "text": "The Lumen public archive lists directors and expeditions but records no private telephone numbers.",
+    "digest": "b85e34f996e2bd4487ec47fce0f8841f9bde51dfaaa81c84646d0312ded61f89"
+  }
+]

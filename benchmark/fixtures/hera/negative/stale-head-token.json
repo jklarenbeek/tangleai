@@ -1,0 +1,14 @@
+{
+  "id": "stale-head-token",
+  "expectedCode": "THERA1006",
+  "input": {
+    "expected": {
+      "versionId": "a",
+      "revision": 1
+    },
+    "current": {
+      "versionId": "a",
+      "revision": 3
+    }
+  }
+}

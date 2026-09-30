@@ -1,0 +1,11 @@
+{
+  "id": "two-active-prompts",
+  "expectedCode": "THERA1002",
+  "input": {
+    "roleId": "retriever",
+    "activePromptIds": [
+      "p1",
+      "p2"
+    ]
+  }
+}

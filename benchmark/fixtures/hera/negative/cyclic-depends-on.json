@@ -1,0 +1,7 @@
+{
+  "id": "cyclic-depends-on",
+  "expectedCode": "THERA1003",
+  "input": {
+    "topology": "back-edge"
+  }
+}

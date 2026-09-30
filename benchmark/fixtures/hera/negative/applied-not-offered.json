@@ -1,0 +1,10 @@
+{
+  "id": "applied-not-offered",
+  "expectedCode": "THERA1003",
+  "input": {
+    "offeredExperienceIds": [],
+    "appliedExperienceIds": [
+      "unoffered"
+    ]
+  }
+}

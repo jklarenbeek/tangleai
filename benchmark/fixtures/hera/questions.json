@@ -1,0 +1,145 @@
+[
+  {
+    "id": "q01",
+    "query": "Which town hosts the college attended by the first Lumen director?",
+    "type": "multi-hop",
+    "category": 1,
+    "split": "training",
+    "gold": {
+      "answer": "Eastmere",
+      "evidenceIds": [
+        "p02",
+        "p03"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q02",
+    "query": "In what year did Mira move to Westhaven?",
+    "type": "temporal",
+    "category": 2,
+    "split": "training",
+    "gold": {
+      "answer": "2020",
+      "evidenceIds": [
+        "p04"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q03",
+    "query": "What does the Helix laboratory study?",
+    "type": "single-hop",
+    "category": 4,
+    "split": "training",
+    "gold": {
+      "answer": "wave dynamics",
+      "evidenceIds": [
+        "p11"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q04",
+    "query": "Who leads Lumen after Ivo?",
+    "type": "single-hop",
+    "category": 3,
+    "split": "training",
+    "gold": {
+      "answer": "Rin",
+      "evidenceIds": [
+        "p09"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q05",
+    "query": "Which laboratory did the successor of Ivo previously direct?",
+    "type": "multi-hop",
+    "category": 1,
+    "split": "held-out",
+    "gold": {
+      "answer": "Helix",
+      "evidenceIds": [
+        "p09",
+        "p10"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q06",
+    "query": "Where were Cedar samples stored after the expedition returned?",
+    "type": "single-hop",
+    "category": 4,
+    "split": "held-out",
+    "gold": {
+      "answer": "Westhaven",
+      "evidenceIds": [
+        "p07"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q07",
+    "query": "Which event happened first: Lumen opening or Arc calibration?",
+    "type": "temporal",
+    "category": 2,
+    "split": "held-out",
+    "gold": {
+      "answer": "Arc calibration",
+      "evidenceIds": [
+        "p02",
+        "p12"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q08",
+    "query": "What is Mira's private telephone number?",
+    "type": "unanswerable",
+    "category": 4,
+    "split": "training",
+    "gold": {
+      "answer": "I do not know",
+      "evidenceIds": [
+        "p16"
+      ],
+      "abstain": true
+    }
+  },
+  {
+    "id": "q09",
+    "query": "Which city hosts the college where the Arc designer teaches?",
+    "type": "multi-hop",
+    "category": 1,
+    "split": "held-out",
+    "gold": {
+      "answer": "Eastmere",
+      "evidenceIds": [
+        "p03",
+        "p12",
+        "p13"
+      ],
+      "abstain": false
+    }
+  },
+  {
+    "id": "q10",
+    "query": "What was Tavi's exact salary on joining Lumen?",
+    "type": "unanswerable",
+    "category": 4,
+    "split": "held-out",
+    "gold": {
+      "answer": "I do not know",
+      "evidenceIds": [],
+      "abstain": true
+    }
+  }
+]

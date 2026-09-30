@@ -1,0 +1,8 @@
+{
+  "id": "eval-split-in-learn",
+  "expectedCode": "THERA1004",
+  "input": {
+    "mode": "learn",
+    "taskId": "q05"
+  }
+}

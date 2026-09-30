@@ -1,0 +1,87 @@
+{
+  "fixture": "hera-qa/v1",
+  "licence": "MIT",
+  "provenance": "Original synthetic text authored for the Tangle HERA fixture",
+  "roles": [
+    "query-decomposer",
+    "retriever",
+    "answer-generator",
+    "query-rewriter",
+    "evidence-selector",
+    "context-validator",
+    "reflect-agent",
+    "conclude-agent"
+  ],
+  "files": [
+    {
+      "path": "corpus.json",
+      "sha256": "ae9713f9464fe4b5b10ba51124ceea6ef55e7f7b9e5c4f246c854d06d435bfb5"
+    },
+    {
+      "path": "negative/applied-not-offered.json",
+      "sha256": "6afd7c2e15adad14fca7aa8877b3dddf8062fcef02dd44a750378f46b46e6606"
+    },
+    {
+      "path": "negative/cross-scope-experience.json",
+      "sha256": "9996deadfe0603c63719b3720ff0de515404a3dbb9db604184c68e84266f4276"
+    },
+    {
+      "path": "negative/cyclic-depends-on.json",
+      "sha256": "d18f51b2b3babaa2e86618dea89a3c122da17ab245565f6dc091a1630ff94ba2"
+    },
+    {
+      "path": "negative/duplicate-node-id.json",
+      "sha256": "1365c3505ca5864c5702d162083cea38335b30d1f7ee812aa034549d42b6e40c"
+    },
+    {
+      "path": "negative/eval-split-in-learn.json",
+      "sha256": "82cf07b7a66b3014fa5ff66338066c8adbeac31222707aaef645660bb50f4fd7"
+    },
+    {
+      "path": "negative/missing-identity.json",
+      "sha256": "550d79033688f7de5bca68462c834d5122595715e5690248e512a4a45da6dc6e"
+    },
+    {
+      "path": "negative/stale-head-token.json",
+      "sha256": "f1ee84be34dcfeb9f6ba0376c4896e07b42cb35b2ae8a60bf1964d7ee6374d40"
+    },
+    {
+      "path": "negative/tool-not-allowlisted.json",
+      "sha256": "390e952ecdaf849a7027d1cbb724cfedc5ab9b89859f13a8e1934c3b5c8521a4"
+    },
+    {
+      "path": "negative/two-active-prompts.json",
+      "sha256": "1be711c5fe647c2480570f151b4afecdfb00f163aa7112ec409d6e1679babb10"
+    },
+    {
+      "path": "questions.json",
+      "sha256": "4d57760fb64eafbaf6f318c56fd89ba89a08c19dad4bc4e7d84b0c5e8b8b4b35"
+    },
+    {
+      "path": "topologies.json",
+      "sha256": "da09f5eece39197bf5760874d55dc5d9b4a100c25f21bb99ce919e6a33c2c7a4"
+    }
+  ],
+  "evaluators": [
+    {
+      "id": "locomo-official-f1",
+      "version": "1",
+      "scorer": "officialScore",
+      "successRuleId": "locomo-f1-ge-0.5-v1"
+    },
+    {
+      "id": "fixture-exact",
+      "version": "1",
+      "scorer": "normalizeAnswer equality",
+      "successRuleId": "exact-v1"
+    }
+  ],
+  "configuration": {
+    "grpoGroupSize": 3,
+    "topologyMutationThreshold": 3,
+    "maxAgents": 5,
+    "seed": 17753,
+    "perCategory": 32
+  },
+  "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203"
+}

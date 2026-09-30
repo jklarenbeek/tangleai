@@ -1,0 +1,155 @@
+[
+  {
+    "id": "serial",
+    "nodes": [
+      {
+        "id": "a",
+        "roleId": "query-decomposer",
+        "dependsOn": []
+      },
+      {
+        "id": "b",
+        "roleId": "retriever",
+        "dependsOn": [
+          "a"
+        ]
+      },
+      {
+        "id": "c",
+        "roleId": "conclude-agent",
+        "dependsOn": [
+          "b"
+        ]
+      }
+    ],
+    "window": 4,
+    "primaryScore": 1,
+    "includesFailed": true,
+    "expected": {
+      "entropy": 1,
+      "distinctRoles": 3,
+      "selfLoops": 0,
+      "cycles": 0,
+      "diameter": 2,
+      "validity": "valid"
+    }
+  },
+  {
+    "id": "parallel",
+    "nodes": [
+      {
+        "id": "a",
+        "roleId": "query-decomposer",
+        "dependsOn": []
+      },
+      {
+        "id": "b",
+        "roleId": "retriever",
+        "dependsOn": [
+          "a"
+        ]
+      },
+      {
+        "id": "c",
+        "roleId": "evidence-selector",
+        "dependsOn": [
+          "a"
+        ]
+      },
+      {
+        "id": "d",
+        "roleId": "conclude-agent",
+        "dependsOn": [
+          "b",
+          "c"
+        ]
+      }
+    ],
+    "window": 4,
+    "primaryScore": 1,
+    "includesFailed": true,
+    "expected": {
+      "entropy": 2,
+      "distinctRoles": 4,
+      "selfLoops": 0,
+      "cycles": 0,
+      "diameter": 2,
+      "validity": "valid"
+    }
+  },
+  {
+    "id": "repeated-role",
+    "nodes": [
+      {
+        "id": "a",
+        "roleId": "retriever",
+        "dependsOn": []
+      },
+      {
+        "id": "b",
+        "roleId": "retriever",
+        "dependsOn": [
+          "a"
+        ]
+      },
+      {
+        "id": "c",
+        "roleId": "conclude-agent",
+        "dependsOn": [
+          "b"
+        ]
+      }
+    ],
+    "window": 4,
+    "primaryScore": 1,
+    "includesFailed": true,
+    "expected": {
+      "entropy": 1,
+      "distinctRoles": 2,
+      "selfLoops": 1,
+      "cycles": 1,
+      "diameter": 2,
+      "validity": "valid"
+    }
+  },
+  {
+    "id": "back-edge",
+    "nodes": [
+      {
+        "id": "a",
+        "roleId": "query-decomposer",
+        "dependsOn": [
+          "b"
+        ]
+      },
+      {
+        "id": "b",
+        "roleId": "retriever",
+        "dependsOn": [
+          "a"
+        ]
+      },
+      {
+        "id": "c",
+        "roleId": "conclude-agent",
+        "dependsOn": [
+          "b"
+        ]
+      }
+    ],
+    "window": 4,
+    "primaryScore": 1,
+    "includesFailed": true,
+    "expected": {
+      "entropy": 1.584962500721156,
+      "distinctRoles": 3,
+      "selfLoops": 0,
+      "cycles": 1,
+      "diameter": null,
+      "validity": {
+        "code": "THERA1003",
+        "path": "/nodes/0/dependsOn/0"
+      }
+    }
+  }
+]
