@@ -19,7 +19,9 @@ Every other workflow file points here instead of restating these.
 - **One development version.** All workspaces share the public fixed group's
   version, starting at `0.20.0`. Major versions remain zero. Changesets records
   patch or minor intent; preparation updates the full suite before a release
-  commit is pushed. Private workspaces remain private regardless of version.
+  commit is pushed. Documentation-only branch pushes may retain the version
+  under the narrow exception in [RELEASE.md](RELEASE.md#prepare-before-pushing).
+  Private workspaces remain private regardless of version.
 - **jarenjs-only dependencies.** Runtime dependencies are `@jarenjs/*`
   and `@tangleai/*`, nothing else. Bun and Node are runtimes/toolchains,
   not dependencies. Dev-only tooling that never ships (typescript,

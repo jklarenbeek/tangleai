@@ -5,7 +5,7 @@
   "major": 0,
   "registry": "https://registry.npmjs.org/",
   "repository": "jklarenbeek/tangleai",
-  "bun": "1.4.0",
+  "bun": "1.4.2",
   "packages": [
     "packages/models",
     "packages/context",

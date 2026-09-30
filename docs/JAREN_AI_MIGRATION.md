@@ -23,7 +23,7 @@ author action.
 | TypeScript-conversion release | `0.22.0`, prepared through the fourteen-package fixed Changesets group for the TypeScript conversion and pen ownership change; [release record](../releases/0.22.0.json) |
 | Source provenance | Original execution bases remain recoverable; the Jaren gitlink now names the committed AI-free source |
 | Foundation mode | 23 published AI-free Jaren packages; exact pinned dependencies and registry URLs/integrities in the lock, at the version the [integration audit](JARENJS_INTEGRATION.md) states |
-| Toolchains | Jaren Node `24.20.0`, Bun `1.4.2`; Tangle Node `24.20.0`, Bun `1.4.0`; npm `11.12.1` |
+| Toolchains | Jaren Node `24.20.0`, Bun `1.4.2`; Tangle Node `24.20.0`, Bun `1.4.2`; npm `11.12.1` |
 
 The [0.84.3 foundation manifest](migrations/jaren-ai/foundations-0.84.3.json)
 preserves the source-built archive hashes, complete member inventories and
@@ -141,7 +141,7 @@ inputs, hashes, historical versions, paid failures and thresholds. Generic
 query/DB/vector/grammar instruments stay in Jaren. AI-only instruments, their
 helper closure and derived facts now live in Tangle. New keyless results are
 under `benchmark/migration/`; historical paid artifacts were not relabeled.
-The program pen measures 15,691 bytes in Bun 1.4.0, with ten retained modules
+The program pen measures 15,691 bytes in Bun 1.4.2, with ten retained modules
 and zero excluded runtime-engine bytes. Its external bundle gate enforces the
 18,000-byte ceiling. The original 15,472-byte esbuild observation remains a
 separate historical measurement.
@@ -223,7 +223,7 @@ remain readable. No automatic legacy executable conversion is claimed.
 
 ## Verification commands and measured gates
 
-Use Node 24.20.0, npm 11.12.1 and Bun 1.4.0. The source submodule remains
+Use Node 24.20.0, npm 11.12.1 and Bun 1.4.2. The source submodule remains
 an audit input; installed Jaren code comes from npm:
 
 ```sh

@@ -17,6 +17,8 @@ permissions:
 jobs:
   release-version:
     runs-on: ubuntu-latest
+    outputs:
+      documentation-only: ${{ steps.policy.outputs.documentation-only }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -24,18 +26,16 @@ jobs:
           submodules: true
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - name: Require the prepared version before publication
+      - name: Classify the push and require a release for non-documentation changes
+        id: policy
         shell: bash
         env:
-          BASE_SHA: ${{ inputs.base || '' }}
-        run: |
-          if [ -z "$BASE_SHA" ] || [[ "$BASE_SHA" =~ ^0+$ ]]; then
-            BASE_SHA=$(git rev-parse origin/main)
-            if [ "$BASE_SHA" = "$(git rev-parse HEAD)" ]; then BASE_SHA=$(git rev-parse HEAD^); fi
-          fi
-          npm run release:check -- --base "$BASE_SHA"
+          BASE_SHA: ${{ inputs.base || github.event.before || '' }}
+          PUSH_REF: ${{ github.ref }}
+        run: node scripts/release/push-policy.ts --ref "$PUSH_REF" --base "$BASE_SHA"
 
   check:
+    needs: release-version
     name: packages (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
@@ -50,14 +50,18 @@ jobs:
           submodules: true
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - run: npm run release:verify
+      - if: needs.release-version.outputs.documentation-only != 'true'
+        run: npm run release:verify
+      - name: Check documentation against source and build Pages
+        if: needs.release-version.outputs.documentation-only == 'true'
+        run: npm run check && npm run pages:build
       - name: Verify the standalone desktop on Linux
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest' && needs.release-version.outputs.documentation-only != 'true'
         run: |
           npm run desktop:compile
           node scripts/release/binary.ts
       - name: Retain the exact Linux artifacts for publication
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest' && needs.release-version.outputs.documentation-only != 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: npm-release-verified
@@ -66,6 +70,8 @@ jobs:
           retention-days: 7
 
   minimum-node:
+    needs: release-version
+    if: needs.release-version.outputs.documentation-only != 'true'
     name: consumers (Node 24.0.0)
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -82,6 +88,8 @@ jobs:
       - run: npm run release:test -- --runtime-only
 
   instruments:
+    needs: release-version
+    if: needs.release-version.outputs.documentation-only != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -105,8 +113,18 @@ jobs:
     needs: [release-version, check, minimum-node, instruments]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
       - name: Require every release check
         env:
           RESULTS: ${{ toJSON(needs) }}
+          DOCUMENTATION_ONLY: ${{ needs.release-version.outputs.documentation-only }}
         run: |
-          node -e 'const jobs = JSON.parse(process.env.RESULTS); if (Object.values(jobs).some(job => job.result !== "success")) process.exit(1)'
+          node --input-type=module - <<'JS'
+          import { assertCiResults } from './scripts/release/ci-results.ts';
+          assertCiResults(JSON.parse(process.env.RESULTS), process.env.DOCUMENTATION_ONLY === 'true');
+          JS

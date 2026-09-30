@@ -8,7 +8,7 @@
   "main": "./src/main.ts",
   "engines": {
     "node": ">=24",
-    "bun": ">=1.4.0"
+    "bun": ">=1.4.2"
   },
   "dependencies": {
     "@tangleai/core": "0.30.1",

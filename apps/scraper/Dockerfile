@@ -1,5 +1,5 @@
 # Browser/runtime versions are deliberately coupled to apps/scraper/package.json and .bun-version.
-FROM oven/bun:1.4.0 AS bun-runtime
+FROM oven/bun:1.4.2 AS bun-runtime
 FROM mcr.microsoft.com/playwright:v1.62.1-noble
 
 COPY --from=bun-runtime /usr/local/bin/bun /usr/local/bin/bun

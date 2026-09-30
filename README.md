@@ -33,7 +33,7 @@ HERA and trading/research applications remain separate roadmap work.
 ## What runs today
 
 ```sh
-# Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.0:
+# Use .nvmrc (Node 24.20.0), npm 11.12.1 and Bun 1.4.2:
 git submodule update --init vendor/jarenjs
 npm ci --ignore-scripts
 npm run check      # strict typecheck + complete offline test suite
@@ -475,6 +475,12 @@ with the earlier empty-answer result retained beside the new measurement.
 draft/review/resume workflow; `npm run mas:smoke` remains keyless.
 
 ## Package releases
+
+Documentation-only branch pushes do not need a version bump or release receipt
+when every change matches the [documentation exception](docs/workflow/RELEASE.md#prepare-before-pushing).
+This covers root README, docs Markdown, reference PDFs and static docs images;
+package docs, machine-readable receipts, source and toolchain changes still
+require a release. CI retains source checks and the Pages build for docs pushes.
 
 Changesets records patch or minor intent for one fixed group of sixteen public
 packages. `npm run release:prepare` updates their versions, all private workspace

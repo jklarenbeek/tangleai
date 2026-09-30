@@ -8,6 +8,27 @@ zero until an intentional, reviewed policy change enables a stable public API.
 
 ## Prepare before pushing
 
+Documentation-only branch pushes can retain the current version. The shared
+push policy allows only `README.md`, Markdown under `docs/`, PDFs under
+`docs/refs/`, and PNG/JPEG/GIF/WebP images under `docs/`. Every changed path
+must qualify, including both sides of a rename. Executable files, symlinks,
+package documentation, changelogs, machine-readable receipts, patches, source,
+toolchain/configuration files and release records require the full release flow.
+
+For documentation-only work, commit the reviewed change after `npm run check`
+passes, then use ordinary `git push`. The hook still requires a clean tree and
+the current commit. It compares main with the actual remote main SHA supplied
+by Git; topic branches compare their complete diff against `origin/main`.
+Missing history, non-fast-forward history and empty diffs do not qualify.
+CI uses the same policy, runs `npm run check` and builds Pages, and skips
+release preparation/verification, packed consumers, the standalone binary and
+release instruments. Pages deployment still waits for successful CI.
+
+The exception never applies to tags or npm publication, and does not alter
+release fingerprints or existing receipts. Publish from the verified release
+commit; documentation commits after it do not become new package artifacts.
+Any push containing code or toolchain changes follows the versioned flow below.
+
 During a campaign, commit each implemented and green work order locally under
 [CONVENTIONS.md §5](CONVENTIONS.md#5-work-order-commits-and-campaign-close-out).
 These checkpoints retain the current development version and stay local. Run
@@ -100,8 +121,9 @@ choice expressed through this sequence; the current CLI has no `--local-only`
 flag. A later request to finish the Git release resumes the push/tag steps at
 the existing verified commit, without creating another release.
 
-The pre-push hook requires the prepared version and a complete gate receipt
-for the exact source and tarballs. The main ruleset prevents deletion and force
+Except for the documentation-only branch changes above, the pre-push hook
+requires the prepared version and a complete gate receipt for the exact source
+and tarballs. The main ruleset prevents deletion and force
 pushes; it deliberately has no PR or pre-push GitHub status requirement. Local
 hooks can be bypassed, so CI remains the deployment backstop rather than a
 main-branch admission gate. Keep the hook enabled throughout closeout.
