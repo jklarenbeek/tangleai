@@ -56,14 +56,20 @@ or usage changes and emits a receipt that reconstructs the original report.
 The [HERA instrument](../docs/HERA_BENCHMARK.md) registers nine orchestration
 rows, an original MIT fixture and a frozen LoCoMo training/held-out split.
 `npm run benchmark:hera` publishes analytic controls, two durable scripted
-executor baselines and frozen query-specific candidate groups. Four learning
-variants remain unimplemented. `--require` gates each capability; `--check` verifies bytes
+executor baselines, frozen query-specific candidate groups and an experience-only
+learning sequence. Three prompt/topology learning variants remain unimplemented.
+`--require` gates each capability; `--check` verifies bytes
 without writing and `--out-dir` redirects both artifacts. Scripted, wire-replay
 and live tiers are named separately. The baselines spend 160 scripted requests;
-frozen groups add 203, including profile and plan repairs. All make zero network
-calls and zero learning writes. The separately registered script bank tests
-sensitivity; it does not measure model quality. Duplicate and invalid proposals
-remain counted, and completed groups replay without new purchases.
+frozen groups add 203, including profile and plan repairs, with zero learning
+writes. Experience learning adds 206 requests (106 training, 100 held out), 53
+committed learning writes, and exercises ADD/MERGE/PRUNE/KEEP. Its mixed-group
+rate is 3/5 and its final library has two entries. Held-out F1 is 0.8, equal to
+both fixed and frozen controls; the intervened all-question score is lower at
+0.8 versus 0.9. All rows make zero network calls. The separately registered
+script bank tests mechanics and sensitivity; it does not measure model quality
+or transfer. Duplicate and invalid proposals remain counted, and completed
+groups and learning transactions replay without new purchases.
 
 ## Contents
 

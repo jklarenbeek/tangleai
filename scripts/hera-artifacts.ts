@@ -10,9 +10,9 @@ const prompts: GmplPromptArtifact[] = [];
 const scalar = { schema:{type:'string',minLength:1}, render:'text' as const };
 const data = (schema: Record<string,unknown>): GmplVariables[string] => ({schema,render:'json'});
 const controls: Record<string,GmplVariables> = {
-  'plan-generation': {phase:data({type:'string',enum:['profile','plan']}),query:scalar,profile:data(heraSchemaOf('heraProfile')),offered_experiences:data({type:'array',items:heraSchemaOf('heraExperience')}),agents:data({type:'array',items:{type:'object'}}),caps:data(heraSchemaOf('heraBudget'))},
-  reflection: {query:scalar,profile:data(heraSchemaOf('heraProfile')),trajectories:data({type:'array',items:{type:'object'}})},
-  consolidation: {scope:scalar,insights:data({type:'array',items:{type:'object'}}),library:data({type:'array',items:heraSchemaOf('heraExperience')}),config:data(heraSchemaOf('heraLearningConfig'))},
+  'plan-generation': {phase:data({type:'string',enum:['profile','plan']}),query:scalar,profile:data(heraSchemaOf('heraProfileView')),offered_experiences:data({type:'array',items:heraSchemaOf('heraExperienceView')}),agents:data({type:'array',items:{type:'object'}}),caps:data(heraSchemaOf('heraBudget'))},
+  reflection: {query:scalar,profile:data(heraSchemaOf('heraProfileView')),trajectories:data({type:'array',items:{type:'object'}})},
+  consolidation: {scope:scalar,insights:data({type:'array',items:{type:'object'}}),library:data({type:'array',items:heraSchemaOf('heraExperienceView')}),config:data(heraSchemaOf('heraLearningConfig')),conflicts:data({type:'array',items:{type:'object'}})},
   'rope-evolution': {agent:scalar,current_prompt:scalar,failures:data({type:'array',items:{type:'object'}}),trials:data({type:'array',items:{type:'object'}}),axis:scalar},
   'topology-mutation': {topology:data(heraSchemaOf('heraTopology')),failures:data({type:'array',items:{type:'object'}}),agents:data({type:'array',items:{type:'object'}}),caps:data(heraSchemaOf('heraBudget'))},
 };

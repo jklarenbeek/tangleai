@@ -1,5 +1,5 @@
 {
-  "kind": "hera-scripted/v2",
+  "kind": "hera-scripted/v3",
   "files": [
     {
       "path": "baseline.json",
@@ -8,6 +8,18 @@
     {
       "path": "orchestrator.json",
       "sha256": "1621e88dad16fba315ab57dae9a44b770e6207269f1faae0a5268010f750a67c"
+    },
+    {
+      "path": "reflection.json",
+      "sha256": "6b092e44a26896b3d8c24fb2555202f37bff79c933a33935bf4b92b26c1d74c1"
+    },
+    {
+      "path": "consolidation.json",
+      "sha256": "d3b276fe11fae89fb684f3b2e7023aeacfd0333244a302db444683f085f0f795"
+    },
+    {
+      "path": "../sequence.json",
+      "sha256": "e93cae14ea7e53c81bf565ff28816816221bcd85d39def6f2c3e367133902a4c"
     }
   ]
 }

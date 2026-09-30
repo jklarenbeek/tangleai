@@ -1,6 +1,6 @@
 [meta]
 id = "hera-plan-generation"
-version = "2"
+version = "3"
 pattern = "hera"
 role = "orchestrator"
 

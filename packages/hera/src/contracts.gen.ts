@@ -970,6 +970,10 @@ export interface HeraRolloutGroup {
   unevaluatedTrajectoryIds?: Array<HeraRolloutGroupUnevaluatedTrajectoryIdsItem>;
   controlUsage?: HeraUsage;
   refusals?: HeraRolloutGroupRefusals;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  groupIndex?: number;
 }
 
 
@@ -1889,6 +1893,75 @@ export interface HeraOperation {
   value: unknown;
   usage: HeraUsage;
   issues: Array<HeraIssue>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraProfileViewTagsItem = string;
+
+export interface HeraProfileView {
+  text: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  tags: Array<HeraProfileViewTagsItem>;
+}
+
+
+export interface HeraExperienceViewProvenance {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  advantageId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  groupId: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type HeraExperienceViewParentsItem = string;
+
+export interface HeraExperienceView {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scope: string;
+  profile: HeraProfileView;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  insight: string;
+  provenance: HeraExperienceViewProvenance;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  useCount: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  successCount: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  utility: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  selectionCount: number;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  parents: Array<HeraExperienceViewParentsItem>;
 }
 
 

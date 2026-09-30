@@ -12,14 +12,17 @@ import {SCORABLE_CATEGORIES} from './locomo.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
 import type {HeraPlanOutput} from '@tangleai/hera';
+import type {HeraTrainingSequence,HeraReflectionScript,HeraConsolidationScript} from './hera-learning-scripts.ts';
+import {heraQuality} from './hera-quality.ts';
 type Script=Record<string,Record<'single-turn'|'fixed',Record<string,{completion:unknown;normalization:unknown;repair:unknown;tool?:{query:string;k:number}}>>>;
 export interface HeraOrchestratorScript {kind:string;profile:{text:string;tags:string[]};plans:Record<string,HeraPlanOutput>;proposals:Record<string,string[]>;}
 export async function loadHeraScripts(root:string) {
   const directory=join(root,'benchmark/fixtures/hera/scripts'),manifest=JSON.parse(await readFile(join(directory,'manifest.json'),'utf8')) as {kind:string;files:Array<{path:string;sha256:string}>};
-  if(manifest.kind!=='hera-scripted/v2'||JSON.stringify(manifest.files.map(f=>f.path))!==JSON.stringify(['baseline.json','orchestrator.json']))throw Error('Invalid HERA script registration.');
+  if(manifest.kind!=='hera-scripted/v3'||JSON.stringify(manifest.files.map(f=>f.path))!==JSON.stringify(['baseline.json','orchestrator.json','reflection.json','consolidation.json','../sequence.json']))throw Error('Invalid HERA script registration.');
   const files=new Map<string,string>();
   for(const file of manifest.files){const bytes=await readFile(join(directory,file.path),'utf8');if(createHash('sha256').update(bytes).digest('hex')!==file.sha256)throw Error('HERA script bytes changed.');files.set(file.path,bytes);}
-  return {revision:await heraRevisionOf(manifest),scripts:JSON.parse(files.get('baseline.json')!) as Script,orchestrator:JSON.parse(files.get('orchestrator.json')!) as HeraOrchestratorScript};
+  return {revision:await heraRevisionOf(manifest),scripts:JSON.parse(files.get('baseline.json')!) as Script,orchestrator:JSON.parse(files.get('orchestrator.json')!) as HeraOrchestratorScript,
+    sequence:JSON.parse(files.get('../sequence.json')!) as HeraTrainingSequence,reflection:JSON.parse(files.get('reflection.json')!) as HeraReflectionScript,consolidation:JSON.parse(files.get('consolidation.json')!) as HeraConsolidationScript};
 }
 /** The native document store and recall implementation own ranking and identity gates. */
 export async function createHeraFixtureEvidence(db:TangleDb,corpus:HeraFixture['corpus'],corpusRevision:string) {
@@ -67,11 +70,11 @@ export async function runHeraBaselines(fixture:HeraFixture,root:string) {
         const run=(await masStore.getRun(result.trajectory.masRunId))!;executions.push({question,result,ms:run.budget.spent.ms});
       }
       const sum=(fn:(e:typeof executions[number])=>number)=>executions.reduce((n,e)=>n+fn(e),0),n=executions.length;
-      const scored=executions.map(({question,result})=>{const score=officialScore({category:question.category,prediction:result.trajectory.answer,answer:truth.get(question.id)!});return {category:question.category,f1:score.scored?score.f1:0,answered:result.trajectory.status==='completed'};});
+      const scored=executions.map(({question,result})=>{const score=officialScore({category:question.category,prediction:result.trajectory.answer,answer:truth.get(question.id)!});return {category:question.category,f1:score.scored?score.f1:0,answered:result.trajectory.status==='completed',split:question.split,success:Number(result.trajectory.success),citationRecall:result.trajectory.metrics.citationRecall};});
       rows.push({id:kind==='fixed'?'fixed-topology':'single-turn',kind:'ablation',status:'run',reason:null,tier:'scripted',seeds:[17753],
         identity:{snapshotId:state.snapshot.id,model:state.snapshot.identities.model,decoder:state.snapshot.identities.decoder,corpusRevision:fixture.manifest.revision,evaluatorId:evaluator.identity.id,toolIds:state.snapshot.identities.tools,
           budget:{calls:HERA_DEFAULT_LIMITS.calls,tokens:HERA_DEFAULT_LIMITS.tokens,ms:HERA_DEFAULT_LIMITS.ms,turns:HERA_DEFAULT_LIMITS.toolRounds,nodes:6,depth:6,fanOut:4,concurrency:4}},
-        quality:{f1:scored.reduce((n,c)=>n+c.f1,0)/n,successRate:sum(e=>Number(e.result.trajectory.success))/n,citationRecall:sum(e=>e.result.trajectory.metrics.citationRecall)/n,answered:scored.filter(c=>c.answered).length,planned:n,
+        heldOutQuality:heraQuality(scored.filter(c=>c.split==='held-out')),quality:{f1:scored.reduce((n,c)=>n+c.f1,0)/n,successRate:sum(e=>Number(e.result.trajectory.success))/n,citationRecall:sum(e=>e.result.trajectory.metrics.citationRecall)/n,answered:scored.filter(c=>c.answered).length,planned:n,
           byCategory:SCORABLE_CATEGORIES.map(category=>{const cases=scored.filter(c=>c.category===category);return {category,f1:cases.length?cases.reduce((n,c)=>n+c.f1,0)/cases.length:0,answered:cases.filter(c=>c.answered).length,planned:cases.length};})},
         cost:{calls:sum(e=>e.result.trajectory.calls),promptTokens:sum(e=>e.result.trajectory.tokens.prompt),completionTokens:sum(e=>e.result.trajectory.tokens.completion),unknownTokenRequests:sum(e=>e.result.trajectory.tokens.unknownRequests),estimatedTokens:sum(e=>e.result.trajectory.tokens.estimated),ms:sum(e=>e.ms),unknownMsRequests:sum(e=>e.result.steps.reduce((n,s)=>n+s.usage.unknownMsRequests,0)),money:null,
           trainingCalls:sum(e=>e.question.split==='training'?e.result.trajectory.calls:0),heldOutCalls:sum(e=>e.question.split==='held-out'?e.result.trajectory.calls:0)},

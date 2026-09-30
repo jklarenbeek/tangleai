@@ -1,9 +1,9 @@
 import {openTangleDb,createHeraStore,createMasStore,type TangleDb} from '@tangleai/store';
 import {MasUncertainEffect,type MasRuntimeObserver} from '@tangleai/mas';
 import {gmplTextDigest} from '@tangleai/gmpl';
-import {createHeraExecutor,heraRevisionOf,type HeraTask,type HeraExecuteRequest,type HeraEvidenceProvider,type HeraExecutorHost} from '@tangleai/hera';
+import {createHeraExecutor,heraRevisionOf,type HeraTask,type HeraExecuteRequest,type HeraEvidenceProvider,type HeraExecutorHost,type HeraLearningConfig} from '@tangleai/hera';
 import {createHeraExampleState,createHeraExampleSegments} from '../../examples/hera.ts';
-export interface ExecutorFixtureOptions {path?:string;unknownUsage?:boolean;failNode?:string;repairNode?:string;unsupported?:boolean;uncertain?:boolean;overlap?:boolean;observer?:MasRuntimeObserver;}
+export interface ExecutorFixtureOptions {path?:string;unknownUsage?:boolean;failNode?:string;repairNode?:string;unsupported?:boolean;uncertain?:boolean;overlap?:boolean;observer?:MasRuntimeObserver;config?:HeraLearningConfig;}
 export async function executorFixture(options:ExecutorFixtureOptions={}) {
   let calls=0,toolCalls=0,active=0,maxActive=0,tick=0,currentRevision='',normalizations=new Map<string,number>();
   const clock={value:1000000},now=()=>`tick-${String(tick++).padStart(6,'0')}`;
@@ -16,7 +16,7 @@ export async function executorFixture(options:ExecutorFixtureOptions={}) {
   const requests:Array<{node:string;phase:string;request:unknown}>=[];
   const build=async()=>{
     const store=createHeraStore(db,{scope:'execution-fixture'}),masStore=createMasStore(db,{now});
-    const state=await createHeraExampleState(store,{corpusRevision,embeddedBy:{model:'fixture',dims:2}});
+    const state=await createHeraExampleState(store,{corpusRevision,embeddedBy:{model:'fixture',dims:2},config:options.config});
     const task:HeraTask={id:'q',scope:store.scope,query:'Where did the first Lumen director study?',split:'held-out',corpusRevision,evaluator:state.snapshot.identities.evaluator,goldAddress:'fixture:q'};
     const host:HeraExecutorHost={store,masStore,segments:createHeraExampleSegments(db,masStore),profiles:state.profiles,evidence,embedder:{model:'fixture',dims:2,embed:async text=>text.map(()=>new Float32Array([1,0]))},
       evaluator:{identity:state.snapshot.identities.evaluator,score:async(_task,answer)=>({primaryScore:answer==='Eastmere'?1:0,success:answer==='Eastmere',metrics:{answerExact:answer==='Eastmere'?1:0}})},now,clock:()=>clock.value,concurrency:4,observer:options.observer,

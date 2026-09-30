@@ -656,6 +656,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "heldOutQuality": {
+          "$ref": "#/$defs/quality"
         }
       },
       "required": [
@@ -755,7 +758,25 @@
             ]
           }
         ]
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "run"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "heldOutQuality": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
     },
     "rowIdentity": {
       "type": [
@@ -1143,6 +1164,70 @@
         "writes": {
           "type": "integer",
           "minimum": 0
+        },
+        "groupsWithoutMixedOutcome": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evaluatedGroups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mixedGroups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "libraryOperations": {
+          "type": "object",
+          "properties": {
+            "add": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "merge": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "prune": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "keep": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "add",
+            "merge",
+            "prune",
+            "keep"
+          ],
+          "additionalProperties": false
+        },
+        "flags": {
+          "type": "object",
+          "properties": {
+            "experience": {
+              "type": "boolean"
+            },
+            "rope": {
+              "type": "boolean"
+            },
+            "mutation": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "experience",
+            "rope",
+            "mutation"
+          ],
+          "additionalProperties": false
+        },
+        "libraryCap": {
+          "type": "integer",
+          "minimum": 1
         }
       },
       "required": [
@@ -1153,9 +1238,85 @@
         "replayCost",
         "mutationAcceptance",
         "negativeTransferByProfile",
-        "writes"
+        "writes",
+        "groupsWithoutMixedOutcome",
+        "evaluatedGroups",
+        "mixedGroups",
+        "libraryOperations",
+        "flags",
+        "libraryCap"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "$query": {
+        "$if": [
+          {
+            "$ne": [
+              "$",
+              null
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.evaluatedGroups",
+                  {
+                    "$add": [
+                      "$.mixedGroups",
+                      "$.groupsWithoutMixedOutcome"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.mixedGroupRate",
+                  {
+                    "$if": [
+                      {
+                        "$gt": [
+                          "$.evaluatedGroups",
+                          0
+                        ]
+                      },
+                      {
+                        "$div": [
+                          "$.mixedGroups",
+                          "$.evaluatedGroups"
+                        ]
+                      },
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.libraryChurn",
+                  {
+                    "$add": [
+                      {
+                        "$add": [
+                          "$.libraryOperations.add",
+                          "$.libraryOperations.merge"
+                        ]
+                      },
+                      "$.libraryOperations.prune"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$le": [
+                  "$.librarySize",
+                  "$.libraryCap"
+                ]
+              }
+            ]
+          },
+          true
+        ]
+      }
     },
     "topology": {
       "type": [

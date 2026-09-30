@@ -23,6 +23,7 @@ import schema from '../schemas/hera-qa.schema.json' with { type: 'json' };
 import runIdentitySchema from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import type { HeraQa, Row, DatasetQuestion } from './hera-qa.types.ts';
 import { runHeraFrozen } from './hera-frozen.ts';
+import { runHeraExperience } from './hera-learning.ts';
 
 export const HERA_REPORT_PATH = 'benchmark/results/hera-qa.json';
 export const HERA_DOCUMENT_PATH = 'docs/HERA_BENCHMARK.md';
@@ -175,6 +176,9 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
   if(!baseline.identities.some(i=>i.identityId===frozen.identity.identityId))baseline.identities.push(frozen.identity);
   baseline.scripted.requests+=frozen.requests;baseline.scripted.replayCalls+=frozen.replayCalls;
   baseline.learningWrites+=frozen.learningWrites;
+  const learned=await runHeraExperience(fixture,root);baseline.rows.push(learned.row);
+  if(!baseline.identities.some(i=>i.identityId===learned.identity.identityId))baseline.identities.push(learned.identity);
+  baseline.scripted.requests+=learned.requests;baseline.scripted.replayCalls+=learned.replayCalls;baseline.learningWrites+=learned.learningWrites;
   for (const row of baseline.rows) rows[HERA_ROWS.indexOf(row.id)] = row;
   const envelope = analyticEnvelope(HERA_ROWS);
   envelope.identities = baseline.identities;
@@ -196,7 +200,7 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
     refusals: { evalSplitInLearn: fixture.questions.filter(q => !planHeraFixtureMode('learn', q).valid).length, ...frozen.refusals },
     totals: { rows: rows.length, run: rows.filter(r => r.status === 'run').length, notRun: 0, implementationMissing: rows.filter(r => r.status === 'implementation-missing').length, datasetUnavailable: 0, answered: rows.reduce((n,r)=>n+(r.quality?.answered??0),0), planned: rows.reduce((n,r)=>n+(r.quality?.planned??0),0), calls: rows.reduce((n,r)=>n+(r.cost?.calls??0),0), learningWrites: baseline.learningWrites },
     limitations: [
-      'The single-turn, fixed-topology and query-specific frozen rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Four learning variants remain unimplemented.',
+      'The single-turn, fixed-topology, query-specific frozen and experience-learning rows execute registered scripted responses through durable MAS. Their quality measures fixture sensitivity, not model quality or a HERA improvement. Three learning variants remain unimplemented.',
       'The fixture corpus is synthetic, original MIT-licensed text. Its oracle and seeded reference are analytic controls.',
       'The fixture success rule is normalized exact equality. The LoCoMo success threshold F1 >= 0.5 is registered configuration, not a measured improvement.',
       'LoCoMo samples 32 questions in each category 1–4; the first 16 in release order within each category train, the remaining 16 are held out. No gold enters evidence selection or role inputs.',
@@ -206,6 +210,8 @@ export async function buildHeraReport(options: { root?: string, sourceId?: strin
       'No live provider or wire-replay tier is executed. Stochastic live comparisons require at least three seeds and explicit new spend authorization.',
       'Costs count dispatched scripted requests, including tool continuations and normalization. Training-fold and held-out-fold calls are separate; both baseline folds execute in evaluate mode with zero learning writes. Scripted token usage is fixed fixture data; monetary cost is unmeasured.',
       'The frozen row includes profiling, bounded plan repairs and every candidate execution, including rejected plans and duplicate proposals. Ranking uses evaluator scores and therefore reports an evaluated group selection, not an answer selector available to unlabelled inference. Its snapshot pins an empty experience library.',
+      'The experience-only row trains on the registered five-task sequence and then evaluates the five held-out tasks against the final snapshot. Three mixed groups exercise ADD, PRUNE, MERGE and KEEP; one all-success and one all-failure group add no insights. Utility exposure still creates immutable counter versions. PRUNE uses an authored, source-backed host conflict policy.',
+      'Experience scripts deliberately alter selected training answers to exercise learning mechanics. The all-question score includes those training interventions; compare held-out columns for the frozen-snapshot measurement. Scripted held-out answers do not prove transfer or a quality improvement. All reflection, consolidation and candidate purchases are included in cost.',
     ],
   };
   const report = { ...content, reportId: await canonicalSha256(content) } as HeraQa;
@@ -221,6 +227,11 @@ export async function validateHeraReport(value: unknown): Promise<void> {
   if (report.split.training.ids.some(id => report.split.heldOut.ids.includes(id))) throw new Error('Training and held-out overlap.');
   if (report.dataset.status !== 'available' && (report.split.training.ids.length || report.split.heldOut.ids.length || report.locomo.questions.length)) throw new Error('Unavailable dataset cannot contain a synthetic replacement.');
   if (report.scripted.requests !== report.totals.calls || report.scripted.replayCalls !== 0) throw new Error('Scripted request census mismatch.');
+  for(const row of report.rows){
+    if(row.heldOutQuality&&(row.status!=='run'||row.heldOutQuality.planned!==report.fixture.heldOut||row.heldOutQuality.answered>row.quality!.answered))
+      throw new Error('Held-out quality must belong to an executed row and the registered held-out fold.');
+    if(row.learning&&!row.heldOutQuality)throw new Error('A measured learning row requires its frozen held-out result.');
+  }
   for (const row of report.rows.filter(r => r.status === 'run' && r.tier === 'scripted')) {
     const ref = (report.identity as IdentityEnvelope).rows.find(r => r.rowId === row.id);
     if (ref?.identityStatus !== 'run') throw new Error('Executed row has no resolved CONFIG identity.');
@@ -258,6 +269,8 @@ export function renderHeraDocument(report: HeraQa): string {
     `Fixture: ${report.fixture.passages} passages, ${report.fixture.questions} questions (${report.fixture.training} training, ${report.fixture.heldOut} held out). Licence: MIT.`, '',
     table({ head: ['Row', 'Status', 'Tier', 'F1', 'Answered / planned', 'Calls', 'Reason'], numeric: [3, 4, 5],
       rows: report.rows.map(r => [r.id, r.status, r.tier, r.quality?.f1.toFixed(4) ?? null, r.quality ? r.quality.answered + ' / ' + r.quality.planned : null, r.cost?.calls ?? null, r.reason ?? (r.tier === 'analytic' ? 'analytic control' : 'scripted execution')]) }), '',
+    table({head:['Row','Held-out F1','Held-out answered / planned','Training calls','Held-out calls'],numeric:[1,2,3,4],rows:report.rows.filter(r=>r.heldOutQuality).map(r=>[r.id,r.heldOutQuality!.f1.toFixed(4),r.heldOutQuality!.answered+' / '+r.heldOutQuality!.planned,r.cost!.trainingCalls,r.cost!.heldOutCalls])}), '',
+    table({head:['Learning row','Mixed / evaluated','Unmixed groups','Library size','ADD / MERGE / PRUNE / KEEP','Head conflicts','Refused learning'],rows:report.rows.filter(r=>r.learning).map(r=>[r.id,r.learning!.mixedGroups+' / '+r.learning!.evaluatedGroups,r.learning!.groupsWithoutMixedOutcome,r.learning!.librarySize,[r.learning!.libraryOperations.add,r.learning!.libraryOperations.merge,r.learning!.libraryOperations.prune,r.learning!.libraryOperations.keep].join(' / '),r.failures.headConflicts,r.failures.refusedLearningWrites])}), '',
     `Measured retriever concurrency: ${report.scripted.maxConcurrentRetrievers}. Replay calls: ${report.scripted.replayCalls}. Script revision: \`${report.scripted.revision}\`.`, '',
     `Dataset: ${report.dataset.status}. Training ${report.split.training.ids.length}; held out ${report.split.heldOut.ids.length}; category-3 uncut answers below their ceiling: ${report.locomo.category3UncutBelowCeiling}.`, '',
     table({ head: ['LoCoMo category', 'Questions', 'Oracle F1', 'Missing from sample'],

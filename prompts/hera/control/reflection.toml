@@ -1,6 +1,6 @@
 [meta]
 id = "hera-reflection"
-version = "1"
+version = "2"
 pattern = "hera"
 role = "semantic-advantage-reflector"
 

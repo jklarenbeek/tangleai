@@ -8,6 +8,7 @@ import {officialScore,normalizeAnswer} from './locomo-parity.ts';
 import {SCORABLE_CATEGORIES} from './locomo.ts';
 import type {HeraFixture} from './hera-qa.ts';
 import type {Row} from './hera-qa.types.ts';
+import {heraQuality} from './hera-quality.ts';
 export async function runHeraFrozen(fixture:HeraFixture,root:string){
   const registration=await loadHeraScripts(root),db=await openTangleDb({jobs:{now:()=>1000000,random:()=>0.5}});
   let tick=0,requests=0,replayCalls=0;const now=()=>`tick-${String(tick++).padStart(6,'0')}`;
@@ -39,10 +40,10 @@ export async function runHeraFrozen(fixture:HeraFixture,root:string){
       if(await heraRevisionOf(replay)!==await heraRevisionOf(result))throw Error('Frozen group replay drift');replayCalls+=requests-before;executions.push({question,result});
     }
     const sum=(read:(entry:typeof executions[number])=>number)=>executions.reduce((n,e)=>n+read(e),0),all=executions.flatMap(e=>e.result.trajectories),controls=executions.map(e=>e.result.group.controlUsage!);
-    const scored=executions.map(({question,result})=>{const best=result.trajectories.find(t=>t.id===result.group.ranking[0]),score=officialScore({category:question.category,prediction:best?.answer??'',answer:truth.get(question.id)!});return {category:question.category,f1:score.scored?score.f1:0,success:Number(best?.success===true),citationRecall:best?.metrics.citationRecall??0,answered:best?.status==='completed'};});
+    const scored=executions.map(({question,result})=>{const best=result.trajectories.find(t=>t.id===result.group.ranking[0]),score=officialScore({category:question.category,prediction:best?.answer??'',answer:truth.get(question.id)!});return {category:question.category,f1:score.scored?score.f1:0,success:Number(best?.success===true),citationRecall:best?.metrics.citationRecall??0,answered:best?.status==='completed',split:question.split};});
     const row:Row={id:'query-specific-frozen',kind:'ablation',status:'run',reason:null,tier:'scripted',seeds:[17753],
       identity:{snapshotId:state.snapshot.id,model:state.snapshot.identities.model,decoder:state.snapshot.identities.decoder,corpusRevision:fixture.manifest.revision,evaluatorId:evaluator.identity.id,toolIds:state.snapshot.identities.tools,budget},
-      quality:{f1:scored.reduce((n,s)=>n+s.f1,0)/scored.length,successRate:scored.reduce((n,s)=>n+s.success,0)/scored.length,citationRecall:scored.reduce((n,s)=>n+s.citationRecall,0)/scored.length,
+      heldOutQuality:heraQuality(scored.filter(c=>c.split==='held-out')),quality:{f1:scored.reduce((n,s)=>n+s.f1,0)/scored.length,successRate:scored.reduce((n,s)=>n+s.success,0)/scored.length,citationRecall:scored.reduce((n,s)=>n+s.citationRecall,0)/scored.length,
         answered:scored.filter(s=>s.answered).length,planned:scored.length,byCategory:SCORABLE_CATEGORIES.map(category=>{const cases=scored.filter(c=>c.category===category);return {category,f1:cases.length?cases.reduce((n,c)=>n+c.f1,0)/cases.length:0,answered:cases.filter(c=>c.answered).length,planned:cases.length};})},
       cost:{calls:sum(e=>e.result.group.budget.spent.calls),promptTokens:all.reduce((n,t)=>n+t.tokens.prompt,0)+controls.reduce((n,c)=>n+c.promptTokens,0),completionTokens:all.reduce((n,t)=>n+t.tokens.completion,0)+controls.reduce((n,c)=>n+c.completionTokens,0),
         unknownTokenRequests:all.reduce((n,t)=>n+t.tokens.unknownRequests,0)+controls.reduce((n,c)=>n+c.unknownTokenRequests,0),estimatedTokens:all.reduce((n,t)=>n+t.tokens.estimated,0)+controls.reduce((n,c)=>n+c.estimatedTokens,0),

@@ -29,14 +29,14 @@ it('invalid survivors are retained and failed candidates are counted values in a
     assert.equal(group.budget.spent.calls,f.counters().calls+f.counters().controls);
   }finally{await f.close();}
 });
-it('unlabelled inference remains unevaluated and learn refuses before purchasing calls',async()=>{
+it('unlabelled inference remains unevaluated and unlabelled learning refuses before purchase',async()=>{
   const f=await groupFixture();try{
     const {host,request}=f.build(),runner=createHeraGroupRunner(host),before=host.store.counters();
     const {goldAddress,...unlabelled}=request.task;
     const result=await runner.run({...request,mode:'infer',task:{...unlabelled,evaluator:null}});assert.ok(result.valid,JSON.stringify(result));
     assert.ok(result.value.trajectories.every(t=>t.primaryScore===null&&t.success===null));assert.equal(result.value.group.unevaluatedTrajectoryIds?.length,2);
     assert.equal(host.store.counters().learningWrites,before.learningWrites);
-    const calls=f.counters(),denied=await runner.run({...request,mode:'learn',task:{...request.task,split:'training'}});assert.equal(denied.valid,false);if(!denied.valid)assert.equal(denied.issues[0].code,'THERA1008');assert.deepEqual(f.counters(),calls);
+    const calls=f.counters(),denied=await runner.run({...request,mode:'learn',task:{...unlabelled,split:'training'}});assert.equal(denied.valid,false);if(!denied.valid)assert.equal(denied.issues[0].code,'THERA1004');assert.deepEqual(f.counters(),calls);
     const heldout=await runner.run({...request,mode:'learn'});assert.equal(heldout.valid,false);if(!heldout.valid)assert.equal(heldout.issues[0].code,'THERA1004');
   }finally{await f.close();}
 });

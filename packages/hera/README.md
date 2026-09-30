@@ -8,8 +8,9 @@ database or network work. Hosts supply storage, scope and write authority.
 The current measurement is the [keyless orchestration instrument](../../docs/HERA_BENCHMARK.md).
 Its analytic oracle and reference establish the fixture. Single-turn, fixed
 MAS and query-specific frozen rows execute registered scripted responses, with
-counted requests and zero learning writes. Four learning variants remain
-explicitly unimplemented.
+counted requests and zero learning writes. The experience-only row trains a
+library and then evaluates held-out tasks against its final snapshot. Three
+prompt and topology learning variants remain explicitly unimplemented.
 Scripted quality measures fixture sensitivity, not model quality or a learning
 improvement.
 
@@ -133,8 +134,52 @@ request. Failed candidate executions remain counted group values.
 Groups retain task-first ranking, null-score inference candidates and their
 mixed-outcome gate. Evaluator score precedes provider tokens and then id; this
 is an evaluated selection, not an oracle available to unlabelled inference.
-`evaluate` and `infer` write only execution evidence. Group `learn` currently
-refuses `THERA1008`; experience and prompt learning stages are not yet available.
+`evaluate` and `infer` write only execution evidence. Group `learn` requires a
+training task with a declared evaluator and label or outcome address. The group
+runner retains execution evidence; the learner below commits learning updates.
+
+## Experience learning
+
+`createHeraLearner(host).run(request)` accepts the same group request in `learn`
+mode. Enable `snapshot.config.flags.experience` to update the library. Reflection
+runs only for a same-query group containing an evaluated success and failure.
+`validateSemanticAdvantage` checks every cited trajectory, step and failed
+invocation; the shared structured-output owner permits one repair. Prompt views
+retain identifiers and visibly truncate large invocation payloads. Stored profile
+and insight vectors are used by selection and excluded from control prompts.
+
+`recordApplications` creates immutable versions from explicit topology
+applications: each evaluated application increments use count and each success
+increments success count. Offering increments selection exposure once per
+evaluated group and cannot increase utility. Utility is the success/use ratio,
+zero before any use. All-success and all-failure groups still update these
+counters, but create no advantage or content-consolidation proposal.
+
+`proposeConsolidation` offers the nearest `selectorCap` active versions by
+profile similarity. Its repair loop and `applyConsolidationPlan` share one
+admission gate. ADD starts at zero counts; MERGE archives parents and inherits
+their exact sums while refusing overlapping ancestry; KEEP changes nothing.
+PRUNE archives a lower-utility target only with a source-backed conflicting
+sibling admitted by `host.consolidationPolicy`. This optional, versioned host
+policy returns exact target and insight ids with a reason; its absence admits
+no contradictions. A model cannot manufacture that authority.
+
+The learner reserves only the original group budget's remaining calls, tokens
+and time for learning. Every reflection, consolidation and insight embedding has
+a durable receipt. It persists its prepared proposal before committing the
+advantage, utility versions, library membership and staged snapshot in one
+transaction. `planHeraLibraryTransition` and `activateSnapshot` use both head
+versions and revisions. A losing learner records `THERA1006` operationally and
+commits no learning changes. Completed learning replays without new purchases,
+including after SQLite reopen or later snapshot activation.
+
+Learning stage operations are append-only. The returned group view composes
+their ids with the original rollout group's ids; it does not rewrite completed
+execution evidence. `rope.run` and `topology.mutate` are explicitly disabled;
+enabling their flags currently refuses `THERA1008`. Refused training requests
+record operational `refusedLearningWrites` counters, separate from the store's
+counts of attempted forbidden writes. Evaluations pinned to old snapshots keep
+reading their exact archived membership.
 
 ## Building and checking
 

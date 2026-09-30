@@ -1593,6 +1593,10 @@
             "appliedNotOffered"
           ],
           "additionalProperties": false
+        },
+        "groupIndex": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -2905,6 +2909,103 @@
         "value",
         "usage",
         "issues"
+      ],
+      "additionalProperties": false
+    },
+    "heraProfileView": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "tags"
+      ],
+      "additionalProperties": false
+    },
+    "heraExperienceView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile": {
+          "$ref": "#/$defs/heraProfileView"
+        },
+        "insight": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "advantageId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "groupId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "advantageId",
+            "groupId"
+          ],
+          "additionalProperties": false
+        },
+        "useCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "successCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "utility": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "selectionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "profile",
+        "insight",
+        "provenance",
+        "useCount",
+        "successCount",
+        "utility",
+        "selectionCount",
+        "parents"
       ],
       "additionalProperties": false
     }

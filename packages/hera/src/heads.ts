@@ -1,12 +1,14 @@
 /** Every HERA activation delegates version-and-revision fencing to outcomes. */
 import { planHeadTransition } from '@tangleai/outcomes';
 import { heraRefuse, type HeraOutcome } from './errors.ts';
-import type { HeraHead, HeraPromptVersion, HeraLearningSnapshot } from './contracts.gen.ts';
+import type { HeraHead, HeraPromptVersion, HeraLearningSnapshot, HeraExperience } from './contracts.gen.ts';
+import {heraLibraryRevisionOf} from './identity.ts';
 
 export interface HeraHeadPlan {
   expected: HeraHead;
   next: HeraHead;
   changes: Array<{ kind: 'promptVersion' | 'snapshot' | 'experience'; id: string; from: string; to: string }>;
+  membership?:{previousIds:string[];nextIds:string[]};
 }
 /** JSON tuples keep opaque scopes and keys distinct, including embedded separators. */
 export function heraHeadId(scope: string, kind: HeraHead['kind'], key = ''): string {
@@ -31,6 +33,17 @@ export function planHeraHeadTransition(actual: HeraHead, expected: HeraHead, tar
 export function planLibraryActivation(actual: HeraHead, expected: HeraHead, revision: string): HeraOutcome<HeraHeadPlan> {
   if (actual.kind !== 'library') return heraRefuse('THERA1006', '/kind', 'A library activation requires a library head.');
   return planHeraHeadTransition(actual, expected, revision);
+}
+/** Membership is part of a learning transition; pure planning never mutates versions. */
+export async function planHeraLibraryTransition(actual:HeraHead,expected:HeraHead,previous:readonly HeraExperience[],next:readonly HeraExperience[]):Promise<HeraOutcome<HeraHeadPlan>>{
+  const previousIds=previous.map(e=>e.id).sort(),nextIds=next.map(e=>e.id).sort();
+  if(new Set(previousIds).size!==previousIds.length||new Set(nextIds).size!==nextIds.length
+    ||[...previous,...next].some(e=>e.scope!==actual.scope||e.status!=='active'))return heraRefuse('THERA1006','/membership','A library transition requires unique active versions in one scope.');
+  if(actual.versionId!==await heraLibraryRevisionOf(previousIds)&&!(actual.versionId===null&&previousIds.length===0))return heraRefuse('THERA1006','/membership','The previous membership differs from the library head.');
+  const planned=planLibraryActivation(actual,expected,await heraLibraryRevisionOf(nextIds));if(!planned.valid)return planned;
+  planned.value.membership={previousIds,nextIds};
+  planned.value.changes=previous.filter(e=>!nextIds.includes(e.id)).map(e=>({kind:'experience',id:e.id,from:'active',to:'archived'}));
+  return planned;
 }
 export function planPromptActivation(actual: HeraHead, expected: HeraHead, candidate: HeraPromptVersion, previous?: HeraPromptVersion): HeraOutcome<HeraHeadPlan> {
   if (actual.id !== heraHeadId(candidate.scope, 'prompt', candidate.agentId) || actual.kind !== 'prompt' || candidate.status !== 'candidate' || candidate.parentId !== actual.versionId)

@@ -3,7 +3,7 @@ import { cloneJson, equalsJson } from '@jarenjs/core/object';
 import { HeraRefusal, heraIssue, type HeraOutcome } from './errors.ts';
 import { assertLearningWrite, isHeraLearningKind, type HeraAuthority } from './modes.ts';
 import { validateHeraRecord } from './schema.ts';
-import { planHeraHeadTransition, planPromptActivation, planSnapshotActivation, type HeraHeadPlan } from './heads.ts';
+import { planHeraHeadTransition, planPromptActivation, planSnapshotActivation, planHeraLibraryTransition, type HeraHeadPlan } from './heads.ts';
 import type { HeraAgentDefinition, HeraPromptVersion, HeraExperience, HeraTopology, HeraRolloutGroup,
   HeraTrajectory, HeraTrajectoryStep, HeraOperation, HeraSemanticAdvantage, HeraPromptTrial, HeraLearningSnapshot, HeraHead } from './contracts.gen.ts';
 export interface HeraRecords {
@@ -121,6 +121,11 @@ export function createHeraStoreAdapter(persistence: HeraPersistence, scope: stri
                 if (!entry || entry.scope !== candidate.scope) return refuse('THERA1002', '/experienceIds', 'A frozen experience is missing.');
               }
               expected = must(planSnapshotActivation(actual, plan.expected, candidate, actual.versionId ? await raw.get('snapshot', actual.versionId) : undefined));
+            } else if(actual.kind==='library'&&plan.membership){
+              const before=await Promise.all(plan.membership.previousIds.map(id=>raw.get('experience',id))),after=await Promise.all(plan.membership.nextIds.map(id=>raw.get('experience',id)));
+              if(before.some(e=>!e)||after.some(e=>!e))return refuse('THERA1006','/membership','A library version disappeared before activation.');
+              expected=must(await planHeraLibraryTransition(actual,plan.expected,before as HeraExperience[],after as HeraExperience[]));
+              if(!equalsJson(expected.membership,plan.membership)||!equalsJson(expected.next,plan.next))return refuse('THERA1006','/membership','The proposed library membership changed.');
             }
             if (!equalsJson(expected.changes, plan.changes)) refuse('THERA1006', '/changes', 'Activation metadata differs from its pure plan.');
             for (const change of expected.changes) {

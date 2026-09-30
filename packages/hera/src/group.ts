@@ -46,7 +46,6 @@ export function createHeraGroupRunner(host:HeraGroupHost) {
       if(!['learn','evaluate','infer'].includes(request.mode))refuse('THERA1001','/mode','A registered mode is required.');
       const task=must(validateHeraShape<HeraTask>('heraTask',request.task)),snapshot=must(await validateHeraRecord('snapshot',request.snapshot));
       must(assertTaskSplit(task,request.mode));
-      if(request.mode==='learn')refuse('THERA1008','/mode','Learning stages are not available.');
       if(task.scope!==host.store.scope||snapshot.scope!==task.scope)refuse('THERA1004','/scope','Task, store and snapshot must share scope.');
       const retained=await host.store.getSnapshot(snapshot.id);
       if(!retained||await heraRevisionOf({...retained,status:null})!==await heraRevisionOf({...snapshot,status:null}))refuse('THERA1002','/snapshot','The exact frozen snapshot must be retained.');
@@ -133,7 +132,7 @@ export function createHeraGroupRunner(host:HeraGroupHost) {
         if(!execution.valid){if(execution.issues.some(i=>i.code==='THERA1007'))throw new HeraRefusal(execution.issues);failures.push(...execution.issues);continue;}
         trajectories.push(execution.value.trajectory);if(execution.value.trajectory.failure)failures.push(execution.value.trajectory.failure.issue);
       }
-      const ranked=rankTrajectories(trajectories),group:HeraRolloutGroup={id,scope:task.scope,taskId:task.id,snapshotId:snapshot.id,requestedSize:snapshot.config.groupSize,
+      const ranked=rankTrajectories(trajectories),group:HeraRolloutGroup={id,scope:task.scope,taskId:task.id,snapshotId:snapshot.id,groupIndex:request.groupIndex,requestedSize:snapshot.config.groupSize,
         candidateTrajectoryIds:trajectories.map(t=>t.id),failures,skips,ranking:ranked.ranked.map(t=>t.id),mixedOutcome:mixedOutcome(trajectories),budget:{limits:budget,spent},
         state:trajectories.some(t=>t.status==='orphan')?'orphan':trajectories.length?'completed':'failed',configRevision,requestBinding:binding,profile:profileValue,
         offeredExperienceIds,topologyIds:topologies.map(t=>t.id),operationIds:[...operationIds,preparationId],unevaluatedTrajectoryIds:ranked.unevaluatedIds,controlUsage,refusals:proposed.refusals};

@@ -9,7 +9,7 @@ export interface HeraTaskAdapter {
   score(task: HeraTask, answer: string, evidence: HeraAnswerEvidence): Promise<HeraTaskScore>;
 }
 export function validateHeraEvaluator(task: HeraTask, snapshot: HeraLearningSnapshot, evaluator: HeraTaskAdapter, mode:HeraMode): HeraOutcome<true> {
-  if (mode === 'learn' && !task.goldAddress && !task.outcomeAddress)
+  if (mode === 'learn' && (task.evaluator===null || (!task.goldAddress && !task.outcomeAddress)))
     return heraRefuse('THERA1004', '/evaluator', 'Learning requires a training label or outcome address.');
   if ((task.evaluator === null ? mode !== 'infer' : !equalsJson(task.evaluator, evaluator.identity)) || !equalsJson(snapshot.identities.evaluator, evaluator.identity))
     return heraRefuse('THERA1002', '/evaluator', 'The task, snapshot and scorer must name the same versioned success rule.');

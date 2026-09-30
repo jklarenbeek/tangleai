@@ -2597,7 +2597,7 @@
           "id": "hera-plan-generation",
           "pattern": "hera",
           "role": "orchestrator",
-          "version": "2"
+          "version": "3"
         },
         "system": {
           "content": "For the profile phase, describe the query in text and concise task tags without answering it. For the plan phase, design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output."
@@ -2607,14 +2607,14 @@
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "31d5bb9fc1bbd7151775dcf7d2a17f2a52694ef6716a6e86139bcad5ad41de55",
+      "revision": "5e120a7deba0674e1449928c723f14f8bb7528e43a351bfd1a9830ea3472d406",
       "role": {
         "id": "orchestrator",
         "instructions": "For the profile phase, describe the query in text and concise task tags without answering it. For the plan phase, design an invocation DAG from the registered roles. Give each invocation a unique id and explicit dependsOn ids; repeated roles are allowed. End at one conclude-agent. Apply only offered experience ids, obey all host caps and never grant tools or write learning state. Task quality outranks token efficiency. Return only the declared structured output.",
         "revision": "284fb629e7fdbcf16f53ba8fafa948f3b1b15381bca1957dcd6ebee6d6867cbd",
         "title": "orchestrator"
       },
-      "sourceDigest": "c8e49ba14efb584cdcb69b7bec352233e8ae4690a6820b832ca371a72ec99835",
+      "sourceDigest": "ad8396fe3fa957f29a5a7c161dc9fa7db123b978c099d0ea7b99751f280c2740",
       "userStylesheet": {
         "$jtlt": "0.1",
         "output": "text",
@@ -2709,133 +2709,10 @@
           },
           "offered_experiences": {
             "items": {
-              "$defs": {},
-              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
-              "$query": {
-                "$and": [
-                  {
-                    "$le": [
-                      "$.successCount",
-                      "$.useCount"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      "$.utility",
-                      {
-                        "$if": [
-                          {
-                            "$gt": [
-                              "$.useCount",
-                              0
-                            ]
-                          },
-                          {
-                            "$div": [
-                              "$.successCount",
-                              "$.useCount"
-                            ]
-                          },
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.insightEmbedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.profile.embedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  }
-                ]
-              },
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "inheritedCounts": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "successCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        },
-                        "useCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        }
-                      },
-                      "required": [
-                        "useCount",
-                        "successCount"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "insight": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "insightEmbedding": {
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 1,
-                  "type": "array"
-                },
-                "parents": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "profile": {
+              "$defs": {
+                "heraProfileView": {
                   "additionalProperties": false,
                   "properties": {
-                    "embeddedBy": {
-                      "additionalProperties": false,
-                      "properties": {
-                        "dims": {
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "model": {
-                          "minLength": 1,
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "model",
-                        "dims"
-                      ],
-                      "type": "object"
-                    },
-                    "embedding": {
-                      "items": {
-                        "type": "number"
-                      },
-                      "type": "array"
-                    },
                     "tags": {
                       "items": {
                         "minLength": 1,
@@ -2850,11 +2727,32 @@
                   },
                   "required": [
                     "text",
-                    "tags",
-                    "embedding",
-                    "embeddedBy"
+                    "tags"
                   ],
                   "type": "object"
+                }
+              },
+              "$id": "https://tangleai.dev/schemas/hera/heraExperienceView",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "$ref": "#/$defs/heraProfileView"
                 },
                 "provenance": {
                   "additionalProperties": false,
@@ -2882,12 +2780,6 @@
                   "minimum": 0,
                   "type": "integer"
                 },
-                "status": {
-                  "enum": [
-                    "active",
-                    "archived"
-                  ]
-                },
                 "successCount": {
                   "minimum": 0,
                   "type": "integer"
@@ -2912,10 +2804,7 @@
                 "successCount",
                 "utility",
                 "selectionCount",
-                "status",
-                "parents",
-                "inheritedCounts",
-                "insightEmbedding"
+                "parents"
               ],
               "type": "object"
             },
@@ -2930,33 +2819,9 @@
           },
           "profile": {
             "$defs": {},
-            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "$id": "https://tangleai.dev/schemas/hera/heraProfileView",
             "additionalProperties": false,
             "properties": {
-              "embeddedBy": {
-                "additionalProperties": false,
-                "properties": {
-                  "dims": {
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "model": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "model",
-                  "dims"
-                ],
-                "type": "object"
-              },
-              "embedding": {
-                "items": {
-                  "type": "number"
-                },
-                "type": "array"
-              },
               "tags": {
                 "items": {
                   "minLength": 1,
@@ -2971,9 +2836,7 @@
             },
             "required": [
               "text",
-              "tags",
-              "embedding",
-              "embeddedBy"
+              "tags"
             ],
             "type": "object"
           },
@@ -3059,133 +2922,10 @@
           "render": "json",
           "schema": {
             "items": {
-              "$defs": {},
-              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
-              "$query": {
-                "$and": [
-                  {
-                    "$le": [
-                      "$.successCount",
-                      "$.useCount"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      "$.utility",
-                      {
-                        "$if": [
-                          {
-                            "$gt": [
-                              "$.useCount",
-                              0
-                            ]
-                          },
-                          {
-                            "$div": [
-                              "$.successCount",
-                              "$.useCount"
-                            ]
-                          },
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.insightEmbedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.profile.embedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  }
-                ]
-              },
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "inheritedCounts": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "successCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        },
-                        "useCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        }
-                      },
-                      "required": [
-                        "useCount",
-                        "successCount"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "insight": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "insightEmbedding": {
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 1,
-                  "type": "array"
-                },
-                "parents": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "profile": {
+              "$defs": {
+                "heraProfileView": {
                   "additionalProperties": false,
                   "properties": {
-                    "embeddedBy": {
-                      "additionalProperties": false,
-                      "properties": {
-                        "dims": {
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "model": {
-                          "minLength": 1,
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "model",
-                        "dims"
-                      ],
-                      "type": "object"
-                    },
-                    "embedding": {
-                      "items": {
-                        "type": "number"
-                      },
-                      "type": "array"
-                    },
                     "tags": {
                       "items": {
                         "minLength": 1,
@@ -3200,11 +2940,32 @@
                   },
                   "required": [
                     "text",
-                    "tags",
-                    "embedding",
-                    "embeddedBy"
+                    "tags"
                   ],
                   "type": "object"
+                }
+              },
+              "$id": "https://tangleai.dev/schemas/hera/heraExperienceView",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "$ref": "#/$defs/heraProfileView"
                 },
                 "provenance": {
                   "additionalProperties": false,
@@ -3232,12 +2993,6 @@
                   "minimum": 0,
                   "type": "integer"
                 },
-                "status": {
-                  "enum": [
-                    "active",
-                    "archived"
-                  ]
-                },
                 "successCount": {
                   "minimum": 0,
                   "type": "integer"
@@ -3262,10 +3017,7 @@
                 "successCount",
                 "utility",
                 "selectionCount",
-                "status",
-                "parents",
-                "inheritedCounts",
-                "insightEmbedding"
+                "parents"
               ],
               "type": "object"
             },
@@ -3286,33 +3038,9 @@
           "render": "json",
           "schema": {
             "$defs": {},
-            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "$id": "https://tangleai.dev/schemas/hera/heraProfileView",
             "additionalProperties": false,
             "properties": {
-              "embeddedBy": {
-                "additionalProperties": false,
-                "properties": {
-                  "dims": {
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "model": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "model",
-                  "dims"
-                ],
-                "type": "object"
-              },
-              "embedding": {
-                "items": {
-                  "type": "number"
-                },
-                "type": "array"
-              },
               "tags": {
                 "items": {
                   "minLength": 1,
@@ -3327,9 +3055,7 @@
             },
             "required": [
               "text",
-              "tags",
-              "embedding",
-              "embeddedBy"
+              "tags"
             ],
             "type": "object"
           }
@@ -3509,7 +3235,7 @@
           "id": "hera-reflection",
           "pattern": "hera",
           "role": "semantic-advantage-reflector",
-          "version": "1"
+          "version": "2"
         },
         "system": {
           "content": "Compare evaluated successes and failures for the same query. Extract semantic advantages only from a mixed group. Tie every success factor, failure mode, insight and failure credit to the supplied trajectory and step identifiers. Model opinion cannot replace the evaluator. Return only the declared structured output."
@@ -3519,14 +3245,14 @@
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "08ae5d27dc729d23b55c489530e420b8e241c7fc3e005e4331e6cdab9f3840ec",
+      "revision": "45becea60a566d43046797477c49746f65c98af9b2c47d771a9196922975182d",
       "role": {
         "id": "semantic-advantage-reflector",
         "instructions": "Compare evaluated successes and failures for the same query. Extract semantic advantages only from a mixed group. Tie every success factor, failure mode, insight and failure credit to the supplied trajectory and step identifiers. Model opinion cannot replace the evaluator. Return only the declared structured output.",
         "revision": "7d96442d3178c5854d58e36f61846821dc472f7f77129189fed3ebdb695ab1af",
         "title": "semantic-advantage-reflector"
       },
-      "sourceDigest": "34111b7d22fc370575b661d32b7bee33a179181015e0b6059041f21f4a9dbea3",
+      "sourceDigest": "09c59e20de677ebcbba363b2688d30f8037ad206980a7551ca8112f727b603cf",
       "userStylesheet": {
         "$jtlt": "0.1",
         "output": "text",
@@ -3553,33 +3279,9 @@
         "properties": {
           "profile": {
             "$defs": {},
-            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "$id": "https://tangleai.dev/schemas/hera/heraProfileView",
             "additionalProperties": false,
             "properties": {
-              "embeddedBy": {
-                "additionalProperties": false,
-                "properties": {
-                  "dims": {
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "model": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "model",
-                  "dims"
-                ],
-                "type": "object"
-              },
-              "embedding": {
-                "items": {
-                  "type": "number"
-                },
-                "type": "array"
-              },
               "tags": {
                 "items": {
                   "minLength": 1,
@@ -3594,9 +3296,7 @@
             },
             "required": [
               "text",
-              "tags",
-              "embedding",
-              "embeddedBy"
+              "tags"
             ],
             "type": "object"
           },
@@ -3623,33 +3323,9 @@
           "render": "json",
           "schema": {
             "$defs": {},
-            "$id": "https://tangleai.dev/schemas/hera/heraProfile",
+            "$id": "https://tangleai.dev/schemas/hera/heraProfileView",
             "additionalProperties": false,
             "properties": {
-              "embeddedBy": {
-                "additionalProperties": false,
-                "properties": {
-                  "dims": {
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "model": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "model",
-                  "dims"
-                ],
-                "type": "object"
-              },
-              "embedding": {
-                "items": {
-                  "type": "number"
-                },
-                "type": "array"
-              },
               "tags": {
                 "items": {
                   "minLength": 1,
@@ -3664,9 +3340,7 @@
             },
             "required": [
               "text",
-              "tags",
-              "embedding",
-              "embeddedBy"
+              "tags"
             ],
             "type": "object"
           }
@@ -3749,24 +3423,24 @@
           "id": "hera-consolidation",
           "pattern": "hera",
           "role": "consolidation-proposer",
-          "version": "1"
+          "version": "3"
         },
         "system": {
           "content": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output."
         },
         "user": {
-          "content": "Scope: {{scope}}\nSource insights: {{insights}}\nActive library: {{library}}\nBounds and policy: {{config}}"
+          "content": "Scope: {{scope}}\nSource insights: {{insights}}\nActive library: {{library}}\nBounds and policy: {{config}}\nHost-admitted source-backed conflicts: {{conflicts}}"
         }
       },
       "policyVersion": "gmpl-jtlt-v1",
-      "revision": "86306ce2a74b6afbbb7f9381001e9057286eb493926574d16cf65d83679cbff3",
+      "revision": "f0b27632a951fbbdc314123150286290c5690ac41f110ecea879ad3f109ce220",
       "role": {
         "id": "consolidation-proposer",
         "instructions": "Propose bounded ADD, MERGE, PRUNE or KEEP operations over supplied source insights and library targets. Preserve provenance. MERGE names at least two targets; PRUNE requires a conflicting higher-utility sibling; KEEP has no replacement text. Do not create authority or count utility from an opinion. Return only the declared structured output.",
         "revision": "d9039255933f8dea49d7f64c6e74c9ae31ad0d4e094e0afbe4bd9ef0037ce1b3",
         "title": "consolidation-proposer"
       },
-      "sourceDigest": "6820bbe5087498b61564a6773726bd5d7b7dc3f85ba1a544bdcd966cee4747b2",
+      "sourceDigest": "3ffbfef30db9acce6a1ee4b8c310599d90b0f0ea04a2517e78fd3a04220726ec",
       "userStylesheet": {
         "$jtlt": "0.1",
         "output": "text",
@@ -3786,6 +3460,10 @@
               "\nBounds and policy: ",
               {
                 "$json": "$.variables.config"
+              },
+              "\nHost-admitted source-backed conflicts: ",
+              {
+                "$json": "$.variables.conflicts"
               }
             ],
             "match": "$"
@@ -3928,6 +3606,12 @@
             ],
             "type": "object"
           },
+          "conflicts": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
           "insights": {
             "items": {
               "type": "object"
@@ -3936,133 +3620,10 @@
           },
           "library": {
             "items": {
-              "$defs": {},
-              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
-              "$query": {
-                "$and": [
-                  {
-                    "$le": [
-                      "$.successCount",
-                      "$.useCount"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      "$.utility",
-                      {
-                        "$if": [
-                          {
-                            "$gt": [
-                              "$.useCount",
-                              0
-                            ]
-                          },
-                          {
-                            "$div": [
-                              "$.successCount",
-                              "$.useCount"
-                            ]
-                          },
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.insightEmbedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.profile.embedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  }
-                ]
-              },
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "inheritedCounts": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "successCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        },
-                        "useCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        }
-                      },
-                      "required": [
-                        "useCount",
-                        "successCount"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "insight": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "insightEmbedding": {
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 1,
-                  "type": "array"
-                },
-                "parents": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "profile": {
+              "$defs": {
+                "heraProfileView": {
                   "additionalProperties": false,
                   "properties": {
-                    "embeddedBy": {
-                      "additionalProperties": false,
-                      "properties": {
-                        "dims": {
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "model": {
-                          "minLength": 1,
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "model",
-                        "dims"
-                      ],
-                      "type": "object"
-                    },
-                    "embedding": {
-                      "items": {
-                        "type": "number"
-                      },
-                      "type": "array"
-                    },
                     "tags": {
                       "items": {
                         "minLength": 1,
@@ -4077,11 +3638,32 @@
                   },
                   "required": [
                     "text",
-                    "tags",
-                    "embedding",
-                    "embeddedBy"
+                    "tags"
                   ],
                   "type": "object"
+                }
+              },
+              "$id": "https://tangleai.dev/schemas/hera/heraExperienceView",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "$ref": "#/$defs/heraProfileView"
                 },
                 "provenance": {
                   "additionalProperties": false,
@@ -4109,12 +3691,6 @@
                   "minimum": 0,
                   "type": "integer"
                 },
-                "status": {
-                  "enum": [
-                    "active",
-                    "archived"
-                  ]
-                },
                 "successCount": {
                   "minimum": 0,
                   "type": "integer"
@@ -4139,10 +3715,7 @@
                 "successCount",
                 "utility",
                 "selectionCount",
-                "status",
-                "parents",
-                "inheritedCounts",
-                "insightEmbedding"
+                "parents"
               ],
               "type": "object"
             },
@@ -4155,6 +3728,7 @@
         },
         "required": [
           "config",
+          "conflicts",
           "insights",
           "library",
           "scope"
@@ -4298,6 +3872,15 @@
             "type": "object"
           }
         },
+        "conflicts": {
+          "render": "json",
+          "schema": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
         "insights": {
           "render": "json",
           "schema": {
@@ -4311,133 +3894,10 @@
           "render": "json",
           "schema": {
             "items": {
-              "$defs": {},
-              "$id": "https://tangleai.dev/schemas/hera/heraExperience",
-              "$query": {
-                "$and": [
-                  {
-                    "$le": [
-                      "$.successCount",
-                      "$.useCount"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      "$.utility",
-                      {
-                        "$if": [
-                          {
-                            "$gt": [
-                              "$.useCount",
-                              0
-                            ]
-                          },
-                          {
-                            "$div": [
-                              "$.successCount",
-                              "$.useCount"
-                            ]
-                          },
-                          0
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.insightEmbedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  },
-                  {
-                    "$eq": [
-                      {
-                        "$count": "$.profile.embedding[*]"
-                      },
-                      "$.profile.embeddedBy.dims"
-                    ]
-                  }
-                ]
-              },
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "inheritedCounts": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "successCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        },
-                        "useCount": {
-                          "minimum": 0,
-                          "type": "integer"
-                        }
-                      },
-                      "required": [
-                        "useCount",
-                        "successCount"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "insight": {
-                  "minLength": 1,
-                  "type": "string"
-                },
-                "insightEmbedding": {
-                  "items": {
-                    "type": "number"
-                  },
-                  "minItems": 1,
-                  "type": "array"
-                },
-                "parents": {
-                  "items": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "type": "array",
-                  "uniqueItems": true
-                },
-                "profile": {
+              "$defs": {
+                "heraProfileView": {
                   "additionalProperties": false,
                   "properties": {
-                    "embeddedBy": {
-                      "additionalProperties": false,
-                      "properties": {
-                        "dims": {
-                          "minimum": 1,
-                          "type": "integer"
-                        },
-                        "model": {
-                          "minLength": 1,
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "model",
-                        "dims"
-                      ],
-                      "type": "object"
-                    },
-                    "embedding": {
-                      "items": {
-                        "type": "number"
-                      },
-                      "type": "array"
-                    },
                     "tags": {
                       "items": {
                         "minLength": 1,
@@ -4452,11 +3912,32 @@
                   },
                   "required": [
                     "text",
-                    "tags",
-                    "embedding",
-                    "embeddedBy"
+                    "tags"
                   ],
                   "type": "object"
+                }
+              },
+              "$id": "https://tangleai.dev/schemas/hera/heraExperienceView",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "insight": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parents": {
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "profile": {
+                  "$ref": "#/$defs/heraProfileView"
                 },
                 "provenance": {
                   "additionalProperties": false,
@@ -4484,12 +3965,6 @@
                   "minimum": 0,
                   "type": "integer"
                 },
-                "status": {
-                  "enum": [
-                    "active",
-                    "archived"
-                  ]
-                },
                 "successCount": {
                   "minimum": 0,
                   "type": "integer"
@@ -4514,10 +3989,7 @@
                 "successCount",
                 "utility",
                 "selectionCount",
-                "status",
-                "parents",
-                "inheritedCounts",
-                "insightEmbedding"
+                "parents"
               ],
               "type": "object"
             },
@@ -5552,5 +5024,5 @@
     }
   ],
   "recipes": [],
-  "revision": "5a6ac34a08bdce85be0c3b95f2b7d37cf7ce47c108c6f72f9450c2c92bbd1856"
+  "revision": "4315c1bdc736573bd57910ac54af6f42a061e2a9a5de8e97aecf7d041181f800"
 }

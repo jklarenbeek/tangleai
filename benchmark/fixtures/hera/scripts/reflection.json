@@ -1,0 +1,8 @@
+{
+  "kind": "hera-reflection-script/v1",
+  "successFactor": "The successful path retained the evidence needed for its answer.",
+  "failureMode": "The unsuccessful path supplied the registered unresolved answer.",
+  "insight": { "id": "evidence-precedence", "text": "Compare retained evidence links and dated-source precedence before concluding." },
+  "creditReason": "This concluding invocation produced the evaluated unsuccessful answer.",
+  "referenceRecipe": "Bind the first ranked success and failure and their conclude-agent invocation steps from the supplied reflection view. No answer key is read."
+}

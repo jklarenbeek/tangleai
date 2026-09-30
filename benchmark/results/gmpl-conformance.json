@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "a2b9c9d744145ffc569ac95305e7b9eb42873611",
+    "head": "52e3d5a602e2cd422be265cc9f0447b89db7174b",
     "clean": false,
     "files": [
       {
@@ -1010,7 +1010,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "f1683bf4460a1baa497d62e1b784b766334a79fa0a20ec7a62548d5192853ddb"
+    "sha256": "ee9f24751f1261489bb9e799f6f433891e517cc2d29d87113f02cb57d11ca4cc"
   },
   "ablations": [
     {
@@ -76564,5 +76564,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "821389c38d7358774cea6ff94f0f2956573f4335e341c6dd943d1539497bfa59"
+  "reportId": "b6bcfab33192d16c3e7f3098af0fcf6e918ca18b04c8d77ea7f81939c2f179f6"
 }

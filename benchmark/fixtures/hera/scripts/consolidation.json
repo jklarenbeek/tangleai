@@ -1,0 +1,24 @@
+{
+  "kind": "hera-consolidation-script/v1",
+  "guidance": {
+    "older": "Prefer the older dated source when two accounts disagree.",
+    "newer": "Prefer the newer dated source when two accounts disagree.",
+    "dates": "Check event dates before ordering events.",
+    "links": "Retain each evidence link in a multi-hop answer."
+  },
+  "merged": "Check event dates and prefer the newer dated account when sources disagree.",
+  "plans": {
+    "seed": [
+      { "op": "ADD", "targets": [], "text": "older" },
+      { "op": "ADD", "targets": [], "text": "newer" },
+      { "op": "ADD", "targets": [], "text": "dates" },
+      { "op": "ADD", "targets": [], "text": "links" }
+    ],
+    "prune-merge": [
+      { "op": "PRUNE", "targets": ["older", "newer"] },
+      { "op": "MERGE", "targets": ["newer", "dates"], "text": "merged" }
+    ],
+    "keep": [ { "op": "KEEP", "targets": [] } ]
+  },
+  "referenceRecipe": "Resolve authored guidance labels to the exact ids offered in the library prompt, and bind operations to the supplied insight ids."
+}
