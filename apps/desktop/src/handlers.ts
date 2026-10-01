@@ -514,7 +514,11 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
             chunk,
             source: item.source,
             score: item.score,
-            context: item.context.map(({ embedding: _contextEmbedding, ...context }) => context),
+            context: item.context.map((entry) => {
+              if (!('embedding' in entry)) return entry;
+              const { embedding: _contextEmbedding, ...context } = entry;
+              return context;
+            }),
             citation: item.citation,
           };
         }),

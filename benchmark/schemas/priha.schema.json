@@ -14,6 +14,9 @@
     },
     {
       "$ref": "#/$defs/prihaLivePlan"
+    },
+    {
+      "$ref": "#/$defs/prihaLocalQueries"
     }
   ],
   "$defs": {
@@ -947,7 +950,8 @@
         "hypothesis",
         "safelist",
         "profileRevision",
-        "profileRuleInputs"
+        "profileRuleInputs",
+        "localQueries"
       ],
       "properties": {
         "document": {
@@ -1220,6 +1224,24 @@
                 },
                 "uniqueItems": true
               }
+            }
+          }
+        },
+        "localQueries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
             }
           }
         }
@@ -1509,7 +1531,9 @@
         "modelIdentity",
         "flatRetrieval",
         "hypothesis",
-        "capabilityRows"
+        "capabilityRows",
+        "localQueryId",
+        "localCorpusAddressId"
       ],
       "properties": {
         "registrationId": {
@@ -1658,6 +1682,14 @@
             "$ref": "#/$defs/prihaCapabilityRegistration"
           },
           "minItems": 8
+        },
+        "localQueryId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "localCorpusAddressId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
         }
       }
     },
@@ -2540,7 +2572,8 @@
         "summary",
         "reportId",
         "replay",
-        "contracts"
+        "contracts",
+        "local"
       ],
       "properties": {
         "document": {
@@ -2722,6 +2755,9 @@
         },
         "contracts": {
           "$ref": "#/$defs/prihaContracts"
+        },
+        "local": {
+          "$ref": "#/$defs/prihaLocalReport"
         }
       },
       "$query": {
@@ -2988,6 +3024,34 @@
                 }
               ]
             }
+          },
+          {
+            "$eq": [
+              "$.local.queryId",
+              "$.registration.localQueryId"
+            ]
+          },
+          {
+            "$every": {
+              "c": "$.capabilities[?(@.id=='local')]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$.local.failed",
+                    0
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$eq": [
+              "$.local.corpusAddressId",
+              "$.registration.localCorpusAddressId"
+            ]
           }
         ]
       }
@@ -3365,6 +3429,828 @@
                 ]
               }
             ]
+          }
+        ]
+      }
+    },
+    "prihaLocalQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "question",
+        "suite",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suite": {
+          "enum": [
+            "exact-name",
+            "paraphrase",
+            "control"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prihaLocalQueries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "cases",
+        "corpusAddresses"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-local-queries"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaLocalQuery"
+          }
+        },
+        "corpusAddresses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version",
+              "url"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "prihaLocalCensus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activeVersions",
+        "children",
+        "semantic",
+        "lexical",
+        "skipped",
+        "deduplicated",
+        "diversityDropped",
+        "parentsOverBudget",
+        "selected",
+        "issues",
+        "rebuilds",
+        "generation",
+        "contextTokens",
+        "sourceRevision",
+        "rebuildMs"
+      ],
+      "properties": {
+        "activeVersions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "children": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lexical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deduplicated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diversityDropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parentsOverBudget": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rebuilds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceRevision": {
+          "type": "string"
+        },
+        "rebuildMs": {
+          "type": "null"
+        }
+      }
+    },
+    "prihaLocalCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "question",
+        "suite",
+        "query",
+        "expectedSupport",
+        "retrievedSupport",
+        "suppliedSupport",
+        "childIds",
+        "parentIds",
+        "childHits",
+        "parentHits",
+        "support",
+        "childRecall",
+        "parentRecovery",
+        "census",
+        "issue"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suite": {
+          "enum": [
+            "exact-name",
+            "paraphrase",
+            "control"
+          ]
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedSupport": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "retrievedSupport": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "suppliedSupport": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "childIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "parentIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "childHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parentHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "support": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "childRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "parentRecovery": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "census": {
+          "$ref": "#/$defs/prihaLocalCensus"
+        },
+        "issue": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code",
+                "path",
+                "detail"
+              ],
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "path": {
+                  "type": "string"
+                },
+                "detail": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.support",
+              {
+                "$count": "$.expectedSupport[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.childHits",
+              {
+                "$count": "$.retrievedSupport[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.parentHits",
+              {
+                "$count": "$.suppliedSupport[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.selected",
+              {
+                "$count": "$.childIds[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.childIds[*]"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.childIds[*]"
+                }
+              }
+            ]
+          },
+          {
+            "$le": [
+              "$.childHits",
+              "$.support"
+            ]
+          },
+          {
+            "$le": [
+              "$.parentHits",
+              "$.support"
+            ]
+          }
+        ]
+      }
+    },
+    "prihaLocalMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cases",
+        "eligibleCases",
+        "support",
+        "childHits",
+        "parentHits",
+        "skipped",
+        "deduplicated",
+        "parentsOverBudget",
+        "issues",
+        "rebuilds",
+        "childRecall",
+        "parentRecovery",
+        "meanCandidates",
+        "exactNameRecall",
+        "paraphraseRecall",
+        "rebuildMs"
+      ],
+      "properties": {
+        "cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligibleCases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "support": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "childHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parentHits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deduplicated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parentsOverBudget": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rebuilds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "childRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "parentRecovery": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "meanCandidates": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exactNameRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "paraphraseRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "rebuildMs": {
+          "type": "null"
+        }
+      }
+    },
+    "prihaLocalRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "treatment",
+        "granularity",
+        "lane",
+        "rankerId",
+        "corpus",
+        "cases",
+        "metrics"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment": {
+          "enum": [
+            "flat-semantic",
+            "local-hybrid"
+          ]
+        },
+        "granularity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lane": {
+          "enum": [
+            "semantic",
+            "lexical",
+            "fused"
+          ]
+        },
+        "rankerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "corpus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sources",
+            "versions",
+            "activeChildren",
+            "activeParents",
+            "retainedChunks",
+            "retainedParents",
+            "embeddingCalls",
+            "embeddedChildren"
+          ],
+          "properties": {
+            "sources": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "versions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "activeChildren": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "activeParents": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retainedChunks": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retainedParents": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "embeddingCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "embeddedChildren": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaLocalCase"
+          }
+        },
+        "metrics": {
+          "$ref": "#/$defs/prihaLocalMetrics"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.metrics.cases",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.eligibleCases",
+              {
+                "$count": "$.cases[?(@.support>0)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.cases[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.cases[*].id"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.support",
+              {
+                "$sum": "$.cases[*].support"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.childHits",
+              {
+                "$sum": "$.cases[*].childHits"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.parentHits",
+              {
+                "$sum": "$.cases[*].parentHits"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.skipped",
+              {
+                "$sum": "$.cases[*].census.skipped"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.deduplicated",
+              {
+                "$sum": "$.cases[*].census.deduplicated"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.parentsOverBudget",
+              {
+                "$sum": "$.cases[*].census.parentsOverBudget"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.issues",
+              {
+                "$sum": "$.cases[*].census.issues"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.rebuilds",
+              {
+                "$sum": "$.cases[*].census.rebuilds"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaLocalComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "granularity",
+        "semantic",
+        "lexical",
+        "fused",
+        "fusedBeatsOrTiesBoth",
+        "latencyBudgetMs",
+        "latency"
+      ],
+      "properties": {
+        "granularity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "semantic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "lexical": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fused": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fusedBeatsOrTiesBoth": {
+          "type": "boolean"
+        },
+        "latencyBudgetMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "latency": {
+          "const": "separate-receipt"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.fusedBeatsOrTiesBoth",
+          {
+            "$and": [
+              {
+                "$ge": [
+                  "$.fused",
+                  "$.semantic"
+                ]
+              },
+              {
+                "$ge": [
+                  "$.fused",
+                  "$.lexical"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaLocalReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "queryId",
+        "queries",
+        "rows",
+        "comparisons",
+        "failed",
+        "providerRequests",
+        "networkRequests",
+        "latency",
+        "corpusAddresses",
+        "corpusAddressId"
+      ],
+      "properties": {
+        "status": {
+          "const": "executed"
+        },
+        "queryId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaLocalQuery"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaLocalRow"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaLocalComparison"
+          }
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerRequests": {
+          "const": 0
+        },
+        "networkRequests": {
+          "const": 0
+        },
+        "latency": {
+          "const": "separate-receipt"
+        },
+        "corpusAddresses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version",
+              "url"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "corpusAddressId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*]"
+              },
+              7
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.rows[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.failed",
+              {
+                "$sum": "$.rows[*].metrics.issues"
+              }
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.metrics.cases",
+                {
+                  "$count": "$.queries[*]"
+                }
+              ]
+            }
           }
         ]
       }

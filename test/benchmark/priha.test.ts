@@ -8,10 +8,12 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { buildPrihaReport, loadPrihaFixture, loadPrihaControl, createPrihaValidator, requirePrihaCapability, PRIHA_ROWS, PRIHA_BAD_ROWS, PRIHA_CAPABILITY_ROWS, renderPrihaDocument, renderPrihaReport, planPrihaLive, authorizePrihaLive, prihaCorpus, prihaScoreAnswer, scorePrihaConversation, validatePrihaReport, reportIdOf, registrationIdOf, type PrihaAnswer, type PrihaFixture, } from '../../benchmark/lib/priha.ts';
+import { prihaLocalTimingReceipt, type PrihaLocalTiming } from '../../benchmark/lib/priha-local.ts';
 import { createPrihaReplay } from '../../benchmark/lib/priha-replay.ts';
 import { readAiEnv } from '../../benchmark/lib/ai-env.ts';
 const exec = promisify(execFile), loaded = await loadPrihaFixture(), fixture = loaded.fixture;
-const report = await buildPrihaReport({ loaded }), validate = createPrihaValidator();
+const localTimings: PrihaLocalTiming[] = [];
+const report = await buildPrihaReport({ loaded, onLocalTiming: value => localTimings.push(value) }), validate = createPrihaValidator();
 async function fixtureCopy(run: (root: string, copy: PrihaFixture) => Promise<void>) {
     const root = await mkdtemp(join(tmpdir(), 'priha-fixture-'));
     try {
@@ -114,16 +116,17 @@ describe('the registered PriHA instrument', () => {
         assert.deepEqual(report.rows.map(r => r.key), PRIHA_ROWS);
         assert.deepEqual(report.registration.capabilityRows, PRIHA_CAPABILITY_ROWS);
         for (const row of report.rows.slice(1)) {
-            assert.equal(row.status, 'implementation-missing');
+            assert.equal(row.status, ['flat-semantic', 'local-hybrid'].includes(row.key) ? 'not-run' : 'implementation-missing');
             assert.ok(row.reason);
             assert.equal(row.metrics, null);
             assert.equal(row.counts.notRun, 32);
         }
         requirePrihaCapability(report, 'instrument');
         requirePrihaCapability(report, 'contracts');
+        requirePrihaCapability(report, 'local');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(2))
+        for (const c of report.capabilities.slice(3))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
@@ -137,6 +140,39 @@ describe('the registered PriHA instrument', () => {
             (value: typeof report) => { value.contracts.memory[0].passed = false; },
             (value: typeof report) => { value.capabilities.find(c => c.id === 'contracts')!.passed = false; },
         ]) { const forged = structuredClone(report); mutation(forged); assert.equal(validate(forged).valid, false); }
+    });
+    it('measures every frozen local query through real retained child and parent evidence', () => {
+        assert.equal(report.local.rows.length, 7); assert.equal(report.local.queries.length, 56);
+        assert.equal(report.local.failed, 0); assert.equal(report.local.networkRequests, 0);
+        assert.ok(report.local.comparisons.every(c => c.fusedBeatsOrTiesBoth));
+        for (const row of report.local.rows) {
+            assert.equal(row.cases.length, 56); assert.equal(row.corpus.sources, 12); assert.equal(row.corpus.versions, 13);
+            assert.equal(row.metrics.support, 44); assert.equal(row.metrics.eligibleCases, 44);
+            assert.ok(row.corpus.retainedChunks > row.corpus.activeChildren);
+            assert.ok(row.cases.every(c => c.childIds.every(id => id.startsWith('chk-'))));
+            assert.ok(row.cases.every(c => c.parentIds.every(id => id.startsWith('par-'))));
+            assert.equal(row.metrics.rebuildMs, null);
+        }
+        for (const mutation of [
+            (r: typeof report) => { r.local.rows[0].metrics.childHits++; },
+            (r: typeof report) => { r.local.rows[0].cases.pop(); },
+            (r: typeof report) => { r.local.comparisons[0].fusedBeatsOrTiesBoth = false; },
+            (r: typeof report) => { r.capabilities.find(c => c.id === 'local')!.passed = false; },
+        ]) { const changed = structuredClone(report); mutation(changed); assert.equal(validate(changed).valid, false); }
+    });
+    it('keeps measured timing in a source-bound receipt outside deterministic scores', async () => {
+        const receipt = await prihaLocalTimingReceipt(report, localTimings);
+        assert.equal(receipt.rows.length, 7); assert.equal(receipt.samples.length, 392);
+        assert.equal(receipt.reportId, report.reportId); assert.equal(receipt.sourceSha256, report.source.sha256);
+        assert.ok(receipt.rows.every(r => r.count === 56 && r.p95Ms !== null && r.p95Ms > 0));
+        assert.ok(receipt.rows.filter(r => r.row.endsWith('/fused')).every(r => r.rebuildMs > 0));
+        const { receiptId, ...payload } = receipt; assert.equal(receiptId, await canonicalSha256(payload));
+        assert.ok((await prihaLocalTimingReceipt(report, [])).rows.every(r => !r.passed));
+    });
+    it('refuses a rehashed local score forgery through independent reproduction', async () => {
+        const changed = structuredClone(report); changed.local.rows[0].metrics.childRecall = 0;
+        changed.reportId = await reportIdOf(changed);
+        await assert.rejects(validatePrihaReport(changed), /does not reproduce/);
     });
     it('the report binds the immutable handoff', async () => {
         const raw = JSON.parse(await readFile('benchmark/results/grounding-handoff.json', 'utf8'));
@@ -232,7 +268,7 @@ describe('the registered PriHA instrument', () => {
             assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
             assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'local'], ['--unknown']])
+            for (const flags of [['--require', 'optimizer'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;

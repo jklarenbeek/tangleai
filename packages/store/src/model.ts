@@ -256,6 +256,15 @@ export const TANGLE_DB_MODEL = {
       },
       key: '/id',
     },
+    document_parents: {
+      schema: {
+        type: 'object', required: ['id', 'sourceId', 'versionId', 'order', 'elementIds', 'text', 'tokenCount', 'headingPath', 'childIds'],
+        properties: { id: ID, sourceId: ID, versionId: ID, order: { type: 'integer' },
+          elementIds: { type: 'array', items: { type: 'string' } }, text: { type: 'string' }, tokenCount: { type: 'integer' },
+          headingPath: { type: 'array', items: { type: 'string' } }, childIds: { type: 'array', items: { type: 'string' } } },
+      },
+      key: '/id',
+    },
     document_chunks: {
       schema: {
         type: 'object',
@@ -269,6 +278,8 @@ export const TANGLE_DB_MODEL = {
           tokenCount: { type: 'integer' },
           order: { type: 'integer' },
           headingPath: { type: 'array', items: { type: 'string' } },
+          parentChunkId: ID,
+          carriedElementIds: { type: 'array', items: { type: 'string' } },
           embedding: { type: 'array', items: { type: 'number' } },
           embeddedBy: { type: 'object' },
         },

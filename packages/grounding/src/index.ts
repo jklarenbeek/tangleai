@@ -13,3 +13,7 @@ export { createGroundingStoreAdapter, GROUNDING_TABLES } from './store.ts';
 export type { GroundingStore, GroundingTables, GroundingTable, GroundingStored, GroundingQuery, GroundingPersistence, GroundingPersistenceView, CreateSessionPlan } from './store.ts';
 export { createMemoryGroundingStore } from './memory-store.ts';
 export type { MemoryGroundingStoreOptions } from './memory-store.ts';
+
+export * from './promote.ts';
+export * from './ranker.ts';
+export * from './local.ts';

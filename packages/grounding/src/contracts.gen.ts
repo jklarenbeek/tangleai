@@ -302,7 +302,14 @@ export interface GroundingProfile {
 }
 
 
-export interface EvidenceTimes {
+/**
+ * Schema constraints this type cannot express: if={"properties":{"provenance":{"type":"null"}}}, then={"properties":{"publishedAt":false,"effectiveAt":false,"expiresAt":false,"reviewedAt":false}}
+ */
+export type EvidenceTimesPart1 = unknown;
+
+export type EvidenceTimes = EvidenceTimesPart1 & { publishedAt?: string; effectiveAt?: string; expiresAt?: string; reviewedAt?: string; provenance: TimeProvenance | null; };
+
+export interface ManifestTimes {
   /**
    * Schema constraints this type cannot express: pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$", format="date-time"
    */
@@ -383,7 +390,7 @@ export interface CorpusManifest {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   contentHash: string;
-  times: EvidenceTimes;
+  times: ManifestTimes;
   curator: CorpusManifestCurator;
 }
 

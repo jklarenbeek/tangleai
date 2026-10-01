@@ -416,3 +416,12 @@ citation validity and original versus incremental costs appear separately.
 provenance assertion, not cryptographic proof of purchase; exact hashes establish
 compatibility only. Live pattern-versus-single-agent LoCoMo quality remains
 unmeasured. The [generated plan](../docs/GMPL_LOCOMO.md) records these limits.
+
+The governed local retrieval instrument runs the real ingester at the registered
+flat and two parent/child sizes, retains superseded evidence, and reports
+semantic, lexical and reciprocal-rank fusion variants. Exact-name and paraphrase
+query cases are byte-registered separately. `npm run benchmark:priha -- --require
+local --latency-json benchmark/receipts/priha-local-latency.json` also writes a
+report-bound wall-time receipt; reproducible score documents contain null timing.
+Current local quality uses hash embeddings on the fictional fixture, with no
+provider calls, live quality claim or clinical deployment qualification.

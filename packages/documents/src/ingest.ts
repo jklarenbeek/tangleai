@@ -5,12 +5,13 @@ import { mapConcurrent } from '@jarenjs/core/async';
 import { estimateTokens } from '@tangleai/core/tokens';
 
 import { likelyDynamicShell, type BrowserFetcher, UnavailableBrowserFetcher } from './browser.ts';
-import { RecursiveDocumentChunker, S2DocumentChunker, SemanticBoundaryChunker } from './chunking.ts';
+import { RecursiveDocumentChunker, S2DocumentChunker, SemanticBoundaryChunker, ParentChildChunker } from './chunking.ts';
 import {
   EXTRACTION_VERSION,
   DocumentError,
   type Chunker,
   type DocumentChunk,
+  type DocumentParent,
   type DocumentCorpusStore,
   type DocumentElement,
   type DocumentSource,
@@ -21,7 +22,7 @@ import { DEFAULT_EXTRACT_LIMITS, extractDocument, extractHtml, type ExtractLimit
 import { SafeStaticFetcher } from './fetch.ts';
 import { normalizeUrl } from './url-policy.ts';
 
-export type ChunkerStrategy = 'recursive' | 'semantic-boundary' | 's2';
+export type ChunkerStrategy = 'recursive' | 'semantic-boundary' | 's2' | 'parent-child';
 export type IngestStage = 'fetch' | 'extract' | 'chunk' | 'embed' | 'store';
 
 export interface IngestProgress {
@@ -38,6 +39,7 @@ export interface IngestUrlInput {
   force?: boolean;
   maxTokens?: number;
   overlapTokens?: number;
+  parentTokens?: number;
   extractLimits?: Partial<ExtractLimits>;
   signal?: AbortSignal;
   onProgress?: (progress: IngestProgress) => void;
@@ -71,7 +73,11 @@ function progress(now: () => string, callback: IngestUrlInput['onProgress'], sta
   callback?.({ stage, status, at: now(), detail });
 }
 
-function chunkerFor(strategy: ChunkerStrategy, embedder: Embedder, maxTokens: number, overlapTokens: number): Chunker {
+function chunkerFor(strategy: ChunkerStrategy, embedder: Embedder, maxTokens: number, overlapTokens: number, parentTokens?: number): Chunker {
+  if (strategy === 'parent-child') {
+    if (parentTokens === undefined) throw new DocumentError('chunk-budget', 'Parent-child ingestion requires an explicit parentTokens budget');
+    return new ParentChildChunker({ parentTokens, maxTokens, overlapTokens });
+  }
   if (strategy === 's2') return new S2DocumentChunker({ embedder, maxTokens, overlapTokens });
   if (strategy === 'semantic-boundary') return new SemanticBoundaryChunker({ embedder, maxTokens, overlapTokens });
   return new RecursiveDocumentChunker({ maxTokens, overlapTokens });
@@ -119,14 +125,21 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           return embedder.embed(texts, embedOptions);
         },
       };
-      const chunker = chunkerFor(strategy, chunkerEmbedder, maxTokens, overlapTokens);
+      const chunker = chunkerFor(strategy, chunkerEmbedder, maxTokens, overlapTokens, input.parentTokens);
       // The chunker clamps what it was asked for; a re-index is only
       // deterministic against the budgets that actually ran.
-      const chunkerConfig = { maxTokens: chunker.maxTokens, overlapTokens: chunker.overlapTokens };
+      const chunkerConfig = { maxTokens: chunker.maxTokens, overlapTokens: chunker.overlapTokens,
+        ...(chunker.parentTokens === undefined ? {} : { parentTokens: chunker.parentTokens }) };
+      const priorVersion = existing?.activeVersionId === undefined ? undefined : await store.getVersion(existing.activeVersionId);
+      const compatible = (active: DocumentVersion | undefined): active is DocumentVersion => active !== undefined
+        && active.extractionVersion === EXTRACTION_VERSION && active.chunkerVersion === chunker.version
+        && active.chunkerConfig.maxTokens === chunkerConfig.maxTokens && active.chunkerConfig.overlapTokens === chunkerConfig.overlapTokens
+        && active.chunkerConfig.parentTokens === chunkerConfig.parentTokens
+        && active.embeddedBy.model === embedder.model && (embedder.dims === undefined || active.embeddedBy.dims === embedder.dims);
 
       try {
         progress(now, input.onProgress, 'fetch', 'start');
-        const fetched = await fetcher.fetch(requestedUrl, input.force === true ? {} : {
+        const fetched = await fetcher.fetch(requestedUrl, input.force === true || !compatible(priorVersion) ? {} : {
           etag: existing?.etag,
           lastModified: existing?.lastModified,
         }, input.signal);
@@ -137,7 +150,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         if (fetched.status === 'not-modified') {
           if (existing?.activeVersionId === undefined) throw new DocumentError('invalid-cache', 'Server returned not-modified but no active document version exists');
           const active = await store.getVersion(existing.activeVersionId);
-          if (active === undefined) throw new DocumentError('invalid-cache', 'Active document version is missing');
+          if (!compatible(active)) throw new DocumentError('invalid-cache', 'Not-modified response cannot reuse a missing or incompatible document version');
           const source = { ...existing, fetchedAt, finalUrl, etag, lastModified, status: 'ready' as const, error: undefined };
           await store.putSource(source);
           progress(now, input.onProgress, 'fetch', 'ok', { status: 304 });
@@ -171,11 +184,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         const canonicalUrl = extracted.canonicalUrl === undefined ? finalUrl : normalizeUrl(extracted.canonicalUrl);
         const identity = { model: embedder.model, dims: embedder.dims ?? 0 };
         const active = existing?.activeVersionId === undefined ? undefined : await store.getVersion(existing.activeVersionId);
-        if (input.force !== true && active !== undefined && active.contentHash === contentHash
-          && active.chunkerVersion === chunker.version && active.embeddedBy.model === identity.model
-          && active.chunkerConfig?.maxTokens === chunkerConfig.maxTokens
-          && active.chunkerConfig.overlapTokens === chunkerConfig.overlapTokens
-          && (identity.dims === 0 || active.embeddedBy.dims === identity.dims)) {
+        if (input.force !== true && compatible(active) && active.contentHash === contentHash) {
           const source: DocumentSource = {
             ...(existing as DocumentSource), finalUrl, canonicalUrl, title: extracted.title, mimeType,
             fetchMode, status: 'ready', fetchedAt, etag, lastModified, error: undefined,
@@ -185,7 +194,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           return { status: 'unchanged', source, version: active, browserFallback };
         }
 
-        const provisionalVersionId = `ver-${hash(`${id}|${contentHash}|${EXTRACTION_VERSION}|${chunker.version}|${chunkerConfig.maxTokens}|${chunkerConfig.overlapTokens}|${identity.model}|${identity.dims}`).slice(0, 32)}`;
+        const provisionalVersionId = `ver-${hash(`${id}|${contentHash}|${EXTRACTION_VERSION}|${chunker.version}|${chunkerConfig.maxTokens}|${chunkerConfig.overlapTokens}${chunkerConfig.parentTokens === undefined ? '' : '|' + chunkerConfig.parentTokens}|${identity.model}|${identity.dims}`).slice(0, 32)}`;
         const elements: DocumentElement[] = extracted.elements.map((element, order) => ({
           ...element,
           id: `el-${hash(`${provisionalVersionId}|${order}|${element.text}`).slice(0, 32)}`,
@@ -222,23 +231,25 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
         }
         const embeddedBy = { model: embedder.model, dims };
         const chunkIds = chunked.chunks.map((chunk, order) => `chk-${hash(`${provisionalVersionId}|${order}|${chunk.text}`).slice(0, 32)}`);
-        const headingElements = new Map<string, string>();
-        for (const element of elements) {
-          if ((element.role === 'heading' || element.role === 'title') && element.headingPath.length > 0) {
-            headingElements.set(element.headingPath.join('\u0000'), element.id);
-          }
-        }
-        const chunks: DocumentChunk[] = chunked.chunks.map((chunk, order) => ({
-          ...chunk,
-          id: chunkIds[order],
-          sourceId: id,
-          versionId: provisionalVersionId,
-          previousId: order === 0 ? undefined : chunkIds[order - 1],
-          nextId: order + 1 === chunkIds.length ? undefined : chunkIds[order + 1],
-          parentId: headingElements.get(chunk.headingPath.join('\u0000')),
-          embedding: vectors[order],
-          embeddedBy,
+        const parents: DocumentParent[] = (chunked.parents ?? []).map(({ childIndexes, contentStartOrder: _, ...parent }, order) => ({
+          ...parent, id: `par-${hash(`${provisionalVersionId}|${order}|${parent.text}`).slice(0, 32)}`,
+          sourceId: id, versionId: provisionalVersionId, childIds: childIndexes.map(index => chunkIds[index]),
         }));
+        const parentByChild = new Map(parents.flatMap(parent => parent.childIds.map(childId => [childId, parent] as const)));
+        const headings = elements.filter(element => (element.role === 'heading' || element.role === 'title') && element.headingPath.length);
+        const byElement = new Map(elements.map(element => [element.id, element]));
+        const chunks: DocumentChunk[] = chunked.chunks.map(({ contentStartOrder, ...chunk }, order) => {
+          const parent = parentByChild.get(chunkIds[order]);
+          const firstOrder = contentStartOrder ?? Math.min(...chunk.elementIds.map(id => byElement.get(id)!.order));
+          const heading = [...headings].reverse().find(element => element.order <= firstOrder && element.headingPath.join('\u0000') === chunk.headingPath.join('\u0000'));
+          const peers = parent?.childIds ?? chunkIds, position = peers.indexOf(chunkIds[order]);
+          return {
+            ...chunk, id: chunkIds[order], sourceId: id, versionId: provisionalVersionId,
+            previousId: peers[position - 1], nextId: peers[position + 1],
+            ...(parent ? { parentChunkId: parent.id } : { parentId: heading?.id }),
+            embedding: vectors[order], embeddedBy,
+          };
+        });
         const embeddingMs = performance.now() - embeddingStarted;
         progress(now, input.onProgress, 'embed', 'ok', { chunks: chunks.length, calls: embeddingCalls, dims, ms: embeddingMs });
 
@@ -258,6 +269,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
             pages: extracted.pages,
             elements: elements.length,
             chunks: chunks.length,
+            ...(chunked.parents ? { parents: parents.length } : {}),
             extractionMs,
             chunkingMs,
             embeddingMs,
@@ -282,7 +294,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           activeVersionId: version.id,
         };
         progress(now, input.onProgress, 'store', 'start');
-        await store.activate({ source, version, elements, chunks });
+        await store.activate({ source, version, elements, chunks, ...(chunked.parents ? { parents } : {}) });
         const activeVersion = { ...version, status: 'active' as const, activatedAt: fetchedAt };
         progress(now, input.onProgress, 'store', 'ok', { versionId: version.id });
         return { status: 'ingested', source, version: activeVersion, browserFallback };

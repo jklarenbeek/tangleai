@@ -1,10 +1,11 @@
 /** Keyless governed retrieval registration; no table precedes the scorer gate. */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { prihaLocalTimingReceipt, type PrihaLocalTiming } from './lib/priha-local.ts';
 import { parseArgs } from './lib/args.ts';
 import { readAiEnv } from './lib/ai-env.ts';
 import { buildPrihaReport, requirePrihaCapability, renderPrihaDocument, renderPrihaReport, planPrihaLive, authorizePrihaLive, PRIHA_CAPABILITIES } from './lib/priha.ts';
-const args = parseArgs(process.argv.slice(2), { flags: ['check', 'live'], values: ['json', 'md', 'require', 'authorize'] });
+const args = parseArgs(process.argv.slice(2), { flags: ['check', 'live'], values: ['json', 'md', 'require', 'authorize', 'latency-json'] });
 if (args.rest.length)
     throw Error('Unexpected PriHA positional arguments.');
 if (args.values.has('authorize') && !args.flags.has('live'))
@@ -13,7 +14,9 @@ const required = args.values.get('require') ?? 'instrument';
 if (!PRIHA_CAPABILITIES.includes(required as typeof PRIHA_CAPABILITIES[number]))
     throw Error('Unknown PriHA capability: ' + required);
 globalThis.fetch = async () => { throw Error('Keyless PriHA must not make a network call.'); };
-const report = await buildPrihaReport();
+if (args.values.has('latency-json') && (args.flags.has('check') || args.flags.has('live'))) throw Error('Latency receipt output requires a keyless generation run.');
+const timings: PrihaLocalTiming[] = [];
+const report = await buildPrihaReport({ onLocalTiming: sample => timings.push(sample) });
 requirePrihaCapability(report, required);
 if (args.flags.has('live')) {
     if (args.flags.has('check') || args.values.has('json') || args.values.has('md'))
@@ -34,6 +37,10 @@ else {
             await mkdir(dirname(path), { recursive: true });
             await writeFile(path, bytes);
         }
+    }
+    if (args.values.has('latency-json')) {
+        const path = args.values.get('latency-json')!; await mkdir(dirname(path), { recursive: true });
+        await writeFile(path, JSON.stringify(await prihaLocalTimingReceipt(report, timings), null, 2) + '\n');
     }
     console.log(renderPrihaDocument(report));
 }

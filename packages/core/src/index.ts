@@ -23,3 +23,5 @@ export type {
   OutcomeReport,
   LedgerMemory,
 } from './schemas/memory.ts';
+
+export * from './lexical.ts';

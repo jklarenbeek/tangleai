@@ -1,39 +1,39 @@
 # Document ingestion benchmark
 
-Generated 2026-09-11T08:35:06.148Z with Bun 1.4.0; embedder hash-trigram-64/64.
+Generated 2026-10-01T03:44:22.386Z with Bun 1.4.2; embedder hash-trigram-512/512.
 
 Fixed corpus: 5 documents, 25 typed elements, 3 labelled questions.
 
-Extraction: 129.8 ms; known Wikipedia boilerplate hits: 0/4; multi-column order: Left heading → Left first → Left second → Right heading → Right first → Right second.
+Extraction: 1759.5 ms; known Wikipedia boilerplate hits: 0/4; multi-column order: Left heading → Left first → Left second → Right heading → Right first → Right second.
 
 Budget: 64 tokens per chunk, 8-token overlap.
 
 | Strategy | Chunks | Recall@5 | MRR | over-budget chunks | Resolvable provenance | ms | heap delta MiB | embed calls | embedded texts | est. tokens |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| heading-recursive | 6 | 100.0% | 1.000 | 0 | 100% | 3.1 | 0.00 | 6 | 9 | 210 |
-| semantic-boundary | 15 | 100.0% | 0.833 | 0 | 100% | 1.5 | 0.00 | 11 | 43 | 378 |
-| corrected-s2 | 6 | 100.0% | 1.000 | 0 | 100% | 3.3 | 0.00 | 11 | 34 | 386 |
+| heading-recursive | 6 | 100.0% | 1.000 | 0 | 100% | 67.4 | 7.60 | 6 | 9 | 210 |
+| semantic-boundary | 22 | 66.7% | 0.444 | 0 | 100% | 63.7 | 0.00 | 11 | 50 | 377 |
+| corrected-s2 | 6 | 100.0% | 1.000 | 0 | 100% | 42.0 | 0.00 | 11 | 34 | 386 |
 
 This fixture benchmark is a regression gate, not evidence that the tiny offline hash embedder predicts production semantic quality. Keep recursive chunking as the default until a representative corpus shows a repeatable S2 retrieval gain worth its extra element-embedding work.
 
 Reproduce with `npm run documents:benchmark`. These keyless measurements use
-JarenJS 0.83.2. The dated live and bundle measurements below are historical.
+JarenJS 0.91.4 and the current 512-dimensional offline embedder. The earlier
+2026-09-11 table used 64 dimensions and is not a matched performance comparison.
+Wall time and heap are single observations taken alongside local checks.
 
-## What this table cannot decide
+## What this table can decide
 
-Read as a comparison it is **saturated, and the tie is not a result.** Six chunks scored
-at Recall@**5** means nearly every chunk is a hit by construction; a corpus this small
-cannot separate three chunkers, and the identical 100% column is that ceiling, not
-agreement between them. What the row does prove is that each strategy keeps every chunk
-inside its budget with resolvable provenance — a regression gate, which is what it is
-kept for.
+All three strategies stay within their chunk budgets and retain resolvable
+provenance. Recursive and S2 recall all three labelled answers; semantic-boundary
+recalls two and has lower reciprocal rank. This five-document corpus is too small
+to establish production semantic quality. In particular, selecting five of six
+chunks leaves little room to distinguish recursive from S2 retrieval.
 
-The default therefore rests on cost, not on quality: recursive chunking answers in one
-embedding pass, S2 spends an extra element-level pass (34 embedded texts against 9) for
-a number this instrument cannot show a gain in. **Recursive heading-aware chunking stays
-the default**, and S2 stays behind a strategy setting until a representative corpus —
-the LoCoMo instrument (`LOCOMO_BENCHMARK.md`), over a real embedder — has a verdict. That the hash embedder
-scores 100% here is not evidence that it predicts production semantic quality.
+Recursive heading-aware chunking remains the default. S2 uses an extra
+element-embedding pass (34 texts against 9 here) without a measured recall gain.
+The separate [governed retrieval instrument](PRIHA_BENCHMARK.md) measures opt-in
+parent/child granularities, semantic and lexical lanes, and fusion over its own
+registered fixture. Neither keyless result establishes live model quality.
 
 ## Standalone checks
 

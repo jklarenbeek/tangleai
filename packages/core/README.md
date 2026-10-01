@@ -21,3 +21,10 @@ See the [temporal API guide](https://github.com/jklarenbeek/tangleai/blob/main/p
 structured synthesis/support/embedding, trigger and execution-result types.
 The authored definition composes the existing MemoryUnit schema; `npm run emit:consolidation` derives both its JSON document and declarations. Evidence
 identity and activation policy belong to `@tangleai/memory/consolidation`.
+
+`@tangleai/core/lexical` supplies the shared NFKC word normalization and bounded
+adapter to Jaren's `compileLexical`. `createLexicalIndex` accepts optional index
+limits, generation and source revision; query ties preserve source order.
+`fuseReciprocalRanks` delegates arithmetic to Jaren, gives each id one vote per
+lane and returns scores plus first-appearance order. Ties use appearance by
+default; `{ ties: 'id' }` preserves the existing consolidation ordering.

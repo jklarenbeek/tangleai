@@ -2,7 +2,7 @@ import type { Embedder } from '@tangleai/models/embed';
 import { cosineSimilarity, type Vector } from '@jarenjs/core/vector';
 import { sameIdentity } from '@tangleai/context/ledger';
 
-import type { DocumentChunk, DocumentCorpusStore, DocumentSource, EmbeddedBy } from './contracts.ts';
+import type { DocumentChunk, DocumentParent, DocumentCorpusStore, DocumentSource, EmbeddedBy } from './contracts.ts';
 
 export interface DocumentCitation {
   chunkId: string;
@@ -18,7 +18,7 @@ export interface RankedDocumentChunk {
   chunk: DocumentChunk;
   source: DocumentSource;
   score: number;
-  context: DocumentChunk[];
+  context: Array<DocumentChunk | DocumentParent>;
   citation: DocumentCitation;
 }
 
@@ -34,6 +34,20 @@ export interface DocumentSearchOptions {
   neighbours?: number;
 }
 
+/** The single identity-gated semantic ranking used by flat and governed recall. */
+export function rankDocumentChunks(chunks: readonly DocumentChunk[], query: Vector, identity: EmbeddedBy,
+  options: { minScore?: number } = {}): { scored: Array<{ chunk: DocumentChunk; score: number }>; skipped: number } {
+  let skipped = 0;
+  const scored: Array<{ chunk: DocumentChunk; score: number }> = [];
+  for (const chunk of chunks) {
+    if (!sameIdentity(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) { skipped++; continue; }
+    const score = cosineSimilarity(chunk.embedding, query);
+    if (score >= (options.minScore ?? -1)) scored.push({ chunk, score });
+  }
+  scored.sort((a, b) => b.score - a.score || a.chunk.id.localeCompare(b.chunk.id));
+  return { scored, skipped };
+}
+
 export async function recallDocumentChunks(
   store: DocumentCorpusStore,
   query: Vector,
@@ -43,16 +57,9 @@ export async function recallDocumentChunks(
   const sources = (await store.listSources()).filter((source) => source.status === 'ready' && source.activeVersionId !== undefined);
   const sourceByVersion = new Map(sources.map((source) => [source.activeVersionId as string, source]));
   const chunks = (await store.listChunks()).filter((chunk) => sourceByVersion.has(chunk.versionId));
-  let skipped = 0;
-  const scored: Array<{ chunk: DocumentChunk; source: DocumentSource; score: number }> = [];
-  for (const chunk of chunks) {
-    if (!sameIdentity(chunk.embeddedBy, identity) || chunk.embedding.length !== query.length) {
-      skipped++;
-      continue;
-    }
-    scored.push({ chunk, source: sourceByVersion.get(chunk.versionId) as DocumentSource, score: cosineSimilarity(chunk.embedding, query) });
-  }
-  scored.sort((a, b) => b.score - a.score || a.chunk.id.localeCompare(b.chunk.id));
+  const ranking = rankDocumentChunks(chunks, query, identity, { minScore: options.minScore ?? 0 });
+  const { skipped } = ranking;
+  const scored = ranking.scored.map(item => ({ ...item, source: sourceByVersion.get(item.chunk.versionId)! }));
   const k = Math.max(1, options.k ?? 8);
   const maxPerSource = Math.max(1, options.maxPerSource ?? 3);
   const counts = new Map<string, number>();
@@ -65,17 +72,24 @@ export async function recallDocumentChunks(
   }).slice(0, k);
   const byId = new Map(chunks.map((chunk) => [chunk.id, chunk]));
   const byElement = new Map<string, DocumentChunk>();
-  for (const chunk of chunks) for (const elementId of chunk.elementIds) byElement.set(elementId, chunk);
+  for (const chunk of chunks) for (const elementId of chunk.elementIds) {
+    const current = byElement.get(elementId);
+    if (!current || chunk.order < current.order) byElement.set(elementId, chunk);
+  }
+  const byParent = new Map((await store.listParents()).map(parent => [parent.id, parent]));
   const neighbours = Math.max(0, options.neighbours ?? 1);
   const ranked = selected.map<RankedDocumentChunk>((item) => {
-    const context: DocumentChunk[] = [item.chunk];
-    if (item.chunk.parentId !== undefined) {
+    const parent = item.chunk.parentChunkId === undefined ? undefined : byParent.get(item.chunk.parentChunkId);
+    if (item.chunk.parentChunkId !== undefined && (!parent || parent.versionId !== item.chunk.versionId))
+      throw new Error('Ranked document child has no retained parent in its version');
+    const context: Array<DocumentChunk | DocumentParent> = parent ? [parent] : [item.chunk];
+    if (!parent && item.chunk.parentId !== undefined) {
       const parent = byElement.get(item.chunk.parentId);
       if (parent !== undefined && parent.versionId === item.chunk.versionId && parent.id !== item.chunk.id) context.unshift(parent);
     }
     let prior = item.chunk;
     let next = item.chunk;
-    for (let distance = 0; distance < neighbours; distance++) {
+    for (let distance = 0; distance < (parent ? 0 : neighbours); distance++) {
       if (prior.previousId !== undefined) {
         const found = byId.get(prior.previousId);
         if (found !== undefined && found.versionId === item.chunk.versionId) {

@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "8f8729405d5bfc856e73d8f08a17b3c80371e2da",
+    "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
     "clean": false,
     "files": [
       {
@@ -21,7 +21,7 @@
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "32adefb76f9e87863f5f33d3069441e48a2e697f928660cb2572b39ce7f5c3ba"
+        "sha256": "980a6453869f4ed99a456e4b7dccc369da05f0b2c891bad44c1a7a1b9fe4b964"
       },
       {
         "path": "apps/desktop/src/settings.ts",
@@ -109,7 +109,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
+        "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "014a1ec95130a06c6cf5e1256c84981aed7a99880808d01dea03b517c112e637"
+    "sha256": "62b156a6b130727547689155c00bfea6eb973b6a2c7a9eaf47c4417b399347f8"
   },
   "suite": {
     "packages": [
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "0486db3c8dfa400dd0298516a4ccb56e33ce054d19f4400fefb313ef27e49b27"
+  "reportId": "e8885c21d774be30bf54cf8302bdd29d3148ac9f99546a931ef93913ba1279d1"
 }

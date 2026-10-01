@@ -28,7 +28,9 @@ export async function qualifyTemporal(store = createTemporalMemoryStore()) {
   const input = { scope, key: 'prepare', sources, claims, knowledge: { mode: 'strict-as-of', cutoff: '2024-03-01T00:00:00Z' },
     expectedHead: null, sourceIdentity: 'installed-sources', policyIdentity: 'installed-policy', embeddedBy,
     embeddings: sources.map(source => ({ sourceId: source.id, vector: [1, 0] })),
-    limits: { maxInputTokens: 1000, maxOutputTokens: 100, maxPhysicalRequests: 0, maxSources: 4, maxClaims: 4, concurrency: 1, deadlineMs: 1000, maxRepairs: 0 } };
+    // Installed browser qualifications share one event loop; this is a functional
+    // consumer check, so leave room for the other package qualifications to run.
+    limits: { maxInputTokens: 1000, maxOutputTokens: 100, maxPhysicalRequests: 0, maxSources: 4, maxClaims: 4, concurrency: 1, deadlineMs: 10000, maxRepairs: 0 } };
   const before = store.stats().writes, receipt = temporalValue(await prepareTemporal(input, { store }));
   if (receipt.replayed) ensure(receipt.writes === 0 && store.stats().writes === before, 'reopen replay must not write');
   const query = { scope, text: 'Where did Alex live on January 15?', anchor: null, knowledge: input.knowledge,

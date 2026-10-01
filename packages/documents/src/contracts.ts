@@ -8,6 +8,7 @@ export type { EmbeddedBy };
 
 export const EXTRACTION_VERSION = 'tangle-extract/1';
 export const RECURSIVE_CHUNKER_VERSION = 'heading-recursive/1';
+export const PARENT_CHILD_CHUNKER_VERSION = 'parent-child/1';
 export const S2_CHUNKER_VERSION = 's2-contiguous/1';
 
 export type FetchMode = 'static' | 'bun-webview' | 'remote-playwright';
@@ -46,6 +47,7 @@ export interface DocumentVersionMetrics {
   pages?: number;
   elements: number;
   chunks: number;
+  parents?: number;
   extractionMs: number;
   chunkingMs: number;
   embeddingMs: number;
@@ -61,7 +63,7 @@ export interface DocumentVersion {
   contentHash: string;
   extractionVersion: string;
   chunkerVersion: string;
-  chunkerConfig: { maxTokens: number; overlapTokens: number };
+  chunkerConfig: { maxTokens: number; overlapTokens: number; parentTokens?: number };
   embeddedBy: EmbeddedBy;
   status: VersionStatus;
   fetchedAt: string;
@@ -102,11 +104,29 @@ export interface DocumentChunk {
   pageStart?: number;
   pageEnd?: number;
   bbox?: BoundingBox;
+  /** Legacy heading-element address; never used by parent-child versions. */
   parentId?: string;
+  parentChunkId?: string;
+  carriedElementIds?: string[];
   previousId?: string;
   nextId?: string;
   embedding: number[];
   embeddedBy: EmbeddedBy;
+}
+
+/** Retained evidence context. Parents have no embedding and are never ranked. */
+export interface DocumentParent {
+  id: string;
+  sourceId: string;
+  versionId: string;
+  order: number;
+  elementIds: string[];
+  text: string;
+  tokenCount: number;
+  headingPath: string[];
+  pageStart?: number;
+  pageEnd?: number;
+  childIds: string[];
 }
 
 export interface ExtractedDocument {
@@ -136,13 +156,20 @@ export interface ChunkDraft {
   pageStart?: number;
   pageEnd?: number;
   bbox?: BoundingBox;
-  parentId?: string;
+  /** Transient reading-order provenance; the ingester does not persist it. */
+  contentStartOrder?: number;
+  carriedElementIds?: string[];
   previousId?: string;
   nextId?: string;
 }
 
+export interface ParentDraft extends Omit<ChunkDraft, 'previousId' | 'nextId' | 'carriedElementIds'> {
+  childIndexes: number[];
+}
+
 export interface ChunkResult {
   chunks: ChunkDraft[];
+  parents?: ParentDraft[];
   diagnostic: ChunkDiagnostic;
 }
 
@@ -152,6 +179,7 @@ export interface Chunker {
    * to be deterministic, which is not always what the caller asked for. */
   readonly maxTokens: number;
   readonly overlapTokens: number;
+  readonly parentTokens?: number;
   chunk(elements: DocumentElement[], options?: { signal?: AbortSignal }): Promise<ChunkResult>;
 }
 
@@ -160,6 +188,7 @@ export interface StoredDocumentBundle {
   version: DocumentVersion;
   elements: DocumentElement[];
   chunks: DocumentChunk[];
+  parents?: DocumentParent[];
 }
 
 export interface DocumentCorpusStore {
@@ -169,6 +198,7 @@ export interface DocumentCorpusStore {
   listVersions(sourceId?: string): Promise<DocumentVersion[]>;
   listElements(versionId: string): Promise<DocumentElement[]>;
   listChunks(versionId?: string): Promise<DocumentChunk[]>;
+  listParents(versionId?: string): Promise<DocumentParent[]>;
   putSource(source: DocumentSource): Promise<void>;
   activate(bundle: StoredDocumentBundle): Promise<void>;
   recordFailure(source: DocumentSource, version?: DocumentVersion): Promise<void>;
@@ -266,12 +296,18 @@ export function assertDocumentVersion(value: unknown): asserts value is Document
   object(value.chunkerConfig, 'DocumentVersion.chunkerConfig');
   integer(value.chunkerConfig.maxTokens, 'DocumentVersion.chunkerConfig.maxTokens', 1);
   integer(value.chunkerConfig.overlapTokens, 'DocumentVersion.chunkerConfig.overlapTokens');
+  if (value.chunkerConfig.parentTokens !== undefined) {
+    integer(value.chunkerConfig.parentTokens, 'DocumentVersion.chunkerConfig.parentTokens', value.chunkerConfig.maxTokens as number);
+  }
+  if (value.chunkerVersion === PARENT_CHILD_CHUNKER_VERSION && value.chunkerConfig.parentTokens === undefined)
+    throw new DocumentError('invalid-record', 'Parent-child versions require parentTokens');
   oneOf(value.status, ['staging', 'active', 'failed', 'superseded'], 'DocumentVersion.status');
   object(value.metrics, 'DocumentVersion.metrics');
   for (const key of ['bytes', 'elements', 'chunks', 'extractionMs', 'chunkingMs', 'embeddingMs', 'embeddingCalls', 'estimatedEmbeddingTokens']) {
     finite(value.metrics[key], `DocumentVersion.metrics.${key}`);
     if ((value.metrics[key] as number) < 0) throw new DocumentError('invalid-record', `DocumentVersion.metrics.${key} cannot be negative`);
   }
+  if (value.metrics.parents !== undefined) integer(value.metrics.parents, 'DocumentVersion.metrics.parents');
   if (value.metrics.pages !== undefined) integer(value.metrics.pages, 'DocumentVersion.metrics.pages');
   if (typeof value.metrics.partial !== 'boolean') throw new DocumentError('invalid-record', 'DocumentVersion.metrics.partial must be boolean');
   strings(value.metrics.warnings, 'DocumentVersion.metrics.warnings');
@@ -321,5 +357,52 @@ export function assertDocumentChunk(value: unknown): asserts value is DocumentCh
   if (value.pageStart !== undefined) integer(value.pageStart, 'DocumentChunk.pageStart', 1);
   if (value.pageEnd !== undefined) integer(value.pageEnd, 'DocumentChunk.pageEnd', 1);
   if (value.bbox !== undefined) assertBox(value.bbox, 'DocumentChunk.bbox');
-  for (const key of ['parentId', 'previousId', 'nextId']) optionalString(value[key], `DocumentChunk.${key}`);
+  if (value.carriedElementIds !== undefined) strings(value.carriedElementIds, 'DocumentChunk.carriedElementIds');
+  for (const key of ['parentId', 'parentChunkId', 'previousId', 'nextId']) optionalString(value[key], `DocumentChunk.${key}`);
+}
+
+export function assertDocumentParent(value: unknown): asserts value is DocumentParent {
+  object(value, 'DocumentParent');
+  for (const key of ['id', 'sourceId', 'versionId', 'text']) nonEmpty(value[key], `DocumentParent.${key}`);
+  for (const key of ['elementIds', 'headingPath', 'childIds']) strings(value[key], `DocumentParent.${key}`);
+  if (!(value.elementIds as string[]).length || !(value.childIds as string[]).length)
+    throw new DocumentError('invalid-record', 'A parent requires its elements and children');
+  integer(value.order, 'DocumentParent.order'); integer(value.tokenCount, 'DocumentParent.tokenCount', 1);
+  for (const key of ['pageStart', 'pageEnd']) if (value[key] !== undefined) integer(value[key], `DocumentParent.${key}`, 1);
+  if ('embedding' in value || 'embeddedBy' in value) throw new DocumentError('invalid-record', 'Parents are not embedded');
+}
+
+/** One activation gate shared by ordinary ingestion and atomic curator promotion. */
+export function assertStoredDocumentBundle(bundle: StoredDocumentBundle): void {
+  assertDocumentSource(bundle.source); assertDocumentVersion(bundle.version);
+  for (const element of bundle.elements) assertDocumentElement(element);
+  for (const chunk of bundle.chunks) assertDocumentChunk(chunk);
+  for (const parent of bundle.parents ?? []) assertDocumentParent(parent);
+  const { source, version, elements, chunks } = bundle, parents = bundle.parents ?? [];
+  if (source.activeVersionId !== version.id || version.sourceId !== source.id
+    || [...elements, ...chunks, ...parents].some(row => row.sourceId !== source.id || row.versionId !== version.id))
+    throw new DocumentError('invalid-record', 'Document bundle identifiers do not agree');
+  for (const records of [elements, chunks, parents]) if (new Set(records.map(row => row.id)).size !== records.length)
+    throw new DocumentError('invalid-record', 'Document bundle identifiers must be unique');
+  const elementIds = new Set(elements.map(e => e.id)), byChunk = new Map(chunks.map(c => [c.id, c])), byParent = new Map(parents.map(p => [p.id, p]));
+  for (const row of [...chunks, ...parents]) if (row.elementIds.some(id => !elementIds.has(id)))
+    throw new DocumentError('invalid-record', 'Document evidence references a missing element');
+  for (const chunk of chunks) {
+    if (chunk.carriedElementIds?.some(id => !elementIds.has(id)) || chunk.parentId && !elementIds.has(chunk.parentId)
+      || chunk.previousId && !byChunk.has(chunk.previousId) || chunk.nextId && !byChunk.has(chunk.nextId))
+      throw new DocumentError('invalid-record', 'Document chunk references missing version evidence');
+    if (version.chunkerVersion === PARENT_CHILD_CHUNKER_VERSION) {
+      const parent = chunk.parentChunkId && byParent.get(chunk.parentChunkId);
+      if (!parent || chunk.parentId !== undefined || !parent.childIds.includes(chunk.id)
+        || [...chunk.elementIds, ...chunk.carriedElementIds ?? []].some(id => !parent.elementIds.includes(id)))
+        throw new DocumentError('invalid-record', 'A child must belong to its true parent');
+    } else if (chunk.parentChunkId !== undefined) throw new DocumentError('invalid-record', 'Only parent-child versions can name a parent chunk');
+  }
+  if (version.chunkerVersion !== PARENT_CHILD_CHUNKER_VERSION && parents.length)
+    throw new DocumentError('invalid-record', 'Legacy versions cannot contain parent records');
+  for (const parent of parents) {
+    if (parent.tokenCount > version.chunkerConfig.parentTokens! || new Set(parent.childIds).size !== parent.childIds.length
+      || parent.childIds.some(id => byChunk.get(id)?.parentChunkId !== parent.id))
+      throw new DocumentError('invalid-record', 'Parent membership or budget is invalid');
+  }
 }

@@ -1,5 +1,6 @@
 /** Grounding owns validation and write plans; trusted adapters own atomic persistence. */
 import { equalsJson } from '@jarenjs/core/object';
+import { assertStoredDocumentBundle, type StoredDocumentBundle } from '@tangleai/documents/contracts';
 import { identityIdOf, validateRunIdentity } from '@tangleai/config';
 import type { ClarifiedIntent, CorpusManifest, EvidenceCandidate, EvidenceConflict, GroundedAnswer, GroundingProfile, GroundingSession, GroundingTrace, QueryPlan, WebRetrievalRun } from './contracts.gen.ts';
 import { GroundingAbort, groundingIssue, groundingMust, groundingReject, type StoreOutcome } from './errors.ts';
@@ -19,6 +20,8 @@ export interface GroundingStored<K extends GroundingTable = GroundingTable> {
 }
 export interface GroundingQuery { sessionId?: string; profileId?: string; profileRevision?: string; sourceId?: string; status?: string; }
 export interface GroundingPersistenceView {
+    /** Optional corpus binding on this SAME transaction, never a nested transaction. */
+    activateCorpus?(bundle: StoredDocumentBundle): Promise<number>;
     get<K extends GroundingTable>(table: K, id: string): Promise<GroundingStored<K> | undefined>;
     put<K extends GroundingTable>(table: K, row: GroundingStored<K>): Promise<void>;
     query<K extends GroundingTable>(table: K, query: GroundingQuery): Promise<GroundingStored<K>[]>;
@@ -30,6 +33,7 @@ export interface GroundingStore {
     putProfile(profile: GroundingProfile): Promise<StoreOutcome<{ revision: string }>>;
     getProfile(id: string, revision: string): Promise<GroundingProfile | undefined>;
     putManifest(manifest: CorpusManifest): Promise<StoreOutcome<{ id: string }>>;
+    promoteToCorpus(manifest: CorpusManifest, bundle: StoredDocumentBundle): Promise<StoreOutcome<{ id: string; versionId: string }>>;
     getManifest(sourceId: string, versionId: string): Promise<CorpusManifest | undefined>;
     createSession(plan: CreateSessionPlan): Promise<StoreOutcome<GroundingSession>>;
     getSession(id: string): Promise<GroundingSession | undefined>;
@@ -76,7 +80,7 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
         const value = (await tx.get(table, id))?.payload;
         return value === undefined ? undefined : immutableGroundingJson(value);
     });
-    async function mutate<T>(task: (tx: GroundingPersistenceView, write: <K extends GroundingTable>(table: K, value: GroundingTables[K]) => Promise<void>, replace: (next: GroundingSession) => Promise<void>) => Promise<T>): Promise<StoreOutcome<T>> {
+    async function mutate<T>(task: (tx: GroundingPersistenceView, write: <K extends GroundingTable>(table: K, value: GroundingTables[K]) => Promise<void>, replace: (next: GroundingSession) => Promise<void>, promote: (manifest: CorpusManifest, bundle: StoredDocumentBundle) => Promise<void>) => Promise<T>): Promise<StoreOutcome<T>> {
         let changes = 0;
         try {
             const value = await persistence.transaction(async raw => {
@@ -136,9 +140,14 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                             if (!query.lanes[e.lane]) groundingReject('TGRD1004', '/lane', 'This query did not authorize the evidence lane.');
                             if (e.lane === 'local' && 'sourceId' in e.address) {
                                 const manifest = (await raw.get('manifests', manifestKey(e.address.sourceId, e.address.versionId)))?.payload;
-                                if (!manifest || manifest.profileId !== session.profileId || manifest.profileRevision !== session.profileRevision) groundingReject('TGRD1004', '/address', 'Local evidence requires a curated version in this profile.');
+                                if (manifest && (manifest.profileId !== session.profileId || manifest.profileRevision !== session.profileRevision)) groundingReject('TGRD1004', '/address', 'Local evidence crosses the curated profile revision.');
+                                if (!manifest) {
+                                    if (e.authority.tier !== 'unverified' || e.authority.institution !== undefined || !e.authority.ruleIds.includes('uncurated-local') || !equalsJson(e.times, { provenance: null }))
+                                        groundingReject('TGRD1005', '/authority', 'Uncurated local evidence cannot assert authority or time facts.');
+                                } else {
                                 if (e.citation.url !== manifest.canonicalUrl) groundingReject('TGRD1004', '/citation/url', 'Local citation URL differs from the curated source.');
                                 if (e.authority.tier !== manifest.authorityTier || e.authority.institution !== manifest.institution || !equalsJson(e.times, manifest.times)) groundingReject('TGRD1005', '/authority', 'Local authority and time facts must match the curated manifest.');
+                                }
                             }
                             if (e.lane === 'web' && 'finalUrl' in e.address) {
                                 if (e.citation.url !== e.address.finalUrl) groundingReject('TGRD1004', '/citation/url', 'Web citation URL differs from the retained final URL.');
@@ -195,7 +204,31 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                     const value = groundingMust(validateGroundingShape('groundingSession', next));
                     await raw.put('sessions', await rowFor('sessions', value)); changes++;
                 };
-                return immutableGroundingJson(await task(raw, write, replace));
+                const promote = async (input: CorpusManifest, bundle: StoredDocumentBundle) => {
+                    if (!input || typeof input !== 'object' || !input.curator || 'lane' in input)
+                        groundingReject('TGRD1010', '/curator', 'Corpus promotion requires an explicit curator manifest.');
+                    checkProvenance(input);
+                    const manifest = groundingMust(validateGroundingShape('corpusManifest', input));
+                    if (manifest.status !== 'active') groundingReject('TGRD1010', '/status', 'Promotion must activate an explicitly curated version.');
+                    if (!raw.activateCorpus) groundingReject('TGRD1009', '/store', 'The host must bind corpus and grounding to one atomic transaction.');
+                    try { assertStoredDocumentBundle(bundle); }
+                    catch (cause) { groundingReject('TGRD1002', '/bundle', 'The curated document bundle is invalid.', cause); }
+                    if (manifest.sourceId !== bundle.source.id || manifest.versionId !== bundle.version.id
+                        || manifest.contentHash !== bundle.version.contentHash || manifest.canonicalUrl !== bundle.source.canonicalUrl)
+                        groundingReject('TGRD1002', '/bundle', 'The curator manifest must name the exact activated source, version, content and canonical URL.');
+                    if (!await raw.get('profiles', profileKey(manifest.profileId, manifest.profileRevision)))
+                        groundingReject('TGRD1002', '/profileRevision', 'The curator profile revision must be retained.');
+                    const key = manifestKey(manifest.sourceId, manifest.versionId), prior = await raw.get('manifests', key);
+                    if (prior && !equalsJson(prior.payload, manifest)) groundingReject('TGRD1002', '/id', 'An existing curated version cannot change or be implicitly reactivated.');
+                    for (const peer of await raw.query('manifests', { sourceId: manifest.sourceId, status: 'active' })) {
+                        if (peer.id === key) continue;
+                        const superseded = groundingMust(validateGroundingShape('corpusManifest', { ...peer.payload, status: 'superseded' }));
+                        await raw.put('manifests', await rowFor('manifests', superseded)); changes++;
+                    }
+                    await write('manifests', manifest);
+                    changes += await raw.activateCorpus(bundle);
+                };
+                return immutableGroundingJson(await task(raw, write, replace, promote));
             });
             return { ok: true, value, changes };
         } catch (error) { return { ok: false, issue: error instanceof GroundingAbort ? error.issue : groundingIssue('TGRD1009', '', 'Grounding persistence failed; the transaction was rolled back.', error) }; }
@@ -205,6 +238,7 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
         putProfile: profile => mutate(async (_tx, write) => { await write('profiles', profile); return { revision: profile.revision }; }),
         getProfile: (id, revision) => read('profiles', profileKey(id, revision)),
         putManifest: manifest => mutate(async (_tx, write) => { await write('manifests', manifest); return { id: manifest.id }; }),
+        promoteToCorpus: (manifest, bundle) => mutate(async (_tx, _write, _replace, promote) => { await promote(manifest, bundle); return { id: manifest.id, versionId: bundle.version.id }; }),
         getManifest: (sourceId, versionId) => read('manifests', manifestKey(sourceId, versionId)),
         createSession: plan => mutate(async (_tx, write) => {
             if (!plan || typeof plan !== 'object' || Object.keys(plan).some(k => !['conversationId', 'profileId', 'profileRevision', 'userContext'].includes(k))) groundingReject('TGRD1001', '', 'Invalid session creation plan.');

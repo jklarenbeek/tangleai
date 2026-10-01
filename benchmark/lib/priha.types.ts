@@ -654,6 +654,18 @@ export interface PrihaFixtureProfileRuleInputsItem {
 }
 
 
+export interface PrihaFixtureLocalQueries {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  file: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.census.sources",{"$count":"$.sources[*]"}]},{"$eq":["$.census.questions",{"$count":"$.questions[*]"}]},{"$eq":["$.census.claims",{"$count":"$.claims[*]"}]},{"$eq":["$.census.elements",{"$count":"$.elements[*]"}]},{"$eq":["$.census.chunks",{"$count":"$.chunks[*]"}]},{"$eq":["$.census.parents",{"$count":"$.parents[*]"}]},{"$eq":["$.census.conversations",{"$count":"$.conversations[*]"}]},{"$eq":["$.census.versions",{"$count":"$.sources[*].versions[*]"}]},{"$eq":["$.census.webRecords",{"$count":"$.web[*]"}]},{"$eq":["$.census.answerable",{"$count":"$.questions[?(@.kind=='answerable')]"}]},{"$eq":["$.census.abstain",{"$count":"$.questions[?(@.kind=='abstain')]"}]},{"$eq":["$.census.refuse",{"$count":"$.questions[?(@.kind=='refuse')]"}]},{"$eq":[{"$count":"$.sources[*].key"},{"$count":{"$distinct":"$.sources[*].key"}}]},{"$eq":[{"$count":"$.questions[*].key"},{"$count":{"$distinct":"$.questions[*].key"}}]},{"$eq":[{"$count":"$.claims[*].key"},{"$count":{"$distinct":"$.claims[*].key"}}]},{"$eq":[{"$count":"$.elements[*].key"},{"$count":{"$distinct":"$.elements[*].key"}}]},{"$eq":[{"$count":"$.chunks[*].key"},{"$count":{"$distinct":"$.chunks[*].key"}}]},{"$eq":[{"$count":"$.parents[*].key"},{"$count":{"$distinct":"$.parents[*].key"}}]},{"$eq":[{"$count":"$.conversations[*].key"},{"$count":{"$distinct":"$.conversations[*].key"}}]},{"$eq":[{"$count":"$.scripts[*].key"},{"$count":{"$distinct":"$.scripts[*].key"}}]},{"$eq":[{"$count":"$.web[*].key"},{"$count":{"$distinct":"$.web[*].key"}}]},{"$eq":[{"$count":"$.sources[*].versions[*].key"},{"$count":{"$distinct":"$.sources[*].versions[*].key"}}]},{"$eq":[{"$count":"$.granularities[*].id"},{"$count":{"$distinct":"$.granularities[*].id"}}]}]}
  */
@@ -727,6 +739,7 @@ export interface PrihaFixture {
    * Schema constraints this type cannot express: minItems=3, maxItems=3
    */
   profileRuleInputs: Array<PrihaFixtureProfileRuleInputsItem>;
+  localQueries: PrihaFixtureLocalQueries;
 }
 
 
@@ -921,6 +934,14 @@ export interface PrihaRegistration {
    * Schema constraints this type cannot express: minItems=8
    */
   capabilityRows: Array<PrihaCapabilityRegistration>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  localQueryId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  localCorpusAddressId: string;
 }
 
 
@@ -1430,8 +1451,361 @@ export interface PrihaContracts {
 }
 
 
+export interface PrihaLocalQuery {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  question: string;
+  suite: "exact-name" | "paraphrase" | "control";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+}
+
+
+export interface PrihaLocalRowCorpus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  sources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  versions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activeChildren: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activeParents: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retainedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retainedParents: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddedChildren: number;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]},{"$eq":["$.contracts.profileRevision","$.registration.profile.revision"]},{"$every":{"c":"$.capabilities[?(@.id=='contracts')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.contracts.failed",0]}]}}]}
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaLocalCaseExpectedSupportItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaLocalCaseRetrievedSupportItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaLocalCaseSuppliedSupportItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaLocalCaseChildIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaLocalCaseParentIdsItem = string;
+
+export interface PrihaLocalCensus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activeVersions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  children: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  semantic: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  lexical: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  skipped: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  deduplicated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  diversityDropped: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  parentsOverBudget: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  selected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  issues: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rebuilds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  generation: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextTokens: number;
+  sourceRevision: string;
+  rebuildMs: null;
+}
+
+
+export interface PrihaLocalCaseIssueOneOf1 {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.support",{"$count":"$.expectedSupport[*]"}]},{"$eq":["$.childHits",{"$count":"$.retrievedSupport[*]"}]},{"$eq":["$.parentHits",{"$count":"$.suppliedSupport[*]"}]},{"$eq":["$.census.selected",{"$count":"$.childIds[*]"}]},{"$eq":[{"$count":"$.childIds[*]"},{"$count":{"$distinct":"$.childIds[*]"}}]},{"$le":["$.childHits","$.support"]},{"$le":["$.parentHits","$.support"]}]}
+ */
+export interface PrihaLocalCase {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  question: string;
+  suite: "exact-name" | "paraphrase" | "control";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  query: string;
+  expectedSupport: Array<PrihaLocalCaseExpectedSupportItem>;
+  retrievedSupport: Array<PrihaLocalCaseRetrievedSupportItem>;
+  suppliedSupport: Array<PrihaLocalCaseSuppliedSupportItem>;
+  childIds: Array<PrihaLocalCaseChildIdsItem>;
+  parentIds: Array<PrihaLocalCaseParentIdsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  childHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  parentHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  support: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  childRecall: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  parentRecovery: number;
+  census: PrihaLocalCensus;
+  issue: PrihaLocalCaseIssueOneOf1 | null;
+}
+
+
+export interface PrihaLocalMetrics {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cases: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  eligibleCases: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  support: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  childHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  parentHits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  skipped: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  deduplicated: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  parentsOverBudget: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  issues: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rebuilds: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  childRecall: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  parentRecovery: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  meanCandidates: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  exactNameRecall: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  paraphraseRecall: number;
+  rebuildMs: null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.metrics.cases",{"$count":"$.cases[*]"}]},{"$eq":["$.metrics.eligibleCases",{"$count":"$.cases[?(@.support>0)]"}]},{"$eq":[{"$count":"$.cases[*].id"},{"$count":{"$distinct":"$.cases[*].id"}}]},{"$eq":["$.metrics.support",{"$sum":"$.cases[*].support"}]},{"$eq":["$.metrics.childHits",{"$sum":"$.cases[*].childHits"}]},{"$eq":["$.metrics.parentHits",{"$sum":"$.cases[*].parentHits"}]},{"$eq":["$.metrics.skipped",{"$sum":"$.cases[*].census.skipped"}]},{"$eq":["$.metrics.deduplicated",{"$sum":"$.cases[*].census.deduplicated"}]},{"$eq":["$.metrics.parentsOverBudget",{"$sum":"$.cases[*].census.parentsOverBudget"}]},{"$eq":["$.metrics.issues",{"$sum":"$.cases[*].census.issues"}]},{"$eq":["$.metrics.rebuilds",{"$sum":"$.cases[*].census.rebuilds"}]}]}
+ */
+export interface PrihaLocalRow {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  key: string;
+  treatment: "flat-semantic" | "local-hybrid";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  granularity: string;
+  lane: "semantic" | "lexical" | "fused";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rankerId: string;
+  corpus: PrihaLocalRowCorpus;
+  cases: Array<PrihaLocalCase>;
+  metrics: PrihaLocalMetrics;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.fusedBeatsOrTiesBoth",{"$and":[{"$ge":["$.fused","$.semantic"]},{"$ge":["$.fused","$.lexical"]}]}]}
+ */
+export interface PrihaLocalComparison {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  granularity: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  semantic: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  lexical: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  fused: number;
+  fusedBeatsOrTiesBoth: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  latencyBudgetMs: number;
+  latency: "separate-receipt";
+}
+
+
+export interface PrihaLocalReportCorpusAddressesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  url: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[{"$count":"$.rows[*]"},7]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":["$.failed",{"$sum":"$.rows[*].metrics.issues"}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.metrics.cases",{"$count":"$.queries[*]"}]}}]}
+ */
+export interface PrihaLocalReport {
+  status: "executed";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  queryId: string;
+  queries: Array<PrihaLocalQuery>;
+  rows: Array<PrihaLocalRow>;
+  comparisons: Array<PrihaLocalComparison>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+  providerRequests: 0;
+  networkRequests: 0;
+  latency: "separate-receipt";
+  corpusAddresses: Array<PrihaLocalReportCorpusAddressesItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  corpusAddressId: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]},{"$eq":["$.contracts.profileRevision","$.registration.profile.revision"]},{"$every":{"c":"$.capabilities[?(@.id=='contracts')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.contracts.failed",0]}]}},{"$eq":["$.local.queryId","$.registration.localQueryId"]},{"$every":{"c":"$.capabilities[?(@.id=='local')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.local.failed",0]}]}},{"$eq":["$.local.corpusAddressId","$.registration.localCorpusAddressId"]}]}
  */
 export interface PrihaReport {
   document: "priha-report";
@@ -1470,6 +1844,7 @@ export interface PrihaReport {
    */
   replay: PrihaReportReplay;
   contracts: PrihaContracts;
+  local: PrihaLocalReport;
 }
 
 
@@ -1557,4 +1932,23 @@ export interface PrihaLivePlan {
 }
 
 
-export type Priha = PrihaFixture | PrihaReport | PrihaConversation | PrihaLivePlan;
+export interface PrihaLocalQueriesCorpusAddressesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  url: string;
+}
+
+
+export interface PrihaLocalQueries {
+  document: "priha-local-queries";
+  cases: Array<PrihaLocalQuery>;
+  corpusAddresses: Array<PrihaLocalQueriesCorpusAddressesItem>;
+}
+
+
+export type Priha = PrihaFixture | PrihaReport | PrihaConversation | PrihaLivePlan | PrihaLocalQueries;

@@ -57,7 +57,7 @@ describe('versioned document ingestion and retrieval', () => {
       assert.equal(three.status, 'ingested');
       assert.notEqual(three.version.id, oldVersion);
       assert.equal((await store.getVersion(oldVersion))?.status, 'superseded');
-      assert.deepEqual(await store.listChunks(oldVersion), [], 'stale chunks are removed after activation');
+      assert.deepEqual((await store.listChunks(oldVersion)).map(chunk => chunk.id), oldChunkIds, 'superseded evidence remains addressable');
       const liveIds = new Set((await store.listChunks(three.version.id)).map((chunk) => chunk.id));
       assert.ok(oldChunkIds.every((id) => !liveIds.has(id)));
 
@@ -79,7 +79,7 @@ describe('versioned document ingestion and retrieval', () => {
       // of 64, and a version that recorded 48 could not be re-indexed from.
       assert.deepEqual(reindexed.version.chunkerConfig, { maxTokens: 64, overlapTokens: 21 });
       assert.equal((await store.getVersion(three.version.id))?.status, 'superseded');
-      assert.deepEqual(await store.listChunks(three.version.id), [], 're-indexing removes chunks for the previous configuration');
+      assert.ok((await store.listChunks(three.version.id)).length > 0, 're-indexing retains previous evidence');
 
       await assert.rejects(() => ingester.ingest({ url: 'https://docs.example/ops' }));
       const retained = (await store.listSources())[0];

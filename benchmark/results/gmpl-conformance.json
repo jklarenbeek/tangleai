@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "8f8729405d5bfc856e73d8f08a17b3c80371e2da",
+    "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
     "clean": false,
     "files": [
       {
@@ -203,7 +203,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "6ff581a2a85977b9831e4e146379b5ddcbd3336a5265cae00eea50b4e4a27905"
+        "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
       },
       {
         "path": "package.json",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "08b29a9854c70ab53ce769233fce1fc95217f673093c043fada9824d825e4c95"
+        "sha256": "4630311f5beb967e036cd3db33d6c24509ccb012cbe43d75cda205c5885bbcd7"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -359,7 +359,11 @@
       },
       {
         "path": "packages/core/src/index.ts",
-        "sha256": "a4053906fa0c75010c84880107fc3b06ffbfe0e6403059bc7ecd5fb55858208a"
+        "sha256": "198c9ab461507bfaae110e000bd4182ac501940e0ae8d8f88096cfe4b91d027c"
+      },
+      {
+        "path": "packages/core/src/lexical.ts",
+        "sha256": "4f10e2230c09f8e07a73176833e63c3b6c43931fd0b3d6138ba5d3327cd4b4f8"
       },
       {
         "path": "packages/core/src/schemas/consolidation-definition.ts",
@@ -750,8 +754,12 @@
         "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
       },
       {
+        "path": "packages/store/src/document-state.ts",
+        "sha256": "8a989411e415e9d1670f4fa5555d76796f75a4d0f43f96963662cb68d18bb71f"
+      },
+      {
         "path": "packages/store/src/document-store.ts",
-        "sha256": "d85e1f34b0681b2841070c6b1d8a400e6405ed74ff70207954db1b78190cbff5"
+        "sha256": "f97b975732899198627b39304010aa2018eb4c4e4c43027bbfb0c7d2e97ae3f9"
       },
       {
         "path": "packages/store/src/evolve-effects.ts",
@@ -779,7 +787,7 @@
       },
       {
         "path": "packages/store/src/grounding-store.ts",
-        "sha256": "e177d7897af6b34baa3943d8b750bef1daa6ad5a4e59764c5dc8e7e41049f07c"
+        "sha256": "2966eccd4e5711c98388fb29f79cdac90f405029087e75a5b8a689d9f0828648"
       },
       {
         "path": "packages/store/src/hera-model.ts",
@@ -815,7 +823,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
+        "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1034,7 +1042,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "15e3db858d4846f507d3d432ed492eca9b69ab622de3f948de4df588aa9a786c"
+    "sha256": "ea166cc40e5c7a62b7b7719926e4450ba7074a5b6ddcc5e19d4e7475d83bd9f3"
   },
   "ablations": [
     {
@@ -76588,5 +76596,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "3d13553af116ec2342343fffbc665ceaf51297bbcb7772f229ff601bef1b7be2"
+  "reportId": "496419207a8d6a5b1703339dbc8b7b505eef03e418f21754f85cffe25914948d"
 }

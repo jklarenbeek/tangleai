@@ -9125,5 +9125,9 @@
         "care-navigation"
       ]
     }
-  ]
+  ],
+  "localQueries": {
+    "file": "local-queries.json",
+    "sha256": "2b060136ee0d0d4db0e2b6fe2cc08428763d272fffd85eb83e97ee0f8d9ce7b3"
+  }
 }

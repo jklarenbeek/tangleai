@@ -2,12 +2,14 @@
 import { createGroundingStoreAdapter, type GroundingPersistence, type GroundingPersistenceView, type GroundingStored, type GroundingStore } from '@tangleai/grounding';
 import type { TangleDb } from './db.ts';
 import { asRows } from './memory-store.ts';
+import { applyDocumentBundle } from './document-state.ts';
 export interface GroundingStoreOptions { applyProbe?: (step: string) => void; }
 export function createGroundingStore(db: TangleDb, options: GroundingStoreOptions = {}): GroundingStore {
     if (options.applyProbe !== undefined && typeof options.applyProbe !== 'function') throw new TypeError('A grounding write probe must be a function.');
     const persistence: GroundingPersistence = {
         transaction: <T>(task: (tx: GroundingPersistenceView) => Promise<T>) => db.transaction(async dbTx => {
             const view: GroundingPersistenceView = {
+                activateCorpus: bundle => applyDocumentBundle(dbTx, bundle, options.applyProbe),
                 async get(table, id) { return dbTx.collection<GroundingStored<typeof table>>('grounding_' + table).get(id); },
                 async put(table, row) { await dbTx.collection<GroundingStored<typeof table>>('grounding_' + table).put(row); options.applyProbe?.('put:grounding_' + table); },
                 async query(table, selectors) {

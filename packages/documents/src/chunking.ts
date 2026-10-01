@@ -5,10 +5,12 @@ import { CHARS_PER_TOKEN, estimateTokens } from '@tangleai/core/tokens';
 
 import {
   RECURSIVE_CHUNKER_VERSION,
+  PARENT_CHILD_CHUNKER_VERSION,
   S2_CHUNKER_VERSION,
   type BoundingBox,
   type ChunkDraft,
   type ChunkResult,
+  type ParentDraft,
   type Chunker,
   type DocumentElement,
 } from './contracts.ts';
@@ -20,6 +22,7 @@ interface AtomicPart {
   element: DocumentElement;
   text: string;
   tokens: number;
+  carried?: boolean;
 }
 
 export interface RecursiveChunkerOptions {
@@ -77,12 +80,14 @@ function unionBox(parts: AtomicPart[]): BoundingBox | undefined {
   return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 }
 
-function draft(parts: AtomicPart[], order: number): ChunkDraft {
+function draft(parts: AtomicPart[], order: number, separateCarry = false): ChunkDraft {
   const pages = parts.map((part) => part.element.page).filter((page): page is number => page !== undefined);
   const headingPath = commonHeading(parts);
   const text = parts.map((part) => part.text).join('\n\n');
   return {
-    elementIds: [...new Set(parts.map((part) => part.element.id))],
+    elementIds: [...new Set(parts.filter(part => !separateCarry || !part.carried).map((part) => part.element.id))],
+    contentStartOrder: parts.find(part => !part.carried)?.element.order,
+    ...(separateCarry ? { carriedElementIds: [...new Set(parts.filter(part => part.carried).map(part => part.element.id))] } : {}),
     text,
     tokenCount: estimateTokens(text),
     order,
@@ -129,12 +134,12 @@ function overlapTail(parts: AtomicPart[], budget: number): AtomicPart[] {
     const part = parts[index];
     const separator = tail.length === 0 ? 0 : 2;
     if (used + separator + part.text.length <= budget) {
-      tail.unshift(part);
+      tail.unshift({ ...part, carried: true });
       used += separator + part.text.length;
       continue;
     }
     const cut = tailAtBoundary(part.text, budget - used - separator);
-    if (cut !== '') tail.unshift({ element: part.element, text: cut, tokens: estimateTokens(cut) });
+    if (cut !== '') tail.unshift({ element: part.element, text: cut, tokens: estimateTokens(cut), carried: true });
     break;
   }
   return tail;
@@ -145,7 +150,7 @@ function overlapTail(parts: AtomicPart[], budget: number): AtomicPart[] {
  * (`ceil(chars / 4)` is the token estimate, so the two orders agree
  * exactly) and carried forward, which keeps the pass linear in the
  * document instead of re-joining `current` for every part. */
-function pack(parts: AtomicPart[], maxTokens: number, overlapTokens: number): ChunkDraft[] {
+function pack(parts: AtomicPart[], maxTokens: number, overlapTokens: number, groups?: AtomicPart[][], separateCarry = false): ChunkDraft[] {
   const maxChars = maxTokens * CHARS_PER_TOKEN;
   const overlapChars = overlapTokens * CHARS_PER_TOKEN - 2;
   const chunks: ChunkDraft[] = [];
@@ -157,7 +162,8 @@ function pack(parts: AtomicPart[], maxTokens: number, overlapTokens: number): Ch
       && Math.ceil(chars / CHARS_PER_TOKEN) >= Math.floor(maxTokens * 0.55);
     if (headingBoundary || withPart(part) > maxChars) {
       if (current.length > 0) {
-        chunks.push(draft(current, chunks.length));
+        chunks.push(draft(current, chunks.length, separateCarry));
+        groups?.push(current);
         current = overlapTail(current, overlapChars);
         chars = joinedChars(current);
       }
@@ -171,7 +177,7 @@ function pack(parts: AtomicPart[], maxTokens: number, overlapTokens: number): Ch
     chars = withPart(part);
     current.push(part);
   }
-  if (current.length > 0) chunks.push(draft(current, chunks.length));
+  if (current.length > 0) { chunks.push(draft(current, chunks.length, separateCarry)); groups?.push(current); }
   return chunks;
 }
 
@@ -197,6 +203,38 @@ export class RecursiveDocumentChunker implements Chunker {
       chunks: pack(parts, this.maxTokens, this.overlapTokens),
       diagnostic: { algorithm: this.version, warnings: [] },
     };
+  }
+}
+
+export interface ParentChildChunkerOptions { parentTokens: number; maxTokens: number; overlapTokens: number; }
+/** The host chooses parent/child sizes; parents add context without embedding cost. */
+export class ParentChildChunker implements Chunker {
+  readonly version = PARENT_CHILD_CHUNKER_VERSION;
+  readonly parentTokens: number;
+  readonly maxTokens: number;
+  readonly overlapTokens: number;
+  constructor(options: ParentChildChunkerOptions) {
+    if (!options || Object.values(options).some(value => !Number.isSafeInteger(value) || value < 0)
+      || !Number.isSafeInteger(options.parentTokens) || !Number.isSafeInteger(options.maxTokens) || !Number.isSafeInteger(options.overlapTokens))
+      throw new TypeError('Parent-child budgets must be nonnegative integers');
+    this.maxTokens = Math.max(16, options.maxTokens);
+    this.parentTokens = Math.max(this.maxTokens, options.parentTokens);
+    this.overlapTokens = Math.min(options.overlapTokens, Math.floor(this.maxTokens / 3));
+  }
+  async chunk(elements: DocumentElement[]): Promise<ChunkResult> {
+    const groups: AtomicPart[][] = [];
+    const parentChunks = pack(atomicParts(elements, this.parentTokens), this.parentTokens, 0, groups);
+    const chunks: ChunkDraft[] = [], parents: ParentDraft[] = [];
+    for (const [order, parts] of groups.entries()) {
+      const contentTokens = this.maxTokens - this.overlapTokens;
+      const childParts = parts.flatMap(part => splitAtBoundary(part.text, contentTokens * CHARS_PER_TOKEN)
+        .map(text => ({ element: part.element, text, tokens: estimateTokens(text) })));
+      const children = pack(childParts, this.maxTokens, this.overlapTokens, undefined, true);
+      const childIndexes = children.map((child, index) => chunks.length + index);
+      for (const child of children) chunks.push({ ...child, order: chunks.length });
+      parents.push({ ...parentChunks[order], childIndexes });
+    }
+    return { chunks, parents, diagnostic: { algorithm: this.version, warnings: [] } };
   }
 }
 

@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "8f8729405d5bfc856e73d8f08a17b3c80371e2da",
-      "sha256": "45cfdf35a21a750aed954e63085c705237047243b5beea4b1ae56bd5d57b369a",
+      "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
+      "sha256": "2afb20101046c2de09746255b8c4fd92ae4d7e27c894acb271aa6fecbdfc8fc6",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -497,16 +497,20 @@
           "sha256": "1f71c9c1bc789059fcf2656d9c8ef73a9a851f8594cebebe4df9eb7a72d434ba"
         },
         {
+          "path": "benchmark/lib/priha-local.ts",
+          "sha256": "2e8fda52164a3703afcaf638151702cfca430106d21991d6750425b34d29c38c"
+        },
+        {
           "path": "benchmark/lib/priha-replay.ts",
           "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
         },
         {
           "path": "benchmark/lib/priha.ts",
-          "sha256": "36375c073c6d75e404401494dc987d035009f34fc4a7f83a542f3c2d78ed202b"
+          "sha256": "cc2565d68557e89d88a7066fe55220c86f7734cda2ffd2182e579ffba80bb11b"
         },
         {
           "path": "benchmark/lib/priha.types.ts",
-          "sha256": "c81f23694372382e9462e544996f4a9320ecb54f24a1df2ce7ce1ea3befc9f96"
+          "sha256": "30ea9310227d3317b74bedfb02b7446c26c862bf51cb07e96264bd7279314f3d"
         },
         {
           "path": "benchmark/lib/question-stream.ts",
@@ -678,7 +682,7 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "6ff581a2a85977b9831e4e146379b5ddcbd3336a5265cae00eea50b4e4a27905"
+          "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
         },
         {
           "path": "package.json",
@@ -794,11 +798,11 @@
         },
         {
           "path": "packages/documents/src/chunking.ts",
-          "sha256": "3f49710fbf758324035dca2b97636588da5ad45dfe3bd95a8b3f708a51c5ca3e"
+          "sha256": "d53994760b67c59e7f1b3e8f1111f68bd9dee3f3b428fc490d9ae9d52b3ab7b7"
         },
         {
           "path": "packages/documents/src/contracts.ts",
-          "sha256": "230cba1107d332464ab3f89977d82e0df84460149f545615d44b451c4b57cba7"
+          "sha256": "1fd10f33a244f1791e9a10bb77497d08e93918e77000e6e7910116587eef4086"
         },
         {
           "path": "packages/documents/src/extract.ts",
@@ -814,11 +818,11 @@
         },
         {
           "path": "packages/documents/src/ingest.ts",
-          "sha256": "4ac1767fa28af31c07f001c1f749cddef7f187de69966b2b5db0074abc7fe1aa"
+          "sha256": "af9d1ec234062031b88ad0ecfbe8a3dc36ff615a95ffb1db05c62d3efeac289c"
         },
         {
           "path": "packages/documents/src/retrieval.ts",
-          "sha256": "0381148bd072ab0d08de42ad19e13b620fd34c72c902eb57999c403ee57b5826"
+          "sha256": "331fffffc3ed2d6efb6af2d735bb99f5ea21d74ad5545655d434785717c4398d"
         },
         {
           "path": "packages/documents/src/url-policy.ts",
@@ -1209,8 +1213,12 @@
           "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
         },
         {
+          "path": "packages/store/src/document-state.ts",
+          "sha256": "8a989411e415e9d1670f4fa5555d76796f75a4d0f43f96963662cb68d18bb71f"
+        },
+        {
           "path": "packages/store/src/document-store.ts",
-          "sha256": "d85e1f34b0681b2841070c6b1d8a400e6405ed74ff70207954db1b78190cbff5"
+          "sha256": "f97b975732899198627b39304010aa2018eb4c4e4c43027bbfb0c7d2e97ae3f9"
         },
         {
           "path": "packages/store/src/evolve-effects.ts",
@@ -1238,7 +1246,7 @@
         },
         {
           "path": "packages/store/src/grounding-store.ts",
-          "sha256": "e177d7897af6b34baa3943d8b750bef1daa6ad5a4e59764c5dc8e7e41049f07c"
+          "sha256": "2966eccd4e5711c98388fb29f79cdac90f405029087e75a5b8a689d9f0828648"
         },
         {
           "path": "packages/store/src/hera-model.ts",
@@ -1274,7 +1282,7 @@
         },
         {
           "path": "packages/store/src/model.ts",
-          "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
+          "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
         },
         {
           "path": "packages/store/src/outcome-store.ts",
@@ -1549,7 +1557,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "120f00daffdbd38dffa89a94520fc1635c1275d34515ceeb669df63d92bd504c",
+    "planId": "710f943e4a8c720c0c4ecafc599a6e98662c7622d9f025283878107b4d6a778b",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,
