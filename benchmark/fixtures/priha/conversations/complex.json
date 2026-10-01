@@ -1,0 +1,88 @@
+{
+  "key": "complex",
+  "initial": {
+    "text": "I need to visit a service desk.",
+    "facts": []
+  },
+  "human": [
+    {
+      "text": "I mean the voucher desk.",
+      "facts": [
+        "voucher desk"
+      ]
+    },
+    {
+      "text": "I need its location.",
+      "facts": [
+        "location"
+      ]
+    }
+  ],
+  "expected": {
+    "triage": "complex",
+    "requiredFields": [
+      "service",
+      "purpose"
+    ],
+    "queries": [
+      {
+        "required": [
+          [
+            " travel voucher desk location "
+          ]
+        ],
+        "forbidden": []
+      }
+    ],
+    "ruleIds": [
+      "clarify-service",
+      "clarify-purpose"
+    ],
+    "facts": [
+      "voucher desk",
+      "location"
+    ],
+    "turns": 2,
+    "outcome": "resolved"
+  },
+  "oracle": {
+    "triage": "complex",
+    "ruleIds": [
+      "clarify-service",
+      "clarify-purpose"
+    ],
+    "facts": [
+      "voucher desk",
+      "location"
+    ],
+    "turns": 2,
+    "outcome": "resolved",
+    "queries": [
+      "travel voucher desk location"
+    ]
+  },
+  "factPredicates": [
+    {
+      "fact": "voucher desk",
+      "predicates": {
+        "required": [
+          [
+            " voucher desk "
+          ]
+        ],
+        "forbidden": []
+      }
+    },
+    {
+      "fact": "location",
+      "predicates": {
+        "required": [
+          [
+            " location "
+          ]
+        ],
+        "forbidden": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "query": "Harbour booking",
+  "results": [
+    {
+      "url": "https://official.harbour.example/booking-update",
+      "title": "booking-update",
+      "content": "Discovery hint only: booking-update"
+    },
+    {
+      "url": "https://forum.harbour.example/booking-rumour",
+      "title": "booking-rumour",
+      "content": "Discovery hint only: booking-rumour"
+    },
+    {
+      "url": "https://official.harbour.example/redirect",
+      "title": "redirect",
+      "content": "Discovery hint only: redirect"
+    },
+    {
+      "url": "https://official.harbour.example/missing",
+      "title": "missing",
+      "content": "Discovery hint only: missing"
+    },
+    {
+      "url": "https://official.harbour.example/injection",
+      "title": "injection",
+      "content": "Discovery hint only: injection"
+    },
+    {
+      "url": "https://official.harbour.example/empty",
+      "title": "empty",
+      "content": "Discovery hint only: empty"
+    },
+    {
+      "url": "https://official.harbour.example/future",
+      "title": "future",
+      "content": "Discovery hint only: future"
+    },
+    {
+      "url": "https://official.harbour.example/weekend-desk",
+      "title": "weekend-desk",
+      "content": "Discovery hint only: weekend-desk"
+    }
+  ],
+  "number_of_results": 8
+}

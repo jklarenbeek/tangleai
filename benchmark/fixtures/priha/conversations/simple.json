@@ -1,0 +1,41 @@
+{
+  "key": "simple",
+  "initial": {
+    "text": "Where is Harbour reception?",
+    "facts": []
+  },
+  "human": [],
+  "expected": {
+    "triage": "simple",
+    "requiredFields": [],
+    "queries": [
+      {
+        "required": [
+          [
+            " harbour reception location "
+          ]
+        ],
+        "forbidden": []
+      }
+    ],
+    "ruleIds": [
+      "in-scope"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "resolved"
+  },
+  "oracle": {
+    "triage": "simple",
+    "ruleIds": [
+      "in-scope"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "resolved",
+    "queries": [
+      "Harbour reception location"
+    ]
+  },
+  "factPredicates": []
+}

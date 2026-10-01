@@ -1,0 +1,3172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/priha",
+  "title": "Governed dual retrieval measurement",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/prihaFixture"
+    },
+    {
+      "$ref": "#/$defs/prihaReport"
+    },
+    {
+      "$ref": "#/$defs/prihaConversation"
+    },
+    {
+      "$ref": "#/$defs/prihaLivePlan"
+    }
+  ],
+  "$defs": {
+    "laneKind": {
+      "enum": [
+        "local",
+        "web"
+      ]
+    },
+    "authorityTier": {
+      "enum": [
+        "official",
+        "professional",
+        "community",
+        "unverified"
+      ]
+    },
+    "timeProvenance": {
+      "enum": [
+        "content",
+        "metadata",
+        "curator"
+      ]
+    },
+    "conflictDecision": {
+      "enum": [
+        "prefer-local",
+        "prefer-web",
+        "caveat",
+        "refuse"
+      ]
+    },
+    "prihaGranularity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "chunkerVersion",
+        "parentTokens",
+        "maxTokens",
+        "overlapTokens"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chunkerVersion": {
+          "enum": [
+            "heading-recursive/1",
+            "parent-child/1"
+          ]
+        },
+        "parentTokens": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "overlapTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaCorpusFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "institution",
+        "authorityTier",
+        "jurisdiction",
+        "language",
+        "effectiveAt",
+        "expiresAt",
+        "timeProvenance"
+      ],
+      "properties": {
+        "institution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityTier": {
+          "$ref": "#/$defs/authorityTier"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effectiveAt": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timeProvenance": {
+          "$ref": "#/$defs/timeProvenance"
+        }
+      }
+    },
+    "prihaVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "file",
+        "sha256",
+        "status",
+        "admittedAt",
+        "supersededAt",
+        "facts"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "superseded"
+          ]
+        },
+        "admittedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "supersededAt": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "facts": {
+          "$ref": "#/$defs/prihaCorpusFacts"
+        }
+      }
+    },
+    "prihaSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "title",
+        "url",
+        "mimeType",
+        "versions"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mimeType": {
+          "enum": [
+            "text/html",
+            "text/markdown"
+          ]
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "prihaElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "lane",
+        "quote"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lane": {
+          "$ref": "#/$defs/laneKind"
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prihaChunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "granularity",
+        "elements",
+        "parent",
+        "text",
+        "tokenCount"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "granularity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "parent": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokenCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "prihaParent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "granularity",
+        "elements",
+        "children",
+        "text",
+        "tokenCount"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "granularity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokenCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "prihaWebRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "name",
+        "kind",
+        "method",
+        "url",
+        "file",
+        "sha256",
+        "status",
+        "headers",
+        "redirectTo",
+        "admittedAt",
+        "facts",
+        "elements"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "searxng",
+            "document"
+          ]
+        },
+        "method": {
+          "const": "GET"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            }
+          },
+          "minItems": 0
+        },
+        "redirectTo": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "admittedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "facts": {
+          "$ref": "#/$defs/prihaCorpusFacts"
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row",
+        "granularity",
+        "retrieved",
+        "supplied"
+      ],
+      "properties": {
+        "row": {
+          "enum": [
+            "oracle",
+            "flat-semantic",
+            "local-hybrid",
+            "web-only",
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "granularity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "supplied": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "text",
+        "kind",
+        "claims",
+        "critical",
+        "decision",
+        "ruleIds",
+        "trace"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "answerable",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "decision": {
+          "$ref": "#/$defs/conflictDecision"
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaTrace"
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaClaimSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim",
+        "local",
+        "web"
+      ],
+      "properties": {
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "local": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "web": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaFixtureAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "reason",
+        "claims"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/grounding#/$defs/answerClaim"
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaTurn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "facts"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaConversation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "initial",
+        "human",
+        "expected",
+        "oracle",
+        "factPredicates"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "initial": {
+          "$ref": "#/$defs/prihaTurn"
+        },
+        "human": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaTurn"
+          },
+          "minItems": 0
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "triage",
+            "requiredFields",
+            "queries",
+            "ruleIds",
+            "facts",
+            "turns",
+            "outcome"
+          ],
+          "properties": {
+            "triage": {
+              "enum": [
+                "simple",
+                "complex",
+                "emergency",
+                "out-of-scope"
+              ]
+            },
+            "requiredFields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "queries": {
+              "type": "array",
+              "items": {
+                "$ref": "https://tangleai.dev/schemas/grounding#/$defs/predicates"
+              },
+              "minItems": 0
+            },
+            "ruleIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "facts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "outcome": {
+              "enum": [
+                "resolved",
+                "exhausted",
+                "refuse"
+              ]
+            }
+          }
+        },
+        "oracle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "triage",
+            "facts",
+            "queries",
+            "ruleIds",
+            "turns",
+            "outcome"
+          ],
+          "properties": {
+            "triage": {
+              "enum": [
+                "simple",
+                "complex",
+                "emergency",
+                "out-of-scope"
+              ]
+            },
+            "facts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "queries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ruleIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "outcome": {
+              "enum": [
+                "resolved",
+                "exhausted",
+                "refuse"
+              ]
+            }
+          }
+        },
+        "factPredicates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "fact",
+              "predicates"
+            ],
+            "properties": {
+              "fact": {
+                "type": "string",
+                "minLength": 1
+              },
+              "predicates": {
+                "$ref": "https://tangleai.dev/schemas/grounding#/$defs/predicates"
+              }
+            }
+          }
+        }
+      }
+    },
+    "prihaConversationFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "file",
+        "sha256"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "prihaScript": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "kind",
+        "question",
+        "answer",
+        "citation",
+        "webRecord",
+        "decision",
+        "conversation",
+        "facts",
+        "turns"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answer": {
+          "$ref": "#/$defs/prihaFixtureAnswer"
+        },
+        "citation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "webRecord": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/conflictDecision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conversation": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "license",
+        "authorship",
+        "cutoff",
+        "census",
+        "granularities",
+        "sources",
+        "elements",
+        "chunks",
+        "parents",
+        "web",
+        "conversations",
+        "questions",
+        "claims",
+        "supportByLane",
+        "scripts",
+        "budgets",
+        "hypothesis",
+        "safelist"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-fixture"
+        },
+        "license": {
+          "const": "MIT"
+        },
+        "authorship": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoff": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "census": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sources",
+            "versions",
+            "questions",
+            "answerable",
+            "abstain",
+            "refuse",
+            "claims",
+            "elements",
+            "chunks",
+            "parents",
+            "conversations",
+            "webRecords"
+          ],
+          "properties": {
+            "sources": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "versions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "questions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answerable": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "abstain": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refuse": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "claims": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "elements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "chunks": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "parents": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "conversations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "webRecords": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "granularities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaGranularity"
+          },
+          "minItems": 3
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaSource"
+          },
+          "minItems": 10
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaElement"
+          },
+          "minItems": 1
+        },
+        "chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaChunk"
+          },
+          "minItems": 1
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaParent"
+          },
+          "minItems": 1
+        },
+        "web": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaWebRecord"
+          },
+          "minItems": 7
+        },
+        "conversations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaConversationFile"
+          },
+          "minItems": 6
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaQuestion"
+          },
+          "minItems": 32
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/grounding#/$defs/fixtureClaim"
+          },
+          "minItems": 24
+        },
+        "supportByLane": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaClaimSupport"
+          },
+          "minItems": 24
+        },
+        "scripts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaScript"
+          },
+          "minItems": 40
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "clarificationTurns",
+            "modelCalls",
+            "searches",
+            "fetches",
+            "maxBytes",
+            "maxTokens",
+            "maxMs"
+          ],
+          "properties": {
+            "clarificationTurns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "modelCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "searches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fetches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxMs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "hypothesis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "localWeight",
+            "authorityBoost",
+            "stalenessPenalty",
+            "maxContextChars"
+          ],
+          "properties": {
+            "localWeight": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "authorityBoost": {
+              "type": "number"
+            },
+            "stalenessPenalty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "maxContextChars": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "safelist": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.census.sources",
+              {
+                "$count": "$.sources[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.questions",
+              {
+                "$count": "$.questions[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.claims",
+              {
+                "$count": "$.claims[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.elements",
+              {
+                "$count": "$.elements[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.chunks",
+              {
+                "$count": "$.chunks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.parents",
+              {
+                "$count": "$.parents[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.conversations",
+              {
+                "$count": "$.conversations[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.versions",
+              {
+                "$count": "$.sources[*].versions[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.webRecords",
+              {
+                "$count": "$.web[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.answerable",
+              {
+                "$count": "$.questions[?(@.kind=='answerable')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.abstain",
+              {
+                "$count": "$.questions[?(@.kind=='abstain')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.refuse",
+              {
+                "$count": "$.questions[?(@.kind=='refuse')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.sources[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.sources[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.questions[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.claims[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.claims[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.elements[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.elements[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.chunks[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.chunks[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.parents[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.parents[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.conversations[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.conversations[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.scripts[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.scripts[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.web[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.web[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.sources[*].versions[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.sources[*].versions[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.granularities[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.granularities[*].id"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reportId",
+        "registrationId",
+        "fixtureId",
+        "sourceSha256",
+        "configIdentityId"
+      ],
+      "properties": {
+        "reportId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "fixtureId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sourceSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "configIdentityId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "prihaRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registrationId",
+        "fixtureId",
+        "control",
+        "handoffReportId",
+        "handoffSha256",
+        "questionIds",
+        "budgets",
+        "corpusVersions",
+        "granularities",
+        "rankerId",
+        "profile",
+        "promptIdentity",
+        "modelIdentity",
+        "flatRetrieval",
+        "hypothesis",
+        "capabilityRows"
+      ],
+      "properties": {
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "fixtureId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "control": {
+          "$ref": "#/$defs/prihaControl"
+        },
+        "handoffReportId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "handoffSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "questionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "budgets": {
+          "$ref": "#/$defs/prihaBudgets"
+        },
+        "corpusVersions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "granularities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaGranularity"
+          },
+          "minItems": 3
+        },
+        "rankerId": {
+          "const": "rrf/1"
+        },
+        "profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "revision"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "promptIdentity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modelIdentity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "flatRetrieval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chunkerVersion",
+            "maxTokens",
+            "overlapTokens",
+            "k",
+            "maxPerSource",
+            "neighbours",
+            "minScore"
+          ],
+          "properties": {
+            "chunkerVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "overlapTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "k": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxPerSource": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "neighbours": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minScore": {
+              "type": "number"
+            }
+          }
+        },
+        "hypothesis": {
+          "$ref": "#/$defs/prihaHypothesis"
+        },
+        "capabilityRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaCapabilityRegistration"
+          },
+          "minItems": 8
+        }
+      }
+    },
+    "prihaCapabilityRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability",
+        "requirements"
+      ],
+      "properties": {
+        "capability": {
+          "enum": [
+            "instrument",
+            "contracts",
+            "local",
+            "optimizer",
+            "web",
+            "reconcile",
+            "flow",
+            "complete"
+          ]
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "evidenceRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "lane",
+        "version",
+        "authorityTier",
+        "admittedAt",
+        "effectiveAt",
+        "expiresAt",
+        "timeProvenance",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lane": {
+          "$ref": "#/$defs/laneKind"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityTier": {
+          "$ref": "#/$defs/authorityTier"
+        },
+        "admittedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "effectiveAt": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiresAt": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timeProvenance": {
+          "$ref": "#/$defs/timeProvenance"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "webRunCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "searches",
+        "results",
+        "snippets",
+        "admitted",
+        "denied",
+        "redirectsOutOfPolicy",
+        "fetched",
+        "failed",
+        "bytes",
+        "stopReason"
+      ],
+      "properties": {
+        "searches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "results": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snippets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "admitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "denied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "redirectsOutOfPolicy": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fetched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stopReason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "clarificationCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "turns",
+        "resolved",
+        "exhausted",
+        "invented-facts"
+      ],
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exhausted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invented-facts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "safetyCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "emergency-routed",
+        "out-of-scope-refused",
+        "safelist-bypass",
+        "fabricated-url",
+        "unsupported-critical"
+      ],
+      "properties": {
+        "emergency-routed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "out-of-scope-refused": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "safelist-bypass": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fabricated-url": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsupported-critical": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claims",
+        "citationResolution",
+        "citationSupport",
+        "triageAccuracy",
+        "parentRecovery",
+        "reconciliationAccuracy",
+        "abstentionAccuracy",
+        "refusalAccuracy",
+        "localRecall",
+        "webRecall"
+      ],
+      "properties": {
+        "claims": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/liveClaims"
+        },
+        "citationResolution": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "citationSupport": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "triageAccuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "parentRecovery": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reconciliationAccuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "abstentionAccuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "refusalAccuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "localRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "webRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "prihaBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reason",
+        "cases"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "analytic",
+            "scripted",
+            "implementation-missing",
+            "not-run",
+            "executed"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cases": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "expected",
+        "given",
+        "correctDisposition",
+        "trace",
+        "claims",
+        "citations",
+        "decision",
+        "decisionCorrect",
+        "localRecall",
+        "webRecall"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "given": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "correctDisposition": {
+          "type": "boolean"
+        },
+        "trace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "retrieved",
+            "supplied"
+          ],
+          "properties": {
+            "retrieved": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "supplied": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            }
+          }
+        },
+        "claims": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/claimScore"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/grounding#/$defs/citationRecord"
+          },
+          "minItems": 0
+        },
+        "decision": {
+          "$ref": "#/$defs/conflictDecision"
+        },
+        "decisionCorrect": {
+          "type": "boolean"
+        },
+        "localRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "webRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "prihaRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "status",
+        "reason",
+        "retrieval",
+        "optimizer",
+        "answer",
+        "flow",
+        "metrics",
+        "cases",
+        "counts",
+        "web",
+        "clarification",
+        "safety",
+        "cost",
+        "latency"
+      ],
+      "properties": {
+        "key": {
+          "enum": [
+            "oracle",
+            "flat-semantic",
+            "local-hybrid",
+            "web-only",
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "status": {
+          "enum": [
+            "analytic",
+            "scripted",
+            "implementation-missing",
+            "not-run",
+            "executed"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrieval": {
+          "$ref": "#/$defs/prihaBlock"
+        },
+        "optimizer": {
+          "$ref": "#/$defs/prihaBlock"
+        },
+        "answer": {
+          "$ref": "#/$defs/prihaBlock"
+        },
+        "flow": {
+          "$ref": "#/$defs/prihaBlock"
+        },
+        "metrics": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/prihaMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaCase"
+          },
+          "minItems": 0
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "planned",
+            "answered",
+            "abstained",
+            "refused",
+            "failed",
+            "notRun"
+          ],
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "abstained": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "notRun": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "web": {
+          "$ref": "#/$defs/webRunCounts"
+        },
+        "clarification": {
+          "$ref": "#/$defs/clarificationCounts"
+        },
+        "safety": {
+          "$ref": "#/$defs/safetyCounts"
+        },
+        "cost": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/liveCost"
+        },
+        "latency": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/liveLatency"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.counts.planned",
+              {
+                "$add": [
+                  {
+                    "$count": "$.cases[*]"
+                  },
+                  "$.counts.notRun"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.answered",
+              {
+                "$count": "$.cases[?(@.given=='answer')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.abstained",
+              {
+                "$count": "$.cases[?(@.given=='abstain')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.refused",
+              {
+                "$count": "$.cases[?(@.given=='refuse')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.cases[*].question"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.cases[*].question"
+                }
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.status",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.metrics",
+                      null
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.counts.notRun",
+                      "$.counts.planned"
+                    ]
+                  },
+                  {
+                    "$ne": [
+                      "$.reason",
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.metrics",
+                  null
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.metrics.claims.tp",
+                      {
+                        "$sum": "$.cases[*].claims.tp"
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.metrics.claims.fp",
+                      {
+                        "$sum": "$.cases[*].claims.fp"
+                      }
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.metrics.claims.fn",
+                      {
+                        "$sum": "$.cases[*].claims.fn"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaBadRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "expected",
+        "actual",
+        "count",
+        "passed",
+        "citations",
+        "fetchedBytes",
+        "inventedFacts",
+        "decisionMismatches",
+        "refusals"
+      ],
+      "properties": {
+        "key": {
+          "enum": [
+            "snippet-as-evidence",
+            "redirect-out-of-policy",
+            "future-dated-page",
+            "fabricated-url",
+            "unsupported-critical",
+            "stale-local-preferred",
+            "invented-user-fact",
+            "clarification-cap"
+          ]
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actual": {
+          "type": "string",
+          "minLength": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "https://tangleai.dev/schemas/grounding#/$defs/citationOutcome"
+          },
+          "minItems": 0
+        },
+        "fetchedBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inventedFacts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decisionMismatches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusals": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.expected",
+                  "$.actual"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.count",
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "clauses",
+        "failures"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "metric",
+              "expected",
+              "actual",
+              "passed"
+            ],
+            "properties": {
+              "metric": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expected": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "actual": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "passed": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "prihaDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "clauses",
+        "reason"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not-evaluated",
+            "adopt",
+            "keep-experimental"
+          ]
+        },
+        "clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "passed"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "passed": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prihaReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "benchmark",
+        "schemaVersion",
+        "registration",
+        "source",
+        "fixtureSource",
+        "envelope",
+        "rows",
+        "badRows",
+        "gate",
+        "capabilities",
+        "pairing",
+        "decision",
+        "evidence",
+        "summary",
+        "reportId",
+        "replay"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-report"
+        },
+        "benchmark": {
+          "const": "priha"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "registration": {
+          "$ref": "#/$defs/prihaRegistration"
+        },
+        "source": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/sourceManifest"
+        },
+        "fixtureSource": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/sourceManifest"
+        },
+        "envelope": {
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaRow"
+          },
+          "minItems": 6
+        },
+        "badRows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaBadRow"
+          },
+          "minItems": 8
+        },
+        "gate": {
+          "$ref": "#/$defs/prihaGate"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "passed",
+              "missing"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "missing": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            }
+          },
+          "minItems": 8
+        },
+        "pairing": {
+          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/pairingBlock"
+        },
+        "decision": {
+          "$ref": "#/$defs/prihaDecision"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceRow"
+          },
+          "minItems": 0
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rows",
+            "missing",
+            "cases",
+            "badControls",
+            "failedControls",
+            "providerRequests"
+          ],
+          "properties": {
+            "rows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "missing": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "cases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "badControls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failedControls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "providerRequests": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "reportId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "replay": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requests",
+            "hits",
+            "failed",
+            "bytes",
+            "networkRequests"
+          ],
+          "properties": {
+            "requests": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "networkRequests": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "$query": {
+            "$and": [
+              {
+                "$eq": [
+                  "$.requests",
+                  {
+                    "$add": [
+                      "$.hits",
+                      "$.failed"
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.networkRequests",
+                  0
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.summary.rows",
+              {
+                "$count": "$.rows[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.missing",
+              {
+                "$count": "$.rows[?(@.status=='implementation-missing')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.cases",
+              {
+                "$count": "$.rows[*].cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.badControls",
+              {
+                "$count": "$.badRows[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.failedControls",
+              {
+                "$count": "$.badRows[?(@.passed==false)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.providerRequests",
+              0
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*]"
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.rows[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.badRows[*]"
+              },
+              8
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.badRows[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.badRows[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.capabilities[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.capabilities[*].id"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.registration.questionIds[*]"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.registration.questionIds[*]"
+                }
+              }
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.counts.planned",
+                {
+                  "$count": "$.registration.questionIds[*]"
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "c": "$.gate.clauses[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$c.expected",
+                    "$c.actual"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$eq": [
+              "$.gate.passed",
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.gate.clauses[?(@.passed==false)]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.summary.failedControls",
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.gate.failures[*]"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.decision.state",
+                  "adopt"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      "$.summary.missing",
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.pairing.eligible",
+                      true
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.decision.clauses[?(@.passed==false)]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$some": {
+                      "p": "$.pairing.comparisons[*]"
+                    },
+                    "$satisfies": {
+                      "$and": [
+                        {
+                          "$eq": [
+                            "$p.metric",
+                            "supported-claim-f1"
+                          ]
+                        },
+                        {
+                          "$gt": [
+                            "$p.interval.low",
+                            0
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$ne": [
+                  "$.summary.missing",
+                  5
+                ]
+              },
+              {
+                "$eq": [
+                  "$.decision.state",
+                  "not-evaluated"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaBudgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clarificationTurns",
+        "modelCalls",
+        "searches",
+        "fetches",
+        "maxBytes",
+        "maxTokens",
+        "maxMs"
+      ],
+      "properties": {
+        "clarificationTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modelCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "searches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fetches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxMs": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaHypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "localWeight",
+        "authorityBoost",
+        "stalenessPenalty",
+        "maxContextChars"
+      ],
+      "properties": {
+        "localWeight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "authorityBoost": {
+          "type": "number"
+        },
+        "stalenessPenalty": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "maxContextChars": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaLivePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "status",
+        "plan",
+        "physicalRequests",
+        "reason",
+        "skipped"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-live-plan"
+        },
+        "status": {
+          "const": "not-run"
+        },
+        "plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "planId",
+            "registrationId",
+            "sourceSha256",
+            "wire",
+            "rows",
+            "questionIds",
+            "budget",
+            "maxFreshCalls",
+            "cacheHits"
+          ],
+          "properties": {
+            "planId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "registrationId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sourceSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "wire": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "provider",
+                "base",
+                "model",
+                "embedModel",
+                "keySource",
+                "thinking",
+                "maxCalls",
+                "maxConcurrency"
+              ],
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "base": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "model": {
+                  "type": "string"
+                },
+                "embedModel": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "keySource": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "thinking": {
+                  "enum": [
+                    "off",
+                    "default"
+                  ]
+                },
+                "maxCalls": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxConcurrency": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "flat-semantic",
+                  "local-hybrid",
+                  "web-only",
+                  "drag-no-optimizer",
+                  "priha-full"
+                ]
+              }
+            },
+            "questionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "budget": {
+              "$ref": "#/$defs/prihaBudgets"
+            },
+            "maxFreshCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "cacheHits": {
+              "const": 0
+            }
+          }
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skipped": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

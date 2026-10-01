@@ -1,0 +1,30 @@
+{
+  "key": "emergency",
+  "initial": {
+    "text": "This is the fictional emergency test phrase RED FLAG.",
+    "facts": []
+  },
+  "human": [],
+  "expected": {
+    "triage": "emergency",
+    "requiredFields": [],
+    "queries": [],
+    "ruleIds": [
+      "emergency-route"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "refuse"
+  },
+  "oracle": {
+    "triage": "emergency",
+    "ruleIds": [
+      "emergency-route"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "refuse",
+    "queries": []
+  },
+  "factPredicates": []
+}

@@ -1,0 +1,41 @@
+{
+  "key": "community",
+  "initial": {
+    "text": "Where can I get local information first?",
+    "facts": []
+  },
+  "human": [],
+  "expected": {
+    "triage": "simple",
+    "requiredFields": [],
+    "queries": [
+      {
+        "required": [
+          [
+            " community information desk "
+          ]
+        ],
+        "forbidden": []
+      }
+    ],
+    "ruleIds": [
+      "community-first"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "resolved"
+  },
+  "oracle": {
+    "triage": "simple",
+    "ruleIds": [
+      "community-first"
+    ],
+    "facts": [],
+    "turns": 0,
+    "outcome": "resolved",
+    "queries": [
+      "community information desk"
+    ]
+  },
+  "factPredicates": []
+}

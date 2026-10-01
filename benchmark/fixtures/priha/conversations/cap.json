@@ -1,0 +1,43 @@
+{
+  "key": "cap",
+  "initial": {
+    "text": "Help me with a service.",
+    "facts": []
+  },
+  "human": [
+    {
+      "text": "I cannot specify the service.",
+      "facts": []
+    },
+    {
+      "text": "I still cannot specify it.",
+      "facts": []
+    }
+  ],
+  "expected": {
+    "triage": "complex",
+    "requiredFields": [
+      "service"
+    ],
+    "queries": [],
+    "ruleIds": [
+      "clarify-service",
+      "clarification-cap"
+    ],
+    "facts": [],
+    "turns": 2,
+    "outcome": "exhausted"
+  },
+  "oracle": {
+    "triage": "complex",
+    "ruleIds": [
+      "clarify-service",
+      "clarification-cap"
+    ],
+    "facts": [],
+    "turns": 2,
+    "outcome": "exhausted",
+    "queries": []
+  },
+  "factPredicates": []
+}
