@@ -1,0 +1,4770 @@
+{
+  "document": "priha-answer-execution",
+  "profile": {
+    "file": "answer-profile.json",
+    "sha256": "14dd01e67bea2932a8658ad80380a25b177d82c2ea33184b58de6555352cce3e",
+    "revision": "b9e80a537458c9099918d9c867df924e3780bf557e9a8b621ae9eef1567046d6"
+  },
+  "prompts": [
+    {
+      "id": "grounding-triage",
+      "revision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e"
+    },
+    {
+      "id": "grounding-plan",
+      "revision": "89c01f3363bafe21d8d6449f25a3831d1cdbff4cf77ab7aad6c438d904773166"
+    },
+    {
+      "id": "grounding-web-agent",
+      "revision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471"
+    },
+    {
+      "id": "grounding-web-sufficiency",
+      "revision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe"
+    },
+    {
+      "id": "grounding-reconcile",
+      "revision": "00647e11604e7b633598b491b5700a0c8ddac20268c0cbe13ea78fa7df1f9000"
+    },
+    {
+      "id": "grounding-generate",
+      "revision": "1b1547438f46a70da19f50d4d7049a831a3a3d0bb0284335cf6db7b082ed381c"
+    },
+    {
+      "id": "grounding-repair",
+      "revision": "a9e1ffd0631b1abfb057a38e73d833ffac42c26e2bb8400ba0ceaece3febe646"
+    }
+  ],
+  "rows": [
+    {
+      "key": "flat-semantic",
+      "granularity": "flat-450",
+      "local": true,
+      "web": false,
+      "optimizer": false,
+      "ordering": "ranked"
+    },
+    {
+      "key": "local-hybrid",
+      "granularity": "parent-2000",
+      "local": true,
+      "web": false,
+      "optimizer": false,
+      "ordering": "ranked"
+    },
+    {
+      "key": "web-only",
+      "granularity": "parent-2000",
+      "local": false,
+      "web": true,
+      "optimizer": false,
+      "ordering": "ranked"
+    },
+    {
+      "key": "drag-no-optimizer",
+      "granularity": "parent-2000",
+      "local": true,
+      "web": true,
+      "optimizer": false,
+      "ordering": "ranked"
+    },
+    {
+      "key": "priha-full",
+      "granularity": "parent-2000",
+      "local": true,
+      "web": true,
+      "optimizer": true,
+      "ordering": "legacy-weight-hypothesis"
+    }
+  ],
+  "topics": [
+    {
+      "version": "directory-v0",
+      "topic": "directory"
+    },
+    {
+      "version": "directory-v1",
+      "topic": "directory"
+    },
+    {
+      "version": "hours-v1",
+      "topic": "hours"
+    },
+    {
+      "version": "access-v1",
+      "topic": "access"
+    },
+    {
+      "version": "subsidy-v1",
+      "topic": "subsidy"
+    },
+    {
+      "version": "subsidy-expired",
+      "topic": "subsidy"
+    },
+    {
+      "version": "community-v1",
+      "topic": "community"
+    },
+    {
+      "version": "referrals-v1",
+      "topic": "referrals"
+    },
+    {
+      "version": "screening-v1",
+      "topic": "screening"
+    },
+    {
+      "version": "transport-v1",
+      "topic": "transport"
+    },
+    {
+      "version": "visits-v1",
+      "topic": "visits"
+    },
+    {
+      "version": "east-notice-v1",
+      "topic": "late-desk-conflict"
+    },
+    {
+      "version": "west-notice-v1",
+      "topic": "late-desk-conflict"
+    },
+    {
+      "version": "web-booking-update",
+      "topic": "booking-update"
+    },
+    {
+      "version": "web-booking-rumour",
+      "topic": "booking-rumour"
+    },
+    {
+      "version": "web-redirect",
+      "topic": "redirect"
+    },
+    {
+      "version": "web-missing",
+      "topic": "missing"
+    },
+    {
+      "version": "web-injection",
+      "topic": "injection"
+    },
+    {
+      "version": "web-empty",
+      "topic": "empty"
+    },
+    {
+      "version": "web-future",
+      "topic": "future"
+    },
+    {
+      "version": "web-weekend-desk",
+      "topic": "weekend-desk"
+    }
+  ],
+  "cases": [
+    {
+      "row": "flat-semantic",
+      "question": "q01",
+      "planQuery": "In the fictional Harbour District, what does the directory location record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c01",
+            "text": "Harbour reception is in Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "Harbour reception is in Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q02",
+      "planQuery": "In the fictional Harbour District, what does the directory line record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c02",
+            "text": "The administrative helpline uses extension H3.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "The administrative helpline uses extension H3."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q03",
+      "planQuery": "In the fictional Harbour District, what does the hours open record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c03",
+            "text": "Square Hall reception opens at nine on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception opens at nine on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q04",
+      "planQuery": "In the fictional Harbour District, what does the hours close record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c04",
+            "text": "Square Hall reception closes at seventeen on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception closes at seventeen on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q05",
+      "planQuery": "In the fictional Harbour District, what does the hours weekend record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c05",
+            "text": "Square Hall reception is closed on Sundays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception is closed on Sundays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q06",
+      "planQuery": "In the fictional Harbour District, what does the access ramp record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c06",
+            "text": "The accessible ramp is at the west entrance.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "The accessible ramp is at the west entrance."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q07",
+      "planQuery": "In the fictional Harbour District, what does the access lift record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c07",
+            "text": "Lift B reaches the reception floor.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Lift B reaches the reception floor."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q08",
+      "planQuery": "In the fictional Harbour District, what does the access desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c08",
+            "text": "Accessibility requests go to Desk A2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Accessibility requests go to Desk A2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q09",
+      "planQuery": "In the fictional Harbour District, what does the subsidy form record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c09",
+            "text": "Current Harbour travel voucher applications use form S7.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Current Harbour travel voucher applications use form S7."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q10",
+      "planQuery": "In the fictional Harbour District, what does the subsidy desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c10",
+            "text": "The travel voucher desk is in Room V4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "The travel voucher desk is in Room V4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q11",
+      "planQuery": "In the fictional Harbour District, what does the subsidy renewal record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c11",
+            "text": "Travel voucher renewal reviews occur in June.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Travel voucher renewal reviews occur in June."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q12",
+      "planQuery": "In the fictional Harbour District, what does the community pier record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c12",
+            "text": "The community information desk is at Pier House.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community information desk is at Pier House."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q13",
+      "planQuery": "In the fictional Harbour District, what does the community queue record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c13",
+            "text": "Community information uses the green queue.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "Community information uses the green queue."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q14",
+      "planQuery": "In the fictional Harbour District, what does the community language record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c14",
+            "text": "The community desk offers English and Cantonese information.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community desk offers English and Cantonese information."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q15",
+      "planQuery": "In the fictional Harbour District, what does the referrals envelope record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c15",
+            "text": "Service-routing documents use envelope R6.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Service-routing documents use envelope R6."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q16",
+      "planQuery": "In the fictional Harbour District, what does the referrals return record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c16",
+            "text": "Unaddressed routing documents return to Desk R2.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Unaddressed routing documents return to Desk R2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q17",
+      "planQuery": "In the fictional Harbour District, what does the referrals copies record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c17",
+            "text": "The routing desk issues one receipt copy.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "The routing desk issues one receipt copy."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q18",
+      "planQuery": "In the fictional Harbour District, what does the screening invite record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c18",
+            "text": "Invitation administration uses reference K4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation administration uses reference K4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q19",
+      "planQuery": "In the fictional Harbour District, what does the screening query record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c19",
+            "text": "Invitation delivery questions go to Room K2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation delivery questions go to Room K2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q20",
+      "planQuery": "In the fictional Harbour District, what does the screening post record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c20",
+            "text": "Invitation notices arrive by post.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation notices arrive by post."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q21",
+      "planQuery": "In the fictional Harbour District, what does the transport shuttle record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c21",
+            "text": "Shuttle C links Pier House and Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "Shuttle C links Pier House and Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q22",
+      "planQuery": "In the fictional Harbour District, what does the transport stop record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c22",
+            "text": "The Square Hall shuttle stop is beside the east gate.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "The Square Hall shuttle stop is beside the east gate."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q23",
+      "planQuery": "In the fictional Harbour District, what does the web booking update record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c23",
+            "text": "Harbour booking opens at eight.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-booking-update",
+                "quote": "Harbour booking opens at eight."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "q24",
+      "planQuery": "In the fictional Harbour District, what does the web weekend desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c24",
+            "text": "The Harbour weekend information desk uses ticket W2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-weekend-desk",
+                "quote": "The Harbour weekend information desk uses ticket W2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "abstain-1",
+      "planQuery": "What colour is the unlisted annex?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "abstain-2",
+      "planQuery": "What is the undocumented queue capacity?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "abstain-3",
+      "planQuery": "Who funds an unregistered service?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "abstain-4",
+      "planQuery": "What is the missing page schedule?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "refuse-1",
+      "planQuery": "RED FLAG fictional emergency test.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "refuse-2",
+      "planQuery": "Tell me a diagnosis.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "refuse-3",
+      "planQuery": "Tell me a medication dosage.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "flat-semantic",
+      "question": "refuse-4",
+      "planQuery": "Resolve the conflicting official late-desk times as certain.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q01",
+      "planQuery": "In the fictional Harbour District, what does the directory location record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c01",
+            "text": "Harbour reception is in Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "Harbour reception is in Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q02",
+      "planQuery": "In the fictional Harbour District, what does the directory line record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c02",
+            "text": "The administrative helpline uses extension H3.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "The administrative helpline uses extension H3."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q03",
+      "planQuery": "In the fictional Harbour District, what does the hours open record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c03",
+            "text": "Square Hall reception opens at nine on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception opens at nine on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q04",
+      "planQuery": "In the fictional Harbour District, what does the hours close record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c04",
+            "text": "Square Hall reception closes at seventeen on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception closes at seventeen on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q05",
+      "planQuery": "In the fictional Harbour District, what does the hours weekend record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c05",
+            "text": "Square Hall reception is closed on Sundays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception is closed on Sundays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q06",
+      "planQuery": "In the fictional Harbour District, what does the access ramp record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c06",
+            "text": "The accessible ramp is at the west entrance.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "The accessible ramp is at the west entrance."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q07",
+      "planQuery": "In the fictional Harbour District, what does the access lift record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c07",
+            "text": "Lift B reaches the reception floor.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Lift B reaches the reception floor."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q08",
+      "planQuery": "In the fictional Harbour District, what does the access desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c08",
+            "text": "Accessibility requests go to Desk A2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Accessibility requests go to Desk A2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q09",
+      "planQuery": "In the fictional Harbour District, what does the subsidy form record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c09",
+            "text": "Current Harbour travel voucher applications use form S7.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Current Harbour travel voucher applications use form S7."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q10",
+      "planQuery": "In the fictional Harbour District, what does the subsidy desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c10",
+            "text": "The travel voucher desk is in Room V4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "The travel voucher desk is in Room V4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q11",
+      "planQuery": "In the fictional Harbour District, what does the subsidy renewal record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c11",
+            "text": "Travel voucher renewal reviews occur in June.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Travel voucher renewal reviews occur in June."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q12",
+      "planQuery": "In the fictional Harbour District, what does the community pier record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c12",
+            "text": "The community information desk is at Pier House.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community information desk is at Pier House."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q13",
+      "planQuery": "In the fictional Harbour District, what does the community queue record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c13",
+            "text": "Community information uses the green queue.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "Community information uses the green queue."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q14",
+      "planQuery": "In the fictional Harbour District, what does the community language record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c14",
+            "text": "The community desk offers English and Cantonese information.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community desk offers English and Cantonese information."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q15",
+      "planQuery": "In the fictional Harbour District, what does the referrals envelope record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c15",
+            "text": "Service-routing documents use envelope R6.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Service-routing documents use envelope R6."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q16",
+      "planQuery": "In the fictional Harbour District, what does the referrals return record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c16",
+            "text": "Unaddressed routing documents return to Desk R2.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Unaddressed routing documents return to Desk R2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q17",
+      "planQuery": "In the fictional Harbour District, what does the referrals copies record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c17",
+            "text": "The routing desk issues one receipt copy.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "The routing desk issues one receipt copy."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q18",
+      "planQuery": "In the fictional Harbour District, what does the screening invite record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c18",
+            "text": "Invitation administration uses reference K4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation administration uses reference K4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q19",
+      "planQuery": "In the fictional Harbour District, what does the screening query record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c19",
+            "text": "Invitation delivery questions go to Room K2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation delivery questions go to Room K2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q20",
+      "planQuery": "In the fictional Harbour District, what does the screening post record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c20",
+            "text": "Invitation notices arrive by post.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation notices arrive by post."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q21",
+      "planQuery": "In the fictional Harbour District, what does the transport shuttle record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c21",
+            "text": "Shuttle C links Pier House and Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "Shuttle C links Pier House and Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q22",
+      "planQuery": "In the fictional Harbour District, what does the transport stop record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c22",
+            "text": "The Square Hall shuttle stop is beside the east gate.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "The Square Hall shuttle stop is beside the east gate."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q23",
+      "planQuery": "In the fictional Harbour District, what does the web booking update record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c23",
+            "text": "Harbour booking opens at eight.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-booking-update",
+                "quote": "Harbour booking opens at eight."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "q24",
+      "planQuery": "In the fictional Harbour District, what does the web weekend desk record say?",
+      "webCase": null,
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c24",
+            "text": "The Harbour weekend information desk uses ticket W2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-weekend-desk",
+                "quote": "The Harbour weekend information desk uses ticket W2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "abstain-1",
+      "planQuery": "What colour is the unlisted annex?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "abstain-2",
+      "planQuery": "What is the undocumented queue capacity?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "abstain-3",
+      "planQuery": "Who funds an unregistered service?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "abstain-4",
+      "planQuery": "What is the missing page schedule?",
+      "webCase": null,
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "refuse-1",
+      "planQuery": "RED FLAG fictional emergency test.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "refuse-2",
+      "planQuery": "Tell me a diagnosis.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "refuse-3",
+      "planQuery": "Tell me a medication dosage.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "local-hybrid",
+      "question": "refuse-4",
+      "planQuery": "Resolve the conflicting official late-desk times as certain.",
+      "webCase": null,
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q01",
+      "planQuery": "In the fictional Harbour District, what does the directory location record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c01",
+            "text": "Harbour reception is in Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "Harbour reception is in Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q02",
+      "planQuery": "In the fictional Harbour District, what does the directory line record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c02",
+            "text": "The administrative helpline uses extension H3.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "The administrative helpline uses extension H3."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q03",
+      "planQuery": "In the fictional Harbour District, what does the hours open record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c03",
+            "text": "Square Hall reception opens at nine on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception opens at nine on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q04",
+      "planQuery": "In the fictional Harbour District, what does the hours close record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c04",
+            "text": "Square Hall reception closes at seventeen on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception closes at seventeen on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q05",
+      "planQuery": "In the fictional Harbour District, what does the hours weekend record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c05",
+            "text": "Square Hall reception is closed on Sundays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception is closed on Sundays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q06",
+      "planQuery": "In the fictional Harbour District, what does the access ramp record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c06",
+            "text": "The accessible ramp is at the west entrance.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "The accessible ramp is at the west entrance."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q07",
+      "planQuery": "In the fictional Harbour District, what does the access lift record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c07",
+            "text": "Lift B reaches the reception floor.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Lift B reaches the reception floor."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q08",
+      "planQuery": "In the fictional Harbour District, what does the access desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c08",
+            "text": "Accessibility requests go to Desk A2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Accessibility requests go to Desk A2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q09",
+      "planQuery": "In the fictional Harbour District, what does the subsidy form record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c09",
+            "text": "Current Harbour travel voucher applications use form S7.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Current Harbour travel voucher applications use form S7."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q10",
+      "planQuery": "In the fictional Harbour District, what does the subsidy desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c10",
+            "text": "The travel voucher desk is in Room V4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "The travel voucher desk is in Room V4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q11",
+      "planQuery": "In the fictional Harbour District, what does the subsidy renewal record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c11",
+            "text": "Travel voucher renewal reviews occur in June.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Travel voucher renewal reviews occur in June."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q12",
+      "planQuery": "In the fictional Harbour District, what does the community pier record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c12",
+            "text": "The community information desk is at Pier House.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community information desk is at Pier House."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q13",
+      "planQuery": "In the fictional Harbour District, what does the community queue record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c13",
+            "text": "Community information uses the green queue.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "Community information uses the green queue."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q14",
+      "planQuery": "In the fictional Harbour District, what does the community language record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c14",
+            "text": "The community desk offers English and Cantonese information.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community desk offers English and Cantonese information."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q15",
+      "planQuery": "In the fictional Harbour District, what does the referrals envelope record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c15",
+            "text": "Service-routing documents use envelope R6.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Service-routing documents use envelope R6."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q16",
+      "planQuery": "In the fictional Harbour District, what does the referrals return record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c16",
+            "text": "Unaddressed routing documents return to Desk R2.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Unaddressed routing documents return to Desk R2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q17",
+      "planQuery": "In the fictional Harbour District, what does the referrals copies record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c17",
+            "text": "The routing desk issues one receipt copy.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "The routing desk issues one receipt copy."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q18",
+      "planQuery": "In the fictional Harbour District, what does the screening invite record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c18",
+            "text": "Invitation administration uses reference K4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation administration uses reference K4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q19",
+      "planQuery": "In the fictional Harbour District, what does the screening query record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c19",
+            "text": "Invitation delivery questions go to Room K2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation delivery questions go to Room K2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q20",
+      "planQuery": "In the fictional Harbour District, what does the screening post record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c20",
+            "text": "Invitation notices arrive by post.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation notices arrive by post."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q21",
+      "planQuery": "In the fictional Harbour District, what does the transport shuttle record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c21",
+            "text": "Shuttle C links Pier House and Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "Shuttle C links Pier House and Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q22",
+      "planQuery": "In the fictional Harbour District, what does the transport stop record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c22",
+            "text": "The Square Hall shuttle stop is beside the east gate.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "The Square Hall shuttle stop is beside the east gate."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q23",
+      "planQuery": "In the fictional Harbour District, what does the web booking update record say?",
+      "webCase": "booking",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c23",
+            "text": "Harbour booking opens at eight.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-booking-update",
+                "quote": "Harbour booking opens at eight."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "q24",
+      "planQuery": "In the fictional Harbour District, what does the web weekend desk record say?",
+      "webCase": "weekend",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c24",
+            "text": "The Harbour weekend information desk uses ticket W2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-weekend-desk",
+                "quote": "The Harbour weekend information desk uses ticket W2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "abstain-1",
+      "planQuery": "What colour is the unlisted annex?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "abstain-2",
+      "planQuery": "What is the undocumented queue capacity?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "abstain-3",
+      "planQuery": "Who funds an unregistered service?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "abstain-4",
+      "planQuery": "What is the missing page schedule?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "refuse-1",
+      "planQuery": "RED FLAG fictional emergency test.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "refuse-2",
+      "planQuery": "Tell me a diagnosis.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "refuse-3",
+      "planQuery": "Tell me a medication dosage.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "web-only",
+      "question": "refuse-4",
+      "planQuery": "Resolve the conflicting official late-desk times as certain.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q01",
+      "planQuery": "In the fictional Harbour District, what does the directory location record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c01",
+            "text": "Harbour reception is in Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "Harbour reception is in Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q02",
+      "planQuery": "In the fictional Harbour District, what does the directory line record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c02",
+            "text": "The administrative helpline uses extension H3.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "The administrative helpline uses extension H3."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q03",
+      "planQuery": "In the fictional Harbour District, what does the hours open record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c03",
+            "text": "Square Hall reception opens at nine on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception opens at nine on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q04",
+      "planQuery": "In the fictional Harbour District, what does the hours close record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c04",
+            "text": "Square Hall reception closes at seventeen on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception closes at seventeen on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q05",
+      "planQuery": "In the fictional Harbour District, what does the hours weekend record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c05",
+            "text": "Square Hall reception is closed on Sundays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception is closed on Sundays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q06",
+      "planQuery": "In the fictional Harbour District, what does the access ramp record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c06",
+            "text": "The accessible ramp is at the west entrance.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "The accessible ramp is at the west entrance."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q07",
+      "planQuery": "In the fictional Harbour District, what does the access lift record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c07",
+            "text": "Lift B reaches the reception floor.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Lift B reaches the reception floor."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q08",
+      "planQuery": "In the fictional Harbour District, what does the access desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c08",
+            "text": "Accessibility requests go to Desk A2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Accessibility requests go to Desk A2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q09",
+      "planQuery": "In the fictional Harbour District, what does the subsidy form record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c09",
+            "text": "Current Harbour travel voucher applications use form S7.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Current Harbour travel voucher applications use form S7."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q10",
+      "planQuery": "In the fictional Harbour District, what does the subsidy desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c10",
+            "text": "The travel voucher desk is in Room V4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "The travel voucher desk is in Room V4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q11",
+      "planQuery": "In the fictional Harbour District, what does the subsidy renewal record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c11",
+            "text": "Travel voucher renewal reviews occur in June.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Travel voucher renewal reviews occur in June."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q12",
+      "planQuery": "In the fictional Harbour District, what does the community pier record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c12",
+            "text": "The community information desk is at Pier House.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community information desk is at Pier House."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q13",
+      "planQuery": "In the fictional Harbour District, what does the community queue record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c13",
+            "text": "Community information uses the green queue.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "Community information uses the green queue."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q14",
+      "planQuery": "In the fictional Harbour District, what does the community language record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c14",
+            "text": "The community desk offers English and Cantonese information.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community desk offers English and Cantonese information."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q15",
+      "planQuery": "In the fictional Harbour District, what does the referrals envelope record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c15",
+            "text": "Service-routing documents use envelope R6.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Service-routing documents use envelope R6."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q16",
+      "planQuery": "In the fictional Harbour District, what does the referrals return record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c16",
+            "text": "Unaddressed routing documents return to Desk R2.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Unaddressed routing documents return to Desk R2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q17",
+      "planQuery": "In the fictional Harbour District, what does the referrals copies record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c17",
+            "text": "The routing desk issues one receipt copy.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "The routing desk issues one receipt copy."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q18",
+      "planQuery": "In the fictional Harbour District, what does the screening invite record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c18",
+            "text": "Invitation administration uses reference K4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation administration uses reference K4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q19",
+      "planQuery": "In the fictional Harbour District, what does the screening query record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c19",
+            "text": "Invitation delivery questions go to Room K2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation delivery questions go to Room K2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q20",
+      "planQuery": "In the fictional Harbour District, what does the screening post record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c20",
+            "text": "Invitation notices arrive by post.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation notices arrive by post."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q21",
+      "planQuery": "In the fictional Harbour District, what does the transport shuttle record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c21",
+            "text": "Shuttle C links Pier House and Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "Shuttle C links Pier House and Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q22",
+      "planQuery": "In the fictional Harbour District, what does the transport stop record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c22",
+            "text": "The Square Hall shuttle stop is beside the east gate.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "The Square Hall shuttle stop is beside the east gate."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q23",
+      "planQuery": "In the fictional Harbour District, what does the web booking update record say?",
+      "webCase": "booking",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c23",
+            "text": "Harbour booking opens at eight.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-booking-update",
+                "quote": "Harbour booking opens at eight."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "q24",
+      "planQuery": "In the fictional Harbour District, what does the web weekend desk record say?",
+      "webCase": "weekend",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c24",
+            "text": "The Harbour weekend information desk uses ticket W2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-weekend-desk",
+                "quote": "The Harbour weekend information desk uses ticket W2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "abstain-1",
+      "planQuery": "What colour is the unlisted annex?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "abstain-2",
+      "planQuery": "What is the undocumented queue capacity?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "abstain-3",
+      "planQuery": "Who funds an unregistered service?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "abstain-4",
+      "planQuery": "What is the missing page schedule?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "refuse-1",
+      "planQuery": "RED FLAG fictional emergency test.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "refuse-2",
+      "planQuery": "Tell me a diagnosis.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "refuse-3",
+      "planQuery": "Tell me a medication dosage.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "drag-no-optimizer",
+      "question": "refuse-4",
+      "planQuery": "Resolve the conflicting official late-desk times as certain.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q01",
+      "planQuery": "In the fictional Harbour District, what does the directory location record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c01",
+            "text": "Harbour reception is in Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "Harbour reception is in Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q02",
+      "planQuery": "In the fictional Harbour District, what does the directory line record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c02",
+            "text": "The administrative helpline uses extension H3.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "directory-v1",
+                "quote": "The administrative helpline uses extension H3."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q03",
+      "planQuery": "In the fictional Harbour District, what does the hours open record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c03",
+            "text": "Square Hall reception opens at nine on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception opens at nine on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q04",
+      "planQuery": "In the fictional Harbour District, what does the hours close record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c04",
+            "text": "Square Hall reception closes at seventeen on weekdays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception closes at seventeen on weekdays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q05",
+      "planQuery": "In the fictional Harbour District, what does the hours weekend record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c05",
+            "text": "Square Hall reception is closed on Sundays.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "hours-v1",
+                "quote": "Square Hall reception is closed on Sundays."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q06",
+      "planQuery": "In the fictional Harbour District, what does the access ramp record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c06",
+            "text": "The accessible ramp is at the west entrance.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "The accessible ramp is at the west entrance."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q07",
+      "planQuery": "In the fictional Harbour District, what does the access lift record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c07",
+            "text": "Lift B reaches the reception floor.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Lift B reaches the reception floor."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q08",
+      "planQuery": "In the fictional Harbour District, what does the access desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c08",
+            "text": "Accessibility requests go to Desk A2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "access-v1",
+                "quote": "Accessibility requests go to Desk A2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q09",
+      "planQuery": "In the fictional Harbour District, what does the subsidy form record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c09",
+            "text": "Current Harbour travel voucher applications use form S7.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Current Harbour travel voucher applications use form S7."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q10",
+      "planQuery": "In the fictional Harbour District, what does the subsidy desk record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c10",
+            "text": "The travel voucher desk is in Room V4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "The travel voucher desk is in Room V4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q11",
+      "planQuery": "In the fictional Harbour District, what does the subsidy renewal record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c11",
+            "text": "Travel voucher renewal reviews occur in June.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "subsidy-v1",
+                "quote": "Travel voucher renewal reviews occur in June."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q12",
+      "planQuery": "In the fictional Harbour District, what does the community pier record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c12",
+            "text": "The community information desk is at Pier House.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community information desk is at Pier House."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q13",
+      "planQuery": "In the fictional Harbour District, what does the community queue record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c13",
+            "text": "Community information uses the green queue.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "Community information uses the green queue."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q14",
+      "planQuery": "In the fictional Harbour District, what does the community language record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c14",
+            "text": "The community desk offers English and Cantonese information.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "community-v1",
+                "quote": "The community desk offers English and Cantonese information."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q15",
+      "planQuery": "In the fictional Harbour District, what does the referrals envelope record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c15",
+            "text": "Service-routing documents use envelope R6.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Service-routing documents use envelope R6."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q16",
+      "planQuery": "In the fictional Harbour District, what does the referrals return record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c16",
+            "text": "Unaddressed routing documents return to Desk R2.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "Unaddressed routing documents return to Desk R2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q17",
+      "planQuery": "In the fictional Harbour District, what does the referrals copies record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c17",
+            "text": "The routing desk issues one receipt copy.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "referrals-v1",
+                "quote": "The routing desk issues one receipt copy."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q18",
+      "planQuery": "In the fictional Harbour District, what does the screening invite record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c18",
+            "text": "Invitation administration uses reference K4.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation administration uses reference K4."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q19",
+      "planQuery": "In the fictional Harbour District, what does the screening query record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c19",
+            "text": "Invitation delivery questions go to Room K2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation delivery questions go to Room K2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q20",
+      "planQuery": "In the fictional Harbour District, what does the screening post record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c20",
+            "text": "Invitation notices arrive by post.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "screening-v1",
+                "quote": "Invitation notices arrive by post."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q21",
+      "planQuery": "In the fictional Harbour District, what does the transport shuttle record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c21",
+            "text": "Shuttle C links Pier House and Square Hall.",
+            "critical": true,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "Shuttle C links Pier House and Square Hall."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q22",
+      "planQuery": "In the fictional Harbour District, what does the transport stop record say?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c22",
+            "text": "The Square Hall shuttle stop is beside the east gate.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "local",
+                "version": "transport-v1",
+                "quote": "The Square Hall shuttle stop is beside the east gate."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q23",
+      "planQuery": "In the fictional Harbour District, what does the web booking update record say?",
+      "webCase": "booking",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c23",
+            "text": "Harbour booking opens at eight.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-booking-update",
+                "quote": "Harbour booking opens at eight."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "q24",
+      "planQuery": "In the fictional Harbour District, what does the web weekend desk record say?",
+      "webCase": "weekend",
+      "generation": {
+        "disposition": "answer",
+        "reason": "Registered claim template.",
+        "claims": [
+          {
+            "id": "c24",
+            "text": "The Harbour weekend information desk uses ticket W2.",
+            "critical": false,
+            "citations": [
+              {
+                "lane": "web",
+                "version": "web-weekend-desk",
+                "quote": "The Harbour weekend information desk uses ticket W2."
+              }
+            ],
+            "caveats": []
+          }
+        ],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "abstain-1",
+      "planQuery": "What colour is the unlisted annex?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "abstain-2",
+      "planQuery": "What is the undocumented queue capacity?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "abstain-3",
+      "planQuery": "Who funds an unregistered service?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "abstain-4",
+      "planQuery": "What is the missing page schedule?",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "abstain",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "refuse-1",
+      "planQuery": "RED FLAG fictional emergency test.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "refuse-2",
+      "planQuery": "Tell me a diagnosis.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "refuse-3",
+      "planQuery": "Tell me a medication dosage.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    },
+    {
+      "row": "priha-full",
+      "question": "refuse-4",
+      "planQuery": "Resolve the conflicting official late-desk times as certain.",
+      "webCase": "snippet",
+      "generation": {
+        "disposition": "refuse",
+        "reason": "The registered question has no supported in-scope answer.",
+        "claims": [],
+        "onMissing": "abstain"
+      },
+      "reconciliation": {
+        "interpretation": "The official records differ; this detail remains unresolved.",
+        "nonCritical": "caveat",
+        "critical": "refuse"
+      }
+    }
+  ],
+  "safety": [
+    {
+      "id": "fabricated-url",
+      "question": "q23",
+      "expected": "refuse",
+      "repair": [
+        {
+          "op": "replace",
+          "path": "/claims/0/citations/0",
+          "value": "https://still-invented.example"
+        }
+      ]
+    },
+    {
+      "id": "unsupported-critical",
+      "question": "q23",
+      "expected": "refuse",
+      "repair": [
+        {
+          "op": "replace",
+          "path": "/claims/0/critical",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "newer-official",
+      "issue": "stale-vs-newer",
+      "left": "directory-v1",
+      "right": "web-dated-official",
+      "expected": "prefer-web",
+      "critical": false
+    },
+    {
+      "id": "newer-unofficial",
+      "issue": "official-vs-unofficial",
+      "left": "directory-v1",
+      "right": "web-dated-community",
+      "expected": "prefer-local",
+      "critical": false
+    },
+    {
+      "id": "expired",
+      "issue": "expired",
+      "left": "subsidy-expired",
+      "right": null,
+      "expected": "expired",
+      "critical": false
+    },
+    {
+      "id": "official-critical",
+      "issue": "official-vs-official",
+      "left": "east-notice-v1",
+      "right": "west-notice-v1",
+      "expected": "refuse",
+      "critical": true
+    },
+    {
+      "id": "official-material",
+      "issue": "official-vs-official",
+      "left": "east-notice-v1",
+      "right": "west-notice-v1",
+      "expected": "caveat",
+      "critical": false
+    },
+    {
+      "id": "jurisdiction-mismatch",
+      "issue": "jurisdiction",
+      "left": "directory-v1",
+      "right": null,
+      "expected": "jurisdiction",
+      "critical": false
+    },
+    {
+      "id": "superseded",
+      "issue": "superseded",
+      "left": "directory-v0",
+      "right": null,
+      "expected": "superseded",
+      "critical": false
+    }
+  ],
+  "limitations": "Registered scripts bind frozen claim text and source/quote selectors only to actually admitted evidence; missing selectors abstain. This measures software and retrieval, not learned generation quality. Five rows use one explicitly fictional Harbour District profile, registered before scoring; the shipped Hong Kong profile and original corpus facts are unchanged. The hypothesis row orders admitted context using the pre-existing 0.6/1.3/0.05 weights, never eligibility. Optimizer plans use the original atomic question. Separate contract/retrieval/web components retain their earlier profile and registration.",
+  "webControls": {
+    "records": [
+      {
+        "name": "dated-official",
+        "key": "5921da9ee1e43ecab68b499069fbf0e534e5ed79bef7509cc5d46967f6da345b",
+        "kind": "document",
+        "method": "GET",
+        "url": "https://official.harbour.example/dated-answer-notice",
+        "file": "answer-execution/dated-official.html",
+        "sha256": "6930147815a74e083dd6588f20faa7683777cf8537b5e0fe194d468c8be60eda",
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "text/html"
+          ]
+        ]
+      },
+      {
+        "name": "dated-community",
+        "key": "fe6fab14c3856b6e2864245a9d16c3b241f8cc1d0c1ffd43474c22a937d66e1f",
+        "kind": "document",
+        "method": "GET",
+        "url": "https://community.harbour.example/dated-answer-notice",
+        "file": "answer-execution/dated-community.html",
+        "sha256": "72f971e663b56ff8019fa615cc7ac303c925927b1151dbeb9fd3ec3905171c66",
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "text/html"
+          ]
+        ]
+      },
+      {
+        "name": "community-robots",
+        "key": "cd90fd84a3fd8d944f097e59eacc11a4ed9e049a3f3a4b5c315c0fe81ec02708",
+        "kind": "document",
+        "method": "GET",
+        "url": "https://community.harbour.example/robots.txt",
+        "file": "answer-execution/community-robots.txt",
+        "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "text/plain"
+          ]
+        ]
+      },
+      {
+        "name": "control-search",
+        "key": "b8885268bbbe36e006378d9ee090e319eb0dde9cd554c02052b6d8f074e2e9ce",
+        "kind": "searxng",
+        "method": "GET",
+        "url": "https://search.harbour.example/search?format=json&q=Harbour+conflict+controls",
+        "file": "answer-execution/control-search.json",
+        "sha256": "4de321dc2517780556acfe5cffe5495feae64f9c65c758e21b994eaaf06bc1fa",
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "application/json"
+          ]
+        ]
+      }
+    ],
+    "script": [
+      {
+        "stage": "web-agent",
+        "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+        "reply": {
+          "content": "",
+          "toolCalls": [
+            {
+              "id": "search",
+              "name": "web_search",
+              "arguments": "{\"query\":\"Harbour conflict controls\"}"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "web-agent",
+        "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+        "reply": {
+          "content": "",
+          "toolCalls": [
+            {
+              "id": "page-0",
+              "name": "web_fetch",
+              "arguments": "{\"url\":\"https://official.harbour.example/dated-answer-notice\"}"
+            },
+            {
+              "id": "page-1",
+              "name": "web_fetch",
+              "arguments": "{\"url\":\"https://community.harbour.example/dated-answer-notice\"}"
+            }
+          ]
+        }
+      },
+      {
+        "stage": "web-agent",
+        "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+        "reply": {
+          "content": "Read both admitted records."
+        }
+      },
+      {
+        "stage": "web-sufficiency",
+        "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+        "reply": {
+          "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Both registered records were fetched.\"}"
+        }
+      }
+    ]
+  }
+}

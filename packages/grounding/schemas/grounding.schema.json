@@ -247,6 +247,10 @@
                   },
                   "minItems": 1,
                   "uniqueItems": true
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }
@@ -331,6 +335,13 @@
                   }
                 }
               }
+            },
+            "excludedTiers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/authorityTier"
+              },
+              "uniqueItems": true
             }
           }
         },
@@ -505,7 +516,7 @@
           }
         },
         "budgets": {
-          "$ref": "#/$defs/groundingSpend"
+          "$ref": "#/$defs/profileBudgets"
         },
         "userContext": {
           "type": "object",
@@ -1533,7 +1544,7 @@
             "type": "string",
             "minLength": 1
           },
-          "minItems": 1,
+          "minItems": 0,
           "uniqueItems": true
         },
         "evidenceIds": {
@@ -1551,7 +1562,10 @@
             "official-vs-unofficial",
             "official-vs-official",
             "expired",
-            "jurisdiction"
+            "jurisdiction",
+            "superseded",
+            "not-yet-effective",
+            "authority-excluded"
           ]
         },
         "comparison": {
@@ -1606,6 +1620,34 @@
               "type": "null"
             }
           ]
+        },
+        "queryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topicKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selectedEvidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "excludedEvidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "interpretation": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
@@ -1783,6 +1825,14 @@
             "repairs": {
               "type": "integer",
               "minimum": 0
+            },
+            "removedClaimIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
             }
           }
         },
@@ -1840,6 +1890,10 @@
           "$ref": "#/$defs/groundingSpend"
         },
         "stopReason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
           "type": "string",
           "minLength": 1
         }
@@ -2429,6 +2483,231 @@
           "minimum": 1,
           "maximum": 100000
         }
+      }
+    },
+    "profileBudgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "searches",
+        "fetches",
+        "bytes",
+        "clarificationTurns",
+        "contextTokens"
+      ],
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "searches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fetches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clarificationTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "prihaAnswer": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "disposition",
+            "claims"
+          ],
+          "properties": {
+            "disposition": {
+              "const": "answer"
+            },
+            "claims": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 64,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "text",
+                  "critical",
+                  "citations",
+                  "caveats"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "critical": {
+                    "type": "boolean"
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  },
+                  "caveats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "disposition",
+            "claims",
+            "reason"
+          ],
+          "properties": {
+            "disposition": {
+              "enum": [
+                "abstain",
+                "refuse"
+              ]
+            },
+            "claims": {
+              "type": "array",
+              "maxItems": 0
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "reconcileReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisions"
+      ],
+      "properties": {
+        "decisions": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "conflictId",
+              "interpretation",
+              "decision"
+            ],
+            "properties": {
+              "conflictId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "interpretation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decision": {
+                "enum": [
+                  "caveat",
+                  "refuse"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "repairProposal": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "op",
+              "path"
+            ],
+            "properties": {
+              "op": {
+                "const": "remove"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/claims/(0|[1-9][0-9]*)(/citations/(0|[1-9][0-9]*))?$"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "op",
+              "path",
+              "value"
+            ],
+            "properties": {
+              "op": {
+                "const": "add"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/claims/(0|[1-9][0-9]*)/caveats/-$"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        ]
       }
     }
   }

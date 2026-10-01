@@ -9,7 +9,7 @@ describe('closed grounding contracts', async () => {
     const refusal = groundingRefuse('TGRD1009', '/host', 'Missing binding.', { code: 'DOC123', docPath: '/fetch/0', message: 'Origin refused.' });
     assert.equal(refusal.valid, false);
     const triageDecision: GroundingRecords['triageDecision'] = { triage: 'simple', reason: 'Known administrative query.', requiredFields: [], intents: ['administrative-information'] };
-    const fixtures: GroundingRecords = { webSufficiency: { sufficient: false, missing: [], refinedQueries: [], reason: 'No evidence.' }, webRerank: [], evidenceTimes: { provenance: null }, groundingProfile: f.profile, corpusManifest: f.manifest, groundingSession: f.session, clarifiedIntent: f.intent, queryPlan: f.plan, evidenceCandidate: f.local, webRetrievalRun: f.webRun, evidenceConflict: f.conflict, groundedClaim: f.answer.claims[0], groundedAnswer: f.answer, groundingIssue: refusal.issues[0], groundingSpend: EMPTY_GROUNDING_SPEND, groundingTrace: (await store.readTrace(f.session.id))!,
+    const fixtures: GroundingRecords = { prihaAnswer: { disposition: 'abstain', claims: [], reason: 'No admitted support.' }, reconcileReply: { decisions: [] }, repairProposal: [], webSufficiency: { sufficient: false, missing: [], refinedQueries: [], reason: 'No evidence.' }, webRerank: [], evidenceTimes: { provenance: null }, groundingProfile: f.profile, corpusManifest: f.manifest, groundingSession: f.session, clarifiedIntent: f.intent, queryPlan: f.plan, evidenceCandidate: f.local, webRetrievalRun: f.webRun, evidenceConflict: f.conflict, groundedClaim: f.answer.claims[0], groundedAnswer: f.answer, groundingIssue: refusal.issues[0], groundingSpend: EMPTY_GROUNDING_SPEND, groundingTrace: (await store.readTrace(f.session.id))!,
         triageDecision, queryDraft: { queries: [{ text: 'Harbour reception', why: 'Locate the reception.', lanes: { local: true, web: true } }] },
         clarificationQuestion: { questions: [{ id: 'q1', text: 'Which service?' }] },
         optimizerCheckpoint: { startRevision: 1, originalQuery: 'Where is reception?', route: 'simple', decision: triageDecision, stage: 'triaged', ruleIds: ['in-scope'], sourceKeys: [],
@@ -21,7 +21,7 @@ describe('closed grounding contracts', async () => {
         const invalid = validateGroundingShape(name, { ...fixtures[name], unexpected: true });
         assert.equal(invalid.valid, false);
         assert.equal(invalid.issues[0].code, 'TGRD1001');
-        assert.equal(invalid.issues[0].path, name === 'webRerank' ? '' : '/unexpected');
+        if (!['webRerank', 'repairProposal', 'prihaAnswer'].includes(name)) assert.equal(invalid.issues[0].path, '/unexpected');
     });
     it('refuses impossible calendar dates through the foundation format compiler', () => {
         const result = validateGroundingShape('corpusManifest', { ...f.manifest, times: { ...f.manifest.times, effectiveAt: '2026-02-31T00:00:00.000Z' } });

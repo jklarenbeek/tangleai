@@ -1,4 +1,4 @@
-import { createMemoryGroundingStore, loadGroundingProfile, evaluateProfileRules, createQueryOptimizer, createWebLane, createReplayWebTransport, webBytesSha256 } from '@tangleai/grounding';
+import { createMemoryGroundingStore, loadGroundingProfile, evaluateProfileRules, createQueryOptimizer, createWebLane, createReplayWebTransport, webBytesSha256, reconcileEvidence, generateGroundedClaims, renderPrihaAnswer } from '@tangleai/grounding';
 import { captureKeyOf } from '@tangleai/core/http-capture';
 import profileDocument from '@tangleai/grounding/profiles/priha-hk' with { type: 'json' };
 import schema from '@tangleai/grounding/schemas/grounding' with { type: 'json' };
@@ -37,9 +37,23 @@ export async function qualifyGroundingBrowser(suppliedStore) {
         { content: JSON.stringify({ sufficient: true, missing: [], refinedQueries: [], reason: 'Reception is supported.' }) }];
     const lane = createWebLane({ profile: profile.value, store, transport, modelIdentity: null, clock: () => 0, now: () => '2026-06-01T00:00:00.000Z',
         client: { endpoint: { provider: 'scripted' }, async complete() { const message = webReplies[webCalls++]; if (!message) throw Error('Unexpected web call.'); return { message, usage: { total_tokens: 10 } }; } } });
-    const web = await lane.retrieve(plan.value.session, plan.value.plan.queries[0].id);
+    const retrieving = await store.transitionSession(plan.value.session.id, { kind: 'retrieve' }, plan.value.session.revision);
+    if (!retrieving.ok) throw Error('Installed retrieval transition failed: ' + JSON.stringify(retrieving));
+    const web = await lane.retrieve(retrieving.value, plan.value.plan.queries[0].id);
     if (!web.ok || web.run.stopReason !== 'sufficient' || web.candidates.length !== 1 || webCalls !== 4 || web.candidates[0].scores.rank !== 1) throw Error('Installed web execution failed: ' + JSON.stringify(web));
-    const requests = transport.stats().requests, webReplay = await lane.retrieve(plan.value.session, plan.value.plan.queries[0].id);
+    const requests = transport.stats().requests, webReplay = await lane.retrieve(retrieving.value, plan.value.plan.queries[0].id);
     if (!webReplay.ok || !webReplay.replayed || JSON.stringify(webReplay.run) !== JSON.stringify(web.run) || requests !== transport.stats().requests || webCalls !== 4) throw Error('Installed web replay failed.');
-    return { webCalls, webRequests: requests, webCandidates: web.candidates.length, revision: profile.value.revision, writes: put.changes, replayWrites: replay.changes, status: session.value.status, emergency: evaluateProfileRules(profile.value, { text: 'RED FLAG' }).emergency, schema: schema.$id };
+    const current = await store.getSession(session.value.id);
+    const reconciled = await reconcileEvidence(profile.value, web.candidates, { sessionId: current.id, now: '2026-06-01T00:00:00.000Z', facts: {} });
+    const toReconcile = await store.transitionSession(current.id, { kind: 'reconcile' }, current.revision);
+    if (!toReconcile.ok) throw Error('Installed reconciliation transition failed.');
+    const generating = await store.transitionSession(current.id, { kind: 'answer' }, toReconcile.value.revision);
+    if (!generating.ok) throw Error('Installed generation transition failed.');
+    let answerCalls = 0;
+    const answer = await generateGroundedClaims({ profile: profile.value, sessionId: current.id, plan: plan.value.plan, query: 'Where is reception?',
+        admitted: reconciled.admitted, conflicts: reconciled.conflicts, store, expectedRevision: generating.value.revision, modelIdentity: null, clock: () => 0,
+        client: { endpoint: { provider: 'scripted' }, async complete() { answerCalls++; return { message: { content: JSON.stringify({ disposition: 'answer', claims: [{ id: 'location',
+            text: 'Reception is in Square Hall.', critical: true, citations: [web.candidates[0].id], caveats: [] }] }) }, usage: { total_tokens: 10 } }; } } });
+    if (!answer.ok || answer.answer.disposition !== 'answer' || answerCalls !== 1 || renderPrihaAnswer(answer.answer) !== 'Reception is in Square Hall.') throw Error('Installed grounded generation failed: ' + JSON.stringify(answer));
+    return { answerCalls, answerDisposition: answer.answer.disposition, webCalls, webRequests: requests, webCandidates: web.candidates.length, revision: profile.value.revision, writes: put.changes, replayWrites: replay.changes, status: session.value.status, emergency: evaluateProfileRules(profile.value, { text: 'RED FLAG' }).emergency, schema: schema.$id };
 }

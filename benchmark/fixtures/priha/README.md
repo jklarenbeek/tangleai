@@ -41,3 +41,26 @@ retained evidence. This measures retrieval/control flow, not answer quality.
 The initial budget-fetch control omitted its expected rejected-tool count;
 the registration now counts that failure and omits a model turn after refusal.
 The runtime stops before dispatching that extra turn. Other gold remains fixed.
+
+The answer execution registration freezes 160 treatment/question reply recipes,
+source/quote citation selectors, prompt revisions, seven reconciliation controls
+and ten adversarial generation runs before scoring. Selectors bind only against
+actual admitted candidates; missing support abstains. The independent scorer
+still owns semantic claim assignment and citation support. No analytic chunk
+membership supplies a runtime candidate.
+
+The original source facts say Harbour District, while the shipped `priha-hk`
+profile says Hong Kong. `answer-profile.json` is an explicitly separate fictional
+profile with a matching jurisdiction; its revision is in every answer identity.
+It also admits the fictional community control host. The shipped profile and
+original source facts are unchanged. Four additional byte-addressed captures
+provide actual dated official/community metadata and discovery/robots records.
+These supplement the original web corpus rather than injecting its analytic date
+annotations into runtime pages. A separate mismatch control verifies exclusion.
+
+The pre-registered legacy-weight hypothesis orders only already-admitted context
+with the original 0.6 local weight, 1.3 authority boost, 0.05/day staleness penalty
+and 6000 excerpt-character cap. It cannot change rule eligibility or preference.
+All five question treatments retain missing answers and refusals in their
+scores. The complete workflow and adoption decision are separate later gates;
+these scripts establish no live answer quality or clinical capability.

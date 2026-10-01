@@ -2,9 +2,9 @@
 import { equalsJson } from '@jarenjs/core/object';
 import { createLexicalIndex } from '@tangleai/core/lexical';
 import type { Embedder } from '@tangleai/models/embed';
-import { PARENT_CHILD_CHUNKER_VERSION, type DocumentCorpusStore, type DocumentParent } from '@tangleai/documents/contracts';
+import { PARENT_CHILD_CHUNKER_VERSION, type DocumentCorpusStore, type DocumentParent, type DocumentChunk, type DocumentSource } from '@tangleai/documents/contracts';
 import { rankDocumentChunks } from '@tangleai/documents/retrieval';
-import type { EvidenceCandidate, GroundingIssue } from './contracts.gen.ts';
+import type { EvidenceCandidate, GroundingIssue, CorpusManifest } from './contracts.gen.ts';
 import type { GroundingStore } from './store.ts';
 import { GroundingAbort, groundingIssue, groundingMust, groundingReject } from './errors.ts';
 import { groundingIdOf, groundingRevisionOf, immutableGroundingJson } from './identity.ts';
@@ -114,18 +114,9 @@ export function createLocalRetriever(options: LocalRetrieverOptions) {
                 const manifest = await options.manifests?.getManifest(row.source.id, row.chunk.versionId);
                 if (manifest && (manifest.status !== 'active' || manifest.profileId !== options.session.profileId || manifest.profileRevision !== options.session.profileRevision))
                     groundingReject('TGRD1004', '/manifest', 'The local curated version belongs to a different profile revision.');
-                const payload = {
-                    sessionId: options.session.id, profileRevision: options.session.profileRevision, queryId: query.id, lane: 'local' as const,
-                    address: { chunkId: row.chunk.id, parentChunkId: row.parent.id, versionId: row.chunk.versionId, sourceId: row.source.id },
-                    excerpt: row.parent.text, scores: row.scores, rankerId: ranker.id + '/' + ranker.version,
-                    authority: manifest ? { tier: manifest.authorityTier, institution: manifest.institution, ruleIds: ['curator:' + manifest.id] }
-                        : { tier: 'unverified' as const, ruleIds: ['uncurated-local'] },
-                    times: manifest?.times ?? { provenance: null },
-                    admitted: { by: ['active-version', ...(manifest ? ['curator:' + manifest.id] : ['uncurated-local'])], at: options.now() },
-                    citation: { url: manifest?.canonicalUrl ?? row.source.canonicalUrl, title: row.source.title ?? row.source.canonicalUrl,
-                        ...(row.chunk.pageStart === undefined ? {} : { page: row.chunk.pageStart }), headingPath: row.chunk.headingPath },
-                };
-                const candidate = groundingMust(validateGroundingShape('evidenceCandidate', { ...payload, id: await groundingIdOf('evidence', payload) }));
+                const candidate = await projectLocalEvidence({ session: options.session, queryId: query.id,
+                    chunk: row.chunk, parent: row.parent, source: row.source, manifest,
+                    excerpt: row.parent.text, scores: row.scores, rankerId: ranker.id + '/' + ranker.version, at: options.now() });
                 result.push(candidate); expanded.set(row.parent.id, row.parent); census.contextTokens += tokens;
                 counts.set(row.source.id, (counts.get(row.source.id) ?? 0) + 1);
                 if (result.length === selection.k) break;
@@ -140,4 +131,28 @@ export function createLocalRetriever(options: LocalRetrieverOptions) {
     return Object.freeze({ retrieve(query: { id: string; text: string }, selection: LocalRetrievalOptions) {
         const result = pending.then(() => retrieve(query, selection)); pending = result.then(() => undefined, () => undefined); return result;
     } });
+}
+
+/** One evidence projection for governed parent retrieval and legacy flat-context consumers. */
+export async function projectLocalEvidence(input: {
+    session: { id: string; profileId: string; profileRevision: string }; queryId: string;
+    chunk: DocumentChunk; parent?: DocumentParent; source: DocumentSource; manifest?: CorpusManifest;
+    excerpt: string; scores: EvidenceCandidate['scores']; rankerId: string; at: string;
+}): Promise<EvidenceCandidate> {
+    const { session, queryId, chunk, parent, source, manifest } = input;
+    if (chunk.sourceId !== source.id || chunk.versionId !== source.activeVersionId
+        || parent && (parent.versionId !== chunk.versionId || parent.sourceId !== source.id || !parent.childIds.includes(chunk.id) || chunk.parentChunkId !== parent.id)
+        || chunk.parentChunkId && !parent
+        || manifest && (manifest.sourceId !== source.id || manifest.versionId !== chunk.versionId || manifest.status !== 'active'
+            || manifest.profileId !== session.profileId || manifest.profileRevision !== session.profileRevision))
+        groundingReject('TGRD1004', '/address', 'Local projection requires matching retained source, version, parent and curator identities.');
+    const payload = { sessionId: session.id, profileRevision: session.profileRevision, queryId, lane: 'local' as const,
+        address: { chunkId: chunk.id, ...(parent ? { parentChunkId: parent.id } : {}), versionId: chunk.versionId, sourceId: source.id },
+        excerpt: input.excerpt, scores: input.scores, rankerId: input.rankerId,
+        authority: manifest ? { tier: manifest.authorityTier, institution: manifest.institution, ruleIds: ['curator:' + manifest.id] }
+            : { tier: 'unverified' as const, ruleIds: ['uncurated-local'] },
+        times: manifest?.times ?? { provenance: null }, admitted: { by: ['active-version', ...(manifest ? ['curator:' + manifest.id] : ['uncurated-local'])], at: input.at },
+        citation: { url: manifest?.canonicalUrl ?? source.canonicalUrl, title: source.title ?? source.canonicalUrl,
+            ...(chunk.pageStart === undefined ? {} : { page: chunk.pageStart }), headingPath: chunk.headingPath } };
+    return groundingMust(validateGroundingShape('evidenceCandidate', { ...payload, id: await groundingIdOf('evidence', payload) }));
 }

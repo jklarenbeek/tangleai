@@ -116,19 +116,21 @@ describe('the registered PriHA instrument', () => {
         assert.deepEqual(report.rows.map(r => r.key), PRIHA_ROWS);
         assert.deepEqual(report.registration.capabilityRows, PRIHA_CAPABILITY_ROWS);
         for (const row of report.rows.slice(1)) {
-            assert.equal(row.status, 'not-run');
+            assert.equal(row.status, 'scripted');
             assert.ok(row.reason);
-            assert.equal(row.metrics, null);
-            assert.equal(row.counts.notRun, 32);
+            assert.ok(row.metrics);
+            assert.equal(row.counts.notRun, 0);
+            assert.equal(row.answer.status, 'executed');
         }
         requirePrihaCapability(report, 'instrument');
         requirePrihaCapability(report, 'contracts');
         requirePrihaCapability(report, 'local');
         requirePrihaCapability(report, 'optimizer');
         requirePrihaCapability(report, 'web');
+        requirePrihaCapability(report, 'reconcile');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(5))
+        for (const c of report.capabilities.slice(6))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
@@ -288,7 +290,7 @@ describe('the registered PriHA instrument', () => {
         assert.equal(plan.physicalRequests, 0);
         assert.equal(authorizePrihaLive(plan), 'skipped');
         assert.throws(() => authorizePrihaLive(plan, 'wrong'), /does not match/);
-        assert.throws(() => authorizePrihaLive(plan, planId), /no executable mechanism row/);
+        assert.throws(() => authorizePrihaLive(plan, planId), /live execution is not enabled/);
         const env = readAiEnv({ AI_PROVIDER: 'openai', AI_MODEL: 'fixture', OPENAI_API_KEY: 'secret-not-in-plan' });
         const configured = await planPrihaLive(report, env);
         assert.ok(!JSON.stringify(configured).includes('secret-not-in-plan'));
@@ -303,7 +305,7 @@ describe('the registered PriHA instrument', () => {
             assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
             assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'reconcile'], ['--unknown']])
+            for (const flags of [['--require', 'flow'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;
@@ -343,4 +345,22 @@ it('the web gate rejects an injected script that fetches a denied page in place 
     const result = await buildPrihaReport({ loaded: changed });
     assert.ok(result.web.failed > 0); assert.throws(() => requirePrihaCapability(result, 'web'), /requires.*booking/);
     assert.equal(result.web.rows[0].cases[0].recovered, 0); assert.equal(result.web.rows[0].cases[0].deniedRequests, 0);
+});
+
+it('scores five real scripted answer treatments with closed conflict and reference controls', () => {
+    assert.equal(report.answers.tier, 'scripted'); assert.equal(report.answers.runs.length, 160);
+    assert.equal(report.answers.failed, 0); assert.equal(report.answers.leakage, 0); assert.equal(report.answers.safety.length, 10);
+    assert.equal(report.answers.conflicts.length, 7); assert.ok(report.answers.runs.every(run => run.reopened));
+    assert.ok(report.answers.safety.every(row => row.passed && row.code === 'TGRD1008' && row.visibleClaims === 0));
+    assert.equal(report.answers.providerRequests, 0); assert.equal(report.answers.networkRequests, 0);
+    assert.ok(report.rows.slice(1).every(row => row.metrics!.claims.fp === 0 && row.metrics!.claims.fn > 0));
+    assert.ok(report.answers.runs.filter(run => run.row === 'drag-no-optimizer').every(run => run.queries.length === 1 && run.queries[0] === fixture.questions.find(q => q.key === run.question)!.text));
+    for (const mutation of [
+        (value: typeof report) => { value.answers.scriptedRequests++; },
+        (value: typeof report) => { value.answers.safety[0].passed = false; },
+        (value: typeof report) => { value.answers.conflicts[0].actual = 'fabricated'; },
+        (value: typeof report) => { value.answers.executionId = '0'.repeat(64); },
+        (value: typeof report) => { value.answers.leakage++; },
+        (value: typeof report) => { value.capabilities.find(row => row.id === 'reconcile')!.passed = false; },
+    ]) { const changed = structuredClone(report); mutation(changed); assert.equal(validate(changed).valid, false); }
 });

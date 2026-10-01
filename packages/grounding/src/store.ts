@@ -191,7 +191,21 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                         }
                     }
                     if (table === 'conflicts') {
-                        for (const id of (value as EvidenceConflict).evidenceIds) if ((await raw.get('evidence', id))?.sessionId !== session.id) groundingReject('TGRD1004', '/evidenceIds', 'A conflict references foreign or missing evidence.');
+                        const conflict = value as EvidenceConflict;
+                        const records: EvidenceCandidate[] = [];
+                        for (const id of conflict.evidenceIds) {
+                            const evidence = await raw.get('evidence', id);
+                            if (evidence?.sessionId !== session.id) groundingReject('TGRD1004', '/evidenceIds', 'A conflict references foreign or missing evidence.');
+                            records.push(evidence.payload);
+                        }
+                        const selected = conflict.selectedEvidenceIds ?? [], excluded = conflict.excludedEvidenceIds ?? [];
+                        if ([...selected, ...excluded].some(id => !conflict.evidenceIds.includes(id)) || selected.some(id => excluded.includes(id)))
+                            groundingReject('TGRD1004', '/selectedEvidenceIds', 'Selected and excluded conflict evidence must be disjoint members of its retained comparison.');
+                        if (conflict.queryId && records.some(row => row.queryId !== conflict.queryId))
+                            groundingReject('TGRD1004', '/queryId', 'A conflict cannot compare different atomic queries.');
+                        if (conflict.selectedEvidenceIds && conflict.decision.startsWith('prefer-') && (!selected.length
+                            || selected.some(id => records.find(row => row.id === id)?.lane !== conflict.decision.slice(7))))
+                            groundingReject('TGRD1004', '/decision', 'The selected evidence must match the preferred lane.');
                     }
                     if (table === 'answers') {
                         const answer = value as GroundedAnswer;

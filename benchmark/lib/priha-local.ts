@@ -24,52 +24,60 @@ function metrics(cases: PrihaLocalCase[]): PrihaLocalMetrics {
         meanCandidates: average(cases.map(c => c.childIds.length)), skipped: census('skipped'), deduplicated: census('deduplicated'),
         parentsOverBudget: census('parentsOverBudget'), issues: census('issues'), rebuilds: census('rebuilds'), rebuildMs: null };
 }
+/** One corpus owner shared by retrieval measurements and scripted answer treatments. */
+export async function createPrihaCorpus(loaded: LoadedPrihaFixture, profile: GroundingProfile, granularity: LoadedPrihaFixture['fixture']['granularities'][number], path?: string) {
+    const db = await openTangleDb(path ? { path } : {}), f = loaded.fixture;
+    try {
+        const store = createDocumentStore(db), grounding = createGroundingStore(db), embedder = createHashEmbedder({ dims: 128 });
+        contractMust(await grounding.putProfile(profile));
+        const versionKeys = new Map<string, string>(); let embeddingCalls = 0, embeddedChildren = 0;
+        for (const source of f.sources) for (const registered of source.versions) {
+            const url = loaded.corpusAddresses.find(a => a.version === registered.key)!.url;
+            let bundle: StoredDocumentBundle | undefined;
+            const staging = { ...store, async activate(value: StoredDocumentBundle) { bundle = value; }, async recordFailure() {} };
+            const fetcher = new SafeStaticFetcher({ now: () => registered.admittedAt,
+                lookup: async () => [{ address: '93.184.216.34', family: 4 }], limits: { respectRobots: false, perHostDelayMs: 0 },
+                fetch: async input => {
+                    if (String(input) !== url) throw Error('Unregistered local fixture request.');
+                    // Historical markdown bytes have their own format, even when a later source is HTML.
+                    return new Response(new Uint8Array(loaded.bodies.get(registered.file)!), { headers: { 'content-type': registered.file.endsWith('.md') ? 'text/markdown' : source.mimeType } });
+                },
+            });
+            await createDocumentIngester({ store: staging, fetcher, embedder, now: () => registered.admittedAt }).ingest({ url,
+                strategy: granularity.parentTokens === null ? 'recursive' : 'parent-child', maxTokens: granularity.maxTokens,
+                overlapTokens: granularity.overlapTokens, ...(granularity.parentTokens === null ? {} : { parentTokens: granularity.parentTokens }), allowBrowser: false });
+            if (!bundle) throw Error('The document ingester did not stage the registered version.');
+            if (bundle.version.contentHash !== registered.sha256) throw Error('The document ingester changed the registered source bytes.');
+            const facts = registered.facts;
+            const payload = { profileId: profile.id, profileRevision: profile.revision, sourceId: bundle.source.id, versionId: bundle.version.id,
+                status: 'active' as const, canonicalUrl: bundle.source.canonicalUrl, institution: facts.institution, authorityTier: facts.authorityTier,
+                jurisdiction: facts.jurisdiction, language: facts.language, contentHash: registered.sha256,
+                times: { provenance: facts.timeProvenance, ...(facts.effectiveAt === null ? {} : { effectiveAt: facts.effectiveAt }), ...(facts.expiresAt === null ? {} : { expiresAt: facts.expiresAt }) },
+                curator: { decision: 'admit' as const, by: 'registered-fixture-curator', at: registered.admittedAt } };
+            const manifest: CorpusManifest = { ...payload, id: await groundingIdOf('manifest', payload) };
+            contractMust(await promoteToCorpus(grounding, manifest, bundle));
+            versionKeys.set(bundle.version.id, registered.key);
+            embeddingCalls += bundle.version.metrics.embeddingCalls; embeddedChildren += bundle.chunks.length;
+        }
+        const versions = await store.listVersions(), allChunks = await store.listChunks(), allParents = await store.listParents();
+        for (const version of versions) {
+            const registered = f.sources.flatMap(s => s.versions).find(v => v.key === versionKeys.get(version.id))!;
+            if (version.status !== registered.status) throw Error(`Document ${registered.key}: actual ${version.status}, registered ${registered.status}.`);
+        }
+        const active = new Set(versions.filter(v => v.status === 'active').map(v => v.id));
+        const corpus = { sources: (await store.listSources()).length, versions: versions.length,
+            activeChildren: allChunks.filter(c => active.has(c.versionId)).length, activeParents: allParents.filter(p => active.has(p.versionId)).length,
+            retainedChunks: allChunks.length, retainedParents: allParents.length, embeddingCalls, embeddedChildren };
+        return { db, store, grounding, embedder, versionKeys, corpus, active, allChunks, allParents, close: () => db.close() };
+    } catch (error) { await db.close(); throw error; }
+}
 export async function measurePrihaLocal(loaded: LoadedPrihaFixture, profile: GroundingProfile,
     onTiming?: (value: PrihaLocalTiming) => void): Promise<PrihaLocalReport> {
     const f = loaded.fixture, rows: PrihaLocalRow[] = [];
     for (const granularity of f.granularities) {
-        const db = await openTangleDb();
+        const host = await createPrihaCorpus(loaded, profile, granularity);
         try {
-            const store = createDocumentStore(db), grounding = createGroundingStore(db), embedder = createHashEmbedder({ dims: 128 });
-            contractMust(await grounding.putProfile(profile));
-            const versionKeys = new Map<string, string>(); let embeddingCalls = 0, embeddedChildren = 0;
-            for (const source of f.sources) for (const registered of source.versions) {
-                const url = loaded.corpusAddresses.find(a => a.version === registered.key)!.url;
-                let bundle: StoredDocumentBundle | undefined;
-                const staging = { ...store, async activate(value: StoredDocumentBundle) { bundle = value; }, async recordFailure() {} };
-                const fetcher = new SafeStaticFetcher({ now: () => registered.admittedAt,
-                    lookup: async () => [{ address: '93.184.216.34', family: 4 }], limits: { respectRobots: false, perHostDelayMs: 0 },
-                    fetch: async input => {
-                        if (String(input) !== url) throw Error('Unregistered local fixture request.');
-                        // Historical markdown bytes have their own format, even when a later source is HTML.
-                        return new Response(new Uint8Array(loaded.bodies.get(registered.file)!), { headers: { 'content-type': registered.file.endsWith('.md') ? 'text/markdown' : source.mimeType } });
-                    },
-                });
-                await createDocumentIngester({ store: staging, fetcher, embedder, now: () => registered.admittedAt }).ingest({ url,
-                    strategy: granularity.parentTokens === null ? 'recursive' : 'parent-child', maxTokens: granularity.maxTokens,
-                    overlapTokens: granularity.overlapTokens, ...(granularity.parentTokens === null ? {} : { parentTokens: granularity.parentTokens }), allowBrowser: false });
-                if (!bundle) throw Error('The document ingester did not stage the registered version.');
-                if (bundle.version.contentHash !== registered.sha256) throw Error('The document ingester changed the registered source bytes.');
-                const facts = registered.facts;
-                const payload = { profileId: profile.id, profileRevision: profile.revision, sourceId: bundle.source.id, versionId: bundle.version.id,
-                    status: 'active' as const, canonicalUrl: bundle.source.canonicalUrl, institution: facts.institution, authorityTier: facts.authorityTier,
-                    jurisdiction: facts.jurisdiction, language: facts.language, contentHash: registered.sha256,
-                    times: { provenance: facts.timeProvenance, ...(facts.effectiveAt === null ? {} : { effectiveAt: facts.effectiveAt }), ...(facts.expiresAt === null ? {} : { expiresAt: facts.expiresAt }) },
-                    curator: { decision: 'admit' as const, by: 'registered-fixture-curator', at: registered.admittedAt } };
-                const manifest: CorpusManifest = { ...payload, id: await groundingIdOf('manifest', payload) };
-                contractMust(await promoteToCorpus(grounding, manifest, bundle));
-                versionKeys.set(bundle.version.id, registered.key);
-                embeddingCalls += bundle.version.metrics.embeddingCalls; embeddedChildren += bundle.chunks.length;
-            }
-            const versions = await store.listVersions(), allChunks = await store.listChunks(), allParents = await store.listParents();
-            for (const version of versions) {
-                const registered = f.sources.flatMap(s => s.versions).find(v => v.key === versionKeys.get(version.id))!;
-                if (version.status !== registered.status) throw Error(`Document ${registered.key}: actual ${version.status}, registered ${registered.status}.`);
-            }
-            const active = new Set(versions.filter(v => v.status === 'active').map(v => v.id));
-            const corpus = { sources: (await store.listSources()).length, versions: versions.length,
-                activeChildren: allChunks.filter(c => active.has(c.versionId)).length, activeParents: allParents.filter(p => active.has(p.versionId)).length,
-                retainedChunks: allChunks.length, retainedParents: allParents.length, embeddingCalls, embeddedChildren };
+            const { store, grounding, embedder, versionKeys, corpus, active, allChunks } = host;
             const chunks = new Map(allChunks.map(c => [c.id, c]));
             const covered = (records: Array<DocumentChunk | DocumentParent>, expected: string[]) => expected.filter(id => {
                 const element = f.elements.find(e => e.key === id)!;
@@ -121,7 +129,7 @@ export async function measurePrihaLocal(loaded: LoadedPrihaFixture, profile: Gro
                 }
                 rows.push({ key, treatment, granularity: granularity.id, lane, rankerId: treatment === 'flat-semantic' ? 'cosine/1' : 'rrf/1', corpus, cases, metrics: metrics(cases) });
             }
-        } finally { await db.close(); }
+        } finally { await host.close(); }
     }
     const comparisons = f.granularities.filter(g => g.parentTokens !== null).map(g => {
         const score = (lane: string) => rows.find(r => r.granularity === g.id && r.lane === lane)!.metrics.childRecall;

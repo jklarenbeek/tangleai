@@ -197,3 +197,46 @@ returns identical retained records with zero fetches or model calls. Calls on
 one lane instance serialize. Cross-process dispatch belongs to the host worker;
 an interrupted uncommitted external read is not promised exactly-once delivery.
 No web read promotes content into the persistent corpus or generates an answer.
+
+### Reconciliation and claim ledgers
+
+`reconcileEvidence(profile, candidates, context)` is a deterministic projection.
+The host supplies the observation time, retained version status and jurisdiction,
+and may register atomic predicate topics. Without topics, each atomic query is
+the conservative comparison scope. Expired, future-effective, inactive and
+jurisdiction-mismatched evidence is excluded. `authority.excludedTiers` can exclude
+web tiers. Official authority wins over unofficial recency; two official sources
+are ordered only when both have proven effective dates. Fetch timestamps and
+Last-Modified never establish an effective date. Every comparison names its rule,
+selected/excluded evidence and scope; ambiguous official comparisons remain
+unresolved. A critical query treats its unresolved comparisons conservatively.
+
+`generateGroundedClaims` consumes a retained session plan, its admitted evidence,
+conflicts, corpus and grounding store. It uses installed reconcile/generate/repair
+packs and the existing structured-output helper. A bounded interpretation can
+only caveat or refuse unresolved comparisons. It cannot change eligibility,
+authority, dates or source preference. Final conflicts are persisted before the
+answer. The answer and optional expected session revision commit atomically.
+
+The generated draft contains claims, evidence ids and caveats. There is no
+confidence field or independent free-prose answer. `renderPrihaAnswer` derives
+visible text from surviving claims. Refusals carry a reason; emergency rendering
+may append the profile's optional `emergency.response.text`. Source keys are not
+rendered as guidance. Every visible citation is used by a surviving claim; unused
+retrieval stays in `GroundingTrace.unused`.
+
+`createCitationResolver` resolves web ids to exact final URLs/page hashes and local
+ids through the retained active corpus to chunk/version/content hashes.
+`validatePrihaClaims` projects into the context package's one native claim
+validator. This proves descriptors, references, visibility and critical-reference
+requirements; it does not prove arbitrary prose entailment. Independent answer
+quality evaluation is still required. Repair uses the context package's guarded
+refiner and Jaren's compiled RFC 6902 applier. Only claim removal, citation removal
+and caveat append are accepted. Claim text, ids, criticality, added citations and
+policy edits are forbidden. The optional profile `budgets.repairs` defaults to one
+and cannot exceed one. Invalid ledgers fail closed with `TGRD1008`.
+
+Calls, tokens and elapsed time share a native budget account across interpretation,
+generation and repair. Narrower caller caps are allowed. Reported final token or
+time overshoot is charged and refuses the answer. A surrounding MAS host may wrap
+the client in its workflow account to cover earlier planning and retrieval too.

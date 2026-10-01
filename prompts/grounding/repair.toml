@@ -1,0 +1,17 @@
+[meta]
+id = "grounding-repair"
+version = "1.0.0"
+pattern = "grounded-answer"
+role = "grounding-repair"
+
+[system]
+content = "Propose a small RFC 6902 patch repairing only the listed claim-reference failures. You may remove a claim, remove a citation from a claim, or append a caveat to a claim. Never change criticality, claim text or ids; never add a claim or citation; never alter evidence, authority, visibility, policy or budgets. Removing unsupported content is required when it cannot be grounded. Paths address the displayed draft claims array. Return only the declared patch schema."
+
+[user]
+content = """Query: {{query}}
+Evidence:
+{{evidence}}
+{{#if context}}
+Declared stage context:
+{{context}}
+{{/if}}"""

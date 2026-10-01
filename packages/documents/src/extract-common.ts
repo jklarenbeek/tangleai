@@ -34,4 +34,3 @@ export function capElements(elements: ElementDraft[], limits: ExtractLimits, war
   warnings.push(`partial extraction: retained ${limits.maxElements} of ${elements.length} elements`);
   return elements.slice(0, limits.maxElements).map((element, order) => ({ ...element, order }));
 }
-

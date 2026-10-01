@@ -22,3 +22,13 @@ declare const webOptions: WebLaneOptions, records: WebReplayRecord[];
 const transport = await createReplayWebTransport(records, { searxBase: "https://search.example" });
 const webResult = await createWebLane({ ...webOptions, transport }).retrieve(session, "atomic-query");
 if (webResult.ok) { const candidates: EvidenceCandidate[] = webResult.candidates; await durable.putWebResult(webResult.run, candidates); }
+
+import { reconcileEvidence, generateGroundedClaims, repairPrihaClaims, renderPrihaAnswer, type GenerateGroundedClaimsOptions, type PrihaAnswer, type ClaimValidationView } from '@tangleai/grounding';
+declare const answerOptions: GenerateGroundedClaimsOptions, draft: PrihaAnswer, view: ClaimValidationView;
+const reconciled = await reconcileEvidence(answerOptions.profile, answerOptions.admitted, { sessionId: session.id, now: '2026-06-01T00:00:00.000Z', facts: {} });
+const generated = await generateGroundedClaims({ ...answerOptions, ...reconciled });
+if (generated.ok) renderPrihaAnswer(generated.answer);
+await repairPrihaClaims(draft, view, [{ op: 'remove', path: '/claims/0' }]);
+// @ts-expect-error a confidence field is outside the grounded draft contract
+const guessed: PrihaAnswer = { disposition: 'abstain', claims: [], reason: 'No source.', confidence: 1 };
+void guessed;

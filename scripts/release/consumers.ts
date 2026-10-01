@@ -182,6 +182,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       assert.equal(groundingBrowser.webCalls, 4);
       assert.equal(groundingBrowser.webRequests, 3);
       assert.equal(groundingBrowser.webCandidates, 1);
+      assert.equal(groundingBrowser.answerCalls, 1);
+      assert.equal(groundingBrowser.answerDisposition, 'answer');
       assert.equal(groundingBrowser.writes, 1);
       assert.equal(groundingBrowser.replayWrites, 0);
       assert.equal(groundingBrowser.status, 'open');

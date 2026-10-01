@@ -87,6 +87,10 @@ export interface GroundingProfileEmergencyResponse {
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
   sourceKeys: Array<GroundingProfileEmergencyResponseSourceKeysItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text?: string;
 }
 
 
@@ -131,6 +135,16 @@ export interface GroundingProfileAuthorityHostsItem {
    * Schema constraints this type cannot express: minLength=1
    */
   institution: string;
+}
+
+
+export interface GroundingProfileAuthority {
+  tiers: ["official","professional","community","unverified"];
+  hosts: Array<GroundingProfileAuthorityHostsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  excludedTiers?: Array<AuthorityTier>;
 }
 
 
@@ -242,6 +256,46 @@ export interface GroundingProfileRankers {
 }
 
 
+export interface ProfileBudgets {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  searches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fetches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bytes: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  clarificationTurns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=1
+   */
+  repairs?: number;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -291,13 +345,13 @@ export interface GroundingProfile {
   purposes: Array<GroundingProfilePurposesItem>;
   emergency: GroundingProfileEmergency;
   outOfScope: Array<GroundingProfileOutOfScopeItem>;
-  authority: { tiers: ["official","professional","community","unverified"]; hosts: Array<GroundingProfileAuthorityHostsItem>; };
+  authority: GroundingProfileAuthority;
   freshness: GroundingProfileFreshness;
   expansions: Array<GroundingProfileExpansionsItem>;
   models: GroundingProfileModels;
   clarification: GroundingProfileClarification;
   rankers: GroundingProfileRankers;
-  budgets: GroundingSpend;
+  budgets: ProfileBudgets;
   userContext: GroundingProfileUserContext;
 }
 
@@ -1065,6 +1119,16 @@ export interface EvidenceConflictComparison {
  */
 export type EvidenceConflictRuleIdsItem = string;
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type EvidenceConflictSelectedEvidenceIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type EvidenceConflictExcludedEvidenceIdsItem = string;
+
 export interface EvidenceConflict {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -1075,14 +1139,14 @@ export interface EvidenceConflict {
    */
   sessionId: string;
   /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   * Schema constraints this type cannot express: minItems=0, uniqueItems=true
    */
   claimIds: Array<EvidenceConflictClaimIdsItem>;
   /**
    * Schema constraints this type cannot express: minItems=1, uniqueItems=true
    */
   evidenceIds: Array<EvidenceConflictEvidenceIdsItem>;
-  issue: "stale-vs-newer" | "official-vs-unofficial" | "official-vs-official" | "expired" | "jurisdiction";
+  issue: "stale-vs-newer" | "official-vs-unofficial" | "official-vs-official" | "expired" | "jurisdiction" | "superseded" | "not-yet-effective" | "authority-excluded";
   comparison: EvidenceConflictComparison;
   severity: "critical" | "material" | "minor";
   decision: "prefer-local" | "prefer-web" | "caveat" | "refuse" | "unresolved";
@@ -1091,6 +1155,26 @@ export interface EvidenceConflict {
    */
   ruleIds: Array<EvidenceConflictRuleIdsItem>;
   modelIdentity: unknown;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  queryId?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  topicKey?: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  selectedEvidenceIds?: Array<EvidenceConflictSelectedEvidenceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  excludedEvidenceIds?: Array<EvidenceConflictExcludedEvidenceIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  interpretation?: string;
 }
 
 
@@ -1166,6 +1250,11 @@ export interface AnswerCitation {
  */
 export type GroundedAnswerCaveatsItem = string;
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundedAnswerValidationRemovedClaimIdsItem = string;
+
 export interface GroundedAnswerValidation {
   valid: boolean;
   issues: Array<GroundingIssue>;
@@ -1173,6 +1262,10 @@ export interface GroundedAnswerValidation {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   repairs: number;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  removedClaimIds?: Array<GroundedAnswerValidationRemovedClaimIdsItem>;
 }
 
 
@@ -1231,6 +1324,10 @@ export interface GroundedAnswer {
    * Schema constraints this type cannot express: minLength=1
    */
   stopReason: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason?: string;
 }
 
 
@@ -1344,5 +1441,108 @@ export interface WebAgentResult {
   summary: string;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaAnswerOneOf1ClaimsItemCitationsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaAnswerOneOf1ClaimsItemCaveatsItem = string;
+
+export interface PrihaAnswerOneOf1ClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  critical: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  citations: Array<PrihaAnswerOneOf1ClaimsItemCitationsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  caveats: Array<PrihaAnswerOneOf1ClaimsItemCaveatsItem>;
+}
+
+
+export interface PrihaAnswerOneOf1 {
+  disposition: "answer";
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=64
+   */
+  claims: Array<PrihaAnswerOneOf1ClaimsItem>;
+}
+
+
+export interface PrihaAnswerOneOf2 {
+  disposition: "abstain" | "refuse";
+  /**
+   * Schema constraints this type cannot express: maxItems=0
+   */
+  claims: Array<unknown>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export type PrihaAnswer = PrihaAnswerOneOf1 | PrihaAnswerOneOf2;
+
+export interface ReconcileReplyDecisionsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  conflictId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  interpretation: string;
+  decision: "caveat" | "refuse";
+}
+
+
+export interface ReconcileReply {
+  /**
+   * Schema constraints this type cannot express: maxItems=256
+   */
+  decisions: Array<ReconcileReplyDecisionsItem>;
+}
+
+
+export interface RepairProposalItemOneOf1 {
+  op: "remove";
+  /**
+   * Schema constraints this type cannot express: pattern="^/claims/(0|[1-9][0-9]*)(/citations/(0|[1-9][0-9]*))?$"
+   */
+  path: string;
+}
+
+
+export interface RepairProposalItemOneOf2 {
+  op: "add";
+  /**
+   * Schema constraints this type cannot express: pattern="^/claims/(0|[1-9][0-9]*)/caveats/-$"
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  value: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxItems=64
+ */
+export type RepairProposal = Array<RepairProposalItemOneOf1 | RepairProposalItemOneOf2>;
 
 export type Grounding = GroundingProfile | CorpusManifest | GroundingSession | ClarifiedIntent | QueryPlan | EvidenceCandidate | WebRetrievalRun | EvidenceConflict | GroundedClaim | GroundedAnswer | GroundingIssue | GroundingSpend | GroundingTrace;

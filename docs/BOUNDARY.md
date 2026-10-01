@@ -258,3 +258,11 @@ Jaren's provider executor does support safe reads and successful-text replay.
 It is not layered over the document fetcher here because scheduling, robots,
 redirect admission and byte budgets already belong to that fetcher, and the
 fixture requires exact redirects and unsuccessful HTTP responses too.
+
+Grounded claim generation projects its draft into the context package's existing
+claim envelope. That native validator proves referential integrity and admission,
+not prose entailment. Tangle owns the profile's authority/time rules and answer
+policy. The bounded repair consumer uses `createClaimRefiner` and Jaren's compiled
+RFC 6902 patch applier; it owns no second validator, patch interpreter or prose
+matcher. The benchmark's unchanged grounding scorer measures scripted semantic
+support independently from the product's reference gate.

@@ -7,8 +7,8 @@ import { join, resolve } from 'node:path';
 import { JarenValidator } from '@jarenjs/validate';
 import { compileGmplPromptPack, renderGmplPrompt } from '@tangleai/gmpl';
 import { groundingArtifacts } from '@tangleai/grounding';
-it('all seven packs compile to their installed artifacts and enforce one question', async () => {
-    assert.equal(groundingArtifacts.prompts.length, 7);
+it('all ten packs compile to their installed artifacts and enforce one question', async () => {
+    assert.equal(groundingArtifacts.prompts.length, 10);
     for (const artifact of groundingArtifacts.prompts) {
         const name = artifact.id.replace('grounding-', ''), source = await readFile(`prompts/grounding/${name}.toml`, 'utf8');
         const compiled = await compileGmplPromptPack(source, { variables: artifact.variables, outputSchema: artifact.outputSchema });
@@ -28,7 +28,7 @@ it('the artifact check rejects retained-byte drift without rewriting the artifac
     const directory = await mkdtemp(join(tmpdir(), 'grounding-artifacts-'));
     try {
         await mkdir(join(directory, 'prompts/grounding'), { recursive: true }); await mkdir(join(directory, 'packages/grounding/artifacts'), { recursive: true });
-        for (const name of ['triage', 'question', 'resolve', 'plan', 'web-agent', 'web-sufficiency', 'web-rerank']) await writeFile(join(directory, `prompts/grounding/${name}.toml`), await readFile(`prompts/grounding/${name}.toml`));
+        for (const name of ['triage', 'question', 'resolve', 'plan', 'web-agent', 'web-sufficiency', 'web-rerank', 'reconcile', 'generate', 'repair']) await writeFile(join(directory, `prompts/grounding/${name}.toml`), await readFile(`prompts/grounding/${name}.toml`));
         const path = join(directory, 'packages/grounding/artifacts/catalog.json');
         await writeFile(path, '{}\n');
         assert.throws(() => execFileSync(process.execPath, [resolve('scripts/grounding-artifacts.ts'), '--check'], { cwd: directory, stdio: 'pipe' }), /Grounding artifact drift/);

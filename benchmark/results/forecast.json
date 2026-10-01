@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "8e346345221e9d8694f443937496583c2f8cfcef",
+    "head": "a5423795883b105854b456d51ec78c5147e8bc20",
     "clean": false,
     "files": [
       {
@@ -490,12 +490,16 @@
         "sha256": "fedb3b07a8af014f62948cb6dc075a89cf9e09457525deacc4785dc1881eb967"
       },
       {
+        "path": "benchmark/lib/priha-answer.ts",
+        "sha256": "79077f9a23b7cfdcd7dab233750656ce2852c6a1f359534105ec0241dfcb2cff"
+      },
+      {
         "path": "benchmark/lib/priha-contracts.ts",
-        "sha256": "1f71c9c1bc789059fcf2656d9c8ef73a9a851f8594cebebe4df9eb7a72d434ba"
+        "sha256": "c91746aac908133e38cda4c7016902a67daf32681e38741eba5dd17b5b6ff34d"
       },
       {
         "path": "benchmark/lib/priha-local.ts",
-        "sha256": "2e8fda52164a3703afcaf638151702cfca430106d21991d6750425b34d29c38c"
+        "sha256": "4576d2f2990cc8c105262b61b6f07a5dec0762b09651d4a239b719de2a7dd84d"
       },
       {
         "path": "benchmark/lib/priha-optimizer.ts",
@@ -511,11 +515,11 @@
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "02a987f6a7ff5fe1f1a63a1629d34d851c45f2c4c8bbbb06d57b4eef507cf1cf"
+        "sha256": "3b63282877445bc62af7da7aa5fbe9dc025f82d0d0f90e047928abe6eaccc0c9"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "97eed8309c822cf3876dfcbaa9bf84cfa698c822e37c260330f4f62611866eb6"
+        "sha256": "4b987937ee3fb3f159f1644bfde523ef04dea881a0d6f858944214d55b017c29"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -811,7 +815,7 @@
       },
       {
         "path": "packages/documents/src/extract-common.ts",
-        "sha256": "3080fdc4f47e4de14ab02cbfce997a2a0e819057b903a0ef8321afef4db83376"
+        "sha256": "3d0bd73e702d677d5a9a11d1a358ca01b7206d1f1837df3acefd25c36dfee9f1"
       },
       {
         "path": "packages/documents/src/extract-static.ts",
@@ -1338,7 +1342,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "f1debcedf8f52449c56839cdfef06b8a5e83533aa0ee21868e3b6c274ed83623"
+    "sha256": "179de47bb09d15657f5a669b868d85f83ac4dd3687b18a1fde6a14a3a0080a4c"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44803,5 +44807,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "db2fefed53c9bf2ee10f1635971285d62cf3e76a6f0b46b61e1746f0f8b645d5"
+  "reportId": "4d3f79e112dc06f1cd91ad926f24aeb85742c4bfa56a1a78955362ff09f09870"
 }

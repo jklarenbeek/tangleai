@@ -23,6 +23,9 @@
     },
     {
       "$ref": "#/$defs/prihaWebExecution"
+    },
+    {
+      "$ref": "#/$defs/prihaAnswerExecution"
     }
   ],
   "$defs": {
@@ -966,7 +969,8 @@
         "profileRuleInputs",
         "localQueries",
         "userFacts",
-        "webExecution"
+        "webExecution",
+        "answerExecution"
       ],
       "properties": {
         "document": {
@@ -1295,6 +1299,24 @@
               "pattern": "^[a-f0-9]{64}$"
             }
           }
+        },
+        "answerExecution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
       },
       "$query": {
@@ -1587,7 +1609,9 @@
         "localCorpusAddressId",
         "optimizerCatalogRevision",
         "optimizerVocabularyRevision",
-        "webExecutionId"
+        "webExecutionId",
+        "answerExecutionId",
+        "answerProfileRevision"
       ],
       "properties": {
         "registrationId": {
@@ -1754,6 +1778,14 @@
           "pattern": "^[a-f0-9]{64}$"
         },
         "webExecutionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "answerExecutionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "answerProfileRevision": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
@@ -2641,7 +2673,8 @@
         "contracts",
         "local",
         "optimizer",
-        "web"
+        "web",
+        "answers"
       ],
       "properties": {
         "document": {
@@ -2832,6 +2865,9 @@
         },
         "web": {
           "$ref": "#/$defs/prihaWebReport"
+        },
+        "answers": {
+          "$ref": "#/$defs/prihaAnswerReport"
         }
       },
       "$query": {
@@ -3177,6 +3213,44 @@
                 {
                   "$eq": [
                     "$.web.failed",
+                    0
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$eq": [
+              "$.registration.answerExecutionId",
+              "$.answers.executionId"
+            ]
+          },
+          {
+            "$eq": [
+              "$.registration.answerProfileRevision",
+              "$.answers.profileRevision"
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.answers.runs[*]"
+              },
+              {
+                "$sum": "$.rows[?(@.key!='oracle')].answer.cases"
+              }
+            ]
+          },
+          {
+            "$every": {
+              "c": "$.capabilities[?(@.id=='reconcile')]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$.answers.failed",
                     0
                   ]
                 }
@@ -5859,6 +5933,897 @@
                 "$count": "$.rows[*]"
               },
               3
+            ]
+          }
+        ]
+      }
+    },
+    "prihaAnswerSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lane",
+        "version",
+        "quote"
+      ],
+      "properties": {
+        "lane": {
+          "enum": [
+            "local",
+            "web"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prihaAnswerRecipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "reason",
+        "claims",
+        "onMissing"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "text",
+              "critical",
+              "citations",
+              "caveats"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "critical": {
+                "type": "boolean"
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/prihaAnswerSelector"
+                }
+              },
+              "caveats": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "onMissing": {
+          "const": "abstain"
+        }
+      }
+    },
+    "prihaAnswerScript": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row",
+        "question",
+        "planQuery",
+        "webCase",
+        "generation",
+        "reconciliation"
+      ],
+      "properties": {
+        "row": {
+          "enum": [
+            "flat-semantic",
+            "local-hybrid",
+            "web-only",
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planQuery": {
+          "type": "string",
+          "minLength": 1
+        },
+        "webCase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "generation": {
+          "$ref": "#/$defs/prihaAnswerRecipe"
+        },
+        "reconciliation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "interpretation",
+            "nonCritical",
+            "critical"
+          ],
+          "properties": {
+            "interpretation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nonCritical": {
+              "const": "caveat"
+            },
+            "critical": {
+              "const": "refuse"
+            }
+          }
+        }
+      }
+    },
+    "prihaAnswerExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "profile",
+        "prompts",
+        "rows",
+        "topics",
+        "cases",
+        "safety",
+        "conflicts",
+        "limitations",
+        "webControls"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-answer-execution"
+        },
+        "profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256",
+            "revision"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "revision"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "granularity",
+              "local",
+              "web",
+              "optimizer",
+              "ordering"
+            ],
+            "properties": {
+              "key": {
+                "enum": [
+                  "flat-semantic",
+                  "local-hybrid",
+                  "web-only",
+                  "drag-no-optimizer",
+                  "priha-full"
+                ]
+              },
+              "granularity": {
+                "enum": [
+                  "flat-450",
+                  "parent-2000",
+                  "parent-1200"
+                ]
+              },
+              "local": {
+                "type": "boolean"
+              },
+              "web": {
+                "type": "boolean"
+              },
+              "optimizer": {
+                "type": "boolean"
+              },
+              "ordering": {
+                "enum": [
+                  "ranked",
+                  "legacy-weight-hypothesis"
+                ]
+              }
+            }
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "version",
+              "topic"
+            ],
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "topic": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaAnswerScript"
+          }
+        },
+        "safety": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "question",
+              "expected",
+              "repair"
+            ],
+            "properties": {
+              "id": {
+                "enum": [
+                  "fabricated-url",
+                  "unsupported-critical"
+                ]
+              },
+              "question": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expected": {
+                "const": "refuse"
+              },
+              "repair": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "issue",
+              "left",
+              "right",
+              "expected",
+              "critical"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "issue": {
+                "type": "string",
+                "minLength": 1
+              },
+              "left": {
+                "type": "string",
+                "minLength": 1
+              },
+              "right": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "expected": {
+                "type": "string",
+                "minLength": 1
+              },
+              "critical": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "webControls": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "records",
+            "script"
+          ],
+          "properties": {
+            "records": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/prihaWebCapture"
+              }
+            },
+            "script": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/prihaWebStep"
+              }
+            }
+          }
+        }
+      }
+    },
+    "prihaAnswerRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row",
+        "question",
+        "sessionId",
+        "answerId",
+        "queries",
+        "retrieved",
+        "admitted",
+        "unused",
+        "cited",
+        "claimTexts",
+        "conflictIds",
+        "ineligible",
+        "calls",
+        "tokens",
+        "repairs",
+        "searches",
+        "fetches",
+        "bytes",
+        "stopReason",
+        "leakage",
+        "reopened",
+        "webDenied",
+        "webFailed",
+        "webAdmitted",
+        "snippets",
+        "redirectDenied"
+      ],
+      "properties": {
+        "row": {
+          "enum": [
+            "flat-semantic",
+            "local-hybrid",
+            "web-only",
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "retrieved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "admitted": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unused": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "cited": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "claimTexts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "conflictIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "ineligible": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "reason",
+              "ruleId"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ruleId": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "searches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fetches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stopReason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "leakage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reopened": {
+          "type": "boolean"
+        },
+        "webDenied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "webFailed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "webAdmitted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snippets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "redirectDenied": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prihaAnswerSafety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row",
+        "id",
+        "disposition",
+        "code",
+        "calls",
+        "repairs",
+        "visibleClaims",
+        "passed"
+      ],
+      "properties": {
+        "row": {
+          "enum": [
+            "flat-semantic",
+            "local-hybrid",
+            "web-only",
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse"
+          ]
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "visibleClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.disposition",
+                  "refuse"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.code",
+                  "TGRD1008"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.visibleClaims",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.repairs",
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaConflictObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "issue",
+        "expected",
+        "actual",
+        "ruleIds",
+        "passed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issue": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actual": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$eq": [
+              "$.actual",
+              "$.expected"
+            ]
+          }
+        ]
+      }
+    },
+    "prihaAnswerReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "tier",
+        "executionId",
+        "profileRevision",
+        "catalogRevision",
+        "runs",
+        "safety",
+        "conflicts",
+        "failed",
+        "scriptedRequests",
+        "providerRequests",
+        "networkRequests",
+        "leakage",
+        "latency",
+        "limitations",
+        "controlCalls",
+        "controlTokens"
+      ],
+      "properties": {
+        "status": {
+          "const": "executed"
+        },
+        "tier": {
+          "const": "scripted"
+        },
+        "executionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaAnswerRun"
+          }
+        },
+        "safety": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaAnswerSafety"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaConflictObservation"
+          }
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scriptedRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerRequests": {
+          "const": 0
+        },
+        "networkRequests": {
+          "const": 0
+        },
+        "leakage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "latency": {
+          "const": "not-measured"
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "controlCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "controlTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.failed",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      {
+                        "$count": "$.safety[?(@.passed==false)]"
+                      },
+                      {
+                        "$count": "$.conflicts[?(@.passed==false)]"
+                      }
+                    ]
+                  },
+                  {
+                    "$count": "$.runs[?(@.leakage>0||@.reopened==false)]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.leakage",
+              {
+                "$sum": "$.runs[*].leakage"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.scriptedRequests",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      "$.controlCalls",
+                      {
+                        "$sum": "$.runs[*].calls"
+                      }
+                    ]
+                  },
+                  {
+                    "$sum": "$.safety[*].calls"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.controlTokens",
+              {
+                "$mul": [
+                  "$.controlCalls",
+                  10
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.runs[*].answerId"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.runs[*].answerId"
+                }
+              }
             ]
           }
         ]

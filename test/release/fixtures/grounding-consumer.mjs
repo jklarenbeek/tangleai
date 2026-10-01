@@ -40,6 +40,6 @@ try {
         responseKey: 'installed-answer', value: { answers: { q1: 'The voucher service.' } } });
     assert.ok(ready.ok); assert.equal(ready.value.disposition, 'ready'); assert.equal(ready.value.intent.answered.service, 'The voucher service.');
     assert.equal(calls, 7); assert.equal(ready.value.spend.calls, 7); assert.equal(ready.value.spend.tokens, 70);
-    const web = await qualifyGroundingBrowser(store); assert.equal(web.webCalls, 4); assert.equal(web.webRequests, 3); assert.equal(web.webCandidates, 1);
+    const web = await qualifyGroundingBrowser(store); assert.equal(web.webCalls, 4); assert.equal(web.webRequests, 3); assert.equal(web.webCandidates, 1); assert.equal(web.answerCalls, 1); assert.equal(web.answerDisposition, 'answer');
     console.log(JSON.stringify({ web, groundingInstalled: true, profiles: 1, repeatWrites: 0, backends: 2, revision: loaded.value.revision }));
 } finally { await db.close(); }
