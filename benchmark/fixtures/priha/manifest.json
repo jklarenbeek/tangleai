@@ -2268,32 +2268,32 @@
     {
       "key": "simple",
       "file": "conversations/simple.json",
-      "sha256": "c6a4d295312c8d0dd3aa7c0ced920d37232eaf3d47aa8eca45d5eb797b058456"
+      "sha256": "afae603b774d3bb73c945b109a791021e3212bb1694ef635f64f7d6f708c5fde"
     },
     {
       "key": "complex",
       "file": "conversations/complex.json",
-      "sha256": "e900609da5bdee33bf49be17072d5c52a5e138d46564f76ca008b244bf454826"
+      "sha256": "e27ff1682e1fe3119c876b24a37f287d4a7348620f7788fa7d7a2f125ab5966a"
     },
     {
       "key": "cap",
       "file": "conversations/cap.json",
-      "sha256": "96bc2b2854f1eff38f09aa0783233f92d20a594f4f477058f0a7d75668d22cf3"
+      "sha256": "3b810490ca41fb8d642745f7e12287a6fd9fbb606a623625fdb00234ff323bb0"
     },
     {
       "key": "emergency",
       "file": "conversations/emergency.json",
-      "sha256": "d14ec6d45bc94eb246650cbd9334e0501b708c964e9612e2558e92c2c4970434"
+      "sha256": "411ece96ef454d0ede7fb9547856e8da3c551f1bfef009b4b99e7fa2df38e017"
     },
     {
       "key": "dosage",
       "file": "conversations/dosage.json",
-      "sha256": "a54003cf9345b7439393c67b634cceaeaa3c27a444fdfc7643dbfec7a8d3c757"
+      "sha256": "04586e8355817a84d372a2480705752563c8ab6a7d3a46d492efaa160acd27b7"
     },
     {
       "key": "community",
       "file": "conversations/community.json",
-      "sha256": "1e1e79f57c9128428e3b1749a1b6bf0e9d32a4664bcff0908b34af647e3becb2"
+      "sha256": "c49a2817f6ead68a3a2a0bc22c86246f73292db32e4a99f8ee7cab39e4735b1a"
     }
   ],
   "questions": [
@@ -9129,5 +9129,9 @@
   "localQueries": {
     "file": "local-queries.json",
     "sha256": "2b060136ee0d0d4db0e2b6fe2cc08428763d272fffd85eb83e97ee0f8d9ce7b3"
+  },
+  "userFacts": {
+    "file": "user-facts.json",
+    "sha256": "e807b063517f110c726eaa038791ffa638e441b8be3035ed7c8a248f7664e063"
   }
 }

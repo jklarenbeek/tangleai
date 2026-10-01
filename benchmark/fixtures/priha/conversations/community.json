@@ -37,5 +37,35 @@
       "community information desk"
     ]
   },
-  "factPredicates": []
+  "factPredicates": [],
+  "optimizerScript": [
+    {
+      "stage": "triage",
+      "promptRevision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e",
+      "reply": {
+        "triage": "simple",
+        "reason": "Known information request.",
+        "requiredFields": [],
+        "intents": [
+          "care-navigation"
+        ]
+      }
+    },
+    {
+      "stage": "plan",
+      "promptRevision": "89c01f3363bafe21d8d6449f25a3831d1cdbff4cf77ab7aad6c438d904773166",
+      "reply": {
+        "queries": [
+          {
+            "text": "community information desk at a community health centre or district health centre",
+            "why": "Find the requested administrative information.",
+            "lanes": {
+              "local": true,
+              "web": true
+            }
+          }
+        ]
+      }
+    }
+  ]
 }

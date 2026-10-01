@@ -181,3 +181,12 @@ that exceeds `traceBytes` rolls back and fails with `TMAS2009`. Mandatory attemp
 failure and budget receipts may exceed the quota so incurred work is never hidden;
 the quota is not a bound on SQLite pages, indexes, WAL or process memory. Already
 admitted concurrent calls still settle and retain their failure costs.
+
+`MasHostBindings.budgetAccount` optionally supplies an enclosing host's existing
+account. Segment execution verifies that its cumulative spend cannot rewind the
+run's durable spend and that remaining calls, tokens and active milliseconds
+cannot widen the run limits. An invalid account fails with `TMAS2009` before any
+node dispatch, preserving the previous valid spend. This lets direct structured
+proposals and MAS clarification share one physical-call budget; normalization and
+repair remain charged by the existing runtime. Omit the binding to retain the
+native account seeded from the run's durable spend.

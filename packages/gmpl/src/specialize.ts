@@ -55,7 +55,7 @@ export async function materializeGmplTemplate(recipe:GmplPatternRecipe,domain:Gm
     }else if(parameters.value.pattern==='structured-debate'){
       const body=await buildDebateRound(parameters.value.participants??2,context);subgraphs.push(body);fragment=await buildBoundedPattern(body,context,{author:false,synthesis:'analysis-merge',maxRounds:parameters.value.maxRounds??3});
     }else if(parameters.value.pattern==='clarification'){
-      const built=await buildClarification(parameters.value.maxTurns??5,context);fragment=built.fragment;subgraphs.push(...built.subgraphs);
+      const built=await buildClarification(parameters.value.maxTurns??5,context,parameters.value.intentOnly??false);fragment=built.fragment;subgraphs.push(...built.subgraphs);
     }else if(parameters.value.pattern==='delphi-panel'){
       const body=await buildDelphiRound(parameters.value.participants??5,context);subgraphs.push(body);fragment=await buildBoundedPattern(body,context,{author:false,synthesis:'delphi-panel-aggregate',maxRounds:parameters.value.maxRounds??3});
     }else return gmplRefuse('TGMPL1003','/recipe','unknown pattern controller');

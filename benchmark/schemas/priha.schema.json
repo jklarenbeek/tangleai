@@ -17,6 +17,9 @@
     },
     {
       "$ref": "#/$defs/prihaLocalQueries"
+    },
+    {
+      "$ref": "#/$defs/prihaUserFacts"
     }
   ],
   "$defs": {
@@ -660,7 +663,8 @@
         "human",
         "expected",
         "oracle",
-        "factPredicates"
+        "factPredicates",
+        "optimizerScript"
       ],
       "properties": {
         "key": {
@@ -812,6 +816,12 @@
               }
             }
           }
+        },
+        "optimizerScript": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaOptimizerScriptStep"
+          }
         }
       }
     },
@@ -951,7 +961,8 @@
         "safelist",
         "profileRevision",
         "profileRuleInputs",
-        "localQueries"
+        "localQueries",
+        "userFacts"
       ],
       "properties": {
         "document": {
@@ -1228,6 +1239,24 @@
           }
         },
         "localQueries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "userFacts": {
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -1533,7 +1562,9 @@
         "hypothesis",
         "capabilityRows",
         "localQueryId",
-        "localCorpusAddressId"
+        "localCorpusAddressId",
+        "optimizerCatalogRevision",
+        "optimizerVocabularyRevision"
       ],
       "properties": {
         "registrationId": {
@@ -1688,6 +1719,14 @@
           "pattern": "^[a-f0-9]{64}$"
         },
         "localCorpusAddressId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "optimizerCatalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "optimizerVocabularyRevision": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
@@ -2573,7 +2612,8 @@
         "reportId",
         "replay",
         "contracts",
-        "local"
+        "local",
+        "optimizer"
       ],
       "properties": {
         "document": {
@@ -2758,6 +2798,9 @@
         },
         "local": {
           "$ref": "#/$defs/prihaLocalReport"
+        },
+        "optimizer": {
+          "$ref": "#/$defs/prihaOptimizerReport"
         }
       },
       "$query": {
@@ -3052,6 +3095,34 @@
               "$.local.corpusAddressId",
               "$.registration.localCorpusAddressId"
             ]
+          },
+          {
+            "$eq": [
+              "$.optimizer.catalogRevision",
+              "$.registration.optimizerCatalogRevision"
+            ]
+          },
+          {
+            "$eq": [
+              "$.optimizer.vocabularyRevision",
+              "$.registration.optimizerVocabularyRevision"
+            ]
+          },
+          {
+            "$every": {
+              "c": "$.capabilities[?(@.id=='optimizer')]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$.optimizer.failed",
+                    0
+                  ]
+                }
+              ]
+            }
           }
         ]
       }
@@ -4251,6 +4322,594 @@
                 }
               ]
             }
+          }
+        ]
+      }
+    },
+    "prihaOptimizerScriptStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "promptRevision",
+        "reply"
+      ],
+      "properties": {
+        "stage": {
+          "enum": [
+            "triage",
+            "question",
+            "resolve",
+            "plan"
+          ]
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reply": {
+          "type": "object"
+        }
+      }
+    },
+    "prihaUserFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "terms"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-user-facts"
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "prihaOptimizerCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conversation",
+        "triage",
+        "outcome",
+        "requiredFields",
+        "ruleIds",
+        "sourceKeys",
+        "queries",
+        "answered",
+        "outstanding",
+        "turns",
+        "calls",
+        "tokens",
+        "reopens",
+        "replayedNodes",
+        "sessionId",
+        "runId",
+        "triageCorrect",
+        "planCorrect",
+        "outcomeCorrect",
+        "factsPreserved",
+        "inventedFacts",
+        "communityQuery",
+        "passed",
+        "error"
+      ],
+      "properties": {
+        "conversation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "triage": {
+          "enum": [
+            "simple",
+            "complex",
+            "emergency",
+            "out-of-scope",
+            "unclassified"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "resolved",
+            "exhausted",
+            "refuse",
+            "unoptimized",
+            "failed"
+          ]
+        },
+        "requiredFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sourceKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "ruleIds"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ruleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "answered": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "outstanding": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reopens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayedNodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "triageCorrect": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planCorrect": {
+          "type": "boolean"
+        },
+        "outcomeCorrect": {
+          "type": "boolean"
+        },
+        "factsPreserved": {
+          "type": "boolean"
+        },
+        "inventedFacts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "communityQuery": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "prihaOptimizerRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "status",
+        "tier",
+        "cases",
+        "metrics"
+      ],
+      "properties": {
+        "key": {
+          "enum": [
+            "drag-no-optimizer",
+            "priha-full"
+          ]
+        },
+        "status": {
+          "const": "executed"
+        },
+        "tier": {
+          "const": "scripted"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaOptimizerCase"
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cases",
+            "planned",
+            "refused",
+            "turns",
+            "calls",
+            "tokens",
+            "triageCorrect",
+            "triageAccuracy",
+            "planCorrect",
+            "planAccuracy",
+            "outcomeCorrect",
+            "factsPreserved",
+            "inventedFacts",
+            "communityRequired",
+            "communityPresent",
+            "clarifications",
+            "resolvedClarifications",
+            "exhaustedClarifications",
+            "clarificationSuccess"
+          ],
+          "properties": {
+            "cases": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "turns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "triageCorrect": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "triageAccuracy": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "planCorrect": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "planAccuracy": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "outcomeCorrect": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "factsPreserved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "inventedFacts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "communityRequired": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "communityPresent": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "clarifications": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resolvedClarifications": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "exhaustedClarifications": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "clarificationSuccess": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.metrics.cases",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.refused",
+              {
+                "$count": "$.cases[?(@.outcome=='refuse' || @.outcome=='exhausted')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.planCorrect",
+              {
+                "$count": "$.cases[?(@.planCorrect==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.outcomeCorrect",
+              {
+                "$count": "$.cases[?(@.outcomeCorrect==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.factsPreserved",
+              {
+                "$count": "$.cases[?(@.factsPreserved==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.communityRequired",
+              {
+                "$count": "$.cases[?(@.communityQuery!=null)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.communityPresent",
+              {
+                "$count": "$.cases[?(@.communityQuery==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.turns",
+              {
+                "$sum": "$.cases[*].turns"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.calls",
+              {
+                "$sum": "$.cases[*].calls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.tokens",
+              {
+                "$sum": "$.cases[*].tokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.metrics.inventedFacts",
+              {
+                "$sum": "$.cases[*].inventedFacts"
+              }
+            ]
+          },
+          {
+            "$le": [
+              "$.metrics.planCorrect",
+              "$.metrics.cases"
+            ]
+          }
+        ]
+      }
+    },
+    "prihaOptimizerReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "tier",
+        "catalogRevision",
+        "vocabularyRevision",
+        "rows",
+        "failed",
+        "scriptedRequests",
+        "providerRequests",
+        "networkRequests",
+        "latency",
+        "limitations"
+      ],
+      "properties": {
+        "status": {
+          "const": "executed"
+        },
+        "tier": {
+          "const": "scripted"
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "vocabularyRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaOptimizerRow"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scriptedRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerRequests": {
+          "const": 0
+        },
+        "networkRequests": {
+          "const": 0
+        },
+        "latency": {
+          "const": "not-measured"
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.scriptedRequests",
+              {
+                "$sum": "$.rows[*].metrics.calls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.failed",
+              {
+                "$count": "$.rows[?(@.key=='priha-full')].cases[?(@.passed==false)]"
+              }
+            ]
           }
         ]
       }

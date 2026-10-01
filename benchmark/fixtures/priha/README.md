@@ -20,3 +20,13 @@ The five named mechanism rows share the same questions and claim predicates.
 The oracle supplies registered evidence only. Eight deliberately incorrect
 controls independently exercise the scorer and instrument guards. Their outcomes
 are diagnostic, not a claim that a product policy already enforced them.
+
+The optimizer scripts were added after the original conversation expectations
+were frozen; all existing expected decisions, user turns, predicates and oracle
+values are retained exactly. Each physical scripted response names its stage and
+compiled prompt revision. Unexpected requests refuse. The closed user-fact
+vocabulary is separately byte-addressed in `user-facts.json`; it is a software
+guard fixture, not a clinical taxonomy. Completion and normalization requests are
+listed separately. The six conversations register 27 requests in total, with a
+maximum of 12 for the two-turn resolved path and zero for deterministic refusals.
+The raw-query comparator preserves refusal policy but omits optimizer stages.

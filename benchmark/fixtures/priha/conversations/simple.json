@@ -37,5 +37,35 @@
       "Harbour reception location"
     ]
   },
-  "factPredicates": []
+  "factPredicates": [],
+  "optimizerScript": [
+    {
+      "stage": "triage",
+      "promptRevision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e",
+      "reply": {
+        "triage": "simple",
+        "reason": "Known information request.",
+        "requiredFields": [],
+        "intents": [
+          "administrative-information"
+        ]
+      }
+    },
+    {
+      "stage": "plan",
+      "promptRevision": "89c01f3363bafe21d8d6449f25a3831d1cdbff4cf77ab7aad6c438d904773166",
+      "reply": {
+        "queries": [
+          {
+            "text": "Harbour reception location",
+            "why": "Find the requested administrative information.",
+            "lanes": {
+              "local": true,
+              "web": true
+            }
+          }
+        ]
+      }
+    }
+  ]
 }

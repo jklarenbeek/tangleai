@@ -3,9 +3,11 @@
   "benchmark": "priha",
   "schemaVersion": 1,
   "registration": {
+    "optimizerCatalogRevision": "18a369c93fbc5c1bf01033e38b122da60eb7d0f912c68d98260e01e31d36406c",
+    "optimizerVocabularyRevision": "886d38817f536e23af2737a6c2dd76d3db064941f1dfa5a7f3851d87c0721dd2",
     "localCorpusAddressId": "1519d9434098aaacd3cc905d9d719b22ddc9a3825cbd8c4121769043b10e34a4",
     "localQueryId": "7f1c1ca99128279d4ecd5750a1276809de959e8cb8a8ea61408981a1255479cf",
-    "fixtureId": "d5bda119135b79f7d5a994cbf53d44621963365f65cd893a55ff79f474176b4d",
+    "fixtureId": "609945b22ea45d51f9abfb7c503bc8f596eb048025ba30095ab9013fb47d6dd2",
     "control": {
       "reportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727",
       "registrationId": "a604b2d67d36e7f2f485935fe290866a1fdde485b9b02e5c70ebf4e416f42292",
@@ -189,7 +191,7 @@
         ]
       }
     ],
-    "registrationId": "e29d9606329aaf6ff8d8e04a1833830f5aba4bbac5867d0dd9a2a1adffb85a1d"
+    "registrationId": "a73ce659b6e6afd31d216c136fe15d0541ba209159ee0d32d2961d3ffcef068a"
   },
   "source": {
     "files": [
@@ -722,16 +724,20 @@
         "sha256": "2e8fda52164a3703afcaf638151702cfca430106d21991d6750425b34d29c38c"
       },
       {
+        "path": "benchmark/lib/priha-optimizer.ts",
+        "sha256": "da691848dc1155b1bad6c89151e2df48f1dc0d298d1f92cec227778e6756fe89"
+      },
+      {
         "path": "benchmark/lib/priha-replay.ts",
         "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "cc2565d68557e89d88a7066fe55220c86f7734cda2ffd2182e579ffba80bb11b"
+        "sha256": "b0d65453527d210e678e01d975f6d6f2666bd984cea3d4513a5d95fe3ee71550"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "30ea9310227d3317b74bedfb02b7446c26c862bf51cb07e96264bd7279314f3d"
+        "sha256": "2495560b7bb5207cf8e06a19d761e5158a822938697d0d26ad20c5d2bb22de7c"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -899,15 +905,15 @@
       },
       {
         "path": "benchmark/schemas/priha.schema.json",
-        "sha256": "e27e7821c14914ec3e60b32dd1fc4ce350918b41b43723977c5313781b818c2c"
+        "sha256": "8368e5b47e9d3e17e2529a7fa7a1275dc758921d80a18a544544df7012cf14d8"
       },
       {
         "path": "package-lock.json",
-        "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
+        "sha256": "1fd45b35bd00a8005aaa0266b78c98a595c06799e97f0bec4895aad08c58efd5"
       },
       {
         "path": "package.json",
-        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
+        "sha256": "ec0677b7fccefa8b8aaef74f884af17795aa8776f38598abfc53e6d5ddc1b872"
       },
       {
         "path": "packages/agents/package.json",
@@ -1511,7 +1517,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "0e78fcf555651b8dcffa3b55853259d797a54cac0383bd5242e42e1aba8dccbe"
+        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -1519,11 +1525,11 @@
       },
       {
         "path": "packages/gmpl/src/clarification-tasks.ts",
-        "sha256": "eb5d89eaa914d70676a3c67170729755bbd828d0ed0b57349837270d0c541c22"
+        "sha256": "17879e6c723f13fe4e94618dd48a9e0e4bbec605a06a28f85f5015e06219d20a"
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "53683c302a3986681c5b50fbfc62c980f40fbcbcdc0e5cfe3888bcf51719a800"
+        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -1559,7 +1565,7 @@
       },
       {
         "path": "packages/gmpl/src/patterns/clarification.ts",
-        "sha256": "eda233c05a109c60b1aa8fd2d07ffdaa1b451b6549b9d573c7ad17bea397d87d"
+        "sha256": "b4e783917874f68a0bebd42b095097248b6ce058e2bbb266803950b3c22dca1d"
       },
       {
         "path": "packages/gmpl/src/patterns/controller.ts",
@@ -1611,15 +1617,19 @@
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
-        "sha256": "799eccfe2797364a01277f6eb46bb73edc77e33d9509c75fe14c9058a86f4495"
+        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
       },
       {
         "path": "packages/gmpl/src/tasks.ts",
         "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
       },
       {
+        "path": "packages/grounding/artifacts/catalog.json",
+        "sha256": "9f122124ca37c1d8a8b2022fc16e64ad52ccea8bc8264fc39c2d0ce5eeed49e5"
+      },
+      {
         "path": "packages/grounding/package.json",
-        "sha256": "8912bf2c14dbf22f40258c6d30f1959939d2fab5e29c6cff94e8b53d5e7b6428"
+        "sha256": "30ee630127e13ee973d62386411e3bb79324feba15ecb5dca0be0d2afd548499"
       },
       {
         "path": "packages/grounding/profiles/priha-hk.json",
@@ -1627,11 +1637,15 @@
       },
       {
         "path": "packages/grounding/schemas/grounding.schema.json",
-        "sha256": "8ad000d7bf9d4f941e85eca287892d9ee2bf47ba43b02ec4819da001f2e60db0"
+        "sha256": "4f2bf98ab47e835d570ead55189608f98320df8de7fa1d06d0a134d5005ac2b4"
+      },
+      {
+        "path": "packages/grounding/src/clarification.ts",
+        "sha256": "9d6b977f1fb450a2c2a68773c6050a810c887ad95c025f68b6821540f50a1ed6"
       },
       {
         "path": "packages/grounding/src/contracts.gen.ts",
-        "sha256": "ffe3f0cd6bce3c9de1491aa91db1d095186e0644337c68b69eb91449ce9a8e88"
+        "sha256": "2c48c375cd6d7e38d847009f538ed06e2f710da8de9308c37ed84fc1829a3bea"
       },
       {
         "path": "packages/grounding/src/errors.ts",
@@ -1643,7 +1657,11 @@
       },
       {
         "path": "packages/grounding/src/index.ts",
-        "sha256": "5ac7523131f892f38a1a388f3deb2d990b40aa732cab819a86ec909f4d08a7b1"
+        "sha256": "97a8cf446e73b966653c86995164d73efad8b6cdafd7896776240d7594ecb1cd"
+      },
+      {
+        "path": "packages/grounding/src/intent.ts",
+        "sha256": "5d2240159c7bfc87305d291bb09a0b95d707ff550c610d9d653f0ca7664ed5c0"
       },
       {
         "path": "packages/grounding/src/local.ts",
@@ -1652,6 +1670,14 @@
       {
         "path": "packages/grounding/src/memory-store.ts",
         "sha256": "ada667d8a785eb745968c3c74b091eac20c2fcd69efe38df8d90c460ed83af2d"
+      },
+      {
+        "path": "packages/grounding/src/optimizer-artifacts.ts",
+        "sha256": "caf89af145fdc6554e680cd0cb513b56af1e209c1bec51ad6cb87fb0248a829a"
+      },
+      {
+        "path": "packages/grounding/src/optimizer.ts",
+        "sha256": "9528e00232922e46f92a4e5766cfc5f644b5da64489d5c1396037c878f1fdd25"
       },
       {
         "path": "packages/grounding/src/profile.ts",
@@ -1667,15 +1693,19 @@
       },
       {
         "path": "packages/grounding/src/schema.ts",
-        "sha256": "3da542ffab96daa5976934711fead5c310542627ecfa7f3947249b08945b451d"
+        "sha256": "ec9263b0f97961927fde7fe30906905c2de9787aa11f77b8ab49f02e81d0cc1e"
+      },
+      {
+        "path": "packages/grounding/src/schemas/optimizer.ts",
+        "sha256": "e8ca9ec94fce5d0af997c9894f5aa2c3b841e3d0a2cf1ee0d033aea04e0b3a1f"
       },
       {
         "path": "packages/grounding/src/session.ts",
-        "sha256": "8de3dc175b27487d52cd1e99e4baa306ef43881eda11ea371b79a890b629af50"
+        "sha256": "bfe3a96fcc2ef915243c7d1d77b7a99d1a6b8918a644de8e5e048819dd020c8d"
       },
       {
         "path": "packages/grounding/src/store.ts",
-        "sha256": "2e315675796b3f97a9c4e151c573c7f0eba626f85a5eb4191f95317c9b75423a"
+        "sha256": "c185c68deb3f8ef0ad15f44ac847c4a4fca0bf7227685bd854550b6561356253"
       },
       {
         "path": "packages/hera/artifacts/catalog.json",
@@ -2007,7 +2037,7 @@
       },
       {
         "path": "packages/mas/src/runtime.ts",
-        "sha256": "668d00aeb40eb2b3a1569cff96db1e89b6a0a9c6f05064d51c2d12ed0160f3e6"
+        "sha256": "140beaa8abf35779e3529bcc03441e05ad710bc211d6bfe18b7d4e3a63c05deb"
       },
       {
         "path": "packages/mas/src/schema.ts",
@@ -2466,6 +2496,10 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-clarification.ts",
+        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+      },
+      {
         "path": "packages/store/src/grounding-model.ts",
         "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
       },
@@ -2487,7 +2521,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
+        "sha256": "6025464670b88f19c62c2a41671541a8176e4479ce9c0044ce0d509349b34e33"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -2670,33 +2704,33 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "d4fb7f71f099ab189d0918f9a11d205d7ac83cfa9c676b1e4476c198615f8ced"
+    "sha256": "1653ee9434114d839a8c7e05709c1978cad58af2eecccfdc318b5a04f5951cbf"
   },
   "fixtureSource": {
     "files": [
       {
         "path": "benchmark/fixtures/priha/conversations/cap.json",
-        "sha256": "96bc2b2854f1eff38f09aa0783233f92d20a594f4f477058f0a7d75668d22cf3"
+        "sha256": "3b810490ca41fb8d642745f7e12287a6fd9fbb606a623625fdb00234ff323bb0"
       },
       {
         "path": "benchmark/fixtures/priha/conversations/community.json",
-        "sha256": "1e1e79f57c9128428e3b1749a1b6bf0e9d32a4664bcff0908b34af647e3becb2"
+        "sha256": "c49a2817f6ead68a3a2a0bc22c86246f73292db32e4a99f8ee7cab39e4735b1a"
       },
       {
         "path": "benchmark/fixtures/priha/conversations/complex.json",
-        "sha256": "e900609da5bdee33bf49be17072d5c52a5e138d46564f76ca008b244bf454826"
+        "sha256": "e27ff1682e1fe3119c876b24a37f287d4a7348620f7788fa7d7a2f125ab5966a"
       },
       {
         "path": "benchmark/fixtures/priha/conversations/dosage.json",
-        "sha256": "a54003cf9345b7439393c67b634cceaeaa3c27a444fdfc7643dbfec7a8d3c757"
+        "sha256": "04586e8355817a84d372a2480705752563c8ab6a7d3a46d492efaa160acd27b7"
       },
       {
         "path": "benchmark/fixtures/priha/conversations/emergency.json",
-        "sha256": "d14ec6d45bc94eb246650cbd9334e0501b708c964e9612e2558e92c2c4970434"
+        "sha256": "411ece96ef454d0ede7fb9547856e8da3c551f1bfef009b4b99e7fa2df38e017"
       },
       {
         "path": "benchmark/fixtures/priha/conversations/simple.json",
-        "sha256": "c6a4d295312c8d0dd3aa7c0ced920d37232eaf3d47aa8eca45d5eb797b058456"
+        "sha256": "afae603b774d3bb73c945b109a791021e3212bb1694ef635f64f7d6f708c5fde"
       },
       {
         "path": "benchmark/fixtures/priha/local-queries.json",
@@ -2704,7 +2738,7 @@
       },
       {
         "path": "benchmark/fixtures/priha/manifest.json",
-        "sha256": "aebb20403a2a1416596978e9f3c102ed1aa12841a2ca4696ea6283ff4e7d5c92"
+        "sha256": "9cc7700ad31370331237e6388a4a5b3a33c43082da9efc50ba3b8b53a638e65c"
       },
       {
         "path": "benchmark/fixtures/priha/sources/access-v1.html",
@@ -2759,6 +2793,10 @@
         "sha256": "0e3e704ceabd9e63a91510196a319bdce8aac74a93a409c0c5e4e9a3d1171e2f"
       },
       {
+        "path": "benchmark/fixtures/priha/user-facts.json",
+        "sha256": "e807b063517f110c726eaa038791ffa638e441b8be3035ed7c8a248f7664e063"
+      },
+      {
         "path": "benchmark/fixtures/priha/web/booking-rumour.html",
         "sha256": "b2fa87910700363305033ea04aebaade50bc370c9418256356826030ac38b9fe"
       },
@@ -2795,7 +2833,7 @@
         "sha256": "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
       }
     ],
-    "sha256": "bf09ae2f1f461f9d214fca32dfb4564621a784183233a1014d958a77ec1662a2"
+    "sha256": "d711c2fb4e39b963661c79280373190813f8cff44501e0aa4ed19661e5e5c011"
   },
   "replay": {
     "requests": 9,
@@ -4340,17 +4378,17 @@
     },
     {
       "key": "drag-no-optimizer",
-      "status": "implementation-missing",
-      "reason": "Dual retrieval and reconciliation are not implemented.",
+      "status": "not-run",
+      "reason": "The scripted plan census executes; retrieval, claim generation and the complete workflow remain unexecuted.",
       "retrieval": {
         "status": "implementation-missing",
         "reason": "Dual retrieval and reconciliation are not implemented.",
         "cases": 0
       },
       "optimizer": {
-        "status": "implementation-missing",
-        "reason": "The clarification/plan census is not implemented.",
-        "cases": 0
+        "status": "executed",
+        "reason": "Scripted plan census only; no answer-quality measurement.",
+        "cases": 6
       },
       "answer": {
         "status": "implementation-missing",
@@ -4413,17 +4451,17 @@
     },
     {
       "key": "priha-full",
-      "status": "implementation-missing",
-      "reason": "The clarification, dual retrieval and composed workflow capabilities are not implemented.",
+      "status": "not-run",
+      "reason": "The scripted plan census executes; retrieval, claim generation and the complete workflow remain unexecuted.",
       "retrieval": {
         "status": "implementation-missing",
         "reason": "The clarification, dual retrieval and composed workflow capabilities are not implemented.",
         "cases": 0
       },
       "optimizer": {
-        "status": "implementation-missing",
-        "reason": "The clarification/plan census is not implemented.",
-        "cases": 0
+        "status": "executed",
+        "reason": "Scripted plan census only; no answer-quality measurement.",
+        "cases": 6
       },
       "answer": {
         "status": "implementation-missing",
@@ -4681,10 +4719,8 @@
     },
     {
       "id": "optimizer",
-      "passed": false,
-      "missing": [
-        "clarification-plan-census"
-      ]
+      "passed": true,
+      "missing": []
     },
     {
       "id": "web",
@@ -25416,6 +25452,465 @@
     "networkRequests": 0,
     "latency": "separate-receipt"
   },
+  "optimizer": {
+    "status": "executed",
+    "tier": "scripted",
+    "catalogRevision": "18a369c93fbc5c1bf01033e38b122da60eb7d0f912c68d98260e01e31d36406c",
+    "vocabularyRevision": "886d38817f536e23af2737a6c2dd76d3db064941f1dfa5a7f3851d87c0721dd2",
+    "rows": [
+      {
+        "key": "drag-no-optimizer",
+        "status": "executed",
+        "tier": "scripted",
+        "cases": [
+          {
+            "conversation": "simple",
+            "triage": "unclassified",
+            "outcome": "unoptimized",
+            "requiredFields": [],
+            "ruleIds": [
+              "in-scope"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "Where is Harbour reception?",
+                "ruleIds": []
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": null,
+            "planCorrect": false,
+            "outcomeCorrect": false,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": false,
+            "error": null
+          },
+          {
+            "conversation": "complex",
+            "triage": "unclassified",
+            "outcome": "unoptimized",
+            "requiredFields": [],
+            "ruleIds": [
+              "in-scope"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "I need to visit a service desk.",
+                "ruleIds": []
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": null,
+            "planCorrect": false,
+            "outcomeCorrect": false,
+            "factsPreserved": false,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": false,
+            "error": null
+          },
+          {
+            "conversation": "cap",
+            "triage": "unclassified",
+            "outcome": "unoptimized",
+            "requiredFields": [],
+            "ruleIds": [
+              "in-scope"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "Help me with a service.",
+                "ruleIds": []
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": null,
+            "planCorrect": false,
+            "outcomeCorrect": false,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": false,
+            "error": null
+          },
+          {
+            "conversation": "emergency",
+            "triage": "emergency",
+            "outcome": "refuse",
+            "requiredFields": [],
+            "ruleIds": [
+              "emergency-route"
+            ],
+            "sourceKeys": [
+              "directory"
+            ],
+            "queries": [],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "dosage",
+            "triage": "out-of-scope",
+            "outcome": "refuse",
+            "requiredFields": [],
+            "ruleIds": [
+              "out-of-scope-dosage"
+            ],
+            "sourceKeys": [],
+            "queries": [],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "community",
+            "triage": "unclassified",
+            "outcome": "unoptimized",
+            "requiredFields": [],
+            "ruleIds": [
+              "in-scope"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "Where can I get local information first?",
+                "ruleIds": []
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": null,
+            "runId": null,
+            "triageCorrect": null,
+            "planCorrect": false,
+            "outcomeCorrect": false,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": false,
+            "passed": false,
+            "error": null
+          }
+        ],
+        "metrics": {
+          "cases": 6,
+          "planned": 4,
+          "refused": 2,
+          "turns": 0,
+          "calls": 0,
+          "tokens": 0,
+          "triageCorrect": null,
+          "triageAccuracy": null,
+          "planCorrect": 2,
+          "planAccuracy": 0.3333333333333333,
+          "outcomeCorrect": 2,
+          "factsPreserved": 5,
+          "inventedFacts": 0,
+          "communityRequired": 1,
+          "communityPresent": 0,
+          "clarifications": 0,
+          "resolvedClarifications": 0,
+          "exhaustedClarifications": 0,
+          "clarificationSuccess": null
+        }
+      },
+      {
+        "key": "priha-full",
+        "status": "executed",
+        "tier": "scripted",
+        "cases": [
+          {
+            "conversation": "simple",
+            "triage": "simple",
+            "outcome": "resolved",
+            "requiredFields": [],
+            "ruleIds": [
+              "in-scope"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "Harbour reception location",
+                "ruleIds": []
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 2,
+            "tokens": 20,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": "session-02c0e247ef69df771e544708dc50c209",
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "complex",
+            "triage": "complex",
+            "outcome": "resolved",
+            "requiredFields": [
+              "service",
+              "purpose"
+            ],
+            "ruleIds": [
+              "clarify-service",
+              "clarify-purpose"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "Travel voucher desk location",
+                "ruleIds": []
+              }
+            ],
+            "answered": {
+              "purpose": "I need its location.",
+              "service": "I mean the voucher desk."
+            },
+            "outstanding": [],
+            "turns": 2,
+            "calls": 12,
+            "tokens": 120,
+            "reopens": 2,
+            "replayedNodes": 8,
+            "sessionId": "session-75c302dbbdff52209765d44acff0b5b1",
+            "runId": "clarification-f58ee4779d4aa94869a5564e742755a9",
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "cap",
+            "triage": "complex",
+            "outcome": "exhausted",
+            "requiredFields": [
+              "service"
+            ],
+            "ruleIds": [
+              "clarify-service",
+              "clarification-cap"
+            ],
+            "sourceKeys": [],
+            "queries": [],
+            "answered": {},
+            "outstanding": [
+              "service"
+            ],
+            "turns": 2,
+            "calls": 11,
+            "tokens": 110,
+            "reopens": 2,
+            "replayedNodes": 8,
+            "sessionId": "session-52540a7cd925cdaf7851af1bb2182b65",
+            "runId": "clarification-6fbdd1f09d8ca9f51341ba5fc5ab58a5",
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "emergency",
+            "triage": "emergency",
+            "outcome": "refuse",
+            "requiredFields": [],
+            "ruleIds": [
+              "emergency-route"
+            ],
+            "sourceKeys": [
+              "directory"
+            ],
+            "queries": [],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": "session-8318dd3ca3a77d6339e659e6635fbdb1",
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "dosage",
+            "triage": "out-of-scope",
+            "outcome": "refuse",
+            "requiredFields": [],
+            "ruleIds": [
+              "out-of-scope-dosage"
+            ],
+            "sourceKeys": [],
+            "queries": [],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 0,
+            "tokens": 0,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": "session-e64549684663d915169f91baf35323b3",
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": null,
+            "passed": true,
+            "error": null
+          },
+          {
+            "conversation": "community",
+            "triage": "simple",
+            "outcome": "resolved",
+            "requiredFields": [],
+            "ruleIds": [
+              "community-first"
+            ],
+            "sourceKeys": [],
+            "queries": [
+              {
+                "text": "community information desk at a community health centre or district health centre",
+                "ruleIds": [
+                  "community-first"
+                ]
+              }
+            ],
+            "answered": {},
+            "outstanding": [],
+            "turns": 0,
+            "calls": 2,
+            "tokens": 20,
+            "reopens": 0,
+            "replayedNodes": 0,
+            "sessionId": "session-b5b1827977bdaf0c5e9b350eb57038e7",
+            "runId": null,
+            "triageCorrect": true,
+            "planCorrect": true,
+            "outcomeCorrect": true,
+            "factsPreserved": true,
+            "inventedFacts": 0,
+            "communityQuery": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "metrics": {
+          "cases": 6,
+          "planned": 3,
+          "refused": 3,
+          "turns": 4,
+          "calls": 27,
+          "tokens": 270,
+          "triageCorrect": 6,
+          "triageAccuracy": 1,
+          "planCorrect": 6,
+          "planAccuracy": 1,
+          "outcomeCorrect": 6,
+          "factsPreserved": 6,
+          "inventedFacts": 0,
+          "communityRequired": 1,
+          "communityPresent": 1,
+          "clarifications": 2,
+          "resolvedClarifications": 1,
+          "exhaustedClarifications": 1,
+          "clarificationSuccess": 0.5
+        }
+      }
+    ],
+    "failed": 0,
+    "scriptedRequests": 27,
+    "providerRequests": 0,
+    "networkRequests": 0,
+    "latency": "not-measured",
+    "limitations": "Registered scripted responses test software control flow and closed-vocabulary fact checks. Raw-query controls retain deterministic refusal rules. These are plan-level observations, not answer or live model quality. The deterministic clock is not a latency measurement."
+  },
   "pairing": {
     "eligible": false,
     "reasons": [
@@ -25675,11 +26170,11 @@
   ],
   "summary": {
     "rows": 6,
-    "missing": 3,
+    "missing": 1,
     "cases": 32,
     "badControls": 8,
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "e5465d75f0ea71e80127d70fb962359476ffa4b5cec94e61e7d438cb1ef079ff"
+  "reportId": "408701d608be8bb4069874e5c740edfbdbfc2526b6cf0c0de8785e58aba41b0c"
 }

@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
-      "sha256": "2afb20101046c2de09746255b8c4fd92ae4d7e27c894acb271aa6fecbdfc8fc6",
+      "head": "2dce4bdb6cfb8fa721b21be5df3f299c5be4de70",
+      "sha256": "0db53a79313d0ba55909ca4b045d3161a7214d9eb718063695f78babc7e3411f",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -501,16 +501,20 @@
           "sha256": "2e8fda52164a3703afcaf638151702cfca430106d21991d6750425b34d29c38c"
         },
         {
+          "path": "benchmark/lib/priha-optimizer.ts",
+          "sha256": "da691848dc1155b1bad6c89151e2df48f1dc0d298d1f92cec227778e6756fe89"
+        },
+        {
           "path": "benchmark/lib/priha-replay.ts",
           "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
         },
         {
           "path": "benchmark/lib/priha.ts",
-          "sha256": "cc2565d68557e89d88a7066fe55220c86f7734cda2ffd2182e579ffba80bb11b"
+          "sha256": "b0d65453527d210e678e01d975f6d6f2666bd984cea3d4513a5d95fe3ee71550"
         },
         {
           "path": "benchmark/lib/priha.types.ts",
-          "sha256": "30ea9310227d3317b74bedfb02b7446c26c862bf51cb07e96264bd7279314f3d"
+          "sha256": "2495560b7bb5207cf8e06a19d761e5158a822938697d0d26ad20c5d2bb22de7c"
         },
         {
           "path": "benchmark/lib/question-stream.ts",
@@ -682,11 +686,11 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
+          "sha256": "1fd45b35bd00a8005aaa0266b78c98a595c06799e97f0bec4895aad08c58efd5"
         },
         {
           "path": "package.json",
-          "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
+          "sha256": "ec0677b7fccefa8b8aaef74f884af17795aa8776f38598abfc53e6d5ddc1b872"
         },
         {
           "path": "packages/agents/package.json",
@@ -1102,7 +1106,7 @@
         },
         {
           "path": "packages/mas/src/runtime.ts",
-          "sha256": "668d00aeb40eb2b3a1569cff96db1e89b6a0a9c6f05064d51c2d12ed0160f3e6"
+          "sha256": "140beaa8abf35779e3529bcc03441e05ad710bc211d6bfe18b7d4e3a63c05deb"
         },
         {
           "path": "packages/mas/src/schema.ts",
@@ -1241,6 +1245,10 @@
           "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
         },
         {
+          "path": "packages/store/src/grounding-clarification.ts",
+          "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+        },
+        {
           "path": "packages/store/src/grounding-model.ts",
           "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
         },
@@ -1262,7 +1270,7 @@
         },
         {
           "path": "packages/store/src/index.ts",
-          "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
+          "sha256": "6025464670b88f19c62c2a41671541a8176e4479ce9c0044ce0d509349b34e33"
         },
         {
           "path": "packages/store/src/ledger-storage.ts",
@@ -1557,7 +1565,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "710f943e4a8c720c0c4ecafc599a6e98662c7622d9f025283878107b4d6a778b",
+    "planId": "71d8795b216b987d59f45c6805ed35ede4e91404d784a76a8a5b99ac25931ab5",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

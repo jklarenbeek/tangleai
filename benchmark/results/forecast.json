@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
+    "head": "2dce4bdb6cfb8fa721b21be5df3f299c5be4de70",
     "clean": false,
     "files": [
       {
@@ -498,16 +498,20 @@
         "sha256": "2e8fda52164a3703afcaf638151702cfca430106d21991d6750425b34d29c38c"
       },
       {
+        "path": "benchmark/lib/priha-optimizer.ts",
+        "sha256": "da691848dc1155b1bad6c89151e2df48f1dc0d298d1f92cec227778e6756fe89"
+      },
+      {
         "path": "benchmark/lib/priha-replay.ts",
         "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "cc2565d68557e89d88a7066fe55220c86f7734cda2ffd2182e579ffba80bb11b"
+        "sha256": "b0d65453527d210e678e01d975f6d6f2666bd984cea3d4513a5d95fe3ee71550"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "30ea9310227d3317b74bedfb02b7446c26c862bf51cb07e96264bd7279314f3d"
+        "sha256": "2495560b7bb5207cf8e06a19d761e5158a822938697d0d26ad20c5d2bb22de7c"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -679,11 +683,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
+        "sha256": "1fd45b35bd00a8005aaa0266b78c98a595c06799e97f0bec4895aad08c58efd5"
       },
       {
         "path": "package.json",
-        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
+        "sha256": "ec0677b7fccefa8b8aaef74f884af17795aa8776f38598abfc53e6d5ddc1b872"
       },
       {
         "path": "packages/agents/package.json",
@@ -1099,7 +1103,7 @@
       },
       {
         "path": "packages/mas/src/runtime.ts",
-        "sha256": "668d00aeb40eb2b3a1569cff96db1e89b6a0a9c6f05064d51c2d12ed0160f3e6"
+        "sha256": "140beaa8abf35779e3529bcc03441e05ad710bc211d6bfe18b7d4e3a63c05deb"
       },
       {
         "path": "packages/mas/src/schema.ts",
@@ -1238,6 +1242,10 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-clarification.ts",
+        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+      },
+      {
         "path": "packages/store/src/grounding-model.ts",
         "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
       },
@@ -1259,7 +1267,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
+        "sha256": "6025464670b88f19c62c2a41671541a8176e4479ce9c0044ce0d509349b34e33"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1318,7 +1326,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "2afb20101046c2de09746255b8c4fd92ae4d7e27c894acb271aa6fecbdfc8fc6"
+    "sha256": "0db53a79313d0ba55909ca4b045d3161a7214d9eb718063695f78babc7e3411f"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44783,5 +44791,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "7aedc7a52fe2f8b57303b799f7cdbcf4e315ac16f23ed303e11d6929d8999a14"
+  "reportId": "4da1d979371fba254206cb8b6d228c22dbc180857741fea8d9d6d15f48748fd3"
 }

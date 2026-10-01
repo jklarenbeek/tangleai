@@ -26,5 +26,6 @@
     "outcome": "refuse",
     "queries": []
   },
-  "factPredicates": []
+  "factPredicates": [],
+  "optimizerScript": []
 }

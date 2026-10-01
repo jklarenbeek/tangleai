@@ -360,6 +360,10 @@ export interface GmplPatternParametersOneOf5 {
    * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
    */
   maxTurns?: number;
+  /**
+   * Project resolved intent without a separate answer synthesis call; default false.
+   */
+  intentOnly?: boolean;
 }
 
 

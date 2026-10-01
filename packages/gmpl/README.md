@@ -135,3 +135,10 @@ rows are ineligible. Reports separate original purchases from zero incremental
 replay transport. Test-created responses remain `scripted`. See
 [the plan and replay report](../../docs/GMPL_LOCOMO.md) for identities, costs and
 limits. Live LoCoMo pattern-versus-single-agent quality remains unmeasured.
+
+Clarification accepts opt-in `intentOnly: true`. Once the native clarification
+loop resolves, a deterministic projection returns its refined query and findings
+without an additional answer-agent completion/normalization pair. The default
+continues to synthesize an answer. Domain applications can use the retained
+host-response history for typed intent projection while MAS still owns the loop,
+interaction waits, replay and shared spend.

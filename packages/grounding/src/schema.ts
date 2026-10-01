@@ -8,6 +8,7 @@ import { groundingRefuse, type GroundingOutcome } from './errors.ts';
 import { immutableGroundingJson } from './identity.ts';
 export { groundingSchema };
 export interface GroundingRecords {
+    triageDecision: C.TriageDecision; queryDraft: C.QueryDraft; clarificationQuestion: C.ClarificationQuestion; optimizerCheckpoint: C.OptimizerCheckpoint;
     groundingProfile: C.GroundingProfile; corpusManifest: C.CorpusManifest; groundingSession: C.GroundingSession;
     clarifiedIntent: C.ClarifiedIntent; queryPlan: C.QueryPlan; evidenceCandidate: C.EvidenceCandidate;
     webRetrievalRun: C.WebRetrievalRun; evidenceConflict: C.EvidenceConflict; groundedClaim: C.GroundedClaim;

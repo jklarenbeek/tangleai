@@ -56,4 +56,5 @@ export { createForecastStore, type ForecastStoreOptions } from './forecast-store
 export { FORECAST_COLLECTIONS } from './forecast-model.ts';
 
 export { createGroundingStore } from './grounding-store.ts';
+export { createGroundingClarificationHost } from './grounding-clarification.ts';
 export type { GroundingStoreOptions } from './grounding-store.ts';

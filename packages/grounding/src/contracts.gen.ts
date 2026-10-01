@@ -407,6 +407,127 @@ export type GroundingSessionUserContextAdditional = string;
  */
 export type GroundingSessionAnswerIdsItem = string;
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TriageDecisionRequiredFieldsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TriageDecisionIntentsItem = string;
+
+export interface TriageDecision {
+  triage: "simple" | "complex";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2000
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  requiredFields: Array<TriageDecisionRequiredFieldsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  intents: Array<TriageDecisionIntentsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type OptimizerCheckpointRuleIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type OptimizerCheckpointSourceKeysItem = string;
+
+export interface OptimizerCheckpointBudget {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface OptimizerCheckpointSpent {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface OptimizerCheckpoint {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=16000
+   */
+  originalQuery: string;
+  route: "simple" | "complex" | "emergency" | "out_of_scope";
+  decision: TriageDecision | null;
+  stage: "triaged" | "clarifying" | "ready" | "planned" | "refused" | "failed";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  ruleIds: Array<OptimizerCheckpointRuleIdsItem>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  sourceKeys: Array<OptimizerCheckpointSourceKeysItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  catalogRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  vocabularyRevision: string;
+  models: { triage: unknown; plan: unknown; };
+  budget: OptimizerCheckpointBudget;
+  spent: OptimizerCheckpointSpent;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  intentId?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  stopReason?: string;
+  issue?: GroundingIssue;
+  inFlight?: "triage" | "clarify" | "plan";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  planId?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  startRevision: number;
+}
+
+
 export interface GroundingSession {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -449,6 +570,7 @@ export interface GroundingSession {
    * Schema constraints this type cannot express: type="integer", minimum=1
    */
   revision: number;
+  optimization?: OptimizerCheckpoint;
 }
 
 
@@ -575,6 +697,10 @@ export interface QueryPlan {
    */
   promptRevision: string;
   modelIdentity: unknown;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  profileRevision?: string;
 }
 
 
@@ -1010,6 +1136,44 @@ export interface GroundingTrace {
    * Schema constraints this type cannot express: uniqueItems=true
    */
   unused: Array<GroundingTraceUnusedItem>;
+}
+
+
+export interface QueryDraftQueriesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=2000
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  why: string;
+  lanes: { local: boolean; web: boolean; };
+}
+
+
+export interface QueryDraft {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=32
+   */
+  queries: Array<QueryDraftQueriesItem>;
+}
+
+
+export interface ClarificationQuestionQuestionsItem {
+  id: "q1";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=1000
+   */
+  text: string;
+}
+
+
+export interface ClarificationQuestion {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=1
+   */
+  questions: Array<ClarificationQuestionQuestionsItem>;
 }
 
 

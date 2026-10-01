@@ -2,7 +2,7 @@
   "name": "tangleai",
   "version": "0.33.0",
   "private": true,
-  "description": "Tangle AI \u2014 self-improving memory and retrieval for agents, built on the @jarenjs suite",
+  "description": "Tangle AI — self-improving memory and retrieval for agents, built on the @jarenjs suite",
   "author": "Joham <jklarenbeek@gmail.com>",
   "license": "MIT",
   "type": "module",
@@ -56,7 +56,7 @@
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
-    "check": "npm run jaren:check && npm run emit:check && npm run gmpl:artifacts -- --check && npm run hera:artifacts -- --check && npm run trace2skill:artifacts -- --check && npm run benchmark:evolve -- --check && npm run policy:check && npm run policy:contract:check && npm run outcomes:contract:check && npm run forecast:contract:check && npm run hera:contract:check && npm run typecheck && npm run test:tree-shaking && npm run migration:docs:check && npm test",
+    "check": "npm run jaren:check && npm run emit:check && npm run gmpl:artifacts -- --check && npm run grounding:artifacts -- --check && npm run hera:artifacts -- --check && npm run trace2skill:artifacts -- --check && npm run benchmark:evolve -- --check && npm run policy:check && npm run policy:contract:check && npm run outcomes:contract:check && npm run forecast:contract:check && npm run hera:contract:check && npm run typecheck && npm run test:tree-shaking && npm run migration:docs:check && npm test",
     "test:tree-shaking": "node scripts/check-program-bundle.ts",
     "jaren:check": "node scripts/check-jaren.ts",
     "benchmark:jaren": "node benchmark/jaren-strategies.ts && bun benchmark/jaren-strategies.ts && node benchmark/jaren-summary.ts",
@@ -159,7 +159,8 @@
     "benchmark:priha": "node --env-file-if-exists=.env benchmark/priha.ts",
     "emit:priha": "jaren-emit --schema benchmark/schemas/priha.schema.json --out benchmark/lib --bundle priha.types.ts",
     "emit:grounding-contracts": "jaren-emit --schema packages/grounding/schemas/grounding.schema.json --out packages/grounding/src --bundle contracts.gen.ts",
-    "test:grounding": "node --test \"test/grounding/*.test.ts\" \"test/store/grounding-store.test.ts\""
+    "test:grounding": "node --test \"test/grounding/*.test.ts\" \"test/store/grounding-store.test.ts\"",
+    "grounding:artifacts": "node scripts/grounding-artifacts.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

@@ -8,6 +8,7 @@ import { groundingIdOf, immutableGroundingJson } from './identity.ts';
 import { loadGroundingProfile, evaluateProfileRules } from './profile.ts';
 import { validateGroundingShape } from './schema.ts';
 import { planSessionTransition, type SessionCommand } from './session.ts';
+import { triageDecisionErrors } from './intent.ts';
 
 export interface GroundingTables {
     profiles: GroundingProfile; manifests: CorpusManifest; sessions: GroundingSession; intents: ClarifiedIntent;
@@ -121,13 +122,35 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                     if (!profile) groundingReject('TGRD1002', '/profileRevision', 'The session requires its retained profile revision.');
                     if (table === 'sessions') {
                         checkContext(profile, session.userContext);
+                        const optimization = session.optimization;
+                        if (optimization) {
+                            if (optimization.decision) {
+                                const errors = triageDecisionErrors(profile, optimization.decision);
+                                if (errors.length) groundingReject('TGRD1001', '/optimization/decision' + errors[0]!.docPath, errors[0]!.message);
+                                if (optimization.route !== optimization.decision.triage) groundingReject('TGRD1001', '/optimization/route', 'The optimizer route must match its triage decision.');
+                            }
+                            for (const dimension of ['calls', 'tokens', 'ms'] as const)
+                                if (optimization.budget[dimension] > profile.budgets[dimension]) groundingReject('TGRD1007', '/optimization/budget/' + dimension, 'Optimizer budgets cannot widen the profile.');
+                            await checkModelIdentity(optimization.models.triage, '/optimization/models/triage');
+                            await checkModelIdentity(optimization.models.plan, '/optimization/models/plan');
+                            if (optimization.intentId && (await raw.get('intents', optimization.intentId))?.sessionId !== session.id)
+                                groundingReject('TGRD1004', '/optimization/intentId', 'The optimizer intent belongs to another session.');
+                            if (optimization.planId && ((await sessionForPlan(optimization.planId)).id !== session.id
+                                || (await raw.get('plans', optimization.planId))?.payload.intentId !== optimization.intentId))
+                                groundingReject('TGRD1004', '/optimization/planId', 'The optimizer plan belongs to another intent or session.');
+                        }
                         if (session.turn > profile.clarification.maxTurns || session.turn > profile.budgets.clarificationTurns) groundingReject('TGRD1007', '/turn', 'clarification-turns');
                         if (session.planId && (await sessionForPlan(session.planId)).id !== session.id) groundingReject('TGRD1004', '/planId', 'The session plan belongs to another session.');
                         if (session.intentId && (await raw.get('intents', session.intentId))?.sessionId !== session.id) groundingReject('TGRD1004', '/intentId', 'The intent belongs to another session.');
                         for (const id of session.answerIds) if ((await raw.get('answers', id))?.sessionId !== session.id) groundingReject('TGRD1004', '/answerIds', 'The answer belongs to another session.');
                     }
                     if (table === 'intents') checkContext(profile, (value as ClarifiedIntent).answered, '/answered');
-                    if (table === 'plans' && (value as QueryPlan).queries.length > profile.clarification.maxQueries) groundingReject('TGRD1007', '/queries', 'query-count');
+                    if (table === 'plans') {
+                        const plan = value as QueryPlan;
+                        if (plan.queries.length > profile.clarification.maxQueries) groundingReject('TGRD1007', '/queries', 'query-count');
+                        if (plan.profileRevision !== undefined && plan.profileRevision !== profile.revision)
+                            groundingReject('TGRD1002', '/profileRevision', 'The plan profile revision differs from its session.');
+                    }
                     if (table === 'evidence' || table === 'web_runs') {
                         const record = value as EvidenceCandidate | WebRetrievalRun;
                         if (!session.planId) groundingReject('TGRD1004', '/queryId', 'Evidence requires an applied query plan.');
@@ -202,6 +225,17 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                 };
                 const replace = async (next: GroundingSession) => {
                     const value = groundingMust(validateGroundingShape('groundingSession', next));
+                    const previous = (await raw.get('sessions', value.id))?.payload.optimization, current = value.optimization;
+                    if (previous && current) {
+                        for (const field of ['startRevision', 'originalQuery', 'catalogRevision', 'vocabularyRevision', 'models', 'budget'] as const)
+                            if (!equalsJson(previous[field], current[field])) groundingReject('TGRD1002', '/optimization/' + field, 'Optimizer identities and limits are immutable within a session turn.');
+                        if (previous.decision && !equalsJson(previous.decision, current.decision)
+                            || previous.runId && previous.runId !== current.runId || previous.intentId && previous.intentId !== current.intentId
+                            || previous.planId && previous.planId !== current.planId)
+                            groundingReject('TGRD1002', '/optimization', 'A retained triage decision or clarification run cannot change.');
+                        if (Object.keys(previous.spent).some(key => current.spent[key as keyof typeof current.spent] < previous.spent[key as keyof typeof previous.spent]))
+                            groundingReject('TGRD1007', '/optimization/spent', 'Optimizer spend cannot decrease.');
+                    }
                     await raw.put('sessions', await rowFor('sessions', value)); changes++;
                 };
                 const promote = async (input: CorpusManifest, bundle: StoredDocumentBundle) => {

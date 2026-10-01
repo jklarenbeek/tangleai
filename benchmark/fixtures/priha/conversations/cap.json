@@ -39,5 +39,171 @@
     "outcome": "exhausted",
     "queries": []
   },
-  "factPredicates": []
+  "factPredicates": [],
+  "optimizerScript": [
+    {
+      "stage": "triage",
+      "promptRevision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e",
+      "reply": {
+        "triage": "complex",
+        "reason": "Clarify the missing service fields.",
+        "requiredFields": [
+          "service"
+        ],
+        "intents": [
+          "service-navigation"
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Help me with a service.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service"
+          ]
+        }
+      }
+    }
+  ]
 }

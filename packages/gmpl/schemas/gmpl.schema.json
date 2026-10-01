@@ -693,6 +693,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 10
+            },
+            "intentOnly": {
+              "type": "boolean",
+              "description": "Project resolved intent without a separate answer synthesis call; default false."
             }
           },
           "required": [

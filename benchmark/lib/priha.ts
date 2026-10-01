@@ -1,9 +1,10 @@
 /** Independent dual-retrieval fixture and measurement over the unchanged claim scorer. */
 import { measurePrihaLocal, type PrihaLocalTiming } from './priha-local.ts';
+import { measurePrihaOptimizer } from './priha-optimizer.ts';
 import type { PrihaLocalQuery, PrihaLocalQueries } from './priha.types.ts';
 import { createPrihaReplay } from './priha-replay.ts';
 import { contractProfile, measurePrihaStoreContracts, type PrihaContractProbe } from './priha-contracts.ts';
-import { evaluateProfileRules } from '@tangleai/grounding';
+import { evaluateProfileRules, groundingArtifacts } from '@tangleai/grounding';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join, resolve, sep } from 'node:path';
@@ -67,6 +68,7 @@ export interface LoadedPrihaFixture {
     source: SourceManifest;
     bodies: Map<string, Uint8Array>;
     conversations: PrihaConversation[];
+    userFacts: string[];
     localQueries: PrihaLocalQuery[];
     corpusAddresses: Array<{ version: string; url: string }>;
     replay: ReturnType<ReturnType<typeof createPrihaReplay>['stats']>;
@@ -96,6 +98,9 @@ export async function loadPrihaFixture(root = process.cwd()): Promise<LoadedPrih
         files.push({ path: 'benchmark/fixtures/priha/' + file, sha256 });
         return bytes;
     }
+    const factDocument = JSON.parse(new TextDecoder().decode(await load(fixture.userFacts.file, fixture.userFacts.sha256))) as { document: 'priha-user-facts'; terms: string[] };
+    mustValidate(factDocument, 'Invalid user-fact vocabulary');
+    const userFacts = factDocument.terms;
     const queryDocument = JSON.parse(new TextDecoder().decode(await load(fixture.localQueries.file, fixture.localQueries.sha256))) as PrihaLocalQueries;
     mustValidate(queryDocument, 'Invalid local query registration');
     const localQueries = queryDocument.cases, corpusAddresses = queryDocument.corpusAddresses;
@@ -129,6 +134,10 @@ export async function loadPrihaFixture(root = process.cwd()): Promise<LoadedPrih
         mustValidate(value, 'Invalid conversation');
         if (value.key !== row.key)
             throw Error('Conversation identity mismatch.');
+        for (const step of value.optimizerScript) {
+            const artifact = groundingArtifacts.prompts.find(prompt => prompt.id === 'grounding-' + step.stage);
+            if (artifact?.revision !== step.promptRevision) throw Error('Optimizer script prompt revision mismatch.');
+        }
         conversations.push(value);
     }
     const elements = new Map(fixture.elements.map(e => [e.key, e]));
@@ -202,7 +211,7 @@ export async function loadPrihaFixture(root = process.cwd()): Promise<LoadedPrih
             throw Error('Fixture replay differs from its captured response.');
     }
     files.sort((a, b) => a.path.localeCompare(b.path));
-    return { replay: replay.stats(), fixture, fixtureId: await canonicalSha256(fixture), source: { files, sha256: await canonicalSha256({ files }) }, bodies, conversations, localQueries, corpusAddresses };
+    return { replay: replay.stats(), fixture, fixtureId: await canonicalSha256(fixture), source: { files, sha256: await canonicalSha256({ files }) }, bodies, conversations, userFacts, localQueries, corpusAddresses };
 }
 /** All byte-addressed pages remain in the classifier registry, including future evidence. */
 export function prihaCorpus(fixture: PrihaFixture, granularity: string): EvidenceCorpus {
@@ -361,19 +370,24 @@ export async function buildPrihaReport(options: {
     const stores = await measurePrihaStoreContracts(), probes = [...rules, ...stores.memory, ...stores.sqlite];
     const contracts = { status: 'executed' as const, profileRevision: profile.revision, rules, ...stores, passed: probes.filter(p => p.passed).length, failed: probes.filter(p => !p.passed).length, providerRequests: 0 as const };
     const local = await measurePrihaLocal(loaded, profile, options.onLocalTiming);
-    const registrationBody = { localCorpusAddressId: local.corpusAddressId, localQueryId: local.queryId, fixtureId: loaded.fixtureId, ...control, questionIds: f.questions.map(q => q.key), budgets: f.budgets, corpusVersions: f.sources.flatMap(s => s.versions.map(v => v.key)), granularities: f.granularities, rankerId: 'rrf/1' as const, profile: { id: profile.id, revision: profile.revision }, promptIdentity: null, modelIdentity: null, hypothesis: f.hypothesis, capabilityRows: PRIHA_CAPABILITY_ROWS.map(c => ({ capability: c.capability, requirements: [...c.requirements] })) };
+    const optimizer = await measurePrihaOptimizer(loaded.conversations, profile, loaded.userFacts);
+    const registrationBody = { optimizerCatalogRevision: optimizer.catalogRevision, optimizerVocabularyRevision: optimizer.vocabularyRevision, localCorpusAddressId: local.corpusAddressId, localQueryId: local.queryId, fixtureId: loaded.fixtureId, ...control, questionIds: f.questions.map(q => q.key), budgets: f.budgets, corpusVersions: f.sources.flatMap(s => s.versions.map(v => v.key)), granularities: f.granularities, rankerId: 'rrf/1' as const, profile: { id: profile.id, revision: profile.revision }, promptIdentity: null, modelIdentity: null, hypothesis: f.hypothesis, capabilityRows: PRIHA_CAPABILITY_ROWS.map(c => ({ capability: c.capability, requirements: [...c.requirements] })) };
     const registration = { ...registrationBody, registrationId: await canonicalSha256(registrationBody) };
     const oracle = oraclePrihaRow(loaded), rows = [oracle, ...PRIHA_ROWS.slice(1).map(key => missingPrihaRow(key, f.questions.length))], badRows = scorePrihaBadRows(loaded), m = oracle.metrics!;
     for (const row of rows) if (row.key === 'flat-semantic' || row.key === 'local-hybrid') {
         row.status = 'not-run'; row.reason = 'Retrieval executes; claim generation and the complete workflow are not yet implemented.';
         row.retrieval = { status: 'executed', reason: null, cases: local.queries.length };
     }
+    for (const row of rows) if (row.key === 'drag-no-optimizer' || row.key === 'priha-full') {
+        row.status = 'not-run'; row.reason = 'The scripted plan census executes; retrieval, claim generation and the complete workflow remain unexecuted.';
+        row.optimizer = { status: 'executed', reason: 'Scripted plan census only; no answer-quality measurement.', cases: loaded.conversations.length };
+    }
     const observations = { supportedClaimPrecision: m.claims.microPrecision, supportedClaimRecall: m.claims.microRecall, supportedClaimF1: m.claims.microF1, citationResolution: m.citationResolution, citationSupport: m.citationSupport, triage: m.triageAccuracy, parentRecovery: m.parentRecovery, reconciliation: m.reconciliationAccuracy, abstention: m.abstentionAccuracy, refusal: m.refusalAccuracy };
     const clauses = Object.entries(observations).map(([metric, actual]) => ({ metric, expected: 1, actual, passed: actual === 1 })), failures = [...clauses.filter(c => !c.passed).map(c => c.metric + ' ceiling failed'), ...badRows.filter(r => !r.passed).map(r => r.key + ' terminal control failed')], gate = { passed: failures.length === 0, clauses, failures };
-    const capabilities = PRIHA_CAPABILITY_ROWS.map(c => ({ id: c.capability, passed: c.capability === 'instrument' ? gate.passed : c.capability === 'contracts' ? contracts.failed === 0 : c.capability === 'local' && local.failed === 0, missing: c.capability === 'instrument' ? failures : c.capability === 'contracts' ? probes.filter(p => !p.passed).map(p => p.id) : c.capability === 'local' ? local.rows.filter(r => r.metrics.issues).map(r => r.key) : [...c.requirements] }));
+    const capabilities = PRIHA_CAPABILITY_ROWS.map(c => ({ id: c.capability, passed: c.capability === 'instrument' ? gate.passed : c.capability === 'contracts' ? contracts.failed === 0 : c.capability === 'local' ? local.failed === 0 : c.capability === 'optimizer' && optimizer.failed === 0, missing: c.capability === 'instrument' ? failures : c.capability === 'contracts' ? probes.filter(p => !p.passed).map(p => p.id) : c.capability === 'local' ? local.rows.filter(r => r.metrics.issues).map(r => r.key) : c.capability === 'optimizer' ? optimizer.rows.find(row => row.key === 'priha-full')!.cases.filter(row => !row.passed).map(row => row.conversation) : [...c.requirements] }));
     const localEvidence: EvidenceRow[] = f.sources.flatMap(s => s.versions.map(v => ({ id: v.key, lane: 'local' as const, version: v.key, authorityTier: v.facts.authorityTier, admittedAt: v.admittedAt, effectiveAt: v.facts.effectiveAt, expiresAt: v.facts.expiresAt, timeProvenance: v.facts.timeProvenance, sha256: v.sha256 })));
     const evidence: EvidenceRow[] = [...localEvidence, ...f.web.filter(w => w.kind === 'document').map(w => ({ id: 'web:' + w.sha256, lane: 'web' as const, version: 'web-' + w.name, authorityTier: w.facts.authorityTier, admittedAt: w.admittedAt, effectiveAt: w.facts.effectiveAt, expiresAt: w.facts.expiresAt, timeProvenance: w.facts.timeProvenance, sha256: w.sha256 }))];
-    const body = { document: 'priha-report' as const, benchmark: 'priha' as const, schemaVersion: 1 as const, registration, source, fixtureSource: loaded.source, replay: loaded.replay, envelope: analyticEnvelope(PRIHA_ROWS), rows, badRows, gate, capabilities, contracts, local, pairing: { eligible: false, reasons: [{ code: 'implementation-missing', detail: 'Local retrieval executes, but no claim-generation treatment has executed on the registered corpus.' }], comparisons: [] }, decision: { state: 'not-evaluated' as const, clauses: [{ id: 'mechanisms-executed', passed: false }, { id: 'independent-claim-delta', passed: false }], reason: 'The analytic oracle qualifies the instrument only. Local retrieval is measured; all five answer treatments remain unexecuted. Live quality and healthcare deployment are unmeasured.' }, evidence, summary: { rows: rows.length, missing: rows.filter(r => r.status === 'implementation-missing').length, cases: rows.reduce((n, r) => n + r.cases.length, 0), badControls: badRows.length, failedControls: badRows.filter(r => !r.passed).length, providerRequests: 0 }, reportId: '' };
+    const body = { document: 'priha-report' as const, benchmark: 'priha' as const, schemaVersion: 1 as const, registration, source, fixtureSource: loaded.source, replay: loaded.replay, envelope: analyticEnvelope(PRIHA_ROWS), rows, badRows, gate, capabilities, contracts, local, optimizer, pairing: { eligible: false, reasons: [{ code: 'implementation-missing', detail: 'Local retrieval executes, but no claim-generation treatment has executed on the registered corpus.' }], comparisons: [] }, decision: { state: 'not-evaluated' as const, clauses: [{ id: 'mechanisms-executed', passed: false }, { id: 'independent-claim-delta', passed: false }], reason: 'The analytic oracle qualifies the instrument only. Local retrieval is measured; all five answer treatments remain unexecuted. Live quality and healthcare deployment are unmeasured.' }, evidence, summary: { rows: rows.length, missing: rows.filter(r => r.status === 'implementation-missing').length, cases: rows.reduce((n, r) => n + r.cases.length, 0), badControls: badRows.length, failedControls: badRows.filter(r => !r.passed).length, providerRequests: 0 }, reportId: '' };
     const { reportId: _, ...payload } = body;
     body.reportId = await canonicalSha256(payload);
     mustValidate(body, 'Invalid PriHA report');
@@ -392,7 +406,7 @@ export const renderPrihaReport = (report: PrihaReport) => JSON.stringify(report,
 export function renderPrihaDocument(report: PrihaReport) {
     const c = report.registration.control;
     return ['# Governed dual retrieval benchmark', '', 'Generated by `npm run benchmark:priha`; figures are produced by the independent instrument.', '',
-        'This original MIT fictional Harbour District corpus measures software behavior. It contains no real healthcare guidance. Profile rules, atomic state, flat retrieval and hybrid parent/child retrieval execute. Answer generation and the other mechanisms remain unexecuted. Live answer quality and healthcare deployment are unmeasured.', '',
+        'This original MIT fictional Harbour District corpus measures software behavior. It contains no real healthcare guidance. Profile rules, atomic state, flat retrieval, hybrid parent/child retrieval and the scripted optimizer execute. Answer generation and web mechanisms remain unexecuted. Live answer quality and healthcare deployment are unmeasured.', '',
         table({ head: ['Treatment', 'Status', 'Reason', 'Supported-claim F1', 'Calls / tokens'], rows: report.rows.map(r => [r.key, r.status, r.reason ?? 'executed', r.metrics ? score(r.metrics.claims.microF1) : null, '0 / 0']) }), '',
         `Contracts: **${report.contracts.status}** — ${report.contracts.passed} passed, ${report.contracts.failed} failed; profile \`${report.contracts.profileRevision}\`. No provider requests.`, '',
         table({ head: ['Contract binding', 'Passed / total'], rows: [['Profile rules', report.contracts.rules.filter(r => r.passed).length + ' / ' + report.contracts.rules.length], ['Memory lifecycle', report.contracts.memory.filter(r => r.passed).length + ' / ' + report.contracts.memory.length], ['SQLite lifecycle', report.contracts.sqlite.filter(r => r.passed).length + ' / ' + report.contracts.sqlite.length]] }), '',
@@ -401,12 +415,16 @@ export function renderPrihaDocument(report: PrihaReport) {
         table({ head: ['Granularity', 'Semantic', 'Lexical', 'Fused', 'Fused beats or ties both'], rows: report.local.comparisons.map(r => [r.granularity, score(r.semantic), score(r.lexical), score(r.fused), String(r.fusedBeatsOrTiesBoth)]) }), '',
         'Child recall counts support quotes wholly present in selected children of the exact registered version. Expanded support measures parent text (or the unchanged flat heading/neighbour context). Cases with no local support remain visible and are excluded from recall denominators. Parent context is deduplicated and bounded to the registered 6000-character-equivalent token budget; the flat control retains its original expansion behavior.', '',
         'Rebuild milliseconds and query p50/p95 are kept in `benchmark/receipts/priha-local-latency.json`, generated explicitly with `--latency-json`. Timing is null in this deterministic document and never presented as zero-speed execution. The receipt binds this report and source and checks the registered latency budget.', '',
+        'The optimizer census executes the public query optimizer and native GMPL/MAS clarification over SQLite. Each pause closes and reopens the database; accepted host answers are projected verbatim. Prompt revisions and stage replies are registered before measurement. The raw-query control preserves deterministic refusal rules but performs no model triage, clarification or expansion. Tier: **scripted**; the figures measure software behavior, not answer quality or live model capability.', '',
+        table({ head: ['Plan census', 'Triage correct / cases', 'Plan correct / cases', 'Clarification resolved / attempted', 'Turns / exhausted / invented', 'Community query present / required', 'Scripted calls / tokens'], rows: report.optimizer.rows.map(row => { const m = row.metrics; return [row.key, m.triageCorrect === null ? 'not run' : m.triageCorrect + ' / ' + m.cases, m.planCorrect + ' / ' + m.cases, m.resolvedClarifications + ' / ' + m.clarifications, [m.turns, m.exhaustedClarifications, m.inventedFacts].join(' / '), m.communityPresent + ' / ' + m.communityRequired, m.calls + ' / ' + m.tokens]; }) }), '',
+        table({ head: ['Optimizer fixture', 'Triage / outcome', 'Turns', 'Calls / tokens', 'SQLite reopens / replayed nodes', 'Checks'], rows: report.optimizer.rows.find(row => row.key === 'priha-full')!.cases.map(row => [row.conversation, row.triage + ' / ' + row.outcome, row.turns, row.calls + ' / ' + row.tokens, row.reopens + ' / ' + row.replayedNodes, row.passed ? 'pass' : row.error ?? 'failed']) }), '',
+        `Optimizer artifact catalog \`${report.optimizer.catalogRevision}\`; closed user-fact vocabulary \`${report.optimizer.vocabularyRevision}\`. ${report.optimizer.limitations}`, '',
         table({ head: ['Oracle gate', 'Expected', 'Measured', 'Pass'], rows: report.gate.clauses.map(c => [c.metric, c.expected, c.actual, String(c.passed)]) }), '',
         table({ head: ['Bad control', 'Terminal outcome', 'Count', 'Pass'], rows: report.badRows.map(r => [r.key, r.actual, r.count, String(r.passed)]) }), '',
         'The oracle uses the existing grounding claim matcher and terminal citation classifier unchanged. A refusal projects to abstention only for that two-disposition claim scorer; the independently reported refusal and abstention accuracies retain their distinct expected dispositions. Analytic chunk/parent memberships are frozen ceiling annotations, not a product chunker execution. Web bodies are byte-addressed; discovery snippets are never citation targets.', '',
         table({ head: ['Treatment', 'Answered / abstained / refused / not run', 'Searches / fetched / denied / failed', 'Clarification turns / resolved / exhausted / invented', 'Emergency / out-of-scope / unsupported-critical'], rows: report.rows.map(r => [r.key, [r.counts.answered, r.counts.abstained, r.counts.refused, r.counts.notRun].join(' / '), [r.web.searches, r.web.fetched, r.web.denied, r.web.failed].join(' / '), [r.clarification.turns, r.clarification.resolved, r.clarification.exhausted, r.clarification['invented-facts']].join(' / '), [r.safety['emergency-routed'], r.safety['out-of-scope-refused'], r.safety['unsupported-critical']].join(' / ')]) }), '',
         `Fixture replay verification: ${report.replay.requests} requests, ${report.replay.hits} hits, ${report.replay.failed} failures, ${report.replay.bytes} bytes and ${report.replay.networkRequests} network requests. These verify committed captures; they are not a retrieval treatment.`, '',
-        'Provider costs are zero for this keyless instrument. The local corpus records actual child embedding calls and retained parent counts in the report. Corpus counters are shared by variants of one granularity and are not additive across those rows. Missing answer and web mechanisms fail their registered capability gates; instrument, contracts and local retrieval currently pass.', '',
+        'Provider costs are zero for this keyless instrument. The local corpus records actual child embedding calls and retained parent counts in the report. Corpus counters are shared by variants of one granularity and are not additive across those rows. Missing answer and web mechanisms fail their registered capability gates; instrument, contracts, local retrieval and the scripted optimizer currently pass.', '',
         table({ head: ['Immutable flat control identity', 'Value'], rows: Object.entries(c).map(([k, v]) => [k, v]) }), '',
         `Handoff wrapper: \`${report.registration.handoffReportId}\`; file SHA-256 \`${report.registration.handoffSha256}\`. The nested baseline identities above are read verbatim; the flat grounding report, fixture and chat path are unchanged.`, '',
         `Registered questions: ${report.registration.questionIds.length}; fixture \`${report.registration.fixtureId}\`; registration \`${report.registration.registrationId}\`.`,

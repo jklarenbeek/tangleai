@@ -84,5 +84,186 @@
         "forbidden": []
       }
     }
+  ],
+  "optimizerScript": [
+    {
+      "stage": "triage",
+      "promptRevision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e",
+      "reply": {
+        "triage": "complex",
+        "reason": "Clarify the missing service fields.",
+        "requiredFields": [
+          "service",
+          "purpose"
+        ],
+        "intents": [
+          "service-navigation"
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "I need to visit a service desk.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service",
+            "purpose"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "I need to visit a service desk.",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "service",
+            "purpose"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Which service do you mean?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Voucher desk information",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "purpose"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": false,
+        "refinedQuery": "Voucher desk information",
+        "result": {
+          "answer": "",
+          "disposition": "needs-information",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": [
+            "purpose"
+          ]
+        }
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "What information do you need about that service?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "question",
+      "promptRevision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376",
+      "reply": {
+        "questions": [
+          {
+            "id": "q1",
+            "text": "What information do you need about that service?"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": true,
+        "refinedQuery": "Travel voucher desk location",
+        "result": {
+          "answer": "",
+          "disposition": "completed",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": []
+        }
+      }
+    },
+    {
+      "stage": "resolve",
+      "promptRevision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70",
+      "reply": {
+        "resolved": true,
+        "refinedQuery": "Travel voucher desk location",
+        "result": {
+          "answer": "",
+          "disposition": "completed",
+          "claims": [],
+          "findings": [],
+          "outstandingQuestions": []
+        }
+      }
+    },
+    {
+      "stage": "plan",
+      "promptRevision": "89c01f3363bafe21d8d6449f25a3831d1cdbff4cf77ab7aad6c438d904773166",
+      "reply": {
+        "queries": [
+          {
+            "text": "Travel voucher desk location",
+            "why": "Find the requested administrative information.",
+            "lanes": {
+              "local": true,
+              "web": true
+            }
+          }
+        ]
+      }
+    }
   ]
 }

@@ -116,7 +116,7 @@ describe('the registered PriHA instrument', () => {
         assert.deepEqual(report.rows.map(r => r.key), PRIHA_ROWS);
         assert.deepEqual(report.registration.capabilityRows, PRIHA_CAPABILITY_ROWS);
         for (const row of report.rows.slice(1)) {
-            assert.equal(row.status, ['flat-semantic', 'local-hybrid'].includes(row.key) ? 'not-run' : 'implementation-missing');
+            assert.equal(row.status, ['flat-semantic', 'local-hybrid', 'drag-no-optimizer', 'priha-full'].includes(row.key) ? 'not-run' : 'implementation-missing');
             assert.ok(row.reason);
             assert.equal(row.metrics, null);
             assert.equal(row.counts.notRun, 32);
@@ -124,12 +124,46 @@ describe('the registered PriHA instrument', () => {
         requirePrihaCapability(report, 'instrument');
         requirePrihaCapability(report, 'contracts');
         requirePrihaCapability(report, 'local');
+        requirePrihaCapability(report, 'optimizer');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(3))
+        for (const c of report.capabilities.slice(4))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
+    });
+    it('executes the registered optimizer census and counts durable replay, facts and physical calls', () => {
+        const [off, on] = report.optimizer.rows;
+        assert.equal(report.optimizer.tier, 'scripted'); assert.equal(report.optimizer.failed, 0);
+        assert.equal(report.optimizer.providerRequests, 0); assert.equal(report.optimizer.networkRequests, 0);
+        assert.equal(off.metrics.planCorrect, 2); assert.equal(off.metrics.triageAccuracy, null);
+        assert.equal(on.metrics.triageCorrect, 6); assert.equal(on.metrics.planCorrect, 6);
+        assert.equal(on.metrics.calls, 27); assert.equal(on.metrics.tokens, 270); assert.equal(on.metrics.turns, 4);
+        assert.equal(on.metrics.resolvedClarifications, 1); assert.equal(on.metrics.exhaustedClarifications, 1);
+        assert.equal(on.metrics.clarificationSuccess, 0.5); assert.equal(on.metrics.inventedFacts, 0);
+        assert.equal(on.metrics.communityPresent, 1); assert.ok(on.cases.every(row => row.passed));
+        for (const row of on.cases.filter(row => row.triage === 'complex')) {
+            assert.equal(row.reopens, 2); assert.ok(row.replayedNodes > 0); assert.ok(row.runId);
+        }
+        assert.deepEqual(on.cases.find(row => row.conversation === 'complex')!.answered, {
+            service: 'I mean the voucher desk.', purpose: 'I need its location.',
+        });
+    });
+    it('native report assertions refuse forged optimizer counts, pins and capability acceptance', () => {
+        for (const mutate of [
+            (value: typeof report) => { value.optimizer.rows[1].metrics.calls++; },
+            (value: typeof report) => { value.optimizer.rows[1].cases[0].passed = false; },
+            (value: typeof report) => { value.optimizer.rows[1].metrics.planCorrect++; },
+            (value: typeof report) => { value.optimizer.catalogRevision = '0'.repeat(64); },
+            (value: typeof report) => { value.capabilities.find(row => row.id === 'optimizer')!.passed = false; },
+        ]) { const changed = structuredClone(report); mutate(changed); assert.equal(validate(changed).valid, false); }
+    });
+    it('the optimizer capability fails when a registered proposal invents a user fact', async () => {
+        const changed = structuredClone(loaded), conversation = changed.conversations.find(row => row.key === 'simple')!;
+        conversation.optimizerScript[1].reply = { queries: [{ text: 'metformin reception', why: 'Bad control.', lanes: { local: true, web: true } }] };
+        const failed = await buildPrihaReport({ loaded: changed });
+        assert.ok(failed.optimizer.failed > 0); assert.throws(() => requirePrihaCapability(failed, 'optimizer'), /requires simple/);
+        assert.equal(failed.optimizer.rows[1].cases.find(row => row.conversation === 'simple')!.outcome, 'failed');
     });
     it('measures both state adapters and rejects forged contract summaries', () => {
         assert.equal(report.contracts.status, 'executed');
@@ -268,7 +302,7 @@ describe('the registered PriHA instrument', () => {
             assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
             assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'optimizer'], ['--unknown']])
+            for (const flags of [['--require', 'web'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;

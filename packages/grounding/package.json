@@ -10,7 +10,8 @@
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/grounding": "./schemas/grounding.schema.json",
     "./profiles/priha-hk": "./profiles/priha-hk.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./artifacts": "./artifacts/catalog.json"
   },
   "engines": {
     "node": ">=24"
@@ -25,7 +26,10 @@
     "@tangleai/models": "^0.33.0",
     "@tangleai/documents": "^0.33.0",
     "@tangleai/config": "^0.33.0",
-    "@jarenjs/formats": "0.91.4"
+    "@jarenjs/formats": "0.91.4",
+    "@tangleai/mas": "^0.33.0",
+    "@tangleai/gmpl": "^0.33.0",
+    "@tangleai/agents": "^0.33.0"
   },
   "private": false,
   "types": "./src/index.ts",
@@ -37,7 +41,8 @@
     "LICENSE",
     "CHANGELOG.md",
     "docs/**/*.md",
-    "profiles/**/*.json"
+    "profiles/**/*.json",
+    "artifacts/**/*.json"
   ],
   "publishConfig": {
     "access": "public",

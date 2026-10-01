@@ -29,7 +29,7 @@ import { MasInfrastructureCrash, type MasRuntimeObserver, type MasTaskHandlerBin
 import { walkRegions, type RegionFrame, type RunContext } from './control-runtime.ts';
 import { validateToolBindings, type MasToolBinding } from './tools.ts';
 import { BUILTIN_MESSAGE_ADAPTERS, type MasMessageAdapter } from './messages.ts';
-import type { MasChatClient } from './budget.ts';
+import type { MasChatClient, MasBudgetAccount } from './budget.ts';
 import type { MasContextProvider } from './context.ts';
 import type { AgentNode, Invocation, MasWorkflow, RuntimeError } from './contracts.gen.ts';
 import type { MasRegistrySnapshot } from './registry.ts';
@@ -48,6 +48,8 @@ export interface MasHostBindings {
   messageAdapters?: ReadonlyMap<string, MasMessageAdapter>;
   now: () => string;
   clock: () => number;
+  /** An enclosing host may share its already-spent account with this segment. */
+  budgetAccount?: MasBudgetAccount;
   observer?: MasRuntimeObserver;
   transcriptChars?: number;
   /**
@@ -148,7 +150,7 @@ export function compileMasRuntime(
   const executeSegment = async (host: MasSegmentHost): Promise<void> => {
     const limits = host.run.budget.limits as Record<string, unknown>;
     const cap = (name: string): number | undefined => (typeof limits[name] === 'number' ? limits[name] as number : undefined);
-    const account = createBudgetAccount({
+    const account = bindings.budgetAccount ?? createBudgetAccount({
       ...(cap('calls') !== undefined ? { turns: cap('calls') } : {}),
       ...(cap('tokens') !== undefined ? { tokens: cap('tokens') } : {}),
       ...(cap('ms') !== undefined ? { ms: cap('ms') } : {}),
@@ -156,11 +158,23 @@ export function compileMasRuntime(
     }, bindings.clock);
 
     const settlement = () => ({ claimSeq: host.claimSeq, spent: account.spent() });
-    const failRun = async (node: string | null, error: RuntimeError): Promise<void> => {
-      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'fail', failure: { node, error }, settlement: settlement() });
+    const failRun = async (node: string | null, error: RuntimeError, safeSpend = account.spent()): Promise<void> => {
+      const transitioned = await bindings.store.transitionRun(host.run.id, { kind: 'fail', failure: { node, error }, settlement: { claimSeq: host.claimSeq, spent: safeSpend } });
       if (!transitioned.ok) throw new MasInfrastructureCrash(`the failure transition refused: ${transitioned.issue.code}`);
       await host.completeSegment({ status: 'failed', failure: { node, error } });
     };
+
+    if (bindings.budgetAccount) {
+      const spent = account.spent(), remaining = account.remaining();
+      for (const [dimension, name] of [['turns', 'calls'], ['tokens', 'tokens'], ['ms', 'ms']] as const) {
+        const limit = cap(name), left = remaining[dimension];
+        if (!Number.isFinite(spent[dimension]) || spent[dimension] < host.run.budget.spent[dimension]
+          || limit !== undefined && (typeof left !== 'number' || !Number.isFinite(left) || left < 0 || spent[dimension] + left > limit + (dimension === 'ms' ? 1 : 0))) {
+          await failRun(null, { code: 'TMAS2009', detail: 'the shared host account cannot rewind spend or widen run limits', cause: null }, host.run.budget.spent);
+          return;
+        }
+      }
+    }
 
     for (const [name, ceiling] of Object.entries(workflow.limits)) {
       const requested = limits[name];

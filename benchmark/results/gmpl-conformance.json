@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "d66c899659ccb23b3cf5882b16260f41ef3899b8",
+    "head": "2dce4bdb6cfb8fa721b21be5df3f299c5be4de70",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "fdf3353215a77eb8be4b0fe8b759c1542dd7d699aca3e7b3c3271df9b8c7f518"
+        "sha256": "1fd45b35bd00a8005aaa0266b78c98a595c06799e97f0bec4895aad08c58efd5"
       },
       {
         "path": "package.json",
-        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
+        "sha256": "ec0677b7fccefa8b8aaef74f884af17795aa8776f38598abfc53e6d5ddc1b872"
       },
       {
         "path": "packages/agents/package.json",
@@ -415,7 +415,7 @@
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
-        "sha256": "0e78fcf555651b8dcffa3b55853259d797a54cac0383bd5242e42e1aba8dccbe"
+        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
       },
       {
         "path": "packages/gmpl/src/catalog.ts",
@@ -423,11 +423,11 @@
       },
       {
         "path": "packages/gmpl/src/clarification-tasks.ts",
-        "sha256": "eb5d89eaa914d70676a3c67170729755bbd828d0ed0b57349837270d0c541c22"
+        "sha256": "17879e6c723f13fe4e94618dd48a9e0e4bbec605a06a28f85f5015e06219d20a"
       },
       {
         "path": "packages/gmpl/src/contracts.gen.ts",
-        "sha256": "53683c302a3986681c5b50fbfc62c980f40fbcbcdc0e5cfe3888bcf51719a800"
+        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
       },
       {
         "path": "packages/gmpl/src/debate-tasks.ts",
@@ -463,7 +463,7 @@
       },
       {
         "path": "packages/gmpl/src/patterns/clarification.ts",
-        "sha256": "eda233c05a109c60b1aa8fd2d07ffdaa1b451b6549b9d573c7ad17bea397d87d"
+        "sha256": "b4e783917874f68a0bebd42b095097248b6ce058e2bbb266803950b3c22dca1d"
       },
       {
         "path": "packages/gmpl/src/patterns/controller.ts",
@@ -515,7 +515,7 @@
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
-        "sha256": "799eccfe2797364a01277f6eb46bb73edc77e33d9509c75fe14c9058a86f4495"
+        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
       },
       {
         "path": "packages/gmpl/src/tasks.ts",
@@ -523,7 +523,7 @@
       },
       {
         "path": "packages/grounding/package.json",
-        "sha256": "8912bf2c14dbf22f40258c6d30f1959939d2fab5e29c6cff94e8b53d5e7b6428"
+        "sha256": "30ee630127e13ee973d62386411e3bb79324feba15ecb5dca0be0d2afd548499"
       },
       {
         "path": "packages/hera/package.json",
@@ -639,7 +639,7 @@
       },
       {
         "path": "packages/mas/src/runtime.ts",
-        "sha256": "668d00aeb40eb2b3a1569cff96db1e89b6a0a9c6f05064d51c2d12ed0160f3e6"
+        "sha256": "140beaa8abf35779e3529bcc03441e05ad710bc211d6bfe18b7d4e3a63c05deb"
       },
       {
         "path": "packages/mas/src/schema.ts",
@@ -782,6 +782,10 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-clarification.ts",
+        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+      },
+      {
         "path": "packages/store/src/grounding-model.ts",
         "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
       },
@@ -803,7 +807,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
+        "sha256": "6025464670b88f19c62c2a41671541a8176e4479ce9c0044ce0d509349b34e33"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -963,7 +967,7 @@
       },
       {
         "path": "test/gmpl/clarification.test.ts",
-        "sha256": "62e357d081f67bb940a34d6a5e14e692b93e7dc0d161796a692da5c63b45f1c7"
+        "sha256": "4a9258a2ecc282f285cd9d42657733f21865f4ceefad817f8fd54f079cb0cb2d"
       },
       {
         "path": "test/gmpl/delphi-panel.test.ts",
@@ -1042,7 +1046,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "ea166cc40e5c7a62b7b7719926e4450ba7074a5b6ddcc5e19d4e7475d83bd9f3"
+    "sha256": "9cbb211af1d41e93ffa4a61fb3c8bd0b4f909bc4a16b2a32ed6b01ff418efd49"
   },
   "ablations": [
     {
@@ -76596,5 +76600,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "496419207a8d6a5b1703339dbc8b7b505eef03e418f21754f85cffe25914948d"
+  "reportId": "1c82584e95bd86f4cf04c811fb4dd7ef494804191210a364270a90d2e08df88d"
 }

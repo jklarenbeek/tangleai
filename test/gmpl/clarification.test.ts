@@ -46,3 +46,16 @@ for(const waitingResolution of ['cancelled','expired'] as const)it(`clarificatio
   const d=await driveGmplWorkflow(p,{input:{input:fixture.input},bindings:p.bindings,waitingResolution,response:node=>node==='question'?{questions:[{id:'q1',text:'Which scope?'}]}:{result,resolved:false,refinedQuery:fixture.input.query}});
   assert.equal(d.trace.interactions[0].status,waitingResolution);assert.equal(d.trace.run.segment,0);assert.equal(d.usage.roles,2);assert.equal(d.responses,0);
 });
+it('intent-only clarification projects the retained intent with no answer synthesis calls', async () => {
+  const p = await prepareGmplPattern({ pattern: 'clarification', maxTurns: 2, intentOnly: true }), result = fixture.script.result;
+  const d = await driveGmplWorkflow(p, { input: { input: fixture.input }, bindings: p.bindings,
+    humanResponses: [{ answers: { q1: 'First supplied detail' } }, { answers: { q1: 'Second supplied detail' } }],
+    response: (node, i) => {
+      assert.notEqual(node, 'answer', 'an intent-only consumer does not request answer synthesis');
+      if (node === 'question') return { questions: [{ id: 'q1', text: 'Which scope?' }] };
+      return { result, resolved: node === 'resolve' && i === 2, refinedQuery: `Supplied intent ${i}` };
+    } });
+  assert.equal(d.status, 'completed', JSON.stringify(d.trace.run.failure)); assert.equal(d.responses, 2);
+  assert.equal(d.usage.roles, 5); assert.equal(d.usage.physical, 10);
+  assert.deepEqual(d.output, { result: { answer: 'Supplied intent 2', disposition: 'completed', claims: [], findings: result.findings } });
+});

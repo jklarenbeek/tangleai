@@ -8,7 +8,13 @@ describe('closed grounding contracts', async () => {
     contractMust(await store.putAnswer(f.answer, f.session.revision));
     const refusal = groundingRefuse('TGRD1009', '/host', 'Missing binding.', { code: 'DOC123', docPath: '/fetch/0', message: 'Origin refused.' });
     assert.equal(refusal.valid, false);
-    const fixtures: GroundingRecords = { groundingProfile: f.profile, corpusManifest: f.manifest, groundingSession: f.session, clarifiedIntent: f.intent, queryPlan: f.plan, evidenceCandidate: f.local, webRetrievalRun: f.webRun, evidenceConflict: f.conflict, groundedClaim: f.answer.claims[0], groundedAnswer: f.answer, groundingIssue: refusal.issues[0], groundingSpend: EMPTY_GROUNDING_SPEND, groundingTrace: (await store.readTrace(f.session.id))! };
+    const triageDecision: GroundingRecords['triageDecision'] = { triage: 'simple', reason: 'Known administrative query.', requiredFields: [], intents: ['administrative-information'] };
+    const fixtures: GroundingRecords = { groundingProfile: f.profile, corpusManifest: f.manifest, groundingSession: f.session, clarifiedIntent: f.intent, queryPlan: f.plan, evidenceCandidate: f.local, webRetrievalRun: f.webRun, evidenceConflict: f.conflict, groundedClaim: f.answer.claims[0], groundedAnswer: f.answer, groundingIssue: refusal.issues[0], groundingSpend: EMPTY_GROUNDING_SPEND, groundingTrace: (await store.readTrace(f.session.id))!,
+        triageDecision, queryDraft: { queries: [{ text: 'Harbour reception', why: 'Locate the reception.', lanes: { local: true, web: true } }] },
+        clarificationQuestion: { questions: [{ id: 'q1', text: 'Which service?' }] },
+        optimizerCheckpoint: { startRevision: 1, originalQuery: 'Where is reception?', route: 'simple', decision: triageDecision, stage: 'triaged', ruleIds: ['in-scope'], sourceKeys: [],
+            catalogRevision: 'a'.repeat(64), vocabularyRevision: 'b'.repeat(64), models: { triage: null, plan: null },
+            budget: { calls: 12, tokens: 12000, ms: 60000 }, spent: { calls: 1, tokens: 10, ms: 0 } } };
     for (const name of Object.keys(fixtures) as Array<keyof GroundingRecords>) it(`${name} validates its fixture and refuses an extra property`, () => {
         const valid = validateGroundingShape(name, fixtures[name]);
         assert.ok(valid.valid, JSON.stringify(valid));
