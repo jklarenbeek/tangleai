@@ -1,0 +1,7 @@
+{
+  "id": "mismatched-projection-version",
+  "kind": "projection",
+  "documentVersion": "active-document",
+  "projectionVersion": "another-document",
+  "expectedCode": "TLRAG1006"
+}

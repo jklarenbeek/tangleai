@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "8b85ba613f7ce66274477aa01d368311b2ba72de",
+    "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
     "clean": false,
     "files": [
       {
@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "98a91dd7a259f9d1d208a9a8c5d3ef11d6863820dea9f13f05b1114c08157561"
+        "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
       },
       {
         "path": "packages/agents/package.json",
@@ -1058,7 +1058,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "f295bf6aeb4d654757fee4990e5a4acb7705a8c5871cf4745833d037a8f330cf"
+    "sha256": "8bc750d49a5cd3eececf4bc75ba8be106fd2ad409b76424c64339f8da383008b"
   },
   "ablations": [
     {
@@ -76612,5 +76612,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "1258452839f46a42c5c062d7e4cfcde526a0bf610aa268f878264c66f63db0c7"
+  "reportId": "0a6093469c8fcfcac6835855f7701aec3e12ce51c58c8cac0d47a9d98942e138"
 }

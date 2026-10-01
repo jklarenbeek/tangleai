@@ -1,0 +1,8 @@
+{
+  "id": "dangling-chunk",
+  "kind": "claim",
+  "patch": {
+    "chunkId": "unregistered-chunk"
+  },
+  "expectedCode": "TLRAG1003"
+}

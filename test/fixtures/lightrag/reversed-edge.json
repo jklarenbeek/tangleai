@@ -1,0 +1,9 @@
+{
+  "id": "reversed-edge",
+  "kind": "relation-merge",
+  "source": "lab",
+  "target": "guild",
+  "oppositeSource": "guild",
+  "oppositeTarget": "lab",
+  "expectedCode": "TLRAG1006"
+}

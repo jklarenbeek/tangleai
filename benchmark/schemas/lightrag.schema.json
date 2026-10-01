@@ -1,0 +1,1777 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/lightrag",
+  "title": "Registered LightRAG mechanism instrument",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/lightragFixture"
+    },
+    {
+      "$ref": "#/$defs/lightragReport"
+    },
+    {
+      "$ref": "#/$defs/lightragLive"
+    },
+    {
+      "$ref": "#/$defs/lightragLadder"
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "uniqueItems": true
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nullableCount": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "embedder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "dims"
+      ],
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/id"
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "chunker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "config",
+        "embeddedBy"
+      ],
+      "properties": {
+        "version": {
+          "$ref": "#/$defs/id"
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maxTokens",
+            "overlapTokens"
+          ],
+          "properties": {
+            "maxTokens": {
+              "type": "integer",
+              "minimum": 16
+            },
+            "overlapTokens": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "embeddedBy": {
+          "$ref": "#/$defs/embedder"
+        }
+      }
+    },
+    "sourceVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "file",
+        "sha256",
+        "status",
+        "admittedAt"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^sources/[a-z0-9-]+\\.(md|html)$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "superseded"
+          ]
+        },
+        "admittedAt": {
+          "$ref": "#/$defs/instant"
+        }
+      }
+    },
+    "fixtureSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "title",
+        "url",
+        "mimeType",
+        "versions"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "$ref": "#/$defs/id"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mimeType": {
+          "enum": [
+            "text/markdown",
+            "text/html"
+          ]
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceVersion"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "fixtureChunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version",
+        "order",
+        "textSha256",
+        "elementOrders"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/id"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "textSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "elementOrders": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    },
+    "fixtureEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "name",
+        "type",
+        "aliases",
+        "description",
+        "supportChunks"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "enum": [
+            "PERSON",
+            "ORGANIZATION",
+            "CONCEPT",
+            "LOCATION",
+            "EVENT",
+            "TECHNOLOGY",
+            "OTHER"
+          ]
+        },
+        "aliases": {
+          "$ref": "#/$defs/ids"
+        },
+        "description": {
+          "$ref": "#/$defs/id"
+        },
+        "supportChunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "fixtureRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "source",
+        "target",
+        "themes",
+        "description",
+        "strength",
+        "supportChunks"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "$ref": "#/$defs/id"
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "description": {
+          "$ref": "#/$defs/id"
+        },
+        "strength": {
+          "$ref": "#/$defs/ratio"
+        },
+        "supportChunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "chunkProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunk",
+        "keywords"
+      ],
+      "properties": {
+        "chunk": {
+          "$ref": "#/$defs/id"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "extractionEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "name",
+        "type",
+        "description"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "enum": [
+            "PERSON",
+            "ORGANIZATION",
+            "CONCEPT",
+            "LOCATION",
+            "EVENT",
+            "TECHNOLOGY",
+            "OTHER"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "extractionRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "source",
+        "target",
+        "themes",
+        "description",
+        "strength"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/id"
+        },
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "target": {
+          "$ref": "#/$defs/id"
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "description": {
+          "$ref": "#/$defs/id"
+        },
+        "strength": {
+          "$ref": "#/$defs/ratio"
+        }
+      }
+    },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunk",
+        "entities",
+        "relations",
+        "contentKeywords"
+      ],
+      "properties": {
+        "chunk": {
+          "$ref": "#/$defs/id"
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/extractionEntity"
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/extractionRelation"
+          }
+        },
+        "contentKeywords": {
+          "$ref": "#/$defs/ids"
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "text",
+        "goldChunks",
+        "goldEntities",
+        "goldRelations",
+        "lowKeywords",
+        "highKeywords"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "specific",
+            "abstract",
+            "one-hop"
+          ]
+        },
+        "text": {
+          "$ref": "#/$defs/id"
+        },
+        "goldChunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "goldEntities": {
+          "$ref": "#/$defs/ids"
+        },
+        "goldRelations": {
+          "$ref": "#/$defs/ids"
+        },
+        "lowKeywords": {
+          "$ref": "#/$defs/ids"
+        },
+        "highKeywords": {
+          "$ref": "#/$defs/ids"
+        }
+      }
+    },
+    "fixtureCensus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sources",
+        "versions",
+        "chunks",
+        "activeChunks",
+        "questions",
+        "entities",
+        "relations",
+        "aliasPairs",
+        "sameNameCollisions",
+        "reversedEdgePairs",
+        "multipleRelationPairs",
+        "duplicateElementPairs",
+        "maxTokens",
+        "overlapTokens"
+      ],
+      "properties": {
+        "sources": {
+          "type": "integer",
+          "minimum": 6
+        },
+        "versions": {
+          "type": "integer",
+          "minimum": 7
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeChunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 18
+        },
+        "entities": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "aliasPairs": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "sameNameCollisions": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "reversedEdgePairs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "multipleRelationPairs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "duplicateElementPairs": {
+          "type": "integer",
+          "minimum": 3
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 16
+        },
+        "overlapTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lightragFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "benchmark",
+        "license",
+        "authorship",
+        "cutoff",
+        "census",
+        "chunker",
+        "sources",
+        "chunks",
+        "entities",
+        "relations",
+        "chunkProfiles",
+        "extraction",
+        "questions"
+      ],
+      "properties": {
+        "document": {
+          "const": "lightrag-fixture"
+        },
+        "benchmark": {
+          "const": "lightrag"
+        },
+        "license": {
+          "const": "MIT"
+        },
+        "authorship": {
+          "$ref": "#/$defs/id"
+        },
+        "cutoff": {
+          "$ref": "#/$defs/instant"
+        },
+        "census": {
+          "$ref": "#/$defs/fixtureCensus"
+        },
+        "chunker": {
+          "$ref": "#/$defs/chunker"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureSource"
+          },
+          "minItems": 6
+        },
+        "chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureChunk"
+          },
+          "minItems": 1
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureEntity"
+          },
+          "minItems": 1
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureRelation"
+          },
+          "minItems": 1
+        },
+        "chunkProfiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/chunkProfile"
+          }
+        },
+        "extraction": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/extraction"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/question"
+          },
+          "minItems": 18
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.census.sources",
+              {
+                "$count": "$.sources[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.chunks",
+              {
+                "$count": "$.chunks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.entities",
+              {
+                "$count": "$.entities[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.relations",
+              {
+                "$count": "$.relations[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.questions",
+              {
+                "$count": "$.questions[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.census.versions",
+              {
+                "$count": "$.sources[*].versions[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.extraction[*]"
+              },
+              {
+                "$count": "$.chunks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.chunkProfiles[*]"
+              },
+              {
+                "$count": "$.chunks[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[?(@.kind=='specific')]"
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[?(@.kind=='abstract')]"
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[?(@.kind=='one-hop')]"
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.sources[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.sources[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.chunks[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.chunks[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.entities[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.entities[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.relations[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.relations[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.questions[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.questions[*].id"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ks",
+        "k",
+        "minScore",
+        "maxPerSource",
+        "neighbours",
+        "contextTokens",
+        "keywordsPerLevel",
+        "candidatesPerKeyword",
+        "expansionEntities",
+        "expansionRelations",
+        "chunksPerSource"
+      ],
+      "properties": {
+        "ks": {
+          "const": [
+            1,
+            3,
+            5
+          ]
+        },
+        "k": {
+          "const": 5
+        },
+        "minScore": {
+          "const": 0
+        },
+        "maxPerSource": {
+          "const": 2
+        },
+        "neighbours": {
+          "const": 0
+        },
+        "contextTokens": {
+          "const": 4000
+        },
+        "keywordsPerLevel": {
+          "const": 8
+        },
+        "candidatesPerKeyword": {
+          "const": 10
+        },
+        "expansionEntities": {
+          "const": 20
+        },
+        "expansionRelations": {
+          "const": 40
+        },
+        "chunksPerSource": {
+          "const": 3
+        }
+      }
+    },
+    "recall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "1",
+        "3",
+        "5"
+      ],
+      "properties": {
+        "1": {
+          "$ref": "#/$defs/ratio"
+        },
+        "3": {
+          "$ref": "#/$defs/ratio"
+        },
+        "5": {
+          "$ref": "#/$defs/ratio"
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "kind",
+        "ranked",
+        "recall",
+        "mrr",
+        "resolved",
+        "unresolved",
+        "skipped",
+        "failed"
+      ],
+      "properties": {
+        "question": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "specific",
+            "abstract",
+            "one-hop"
+          ]
+        },
+        "ranked": {
+          "$ref": "#/$defs/ids"
+        },
+        "recall": {
+          "$ref": "#/$defs/recall"
+        },
+        "mrr": {
+          "$ref": "#/$defs/ratio"
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "recall",
+        "mrr"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recall": {
+          "$ref": "#/$defs/recall"
+        },
+        "mrr": {
+          "$ref": "#/$defs/ratio"
+        }
+      }
+    },
+    "stratum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "metrics"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "specific",
+            "abstract",
+            "one-hop"
+          ]
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calls",
+        "tokens",
+        "ms"
+      ],
+      "properties": {
+        "calls": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "tokens": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "ms": {
+          "$ref": "#/$defs/nullableCount"
+        }
+      }
+    },
+    "rowIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpusId",
+        "questionSetId",
+        "retrievalMode",
+        "model",
+        "prompts",
+        "chunker",
+        "embeddedBy",
+        "providerStatus"
+      ],
+      "properties": {
+        "corpusId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "questionSetId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "retrievalMode": {
+          "enum": [
+            "oracle",
+            "random",
+            "dense-chunk",
+            "low",
+            "high",
+            "hybrid",
+            "hybrid-no-original"
+          ]
+        },
+        "model": {
+          "type": "null"
+        },
+        "prompts": {
+          "type": "null"
+        },
+        "chunker": {
+          "$ref": "#/$defs/chunker"
+        },
+        "embeddedBy": {
+          "$ref": "#/$defs/embedder"
+        },
+        "providerStatus": {
+          "const": "not-run"
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "status",
+        "reason",
+        "identity",
+        "limits",
+        "cost",
+        "cases",
+        "metrics",
+        "byKind",
+        "skipped",
+        "failed",
+        "citations"
+      ],
+      "properties": {
+        "key": {
+          "enum": [
+            "oracle",
+            "random",
+            "dense-chunk",
+            "lightrag-low",
+            "lightrag-high",
+            "lightrag-hybrid",
+            "lightrag-hybrid-no-original"
+          ]
+        },
+        "status": {
+          "enum": [
+            "executed",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "const": "implementation-missing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identity": {
+          "$ref": "#/$defs/rowIdentity"
+        },
+        "limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/case"
+          }
+        },
+        "metrics": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/metrics"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "byKind": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/stratum"
+          }
+        },
+        "skipped": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "failed": {
+          "$ref": "#/$defs/nullableCount"
+        },
+        "citations": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "resolved",
+                "unresolved"
+              ],
+              "properties": {
+                "resolved": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unresolved": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "$query": {
+        "$if": [
+          {
+            "$eq": [
+              "$.status",
+              "not-run"
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.reason",
+                  "implementation-missing"
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.skipped",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.failed",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.citations",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.cases[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.byKind[*]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.cost.calls",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.cost.tokens",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.cost.ms",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "$and": [
+              {
+                "$eq": [
+                  "$.reason",
+                  null
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics.count",
+                  {
+                    "$count": "$.cases[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$sum": "$.byKind[*].metrics.count"
+                  },
+                  {
+                    "$count": "$.cases[*]"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics.mrr",
+                  {
+                    "$avg": "$.cases[*].mrr"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.skipped",
+                  {
+                    "$sum": "$.cases[*].skipped"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.failed",
+                  {
+                    "$sum": "$.cases[*].failed"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.citations.resolved",
+                  {
+                    "$sum": "$.cases[*].resolved"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.citations.unresolved",
+                  {
+                    "$sum": "$.cases[*].unresolved"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics.recall['1']",
+                  {
+                    "$avg": "$.cases[*].recall['1']"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics.recall['3']",
+                  {
+                    "$avg": "$.cases[*].recall['3']"
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  "$.metrics.recall['5']",
+                  {
+                    "$avg": "$.cases[*].recall['5']"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "sourceReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "sha256"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/id"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "band": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "k",
+        "expected",
+        "low",
+        "high",
+        "actual",
+        "passed"
+      ],
+      "properties": {
+        "k": {
+          "enum": [
+            1,
+            3,
+            5
+          ]
+        },
+        "expected": {
+          "$ref": "#/$defs/ratio"
+        },
+        "low": {
+          "$ref": "#/$defs/ratio"
+        },
+        "high": {
+          "$ref": "#/$defs/ratio"
+        },
+        "actual": {
+          "$ref": "#/$defs/ratio"
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              {
+                "$ge": [
+                  "$.actual",
+                  "$.low"
+                ]
+              },
+              {
+                "$le": [
+                  "$.actual",
+                  "$.high"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "oracle",
+        "random",
+        "resolution",
+        "failures"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "oracle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expected",
+            "actual",
+            "passed"
+          ],
+          "properties": {
+            "expected": {
+              "$ref": "#/$defs/recall"
+            },
+            "actual": {
+              "$ref": "#/$defs/recall"
+            },
+            "passed": {
+              "type": "boolean"
+            }
+          },
+          "$query": {
+            "$eq": [
+              "$.passed",
+              {
+                "$eq": [
+                  "$.expected",
+                  "$.actual"
+                ]
+              }
+            ]
+          }
+        },
+        "random": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/band"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gold",
+            "support",
+            "unresolved",
+            "passed"
+          ],
+          "properties": {
+            "gold": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "support": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "boolean"
+            }
+          },
+          "$query": {
+            "$eq": [
+              "$.passed",
+              {
+                "$eq": [
+                  "$.unresolved",
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        "failures": {
+          "$ref": "#/$defs/ids"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              "$.oracle.passed",
+              "$.resolution.passed",
+              {
+                "$eq": [
+                  {
+                    "$count": "$.random[?(@.passed==false)]"
+                  },
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.failures[*]"
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registrationId",
+        "fixtureId",
+        "questionSetId",
+        "questionIds",
+        "rows",
+        "seed",
+        "limits",
+        "chunker",
+        "flatHandoffSha256"
+      ],
+      "properties": {
+        "registrationId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "fixtureId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "questionSetId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "questionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "minItems": 18,
+          "uniqueItems": true
+        },
+        "rows": {
+          "const": [
+            "oracle",
+            "random",
+            "dense-chunk",
+            "lightrag-low",
+            "lightrag-high",
+            "lightrag-hybrid",
+            "lightrag-hybrid-no-original"
+          ]
+        },
+        "seed": {
+          "const": 24105779
+        },
+        "limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "chunker": {
+          "$ref": "#/$defs/chunker"
+        },
+        "flatHandoffSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "lightragReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "benchmark",
+        "schemaVersion",
+        "registration",
+        "fixture",
+        "source",
+        "configIdentities",
+        "rows",
+        "gate",
+        "decision",
+        "reportId"
+      ],
+      "properties": {
+        "document": {
+          "const": "lightrag-report"
+        },
+        "benchmark": {
+          "const": "lightrag"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "registration": {
+          "$ref": "#/$defs/registration"
+        },
+        "fixture": {
+          "$ref": "#/$defs/fixtureCensus"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceReceipt"
+        },
+        "configIdentities": {
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/row"
+          },
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "decision": {
+          "const": {
+            "state": "not-evaluated",
+            "defaultChanged": false,
+            "reason": "Graph mechanisms and live answer quality are unmeasured."
+          }
+        },
+        "reportId": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              [
+                "$.rows[*].key"
+              ],
+              "$.registration.rows"
+            ]
+          },
+          {
+            "$every": {
+              "r": "$.rows[*]"
+            },
+            "$satisfies": {
+              "$and": [
+                {
+                  "$eq": [
+                    "$r.identity.corpusId",
+                    "$.registration.fixtureId"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.identity.questionSetId",
+                    "$.registration.questionSetId"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.limits",
+                    "$.registration.limits"
+                  ]
+                },
+                {
+                  "$eq": [
+                    "$r.identity.chunker",
+                    "$.registration.chunker"
+                  ]
+                },
+                {
+                  "$if": [
+                    {
+                      "$eq": [
+                        "$r.status",
+                        "executed"
+                      ]
+                    },
+                    {
+                      "$eq": [
+                        [
+                          "$r.cases[*].question"
+                        ],
+                        "$.registration.questionIds"
+                      ]
+                    },
+                    true
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "lightragLive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "status",
+        "reason",
+        "registrationId",
+        "physicalRequests"
+      ],
+      "properties": {
+        "document": {
+          "const": "lightrag-live"
+        },
+        "status": {
+          "const": "not-run"
+        },
+        "reason": {
+          "const": "Live paired quality, judge and separately licensed parity tiers require later registered plans and new explicit spend approval."
+        },
+        "registrationId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "physicalRequests": {
+          "const": 0
+        }
+      }
+    },
+    "lightragLadder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "status",
+        "reason",
+        "sizes",
+        "maxP95Ms",
+        "registrationId",
+        "latency"
+      ],
+      "properties": {
+        "document": {
+          "const": "lightrag-ladder"
+        },
+        "status": {
+          "const": "not-run"
+        },
+        "reason": {
+          "const": "Graph retrieval implementation is required before the registered scale measurement."
+        },
+        "sizes": {
+          "const": [
+            100,
+            1000,
+            10000
+          ]
+        },
+        "maxP95Ms": {
+          "const": 250
+        },
+        "registrationId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "latency": {
+          "type": "null"
+        }
+      }
+    }
+  }
+}

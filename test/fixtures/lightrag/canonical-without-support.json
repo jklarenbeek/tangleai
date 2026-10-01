@@ -1,0 +1,9 @@
+{
+  "id": "canonical-without-support",
+  "kind": "entity",
+  "patch": {
+    "supportClaimIds": [],
+    "supportChunkIds": []
+  },
+  "expectedCode": "TLRAG1001"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "same-name-collision",
+  "kind": "entity-merge",
+  "name": "Beacon",
+  "types": [
+    "LOCATION",
+    "CONCEPT"
+  ],
+  "expectedCode": "TLRAG1006"
+}

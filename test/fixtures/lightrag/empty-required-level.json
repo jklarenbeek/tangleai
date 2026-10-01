@@ -1,0 +1,10 @@
+{
+  "id": "empty-required-level",
+  "kind": "query-plan",
+  "mode": "high",
+  "highLevelKeywords": [],
+  "lowLevelKeywords": [
+    "Tidemark Lab"
+  ],
+  "expectedCode": "TLRAG1008"
+}

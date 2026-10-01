@@ -1,0 +1,9 @@
+{
+  "id": "unsupplied-citation",
+  "kind": "answer",
+  "supplied": [
+    "known-chunk"
+  ],
+  "citation": "unsupplied-chunk",
+  "expectedCode": "TLRAG1009"
+}

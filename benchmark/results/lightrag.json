@@ -1,0 +1,1941 @@
+{
+  "document": "lightrag-report",
+  "benchmark": "lightrag",
+  "schemaVersion": 1,
+  "registration": {
+    "fixtureId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+    "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+    "questionIds": [
+      "specific-equipment",
+      "specific-funding",
+      "specific-launch",
+      "specific-archive-host",
+      "specific-timber",
+      "specific-produce",
+      "abstract-training",
+      "abstract-grant-admin",
+      "abstract-cargo",
+      "abstract-festival-host",
+      "abstract-restoration",
+      "abstract-school-funding",
+      "hop-shelves",
+      "hop-launch",
+      "hop-archive-host",
+      "hop-timber",
+      "hop-grant-admin",
+      "hop-opening"
+    ],
+    "rows": [
+      "oracle",
+      "random",
+      "dense-chunk",
+      "lightrag-low",
+      "lightrag-high",
+      "lightrag-hybrid",
+      "lightrag-hybrid-no-original"
+    ],
+    "seed": 24105779,
+    "limits": {
+      "ks": [
+        1,
+        3,
+        5
+      ],
+      "k": 5,
+      "minScore": 0,
+      "maxPerSource": 2,
+      "neighbours": 0,
+      "contextTokens": 4000,
+      "keywordsPerLevel": 8,
+      "candidatesPerKeyword": 10,
+      "expansionEntities": 20,
+      "expansionRelations": 40,
+      "chunksPerSource": 3
+    },
+    "chunker": {
+      "version": "heading-recursive/1",
+      "config": {
+        "maxTokens": 100,
+        "overlapTokens": 32
+      },
+      "embeddedBy": {
+        "model": "hash-trigram-64",
+        "dims": 64
+      }
+    },
+    "flatHandoffSha256": "e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172",
+    "registrationId": "d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54"
+  },
+  "fixture": {
+    "sources": 6,
+    "versions": 7,
+    "chunks": 17,
+    "activeChunks": 15,
+    "questions": 18,
+    "entities": 20,
+    "relations": 18,
+    "aliasPairs": 2,
+    "sameNameCollisions": 2,
+    "reversedEdgePairs": 1,
+    "multipleRelationPairs": 1,
+    "duplicateElementPairs": 10,
+    "maxTokens": 100,
+    "overlapTokens": 32
+  },
+  "source": {
+    "files": [
+      {
+        "path": "benchmark/fixtures/lightrag/manifest.json",
+        "sha256": "6706da9364b20d2d023ab18cd0235cf0e9a43472760bc77a36d5f986f9a2bf24"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/depot.md",
+        "sha256": "17943243a17d6e8e93f240befa66e65bca2a2e56b733313eaddbb59f23412cb7"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/guild-old.md",
+        "sha256": "57ddd8831d2171a62116be2ef26af222459864cebf4b2d0e80d65505b7b92321"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/guild.md",
+        "sha256": "1fce4f2dc1b03e2c3ea11902471f2762f2e7c6e35a5487bf25717caa3c616527"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/lab.md",
+        "sha256": "b6b660c4ff1214a6c2f806d9a4d8c11df876e2dfe3698a7f7c483511617164fd"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/museum.html",
+        "sha256": "73c9e2d75aa3d29bdf95c74ee9dea92ad21ec5dc896b25cfcdd7c2755f1c8aa8"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/quay.html",
+        "sha256": "14e4777667e040cf2d2d3dd747ff7d3da35f4c4c61166c328a3d1909e659bb20"
+      },
+      {
+        "path": "benchmark/fixtures/lightrag/sources/workshop.md",
+        "sha256": "0edadf9cbf839bcf1f8b22322c193b06a687d7edc358785748d326e66d921654"
+      },
+      {
+        "path": "benchmark/lib/lightrag.ts",
+        "sha256": "05084ce55d1e3e4fb47080261f4bdc33ecaf67d3e8ef9d90aabf325fdc5e891d"
+      },
+      {
+        "path": "benchmark/lib/lightrag.types.ts",
+        "sha256": "2913387e48cd6d74dccc2a6a525aca7cb33375edd66aea7ee55dbb6133a7ff3c"
+      },
+      {
+        "path": "benchmark/lib/recall.ts",
+        "sha256": "a5640069e2617cb642e40ded56582669e26407d451c5dc32e94896f0188e9610"
+      },
+      {
+        "path": "benchmark/lib/relevance.ts",
+        "sha256": "2fbafbddee5b66a6a53eb4384986ef9541e338658c464c6a82e424cd82c52dcb"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/table.ts",
+        "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/lightrag.ts",
+        "sha256": "563e963a2157e73bf814a98686cf57893dd63c0968e913618801b5f91354968f"
+      },
+      {
+        "path": "benchmark/schemas/lightrag.schema.json",
+        "sha256": "ac77d8a4814c2d121541337371900223c8c0927a265f5831e21ab69f37210f0f"
+      },
+      {
+        "path": "packages/documents/src/chunking.ts",
+        "sha256": "d53994760b67c59e7f1b3e8f1111f68bd9dee3f3b428fc490d9ae9d52b3ab7b7"
+      },
+      {
+        "path": "packages/documents/src/ingest.ts",
+        "sha256": "af9d1ec234062031b88ad0ecfbe8a3dc36ff615a95ffb1db05c62d3efeac289c"
+      },
+      {
+        "path": "packages/documents/src/retrieval.ts",
+        "sha256": "331fffffc3ed2d6efb6af2d735bb99f5ea21d74ad5545655d434785717c4398d"
+      },
+      {
+        "path": "packages/models/src/embed.ts",
+        "sha256": "1c1b8fb32687ecb9c73c566d99b4d1aa327e685eb68dd626111d8f3bbfa365d1"
+      },
+      {
+        "path": "packages/store/src/document-store.ts",
+        "sha256": "f97b975732899198627b39304010aa2018eb4c4e4c43027bbfb0c7d2e97ae3f9"
+      }
+    ],
+    "sha256": "d4d12d25ec2555b5702a44cfdfd093faadcfb3947fd21d6a87d408d148e4dde3"
+  },
+  "configIdentities": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "oracle",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "random",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "dense-chunk",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "lightrag-low",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "lightrag-high",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "lightrag-hybrid",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "lightrag-hybrid-no-original",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "key": "oracle",
+      "status": "executed",
+      "reason": null,
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "oracle",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0
+      },
+      "cases": [
+        {
+          "question": "specific-equipment",
+          "kind": "specific",
+          "ranked": [
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2",
+            "guild@2:0",
+            "guild@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-funding",
+          "kind": "specific",
+          "ranked": [
+            "guild@2:0",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2",
+            "guild@2:1"
+          ],
+          "recall": {
+            "1": 1,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-launch",
+          "kind": "specific",
+          "ranked": [
+            "quay@2:0",
+            "quay@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-archive-host",
+          "kind": "specific",
+          "ranked": [
+            "museum@2:0",
+            "museum@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-timber",
+          "kind": "specific",
+          "ranked": [
+            "workshop@2:0",
+            "workshop@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-produce",
+          "kind": "specific",
+          "ranked": [
+            "depot@2:0",
+            "depot@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-training",
+          "kind": "abstract",
+          "ranked": [
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2",
+            "guild@2:0",
+            "guild@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-grant-admin",
+          "kind": "abstract",
+          "ranked": [
+            "guild@2:0",
+            "guild@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-cargo",
+          "kind": "abstract",
+          "ranked": [
+            "quay@2:0",
+            "quay@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-festival-host",
+          "kind": "abstract",
+          "ranked": [
+            "museum@2:0",
+            "museum@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-restoration",
+          "kind": "abstract",
+          "ranked": [
+            "workshop@2:0",
+            "workshop@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-school-funding",
+          "kind": "abstract",
+          "ranked": [
+            "depot@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2",
+            "guild@2:0"
+          ],
+          "recall": {
+            "1": 1,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-shelves",
+          "kind": "one-hop",
+          "ranked": [
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2",
+            "guild@2:0",
+            "guild@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-launch",
+          "kind": "one-hop",
+          "ranked": [
+            "quay@2:0",
+            "quay@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-archive-host",
+          "kind": "one-hop",
+          "ranked": [
+            "museum@2:1",
+            "museum@2:2",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-timber",
+          "kind": "one-hop",
+          "ranked": [
+            "workshop@2:0",
+            "workshop@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-grant-admin",
+          "kind": "one-hop",
+          "ranked": [
+            "guild@2:0",
+            "guild@2:1",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-opening",
+          "kind": "one-hop",
+          "ranked": [
+            "museum@2:1",
+            "museum@2:2",
+            "lab@2:0",
+            "lab@2:1",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        }
+      ],
+      "metrics": {
+        "count": 18,
+        "recall": {
+          "1": 0.5555555555555556,
+          "3": 1,
+          "5": 1
+        },
+        "mrr": 1
+      },
+      "byKind": [
+        {
+          "kind": "specific",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.5833333333333334,
+              "3": 1,
+              "5": 1
+            },
+            "mrr": 1
+          }
+        },
+        {
+          "kind": "abstract",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.5833333333333334,
+              "3": 1,
+              "5": 1
+            },
+            "mrr": 1
+          }
+        },
+        {
+          "kind": "one-hop",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.5,
+              "3": 1,
+              "5": 1
+            },
+            "mrr": 1
+          }
+        }
+      ],
+      "skipped": 0,
+      "failed": 0,
+      "citations": {
+        "resolved": 90,
+        "unresolved": 0
+      }
+    },
+    {
+      "key": "random",
+      "status": "executed",
+      "reason": null,
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "random",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0
+      },
+      "cases": [
+        {
+          "question": "specific-equipment",
+          "kind": "specific",
+          "ranked": [
+            "lab@2:0",
+            "guild@2:0",
+            "depot@2:1",
+            "lab@2:2",
+            "workshop@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-funding",
+          "kind": "specific",
+          "ranked": [
+            "depot@2:1",
+            "depot@2:0",
+            "quay@2:0",
+            "quay@2:1",
+            "guild@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 1
+          },
+          "mrr": 0.2,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-launch",
+          "kind": "specific",
+          "ranked": [
+            "workshop@2:2",
+            "museum@2:1",
+            "museum@2:0",
+            "lab@2:0",
+            "quay@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.2,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-archive-host",
+          "kind": "specific",
+          "ranked": [
+            "depot@2:0",
+            "guild@2:0",
+            "quay@2:0",
+            "lab@2:0",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-timber",
+          "kind": "specific",
+          "ranked": [
+            "lab@2:2",
+            "workshop@2:2",
+            "quay@2:0",
+            "museum@2:0",
+            "guild@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-produce",
+          "kind": "specific",
+          "ranked": [
+            "quay@2:0",
+            "workshop@2:1",
+            "depot@2:1",
+            "museum@2:1",
+            "depot@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0.5,
+            "5": 1
+          },
+          "mrr": 0.3333333333333333,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-training",
+          "kind": "abstract",
+          "ranked": [
+            "lab@2:0",
+            "workshop@2:2",
+            "workshop@2:1",
+            "museum@2:0",
+            "museum@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-grant-admin",
+          "kind": "abstract",
+          "ranked": [
+            "guild@2:1",
+            "museum@2:1",
+            "depot@2:1",
+            "museum@2:0",
+            "lab@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-cargo",
+          "kind": "abstract",
+          "ranked": [
+            "lab@2:0",
+            "museum@2:0",
+            "museum@2:1",
+            "lab@2:2",
+            "workshop@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-festival-host",
+          "kind": "abstract",
+          "ranked": [
+            "quay@2:0",
+            "workshop@2:0",
+            "depot@2:0",
+            "museum@2:1",
+            "lab@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.25,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-restoration",
+          "kind": "abstract",
+          "ranked": [
+            "quay@2:1",
+            "quay@2:0",
+            "guild@2:0",
+            "museum@2:0",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-school-funding",
+          "kind": "abstract",
+          "ranked": [
+            "lab@2:1",
+            "workshop@2:2",
+            "quay@2:1",
+            "depot@2:1",
+            "lab@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 1
+          },
+          "mrr": 0.25,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-shelves",
+          "kind": "one-hop",
+          "ranked": [
+            "museum@2:2",
+            "quay@2:0",
+            "lab@2:0",
+            "museum@2:0",
+            "lab@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0.5,
+            "5": 1
+          },
+          "mrr": 0.3333333333333333,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-launch",
+          "kind": "one-hop",
+          "ranked": [
+            "guild@2:0",
+            "depot@2:1",
+            "quay@2:0",
+            "workshop@2:0",
+            "lab@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 0.3333333333333333,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-archive-host",
+          "kind": "one-hop",
+          "ranked": [
+            "guild@2:1",
+            "guild@2:0",
+            "museum@2:1",
+            "workshop@2:1",
+            "lab@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 0.3333333333333333,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-timber",
+          "kind": "one-hop",
+          "ranked": [
+            "workshop@2:0",
+            "guild@2:1",
+            "museum@2:1",
+            "quay@2:1",
+            "depot@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-grant-admin",
+          "kind": "one-hop",
+          "ranked": [
+            "quay@2:1",
+            "workshop@2:0",
+            "lab@2:1",
+            "guild@2:0",
+            "workshop@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.25,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-opening",
+          "kind": "one-hop",
+          "ranked": [
+            "workshop@2:1",
+            "workshop@2:0",
+            "workshop@2:2",
+            "lab@2:0",
+            "museum@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.2,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        }
+      ],
+      "metrics": {
+        "count": 18,
+        "recall": {
+          "1": 0.1111111111111111,
+          "3": 0.2222222222222222,
+          "5": 0.5
+        },
+        "mrr": 0.37129629629629624
+      },
+      "byKind": [
+        {
+          "kind": "specific",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.08333333333333333,
+              "3": 0.16666666666666666,
+              "5": 0.5
+            },
+            "mrr": 0.28888888888888886
+          }
+        },
+        {
+          "kind": "abstract",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.16666666666666666,
+              "3": 0.16666666666666666,
+              "5": 0.4166666666666667
+            },
+            "mrr": 0.4166666666666667
+          }
+        },
+        {
+          "kind": "one-hop",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.08333333333333333,
+              "3": 0.3333333333333333,
+              "5": 0.5833333333333334
+            },
+            "mrr": 0.4083333333333334
+          }
+        }
+      ],
+      "skipped": 0,
+      "failed": 0,
+      "citations": {
+        "resolved": 90,
+        "unresolved": 0
+      }
+    },
+    {
+      "key": "dense-chunk",
+      "status": "executed",
+      "reason": null,
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "dense-chunk",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": 0,
+        "tokens": 0,
+        "ms": 0
+      },
+      "cases": [
+        {
+          "question": "specific-equipment",
+          "kind": "specific",
+          "ranked": [
+            "lab@2:1",
+            "workshop@2:1",
+            "lab@2:0",
+            "workshop@2:2",
+            "museum@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-funding",
+          "kind": "specific",
+          "ranked": [
+            "guild@2:0",
+            "lab@2:2",
+            "guild@2:1",
+            "lab@2:1",
+            "museum@2:0"
+          ],
+          "recall": {
+            "1": 1,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-launch",
+          "kind": "specific",
+          "ranked": [
+            "quay@2:1",
+            "quay@2:0",
+            "workshop@2:0",
+            "workshop@2:2",
+            "lab@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-archive-host",
+          "kind": "specific",
+          "ranked": [
+            "depot@2:0",
+            "quay@2:1",
+            "lab@2:2",
+            "lab@2:0",
+            "depot@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-timber",
+          "kind": "specific",
+          "ranked": [
+            "workshop@2:1",
+            "lab@2:1",
+            "workshop@2:0",
+            "lab@2:0",
+            "museum@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "specific-produce",
+          "kind": "specific",
+          "ranked": [
+            "depot@2:0",
+            "depot@2:1",
+            "workshop@2:0",
+            "quay@2:1",
+            "quay@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-training",
+          "kind": "abstract",
+          "ranked": [
+            "lab@2:2",
+            "depot@2:1",
+            "workshop@2:2",
+            "lab@2:1",
+            "quay@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.25,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-grant-admin",
+          "kind": "abstract",
+          "ranked": [
+            "depot@2:0",
+            "museum@2:0",
+            "depot@2:1",
+            "museum@2:2",
+            "guild@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.2,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-cargo",
+          "kind": "abstract",
+          "ranked": [
+            "guild@2:1",
+            "lab@2:2",
+            "depot@2:1",
+            "quay@2:1",
+            "depot@2:0"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0.5
+          },
+          "mrr": 0.25,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-festival-host",
+          "kind": "abstract",
+          "ranked": [
+            "museum@2:0",
+            "lab@2:1",
+            "lab@2:0",
+            "workshop@2:2",
+            "quay@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-restoration",
+          "kind": "abstract",
+          "ranked": [
+            "depot@2:1",
+            "guild@2:1",
+            "museum@2:2",
+            "lab@2:2",
+            "quay@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0,
+            "5": 0
+          },
+          "mrr": 0,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "abstract-school-funding",
+          "kind": "abstract",
+          "ranked": [
+            "depot@2:1",
+            "depot@2:0",
+            "lab@2:2",
+            "museum@2:2",
+            "workshop@2:0"
+          ],
+          "recall": {
+            "1": 1,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-shelves",
+          "kind": "one-hop",
+          "ranked": [
+            "lab@2:1",
+            "workshop@2:2",
+            "workshop@2:1",
+            "lab@2:0",
+            "museum@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-launch",
+          "kind": "one-hop",
+          "ranked": [
+            "quay@2:1",
+            "workshop@2:0",
+            "quay@2:0",
+            "lab@2:0",
+            "workshop@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-archive-host",
+          "kind": "one-hop",
+          "ranked": [
+            "lab@2:2",
+            "museum@2:1",
+            "depot@2:0",
+            "museum@2:2",
+            "depot@2:1"
+          ],
+          "recall": {
+            "1": 0,
+            "3": 0.5,
+            "5": 1
+          },
+          "mrr": 0.5,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-timber",
+          "kind": "one-hop",
+          "ranked": [
+            "workshop@2:0",
+            "lab@2:1",
+            "workshop@2:1",
+            "lab@2:0",
+            "guild@2:1"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-grant-admin",
+          "kind": "one-hop",
+          "ranked": [
+            "guild@2:0",
+            "guild@2:1",
+            "depot@2:0",
+            "museum@2:0",
+            "lab@2:2"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 1,
+            "5": 1
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        },
+        {
+          "question": "hop-opening",
+          "kind": "one-hop",
+          "ranked": [
+            "museum@2:2",
+            "museum@2:0",
+            "quay@2:1",
+            "workshop@2:2",
+            "workshop@2:0"
+          ],
+          "recall": {
+            "1": 0.5,
+            "3": 0.5,
+            "5": 0.5
+          },
+          "mrr": 1,
+          "resolved": 5,
+          "unresolved": 0,
+          "skipped": 0,
+          "failed": 0
+        }
+      ],
+      "metrics": {
+        "count": 18,
+        "recall": {
+          "1": 0.3888888888888889,
+          "3": 0.6111111111111112,
+          "5": 0.75
+        },
+        "mrr": 0.7333333333333333
+      },
+      "byKind": [
+        {
+          "kind": "specific",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.5,
+              "3": 0.8333333333333334,
+              "5": 0.8333333333333334
+            },
+            "mrr": 0.8333333333333334
+          }
+        },
+        {
+          "kind": "abstract",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.25,
+              "3": 0.25,
+              "5": 0.5
+            },
+            "mrr": 0.45
+          }
+        },
+        {
+          "kind": "one-hop",
+          "metrics": {
+            "count": 6,
+            "recall": {
+              "1": 0.4166666666666667,
+              "3": 0.75,
+              "5": 0.9166666666666666
+            },
+            "mrr": 0.9166666666666666
+          }
+        }
+      ],
+      "skipped": 0,
+      "failed": 0,
+      "citations": {
+        "resolved": 90,
+        "unresolved": 0
+      }
+    },
+    {
+      "key": "lightrag-low",
+      "status": "not-run",
+      "reason": "implementation-missing",
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "low",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": null,
+        "tokens": null,
+        "ms": null
+      },
+      "cases": [],
+      "metrics": null,
+      "byKind": [],
+      "skipped": null,
+      "failed": null,
+      "citations": null
+    },
+    {
+      "key": "lightrag-high",
+      "status": "not-run",
+      "reason": "implementation-missing",
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "high",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": null,
+        "tokens": null,
+        "ms": null
+      },
+      "cases": [],
+      "metrics": null,
+      "byKind": [],
+      "skipped": null,
+      "failed": null,
+      "citations": null
+    },
+    {
+      "key": "lightrag-hybrid",
+      "status": "not-run",
+      "reason": "implementation-missing",
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "hybrid",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": null,
+        "tokens": null,
+        "ms": null
+      },
+      "cases": [],
+      "metrics": null,
+      "byKind": [],
+      "skipped": null,
+      "failed": null,
+      "citations": null
+    },
+    {
+      "key": "lightrag-hybrid-no-original",
+      "status": "not-run",
+      "reason": "implementation-missing",
+      "identity": {
+        "corpusId": "102bdbe1a5cee51014faff1ad5e172135e683f5292cc35b43198052a5b025abb",
+        "questionSetId": "fc9ec3159a9265a822a5480b25971f61dde456b4f7a33d80b0555fe682c39789",
+        "retrievalMode": "hybrid-no-original",
+        "model": null,
+        "prompts": null,
+        "chunker": {
+          "version": "heading-recursive/1",
+          "config": {
+            "maxTokens": 100,
+            "overlapTokens": 32
+          },
+          "embeddedBy": {
+            "model": "hash-trigram-64",
+            "dims": 64
+          }
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "providerStatus": "not-run"
+      },
+      "limits": {
+        "ks": [
+          1,
+          3,
+          5
+        ],
+        "k": 5,
+        "minScore": 0,
+        "maxPerSource": 2,
+        "neighbours": 0,
+        "contextTokens": 4000,
+        "keywordsPerLevel": 8,
+        "candidatesPerKeyword": 10,
+        "expansionEntities": 20,
+        "expansionRelations": 40,
+        "chunksPerSource": 3
+      },
+      "cost": {
+        "calls": null,
+        "tokens": null,
+        "ms": null
+      },
+      "cases": [],
+      "metrics": null,
+      "byKind": [],
+      "skipped": null,
+      "failed": null,
+      "citations": null
+    }
+  ],
+  "gate": {
+    "passed": true,
+    "oracle": {
+      "expected": {
+        "1": 0.5555555555555556,
+        "3": 1,
+        "5": 1
+      },
+      "actual": {
+        "1": 0.5555555555555556,
+        "3": 1,
+        "5": 1
+      },
+      "passed": true
+    },
+    "random": [
+      {
+        "k": 1,
+        "expected": 0.06666666666666667,
+        "low": 0,
+        "high": 0.292431485823349,
+        "actual": 0.1111111111111111,
+        "passed": true
+      },
+      {
+        "k": 3,
+        "expected": 0.20000000000000007,
+        "low": 0,
+        "high": 0.5284975906057737,
+        "actual": 0.2222222222222222,
+        "passed": true
+      },
+      {
+        "k": 5,
+        "expected": 0.33333333333333326,
+        "low": 0,
+        "high": 0.7105541619803315,
+        "actual": 0.5,
+        "passed": true
+      }
+    ],
+    "resolution": {
+      "gold": 34,
+      "support": 87,
+      "unresolved": 0,
+      "passed": true
+    },
+    "failures": []
+  },
+  "decision": {
+    "state": "not-evaluated",
+    "defaultChanged": false,
+    "reason": "Graph mechanisms and live answer quality are unmeasured."
+  },
+  "reportId": "f24ab8bcf9e01a793d5af803bbbeebc00b9614f896f948353b5f124e94655016"
+}

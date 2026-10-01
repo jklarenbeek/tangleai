@@ -74,4 +74,4 @@ Scripted totals across integrated rows: 12 model calls, 3 tool calls, 1 context 
 
 Live weekly-report row: **not-run** — no authorized live plan. Runtime conformance does not depend on a live model: the claims are scheduler/contract/durability semantics and the scripted clients exercise the exact AI/tool/context seams.
 
-Report `8ca225fb8a93…` at suite @jarenjs/flow@0.91.4; flat baseline projected by `queries/mas/runtime-baseline.json`.
+Report `a4e4f00d0d6f…` at suite @jarenjs/flow@0.91.4; flat baseline projected by `queries/mas/runtime-baseline.json`.

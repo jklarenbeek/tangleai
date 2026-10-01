@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "8b85ba613f7ce66274477aa01d368311b2ba72de",
+    "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
     "clean": false,
     "files": [
       {
@@ -356,6 +356,14 @@
       {
         "path": "benchmark/lib/ledger-db.ts",
         "sha256": "8327cf26450eb4172b5a03e3471c51e3eea997ec54c10675b94ea08802fd420d"
+      },
+      {
+        "path": "benchmark/lib/lightrag.ts",
+        "sha256": "05084ce55d1e3e4fb47080261f4bdc33ecaf67d3e8ef9d90aabf325fdc5e891d"
+      },
+      {
+        "path": "benchmark/lib/lightrag.types.ts",
+        "sha256": "2913387e48cd6d74dccc2a6a525aca7cb33375edd66aea7ee55dbb6133a7ff3c"
       },
       {
         "path": "benchmark/lib/locomo-corpus.ts",
@@ -719,7 +727,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "98a91dd7a259f9d1d208a9a8c5d3ef11d6863820dea9f13f05b1114c08157561"
+        "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
       },
       {
         "path": "packages/agents/package.json",
@@ -1374,7 +1382,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "ce0f3d89f1bbb7cc4eae9ce57a4e3feff9b24ce104d6556946e16ff93e886da3"
+    "sha256": "538c4e7e4ff4a4d969c79606820633544a969194e4492dba093c3c06b2c5b217"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44839,5 +44847,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "243b1ee9ab134ab4a10f0661ce1698fa8e675605a0a7ccaa2e1a6ac3acd1bef9"
+  "reportId": "538b1e9389cbf0adbb84800a6f93847d01b400d31b31ac5b9d1f854154f718f0"
 }

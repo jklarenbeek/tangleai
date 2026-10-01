@@ -1,0 +1,2308 @@
+{
+  "document": "lightrag-fixture",
+  "benchmark": "lightrag",
+  "license": "MIT",
+  "authorship": "Tangle-authored original fictional Windmere district records; no third-party source text.",
+  "cutoff": "2026-07-01T00:00:00.000Z",
+  "census": {
+    "sources": 6,
+    "versions": 7,
+    "chunks": 17,
+    "activeChunks": 15,
+    "questions": 18,
+    "entities": 20,
+    "relations": 18,
+    "aliasPairs": 2,
+    "sameNameCollisions": 2,
+    "reversedEdgePairs": 1,
+    "multipleRelationPairs": 1,
+    "duplicateElementPairs": 10,
+    "maxTokens": 100,
+    "overlapTokens": 32
+  },
+  "chunker": {
+    "version": "heading-recursive/1",
+    "config": {
+      "maxTokens": 100,
+      "overlapTokens": 32
+    },
+    "embeddedBy": {
+      "model": "hash-trigram-64",
+      "dims": 64
+    }
+  },
+  "sources": [
+    {
+      "key": "lab",
+      "title": "Tidemark Lab records",
+      "url": "https://fixtures.tangleai.dev/lightrag/lab",
+      "mimeType": "text/markdown",
+      "versions": [
+        {
+          "key": "lab@2",
+          "file": "sources/lab.md",
+          "sha256": "b6b660c4ff1214a6c2f806d9a4d8c11df876e2dfe3698a7f7c483511617164fd",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "key": "guild",
+      "title": "Windmere Guild records",
+      "url": "https://fixtures.tangleai.dev/lightrag/guild",
+      "mimeType": "text/markdown",
+      "versions": [
+        {
+          "key": "guild@1",
+          "file": "sources/guild-old.md",
+          "sha256": "57ddd8831d2171a62116be2ef26af222459864cebf4b2d0e80d65505b7b92321",
+          "status": "superseded",
+          "admittedAt": "2026-05-01T00:00:00.000Z"
+        },
+        {
+          "key": "guild@2",
+          "file": "sources/guild.md",
+          "sha256": "1fce4f2dc1b03e2c3ea11902471f2762f2e7c6e35a5487bf25717caa3c616527",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "key": "quay",
+      "title": "Amber Quay records",
+      "url": "https://fixtures.tangleai.dev/lightrag/quay",
+      "mimeType": "text/html",
+      "versions": [
+        {
+          "key": "quay@2",
+          "file": "sources/quay.html",
+          "sha256": "14e4777667e040cf2d2d3dd747ff7d3da35f4c4c61166c328a3d1909e659bb20",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "key": "museum",
+      "title": "Glass Museum records",
+      "url": "https://fixtures.tangleai.dev/lightrag/museum",
+      "mimeType": "text/html",
+      "versions": [
+        {
+          "key": "museum@2",
+          "file": "sources/museum.html",
+          "sha256": "73c9e2d75aa3d29bdf95c74ee9dea92ad21ec5dc896b25cfcdd7c2755f1c8aa8",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "key": "workshop",
+      "title": "Cedar Workshop records",
+      "url": "https://fixtures.tangleai.dev/lightrag/workshop",
+      "mimeType": "text/markdown",
+      "versions": [
+        {
+          "key": "workshop@2",
+          "file": "sources/workshop.md",
+          "sha256": "0edadf9cbf839bcf1f8b22322c193b06a687d7edc358785748d326e66d921654",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "key": "depot",
+      "title": "Orchard Depot records",
+      "url": "https://fixtures.tangleai.dev/lightrag/depot",
+      "mimeType": "text/markdown",
+      "versions": [
+        {
+          "key": "depot@2",
+          "file": "sources/depot.md",
+          "sha256": "17943243a17d6e8e93f240befa66e65bca2a2e56b733313eaddbb59f23412cb7",
+          "status": "active",
+          "admittedAt": "2026-06-01T00:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "chunks": [
+    {
+      "key": "lab@2:0",
+      "version": "lab@2",
+      "order": 0,
+      "textSha256": "743444e72ab46feee5c20c534482f1a0aacbe3c45511fb9ac1d4c7fff9013af2",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "key": "lab@2:1",
+      "version": "lab@2",
+      "order": 1,
+      "textSha256": "ef6156b3b4f86d79b89f9d0fd54c1c6e7c1525f9b78d3cba08be1f5af12fd8db",
+      "elementOrders": [
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "key": "lab@2:2",
+      "version": "lab@2",
+      "order": 2,
+      "textSha256": "6f5ec968185c6a4d27dc29e5c3a54c94426874d5aa5396ae8c1cbdf4d050203c",
+      "elementOrders": [
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "key": "guild@1:0",
+      "version": "guild@1",
+      "order": 0,
+      "textSha256": "cf08c0ab5ec71b7bf8417a23cafa261c57cea6cf7521c87ceaf80831080fbae0",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "key": "guild@1:1",
+      "version": "guild@1",
+      "order": 1,
+      "textSha256": "ab281ee9066578bf31a2eb071829d51d50dabe801b1c1fe3408dfb7a64f99ff5",
+      "elementOrders": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "key": "guild@2:0",
+      "version": "guild@2",
+      "order": 0,
+      "textSha256": "71ff6a45705507a43e66414a1ccb3bc8d46e1dc82b0b2f627ce8a4ecc745a859",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "key": "guild@2:1",
+      "version": "guild@2",
+      "order": 1,
+      "textSha256": "222d0ea30649dd596a590e2c1c2b0f0182823e76b03db929dc9bc3f067ecefa8",
+      "elementOrders": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "key": "quay@2:0",
+      "version": "quay@2",
+      "order": 0,
+      "textSha256": "1afcb0c59d54f9a9f3e039cd03febe39a9123f9a98d90c9bd08f40f7591dfba7",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "key": "quay@2:1",
+      "version": "quay@2",
+      "order": 1,
+      "textSha256": "7e81e87ca67c225b23587794b5e741f26a16e11285870d84dc636d92c386b277",
+      "elementOrders": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "key": "museum@2:0",
+      "version": "museum@2",
+      "order": 0,
+      "textSha256": "6209ad6e0c0bf458850ab104a6c917774d175808626b8013be99c55077da72d7",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "key": "museum@2:1",
+      "version": "museum@2",
+      "order": 1,
+      "textSha256": "37f0e3701d0208e54ab6f4a8a945f25599ecb08fd69f1144dcb58e07370c050d",
+      "elementOrders": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "key": "museum@2:2",
+      "version": "museum@2",
+      "order": 2,
+      "textSha256": "82b192404411aff39ffd283581cfa0bae126d0bd35eae1576bdab0c6a653d0e5",
+      "elementOrders": [
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "key": "workshop@2:0",
+      "version": "workshop@2",
+      "order": 0,
+      "textSha256": "a585bdaad79e55edad29324cbfa26472d263b16a90e8669de97e84ecf4e6ea13",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "key": "workshop@2:1",
+      "version": "workshop@2",
+      "order": 1,
+      "textSha256": "d2842d8ceee3d96596aa6838d6e780da22be7c4b62fadfb5ba4d36298a5d1e03",
+      "elementOrders": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "key": "workshop@2:2",
+      "version": "workshop@2",
+      "order": 2,
+      "textSha256": "5b565056287e2ad28b8f04a1c40e69c7f142f3784c9b1b988d4608ad2bc57b7e",
+      "elementOrders": [
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "key": "depot@2:0",
+      "version": "depot@2",
+      "order": 0,
+      "textSha256": "6ab7a14ad773b99a37689dc1f95f15ffa824707ba272e59029e5119aef39f8f4",
+      "elementOrders": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "key": "depot@2:1",
+      "version": "depot@2",
+      "order": 1,
+      "textSha256": "ffac788ff95974052aa92c062a605d071587dae78cc5b30c83969ebc8cf22556",
+      "elementOrders": [
+        5,
+        6,
+        7,
+        8
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "key": "lab",
+      "name": "Tidemark Lab",
+      "type": "ORGANIZATION",
+      "aliases": [
+        "Ｔｉｄｅｍａｒｋ　Ｌａｂ"
+      ],
+      "description": "Tidemark Lab conducts coastal materials research.",
+      "supportChunks": [
+        "lab@2:0",
+        "lab@2:1",
+        "lab@2:2",
+        "guild@2:0",
+        "guild@2:1"
+      ]
+    },
+    {
+      "key": "workshop",
+      "name": "Cedar Workshop",
+      "type": "ORGANIZATION",
+      "aliases": [
+        "CEDAR WORKSHOP"
+      ],
+      "description": "Cedar Workshop teaches practical timber crafts.",
+      "supportChunks": [
+        "lab@2:0",
+        "lab@2:1",
+        "workshop@2:0",
+        "workshop@2:1",
+        "workshop@2:2"
+      ]
+    },
+    {
+      "key": "guild",
+      "name": "Windmere Guild",
+      "type": "ORGANIZATION",
+      "aliases": [],
+      "description": "Windmere Guild coordinates civic research grants.",
+      "supportChunks": [
+        "lab@2:0",
+        "lab@2:1",
+        "guild@2:0",
+        "guild@2:1",
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "quay",
+      "name": "Amber Quay",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Amber Quay is the eastern ferry terminal.",
+      "supportChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ]
+    },
+    {
+      "key": "museum",
+      "name": "Glass Museum",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Glass Museum preserves regional craft collections.",
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ]
+    },
+    {
+      "key": "hall",
+      "name": "Birch Hall",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Birch Hall hosts public opening ceremonies.",
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1",
+        "museum@2:2"
+      ]
+    },
+    {
+      "key": "beacon-place",
+      "name": "Beacon",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Beacon is a lookout shelter beside Amber Quay.",
+      "supportChunks": [
+        "quay@2:0"
+      ]
+    },
+    {
+      "key": "beacon-project",
+      "name": "Beacon",
+      "type": "CONCEPT",
+      "aliases": [],
+      "description": "Beacon is a research project on reusable glazing.",
+      "supportChunks": [
+        "lab@2:0"
+      ]
+    },
+    {
+      "key": "meridian-route",
+      "name": "Meridian",
+      "type": "OTHER",
+      "aliases": [],
+      "description": "Meridian is a circular ferry route around the bay.",
+      "supportChunks": [
+        "quay@2:0"
+      ]
+    },
+    {
+      "key": "meridian-device",
+      "name": "Meridian",
+      "type": "TECHNOLOGY",
+      "aliases": [],
+      "description": "Meridian is a laboratory sensor for testing glass.",
+      "supportChunks": [
+        "lab@2:0"
+      ]
+    },
+    {
+      "key": "depot",
+      "name": "Orchard Depot",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Orchard Depot stores seasonal produce for schools.",
+      "supportChunks": [
+        "quay@2:0",
+        "quay@2:1",
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "archive",
+      "name": "Silk Archive",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Silk Archive holds the town weaving records.",
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ]
+    },
+    {
+      "key": "ferry",
+      "name": "Kite Ferry",
+      "type": "TECHNOLOGY",
+      "aliases": [],
+      "description": "Kite Ferry transports produce across the bay.",
+      "supportChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ]
+    },
+    {
+      "key": "grant",
+      "name": "Coral Grant",
+      "type": "CONCEPT",
+      "aliases": [],
+      "description": "Coral Grant funds reusable material experiments.",
+      "supportChunks": [
+        "guild@2:0",
+        "guild@2:1"
+      ]
+    },
+    {
+      "key": "festival",
+      "name": "Ember Festival",
+      "type": "EVENT",
+      "aliases": [],
+      "description": "Ember Festival celebrates local making traditions.",
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1",
+        "museum@2:2"
+      ]
+    },
+    {
+      "key": "school",
+      "name": "Willow School",
+      "type": "ORGANIZATION",
+      "aliases": [],
+      "description": "Willow School teaches children from the northern district.",
+      "supportChunks": [
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "library",
+      "name": "Opal Library",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Opal Library lends books on design and construction.",
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1",
+        "museum@2:2",
+        "workshop@2:0",
+        "workshop@2:1",
+        "workshop@2:2"
+      ]
+    },
+    {
+      "key": "bridge",
+      "name": "Slate Bridge",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Slate Bridge connects the mill road to the town.",
+      "supportChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ]
+    },
+    {
+      "key": "mill",
+      "name": "Reed Mill",
+      "type": "LOCATION",
+      "aliases": [],
+      "description": "Reed Mill prepares timber for restoration projects.",
+      "supportChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ]
+    },
+    {
+      "key": "fund",
+      "name": "Lunar Fund",
+      "type": "ORGANIZATION",
+      "aliases": [],
+      "description": "Lunar Fund finances school improvement projects.",
+      "supportChunks": [
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "key": "equipment",
+      "source": "lab",
+      "target": "workshop",
+      "themes": [
+        "equipment sharing"
+      ],
+      "description": "Tidemark Lab shares testing equipment with Cedar Workshop.",
+      "strength": 1,
+      "supportChunks": [
+        "lab@2:0",
+        "lab@2:1"
+      ]
+    },
+    {
+      "key": "training",
+      "source": "lab",
+      "target": "workshop",
+      "themes": [
+        "skills training"
+      ],
+      "description": "Tidemark Lab provides materials training to Cedar Workshop.",
+      "strength": 1,
+      "supportChunks": [
+        "lab@2:0",
+        "lab@2:1"
+      ]
+    },
+    {
+      "key": "funding",
+      "source": "guild",
+      "target": "lab",
+      "themes": [
+        "research funding"
+      ],
+      "description": "Windmere Guild funds the experiments at Tidemark Lab.",
+      "strength": 1,
+      "supportChunks": [
+        "guild@2:0"
+      ]
+    },
+    {
+      "key": "auditing",
+      "source": "lab",
+      "target": "guild",
+      "themes": [
+        "grant auditing"
+      ],
+      "description": "Tidemark Lab audits the research records of Windmere Guild.",
+      "strength": 1,
+      "supportChunks": [
+        "lab@2:1"
+      ]
+    },
+    {
+      "key": "launch",
+      "source": "quay",
+      "target": "ferry",
+      "themes": [
+        "ferry departure"
+      ],
+      "description": "Amber Quay is the departure terminal for Kite Ferry.",
+      "strength": 1,
+      "supportChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ]
+    },
+    {
+      "key": "cargo",
+      "source": "ferry",
+      "target": "depot",
+      "themes": [
+        "cargo delivery"
+      ],
+      "description": "Kite Ferry delivers fruit crates to Orchard Depot.",
+      "strength": 1,
+      "supportChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ]
+    },
+    {
+      "key": "produce",
+      "source": "depot",
+      "target": "school",
+      "themes": [
+        "school meals"
+      ],
+      "description": "Orchard Depot supplies produce to Willow School.",
+      "strength": 1,
+      "supportChunks": [
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "archive-host",
+      "source": "museum",
+      "target": "archive",
+      "themes": [
+        "record preservation"
+      ],
+      "description": "Glass Museum hosts the collection of Silk Archive.",
+      "strength": 1,
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ]
+    },
+    {
+      "key": "festival-host",
+      "source": "museum",
+      "target": "festival",
+      "themes": [
+        "craft celebration"
+      ],
+      "description": "Glass Museum hosts the exhibits of Ember Festival.",
+      "strength": 1,
+      "supportChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ]
+    },
+    {
+      "key": "opening",
+      "source": "festival",
+      "target": "hall",
+      "themes": [
+        "opening ceremony"
+      ],
+      "description": "Ember Festival holds its opening ceremony in Birch Hall.",
+      "strength": 1,
+      "supportChunks": [
+        "museum@2:1",
+        "museum@2:2"
+      ]
+    },
+    {
+      "key": "timber",
+      "source": "workshop",
+      "target": "mill",
+      "themes": [
+        "timber supply"
+      ],
+      "description": "Cedar Workshop obtains restoration timber from Reed Mill.",
+      "strength": 1,
+      "supportChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ]
+    },
+    {
+      "key": "restoration",
+      "source": "mill",
+      "target": "bridge",
+      "themes": [
+        "bridge restoration"
+      ],
+      "description": "Reed Mill provides beams for the restoration of Slate Bridge.",
+      "strength": 1,
+      "supportChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ]
+    },
+    {
+      "key": "shelves",
+      "source": "workshop",
+      "target": "library",
+      "themes": [
+        "library repair"
+      ],
+      "description": "Cedar Workshop repairs the wooden shelves of Opal Library.",
+      "strength": 1,
+      "supportChunks": [
+        "workshop@2:1",
+        "workshop@2:2"
+      ]
+    },
+    {
+      "key": "membership",
+      "source": "depot",
+      "target": "guild",
+      "themes": [
+        "logistics coordination"
+      ],
+      "description": "Orchard Depot belongs to the logistics circle of Windmere Guild.",
+      "strength": 1,
+      "supportChunks": [
+        "depot@2:0",
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "grant-admin",
+      "source": "guild",
+      "target": "grant",
+      "themes": [
+        "grant administration"
+      ],
+      "description": "Windmere Guild administers the awards of Coral Grant.",
+      "strength": 1,
+      "supportChunks": [
+        "guild@2:0",
+        "guild@2:1"
+      ]
+    },
+    {
+      "key": "school-funding",
+      "source": "fund",
+      "target": "school",
+      "themes": [
+        "school funding"
+      ],
+      "description": "Lunar Fund finances classroom repairs at Willow School.",
+      "strength": 1,
+      "supportChunks": [
+        "depot@2:1"
+      ]
+    },
+    {
+      "key": "award",
+      "source": "grant",
+      "target": "lab",
+      "themes": [
+        "material reuse"
+      ],
+      "description": "Coral Grant supports the reusable material study at Tidemark Lab.",
+      "strength": 1,
+      "supportChunks": [
+        "guild@2:0",
+        "guild@2:1"
+      ]
+    },
+    {
+      "key": "outreach",
+      "source": "hall",
+      "target": "library",
+      "themes": [
+        "reading outreach"
+      ],
+      "description": "Birch Hall hosts reading outreach sessions from Opal Library.",
+      "strength": 1,
+      "supportChunks": [
+        "museum@2:1",
+        "museum@2:2"
+      ]
+    }
+  ],
+  "chunkProfiles": [
+    {
+      "chunk": "lab@2:0",
+      "keywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "lab@2:1",
+      "keywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "lab@2:2",
+      "keywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@1:0",
+      "keywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@1:1",
+      "keywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@2:0",
+      "keywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@2:1",
+      "keywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "quay@2:0",
+      "keywords": [
+        "quay",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "quay@2:1",
+      "keywords": [
+        "quay",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:0",
+      "keywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:1",
+      "keywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:2",
+      "keywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:0",
+      "keywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:1",
+      "keywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:2",
+      "keywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "depot@2:0",
+      "keywords": [
+        "depot",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "depot@2:1",
+      "keywords": [
+        "depot",
+        "windmere records"
+      ]
+    }
+  ],
+  "extraction": [
+    {
+      "chunk": "lab@2:0",
+      "entities": [
+        {
+          "key": "lab",
+          "name": "Tidemark Lab",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research."
+        },
+        {
+          "key": "workshop",
+          "name": "Cedar Workshop",
+          "type": "ORGANIZATION",
+          "description": "Cedar Workshop teaches practical timber crafts."
+        },
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "beacon-project",
+          "name": "Beacon",
+          "type": "CONCEPT",
+          "description": "Beacon is a research project on reusable glazing."
+        },
+        {
+          "key": "meridian-device",
+          "name": "Meridian",
+          "type": "TECHNOLOGY",
+          "description": "Meridian is a laboratory sensor for testing glass."
+        }
+      ],
+      "relations": [
+        {
+          "key": "equipment",
+          "source": "Tidemark Lab",
+          "target": "Cedar Workshop",
+          "description": "Tidemark Lab shares testing equipment with Cedar Workshop.",
+          "themes": [
+            "equipment sharing"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "training",
+          "source": "Tidemark Lab",
+          "target": "Cedar Workshop",
+          "description": "Tidemark Lab provides materials training to Cedar Workshop.",
+          "themes": [
+            "skills training"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "lab@2:1",
+      "entities": [
+        {
+          "key": "lab",
+          "name": "Ｔｉｄｅｍａｒｋ　Ｌａｂ",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research. The register also records this alternate spelling."
+        },
+        {
+          "key": "workshop",
+          "name": "Cedar Workshop",
+          "type": "ORGANIZATION",
+          "description": "Cedar Workshop teaches practical timber crafts."
+        },
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        }
+      ],
+      "relations": [
+        {
+          "key": "equipment",
+          "source": "Tidemark Lab",
+          "target": "Cedar Workshop",
+          "description": "Tidemark Lab shares testing equipment with Cedar Workshop.",
+          "themes": [
+            "equipment sharing"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "training",
+          "source": "Tidemark Lab",
+          "target": "Cedar Workshop",
+          "description": "Tidemark Lab provides materials training to Cedar Workshop.",
+          "themes": [
+            "skills training"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "auditing",
+          "source": "Tidemark Lab",
+          "target": "Windmere Guild",
+          "description": "Tidemark Lab audits the research records of Windmere Guild.",
+          "themes": [
+            "grant auditing"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "lab@2:2",
+      "entities": [
+        {
+          "key": "lab",
+          "name": "Ｔｉｄｅｍａｒｋ　Ｌａｂ",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research. The register also records this alternate spelling."
+        }
+      ],
+      "relations": [],
+      "contentKeywords": [
+        "lab",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@1:0",
+      "entities": [
+        {
+          "key": "lab",
+          "name": "Tidemark Lab",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research."
+        },
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "grant",
+          "name": "Coral Grant",
+          "type": "CONCEPT",
+          "description": "Coral Grant funds reusable material experiments."
+        },
+        {
+          "key": "mill",
+          "name": "Reed Mill",
+          "type": "LOCATION",
+          "description": "Reed Mill prepares timber for restoration projects."
+        }
+      ],
+      "relations": [
+        {
+          "key": "funding",
+          "source": "Windmere Guild",
+          "target": "Reed Mill",
+          "description": "Windmere Guild funds the restoration work at Reed Mill.",
+          "themes": [
+            "research funding"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "grant-admin",
+          "source": "Windmere Guild",
+          "target": "Coral Grant",
+          "description": "Windmere Guild administers the awards of Coral Grant.",
+          "themes": [
+            "grant administration"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@1:1",
+      "entities": [
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "mill",
+          "name": "Reed Mill",
+          "type": "LOCATION",
+          "description": "Reed Mill prepares timber for restoration projects."
+        },
+        {
+          "key": "grant",
+          "name": "Coral Grant",
+          "type": "CONCEPT",
+          "description": "Coral Grant funds reusable material experiments."
+        },
+        {
+          "key": "lab",
+          "name": "Tidemark Lab",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research."
+        }
+      ],
+      "relations": [
+        {
+          "key": "funding",
+          "source": "Windmere Guild",
+          "target": "Reed Mill",
+          "description": "Windmere Guild funds the restoration work at Reed Mill.",
+          "themes": [
+            "research funding"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "grant-admin",
+          "source": "Windmere Guild",
+          "target": "Coral Grant",
+          "description": "Windmere Guild administers the awards of Coral Grant.",
+          "themes": [
+            "grant administration"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "award",
+          "source": "Coral Grant",
+          "target": "Tidemark Lab",
+          "description": "Coral Grant supports the reusable material study at Tidemark Lab.",
+          "themes": [
+            "material reuse"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@2:0",
+      "entities": [
+        {
+          "key": "lab",
+          "name": "Tidemark Lab",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research."
+        },
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "grant",
+          "name": "Coral Grant",
+          "type": "CONCEPT",
+          "description": "Coral Grant funds reusable material experiments."
+        }
+      ],
+      "relations": [
+        {
+          "key": "funding",
+          "source": "Windmere Guild",
+          "target": "Tidemark Lab",
+          "description": "Windmere Guild funds the experiments at Tidemark Lab.",
+          "themes": [
+            "research funding"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "grant-admin",
+          "source": "Windmere Guild",
+          "target": "Coral Grant",
+          "description": "Windmere Guild administers the awards of Coral Grant.",
+          "themes": [
+            "grant administration"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "award",
+          "source": "Coral Grant",
+          "target": "Tidemark Lab",
+          "description": "Coral Grant supports the reusable material study at Tidemark Lab.",
+          "themes": [
+            "material reuse"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "guild@2:1",
+      "entities": [
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "grant",
+          "name": "Coral Grant",
+          "type": "CONCEPT",
+          "description": "Coral Grant funds reusable material experiments."
+        },
+        {
+          "key": "lab",
+          "name": "Tidemark Lab",
+          "type": "ORGANIZATION",
+          "description": "Tidemark Lab conducts coastal materials research."
+        }
+      ],
+      "relations": [
+        {
+          "key": "grant-admin",
+          "source": "Windmere Guild",
+          "target": "Coral Grant",
+          "description": "Windmere Guild administers the awards of Coral Grant.",
+          "themes": [
+            "grant administration"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "award",
+          "source": "Coral Grant",
+          "target": "Tidemark Lab",
+          "description": "Coral Grant supports the reusable material study at Tidemark Lab.",
+          "themes": [
+            "material reuse"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "guild",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "quay@2:0",
+      "entities": [
+        {
+          "key": "quay",
+          "name": "Amber Quay",
+          "type": "LOCATION",
+          "description": "Amber Quay is the eastern ferry terminal."
+        },
+        {
+          "key": "beacon-place",
+          "name": "Beacon",
+          "type": "LOCATION",
+          "description": "Beacon is a lookout shelter beside Amber Quay."
+        },
+        {
+          "key": "meridian-route",
+          "name": "Meridian",
+          "type": "OTHER",
+          "description": "Meridian is a circular ferry route around the bay."
+        },
+        {
+          "key": "depot",
+          "name": "Orchard Depot",
+          "type": "LOCATION",
+          "description": "Orchard Depot stores seasonal produce for schools."
+        },
+        {
+          "key": "ferry",
+          "name": "Kite Ferry",
+          "type": "TECHNOLOGY",
+          "description": "Kite Ferry transports produce across the bay."
+        }
+      ],
+      "relations": [
+        {
+          "key": "launch",
+          "source": "Amber Quay",
+          "target": "Kite Ferry",
+          "description": "Amber Quay is the departure terminal for Kite Ferry.",
+          "themes": [
+            "ferry departure"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "cargo",
+          "source": "Kite Ferry",
+          "target": "Orchard Depot",
+          "description": "Kite Ferry delivers fruit crates to Orchard Depot.",
+          "themes": [
+            "cargo delivery"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "quay",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "quay@2:1",
+      "entities": [
+        {
+          "key": "quay",
+          "name": "Amber Quay",
+          "type": "LOCATION",
+          "description": "Amber Quay is the eastern ferry terminal."
+        },
+        {
+          "key": "ferry",
+          "name": "Kite Ferry",
+          "type": "TECHNOLOGY",
+          "description": "Kite Ferry transports produce across the bay."
+        },
+        {
+          "key": "depot",
+          "name": "Orchard Depot",
+          "type": "LOCATION",
+          "description": "Orchard Depot stores seasonal produce for schools."
+        }
+      ],
+      "relations": [
+        {
+          "key": "launch",
+          "source": "Amber Quay",
+          "target": "Kite Ferry",
+          "description": "Amber Quay is the departure terminal for Kite Ferry.",
+          "themes": [
+            "ferry departure"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "cargo",
+          "source": "Kite Ferry",
+          "target": "Orchard Depot",
+          "description": "Kite Ferry delivers fruit crates to Orchard Depot.",
+          "themes": [
+            "cargo delivery"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "quay",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:0",
+      "entities": [
+        {
+          "key": "museum",
+          "name": "Glass Museum",
+          "type": "LOCATION",
+          "description": "Glass Museum preserves regional craft collections."
+        },
+        {
+          "key": "hall",
+          "name": "Birch Hall",
+          "type": "LOCATION",
+          "description": "Birch Hall hosts public opening ceremonies."
+        },
+        {
+          "key": "archive",
+          "name": "Silk Archive",
+          "type": "LOCATION",
+          "description": "Silk Archive holds the town weaving records."
+        },
+        {
+          "key": "festival",
+          "name": "Ember Festival",
+          "type": "EVENT",
+          "description": "Ember Festival celebrates local making traditions."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        }
+      ],
+      "relations": [
+        {
+          "key": "archive-host",
+          "source": "Glass Museum",
+          "target": "Silk Archive",
+          "description": "Glass Museum hosts the collection of Silk Archive.",
+          "themes": [
+            "record preservation"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "festival-host",
+          "source": "Glass Museum",
+          "target": "Ember Festival",
+          "description": "Glass Museum hosts the exhibits of Ember Festival.",
+          "themes": [
+            "craft celebration"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:1",
+      "entities": [
+        {
+          "key": "museum",
+          "name": "Glass Museum",
+          "type": "LOCATION",
+          "description": "Glass Museum preserves regional craft collections."
+        },
+        {
+          "key": "archive",
+          "name": "Silk Archive",
+          "type": "LOCATION",
+          "description": "Silk Archive holds the town weaving records."
+        },
+        {
+          "key": "festival",
+          "name": "Ember Festival",
+          "type": "EVENT",
+          "description": "Ember Festival celebrates local making traditions."
+        },
+        {
+          "key": "hall",
+          "name": "Birch Hall",
+          "type": "LOCATION",
+          "description": "Birch Hall hosts public opening ceremonies."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        }
+      ],
+      "relations": [
+        {
+          "key": "archive-host",
+          "source": "Glass Museum",
+          "target": "Silk Archive",
+          "description": "Glass Museum hosts the collection of Silk Archive.",
+          "themes": [
+            "record preservation"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "festival-host",
+          "source": "Glass Museum",
+          "target": "Ember Festival",
+          "description": "Glass Museum hosts the exhibits of Ember Festival.",
+          "themes": [
+            "craft celebration"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "opening",
+          "source": "Ember Festival",
+          "target": "Birch Hall",
+          "description": "Ember Festival holds its opening ceremony in Birch Hall.",
+          "themes": [
+            "opening ceremony"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "outreach",
+          "source": "Birch Hall",
+          "target": "Opal Library",
+          "description": "Birch Hall hosts reading outreach sessions from Opal Library.",
+          "themes": [
+            "reading outreach"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "museum@2:2",
+      "entities": [
+        {
+          "key": "festival",
+          "name": "Ember Festival",
+          "type": "EVENT",
+          "description": "Ember Festival celebrates local making traditions."
+        },
+        {
+          "key": "hall",
+          "name": "Birch Hall",
+          "type": "LOCATION",
+          "description": "Birch Hall hosts public opening ceremonies."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        }
+      ],
+      "relations": [
+        {
+          "key": "opening",
+          "source": "Ember Festival",
+          "target": "Birch Hall",
+          "description": "Ember Festival holds its opening ceremony in Birch Hall.",
+          "themes": [
+            "opening ceremony"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "outreach",
+          "source": "Birch Hall",
+          "target": "Opal Library",
+          "description": "Birch Hall hosts reading outreach sessions from Opal Library.",
+          "themes": [
+            "reading outreach"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "museum",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:0",
+      "entities": [
+        {
+          "key": "workshop",
+          "name": "Cedar Workshop",
+          "type": "ORGANIZATION",
+          "description": "Cedar Workshop teaches practical timber crafts."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        },
+        {
+          "key": "bridge",
+          "name": "Slate Bridge",
+          "type": "LOCATION",
+          "description": "Slate Bridge connects the mill road to the town."
+        },
+        {
+          "key": "mill",
+          "name": "Reed Mill",
+          "type": "LOCATION",
+          "description": "Reed Mill prepares timber for restoration projects."
+        }
+      ],
+      "relations": [
+        {
+          "key": "timber",
+          "source": "Cedar Workshop",
+          "target": "Reed Mill",
+          "description": "Cedar Workshop obtains restoration timber from Reed Mill.",
+          "themes": [
+            "timber supply"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "restoration",
+          "source": "Reed Mill",
+          "target": "Slate Bridge",
+          "description": "Reed Mill provides beams for the restoration of Slate Bridge.",
+          "themes": [
+            "bridge restoration"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:1",
+      "entities": [
+        {
+          "key": "workshop",
+          "name": "CEDAR WORKSHOP",
+          "type": "ORGANIZATION",
+          "description": "Cedar Workshop teaches practical timber crafts. The register also records this alternate spelling."
+        },
+        {
+          "key": "mill",
+          "name": "Reed Mill",
+          "type": "LOCATION",
+          "description": "Reed Mill prepares timber for restoration projects."
+        },
+        {
+          "key": "bridge",
+          "name": "Slate Bridge",
+          "type": "LOCATION",
+          "description": "Slate Bridge connects the mill road to the town."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        }
+      ],
+      "relations": [
+        {
+          "key": "timber",
+          "source": "Cedar Workshop",
+          "target": "Reed Mill",
+          "description": "Cedar Workshop obtains restoration timber from Reed Mill.",
+          "themes": [
+            "timber supply"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "restoration",
+          "source": "Reed Mill",
+          "target": "Slate Bridge",
+          "description": "Reed Mill provides beams for the restoration of Slate Bridge.",
+          "themes": [
+            "bridge restoration"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "shelves",
+          "source": "Cedar Workshop",
+          "target": "Opal Library",
+          "description": "Cedar Workshop repairs the wooden shelves of Opal Library.",
+          "themes": [
+            "library repair"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "workshop@2:2",
+      "entities": [
+        {
+          "key": "workshop",
+          "name": "CEDAR WORKSHOP",
+          "type": "ORGANIZATION",
+          "description": "Cedar Workshop teaches practical timber crafts. The register also records this alternate spelling."
+        },
+        {
+          "key": "library",
+          "name": "Opal Library",
+          "type": "LOCATION",
+          "description": "Opal Library lends books on design and construction."
+        }
+      ],
+      "relations": [
+        {
+          "key": "shelves",
+          "source": "Cedar Workshop",
+          "target": "Opal Library",
+          "description": "Cedar Workshop repairs the wooden shelves of Opal Library.",
+          "themes": [
+            "library repair"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "workshop",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "depot@2:0",
+      "entities": [
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "depot",
+          "name": "Orchard Depot",
+          "type": "LOCATION",
+          "description": "Orchard Depot stores seasonal produce for schools."
+        },
+        {
+          "key": "school",
+          "name": "Willow School",
+          "type": "ORGANIZATION",
+          "description": "Willow School teaches children from the northern district."
+        },
+        {
+          "key": "fund",
+          "name": "Lunar Fund",
+          "type": "ORGANIZATION",
+          "description": "Lunar Fund finances school improvement projects."
+        }
+      ],
+      "relations": [
+        {
+          "key": "produce",
+          "source": "Orchard Depot",
+          "target": "Willow School",
+          "description": "Orchard Depot supplies produce to Willow School.",
+          "themes": [
+            "school meals"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "membership",
+          "source": "Orchard Depot",
+          "target": "Windmere Guild",
+          "description": "Orchard Depot belongs to the logistics circle of Windmere Guild.",
+          "themes": [
+            "logistics coordination"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "depot",
+        "windmere records"
+      ]
+    },
+    {
+      "chunk": "depot@2:1",
+      "entities": [
+        {
+          "key": "depot",
+          "name": "Orchard Depot",
+          "type": "LOCATION",
+          "description": "Orchard Depot stores seasonal produce for schools."
+        },
+        {
+          "key": "school",
+          "name": "Willow School",
+          "type": "ORGANIZATION",
+          "description": "Willow School teaches children from the northern district."
+        },
+        {
+          "key": "guild",
+          "name": "Windmere Guild",
+          "type": "ORGANIZATION",
+          "description": "Windmere Guild coordinates civic research grants."
+        },
+        {
+          "key": "fund",
+          "name": "Lunar Fund",
+          "type": "ORGANIZATION",
+          "description": "Lunar Fund finances school improvement projects."
+        }
+      ],
+      "relations": [
+        {
+          "key": "produce",
+          "source": "Orchard Depot",
+          "target": "Willow School",
+          "description": "Orchard Depot supplies produce to Willow School.",
+          "themes": [
+            "school meals"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "membership",
+          "source": "Orchard Depot",
+          "target": "Windmere Guild",
+          "description": "Orchard Depot belongs to the logistics circle of Windmere Guild.",
+          "themes": [
+            "logistics coordination"
+          ],
+          "strength": 1
+        },
+        {
+          "key": "school-funding",
+          "source": "Lunar Fund",
+          "target": "Willow School",
+          "description": "Lunar Fund finances classroom repairs at Willow School.",
+          "themes": [
+            "school funding"
+          ],
+          "strength": 1
+        }
+      ],
+      "contentKeywords": [
+        "depot",
+        "windmere records"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "specific-equipment",
+      "kind": "specific",
+      "text": "Who shares testing equipment with Cedar Workshop?",
+      "goldChunks": [
+        "lab@2:0",
+        "lab@2:1"
+      ],
+      "goldEntities": [
+        "lab",
+        "workshop"
+      ],
+      "goldRelations": [
+        "equipment"
+      ],
+      "lowKeywords": [
+        "Tidemark Lab"
+      ],
+      "highKeywords": [
+        "equipment sharing"
+      ]
+    },
+    {
+      "id": "specific-funding",
+      "kind": "specific",
+      "text": "Who funds the experiments at Tidemark Lab?",
+      "goldChunks": [
+        "guild@2:0"
+      ],
+      "goldEntities": [
+        "guild",
+        "lab"
+      ],
+      "goldRelations": [
+        "funding"
+      ],
+      "lowKeywords": [
+        "Windmere Guild"
+      ],
+      "highKeywords": [
+        "research funding"
+      ]
+    },
+    {
+      "id": "specific-launch",
+      "kind": "specific",
+      "text": "Where does Kite Ferry depart?",
+      "goldChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ],
+      "goldEntities": [
+        "quay",
+        "ferry"
+      ],
+      "goldRelations": [
+        "launch"
+      ],
+      "lowKeywords": [
+        "Amber Quay"
+      ],
+      "highKeywords": [
+        "ferry departure"
+      ]
+    },
+    {
+      "id": "specific-archive-host",
+      "kind": "specific",
+      "text": "Where is Silk Archive hosted?",
+      "goldChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ],
+      "goldEntities": [
+        "museum",
+        "archive"
+      ],
+      "goldRelations": [
+        "archive-host"
+      ],
+      "lowKeywords": [
+        "Glass Museum"
+      ],
+      "highKeywords": [
+        "record preservation"
+      ]
+    },
+    {
+      "id": "specific-timber",
+      "kind": "specific",
+      "text": "Where does Cedar Workshop obtain restoration timber?",
+      "goldChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ],
+      "goldEntities": [
+        "workshop",
+        "mill"
+      ],
+      "goldRelations": [
+        "timber"
+      ],
+      "lowKeywords": [
+        "Cedar Workshop"
+      ],
+      "highKeywords": [
+        "timber supply"
+      ]
+    },
+    {
+      "id": "specific-produce",
+      "kind": "specific",
+      "text": "Which school receives produce from Orchard Depot?",
+      "goldChunks": [
+        "depot@2:0",
+        "depot@2:1"
+      ],
+      "goldEntities": [
+        "depot",
+        "school"
+      ],
+      "goldRelations": [
+        "produce"
+      ],
+      "lowKeywords": [
+        "Orchard Depot"
+      ],
+      "highKeywords": [
+        "school meals"
+      ]
+    },
+    {
+      "id": "abstract-training",
+      "kind": "abstract",
+      "text": "How are materials research skills shared in Windmere?",
+      "goldChunks": [
+        "lab@2:0",
+        "lab@2:1"
+      ],
+      "goldEntities": [
+        "lab",
+        "workshop"
+      ],
+      "goldRelations": [
+        "training"
+      ],
+      "lowKeywords": [
+        "Tidemark Lab"
+      ],
+      "highKeywords": [
+        "skills training"
+      ]
+    },
+    {
+      "id": "abstract-grant-admin",
+      "kind": "abstract",
+      "text": "How are local research awards administered?",
+      "goldChunks": [
+        "guild@2:0",
+        "guild@2:1"
+      ],
+      "goldEntities": [
+        "guild",
+        "grant"
+      ],
+      "goldRelations": [
+        "grant-admin"
+      ],
+      "lowKeywords": [
+        "Windmere Guild"
+      ],
+      "highKeywords": [
+        "grant administration"
+      ]
+    },
+    {
+      "id": "abstract-cargo",
+      "kind": "abstract",
+      "text": "How does the bay transport support food distribution?",
+      "goldChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ],
+      "goldEntities": [
+        "ferry",
+        "depot"
+      ],
+      "goldRelations": [
+        "cargo"
+      ],
+      "lowKeywords": [
+        "Kite Ferry"
+      ],
+      "highKeywords": [
+        "cargo delivery"
+      ]
+    },
+    {
+      "id": "abstract-festival-host",
+      "kind": "abstract",
+      "text": "How are the district craft traditions celebrated?",
+      "goldChunks": [
+        "museum@2:0",
+        "museum@2:1"
+      ],
+      "goldEntities": [
+        "museum",
+        "festival"
+      ],
+      "goldRelations": [
+        "festival-host"
+      ],
+      "lowKeywords": [
+        "Glass Museum"
+      ],
+      "highKeywords": [
+        "craft celebration"
+      ]
+    },
+    {
+      "id": "abstract-restoration",
+      "kind": "abstract",
+      "text": "How is local timber used to restore public infrastructure?",
+      "goldChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ],
+      "goldEntities": [
+        "mill",
+        "bridge"
+      ],
+      "goldRelations": [
+        "restoration"
+      ],
+      "lowKeywords": [
+        "Reed Mill"
+      ],
+      "highKeywords": [
+        "bridge restoration"
+      ]
+    },
+    {
+      "id": "abstract-school-funding",
+      "kind": "abstract",
+      "text": "How are improvements to school classrooms funded?",
+      "goldChunks": [
+        "depot@2:1"
+      ],
+      "goldEntities": [
+        "fund",
+        "school"
+      ],
+      "goldRelations": [
+        "school-funding"
+      ],
+      "lowKeywords": [
+        "Lunar Fund"
+      ],
+      "highKeywords": [
+        "school funding"
+      ]
+    },
+    {
+      "id": "hop-shelves",
+      "kind": "one-hop",
+      "text": "Which laboratory shares equipment with the workshop that repairs the library shelves?",
+      "goldChunks": [
+        "lab@2:0",
+        "lab@2:1"
+      ],
+      "goldEntities": [
+        "lab",
+        "workshop"
+      ],
+      "goldRelations": [
+        "equipment"
+      ],
+      "lowKeywords": [
+        "Opal Library"
+      ],
+      "highKeywords": [
+        "library repair"
+      ]
+    },
+    {
+      "id": "hop-launch",
+      "kind": "one-hop",
+      "text": "Where does the ferry departing from Amber Quay deliver fruit crates?",
+      "goldChunks": [
+        "quay@2:0",
+        "quay@2:1"
+      ],
+      "goldEntities": [
+        "ferry",
+        "depot"
+      ],
+      "goldRelations": [
+        "cargo"
+      ],
+      "lowKeywords": [
+        "Amber Quay"
+      ],
+      "highKeywords": [
+        "ferry departure"
+      ]
+    },
+    {
+      "id": "hop-archive-host",
+      "kind": "one-hop",
+      "text": "Where is the opening of the festival associated with the archive host?",
+      "goldChunks": [
+        "museum@2:1",
+        "museum@2:2"
+      ],
+      "goldEntities": [
+        "festival",
+        "hall"
+      ],
+      "goldRelations": [
+        "opening"
+      ],
+      "lowKeywords": [
+        "Silk Archive"
+      ],
+      "highKeywords": [
+        "record preservation"
+      ]
+    },
+    {
+      "id": "hop-timber",
+      "kind": "one-hop",
+      "text": "Which bridge receives beams from the workshop timber supplier?",
+      "goldChunks": [
+        "workshop@2:0",
+        "workshop@2:1"
+      ],
+      "goldEntities": [
+        "mill",
+        "bridge"
+      ],
+      "goldRelations": [
+        "restoration"
+      ],
+      "lowKeywords": [
+        "Cedar Workshop"
+      ],
+      "highKeywords": [
+        "timber supply"
+      ]
+    },
+    {
+      "id": "hop-grant-admin",
+      "kind": "one-hop",
+      "text": "Which lab receives the material reuse award administered by the guild?",
+      "goldChunks": [
+        "guild@2:0",
+        "guild@2:1"
+      ],
+      "goldEntities": [
+        "grant",
+        "lab"
+      ],
+      "goldRelations": [
+        "award"
+      ],
+      "lowKeywords": [
+        "Windmere Guild"
+      ],
+      "highKeywords": [
+        "grant administration"
+      ]
+    },
+    {
+      "id": "hop-opening",
+      "kind": "one-hop",
+      "text": "Which library contributes reading sessions to the festival opening venue?",
+      "goldChunks": [
+        "museum@2:1",
+        "museum@2:2"
+      ],
+      "goldEntities": [
+        "hall",
+        "library"
+      ],
+      "goldRelations": [
+        "outreach"
+      ],
+      "lowKeywords": [
+        "Ember Festival"
+      ],
+      "highKeywords": [
+        "opening ceremony"
+      ]
+    }
+  ]
+}
