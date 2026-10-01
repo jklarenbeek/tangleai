@@ -1,7 +1,7 @@
 {
   "$mas": "0.1",
   "workflowId": "grounding-session",
-  "versionId": "85519dcb524d88fd6e625ee77571b16f1b0b2182c24c23ee8dafe937b93bf8a2",
+  "versionId": "0faaa239cafa1bf40546e994f22e51fbb89fb839dc5b835b2687b3d7154747df",
   "parentVersionId": null,
   "title": "Grounded session",
   "description": "Profile rules, durable clarification, dual retrieval, reconciliation and validated claim citations. Binding: grounding-template",
@@ -7641,7 +7641,7 @@
     "traceBytes": 768000
   },
   "registry": {
-    "revision": "4793c09536a1f178638d0f7195cb4a3d85c8cfd86bf69c34be53927a240bf8ad"
+    "revision": "4907d3f70166a241c76003ea2977662e9b24250175efd20fa217df5412b51f57"
   },
   "config": {
     "registryRevision": "3ed01d83a6b6c361679c91acf2889cc49f6fa47f382bedad03b52f38d4cd65ef",

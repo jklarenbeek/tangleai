@@ -35,6 +35,10 @@ void guessed;
 
 import { createGroundingHost, createGroundingReader, createGroundingWorkflow, type GroundingHostOptions, type GroundingReply, type GroundingEvidenceView } from '@tangleai/grounding';
 import { createGroundingSegmentHost } from '@tangleai/store';
+import { selectGroundingContext } from '@tangleai/grounding';
+const selection = selectGroundingContext(answerOptions.admitted, answerOptions.profile.budgets.contextTokens);
+const omitted: readonly string[] = selection.omittedEvidenceIds;
+void omitted;
 declare const hostOptions: GroundingHostOptions;
 const host = await createGroundingHost(hostOptions);
 const reply: GroundingReply = await host.start({ text: 'Where is reception?', conversationId: 'consumer' });

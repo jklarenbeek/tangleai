@@ -295,25 +295,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   (`compose/searxng/`) and its own separate authorization; it is a dated
   diagnostic and can never enter the flat gate's denominator. *Closes on:* one
   authorized `--web-live` run whose report replays byte-identically.
-- [ ] **Dual retrieval for grounded assistants (PriHA / DRAG).** *Wanted:* a
-  turn classified and either paused for bounded clarification or turned into a
-  version-pinned, intent-oriented atomic query plan; every atomic query through
-  semantic AND keyword local retrieval plus a safelisted, bounded web lane
-  (crawled, content-hashed, time-stamped, policy-admitted, replayable — snippets
-  and inaccessible links are not evidence); child hits expanded to true parent
-  chunks and reranked with full provenance; reconciliation that records authority
-  and freshness conflicts and resolves, qualifies or refuses per profile; every
-  material claim linked to the evidence actually used, every visible citation
-  resolving, unused candidates trace-only. *Constraint:* two context lanes in one
-  prompt are not dual retrieval, a SearxNG screen is not a web-search agent, and an
-  HTTP `Last-Modified` is not authority. The five files under `prompts/priha/` are
-  seeds no source imports. Healthcare deployment is a separate gate this entry
-  never claims. The flat document-grounding baseline is now an immutable
-  measured handoff (`benchmark/results/grounding-handoff.json` names the
-  report/registration/source/config identities); a dual-retrieval treatment
-  registers its own identity and must beat that exact row — it may not
-  re-render a friendlier flat baseline. *Closes on:* a deterministic benchmark
-  with ablations, costs, safety violations and losses under pinned identities.
+- [ ] **Live qualification of governed dual retrieval (PriHA / DRAG).** The
+  [scripted mechanism and ablations](PRIHA_BENCHMARK.md) ship, but the full
+  treatment does not pass its paired improvement gate. Measure live quality and
+  cost under a new exact-plan spend approval, preserving the immutable flat
+  handoff and all failed/abstained cases. The fictional fixture and the separate
+  historical paid question set must not be represented as matched pairs.
+  Healthcare use additionally requires a governed PHR corpus, consent and
+  privacy controls, and domain-expert review; no clinical readiness is inferred
+  from mechanism parity. Reconsider `createDbSearch` only if a registered local
+  latency row fails. The existing desktop run-addressed streams still need a
+  grounding-specific event projection if session updates are to stream instead
+  of being explicitly refreshed. *Closes on:* dated paired live evidence,
+  reviewed domain/privacy gates, measured search scale and a resumable session
+  event projection with exact accounting.
 - [ ] **The graph question, and LightRAG's answer to it.** *Wanted:* to decide
   graph indexing of `relations` only when a real query needs a traversal —
   document-shaped relations have no ceiling until then, and Memgraph / a neo4j

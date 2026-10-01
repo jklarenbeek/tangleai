@@ -88,7 +88,9 @@ export function sniffMime(bytes: Uint8Array, declared?: string): string {
   throw new DocumentError('unsupported-mime', `Unsupported document MIME type${declared === undefined ? '' : `: ${declared}`}`);
 }
 
-async function readBounded(response: Response, maxBytes: number, onBytesRead?: (bytes: number) => void): Promise<Uint8Array> {
+/** Shared bounded reader for fetch and capture; count delivered chunks before enforcing the ceiling. */
+export async function readBoundedResponseBytes(response: Response, maxBytes: number, onBytesRead?: (bytes: number) => void): Promise<Uint8Array> {
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) throw new TypeError('A response byte ceiling must be a nonnegative integer.');
   const body = response.body;
   if (body === null) return new Uint8Array();
   const reader = body.getReader();
@@ -217,7 +219,7 @@ export class SafeStaticFetcher {
         await response.body?.cancel();
         throw new DocumentError('response-too-large', `Document exceeds the ${this.limits.maxCompressedBytes}-byte transfer limit`);
       }
-      return { response, bytes: await readBounded(response, maxBytes, this.onBytesRead) };
+      return { response, bytes: await readBoundedResponseBytes(response, maxBytes, this.onBytesRead) };
     }, { scope: new URL(url).host, signal: init.signal ?? undefined });
   }
 

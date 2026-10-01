@@ -8,7 +8,7 @@ import { createBudgetAccount } from '@tangleai/agents';
 import { createSharedBudgetClient, type MasChatClient } from '@tangleai/mas';
 import { createGroundingStore, openTangleDb } from '@tangleai/store';
 import { createLocalRetriever, createRrfRanker, projectLocalEvidence, createWebLane, createReplayWebTransport, createQueryOptimizer,
-    reconcileEvidence, createAnswerModel, interpretEvidenceConflicts, generateGroundedClaims, groundingArtifacts, groundingIdOf, loadGroundingProfile, evaluateProfileRules,
+    reconcileEvidence, selectGroundingContext, createAnswerModel, interpretEvidenceConflicts, generateGroundedClaims, groundingArtifacts, groundingIdOf, loadGroundingProfile, evaluateProfileRules,
     type EvidenceCandidate, type EvidenceConflict, type GroundingSession, type QueryPlan, type GroundingProfile, type PrihaAnswer,
     type WebReplayRecord, type ReconciliationFact } from '@tangleai/grounding';
 import { collectDocumentEvidence, GROUNDING_DEFAULTS } from '../../apps/desktop/src/grounding.ts';
@@ -34,7 +34,7 @@ export function stageOf(request: unknown, registration: PrihaAnswerExecution) {
 export function versionOf(candidate: EvidenceCandidate, host: Host, loaded: LoadedPrihaFixture): string {
     if ('versionId' in candidate.address) return host.versionKeys.get(candidate.address.versionId) ?? 'unregistered';
     const address = candidate.address;
-    const record = [...loaded.fixture.web, ...loaded.answerExecution.webControls.records].find(record => record.sha256 === address.sha256 && record.url === address.finalUrl);
+    const record = [...loaded.fixture.web, ...loaded.answerExecution.webControls.records, ...loaded.completeExecution.records].find(record => record.sha256 === address.sha256 && record.url === address.finalUrl);
     return record ? 'web-' + record.name : 'unregistered';
 }
 export function bindRecipe(script: PrihaAnswerScript, candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture): PrihaAnswer {
@@ -236,7 +236,8 @@ export async function measurePrihaAnswers(loaded: LoadedPrihaFixture) {
             admitted = admitted.filter(row => { const size = row.excerpt.length; if (chars + size > hypothesis.maxContextChars) return false; chars += size; return true; });
         }
         session = contractMust(await host.grounding.transitionSession(session.id, { kind: 'answer' }, session.revision));
-        const result = await generateGroundedClaims({ profile, client, modelIdentity: null, sessionId: session.id, query: q.text, plan, admitted, conflicts,
+        admitted = selectGroundingContext(admitted, profile.budgets.contextTokens).candidates;
+        const result = await generateGroundedClaims({ profile, factVocabulary: loaded.userFacts, client, modelIdentity: null, sessionId: session.id, query: q.text, plan, admitted, conflicts,
             store: host.grounding, corpus: host.store, expectedRevision: session.revision, clock: () => 0, critical: q.critical });
         if (!result.ok) throw Error(JSON.stringify(result.issue));
         if (!control && result.answer.validation.issues.length) throw Error('Unexpected registered answer failure: ' + JSON.stringify(result.answer.validation.issues));

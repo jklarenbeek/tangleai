@@ -67,6 +67,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     cpSync(resolve(root, 'test/release/fixtures/gmpl-consumer.mjs'), resolve(directory, 'gmpl-consumer.mjs'));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'gmpl-consumer.mjs']);
     await sqliteFixture('bun', ['gmpl-consumer.mjs']);
+    writeFileSync(resolve(directory, 'grounding-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/grounding.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['grounding-consumer.mjs', 'grounding-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'grounding-consumer.mjs']);
     await sqliteFixture('bun', ['grounding-consumer.mjs']);

@@ -10,6 +10,7 @@ import type { GroundingStore } from './store.ts';
 import type { WebTransport } from './web-transport.ts';
 import type { CandidateRanker } from './ranker.ts';
 import { createRrfRanker } from './ranker.ts';
+import { selectGroundingContext } from './context.ts';
 import { createLocalRetriever, type LocalRetrievalOptions, type LocalRetrievalOutcome } from './local.ts';
 import { createWebLane, GROUNDING_WEB_TOOLS, type WebLaneOptions } from './web.ts';
 import { createQueryOptimizer, type OptimizerClient, type OptimizerOutcome } from './optimizer.ts';
@@ -44,6 +45,8 @@ export interface GroundingHostOptions {
     /** Host-owned facts and ordering are pinned experimental or domain policies. */
     policy?: { id: string; version: string; critical?: boolean;
         lanes?: { local: boolean; web: boolean };
+        localRetrieval?: { lexical: boolean; expandParents: boolean };
+        reconciliation?: 'governed' | 'disabled-experiment';
         local?: (session: GroundingSession, query: QueryPlan['queries'][number], selection: LocalRetrievalOptions) => Promise<LocalRetrievalOutcome>;
         facts?: (candidates: readonly EvidenceCandidate[]) => Promise<Record<string, ReconciliationFact>>;
         order?: (candidates: readonly EvidenceCandidate[]) => Promise<EvidenceCandidate[]> };
@@ -62,7 +65,7 @@ const fromOptimizer = (outcome: OptimizerOutcome): GroundingStageValue => {
         answerId: null, evidenceIds: [], conflictIds: [] };
 };
 export async function createGroundingHost(options: GroundingHostOptions) {
-    options = { ...options, transport: Object.freeze({ ...options.transport }), ...(options.policy ? { policy: Object.freeze({ ...options.policy, ...(options.policy.lanes ? { lanes: Object.freeze({ ...options.policy.lanes }) } : {}) }) } : {}),
+    options = { ...options, transport: Object.freeze({ ...options.transport }), ...(options.policy ? { policy: Object.freeze({ ...options.policy, ...(options.policy.lanes ? { lanes: Object.freeze({ ...options.policy.lanes }) } : {}), ...(options.policy.localRetrieval ? { localRetrieval: Object.freeze({ ...options.policy.localRetrieval }) } : {}) }) } : {}),
         ...(options.selection ? { selection: Object.freeze({ ...options.selection }) } : {}) };
     const profile = groundingMust(await loadGroundingProfile(options.profile)), store = options.store, mas = options.segments.store;
     const vocabulary = immutableGroundingJson([...options.factVocabulary]), suppliedRanker = options.ranker ?? createRrfRanker();
@@ -73,7 +76,7 @@ export async function createGroundingHost(options: GroundingHostOptions) {
     const configIdentityId = await groundingRevisionOf({ profileRevision: profile.revision,
         models: Object.fromEntries(Object.entries(models).map(([id, value]) => [id, value.identity])),
         transport: options.transport.revision, ranker: [ranker.id, ranker.version], vocabulary, selection,
-        policy: options.policy ? [options.policy.id, options.policy.version, options.policy.critical ?? false, options.policy.lanes ?? null] : null });
+        policy: options.policy ? [options.policy.id, options.policy.version, options.policy.critical ?? false, options.policy.lanes ?? null, options.policy.localRetrieval ?? null, options.policy.reconciliation ?? 'governed'] : null });
     must(await store.putProfile(profile));
     const prepared = new Map<string, Promise<Prepared>>();
     const activeTools = new Map<string, Parameters<NonNullable<WebLaneOptions['bindTools']>>[0]>();
@@ -205,7 +208,8 @@ export async function createGroundingHost(options: GroundingHostOptions) {
             const used = (native?.attempts ?? []).filter(row => row.status === 'completed' && row.invocationId.startsWith('local-'))
                 .reduce((sum, row) => sum + ((row.output as { lane?: LaneValue })?.lane?.contextTokens ?? 0), 0);
             const local = createLocalRetriever({ store: options.corpus, manifests: store, session: await sessionFor(sessionId), embedder: options.embedder,
-                ranker, budgets: { contextTokens: profile.budgets.contextTokens }, now: options.now, clock: options.clock });
+                ranker, lanes: { semantic: true, lexical: options.policy?.localRetrieval?.lexical ?? true }, expandParents: options.policy?.localRetrieval?.expandParents ?? true,
+                budgets: { contextTokens: profile.budgets.contextTokens }, now: options.now, clock: options.clock });
             const bounded = { ...selection, contextTokens: Math.max(0, Math.min(selection.contextTokens, profile.budgets.contextTokens - used)) };
             const result = options.policy?.local ? await options.policy.local(await sessionFor(sessionId), query, bounded) : await local.retrieve(query, bounded);
             if (!result.ok) throw new GroundingAbort(result.issue);
@@ -235,14 +239,15 @@ export async function createGroundingHost(options: GroundingHostOptions) {
             }
             const custom = await options.policy?.facts?.(candidates);
             if (custom) for (const row of candidates) facts[row.id] = { ...facts[row.id], ...custom[row.id] };
-            const result = await reconcileEvidence(profile, candidates, { sessionId, now: options.now(), facts,
+            const result = await reconcileEvidence(profile, candidates, { sessionId, now: options.now(), facts, rules: options.policy?.reconciliation ?? 'governed',
                 criticalQueries: options.policy?.critical ? plan.queries.map(row => row.id) : [] });
             const ordered = options.policy?.order ? await options.policy.order(result.admitted) : result.admitted;
             const ids = new Map(result.admitted.map(row => [row.id, JSON.stringify(row)]));
             if (new Set(ordered.map(row => row.id)).size !== ordered.length || ordered.some(row => ids.get(row.id) !== JSON.stringify(row)))
                 groundingReject('TGRD1005', '/order', 'Ordering cannot invent or relabel admitted facts.');
+            const selected = selectGroundingContext(ordered, selection.contextTokens);
             must(await store.putConflict(result.conflicts));
-            return { context: { ...context, evidenceIds: ordered.map(row => row.id), conflictIds: result.conflicts.map(row => row.id) } };
+            return { context: { ...context, evidenceIds: selected.candidates.map(row => row.id), conflictIds: result.conflicts.map(row => row.id) } };
         });
         add('validate', async input => {
             const context = contextOf(input);
@@ -299,12 +304,13 @@ export async function createGroundingHost(options: GroundingHostOptions) {
                 if (current.status === 'reconciling') current = await transition(current, { kind: 'answer' });
                 const result = await generateGroundedClaims({ profile, client, modelIdentity: models[profile.models.generate]!.identity,
                     query: execution.originalQuery, plan: await planFor(context), sessionId, store, corpus: options.corpus, admitted, conflicts,
-                    expectedRevision: current.revision, clock: options.clock, critical: options.policy?.critical ?? false, interpretConflicts: false, failOnDependencyError: true });
+                    expectedRevision: current.revision, clock: options.clock, critical: options.policy?.critical ?? false, factVocabulary: vocabulary, interpretConflicts: false, failOnDependencyError: true });
                 if (!result.ok) throw new GroundingAbort(result.issue);
                 return { context: { ...context, answerId: result.answer.id } };
             }) });
         }
-        const messageAdapters = new Map(p.clarification?.bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS);
+        const declaredAdapters = new Set(p.snapshot.document.messageAdapters.map(row => row.id));
+        const messageAdapters = new Map([...(p.clarification?.bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS)].filter(([id]) => declaredAdapters.has(id)));
         for (const stage of GROUNDING_AGENT_STAGES) {
             const artifact = groundingArtifacts.prompts.find(row => row.id === 'grounding-' + stage)!;
             messageAdapters.set(artifact.id, { id: artifact.id, version: artifact.revision, render: input => JSON.stringify(input.value) });

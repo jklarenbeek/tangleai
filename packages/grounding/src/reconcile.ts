@@ -17,6 +17,8 @@ export interface ReconciliationContext {
     facts: Record<string, ReconciliationFact>;
     criticalQueries?: string[];
     criticalTopics?: string[];
+    /** Deliberate experimental removal; never selected by model output. */
+    rules?: 'governed' | 'disabled-experiment';
 }
 export interface ReconciliationResult {
     admitted: EvidenceCandidate[];
@@ -43,6 +45,9 @@ export async function reconcileEvidence(profileInput: GroundingProfile, input: r
             groundingReject('TGRD1004', '/evidence', 'Evidence belongs to another session or profile.');
         return value;
     });
+    if (context.rules === 'disabled-experiment') return { admitted: [...candidates], conflicts: [], ineligible: [], census };
+    if (context.rules !== undefined && context.rules !== 'governed')
+        groundingReject('TGRD1001', '/rules', 'Unknown reconciliation policy.');
     const conflicts: EvidenceConflict[] = [], ineligible: ReconciliationResult['ineligible'] = [], excluded = new Set<string>();
     const critical = (queryId: string, topic: string) => context.criticalQueries?.includes(queryId) || context.criticalTopics?.includes(topic);
     const conflict = async (rows: EvidenceCandidate[], topic: string, issue: EvidenceConflict['issue'], ruleId: string,

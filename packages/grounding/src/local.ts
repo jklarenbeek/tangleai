@@ -30,6 +30,8 @@ export interface LocalRetrieverOptions {
     budgets: { contextTokens: number };
     /** Explicit experimental ablations; production hosts normally enable both. */
     lanes?: { semantic: boolean; lexical: boolean };
+    /** Explicit child-only control; true parent addresses remain intact. */
+    expandParents?: boolean;
     now: () => string;
     clock?: () => number;
 }
@@ -37,7 +39,7 @@ export interface LocalRetrievalOptions { k: number; minScore: number; maxPerSour
 export function createLocalRetriever(options: LocalRetrieverOptions) {
     const { store, embedder, ranker } = options, clock = options.clock ?? (() => performance.now());
     let resident: ReturnType<typeof createLexicalIndex> | undefined, generation = 0, sourceRevision = '';
-    const lanes = options.lanes ?? { semantic: true, lexical: true };
+    const lanes = options.lanes ?? { semantic: true, lexical: true }, expandParents = options.expandParents ?? true;
     // Serialize access to the generation cache; concurrent queries never swap its corpus mid-search.
     let pending = Promise.resolve();
     async function retrieve(query: { id: string; text: string }, selection: LocalRetrievalOptions): Promise<LocalRetrievalOutcome> {
@@ -109,15 +111,15 @@ export function createLocalRetriever(options: LocalRetrieverOptions) {
                     groundingReject('TGRD1009', '/ranker', 'A ranker may only add finite rank and fusion scores to unchanged evidence.');
                 if (seen.has(row.chunk.id)) { census.deduplicated++; continue; } seen.add(row.chunk.id);
                 if ((counts.get(row.source.id) ?? 0) >= selection.maxPerSource) { census.diversityDropped++; continue; }
-                const tokens = expanded.has(row.parent.id) ? 0 : row.parent.tokenCount;
+                const tokens = expandParents ? expanded.has(row.parent.id) ? 0 : row.parent.tokenCount : row.chunk.tokenCount;
                 if (census.contextTokens + tokens > Math.min(selection.contextTokens, options.budgets.contextTokens)) { census.parentsOverBudget++; continue; }
                 const manifest = await options.manifests?.getManifest(row.source.id, row.chunk.versionId);
                 if (manifest && (manifest.status !== 'active' || manifest.profileId !== options.session.profileId || manifest.profileRevision !== options.session.profileRevision))
                     groundingReject('TGRD1004', '/manifest', 'The local curated version belongs to a different profile revision.');
                 const candidate = await projectLocalEvidence({ session: options.session, queryId: query.id,
                     chunk: row.chunk, parent: row.parent, source: row.source, manifest,
-                    excerpt: row.parent.text, scores: row.scores, rankerId: ranker.id + '/' + ranker.version, at: options.now() });
-                result.push(candidate); expanded.set(row.parent.id, row.parent); census.contextTokens += tokens;
+                    excerpt: expandParents ? row.parent.text : row.chunk.text, scores: row.scores, rankerId: ranker.id + '/' + ranker.version, at: options.now() });
+                result.push(candidate); if (expandParents) expanded.set(row.parent.id, row.parent); census.contextTokens += tokens;
                 counts.set(row.source.id, (counts.get(row.source.id) ?? 0) + 1);
                 if (result.length === selection.k) break;
             }

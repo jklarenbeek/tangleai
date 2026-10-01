@@ -13,7 +13,7 @@ export async function createGroundingRegistry(base?: MasRegistrySnapshot, subgra
         return { id: artifact.id, title: artifact.id, instructions, instructionsRevision: await masRevisionOf(instructions), capabilities: [] };
     }));
     const agentExecutors = await Promise.all(GROUNDING_AGENT_STAGES.map(async stage => ({ id: 'grounding-' + stage,
-        version: await masRevisionOf({ owner: 'governed-grounding-component/1', stage, catalog: groundingArtifacts.revision }) })));
+        version: await masRevisionOf({ owner: 'governed-grounding-component/2', stage, catalog: groundingArtifacts.revision }) })));
     const adapters = GROUNDING_AGENT_STAGES.map(stage => { const artifact = groundingArtifacts.prompts.find(row => row.id === 'grounding-' + stage)!;
         return { id: artifact.id, version: artifact.revision }; });
     const tools = await Promise.all(GROUNDING_WEB_TOOLS.map(async tool => ({ id: tool.name, title: tool.description, effect: 'read' as const,

@@ -92,24 +92,33 @@ versus scaffold 0.533 does not pass the registered paired interval gate.
 `--live` prints a frozen credential-free plan and makes no request. Execution
 requires new approval of its exact `planId`; live forecasting quality is unmeasured.
 
-The [governed retrieval instrument](../docs/PRIHA_BENCHMARK.md) freezes an original
-MIT Harbour District corpus, 32 questions, three chunk granularities and nine
-exact-byte web captures. Its analytic oracle reaches ten exact ceilings; eight
-bad controls expose citation, policy, clarification and reconciliation errors.
-Versioned profile rules and identical memory/SQLite lifecycle probes execute without
-provider calls. Five named retrieval mechanisms remain explicitly missing. The unchanged flat
-claim scorer and the immutable grounding handoff define the comparison.
-`npm run benchmark:priha -- --require instrument` generates both artifacts;
+The [governed retrieval instrument](../docs/PRIHA_BENCHMARK.md) measures five
+native workflow treatments, four ablations, nine safety suites and 84 forced
+stage recoveries on 32 fictional Harbour District questions. Original analytic
+sources, recipes and flat handoff bytes remain frozen; supplemental registrations
+pin executable captures and controlled mechanism removals before scoring.
+The 24 gold-bearing claim scores and eight gold-free routes remain separate.
+The full treatment's paired interval includes zero, so the schema-derived
+scripted decision is `keep-experimental` and changes no product default.
+
+`npm run benchmark:priha -- --require complete` generates the keyless artifacts;
 `--check` verifies without writing, and `--json` / `--md` redirect outputs.
-`--live` prints a credential-free dry plan with zero requests; authorization is
-refused while no executable mechanism exists. The corpus is fictional and the
-measurement establishes no live answer quality or healthcare deployment claim.
+`--live` reads the current source-bound report and prints a credential-free dry
+plan. A new approval executes `--live --authorize <plan-id> --live-json <path>`;
+optional `--web-live --searx <base>` changes the plan and uses bounded capture.
+The default is exact frozen web replay. A missing key, rejected ceiling, changed
+source or wrong identity spends nothing. Live quality and healthcare deployment
+remain unmeasured; fake-wire tests establish the execution guard, not a paid result.
+An authorized execution exclusively creates its requested receipt and SQLite
+directory, retains a dated receipt under `benchmark/results/priha-live-*`, and
+renders its measured rows beside the keyless table. Later keyless generation
+verifies and preserves those dated results without buying another execution.
 
 ## Contents
 
 | Instrument | What it answers | Command |
 |---|---|---|
-| [`priha.ts`](./priha.ts) | Fixed dual-retrieval corpus, unchanged claim/citation scorer, analytic oracle and eight bad controls, immutable flat handoff and honest missing capabilities. [Report](../docs/PRIHA_BENCHMARK.md). | `npm run benchmark:priha -- --require instrument` (`--check`, `--json`, `--md`, `--live` dry plan) |
+| [`priha.ts`](./priha.ts) | Native governed retrieval treatments, four ablations, nine safety suites, paired claim gate and exact-authorized live runner. [Report](../docs/PRIHA_BENCHMARK.md). | `npm run benchmark:priha -- --require complete` (`--check`, `--json`, `--md`, `--live` dry plan) |
 | [`forecast.ts`](./forecast.ts) | Seven measured forecasting rows, cutoff/revision/lifecycle censuses, paired claim gate, counterfactual accounting and two-run generation stability; live quality remains unmeasured. [Report](../docs/FORECAST_BENCHMARK.md). | `npm run benchmark:forecast -- --require complete` (`--check`, `--out-dir`, `--live` dry plan) |
 | [`consolidate.ts`](./consolidate.ts) | Nine frozen raw/deterministic/semantic/combined comparisons with fixed exact-source budgets, per-category and held-out LoCoMo recall/verbatim floors, counted failures, memory/Node/Bun activation/execution/trigger probes and existing compaction/program controls. [Report](../docs/CONSOLIDATE_BENCHMARK.md); keyless/scripted evidence never qualifies a live QA default. | `node benchmark/consolidate.ts --require --json /tmp/consolidation.json --md docs/CONSOLIDATE_BENCHMARK.md` |
 | [`locomo-census.ts`](./locomo-census.ts) | What is actually in the LoCoMo release — categories, ground truth, parseable timestamps, and how many evidence ids resolve | `npm run benchmark:locomo:census` |
@@ -147,6 +156,11 @@ measurement establishes no live answer quality or healthcare deployment claim.
 | [`lib/http-capture.ts`](./lib/http-capture.ts) | The benchmark-owned SQLite HTTP capture (`benchmark/cache/grounding-http.sqlite`, gitignored): exact response bytes/status/headers per credential-free request, byte SHA-256s, replay serving stored bytes with zero network calls, missing/malformed captures as named failures, and the body-free manifest reports carry. It never touches the JarenJS model replay key. |
 | [`lib/priha.ts`](./lib/priha.ts) | Hash-verified fictional corpus and analytic evidence, reused grounding scorer, closed report, fixed capability registration, canonical identities and zero-request dry plan. |
 | [`lib/priha-replay.ts`](./lib/priha-replay.ts) | Exact committed response bytes addressed by the shared capture key; fresh responses, counted misses and no network fallback. |
+| [`lib/priha-flow.ts`](./lib/priha-flow.ts) | Shared native scenario composition, actual call/evidence observations and every-stage crash/recovery matrix. |
+| [`lib/priha-ablation.ts`](./lib/priha-ablation.ts) | Registered mechanism removals, shared paired bootstrap/power statistics and schema-checked adoption clauses. |
+| [`lib/priha-safety.ts`](./lib/priha-safety.ts) | Nine registered adversarial suites over actual retained sessions, corpus versions and exact HTTP replay. |
+| [`lib/priha-live.ts`](./lib/priha-live.ts), [`lib/priha-live-execution.ts`](./lib/priha-live-execution.ts), [`lib/priha-live-records.ts`](./lib/priha-live-records.ts) | Credential-free source-bound plan, exact authorization before effects, real provider/host composition, bounded optional HTTP capture and verified dated receipts. |
+
 | [`lib/grounding.ts`](./lib/grounding.ts) | The grounding fixture loader (hash-verified, schema-validated, quotes pinned to exactly one occurrence), the answer renderer that derives visible text from the claim ledger, the predicate matcher, the terminal citation classifier, the oracle gate and the keyless report/Markdown. Types are generated from `schemas/grounding.schema.json` by `jaren-emit`; identities are `canonicalSha256` over explicit payloads; the answer-F1 diagnostic reuses the official LoCoMo normalizer and token F1. The suite claim envelope owns generic reference integrity in the desktop gate; the fixture matching predicates and terminal support scorer remain Tangle-specific. |
 | [`lib/trace2skill-fixture.ts`](./lib/trace2skill-fixture.ts) | The one door the skill-evolution corpus comes through: every registered file re-hashed against the manifest, the evolve and held-out halves checked for disjointness, and ground truth handed out only against a named scope. It also owns the mapping from a registered patch document onto the compiler's operation shape, and the scope document a trajectory-blind draft is allowed to see. Refusals are returned as counted issues, not thrown, so the report can publish them and the capability gate can go false. |
 | [`lib/trace2skill-adapter.ts`](./lib/trace2skill-adapter.ts) | What a host must supply before a skill can be evolved against a domain: prepared inputs, the executor's `read_file` surface over the task's inputs alone, the exact-normalized evaluator, and the wider surface an error analyst gets after a failure. The boundary between the last two is the point — crossing it returns a refusal and increments a counter. One bridge maps this surface onto the host contract the skill package executes against, so the boundary a row measures and the boundary an executor crosses are the same object. |

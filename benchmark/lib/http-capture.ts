@@ -32,6 +32,7 @@ import { openStore, type Collection, type OpenStoreOptions, type Store } from '@
 import { bunDriver } from '@jarenjs/db/bun';
 import { nodeDriver } from '@jarenjs/db/node';
 import { captureKeyOf, CAPTURED_HEADERS, type CaptureKind } from '@tangleai/core/http-capture';
+import { readBoundedResponseBytes } from '@tangleai/documents/fetch';
 export { captureKeyOf, CAPTURED_HEADERS, type CaptureKind } from '@tangleai/core/http-capture';
 
 /** Where the capture lives, relative to the repository root. Gitignored with the rest of `benchmark/cache/`. */
@@ -110,7 +111,7 @@ export interface HttpCapture {
    * transport is never touched, and a missing capture throws a named
    * failure the caller's own error path keeps as a value.
    */
-  fetchFor(kind: CaptureKind, options: { replay: boolean, inner?: typeof globalThis.fetch }): typeof globalThis.fetch;
+  fetchFor(kind: CaptureKind, options: { replay: boolean, inner?: typeof globalThis.fetch; maxResponseBytes?: number; onBytesRead?: (bytes: number) => void }): typeof globalThis.fetch;
   manifest(): Promise<CaptureManifestRow[]>;
   stats(): CaptureStats;
   close(): Promise<void>;
@@ -140,6 +141,8 @@ export async function openHttpCapture(options: OpenHttpCaptureOptions = {}): Pro
   return {
     path,
     fetchFor(kind, fetchOptions) {
+      if (fetchOptions.maxResponseBytes !== undefined && (!Number.isSafeInteger(fetchOptions.maxResponseBytes) || fetchOptions.maxResponseBytes < 0))
+        throw new TypeError('Capture requires a nonnegative response byte ceiling.');
       const inner = fetchOptions.inner ?? globalThis.fetch;
       if (fetchOptions.replay) {
         return (async (input: RequestInfo | URL): Promise<Response> => {
@@ -193,7 +196,15 @@ export async function openHttpCapture(options: OpenHttpCaptureOptions = {}): Pro
           stats.captures++;
           throw error;
         }
-        const bytes = new Uint8Array(await response.clone().arrayBuffer());
+        let bytes: Uint8Array;
+        try {
+          bytes = fetchOptions.maxResponseBytes === undefined ? new Uint8Array(await response.clone().arrayBuffer())
+            : await readBoundedResponseBytes(response, fetchOptions.maxResponseBytes, fetchOptions.onBytesRead);
+        } catch (error) {
+          await captures.put({ ...base, failure: { code: 'body', message: error instanceof Error ? error.message : String(error) } });
+          stats.captures++;
+          throw error;
+        }
         const headers: Array<[string, string]> = [];
         for (const name of CAPTURED_HEADERS) {
           const value = response.headers.get(name);
@@ -208,7 +219,7 @@ export async function openHttpCapture(options: OpenHttpCaptureOptions = {}): Pro
           responseBytes: bytes.length,
         });
         stats.captures++;
-        return response;
+        return fetchOptions.maxResponseBytes === undefined ? response : new Response(bytes.length ? new Uint8Array(bytes) : null, { status: response.status, headers: response.headers });
       }) as typeof globalThis.fetch;
     },
     async manifest() {

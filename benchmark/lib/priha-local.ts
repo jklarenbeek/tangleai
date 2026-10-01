@@ -25,13 +25,14 @@ function metrics(cases: PrihaLocalCase[]): PrihaLocalMetrics {
         parentsOverBudget: census('parentsOverBudget'), issues: census('issues'), rebuilds: census('rebuilds'), rebuildMs: null };
 }
 /** One corpus owner shared by retrieval measurements and scripted answer treatments. */
-export async function createPrihaCorpus(loaded: LoadedPrihaFixture, profile: GroundingProfile, granularity: LoadedPrihaFixture['fixture']['granularities'][number], path?: string, jobClock: () => number = () => 1_000_000) {
+export async function createPrihaCorpus(loaded: LoadedPrihaFixture, profile: GroundingProfile, granularity: LoadedPrihaFixture['fixture']['granularities'][number], path?: string, jobClock: () => number = () => 1_000_000, options: { sourceKeys?: readonly string[] } = {}) {
     const db = await openTangleDb({ ...(path ? { path } : {}), jobs: { now: jobClock, random: () => 0.5 } }), f = loaded.fixture;
     try {
         const store = createDocumentStore(db), grounding = createGroundingStore(db), embedder = createHashEmbedder({ dims: 128 });
         contractMust(await grounding.putProfile(profile));
         const versionKeys = new Map<string, string>(); let embeddingCalls = 0, embeddedChildren = 0;
-        for (const source of f.sources) for (const registered of source.versions) {
+        if (options.sourceKeys?.some(key => !f.sources.some(source => source.key === key))) throw Error('Unregistered corpus source selection.');
+        for (const source of f.sources.filter(source => options.sourceKeys === undefined || options.sourceKeys.includes(source.key))) for (const registered of source.versions) {
             const url = loaded.corpusAddresses.find(a => a.version === registered.key)!.url;
             let bundle: StoredDocumentBundle | undefined;
             const staging = { ...store, async activate(value: StoredDocumentBundle) { bundle = value; }, async recordFailure() {} };

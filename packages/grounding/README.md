@@ -1,8 +1,9 @@
 # @tangleai/grounding
 
-Versioned policy, evidence contracts and durable session state for governed
-retrieval. Root imports work in browsers. The package supplies contract and lifecycle primitives, hybrid local retrieval
-and explicit corpus promotion. Answer generation is not yet implemented.
+Versioned policy, evidence contracts and durable sessions for governed local/web
+retrieval. Root imports work in browsers. Native workflows compose typed
+clarification, hybrid parent/child retrieval, bounded web reads, reconciliation
+and validated claim ledgers. Explicit corpus promotion retains curator authority.
 
 ```ts
 import { createMemoryGroundingStore, loadGroundingProfile } from '@tangleai/grounding';
@@ -74,6 +75,11 @@ ranker and core lexical index. `createRrfRanker()` uses `rrf/1`; raw semantic an
 lexical scores survive fusion. Hosts may supply another ranker, but it can only
 add finite ranking scores to unchanged evidence. Explicit lane switches support
 measurement of semantic-only and lexical-only variants.
+
+Parent expansion follows the retained `parentChunkId`, never a shared source
+element id. Adjacent primary slices of a long paragraph legitimately retain the
+same original element address; overlap-only elements have separate carried
+provenance. Repeated headings therefore cannot redirect a child to a later parent.
 
 The lexical index rebuilds when the active version set changes and records its
 generation, source revision and rebuild time. Results include selected evidence,
@@ -287,3 +293,41 @@ search-host policy; configuring a search endpoint does not grant it authority.
 Desktop startup pages through the entire retained session history before
 recovering unfinished native executions. Terminal sessions and interactions
 waiting for a user response do not dispatch new work.
+
+### Complete mechanism measurement and limits
+
+The [keyless example](../../examples/grounding.ts) composes only installed public
+imports; the packed Node and Bun consumers execute it. It returns a cited local
+answer, an identical zero-call replay, a reader projection and a zero-call policy
+refusal. Callers supply `openTangleDb({ jobs: {} })` and close it after the example.
+
+`selectGroundingContext` enforces the final cross-lane evidence ceiling after
+ordering. It counts every excerpt actually serialized, including duplicate parent
+text under different evidence ids, and omits whole candidates without rewriting
+quotes or provenance. The standalone answer model also rejects an oversized
+supply before dispatch. Omitted candidates remain in the retained trace.
+
+Generated claim text, draft caveats/reasons and final conflict caveats share the
+optimizer's configured fact vocabulary guard. A phrase can be supported by this
+request, its accepted clarification or admitted evidence. Another conversation is
+never a source of personal facts. This closed phrase check is not general semantic
+entailment or a privacy guarantee for arbitrary prose. Invalid planning proposals
+retain a named content failure after one repair, with no stored unsafe query.
+
+Profiles with zero clarification turns bind only the adapters their workflow
+actually declares. Composed workflows require positive model call, token and time
+ceilings under the native MAS contract; zero values are refused at construction,
+never widened. Host policy/ranker functions are captured with their declared
+versions. Hosts remain responsible for versioning state held inside closures.
+
+The [measurement](../../docs/PRIHA_BENCHMARK.md) executes five treatments, four
+ablations and nine adversarial suites on 32 fictional questions. Its scripted
+adoption decision is **keep-experimental**: the full treatment's mean paired
+claim-F1 gain over flat retrieval is 0.125, with 95% interval [-0.083, 0.333].
+The optimizer adds calls without measured quality gain on this fixture. Explicit
+`localRetrieval` and `reconciliation: 'disabled-experiment'` host policy options
+exist for controlled ablations; the governed defaults remain enabled. The
+historical-weight ablation is an explicitly identical control, not a newly tuned
+setting. No live quality, paper-score reproduction or healthcare readiness is
+claimed. A real deployment still needs a governed corpus, consent/privacy policy
+and domain-expert evaluation. Live evaluation requires a new exact-plan approval.

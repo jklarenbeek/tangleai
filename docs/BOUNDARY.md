@@ -267,3 +267,13 @@ policy. The bounded repair consumer uses `createClaimRefiner` and Jaren's compil
 RFC 6902 patch applier; it owns no second validator, patch interpreter or prose
 matcher. The benchmark's unchanged grounding scorer measures scripted semantic
 support independently from the product's reference gate.
+
+The governed session host also owns final evidence selection across both lanes:
+`selectGroundingContext` uses the shared token estimator and retains unchanged
+candidate records. The answer model checks the ceiling again before dispatch.
+The configured user-fact vocabulary has one owner in grounding intent projection;
+planning and final claim/caveat validation reuse it. Experimental lane/parent/rule
+removals are explicit pinned host policies and never selected by model output.
+The benchmark HTTP capture reuses the document fetcher's exported bounded response
+reader before retaining live bodies; capture keys and response-byte identities
+continue to use the existing core capture contract.

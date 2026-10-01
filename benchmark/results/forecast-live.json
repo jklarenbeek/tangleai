@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "1c79b6a57af2433d7e46f71b1931b403f6fcd9d6",
-      "sha256": "7f8b4f66797de63fbcc3bcaa4722dccda0afbc3f0ad7c5fe79e908aef93811c1",
+      "head": "c643e1ea4b9f0d92de6b0a7b66afe4beb84c2048",
+      "sha256": "556c36c255fa28c7bd1d0f2cae2dd8c19e76255abb33dcd8c3c7f4d864d87278",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -354,7 +354,7 @@
         },
         {
           "path": "benchmark/lib/http-capture.ts",
-          "sha256": "fb259111a78482f80a4b8307f8fb9bd3c1f0899669e5f8ba058251b1ce1c3351"
+          "sha256": "dbd3d427012f0ce0e16bb573aaf5bb8e6e896132a69052cf9d3dcbf5c7b78a36"
         },
         {
           "path": "benchmark/lib/ledger-db.ts",
@@ -493,8 +493,12 @@
           "sha256": "fedb3b07a8af014f62948cb6dc075a89cf9e09457525deacc4785dc1881eb967"
         },
         {
+          "path": "benchmark/lib/priha-ablation.ts",
+          "sha256": "d98d4f93fcf64bdf0d338b61df64cc1f87982166da0d1e8bf9131f62b391bc38"
+        },
+        {
           "path": "benchmark/lib/priha-answer.ts",
-          "sha256": "fe70a5612fababb0311ecf6d0df8a63136050423c705422b2cfd1139eecca4d2"
+          "sha256": "764311dbb35adae5dfe47f7525edd5969b76cf168b4df124180481cc4a292312"
         },
         {
           "path": "benchmark/lib/priha-contracts.ts",
@@ -502,11 +506,23 @@
         },
         {
           "path": "benchmark/lib/priha-flow.ts",
-          "sha256": "336b14fb16e420e2e231bb02fb0be1f8169f1f6d8b8cb5f42a75fbabb1786f45"
+          "sha256": "784a393b4ce2b3e522ca7e7112ea2e9c03c8bf181a2aab7d19ef328b23b9b79f"
+        },
+        {
+          "path": "benchmark/lib/priha-live-execution.ts",
+          "sha256": "ec67e9db0d989611c67288c5965adbfd2ee6214fcf88ca2b717f6f4c5ea29504"
+        },
+        {
+          "path": "benchmark/lib/priha-live-records.ts",
+          "sha256": "55bfb322b3679ab574a15b8f56b1340ba3e6314757ec7fb83643fdca8b2e479c"
+        },
+        {
+          "path": "benchmark/lib/priha-live.ts",
+          "sha256": "afe6dae220b4549bbe4e41582e681e022cc6bf8bd4286c4f15f05a7db59a539c"
         },
         {
           "path": "benchmark/lib/priha-local.ts",
-          "sha256": "23a02292c212884d18dfb5c7614466c80f553a99b5735ad09849c0a0f053419f"
+          "sha256": "fffc8f8f4724503ae38283835dbd8368637cc17ab718be3bdc084d425ed5ca90"
         },
         {
           "path": "benchmark/lib/priha-optimizer.ts",
@@ -517,16 +533,20 @@
           "sha256": "cc1d9e9227aad3f958c8561b8d20a2bf24bfb8953ebca2195a9dd519e4c1cf69"
         },
         {
+          "path": "benchmark/lib/priha-safety.ts",
+          "sha256": "8ae6a51a52da4f0a54a1a7dfe34f9601cc1cdff42137a884d88f9b593cd109ab"
+        },
+        {
           "path": "benchmark/lib/priha-web.ts",
           "sha256": "ac367e1b91aa95eb386639764f7fceda067ec36dbac954373264fc1aab25a5ef"
         },
         {
           "path": "benchmark/lib/priha.ts",
-          "sha256": "d0da5c8d9ebc7316ad423f93f4b87412144f7c018350b544be9acea4c0edfa51"
+          "sha256": "1ff8ef2f0797608228851cffbb50dcd31abdc4823aa0993edd0ba7a1d48e1308"
         },
         {
           "path": "benchmark/lib/priha.types.ts",
-          "sha256": "f5e340fbeb2dbdb70eefc869110faf31cc5b03581470a6e9959b67c16ca99caf"
+          "sha256": "ca520a93663ee9f71cd443a9051892f2be12adba98fdfb386e36f8d57df80eb7"
         },
         {
           "path": "benchmark/lib/question-stream.ts",
@@ -834,7 +854,7 @@
         },
         {
           "path": "packages/documents/src/fetch.ts",
-          "sha256": "f9ab3ef1f3a25bab092b87a1452a42c95a77cd9016b0f447062bdae661407ceb"
+          "sha256": "94e7f86a00fed8f673b6707edb285e7f73a2ea367b19cd9d55c38ad43dce091c"
         },
         {
           "path": "packages/documents/src/index.ts",
@@ -1593,7 +1613,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "24ee95a371dcac0394f44f48b00f5745d2d60f9128f99dfb468152d248f137e0",
+    "planId": "8cb960b8fd9790bf2939f863636528b2b6dc079a8efcf5240f903ffc45cecdcc",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

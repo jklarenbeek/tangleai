@@ -5,8 +5,9 @@ import { join } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import { estimateTokens } from '@tangleai/core/tokens';
-import { createGroundingHost, createReplayWebTransport, loadGroundingProfile, groundingArtifacts,
-    type EvidenceCandidate, type GroundingHost, type GroundingHostOptions, type GroundedAnswer, type LocalRetrievalOutcome } from '@tangleai/grounding';
+import { createGroundingHost, createReplayWebTransport, loadGroundingProfile, groundingArtifacts, evaluateProfileRules,
+    type EvidenceCandidate, type GroundingHost, type GroundingHostOptions, type GroundedAnswer, type GroundingReply,
+    type LocalRetrievalOutcome, type WebReplayRecord, type WebTransport, type OptimizerClient } from '@tangleai/grounding';
 import { MasInfrastructureCrash, type MasRuntimeObserver } from '@tangleai/mas';
 import { createGroundingSegmentHost, createGroundingStore, createDocumentStore, openTangleDb } from '@tangleai/store';
 import { createPrihaCorpus } from './priha-local.ts';
@@ -14,27 +15,40 @@ import { prihaWebReplayRecords } from './priha-replay.ts';
 import { stageOf, bindRecipe, reconciliationFacts, metrics, localCandidates, scoreRuntimeAnswer, measurePrihaAnswers } from './priha-answer.ts';
 import { contractMust } from './priha-contracts.ts';
 import type { LoadedPrihaFixture, PrihaCase } from './priha.ts';
-import type { PrihaAnswerScript, PrihaAnswerExecution, PrihaFlowReport, PrihaFlowRun, PrihaFlowPath, PrihaFlowCrash } from './priha.types.ts';
+import type { PrihaAnswerScript, PrihaAnswerExecution, PrihaFlowReport, PrihaFlowRun, PrihaFlowPath, PrihaFlowCrash, PrihaWebStep } from './priha.types.ts';
 
 type Corpus = Awaited<ReturnType<typeof createPrihaCorpus>>;
-type Treatment = PrihaAnswerExecution['rows'][number];
+export type PrihaFlowTreatment = Omit<PrihaAnswerExecution['rows'][number], 'key'> & { key: string;
+    lexical?: boolean; expandParents?: boolean; reconciliation?: 'governed' | 'disabled-experiment' };
+type Treatment = PrihaFlowTreatment;
 const observation = ({ question, given, claims, correctDisposition, decision, decisionCorrect, localRecall, webRecall }: PrihaCase) =>
     ({ question, given, claims, correctDisposition, decision, decisionCorrect, localRecall, webRecall });
-export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: Awaited<ReturnType<typeof measurePrihaAnswers>>) {
+/** Shared fixture composition; all treatments retain the same runtime and scorer owners. */
+export async function createPrihaFlowScenarios(loaded: LoadedPrihaFixture, onRequest?: () => void) {
     const registration = loaded.flowExecution, answer = loaded.answerExecution;
     const checked = await loadGroundingProfile(JSON.parse(new TextDecoder().decode(loaded.bodies.get(answer.profile.file)!)));
     if (!checked.valid) throw Error('The registered flow profile was refused.');
-    const profile = checked.value, directory = await mkdtemp(join(tmpdir(), 'priha-flow-'));
+    const profile = checked.value, now = () => loaded.fixture.cutoff;
     const records = await prihaWebReplayRecords(loaded.fixture.web, loaded.webExecution, loaded.bodies);
-    const rows: PrihaFlowReport['rows'] = [], paths: PrihaFlowPath[] = [], crashes: PrihaFlowCrash[] = [];
-    const now = () => loaded.fixture.cutoff;
-    let scriptedRequests = 0, baselineCalls = 0;
     async function scenario(corpus: Corpus, treatment: Treatment, script: PrihaAnswerScript, name: string, options: {
         complex?: boolean; dead?: boolean; observer?: MasRuntimeObserver; jobClock?: () => number;
+        webScript?: PrihaWebStep[]; extraRecords?: WebReplayRecord[];
+        transformReply?: (stage: string, reply: unknown) => unknown;
+        live?: OptimizerClient; transport?: WebTransport; clock?: () => number;
     } = {}) {
-        let current = corpus, calls = 0, resolveTurns = 0, webPosition = 0;
+        let current = corpus, calls = 0, requests = 0, resolveTurns = 0, webPosition = 0;
+        const stages: string[] = [], requestUrls: string[] = [];
         const session = contractMust(await current.grounding.createSession({ conversationId: name, profileId: profile.id, profileRevision: profile.revision }));
-        const transport = await createReplayWebTransport(records, { searxBase: loaded.webExecution.searxBase });
+        const byKey = new Map(records.map(row => [row.key, row]));
+        for (const record of options.extraRecords ?? []) {
+            const old = byKey.get(record.key);
+            if (old && !equalsJson({ ...old, bytes: [...old.bytes] }, { ...record, bytes: [...record.bytes] })) throw Error('Conflicting replay records.');
+            byKey.set(record.key, record);
+        }
+        const underlying = options.transport ?? await createReplayWebTransport([...byKey.values()], { searxBase: loaded.webExecution.searxBase });
+        const transport: WebTransport = { ...underlying, fetch: async (input, init) => {
+            requests++; requestUrls.push(input instanceof Request ? input.url : String(input)); return underlying.fetch(input, init);
+        } };
         const query = loaded.fixture.questions.find(row => row.key === script.question)!;
         async function inputs() {
             const retained = (await current.grounding.readTrace(session.id))!;
@@ -44,10 +58,12 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
             return { candidates: retained.evidence.filter(row => value?.context?.evidenceIds.includes(row.id)),
                 conflicts: retained.conflicts.filter(row => value?.context?.conflictIds.includes(row.id)) };
         }
-        const client = { endpoint: { provider: 'scripted' }, async complete(request: unknown) {
-            calls++; scriptedRequests++;
+        const client = { endpoint: options.live?.client.endpoint ?? { provider: 'scripted' }, async complete(request: unknown) {
+            calls++; onRequest?.();
+            // A live client receives the actual native request before any scripted reply is consulted.
+            if (options.live) return options.live.client.complete(request as Parameters<OptimizerClient['client']['complete']>[0]);
             if (options.dead) throw Error('Registered unavailable model wire.');
-            const stage = stageOf(request, { ...answer, prompts: registration.prompts }); let reply: unknown;
+            const stage = stageOf(request, { ...answer, prompts: registration.prompts }); stages.push(stage); let reply: unknown;
             if (stage === 'triage') {
                 resolveTurns = 0; webPosition = 0;
                 reply = { triage: options.complex ? 'complex' : 'simple', reason: 'Registered flow path.', requiredFields: options.complex ? [registration.complexRequiredField] : [],
@@ -58,7 +74,7 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
                 reply = { refinedQuery: script.planQuery, resolved, result: { answer: '', disposition: resolved ? 'completed' : 'needs-information', claims: [], findings: [], outstandingQuestions: resolved ? [] : [registration.complexRequiredField] } };
             } else if (stage === 'plan') reply = { queries: [{ text: script.planQuery, why: 'Registered atomic question.', lanes: { local: treatment.local, web: treatment.web } }] };
             else if (stage === 'web-agent' || stage === 'web-sufficiency') {
-                const steps = script.webCase ? loaded.webExecution.cases.find(row => row.id === script.webCase)!.script : [];
+                const steps = options.webScript ?? (script.webCase ? loaded.webExecution.cases.find(row => row.id === script.webCase)!.script : []);
                 const step = steps[webPosition++];
                 if (!step || step.stage !== stage) throw Error('Unregistered flow web request: ' + stage);
                 return { message: structuredClone(step.reply), usage: { total_tokens: 10 } };
@@ -69,11 +85,12 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
             } else if (stage === 'generate') reply = bindRecipe(script, (await inputs()).candidates, current, loaded);
             else if (stage === 'repair') reply = [];
             else throw Error('Unregistered flow model stage: ' + stage);
-            return { message: { role: 'assistant' as const, content: JSON.stringify(reply) }, usage: { total_tokens: 10 } };
+            return { message: { role: 'assistant' as const, content: JSON.stringify(options.transformReply?.(stage, reply) ?? reply) }, usage: { total_tokens: 10 } };
         } };
         const segments = () => createGroundingSegmentHost(current.db, { now, jobClock: options.jobClock ?? (() => 1_000_000), deadlineFor: ms => new Date(Date.parse(now()) + ms).toISOString() });
         const policy: NonNullable<GroundingHostOptions['policy']> = { id: 'priha-flow-treatment', version: await canonicalSha256({ treatment, query: query.key, critical: query.critical,
             hypothesis: loaded.fixture.hypothesis, topics: answer.topics }), critical: query.critical, lanes: { local: treatment.local, web: treatment.web },
+            localRetrieval: { lexical: treatment.lexical ?? true, expandParents: treatment.expandParents ?? true }, reconciliation: treatment.reconciliation ?? 'governed',
             facts: candidates => reconciliationFacts([...candidates], current, loaded),
             order: async candidates => {
                 const ordered = [...candidates];
@@ -95,11 +112,11 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
                 issues: 0, rebuilds: 0, rebuildMs: 0, generation: 0, sourceRevision: loaded.fixtureId, contextTokens } };
         };
         const compose = () => createGroundingHost({ profile, store: current.grounding, corpus: current.store, embedder: current.embedder,
-            segments: segments(), transport, clientFor: () => ({ client, identity: null }), now, clock: () => 0, factVocabulary: loaded.userFacts,
+            segments: segments(), transport, clientFor: () => ({ client, identity: options.live?.identity ?? null }), now, clock: options.clock ?? (() => 0), factVocabulary: loaded.userFacts,
             policy, ...(options.observer ? { observer: options.observer } : {}) });
         let host = await compose();
         return { sessionId: session.id, get host() { return host; }, get corpus() { return current; }, query,
-            stats: () => ({ calls, requests: transport.stats().requests }),
+            searxBase: transport.searxBase, stats: () => ({ calls, requests }), observations: () => ({ stages: [...stages], requestUrls: [...requestUrls] }),
             start: (text = query.text) => host.start({ text, conversationId: name, mode: treatment.optimizer ? 'optimized' : 'raw' }),
             async reopen(path: string) {
                 await current.close(); const db = await openTangleDb({ path, jobs: { now: options.jobClock ?? (() => 1_000_000), random: () => 0.5 } });
@@ -108,6 +125,43 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
             close: () => current.close(),
         };
     }
+    return { profile, scenario };
+}
+export type PrihaFlowScenario = Awaited<ReturnType<Awaited<ReturnType<typeof createPrihaFlowScenarios>>['scenario']>>;
+/** Retain actual runtime observations; the independent scorer alone assigns semantic support. */
+export async function observePrihaFlowScenario(loaded: LoadedPrihaFixture, s: PrihaFlowScenario, reply: GroundingReply) {
+    const trace = (await s.corpus.grounding.readTrace(s.sessionId))!, held = trace.answers.find(row => row.id === trace.session.answerIds.at(-1));
+    const native = await createGroundingSegmentHost(s.corpus.db, { now: () => loaded.fixture.cutoff, jobClock: () => 1_000_000,
+        deadlineFor: () => loaded.fixture.cutoff }).store.readTrace(reply.identities.runId);
+    const result = native?.attempts.find(row => row.invocationId === 'reconcile' && row.status === 'completed')?.output as { context?: { evidenceIds: string[] } } | undefined;
+    const admitted = trace.evidence.filter(row => result?.context?.evidenceIds.includes(row.id));
+    const answer: Pick<GroundedAnswer, 'disposition' | 'claims' | 'citations' | 'reason'> = held ?? {
+        disposition: 'refuse', claims: [], citations: [], reason: reply.answer?.text ?? reply.failure?.detail ?? 'No completed answer.' };
+    const scored = scoreRuntimeAnswer(s.corpus, loaded, s.query, answer, trace.evidence, admitted).scored;
+    const rules = evaluateProfileRules(trace.profile, { text: s.query.text }), expectedRuleId = rules.emergency ?? rules.outOfScope;
+    const searchBase = new URL(s.searxBase), searchPath = searchBase.pathname.replace(/\/+$/, '') + '/search';
+    const safelistBypass = s.observations().requestUrls.filter(value => {
+        const url = new URL(value);
+        return !(url.origin === searchBase.origin && url.pathname === searchPath) && rules.authorityOf(value) === null;
+    }).length;
+    const run: PrihaFlowRun = { question: s.query.key, sessionId: s.sessionId, runId: reply.identities.runId, workflowVersionId: reply.identities.workflowVersionId,
+        answerId: held?.id ?? null, intentId: trace.session.intentId ?? null, planId: trace.session.planId ?? null,
+        disposition: reply.disposition, calls: s.stats().calls, tokens: reply.trace.tokens, requests: s.stats().requests, reopened: false, failure: reply.failure?.detail ?? null,
+        ms: reply.trace.ms, searches: reply.trace.searches, fetches: reply.trace.fetches,
+        bytes: trace.webRuns.reduce((sum, row) => sum + row.spend.bytes, 0), contextTokens: admitted.reduce((sum, row) => sum + estimateTokens(row.excerpt), 0),
+        unsupportedCritical: answer.claims.filter(claim => claim.critical && !scored.claims.matches.some(match => match.predictedId === claim.id && match.supported)).length,
+        safelistBypass, expectedRuleId, ruleIds: reply.ruleIds,
+        safeRoute: expectedRuleId === null || (reply.ruleIds.includes(expectedRuleId) && reply.disposition === 'refusal' && s.stats().calls === 0 && s.stats().requests === 0) };
+    if (reply.trace.calls !== run.calls) throw Error('Native and physical flow call counts disagree.');
+    return { scored, run, trace, native, admitted, answer };
+}
+export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: Awaited<ReturnType<typeof measurePrihaAnswers>>) {
+    const registration = loaded.flowExecution, answer = loaded.answerExecution;
+    const directory = await mkdtemp(join(tmpdir(), 'priha-flow-'));
+    const rows: PrihaFlowReport['rows'] = [], paths: PrihaFlowPath[] = [], crashes: PrihaFlowCrash[] = [];
+    const now = () => loaded.fixture.cutoff;
+    let scriptedRequests = 0, baselineCalls = 0;
+    const { profile, scenario } = await createPrihaFlowScenarios(loaded, () => { scriptedRequests++; });
     try {
         for (const treatment of answer.rows) {
             const path = join(directory, treatment.key + '.sqlite');
@@ -116,19 +170,8 @@ export async function measurePrihaFlow(loaded: LoadedPrihaFixture, components: A
             try {
                 for (const script of answer.cases.filter(row => row.row === treatment.key)) {
                     const s = await scenario(corpus, treatment, script, 'flow:' + treatment.key + ':' + script.question);
-                    const reply = await s.start(), trace = (await corpus.grounding.readTrace(s.sessionId))!;
-                    const held = trace.answers.find(row => row.id === trace.session.answerIds.at(-1));
-                    const native = await createGroundingSegmentHost(corpus.db, { now, jobClock: () => 1_000_000, deadlineFor: () => now() }).store.readTrace(reply.identities.runId);
-                    const result = native?.attempts.find(row => row.invocationId === 'reconcile' && row.status === 'completed')?.output as { context?: { evidenceIds: string[] } } | undefined;
-                    const admitted = trace.evidence.filter(row => result?.context?.evidenceIds.includes(row.id));
-                    const answerValue: Pick<GroundedAnswer, 'disposition' | 'claims' | 'citations' | 'reason'> = held ?? {
-                        disposition: 'refuse', claims: [], citations: [], reason: reply.answer?.text ?? reply.failure?.detail ?? 'No completed answer.' };
-                    cases.push(scoreRuntimeAnswer(corpus, loaded, s.query, answerValue, trace.evidence, admitted).scored);
-                    runs.push({ question: script.question, sessionId: s.sessionId, runId: reply.identities.runId, workflowVersionId: reply.identities.workflowVersionId,
-                        answerId: held?.id ?? null, intentId: trace.session.intentId ?? null, planId: trace.session.planId ?? null,
-                        disposition: reply.disposition, calls: s.stats().calls, tokens: reply.trace.tokens, requests: s.stats().requests, reopened: false,
-                        failure: reply.failure?.detail ?? null });
-                    if (reply.trace.calls !== s.stats().calls) throw Error('Native and physical flow call counts disagree.');
+                    const measured = await observePrihaFlowScenario(loaded, s, await s.start());
+                    cases.push(measured.scored); runs.push(measured.run);
                 }
             } finally { await corpus.close(); }
             const reopened = await openTangleDb({ path });

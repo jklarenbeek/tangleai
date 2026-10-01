@@ -356,6 +356,23 @@ grounded recall — the sources themselves, quoted and cited, never invention.
 The paired measurement behind this behavior lives in
 [`GROUNDING_BENCHMARK.md`](GROUNDING_BENCHMARK.md).
 
+Governed grounding sessions use `@tangleai/grounding` beside the existing chat
+path. The public host injects profile, model identities, corpus, embedder, ranker,
+transport and the SQLite segment host. One native MAS graph composes GMPL typed
+clarification, semantic/lexical child ranking, retained parent context, bounded
+request-local web evidence, deterministic authority/time rules and structured
+claim generation with one repair. Final evidence selection counts both lanes
+under one context ceiling. Configuration, workflow and profile revisions pin
+resume; explicit refresh creates a new run and retains earlier answers.
+
+The desktop exposes seven `grounding.*` commands/reads and a session panel through
+its existing contract dispatcher. Historical readers require no model binding.
+Completed stages replay through native attempts and checkpoints; the benchmark
+terminates and reopens all 84 observed stage paths. Citation identity, authority,
+content-time provenance, unused evidence and exact physical-call counts remain
+inspectable. The [paired ablation](PRIHA_BENCHMARK.md) keeps this capability
+experimental; it establishes neither live answer quality nor healthcare safety.
+
 ## The operator control plane (added 2026-09-14)
 
 Every live thing on the desktop is a run with an id and a sequence. A run's

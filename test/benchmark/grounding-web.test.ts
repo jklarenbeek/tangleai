@@ -249,6 +249,30 @@ describe('the capture adapter\'s refusals', () => {
 });
 
 describe('the stated not-run state', () => {
+  it('bounded capture cancels an oversized body and retains the named failure without draining it', async () => {
+    const capture = await openHttpCapture({ path: ':memory:' }); let pulls = 0, cancelled = false, delivered = 0;
+    try {
+      const fetch = capture.fetchFor('document', { replay: false, maxResponseBytes: 4, onBytesRead: bytes => { delivered += bytes; },
+        inner: async () => new Response(new ReadableStream<Uint8Array>({
+          pull(controller) { pulls++; if (pulls <= 10) controller.enqueue(new Uint8Array(8)); else controller.close(); },
+          cancel() { cancelled = true; },
+        })) });
+      await assert.rejects(fetch('https://official.harbour.example/big'), /decompressed limit/);
+      assert.equal(cancelled, true); assert.ok(pulls <= 2); assert.equal(delivered, 8);
+      assert.equal((await capture.manifest())[0]!.failure!.code, 'body');
+      await assert.rejects(capture.fetchFor('document', { replay: true, inner: throwing })('https://official.harbour.example/big'), /captured failure/);
+    } finally { await capture.close(); }
+  });
+  it('bounded capture returns the exact unconsumed response and replay bytes at the ceiling', async () => {
+    const capture = await openHttpCapture({ path: ':memory:' });
+    try {
+      const fetch = capture.fetchFor('document', { replay: false, maxResponseBytes: 4,
+        inner: async () => new Response('four', { headers: { 'content-type': 'text/plain' } }) });
+      const response = await fetch('https://official.harbour.example/small');
+      assert.equal(await response.text(), 'four'); assert.equal((await capture.manifest())[0]!.responseBytes, 4);
+      assert.equal(await (await capture.fetchFor('document', { replay: true, inner: throwing })('https://official.harbour.example/small')).text(), 'four');
+    } finally { await capture.close(); }
+  });
   it('is schema-valid, names its reason and touches nothing', async () => {
     const report = await notRunGroundingWeb('no SearxNG endpoint was configured (--searx <base>)', { clock: () => new Date('2026-09-01T00:00:00.000Z') });
     const outcome = validate(report);

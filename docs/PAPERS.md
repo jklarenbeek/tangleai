@@ -11,6 +11,19 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
 
 ## Ported — running in this repo
 
+- **PriHA / DRAG** (arXiv:2604.14215v1)
+  - `@tangleai/grounding` composes governed clarification, hybrid parent/child
+    retrieval, iterative safelisted web reads, authority/time reconciliation and
+    claim-level references through native resumable workflows and desktop commands.
+  - The [scripted measurement](PRIHA_BENCHMARK.md) runs five treatments, four
+    ablations and nine safety suites on an original fictional fixture. The full
+    treatment's paired gain is 0.125 with 95% interval [-0.083, 0.333], so adoption
+    remains experimental; optimizer cost has no measured quality gain here.
+  - The paper's dataset, judge, providers and score are not reproduced. Live
+    language-model injection resistance and healthcare readiness are not claimed.
+    Archived weights are a registered equivalence control, not inherited success.
+  - 📄 [`refs/2604.14215v1.pdf`](refs/2604.14215v1.pdf)
+
 - **Milkyway harness evolution** (arXiv:2604.15719v2, Xu et al., Apr 2026)
   - `@tangleai/forecast` implements ordered checkpoints under pinned prompts and
     tools, cutoff-audited evidence, six-section notes, question-local guarded
@@ -135,7 +148,6 @@ implementing any single one.
 ## Reference-only
 
 - **LightRAG** (arXiv:2410.05779v3) — graph+vector fusion; the roadmap's graph question names its mechanism as the candidate. 📄 [`refs/2410.05779v3.pdf`](refs/2410.05779v3.pdf)
-- **PriHA / DRAG** (arXiv:2604.14215v1) — dual retrieval fusion; a roadmap entry of its own. 📄 [`refs/2604.14215v1.pdf`](refs/2604.14215v1.pdf)
 - **5 Proven Query Translation Techniques** (TDS, 2024) — HyDE, multi-query, step-back. 📄 [`refs/5 Proven Query Translation Techniques.pdf`](refs/5%20Proven%20Query%20Translation%20Techniques.pdf)
 - **AutoSkill** (arXiv:2604.17614v1) — activation-space skill characterization. 📄 [`refs/2604.17614v1.pdf`](refs/2604.17614v1.pdf)
 - **Memo, Not True Memory** (arXiv:2604.27707v1) — the generalization-ceiling argument for

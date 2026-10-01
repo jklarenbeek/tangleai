@@ -17,6 +17,7 @@ export type { MemoryGroundingStoreOptions } from './memory-store.ts';
 export * from './promote.ts';
 export * from './ranker.ts';
 export * from './local.ts';
+export * from './context.ts';
 export * from './optimizer.ts';
 export * from './optimizer-artifacts.ts';
 export * from './intent.ts';

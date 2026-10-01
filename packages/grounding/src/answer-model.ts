@@ -1,5 +1,6 @@
 /** All answer stages consume one existing budget account and the installed prompt catalog. */
 import { createBudgetAccount } from '@tangleai/agents';
+import { estimateTokens } from '@tangleai/core/tokens';
 import { createSharedBudgetClient, MasBudgetStop, type MasChatClient } from '@tangleai/mas';
 import { createStructuredOutput } from '@tangleai/models/structured';
 import { renderGmplPrompt } from '@tangleai/gmpl';
@@ -36,6 +37,8 @@ export async function createAnswerModel(options: AnswerModelOptions) {
         async run(stage: 'reconcile' | 'generate' | 'repair', query: string, admitted: readonly EvidenceCandidate[], context: Record<string, unknown>,
             control: { maxRepairs: number; gate?: (value: any) => any }) {
             if (!Number.isSafeInteger(control.maxRepairs) || control.maxRepairs < 0 || control.maxRepairs > 1) groundingReject('TGRD1007', '/maxRepairs', 'A structured answer stage allows at most one schema repair.');
+            if (admitted.reduce((sum, row) => sum + estimateTokens(row.excerpt), 0) > profile.budgets.contextTokens)
+                groundingReject('TGRD1007', '/contextTokens', 'The supplied evidence exceeds the profile context ceiling.');
             const artifact = groundingArtifacts.prompts.find(row => row.id === 'grounding-' + stage)!;
             const evidence = await Promise.all(admitted.map(async row => ({ id: row.id, digest: await groundingRevisionOf(row),
                 text: JSON.stringify({ lane: row.lane, authority: row.authority, times: row.times, excerpt: row.excerpt }) })));

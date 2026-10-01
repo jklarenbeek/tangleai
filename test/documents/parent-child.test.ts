@@ -1,6 +1,9 @@
 import { it } from 'node:test';
 import assert from 'node:assert/strict';
-import { recallDocumentChunks, assertStoredDocumentBundle, ParentChildChunker } from '@tangleai/documents';
+import { recallDocumentChunks, assertStoredDocumentBundle, ParentChildChunker, SafeStaticFetcher, createDocumentIngester } from '@tangleai/documents';
+import { nodeDriver } from '@jarenjs/db/node';
+import { createHashEmbedder } from '@tangleai/models/embed';
+import { createDocumentStore, openTangleDb } from '@tangleai/store';
 import { localCorpus } from '../fixtures/grounding/local-corpus.ts';
 it('retains true parents, bounds children and embeds only children', async () => {
     const f = await localCorpus();
@@ -40,4 +43,35 @@ it('refuses dangling parent membership before any corpus activation', async () =
         await assert.rejects(() => f.store.activate(bundle), /true parent/);
         assert.deepEqual(await f.store.listSources(), []); assert.deepEqual(await f.store.listParents(), []);
     } finally { await f.db.close(); }
+});
+it('preserves source paragraph references while expanding explicit parents across repeated headings', async () => {
+    const paragraph = (n: number) => `<p>${Array.from({ length: 60 }, (_, i) => `Sentence ${n}-${i} states a distinct fact about relay policy number ${n * 100 + i}.`).join(' ')}</p>`;
+    const html = `<!doctype html><html><body><main><h1>Guide</h1><h2>Notes</h2>${paragraph(1)}${paragraph(2)}<h2>Details</h2>${paragraph(3)}<h2>Notes</h2>${paragraph(4)}${paragraph(5)}</main></body></html>`;
+    for (const parent of [false, true]) {
+        const db = await openTangleDb({ driver: nodeDriver() }), store = createDocumentStore(db), embedder = createHashEmbedder({ dims: 64 });
+        try {
+            const ingester = createDocumentIngester({ store, embedder, fetcher: new SafeStaticFetcher({
+                fetch: async () => new Response(html, { headers: { 'content-type': 'text/html' } }),
+                lookup: async () => [{ address: '93.184.216.34', family: 4 }], limits: { respectRobots: false, perHostDelayMs: 0 },
+            }) });
+            const out = await ingester.ingest({ url: 'https://docs.example/guide', ...(parent ? { strategy: 'parent-child' as const, parentTokens: 2000, maxTokens: 400, overlapTokens: 50 } : {}) });
+            const chunks = await store.listChunks(out.version.id), elements = await store.listElements(out.version.id), parents = await store.listParents(out.version.id);
+            const byId = new Map(elements.map(element => [element.id, element]));
+            const [query] = await embedder.embed(['relay policy number 105']);
+            const recall = await recallDocumentChunks(store, query, { model: embedder.model, dims: 64 }, { k: 3, neighbours: 0 });
+            if (parent) {
+                const shared = chunks.slice(1).flatMap((chunk, i) => chunk.elementIds.filter(id => chunks[i].elementIds.includes(id)));
+                assert.ok(shared.length > 0, 'different primary slices retain the same original paragraph address');
+                assert.ok(shared.every(id => byId.get(id)!.text.length > (400 - 50) * 4), 'overlap alone cannot grant primary ownership');
+                assert.ok(chunks.every(chunk => parents.some(p => p.id === chunk.parentChunkId && p.childIds.includes(chunk.id))));
+                assert.ok(recall.ranked.every(hit => hit.context.length === 1 && hit.context[0].id === hit.chunk.parentChunkId));
+            } else {
+                const notes = chunks.filter(chunk => chunk.headingPath.join('/') === 'Guide/Notes');
+                assert.equal(byId.get(notes[0].parentId!)!.order, 1);
+                assert.equal(byId.get(notes.at(-1)!.parentId!)!.order, 6);
+                const hit = recall.ranked.find(value => value.chunk.order === 2);
+                assert.ok(hit); assert.ok(hit.context.every(chunk => chunk.order <= hit.chunk.order));
+            }
+        } finally { await db.close(); }
+    }
 });

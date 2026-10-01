@@ -9,6 +9,7 @@ import { createAnswerModel, type AnswerModelOptions } from './answer-model.ts';
 import { interpretEvidenceConflicts } from './reconcile-model.ts';
 import { createCitationResolver, repairPrihaClaims, validatePrihaClaims } from './validate.ts';
 import { evaluateProfileRules } from './profile.ts';
+import { inventedGroundingFacts } from './intent.ts';
 import { groundingArtifacts } from './optimizer-artifacts.ts';
 import { groundingIdOf, groundingRevisionOf, immutableGroundingJson } from './identity.ts';
 import { GroundingAbort, groundingIssue, groundingMust, groundingReject } from './errors.ts';
@@ -18,6 +19,8 @@ export interface GenerateGroundedClaimsOptions extends AnswerModelOptions {
     store: GroundingStore; corpus?: DocumentCorpusStore; expectedRevision?: number;
     /** Host policy can strengthen every claim; model replies cannot weaken this declaration. */
     critical?: boolean;
+    /** Only registered phrases are covered; this is not arbitrary prose entailment. */
+    factVocabulary?: readonly string[];
     /** A preceding native workflow stage can retain the bounded interpretation. */
     interpretConflicts?: boolean;
     /** A durable host distinguishes unavailable dependencies from unsupported claims. */
@@ -26,14 +29,14 @@ export interface GenerateGroundedClaimsOptions extends AnswerModelOptions {
 export async function generateGroundedClaims(options: GenerateGroundedClaimsOptions) {
     options = { ...options, profile: immutableGroundingJson(options.profile), modelIdentity: immutableGroundingJson(options.modelIdentity),
         plan: immutableGroundingJson(options.plan), admitted: immutableGroundingJson(options.admitted), conflicts: immutableGroundingJson(options.conflicts),
-        ...(options.budget ? { budget: immutableGroundingJson(options.budget) } : {}) };
+        ...(options.budget ? { budget: immutableGroundingJson(options.budget) } : {}), factVocabulary: immutableGroundingJson([...(options.factVocabulary ?? [])]) };
     const model = await createAnswerModel(options), query = options.query, critical = options.critical ?? false;
     const plan = groundingMust(validateGroundingShape('queryPlan', options.plan)), admitted = immutableGroundingJson(options.admitted);
     const sessionId = options.sessionId, store = options.store, expectedRevision = options.expectedRevision;
     let conflicts = immutableGroundingJson(options.conflicts), repairs = 0, stopReason = 'answered', removedClaimIds: string[] = [];
     const validationIssues: GroundingIssue[] = [];
     const refusal = (reason: string): PrihaAnswer => ({ disposition: 'refuse', reason, claims: [] });
-    let accepted = false;
+    let accepted = false, suppliedFacts: string[] = [];
     let draft: PrihaAnswer = refusal('The available evidence does not support a reliable answer.');
     try {
         const session = await store.getSession(sessionId), trace = await store.readTrace(sessionId);
@@ -54,6 +57,7 @@ export async function generateGroundedClaims(options: GenerateGroundedClaimsOpti
             if (conflict.excludedEvidenceIds?.some(id => admitted.some(row => row.id === id)))
                 groundingReject('TGRD1008', '/admitted', 'Rule-excluded evidence cannot return to generation.');
         }
+        suppliedFacts = [query, ...Object.values(trace.intents.find(row => row.id === plan.intentId)!.answered), ...admitted.map(row => row.excerpt)];
         accepted = true;
         const rules = evaluateProfileRules(model.profile, { text: query });
         if (rules.emergency || rules.outOfScope || options.interpretConflicts === false) {
@@ -72,6 +76,9 @@ export async function generateGroundedClaims(options: GenerateGroundedClaimsOpti
             const resolver = await createCitationResolver(admitted, options.corpus), view = resolver.view;
             const gate = (value: PrihaAnswer) => {
                 const checked = validatePrihaClaims(value, view);
+                const visible = value.disposition === 'answer' ? value.claims.flatMap(row => [row.text, ...row.caveats]).join('\n') : value.reason;
+                if (inventedGroundingFacts(visible, suppliedFacts, options.factVocabulary ?? []).length)
+                    checked.errors.push({ code: 'TGRD1004', docPath: '/claims', instancePath: '/claims', message: 'The answer introduced an unsupplied registered user fact.' });
                 if (value.disposition === 'answer') value.claims.forEach((claim, index) => {
                     if (!claim.citations.length) checked.errors.push({ code: 'EVIDENCE_REFERENCE', docPath: `/claims/${index}/citations`, instancePath: `/claims/${index}/citations`, message: 'Every factual claim requires admitted evidence.' });
                 });
@@ -121,13 +128,17 @@ export async function generateGroundedClaims(options: GenerateGroundedClaimsOpti
         validationIssues.push(issue); draft = refusal('The available evidence could not be validated for a reliable answer.');
         stopReason = typeof (cause as { reason?: unknown })?.reason === 'string' ? (cause as { reason: string }).reason : issue.code === 'TGRD1008' ? 'unsupported-claims' : 'generation-failed';
     }
-    const claims: GroundedAnswer['claims'] = draft.disposition === 'answer' ? draft.claims.map(claim => {
+    let claims: GroundedAnswer['claims'] = draft.disposition === 'answer' ? draft.claims.map(claim => {
         const related = conflicts.filter(conflict => conflict.evidenceIds.some(id => claim.citations.includes(id)));
         const caveats = [...new Set([...claim.caveats, ...related.filter(row => row.decision === 'caveat' || row.decision === 'unresolved' && row.severity !== 'critical')
             .map(row => row.interpretation ?? 'The available official sources disagree; this detail remains uncertain.')])];
         return { id: claim.id, text: claim.text, critical: claim.critical, status: caveats.length ? 'qualified' : claim.citations.length ? 'supported' : 'unresolved',
             evidenceIds: claim.citations, conflictIds: related.map(row => row.id), caveats };
     }) : [];
+    if (inventedGroundingFacts(claims.flatMap(row => [row.text, ...row.caveats]).join('\n'), suppliedFacts, options.factVocabulary ?? []).length) {
+        validationIssues.push(groundingIssue('TGRD1004', '/claims', 'The final claim ledger introduced an unsupplied registered user fact.'));
+        claims = []; draft = refusal('The available evidence does not support a reliable answer.'); stopReason = 'unsupported-user-fact';
+    }
     const cited = [...new Set(claims.flatMap(claim => claim.evidenceIds))];
     const payload = { sessionId, planId: plan.id, disposition: draft.disposition, ...(draft.disposition === 'answer' ? {} : { reason: draft.reason }),
         claims, citations: cited.map(id => ({ evidenceId: id, ...admitted.find(row => row.id === id)!.citation })), caveats: [],

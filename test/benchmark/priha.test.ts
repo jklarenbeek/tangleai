@@ -7,12 +7,13 @@ import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
-import { buildPrihaReport, loadPrihaFixture, loadPrihaControl, createPrihaValidator, requirePrihaCapability, PRIHA_ROWS, PRIHA_BAD_ROWS, PRIHA_CAPABILITY_ROWS, renderPrihaDocument, renderPrihaReport, planPrihaLive, authorizePrihaLive, prihaCorpus, prihaScoreAnswer, scorePrihaConversation, validatePrihaReport, reportIdOf, registrationIdOf, type PrihaAnswer, type PrihaFixture, } from '../../benchmark/lib/priha.ts';
+import { buildPrihaReport, loadPrihaFixture, loadPrihaControl, createPrihaValidator, requirePrihaCapability, PRIHA_ROWS, PRIHA_BAD_ROWS, PRIHA_CAPABILITY_ROWS, renderPrihaDocument, renderPrihaReport, planPrihaLive, authorizePrihaLive, runPrihaLive, prihaCorpus, prihaScoreAnswer, scorePrihaConversation, validatePrihaReport, reportIdOf, registrationIdOf, type PrihaAnswer, type PrihaFixture, } from '../../benchmark/lib/priha.ts';
 import { prihaLocalTimingReceipt, type PrihaLocalTiming } from '../../benchmark/lib/priha-local.ts';
 import { stageOf } from '../../benchmark/lib/priha-answer.ts';
 import { groundingArtifacts } from '@tangleai/grounding';
 import { createPrihaReplay } from '../../benchmark/lib/priha-replay.ts';
 import { readAiEnv } from '../../benchmark/lib/ai-env.ts';
+import { readPrihaLiveReceipts } from '../../benchmark/lib/priha-live-records.ts';
 const exec = promisify(execFile), loaded = await loadPrihaFixture(), fixture = loaded.fixture;
 const localTimings: PrihaLocalTiming[] = [];
 const report = await buildPrihaReport({ loaded, onLocalTiming: value => localTimings.push(value) }), validate = createPrihaValidator();
@@ -133,10 +134,10 @@ describe('the registered PriHA instrument', () => {
         requirePrihaCapability(report, 'flow');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(7))
-            assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
+        requirePrihaCapability(report, 'complete');
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
-        assert.equal(report.decision.state, 'not-evaluated');
+        assert.equal(report.decision.state, 'keep-experimental');
+        assert.equal(report.decision.tier, 'scripted-tier'); assert.equal(report.decision.defaultChanged, false);
     });
     it('executes the registered optimizer census and counts durable replay, facts and physical calls', () => {
         const [off, on] = report.optimizer.rows;
@@ -250,6 +251,8 @@ describe('the registered PriHA instrument', () => {
         const identity = structuredClone(report);
         identity.registration.control.sourceSha256 = 'a'.repeat(64);
         identity.registration.registrationId = await registrationIdOf(identity.registration);
+        identity.live.plan.registrationId = identity.registration.registrationId;
+        const { planId: _, ...payload } = identity.live.plan; identity.live.plan.planId = await canonicalSha256(payload);
         identity.reportId = await reportIdOf(identity);
         await assert.rejects(validatePrihaReport(identity), /does not reproduce/);
     });
@@ -269,7 +272,7 @@ describe('the registered PriHA instrument', () => {
     });
     it('committed report and Markdown equal the measured command artifacts', async () => {
         assert.equal(await readFile('benchmark/results/priha.json', 'utf8'), renderPrihaReport(report));
-        assert.equal(await readFile('docs/PRIHA_BENCHMARK.md', 'utf8'), renderPrihaDocument(report));
+        assert.equal(await readFile('docs/PRIHA_BENCHMARK.md', 'utf8'), renderPrihaDocument(report, await readPrihaLiveReceipts()));
     });
     it('replays exact bytes repeatedly, with counted misses and no fallback', async () => {
         const replay = createPrihaReplay(fixture.web, loaded.bodies), row = fixture.web.find(r => r.kind === 'document' && r.status === 200)!;
@@ -284,7 +287,7 @@ describe('the registered PriHA instrument', () => {
         bytes.set(row.file, new Uint8Array([1]));
         await assert.rejects(createPrihaReplay(fixture.web, bytes).fetchFor('document')(row.url), /digest/);
     });
-    it('freezes a credential-free dry plan and refuses even matching spending authorization', async () => {
+    it('freezes a credential-free dry plan and requires an executable wire plus exact authorization', async () => {
         const plan = await planPrihaLive(report), again = await planPrihaLive(report);
         assert.deepEqual(plan, again);
         assert.equal(validate(plan).valid, true);
@@ -293,22 +296,24 @@ describe('the registered PriHA instrument', () => {
         assert.equal(plan.physicalRequests, 0);
         assert.equal(authorizePrihaLive(plan), 'skipped');
         assert.throws(() => authorizePrihaLive(plan, 'wrong'), /does not match/);
-        assert.throws(() => authorizePrihaLive(plan, planId), /live execution is not enabled/);
-        const env = readAiEnv({ AI_PROVIDER: 'openai', AI_MODEL: 'fixture', OPENAI_API_KEY: 'secret-not-in-plan' });
+        assert.equal(authorizePrihaLive(plan, planId), 'skipped');
+        const env = readAiEnv({ TANGLE_AI_MODEL: 'fixture/model', OPENROUTER_AI_KEY: 'secret-not-in-plan', TANGLE_AI_MAX_CALLS: '1920' });
         const configured = await planPrihaLive(report, env);
         assert.ok(!JSON.stringify(configured).includes('secret-not-in-plan'));
+        assert.equal(authorizePrihaLive(configured, configured.plan.planId), 'execute');
+        assert.equal(configured.plan.maxFreshCalls, 1920); assert.equal(configured.plan.maxSearches, 288); assert.equal(configured.plan.maxFetches, 576);
+        assert.equal(configured.plan.maxWebHttpRequests, 0);
         await assert.rejects(planPrihaLive(report, { ...env, baseUrl: 'https://example.test/?secret=not-safe' }), /credential-free/);
     });
     it('the CLI reproduces files, checks without writing and refuses unsupported gates before output', async () => {
         const root = await mkdtemp(join(tmpdir(), 'priha-cli-'));
         try {
-            const a = join(root, 'a.json'), b = join(root, 'b.md'), c = join(root, 'c.json'), d = join(root, 'd.md');
+            const a = join(root, 'a.json'), b = join(root, 'b.md');
             await exec(process.execPath, ['benchmark/priha.ts', '--json', a, '--md', b]);
-            await exec(process.execPath, ['benchmark/priha.ts', '--json', c, '--md', d]);
-            assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
-            assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
+            assert.equal(await readFile(a, 'utf8'), renderPrihaReport(report));
+            assert.equal(await readFile(b, 'utf8'), renderPrihaDocument(report, await readPrihaLiveReceipts()));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'complete'], ['--unknown']])
+            for (const flags of [['--require', 'unknown-capability'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;
@@ -332,6 +337,104 @@ it('executes the web component independently with exact replay and denied-origin
         assert.ok(row.cases.every(value => value.replayIdentical && value.timeFactsCorrect));
         assert.deepEqual(row.cases.filter(value => value.id.startsWith('budget-')).map(value => value.stopReason), ['budget-turns','budget-tokens','budget-ms','budget-searches','budget-fetches','budget-bytes']);
     }
+});
+it('measures all registered ablations and retains both the scored and gold-free denominators', () => {
+    assert.equal(report.ablation.failed, 0); assert.equal(report.ablation.rows.length, 4);
+    for (const row of report.ablation.rows) { assert.equal(row.cases.length, 32); assert.equal(row.runs.length, 32); assert.ok(row.runs.every(run => run.reopened)); }
+    assert.equal(report.pairing.comparisons.length, 9);
+    for (const pair of report.pairing.comparisons) {
+        assert.equal(pair.outcomes.length, 32); assert.equal(pair.pairs, 24); assert.equal(pair.excludedNull, 8);
+        assert.equal(pair.wins + pair.losses + pair.ties, 24);
+    }
+    const full = report.flow.rows.find(row => row.key === 'priha-full')!, hypothesis = report.ablation.rows.find(row => row.key === 'priha-hypothesis-weights')!;
+    assert.deepEqual(hypothesis.metrics, full.metrics); assert.equal(hypothesis.calls, full.calls); assert.equal(hypothesis.tokens, full.tokens);
+    assert.equal(report.safety.suites.length, 9); assert.equal(report.safety.cases.length, 11); assert.equal(report.safety.violations, 0);
+    assert.equal(report.safety.setup[0].factRetained, true);
+    const rejected = report.safety.cases.find(row => row.id === 'personalization-leakage:plan')!;
+    assert.equal(rejected.run.disposition, 'failure'); assert.equal(rejected.run.failure, 'plan-unavailable');
+    assert.deepEqual(rejected.planTexts, []); assert.ok(rejected.checks.every(check => check.passed));
+    assert.equal(report.decision.defaultChanged, false);
+});
+it('the decision cannot be forged independently of its cases, comparisons, budgets or safety observations', () => {
+    for (const mutate of [
+        (value: typeof report) => { value.rows[1].metrics!.claims.microF1 = 1; },
+        (value: typeof report) => { (value.ablation.rows[0].metrics.claims as { meanF1: number }).meanF1 = 1; },
+        (value: typeof report) => { value.pairing.comparisons[0].outcomes[0].treatmentF1 = 0.123; },
+        (value: typeof report) => { value.flow.rows.find(row => row.key === 'priha-full')!.runs[0].contextTokens = 1501; },
+        (value: typeof report) => { value.safety.cases[0].checks[0].actual = 'forged'; },
+        (value: typeof report) => { value.safety.suites[0].violations++; },
+        (value: typeof report) => { value.decision.clauses.find(row => row.id === 'independent-claim-delta')!.passed = true; },
+        (value: typeof report) => { value.decision.defaultChanged = true as never; },
+        (value: typeof report) => { value.live.plan.maxFreshCalls++; },
+    ]) { const changed = structuredClone(report); mutate(changed); assert.equal(validate(changed).valid, false); }
+});
+it('live dry, skipped, mismatched and changed-source plans make zero transport calls', async () => {
+    const env = readAiEnv({ OPENROUTER_AI_KEY: 'fake-priha-key', TANGLE_AI_MODEL: 'fixture/model', TANGLE_AI_MAX_CALLS: '1920' });
+    let requests = 0; const fetch = async () => { requests++; throw Error('Unapproved request.'); };
+    const plan = await planPrihaLive(report, env);
+    assert.equal((await runPrihaLive(report, plan, { env, fetch })).authorization, 'dry-run');
+    await assert.rejects(runPrihaLive(report, plan, { env, fetch, authorize: 'wrong' }), /does not match/);
+    const empty = readAiEnv({}), skipped = await planPrihaLive(report, empty);
+    assert.equal((await runPrihaLive(report, skipped, { env: empty, fetch, authorize: skipped.plan.planId })).authorization, 'skipped');
+    const forged = structuredClone(plan); forged.plan.sourceSha256 = '0'.repeat(64);
+    await assert.rejects(runPrihaLive(report, forged, { env, fetch, authorize: forged.plan.planId }), /source or fixture changed/);
+    const captured = await planPrihaLive(report, env, { webLive: true, searxBase: 'https://search.fixture.invalid' });
+    assert.equal(captured.plan.maxWebHttpRequests, 7200); assert.equal(captured.plan.maxWebBytes, 9600000);
+    assert.notEqual(captured.plan.planId, plan.plan.planId); assert.equal(requests, 0);
+    const first = await exec(process.execPath, ['benchmark/priha.ts', '--live'], { env: { PATH: process.env.PATH } });
+    const second = await exec(process.execPath, ['benchmark/priha.ts', '--live'], { env: { PATH: process.env.PATH } });
+    assert.equal(first.stdout, second.stdout); assert.match(first.stdout, /skipped: 0 physical requests/);
+    assert.match(first.stdout, new RegExp(skipped.plan.planId));
+});
+it('exact live authorization executes every question through the real wire and host with an injected fake provider', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'priha-authorized-'));
+    const env = readAiEnv({ OPENROUTER_AI_KEY: 'fake-priha-key', TANGLE_AI_MODEL: 'fixture/model', TANGLE_AI_MAX_CALLS: '1920' });
+    const plan = await planPrihaLive(report, env, { webLive: true, searxBase: 'https://search.fixture.invalid' }); let requests = 0, webRequests = 0;
+    const fetch: typeof globalThis.fetch = async (_url, init) => {
+        requests++; const body = JSON.parse(String(init?.body));
+        assert.equal(body.max_tokens, 1024); assert.equal(body.stream, false); assert.equal(body.reasoning.enabled, false);
+        const artifact = groundingArtifacts.prompts.find(prompt => body.messages.some((message: { role: string; content: string }) =>
+            message.role === 'system' && message.content.includes(prompt.role.instructions)));
+        assert.ok(artifact);
+        if (artifact.id === 'grounding-web-agent' && !body.messages.some((message: { role: string }) => message.role === 'tool'))
+            return new Response(JSON.stringify({ choices: [{ message: { role: 'assistant', content: '', tool_calls: [{ id: 'fixture-fetch', type: 'function',
+                function: { name: 'web_fetch', arguments: JSON.stringify({ url: 'https://official.harbour.example/archive' }) } }] }, finish_reason: 'tool_calls' }],
+                usage: { prompt_tokens: 2, completion_tokens: 1, total_tokens: 3 }, model: 'fixture/model' }), { headers: { 'content-type': 'application/json' } });
+        const content = artifact.id === 'grounding-triage' ? { triage: 'simple', reason: 'Injected provider response.', requiredFields: [], intents: ['administrative-information'] }
+            : artifact.id === 'grounding-plan' ? { queries: [{ text: 'Harbour administrative information', why: 'Injected provider response.', lanes: { local: true, web: true } }] }
+            : artifact.id === 'grounding-web-sufficiency' ? { sufficient: false, missing: ['Evidence'], refinedQueries: [], reason: 'Injected provider response.' }
+            : artifact.id === 'grounding-reconcile' ? { decisions: [] }
+            : artifact.id === 'grounding-repair' ? []
+            : { disposition: 'abstain', claims: [], reason: 'The injected provider supplied no supported answer.' };
+        return new Response(JSON.stringify({ choices: [{ message: { role: 'assistant', content: JSON.stringify(content) }, finish_reason: 'stop' }],
+            usage: { prompt_tokens: 2, completion_tokens: 1, total_tokens: 3 }, model: 'fixture/model' }), { headers: { 'content-type': 'application/json' } });
+    };
+    try {
+        const result = await runPrihaLive(report, plan, { env, authorize: plan.plan.planId, fetch, lookup: async () => [{ address: '93.184.216.34', family: 4 }],
+            webFetch: async input => { webRequests++; const url = new URL(String(input)); assert.equal(url.hostname, 'official.harbour.example');
+                return new Response(url.pathname === '/robots.txt' ? 'User-agent: *\nAllow: /' : '<html><main><h1>Archive</h1><p>The archive desk is in Square Hall.</p></main></html>',
+                    { headers: { 'content-type': url.pathname === '/robots.txt' ? 'text/plain' : 'text/html' } }); }, databaseDirectory: join(directory, 'execution'),
+            now: () => new Date('2026-10-01T12:00:00.000Z'), clock: () => 0 });
+        assert.equal(result.authorization, 'execute'); assert.equal(result.physicalRequests, requests + webRequests); assert.ok(requests > 0 && requests <= 1920);
+        const execution = result.execution!; assert.equal(execution.providerRequests, requests); assert.equal(execution.webRequests, webRequests); assert.ok(webRequests > 0); assert.ok(execution.capture.length > 0); assert.ok(execution.webBytes > 0); assert.equal(execution.rows.length, 5);
+        for (const row of execution.rows) { assert.equal(row.cases.length, 32); assert.equal(row.runs.length, 32); assert.ok(row.runs.every(run => run.reopened)); }
+        assert.ok(execution.rows.every(row => (row.metrics.claims as { tp: number }).tp === 0), 'Live replies must never be substituted with the scripted gold recipes.');
+        assert.equal(execution.comparisons.length, 5); assert.equal(validate(execution).valid, true);
+        assert.ok(!JSON.stringify(execution).includes('fake-priha-key'));
+        const { executionId, ...payload } = execution; assert.equal(executionId, await canonicalSha256(payload));
+        const results = join(directory, 'benchmark/results'); await mkdir(results, { recursive: true });
+        const receiptPath = join(results, `priha-live-${execution.at.slice(0, 10)}-${executionId}.json`);
+        await writeFile(receiptPath, JSON.stringify({ plan, execution }));
+        const receipts = await readPrihaLiveReceipts(directory), document = renderPrihaDocument(report, receipts);
+        assert.equal(receipts.length, 1); assert.match(document, /Dated live execution/); assert.match(document, /Live treatment/);
+        assert.ok(document.includes(executionId)); assert.match(document, /keep-experimental/);
+        const before = requests;
+        await assert.rejects(runPrihaLive(report, plan, { env, authorize: plan.plan.planId, fetch, databaseDirectory: join(directory, 'execution') }), /EEXIST/);
+        assert.equal(requests, before);
+        const forged = structuredClone(execution); forged.sourceSha256 = '0'.repeat(64);
+        await writeFile(receiptPath, JSON.stringify({ plan, execution: forged }));
+        await assert.rejects(readPrihaLiveReceipts(directory), /identity mismatch/);
+    } finally { await rm(directory, { recursive: true, force: true }); }
 });
 it('native web assertions refuse forged counts, identities and capability acceptance', () => {
     for (const alter of [
