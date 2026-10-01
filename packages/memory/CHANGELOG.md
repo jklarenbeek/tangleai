@@ -1,5 +1,19 @@
 # @tangleai/memory
 
+## 0.34.0
+
+### Patch Changes
+
+- 2dce4bd: Add retained parent and child document evidence, shared bounded lexical retrieval,
+  and governed hybrid local selection with atomic curator promotion. Preserve the
+  flat defaults and consolidation scoring while fixing heading expansion and
+  retaining superseded evidence addresses.
+- Updated dependencies [2dce4bd]
+- Updated dependencies [a542379]
+  - @tangleai/core@0.34.0
+  - @tangleai/context@0.34.0
+  - @tangleai/models@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes

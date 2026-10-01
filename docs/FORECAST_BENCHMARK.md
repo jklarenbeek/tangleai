@@ -75,7 +75,7 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | admission-parity | true | 1152 snapshot/cutoff pairs agree with the independent oracle. |
 | adapter-score-parity | true | 75 authored predictions agree with the independent scorer. |
 | stop-reason-census | true | future: stop, cutoff refusal TFCT1006, 4 calls; length: length, TFCT1005, 3 calls; tool-limit: tool-limit, TFCT1005, 2 calls; budget-turns: budget-turns, TFCT1005, 0 calls; malformed: stop, TFCT1009, 3 calls |
-| resume-identity | true | 27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 3e29715f503cf8695ebced2c44c96ca02ee79c7539fff906b85810100bef2a47. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3. |
+| resume-identity | true | 27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable d4625f3372fe15963b26586d493c937f40bffb4c95558992c41c327dbdd55883. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3. |
 | duplicate-delivery | true | 3 TMAS2001 deliveries create no extra forecast artifact or spend; second ticks start zero runs. |
 | ordinal-discipline | true | One out-of-order ordinal is refused as TFCT1004 before any model purchase. |
 | revision-skipped-at-ordinal-1 | true | Checkpoint one takes revision-skip; later checkpoints return a counted not-implemented revision value. |
@@ -84,7 +84,7 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | editor-toolbox-names | true | Every measured revision pins exactly four read tools; no web or store write tool. |
 | revision-digest-agreement | true | Unrelated questions follow seed → 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 → c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d; a related question starts from the checked generation and its repeated final proposal stages nothing. |
 | no-op-revision-writes-nothing | true | An unchanged guarded proposal is counted as deferred and invokes no harness publication. A host can still retain the revision and its spent receipt. |
-| revision-resume-identity | true | 2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 3e29715f503cf8695ebced2c44c96ca02ee79c7539fff906b85810100bef2a47. |
+| revision-resume-identity | true | 2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable d4625f3372fe15963b26586d493c937f40bffb4c95558992c41c327dbdd55883. |
 | adapter-score-parity | true | 45 choice/numeric candidate predictions reproduce the independent fixture scorer; the total digest miss remains a failure. |
 | promotion-fencing | true | One checked activation advances its captured parent by one; the losing release-date scope has no eligible candidate and no head. Concurrency is separately exercised by two service hosts. |
 | checked-scope-transfer | true | The next related question uses the independently promoted head; an unrelated scope starts from its seed. |
@@ -230,4 +230,4 @@ Transfer to no registered successor: not-run; digest `314cf26cc10be0a2166304685e
 
 The credential-free [live registration](../benchmark/results/forecast-live.json) is `not-run`. A dry plan sends zero requests; execution needs new approval of its exact planId. Model requests on fictional replay evidence do not qualify a real forecasting domain. Missing future-candidate pairs remain ineligible, never backfilled into earlier decisions.
 
-Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `556c36c255fa28c7bd1d0f2cae2dd8c19e76255abb33dcd8c3c7f4d864d87278`. Report: `4f51bc3e27e094d9f7fb8ee37827a0eeda213b1eb27294329fcd6829ed565bf1`.
+Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `ce0f3d89f1bbb7cc4eae9ce57a4e3feff9b24ce104d6556946e16ff93e886da3`. Report: `243b1ee9ab134ab4a10f0661ce1698fa8e675605a0a7ccaa2e1a6ac3acd1bef9`.

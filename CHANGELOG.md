@@ -1,5 +1,37 @@
 # Tangle releases
 
+## 0.34.0
+
+Compose durable grounded sessions through the native MAS workflow and SQLite
+worker, with typed clarification, bounded retrieval and validated claim ledgers.
+Register revision-pinned agent components under native physical-call accounting.
+Checkpoint ABI 7 excludes unused branch outputs from downstream input identities
+while preserving strict provenance checks. Add retained session readers and
+native queue recovery.
+
+Add rules-first intent triage, durable one-question clarification and pinned atomic
+query plans with host-response fact projection. Compile grounding prompt packs,
+share enclosing call budgets with MAS, expose intent-only GMPL clarification and
+bind the existing SQLite queue to the optimizer. Retain native response fencing,
+replay, turn limits and explicit budget failure accounting.
+
+Reconcile admitted evidence by authority and proven time, persist conflict decisions, and generate claim ledgers through native citation validation and bounded guarded repair.
+
+Add closed grounding profiles and evidence contracts with deterministic rule evaluation, revisioned session transitions and atomic memory/SQLite persistence.
+
+Add retained parent and child document evidence, shared bounded lexical retrieval,
+and governed hybrid local selection with atomic curator promotion. Preserve the
+flat defaults and consolidation scoring while fixing heading expansion and
+retaining superseded evidence addresses.
+
+Bound the final combined evidence context, reject unsupported configured personal
+facts in generated claims and caveats, and support profiles with no clarification
+turns. Qualify the composed grounding workflow with paired ablations, adversarial
+controls and an exact-authorized live runner. Share bounded response reading with
+HTTP capture so an oversized response cannot be drained before its budget check.
+
+Add bounded governed web retrieval with exact HTTP replay, cumulative plan budgets, atomic evidence traces and optional shared-budget model reranking. Enforce per-hop admission and protected mapped IPv6 addresses in the existing document fetcher. Share browser-safe HTML/text extraction and canonical HTTP capture identities with existing document and benchmark owners.
+
 ## 0.33.0
 
 Add bounded forecasting execution, cutoff-audited evidence tools and six-section

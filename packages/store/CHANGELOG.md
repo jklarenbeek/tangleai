@@ -1,5 +1,48 @@
 # @tangleai/store
 
+## 0.34.0
+
+### Minor Changes
+
+- 8e34634: Add rules-first intent triage, durable one-question clarification and pinned atomic
+  query plans with host-response fact projection. Compile grounding prompt packs,
+  share enclosing call budgets with MAS, expose intent-only GMPL clarification and
+  bind the existing SQLite queue to the optimizer. Retain native response fencing,
+  replay, turn limits and explicit budget failure accounting.
+
+### Patch Changes
+
+- c643e1e: Compose durable grounded sessions through the native MAS workflow and SQLite
+  worker, with typed clarification, bounded retrieval and validated claim ledgers.
+  Register revision-pinned agent components under native physical-call accounting.
+  Checkpoint ABI 7 excludes unused branch outputs from downstream input identities
+  while preserving strict provenance checks. Add retained session readers and
+  native queue recovery.
+- d66c899: Add closed grounding profiles and evidence contracts with deterministic rule evaluation, revisioned session transitions and atomic memory/SQLite persistence.
+- 2dce4bd: Add retained parent and child document evidence, shared bounded lexical retrieval,
+  and governed hybrid local selection with atomic curator promotion. Preserve the
+  flat defaults and consolidation scoring while fixing heading expansion and
+  retaining superseded evidence addresses.
+- a542379: Add bounded governed web retrieval with exact HTTP replay, cumulative plan budgets, atomic evidence traces and optional shared-budget model reranking. Enforce per-hop admission and protected mapped IPv6 addresses in the existing document fetcher. Share browser-safe HTML/text extraction and canonical HTTP capture identities with existing document and benchmark owners.
+- Updated dependencies [c643e1e]
+- Updated dependencies [8e34634]
+- Updated dependencies [1c79b6a]
+- Updated dependencies [d66c899]
+- Updated dependencies [2dce4bd]
+- Updated dependencies [8b85ba6]
+- Updated dependencies [a542379]
+  - @tangleai/grounding@0.34.0
+  - @tangleai/mas@0.34.0
+  - @tangleai/core@0.34.0
+  - @tangleai/memory@0.34.0
+  - @tangleai/documents@0.34.0
+  - @tangleai/evolve@0.34.0
+  - @tangleai/forecast@0.34.0
+  - @tangleai/hera@0.34.0
+  - @tangleai/trace2skill@0.34.0
+  - @tangleai/config@0.34.0
+  - @tangleai/outcomes@0.34.0
+
 ## 0.33.0
 
 ### Minor Changes

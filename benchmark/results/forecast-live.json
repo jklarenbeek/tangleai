@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "c643e1ea4b9f0d92de6b0a7b66afe4beb84c2048",
-      "sha256": "556c36c255fa28c7bd1d0f2cae2dd8c19e76255abb33dcd8c3c7f4d864d87278",
+      "head": "8b85ba613f7ce66274477aa01d368311b2ba72de",
+      "sha256": "ce0f3d89f1bbb7cc4eae9ce57a4e3feff9b24ce104d6556946e16ff93e886da3",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -718,15 +718,15 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "16e46e04282df8e8a827cb166ee7af002075f0dd3897a9f0d0eb84adfa4f1663"
+          "sha256": "d3d01e662614b3f2c23b2cc753089eb0ea26e4b4c059ccc1b88bb622fbc07f1f"
         },
         {
           "path": "package.json",
-          "sha256": "d6f86884bab03bee508f5340197d889c377aef5190c36345961d0aeff3532bbc"
+          "sha256": "98a91dd7a259f9d1d208a9a8c5d3ef11d6863820dea9f13f05b1114c08157561"
         },
         {
           "path": "packages/agents/package.json",
-          "sha256": "80d9d0848d90fed468583b7eb9f1cd8cc0c096d5ce9be3f488a16b62aae6f49f"
+          "sha256": "402abdfbc4518997f43fb417c592c2bcb0c289033006d4af6bbb2ac7ede872d7"
         },
         {
           "path": "packages/agents/src/agent.ts",
@@ -770,7 +770,7 @@
         },
         {
           "path": "packages/context/package.json",
-          "sha256": "5ecb6e0813a441251153d2e339e1abc012e5043f8ba207db85f39d4a372806d4"
+          "sha256": "11274544e08e6ff80a9ebb415b0040652de965d3815cfe7c89f1f2301eeed883"
         },
         {
           "path": "packages/context/src/archive.ts",
@@ -826,7 +826,7 @@
         },
         {
           "path": "packages/documents/package.json",
-          "sha256": "de95489b95d6072204b492ad70df85a5e1942351121c3cbe92c94f037a10324e"
+          "sha256": "458f899e1f47575f84ffbc3664c72ea23767671d430a47e791d4fbf5ca139533"
         },
         {
           "path": "packages/documents/src/browser.ts",
@@ -874,7 +874,7 @@
         },
         {
           "path": "packages/forecast/package.json",
-          "sha256": "eddaa95a70d38e4d81b930a7260812ad15ec91ea59a51f9c288e522fd486ba47"
+          "sha256": "f10fa792f0a2bf3277beae184725ee6b470caf20138f172e257f3494c444cfe4"
         },
         {
           "path": "packages/forecast/schemas/forecast.contract.json",
@@ -1046,7 +1046,7 @@
         },
         {
           "path": "packages/mas/package.json",
-          "sha256": "364e5e3870bb3584f1a2e46d6b7189d90f409ef47b653942d9111271c8573835"
+          "sha256": "511b338125b5f746d4187798254838776320190a9a12d249c15c320a5cf422ba"
         },
         {
           "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -1178,7 +1178,7 @@
         },
         {
           "path": "packages/models/package.json",
-          "sha256": "3a23995a77cdc2eaa5b5c0a35bce682ba5ee4fcf966c6667584ed541ae2b12c4"
+          "sha256": "51f8f2527aa56b53841801342031b1b27ecc64de7a4cb793f6754babe79150d2"
         },
         {
           "path": "packages/models/src/check.ts",
@@ -1234,7 +1234,7 @@
         },
         {
           "path": "packages/search/package.json",
-          "sha256": "6b0a32ff69866e1edc05b0308c107ac349daa7bf54f8c8acde98f51e3cbbf190"
+          "sha256": "dd26796c9366fd50ac05cbe7060c27754f65a11af716e8553bf17647717e6283"
         },
         {
           "path": "packages/search/src/index.ts",
@@ -1246,7 +1246,7 @@
         },
         {
           "path": "packages/store/package.json",
-          "sha256": "62c67d84cee71eb4aa67ede130ced848c5eef6cf23214d0bead862dce5b747ae"
+          "sha256": "c39fd017d1a2e9220146628d153137852c300769264e604bf72749b69f5d2d9f"
         },
         {
           "path": "packages/store/src/consolidation-model.ts",
@@ -1613,7 +1613,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "8cb960b8fd9790bf2939f863636528b2b6dc079a8efcf5240f903ffc45cecdcc",
+    "planId": "1762ba99601eaaa07a58b9846f4b3d56950be07b78aa3b64417610a1733388b5",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

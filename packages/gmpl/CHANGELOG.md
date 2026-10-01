@@ -1,5 +1,21 @@
 # @tangleai/gmpl
 
+## 0.34.0
+
+### Minor Changes
+
+- 8e34634: Add rules-first intent triage, durable one-question clarification and pinned atomic
+  query plans with host-response fact projection. Compile grounding prompt packs,
+  share enclosing call budgets with MAS, expose intent-only GMPL clarification and
+  bind the existing SQLite queue to the optimizer. Retain native response fencing,
+  replay, turn limits and explicit budget failure accounting.
+
+### Patch Changes
+
+- Updated dependencies [c643e1e]
+- Updated dependencies [8e34634]
+  - @tangleai/mas@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes

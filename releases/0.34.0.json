@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "version": "0.34.0",
+  "baseVersion": "0.33.0",
+  "baseCommit": "289b202c872626f3b467ef04bd3b31fda6eb3aae",
+  "preparationCommit": "8b85ba613f7ce66274477aa01d368311b2ba72de",
+  "initial": false,
+  "inputHash": "5bfe704fe39408e9d4a5428765d9a6bdb86f66674d3a0c052de1add6bcdb0f23",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Compose durable grounded sessions through the native MAS workflow and SQLite\nworker, with typed clarification, bounded retrieval and validated claim ledgers.\nRegister revision-pinned agent components under native physical-call accounting.\nCheckpoint ABI 7 excludes unused branch outputs from downstream input identities\nwhile preserving strict provenance checks. Add retained session readers and\nnative queue recovery.",
+      "id": "composed-grounding-sessions"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add rules-first intent triage, durable one-question clarification and pinned atomic\nquery plans with host-response fact projection. Compile grounding prompt packs,\nshare enclosing call budgets with MAS, expose intent-only GMPL clarification and\nbind the existing SQLite queue to the optimizer. Retain native response fencing,\nreplay, turn limits and explicit budget failure accounting.",
+      "id": "durable-intent-planning"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        }
+      ],
+      "summary": "Reconcile admitted evidence by authority and proven time, persist conflict decisions, and generate claim ledgers through native citation validation and bounded guarded repair.",
+      "id": "governed-grounded-claims"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Add closed grounding profiles and evidence contracts with deterministic rule evaluation, revisioned session transitions and atomic memory/SQLite persistence.",
+      "id": "governed-grounding"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add retained parent and child document evidence, shared bounded lexical retrieval,\nand governed hybrid local selection with atomic curator promotion. Preserve the\nflat defaults and consolidation scoring while fixing heading expansion and\nretaining superseded evidence addresses.",
+      "id": "hybrid-local-evidence"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        }
+      ],
+      "summary": "Bound the final combined evidence context, reject unsupported configured personal\nfacts in generated claims and caveats, and support profiles with no clarification\nturns. Qualify the composed grounding workflow with paired ablations, adversarial\ncontrols and an exact-authorized live runner. Share bounded response reading with\nHTTP capture so an oversized response cannot be drained before its budget check.",
+      "id": "qualified-governed-grounding"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/grounding",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/core",
+          "type": "patch"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Add bounded governed web retrieval with exact HTTP replay, cumulative plan budgets, atomic evidence traces and optional shared-budget model reranking. Enforce per-hop admission and protected mapped IPv6 addresses in the existing document fetcher. Share browser-safe HTML/text extraction and canonical HTTP capture identities with existing document and benchmark owners.",
+      "id": "safelisted-web-evidence"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.34.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.34.0"
+    }
+  ]
+}

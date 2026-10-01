@@ -1,5 +1,22 @@
 # @tangleai/forecast
 
+## 0.34.0
+
+### Patch Changes
+
+- Updated dependencies [c643e1e]
+- Updated dependencies [8e34634]
+- Updated dependencies [2dce4bd]
+- Updated dependencies [8b85ba6]
+- Updated dependencies [a542379]
+  - @tangleai/mas@0.34.0
+  - @tangleai/documents@0.34.0
+  - @tangleai/agents@0.34.0
+  - @tangleai/context@0.34.0
+  - @tangleai/models@0.34.0
+  - @tangleai/outcomes@0.34.0
+  - @tangleai/search@0.34.0
+
 ## 0.33.0
 
 ### Minor Changes

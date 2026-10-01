@@ -1,5 +1,16 @@
 # @tangleai/trace2skill
 
+## 0.34.0
+
+### Patch Changes
+
+- Updated dependencies [c643e1e]
+- Updated dependencies [8e34634]
+  - @tangleai/mas@0.34.0
+  - @tangleai/agents@0.34.0
+  - @tangleai/models@0.34.0
+  - @tangleai/outcomes@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes

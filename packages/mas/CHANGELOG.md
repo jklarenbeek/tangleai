@@ -1,5 +1,27 @@
 # @tangleai/mas
 
+## 0.34.0
+
+### Minor Changes
+
+- c643e1e: Compose durable grounded sessions through the native MAS workflow and SQLite
+  worker, with typed clarification, bounded retrieval and validated claim ledgers.
+  Register revision-pinned agent components under native physical-call accounting.
+  Checkpoint ABI 7 excludes unused branch outputs from downstream input identities
+  while preserving strict provenance checks. Add retained session readers and
+  native queue recovery.
+- 8e34634: Add rules-first intent triage, durable one-question clarification and pinned atomic
+  query plans with host-response fact projection. Compile grounding prompt packs,
+  share enclosing call budgets with MAS, expose intent-only GMPL clarification and
+  bind the existing SQLite queue to the optimizer. Retain native response fencing,
+  replay, turn limits and explicit budget failure accounting.
+
+### Patch Changes
+
+- @tangleai/agents@0.34.0
+  - @tangleai/context@0.34.0
+  - @tangleai/models@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes

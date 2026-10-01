@@ -1,5 +1,25 @@
 # @tangleai/documents
 
+## 0.34.0
+
+### Patch Changes
+
+- 2dce4bd: Add retained parent and child document evidence, shared bounded lexical retrieval,
+  and governed hybrid local selection with atomic curator promotion. Preserve the
+  flat defaults and consolidation scoring while fixing heading expansion and
+  retaining superseded evidence addresses.
+- 8b85ba6: Bound the final combined evidence context, reject unsupported configured personal
+  facts in generated claims and caveats, and support profiles with no clarification
+  turns. Qualify the composed grounding workflow with paired ablations, adversarial
+  controls and an exact-authorized live runner. Share bounded response reading with
+  HTTP capture so an oversized response cannot be drained before its budget check.
+- a542379: Add bounded governed web retrieval with exact HTTP replay, cumulative plan budgets, atomic evidence traces and optional shared-budget model reranking. Enforce per-hop admission and protected mapped IPv6 addresses in the existing document fetcher. Share browser-safe HTML/text extraction and canonical HTTP capture identities with existing document and benchmark owners.
+- Updated dependencies [2dce4bd]
+- Updated dependencies [a542379]
+  - @tangleai/core@0.34.0
+  - @tangleai/context@0.34.0
+  - @tangleai/models@0.34.0
+
 ## 0.33.0
 
 ### Patch Changes
