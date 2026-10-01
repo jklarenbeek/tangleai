@@ -10,7 +10,9 @@
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/forecast": "./schemas/forecast.schema.json",
     "./package.json": "./package.json",
-    "./schemas/outcome-adapter": "./schemas/outcome-adapter.schema.json"
+    "./schemas/outcome-adapter": "./schemas/outcome-adapter.schema.json",
+    "./contract": "./src/contract.ts",
+    "./schemas/contract": "./schemas/forecast.contract.json"
   },
   "engines": {
     "node": ">=24"
@@ -26,7 +28,8 @@
     "@tangleai/context": "^0.32.0",
     "@tangleai/search": "^0.32.0",
     "@tangleai/documents": "^0.32.0",
-    "@tangleai/mas": "^0.32.0"
+    "@tangleai/mas": "^0.32.0",
+    "@jarenjs/contract": "0.91.4"
   },
   "private": false,
   "types": "./src/index.ts",

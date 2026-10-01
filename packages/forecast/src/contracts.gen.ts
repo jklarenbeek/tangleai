@@ -1372,4 +1372,1017 @@ export interface RetrospectiveProposal {
 }
 
 
+export interface ForecastReadIssue {
+  /**
+   * Schema constraints this type cannot express: maxLength=32
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  detail: string;
+  retryable: boolean;
+}
+
+
+export interface ForecastReadDomainIssue {
+  code: "TFCT1001" | "TFCT1002" | "TFCT1003" | "TFCT1004" | "TFCT1005" | "TFCT1006" | "TFCT1007" | "TFCT1008" | "TFCT1009" | "TFCT1010" | "TFCT1011" | "TFCT1012";
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  detail: string;
+  retryable: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  cause?: Array<ForecastReadIssue>;
+}
+
+
+export interface ForecastReadAddressOneOf1 {
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  url: string;
+}
+
+
+export interface ForecastReadAddressOneOf2 {
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  corpus: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  snapshotId: string;
+}
+
+
+export type ForecastReadAddress = ForecastReadAddressOneOf1 | ForecastReadAddressOneOf2;
+
+/**
+ * Schema constraints this type cannot express: maxLength=512
+ */
+export type ForecastReadAdapterOneOf1OptionsItem = string;
+
+export interface ForecastReadAdapterOneOf1 {
+  id: "choice/v1";
+  /**
+   * Schema constraints this type cannot express: maxLength=256
+   */
+  version: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  options: Array<ForecastReadAdapterOneOf1OptionsItem>;
+}
+
+
+export interface ForecastReadAdapterOneOf2 {
+  id: "numeric/v1";
+  /**
+   * Schema constraints this type cannot express: maxLength=256
+   */
+  version: string;
+  tolerance: number;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  range: Array<number>;
+  /**
+   * Schema constraints this type cannot express: maxLength=256
+   */
+  unit?: string;
+}
+
+
+export type ForecastReadAdapter = ForecastReadAdapterOneOf1 | ForecastReadAdapterOneOf2;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadQuestionSummaryStartedFromCheckedVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type ForecastReadQuestionSummaryOrdinalsPlannedItem = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type ForecastReadQuestionSummaryOrdinalsFinishedItem = number;
+
+export interface ForecastReadQuestionSummary {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  status: "open" | "resolved" | "disputed";
+  startedFromCheckedVersionId: ForecastReadQuestionSummaryStartedFromCheckedVersionIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  scopeKey: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  ordinalsPlanned: Array<ForecastReadQuestionSummaryOrdinalsPlannedItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  ordinalsFinished: Array<ForecastReadQuestionSummaryOrdinalsFinishedItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=512
+ */
+export type ForecastReadCheckpointSummaryStopReasonAnyOf1 = string;
+
+export interface ForecastReadCheckpointSummary {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  ordinal: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  scheduledAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  cutoffAt: string;
+  status: "planned" | "running" | "finalized" | "failed";
+  spend: Spend;
+  stopReason: ForecastReadCheckpointSummaryStopReasonAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadQuestionStartedFromCheckedVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type ForecastReadQuestionOrdinalsPlannedItem = number;
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type ForecastReadQuestionOrdinalsFinishedItem = number;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadQuestionLatestProvisionalVersionIdAnyOf1 = string;
+
+export type ForecastReadQuestion = { id: string; status: "open" | "resolved" | "disputed"; startedFromCheckedVersionId: ForecastReadQuestionStartedFromCheckedVersionIdAnyOf1 | null; scopeKey: string; ordinalsPlanned: Array<ForecastReadQuestionOrdinalsPlannedItem>; ordinalsFinished: Array<ForecastReadQuestionOrdinalsFinishedItem>; prompt: string; issuedAt: string; expectedResolutionAt: string; latestProvisionalVersionId: ForecastReadQuestionLatestProvisionalVersionIdAnyOf1 | null; promptRevision: string; toolsetRevision: string; adapter: ForecastReadAdapter; checkpointPolicy: CheckpointPolicy; checkpoints: Array<ForecastReadCheckpointSummary>; harnessLineageIds: Array<Hash>; } | null;
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastReadEvidenceAvailableAtAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastReadEvidenceFetchedAtAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastReadEvidenceClaimedPublishedAtAnyOf1 = string;
+
+export interface ForecastReadEvidenceRefusalAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: maxLength=32
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=1024
+   */
+  reason: string;
+}
+
+
+export interface ForecastReadEvidence {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  kind: "snapshot" | "live";
+  availableAt: ForecastReadEvidenceAvailableAtAnyOf1 | null;
+  fetchedAt: ForecastReadEvidenceFetchedAtAnyOf1 | null;
+  claimedPublishedAt: ForecastReadEvidenceClaimedPublishedAtAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bytes: number;
+  admitted: boolean;
+  address: ForecastReadAddress;
+  refusal: ForecastReadEvidenceRefusalAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: maxLength=2048
+   */
+  excerpt: string;
+  excerptTruncated: boolean;
+}
+
+
+export interface ForecastReadPredictionUncertaintyAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  probability: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=4096
+ */
+export type ForecastReadPredictionNormalizedAnyOf1 = string;
+
+export interface ForecastReadPrediction {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  uncertainty: ForecastReadPredictionUncertaintyAnyOf1 | null;
+  normalized: ForecastReadPredictionNormalizedAnyOf1 | number;
+  normalizedTruncated: boolean;
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  adapterId: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  adapterVersion: string;
+}
+
+
+export interface ForecastReadFailure {
+  /**
+   * Schema constraints this type cannot express: maxLength=32
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=2048
+   */
+  detail: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=512
+ */
+export type ForecastReadCheckpointStopReasonAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastReadCheckpointStartedAtAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+ */
+export type ForecastReadCheckpointEndedAtAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadCheckpointInputHarnessVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadCheckpointInputHarnessDigestAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadCheckpointTraceIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadCheckpointNoteIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadCheckpointDecisionIdAnyOf1 = string;
+
+export interface ForecastReadCheckpointEvidenceRefusalsItem {
+  id: Hash;
+  /**
+   * Schema constraints this type cannot express: maxLength=32
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=1024
+   */
+  reason: string;
+}
+
+
+export interface ForecastReadCheckpointEvidence {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  admitted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refused: number;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  refusals: Array<ForecastReadCheckpointEvidenceRefusalsItem>;
+}
+
+
+export type ForecastReadCheckpoint = { id: string; questionId: string; ordinal: number; scheduledAt: string; cutoffAt: string; status: "planned" | "running" | "finalized" | "failed"; spend: Spend; stopReason: ForecastReadCheckpointStopReasonAnyOf1 | null; startedAt: ForecastReadCheckpointStartedAtAnyOf1 | null; endedAt: ForecastReadCheckpointEndedAtAnyOf1 | null; inputHarnessVersionId: ForecastReadCheckpointInputHarnessVersionIdAnyOf1 | null; inputHarnessDigest: ForecastReadCheckpointInputHarnessDigestAnyOf1 | null; traceId: ForecastReadCheckpointTraceIdAnyOf1 | null; noteId: ForecastReadCheckpointNoteIdAnyOf1 | null; decisionId: ForecastReadCheckpointDecisionIdAnyOf1 | null; treatment: "no-harness" | "static-harness" | "scaffold-no-harness" | "evolving-harness"; configuration: Configuration; promptRevision: string; toolsetRevision: string; noteSchemaRevision: string; prediction: ForecastReadPrediction | null; evidence: ForecastReadCheckpointEvidence; revisionIds: Array<Hash>; failure: ForecastReadFailure | null; noteFailure: ForecastReadFailure | null; } | null;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadNoteEvidenceIdsItem = string;
+
+export interface ForecastReadNoteSections {
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  questionState: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  keyEvidence: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  mainJudgmentTrajectory: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  helpfulSignals: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  misleadingOrFragileSignals: string;
+  /**
+   * Schema constraints this type cannot express: maxLength=8192
+   */
+  unresolvedRisks: string;
+}
+
+
+export type ForecastReadNote = { id: string; checkpointId: string; traceId: string; noteSchemaRevision: string; evidenceIds: Array<ForecastReadNoteEvidenceIdsItem>; sections: ForecastReadNoteSections; } | null;
+
+/**
+ * Schema constraints this type cannot express: maxLength=128
+ */
+export type ForecastReadTraceStepToolsItem = string;
+
+export interface ForecastReadTraceStep {
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=100
+   */
+  tools: Array<ForecastReadTraceStepToolsItem>;
+}
+
+
+export interface ForecastReadTraceTruncated {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  steps: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chars: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type ForecastReadTraceNextCursorAnyOf1 = number;
+
+export type ForecastReadTrace = { id: string; checkpointId: string; bytes: number; truncated: ForecastReadTraceTruncated; omittedSteps: number; steps: Array<ForecastReadTraceStep>; excerpt: string; cursor: number; nextCursor: ForecastReadTraceNextCursorAnyOf1 | null; totalChars: number; } | null;
+
+/**
+ * Schema constraints this type cannot express: maxLength=128
+ */
+export type ForecastReadGuidanceSourcesItem = string;
+
+export interface ForecastReadGuidance {
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  sources: Array<ForecastReadGuidanceSourcesItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=128
+ */
+export type ForecastReadCommittedGuidanceSourcesItem = string;
+
+export interface ForecastReadCommittedGuidance {
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  sources: Array<ForecastReadCommittedGuidanceSourcesItem>;
+  component: "factorTracking" | "evidenceHandling" | "uncertaintyHandling";
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  guidanceRef: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=128
+ */
+export type ForecastReadDeferredGuidanceSourcesItem = string;
+
+export interface ForecastReadDeferredGuidance {
+  /**
+   * Schema constraints this type cannot express: maxLength=4096
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  sources: Array<ForecastReadDeferredGuidanceSourcesItem>;
+  component?: "factorTracking" | "evidenceHandling" | "uncertaintyHandling";
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadRevisionComparedNoteIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadRevisionCandidateVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: maxLength=512
+ */
+export type ForecastReadRevisionGateVolatileFactItemsItem = string;
+
+export interface ForecastReadRevisionGateVolatileFact {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refused: number;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  items: Array<ForecastReadRevisionGateVolatileFactItemsItem>;
+}
+
+
+export interface ForecastReadRevisionGateSemantic {
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  stage: string;
+  revision: Hash;
+}
+
+
+export interface ForecastReadRevisionValidation {
+  ok: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  issues: Array<ForecastReadDomainIssue>;
+}
+
+
+export type ForecastReadRevision = { id: string; questionId: string; checkpointId: string; comparedNoteIds: Array<ForecastReadRevisionComparedNoteIdsItem>; candidateVersionId: ForecastReadRevisionCandidateVersionIdAnyOf1 | null; traceReads: number; provisionalDiagnoses: Array<ForecastReadGuidance>; committedGuidance: Array<ForecastReadCommittedGuidance>; deferredFeedback: Array<ForecastReadDeferredGuidance>; patchOpCount: number; gate: { volatileFact: ForecastReadRevisionGateVolatileFact; semantic: ForecastReadRevisionGateSemantic; }; validation: ForecastReadRevisionValidation; } | null;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadHarnessQuestionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadHarnessParentVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadHarnessCheckedVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadHarnessProvenanceRevisionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadHarnessProvenanceRetrospectiveIdAnyOf1 = string;
+
+export type ForecastReadHarness = { id: string; questionId: ForecastReadHarnessQuestionIdAnyOf1 | null; parentVersionId: ForecastReadHarnessParentVersionIdAnyOf1 | null; document: HarnessDocument; digest: string; status: "staged" | "provisional" | "rejected" | "archived" | "checked-ref"; checkedVersionId: ForecastReadHarnessCheckedVersionIdAnyOf1 | null; provenance: { revisionId: ForecastReadHarnessProvenanceRevisionIdAnyOf1 | null; retrospectiveId: ForecastReadHarnessProvenanceRetrospectiveIdAnyOf1 | null; seed: boolean; }; recordedAt: string; scopeKey: string; } | null;
+
+export type ForecastReadHead = { versionId: Hash; digest: Hash; revision: number; } | null;
+
+/**
+ * Schema constraints this type cannot express: maxLength=4096
+ */
+export type ForecastReadResolutionFactOutcomeAnyOf1 = string;
+
+export interface ForecastReadResolutionFact {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  observedAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  receivedAt: string;
+  outcome: ForecastReadResolutionFactOutcomeAnyOf1 | number;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  evidence: Array<{ address: ForecastReadAddress; sha256: Hash; }>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=4096
+ */
+export type ForecastReadCorrectionOutcomeAnyOf1 = string;
+
+export interface ForecastReadCorrection {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  observedAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  receivedAt: string;
+  outcome: ForecastReadCorrectionOutcomeAnyOf1 | number;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  evidence: Array<{ address: ForecastReadAddress; sha256: Hash; }>;
+  correctionOf: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxLength=4096
+ */
+export type ForecastReadResolutionOutcomeAnyOf1 = string;
+
+export interface ForecastReadResolutionLossesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  decisionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  resolutionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  scoreId: string;
+  category: "success" | "partial" | "failure";
+  utility: 0 | 0.5 | 1;
+}
+
+
+export interface ForecastReadResolutionSkippedItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  reason: "post-resolution" | "failed" | "no-decision";
+}
+
+
+export type ForecastReadResolution = { id: string; questionId: string; observedAt: string; receivedAt: string; outcome: ForecastReadResolutionOutcomeAnyOf1 | number; evidence: Array<{ address: ForecastReadAddress; sha256: Hash; }>; losses: Array<ForecastReadResolutionLossesItem>; skipped: Array<ForecastReadResolutionSkippedItem>; scorerId: string; scorerVersion: string; scoringStatus: "pending" | "complete" | "legacy"; disputed: boolean; corrections: Array<ForecastReadCorrection>; correctionsTruncated: boolean; } | null;
+
+/**
+ * Schema constraints this type cannot express: maxLength=128
+ */
+export type ForecastReadVerdictSourcesItem = string;
+
+/**
+ * Schema constraints this type cannot express: maxLength=512
+ */
+export type ForecastReadVerdictRefinedTextAnyOf1 = string;
+
+export interface ForecastReadVerdict {
+  /**
+   * Schema constraints this type cannot express: maxLength=128
+   */
+  guidanceRef: string;
+  verdict: "validate" | "refine" | "reject";
+  /**
+   * Schema constraints this type cannot express: maxLength=512
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=32
+   */
+  sources: Array<ForecastReadVerdictSourcesItem>;
+  refinedText: ForecastReadVerdictRefinedTextAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadRetrospectiveCandidateVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastReadRetrospectiveReflectAnyOf1VersionIdAnyOf1 = string;
+
+export interface ForecastReadRetrospectiveReflectAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  reflectionId: string;
+  versionId: ForecastReadRetrospectiveReflectAnyOf1VersionIdAnyOf1 | null;
+  noOp: boolean;
+}
+
+
+export interface ForecastReadRetrospectivePromotionAnyOf1 {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  approvalId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  activationEventId: string;
+  head: Head;
+}
+
+
+export interface ForecastReadRetrospectiveEvaluationAnyOf1 {
+  evaluationId: Hash | null;
+  eligible: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  issues: Array<ForecastReadIssue>;
+}
+
+
+export type ForecastReadRetrospective = { id: string; questionId: string; resolutionId: string; candidateVersionId: ForecastReadRetrospectiveCandidateVersionIdAnyOf1 | null; reflect: ForecastReadRetrospectiveReflectAnyOf1 | null; promotion: ForecastReadRetrospectivePromotionAnyOf1 | null; outcome: "promoted" | "retained" | "rejected" | "ineligible" | "pending"; verdicts: Array<ForecastReadVerdict>; evaluation: ForecastReadRetrospectiveEvaluationAnyOf1 | null; issues: Array<ForecastReadDomainIssue>; } | null;
+
+export interface ForecastReadDue {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  ordinal: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  scheduledAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  cutoffAt: string;
+  status: "due" | "running" | "complete" | "skipped";
+}
+
+
+export interface QuestionsListQuery {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="\\S"
+   */
+  scopeKey?: string;
+  status?: "open" | "resolved" | "disputed";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=100
+   */
+  limit: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type QuestionsListReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type QuestionsListReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type QuestionsListReadResult = (QuestionsListReadResultOneOf1 | QuestionsListReadResultOneOf2) & { ok: boolean; value?: Array<ForecastReadQuestionSummary>; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface QuestionGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type QuestionGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type QuestionGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type QuestionGetReadResult = (QuestionGetReadResultOneOf1 | QuestionGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadQuestion; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface CheckpointsListQuery {
+  questionId: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type CheckpointsListReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type CheckpointsListReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type CheckpointsListReadResult = (CheckpointsListReadResultOneOf1 | CheckpointsListReadResultOneOf2) & { ok: boolean; value?: Array<ForecastReadCheckpointSummary> | null; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface CheckpointGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type CheckpointGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type CheckpointGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type CheckpointGetReadResult = (CheckpointGetReadResultOneOf1 | CheckpointGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadCheckpoint; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface NoteGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type NoteGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type NoteGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type NoteGetReadResult = (NoteGetReadResultOneOf1 | NoteGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadNote; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface EvidenceListQuery {
+  checkpointId: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type EvidenceListReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type EvidenceListReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type EvidenceListReadResult = (EvidenceListReadResultOneOf1 | EvidenceListReadResultOneOf2) & { ok: boolean; value?: Array<ForecastReadEvidence> | null; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface TraceGetQuery {
+  id: Hash;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cursor?: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=4096
+   */
+  limit: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type TraceGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type TraceGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type TraceGetReadResult = (TraceGetReadResultOneOf1 | TraceGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadTrace; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface RevisionGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type RevisionGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type RevisionGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type RevisionGetReadResult = (RevisionGetReadResultOneOf1 | RevisionGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadRevision; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface HarnessVersionGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type HarnessVersionGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type HarnessVersionGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type HarnessVersionGetReadResult = (HarnessVersionGetReadResultOneOf1 | HarnessVersionGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadHarness; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface HarnessHeadQuery {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="\\S"
+   */
+  scopeKey: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type HarnessHeadReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type HarnessHeadReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type HarnessHeadReadResult = (HarnessHeadReadResultOneOf1 | HarnessHeadReadResultOneOf2) & { ok: boolean; value?: ForecastReadHead; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface ResolutionGetQuery {
+  questionId: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type ResolutionGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type ResolutionGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type ResolutionGetReadResult = (ResolutionGetReadResultOneOf1 | ResolutionGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadResolution; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface RetrospectiveGetQuery {
+  id: Hash;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type RetrospectiveGetReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type RetrospectiveGetReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type RetrospectiveGetReadResult = (RetrospectiveGetReadResultOneOf1 | RetrospectiveGetReadResultOneOf2) & { ok: boolean; value?: ForecastReadRetrospective; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
+export interface DueListQuery {
+  now: Instant;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=100
+   */
+  limit: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["issues"]}
+ */
+export type DueListReadResultOneOf1 = { ok?: true; value: unknown; writes: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["value"]},{"required":["writes"]}]}
+ */
+export type DueListReadResultOneOf2 = { ok?: false; issues: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type DueListReadResult = (DueListReadResultOneOf1 | DueListReadResultOneOf2) & { ok: boolean; value?: Array<ForecastReadDue>; writes?: 0; issues?: Array<ForecastReadDomainIssue>; };
+
 export type Forecast = unknown;

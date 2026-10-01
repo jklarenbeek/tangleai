@@ -168,3 +168,50 @@ run reports zero new forecast/outcome writes and zero model calls. The example
 traps network access. Eight resolution publication/MAS boundaries reopen SQLite
 with identical artifacts and no extra purchases; checkpoint and revision
 recovery remain independently measured.
+
+`@tangleai/forecast/contract` exports `forecastContractDocument`,
+`createForecastContract` and `createForecastReadHandlers`. Thirteen read
+operations cover question lists/detail, checkpoint lists/detail, notes,
+evidence, trace metadata, revisions, harness versions/current head, resolutions,
+retrospectives and due schedules. The same closed schemas validate local and
+HTTP clients. There are no contract commands or subscriptions and no transport
+idempotency ledger. The existing `createForecastHandlers` continues to serve
+MAS task execution.
+
+Bind an authenticated store, scope key, optional question-id allowlist and
+`allowScope`; authority is checked before any storage read. An omitted question
+allowlist grants the authenticated scope, while an empty list grants no
+question records. Unknown ids return null. Existing foreign records return
+`TFCT1003`, so these reads do not conceal whether a forbidden id exists.
+Historical archived/rejected harnesses are readable only within the authorized
+question view; this grants no permission to execute them. Checked references
+and the seed are shared within their exact scope.
+
+The current-head query also requires the scope's `ForecastOutcomeHost` bound to
+the same forecast store. It reads `injectChecked` through that host, including
+rollback effects; a retained checked-reference record alone is not an active
+head. A missing outcome binding returns `TFCT1012`, and an empty service head
+returns null. Resolution reads retain the original outcome and scores, list
+correction evidence separately, and expose pending/complete scoring and disputed
+question state.
+
+Projections select named fields recursively and cap text and lists. They do
+not return prediction raw text, stage-call payloads, trace messages or tool
+results. Evidence excerpts expose truncation explicitly. Trace pagination uses
+Unicode character offsets over step/tool metadata, with at most 4,096 excerpt
+characters and 1,000 displayed steps. Stored byte and truncation counts stay
+separate from projected omissions. These are display records, not executable
+record exports; text in named evidence and note fields remains authored data.
+
+`npm run emit:forecast-contract -- --check` verifies the generated bundle, and
+`npm run forecast:contract:check` refuses breaking changes against its frozen
+public baseline. Both are included in the repository gate.
+
+Transport diagnostics retain Jaren's native codes: invalid input is `JC2050`,
+local handler/output faults are `JC2070`, and HTTP handler/output faults are
+`JC2008`/`JC2010`. Domain refusals remain `TFCT` values within successful
+transport responses. The local client's idempotency capability is false; HTTP
+advertises transport support independently of this read-only document. A host
+can set `ledger: null` on `serveHttp`; no read operation sends or consumes an
+idempotency key. Resolution histories scan past full pages to find their
+original fact and signal when displayed corrections are truncated.

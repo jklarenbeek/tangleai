@@ -29,3 +29,6 @@ export * from './outcome-host.ts';
 export * from './outcome-commands.ts';
 export * from './retrospective.ts';
 export * from './lifecycle.ts';
+export { createForecastContract, forecastContractDocument, createForecastReadHandlers } from './contract.ts';
+export type { ForecastReadHandlerBinding, ForecastReadHandlerOptions } from './contract.ts';
+export * from './projections.ts';

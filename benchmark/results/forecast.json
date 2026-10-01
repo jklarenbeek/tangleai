@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "0ce15cbf7fbd6f467e6f8b744e7d65ad4e41e9ee",
+    "head": "2d64db7607deb10e611e6cf9da1a01362d1aa39a",
     "clean": false,
     "files": [
       {
@@ -635,11 +635,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "62352c506ec4d96ca417c370b93c5d6e58a913be3b0a0c14e1c8c30aa71c7e08"
+        "sha256": "3f77080e0fe35bf80e716f8d34ee313b8a49f7337d6cc9d751d42cf4cbb3c2c3"
       },
       {
         "path": "package.json",
-        "sha256": "b80b80d0e858e8a67f75d8859fb3f1787fbea1645f132a3ac5d068c316f3a9c8"
+        "sha256": "3cf3bcabd82349f94d7452bba58f07eef1304fdc44a2a5aa547b9d4f636eabd8"
       },
       {
         "path": "packages/agents/package.json",
@@ -783,11 +783,15 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "429ab70868689c44fea5a168e4ab242c1849d52062019cc10174d734b3ceca52"
+        "sha256": "1c28fc403f2aa4565415f347f5608d439cba17b13c2c3e222993289dc3824ea3"
+      },
+      {
+        "path": "packages/forecast/schemas/forecast.contract.json",
+        "sha256": "7a835ad948de9ba108323ec7a017de9c859acc7b4ceee3f1716f545de2678d0d"
       },
       {
         "path": "packages/forecast/schemas/forecast.schema.json",
-        "sha256": "3476124c34438356f905005c04a191b1236e81de8521baf9f878db4cf675ba16"
+        "sha256": "4b4f50fd2b8e609d0f85ff68f4241470b5dc0447ef6c0d6fcee4700838bc45ec"
       },
       {
         "path": "packages/forecast/schemas/outcome-adapter.schema.json",
@@ -814,8 +818,12 @@
         "sha256": "edda1c1e6d98fff8359a71bea31bcbb0b4fc59eede1c449264bd552bb7b09490"
       },
       {
+        "path": "packages/forecast/src/contract.ts",
+        "sha256": "3faff8707a72a8b8f778616b160c9268a0a513010c91f01fbb750179621b6b3c"
+      },
+      {
         "path": "packages/forecast/src/contracts.gen.ts",
-        "sha256": "597cb87fe1b9ca03ddb4568417ee556a368c06ae2c2f2fdc66fcbb8f3396f554"
+        "sha256": "af4395eca294e8f13b5fa4d3a2ff635d29119827872926ce4cb9292e48019f96"
       },
       {
         "path": "packages/forecast/src/editor-toolbox.ts",
@@ -855,7 +863,7 @@
       },
       {
         "path": "packages/forecast/src/index.ts",
-        "sha256": "49c2d857a81e9e54241c0398fb71b0efc2f42f7b91817091f28a6dc3d6c0a753"
+        "sha256": "3af7b6c01ba390e5745b0d66169a6f3e965e1cac1399a455b8ce82b790699138"
       },
       {
         "path": "packages/forecast/src/lifecycle.ts",
@@ -886,8 +894,16 @@
         "sha256": "74233a5db41610162c33f241c061494800156c159ac8e7d98c2d659002349796"
       },
       {
+        "path": "packages/forecast/src/projections.ts",
+        "sha256": "2b5a2ab22758417839ba03627d4a7cfc98abdb0ddcdfd0189abd9e0f607bc25b"
+      },
+      {
         "path": "packages/forecast/src/prompts.ts",
         "sha256": "59b18d5e1c23987373c41f982092ea1a656b58873996cad6abf145a924255a3a"
+      },
+      {
+        "path": "packages/forecast/src/read-handlers.ts",
+        "sha256": "ea427603580df6a9a367a7db163dd237c1ed8afe89710d16a5c6d7e22d16ef0d"
       },
       {
         "path": "packages/forecast/src/refiner.ts",
@@ -1246,7 +1262,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "9b5c13ce0fa1e03216241a781da122711783da2b77955fa627872886b7891f04"
+    "sha256": "4c67dfe0767422bd14ef6002cef6758dc2acf299f1d8a197ebcf6407867ff4e0"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -36159,5 +36175,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.",
     "No live plan is registered yet."
   ],
-  "reportId": "5a087c2b5353d772328541549b1731f4829315bce28439197eb5cf5700c343a9"
+  "reportId": "8412c5e501f64da982da28158ad10718a1cd00370e857beba26070bec8eedd14"
 }

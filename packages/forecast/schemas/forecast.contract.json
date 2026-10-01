@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://tangleai.dev/schemas/forecast",
-  "title": "Forecasting lifecycle contracts",
+  "$contract": "0.1",
+  "id": "tangle-forecast",
+  "version": "1",
   "$defs": {
     "json": {
       "anyOf": [
@@ -5749,6 +5749,125 @@
           }
         }
       ]
+    }
+  },
+  "operations": {
+    "forecast.questions.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/questionsListQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/questionsListReadResult"
+      }
+    },
+    "forecast.question.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/questionGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/questionGetReadResult"
+      }
+    },
+    "forecast.checkpoints.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/checkpointsListQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/checkpointsListReadResult"
+      }
+    },
+    "forecast.checkpoint.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/checkpointGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/checkpointGetReadResult"
+      }
+    },
+    "forecast.note.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/noteGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/noteGetReadResult"
+      }
+    },
+    "forecast.evidence.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/evidenceListQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/evidenceListReadResult"
+      }
+    },
+    "forecast.trace.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/traceGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/traceGetReadResult"
+      }
+    },
+    "forecast.revision.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/revisionGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/revisionGetReadResult"
+      }
+    },
+    "forecast.harness.version.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/harnessVersionGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/harnessVersionGetReadResult"
+      }
+    },
+    "forecast.harness.head": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/harnessHeadQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/harnessHeadReadResult"
+      }
+    },
+    "forecast.resolution.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/resolutionGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/resolutionGetReadResult"
+      }
+    },
+    "forecast.retrospective.get": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/retrospectiveGetQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/retrospectiveGetReadResult"
+      }
+    },
+    "forecast.due.list": {
+      "kind": "read",
+      "input": {
+        "$ref": "#/$defs/dueListQuery"
+      },
+      "output": {
+        "$ref": "#/$defs/dueListReadResult"
+      }
     }
   }
 }
