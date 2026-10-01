@@ -13,7 +13,12 @@ import { immutableLightRagJson } from './identity.ts';
 const unique = (values: readonly string[]) => [...new Set(values)].sort();
 const order = <T extends { id: string }>(rows: readonly T[]) => [...rows].sort((a,b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 export interface LightRagApplyReceipt { projectionId: string; head: ProjectionWritePlan['nextHead']; writes: number; newClaims: number; reactivation: boolean; replayed: boolean }
-export function storedLightRagWrite(write: LightRagWrite): LightRagStored {
+/** Supply the checked plan to restore preparation omitted from projection writes. */
+export function storedLightRagWrite(write: LightRagWrite, plan?: Pick<ProjectionWritePlan, 'request' | 'priorProjections'>): LightRagStored {
+    if (write.table === 'projections' && write.row.prepared === undefined && plan) {
+        const source = write.row.id === plan.request.id ? plan.request : plan.priorProjections.find(row => row.id === write.row.id);
+        if (source?.prepared) return lightRagStored('projections', { ...write.row, prepared: source.prepared });
+    }
     return lightRagStored(write.table, write.row, 'projectionId' in write ? write.projectionId : undefined);
 }
 async function projectionsFor(view: LightRagReadView, sourceId: string): Promise<GraphProjection[]> {
@@ -27,7 +32,7 @@ async function projectionsFor(view: LightRagReadView, sourceId: string): Promise
 }
 async function unchangedResult(view: LightRagReadView, plan: ProjectionWritePlan): Promise<boolean> {
     const final = new Map<string, { table: LightRagTable; stored: LightRagStored }>();
-    for (const write of plan.writes) { const stored = storedLightRagWrite(write); final.set(write.table + ':' + stored.id, { table: write.table, stored }); }
+    for (const write of plan.writes) { const stored = storedLightRagWrite(write, plan); final.set(write.table + ':' + stored.id, { table: write.table, stored }); }
     for (const row of final.values()) if (!same(await view.get(row.table, row.stored.id) ?? null, row.stored)) return false;
     return contributionResultMatchesWithin(view, plan.request.id, plan.contribution, plan.operation === 'activate');
 }
@@ -118,7 +123,7 @@ export async function applyLightRagWritePlanWithin(view: LightRagWriteView, valu
     if (replay) return replay;
     let writes = 0, newClaims = 0;
     for (const write of plan.writes) {
-        const stored = storedLightRagWrite(write), before = await view.get(write.table, stored.id);
+        const stored = storedLightRagWrite(write, plan), before = await view.get(write.table, stored.id);
         if (same(before ?? null, stored)) continue;
         if (before && 'projectionId' in write) lightragReject('TLRAG1002', '/members', 'An immutable contribution member cannot be overwritten.');
         await view.put(write.table, stored); writes++;

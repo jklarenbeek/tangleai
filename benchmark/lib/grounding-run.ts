@@ -152,70 +152,74 @@ export interface BuiltCorpus {
  */
 export async function buildFixtureCorpus(fixture: GroundingFixture, embedder: Embedder, root = process.cwd()): Promise<BuiltCorpus> {
   const db = await openTangleDb({ driver: nodeDriver() });
-  const store = createDocumentStore(db);
-  const served = new Map<string, { bytes: Uint8Array, mimeType: string }>();
-  let clock = '1970-01-01T00:00:00.000Z';
-  const fetchImpl = (async (input: RequestInfo | URL): Promise<Response> => {
-    const url = String(input);
-    const body = served.get(url);
-    if (body === undefined) return new Response('not in the fixture', { status: 404 });
-    return new Response(body.bytes.slice() as unknown as BodyInit, { status: 200, headers: { 'content-type': body.mimeType } });
-  }) as typeof globalThis.fetch;
-  const ingester = createDocumentIngester({
-    store,
-    embedder,
-    fetcher: new SafeStaticFetcher({ fetch: fetchImpl, lookup: LOOKUP, limits: { respectRobots: false, perHostDelayMs: 0 }, now: () => clock }),
-    now: () => clock,
-  });
+  try {
+    const store = createDocumentStore(db);
+    const served = new Map<string, { bytes: Uint8Array, mimeType: string }>();
+    let clock = '1970-01-01T00:00:00.000Z';
+    const fetchImpl = (async (input: RequestInfo | URL): Promise<Response> => {
+      const url = String(input);
+      const body = served.get(url);
+      if (body === undefined) return new Response('not in the fixture', { status: 404 });
+      return new Response(body.bytes.slice() as unknown as BodyInit, { status: 200, headers: { 'content-type': body.mimeType } });
+    }) as typeof globalThis.fetch;
+    const ingester = createDocumentIngester({
+      store,
+      embedder,
+      fetcher: new SafeStaticFetcher({ fetch: fetchImpl, lookup: LOOKUP, limits: { respectRobots: false, perHostDelayMs: 0 }, now: () => clock }),
+      now: () => clock,
+    });
 
-  const chunks = new Map<string, EvidenceChunk>();
-  let versions = 0;
-  let chunkCount = 0;
-  let elementCount = 0;
-  let embeddingCalls = 0;
-  for (const source of fixture.sources) {
-    for (const version of source.versions) {
-      const bytes = await readFile(join(root, `benchmark/fixtures/grounding/${version.file}`));
-      served.set(source.url, { bytes, mimeType: source.mimeType });
-      clock = version.admittedAt;
-      const outcome = await ingester.ingest({ url: source.url, strategy: 'recursive', maxTokens: 450, overlapTokens: 48, force: true });
-      versions++;
-      embeddingCalls += outcome.version.metrics.embeddingCalls;
+    const chunks = new Map<string, EvidenceChunk>();
+    let versions = 0;
+    let chunkCount = 0;
+    let elementCount = 0;
+    let embeddingCalls = 0;
+    for (const source of fixture.sources) {
+      for (const version of source.versions) {
+        const bytes = await readFile(join(root, `benchmark/fixtures/grounding/${version.file}`));
+        served.set(source.url, { bytes, mimeType: source.mimeType });
+        clock = version.admittedAt;
+        const outcome = await ingester.ingest({ url: source.url, strategy: 'recursive', maxTokens: 450, overlapTokens: 48, force: true });
+        versions++;
+        embeddingCalls += outcome.version.metrics.embeddingCalls;
 
-      // register this version's addresses BEFORE a successor's activation
-      // deletes its rows; status and admission come from the fixture, the
-      // ids from what the shipped path actually produced
-      const realElements = await store.listElements(outcome.version.id);
-      const elementKeyOf = new Map<string, string>();
-      for (const declared of fixture.elements.filter((e) => e.version === version.key)) {
-        const matches = realElements.filter((e) => e.text.includes(declared.quote));
-        if (matches.length !== 1) {
-          await db.close();
-          throw new Error(`fixture element ${declared.key} maps to ${matches.length} ingested elements of ${version.key}; the oracle needs exactly one`);
+        // register this version's addresses BEFORE a successor's activation
+        // retains its rows; status and admission come from the fixture, the
+        // ids from what the shipped path actually produced
+        const realElements = await store.listElements(outcome.version.id);
+        const elementKeyOf = new Map<string, string>();
+        for (const declared of fixture.elements.filter((e) => e.version === version.key)) {
+          const matches = realElements.filter((e) => e.text.includes(declared.quote));
+          if (matches.length !== 1) {
+            throw new Error(`fixture element ${declared.key} maps to ${matches.length} ingested elements of ${version.key}; the oracle needs exactly one`);
+          }
+          elementKeyOf.set(matches[0].id, declared.key);
         }
-        elementKeyOf.set(matches[0].id, declared.key);
-      }
-      const realChunks = await store.listChunks(outcome.version.id);
-      elementCount += realElements.length;
-      chunkCount += realChunks.length;
-      for (const chunk of realChunks) {
-        chunks.set(chunk.id, {
-          id: chunk.id,
-          version: version.key,
-          status: version.status,
-          admittedAt: version.admittedAt,
-          elements: new Set(chunk.elementIds.map((id) => elementKeyOf.get(id)).filter((key): key is string => key !== undefined)),
-        });
+        const realChunks = await store.listChunks(outcome.version.id);
+        elementCount += realElements.length;
+        chunkCount += realChunks.length;
+        for (const chunk of realChunks) {
+          chunks.set(chunk.id, {
+            id: chunk.id,
+            version: version.key,
+            status: version.status,
+            admittedAt: version.admittedAt,
+            elements: new Set(chunk.elementIds.map((id) => elementKeyOf.get(id)).filter((key): key is string => key !== undefined)),
+          });
+        }
       }
     }
+    return {
+      db,
+      store,
+      corpus: { chunk: (id) => chunks.get(id) },
+      census: { sources: fixture.sources.length, versions, chunks: chunkCount, elements: elementCount, embeddingCalls },
+      close: () => db.close(),
+    };
+  } catch (cause) {
+    await db.close();
+    throw cause;
   }
-  return {
-    db,
-    store,
-    corpus: { chunk: (id) => chunks.get(id) },
-    census: { sources: fixture.sources.length, versions, chunks: chunkCount, elements: elementCount, embeddingCalls },
-    close: () => db.close(),
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -612,13 +616,13 @@ export function emptyTally(): Tally {
   return { turns: 0, tokens: 0, promptTokens: 0, completionTokens: 0, ms: 0, replayed: 0 };
 }
 
-function replayMs(result: unknown): number | null {
+export function replayMs(result: unknown): number | null {
   const replayed = (result as { replayed?: { ms?: unknown } } | null)?.replayed;
   const ms = replayed?.ms;
   return typeof ms === 'number' && Number.isFinite(ms) ? ms : null;
 }
 
-function charge(tallies: readonly Tally[], latencies: number[], usage: any, elapsed: number, replayed: boolean): void {
+export function charge(tallies: readonly Tally[], latencies: number[], usage: any, elapsed: number, replayed: boolean): void {
   const prompt = typeof usage?.prompt_tokens === 'number' ? usage.prompt_tokens : 0;
   const completion = typeof usage?.completion_tokens === 'number' ? usage.completion_tokens : 0;
   const total = typeof usage?.total_tokens === 'number' && usage.total_tokens > 0 ? usage.total_tokens : prompt + completion;
@@ -702,7 +706,7 @@ export interface ExecuteOptions {
   root?: string;
 }
 
-interface RowSums {
+export interface RowSums {
   claims: { tp: number, fp: number, fn: number };
   claimF1s: number[];
   answerF1s: number[];
@@ -714,7 +718,7 @@ interface RowSums {
   supply: { candidates: number, blocks: number, uniqueSupplied: number, duplicateExpansions: number, characters: number, estimatedTokens: number };
 }
 
-function emptySums(): RowSums {
+export function emptySums(): RowSums {
   return {
     claims: { tp: 0, fp: 0, fn: 0 },
     claimF1s: [],
@@ -747,7 +751,7 @@ interface QuestionContext {
   official: { category: 1 | 2 | 3 | 4, answer: string | number } | null;
 }
 
-function traceBlock(evidence: DocumentEvidence): NonNullable<LiveQuestionResult['trace']> {
+export function traceBlock(evidence: DocumentEvidence): NonNullable<LiveQuestionResult['trace']> {
   return {
     retrieved: evidence.ranked.map((item) => item.chunk.id),
     supplied: [...evidence.suppliedChunkIds],
@@ -863,7 +867,7 @@ function citedRecallOf(question: QuestionContext, citations: ReadonlyArray<{ cit
   return evidenceRecall([...question.support], covered);
 }
 
-function addSums(sums: RowSums, result: LiveQuestionResult): void {
+export function addSums(sums: RowSums, result: LiveQuestionResult): void {
   if (result.claims !== null) {
     sums.claims.tp += result.claims.tp;
     sums.claims.fp += result.claims.fp;
@@ -902,7 +906,7 @@ async function questionSetOf(results: readonly LiveQuestionResult[], statuses: r
   return canonicalSha256(results.filter((r) => statuses.includes(r.status)).map((r) => r.id).sort());
 }
 
-function rowBlock(
+export function rowBlock(
   key: LiveRow['key'],
   generates: boolean,
   questionSet: string,
@@ -985,7 +989,7 @@ function pairingOf(rows: readonly LiveRow[]): { eligible: boolean, reasons: Arra
   return { eligible: reasons.length === 0, reasons };
 }
 
-function comparisonOf(metric: LiveComparison['metric'], deltas: readonly number[]): LiveComparison {
+export function comparisonOf(metric: LiveComparison['metric'], deltas: readonly number[]): LiveComparison {
   const interval = bootstrapInterval(deltas, { resamples: 10000, seed: 17753, level: 0.95 });
   const sd = deltas.length < 2 ? 0 : (stddev(deltas) ?? 0);
   const se = deltas.length === 0 ? 0 : sd / Math.sqrt(deltas.length);

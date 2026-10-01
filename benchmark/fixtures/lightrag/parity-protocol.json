@@ -1,0 +1,26 @@
+{
+  "paper": "2410.05779v3",
+  "subsets": [
+    "Agriculture",
+    "CS",
+    "Legal",
+    "Mix"
+  ],
+  "questionsPerSubset": 125,
+  "questionGeneration": "five users, five tasks per user and five questions per task over the complete subset",
+  "llm": "gpt-4o-mini",
+  "judge": "gpt-4o-mini",
+  "gleaning": 1,
+  "chunkSize": 1200,
+  "ordering": [
+    "control-first",
+    "treatment-first"
+  ],
+  "dimensions": [
+    "comprehensiveness",
+    "diversity",
+    "empowerment",
+    "overall"
+  ],
+  "measurement": "No paper-score comparison until corpus, generated questions, prompt bytes, model snapshots, embedder, tokenizer, overlap and all baseline settings are pinned and the full separately authorized protocol executes."
+}

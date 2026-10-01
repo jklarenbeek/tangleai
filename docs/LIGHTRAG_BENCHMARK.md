@@ -10,15 +10,15 @@ Corpus: 6 sources, 7 versions, 17 retained chunks (15 active), 20 entities, 18 d
 
 Chunker `heading-recursive/1`, 100/32 token/overlap budgets; embedder `hash-trigram-64`, 64 dimensions. Seed 24105779. The superseded source remains addressable and is excluded from active retrieval.
 
-| Row | Recall@1 | Recall@3 | Recall@5 | MRR | Entity recall | Relation recall | Unresolved | Provider calls |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| oracle | 0.556 | 1.000 | 1.000 | 1.000 | — | — | 0 | 0 |
-| random | 0.111 | 0.222 | 0.500 | 0.371 | — | — | 0 | 0 |
-| dense-chunk | 0.389 | 0.611 | 0.750 | 0.733 | — | — | 0 | 0 |
-| lightrag-low | 0.167 | 0.556 | 0.694 | 0.514 | 0.972 | 0.944 | 0 | 0 |
-| lightrag-high | 0.111 | 0.417 | 0.639 | 0.407 | 1.000 | 0.944 | 0 | 0 |
-| lightrag-hybrid | 0.167 | 0.472 | 0.639 | 0.481 | 1.000 | 1.000 | 0 | 0 |
-| lightrag-hybrid-no-original | 0.167 | 0.472 | 0.639 | 0.481 | 1.000 | 1.000 | 0 | 0 |
+| Row | Recall@1 | Recall@3 | Recall@5 | MRR | Entity recall | Relation recall | Citation resolution | Unresolved | Provider calls |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| oracle | 0.556 | 1.000 | 1.000 | 1.000 | — | — | 1.000 | 0 | 0 |
+| random | 0.111 | 0.222 | 0.500 | 0.371 | — | — | 1.000 | 0 | 0 |
+| dense-chunk | 0.389 | 0.611 | 0.750 | 0.733 | — | — | 1.000 | 0 | 0 |
+| lightrag-low | 0.167 | 0.556 | 0.694 | 0.514 | 0.972 | 0.944 | 1.000 | 0 | 0 |
+| lightrag-high | 0.111 | 0.417 | 0.639 | 0.407 | 1.000 | 0.944 | 1.000 | 0 | 0 |
+| lightrag-hybrid | 0.167 | 0.472 | 0.639 | 0.481 | 1.000 | 1.000 | 1.000 | 0 | 0 |
+| lightrag-hybrid-no-original | 0.167 | 0.472 | 0.639 | 0.481 | 1.000 | 1.000 | 1.000 | 0 | 0 |
 
 | Row / question kind | Questions | Recall@1 | Recall@3 | Recall@5 | MRR | Entity recall (n) | Relation recall (n) |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -100,20 +100,69 @@ Pruning counts trace events, including candidates beyond per-keyword limits; ski
 
 One shared graph build admits 7 contributions with 62 entity claims and 38 relation claims: 14 local hash-embedding calls and 214 estimated budget tokens. Query rows count their own local work separately. Provider calls and provider tokens are zero. The clock-free cost field is zero by construction, not measured latency; runtime timings stay outside this report.
 
+Indexing also makes 7 document embedding calls, executes 34 scripted extraction passes, profiles 51 affected canonicals and makes 4 scripted co-reference decisions. These callback and local-embedding counts are separate from zero provider calls.
+
+Incremental observations cover both the Windmere guild replacement and the immutable grounding relay-history replacement. The latter admits the unchanged Beacon fixture first, proving that an unrelated canonical revision stays unchanged. Every observation records its own fixture identity, counts only replacement chunks as re-extracted, retains historical evidence and excludes every withdrawn claim from active support. Retired canonicals still count as touched but need no profile call; per-contribution indexing stages bind profile calls to actual profile updates.
+
+| Coverage | Reached | Available | Fraction |
+|---|---:|---:|---:|
+| Entities | 20 | 20 | 1.000 |
+| Relations | 18 | 18 | 1.000 |
+
+| Replacement | Chunks re-extracted | Canonicals touched | Unaffected canonicals | Unrelated chunks / changed unaffected revisions | Claims withdrawn / remaining active support | Local calls | Budget tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| guild@1 → guild@2 | 2 | 8 | 6 | 0 / 0 | 13 / 0 | 2 | 27 |
+| relay-history@1 → relay-history@2 | 1 | 5 | 1 | 0 / 0 | 3 / 0 | 2 | 13 |
+
 | Cutoff | Oracle ceiling | Observed oracle | Random expectation | Random band | Observed random |
 |---|---:|---:|---:|---:|---:|
 | 1 | 0.556 | 0.556 | 0.067 | [0.000, 0.292] | 0.111 |
 | 3 | 1.000 | 1.000 | 0.200 | [0.000, 0.528] | 0.222 |
 | 5 | 1.000 | 1.000 | 0.333 | [0.000, 0.711] | 0.500 |
 
-Fractional recall and MRR reuse the existing relevance scorer. Oracle ceilings depend on each question’s number of resolvable gold chunks; an oracle can fall below 1 at a smaller cutoff without losing reachable evidence. Random draws are without replacement and use the registered analytic band. Every gold and graph support reference resolves before publication. The oracle, random and dense row objects are unchanged from the pre-graph control.
+Fractional recall and MRR reuse the existing relevance scorer. Oracle ceilings depend on each question’s number of resolvable gold chunks; an oracle can fall below 1 at a smaller cutoff without losing reachable evidence. Random draws are without replacement and use the registered analytic band. Every gold and graph support reference resolves before publication. The oracle, random and dense rankings, scores and costs are unchanged from the pre-graph control; citation resolution is now explicit.
 
 The separately preregistered one-hop control keeps marker facts in distinct source chunks. The reachable Bridge fact is found: **true**; the Far fact two hops away is found: **false**; Bridge is found without expansion: **false**. With expansion it returns bridge-fact, bridge-far, start, start-bridge; without expansion it returns start, start-bridge. The Bridge–Far connection chunk contains an endpoint claim, but it cannot satisfy the separate Far marker fact. Registration bytes: `9787cac71bdb0bf652fdbab5c161f1120d49ba40c5f70b50e7c0fddac0df2dc3`.
 
 Limits: 8 keywords per level, 10 candidates per keyword, 20 added entities, 40 added relations, 3 citation chunks per source and 4000 estimated context tokens. Dense remains k 5, minimum score 0, at most 2 chunks per source, no neighbours. Host overrides are explicit and recorded.
 
-Scale targets remain registered at 100, 1,000 and 10,000 chunks, with SQLite hybrid p95 at most 250 ms at 10,000. This mechanism report makes no scale-performance claim.
+## Registered scale ladder
 
-The immutable flat handoff SHA-256 is `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. Gate: **passed**. Source `67b023eed954172245e2124617dc5fbb35410b2bf83e9260b1e6770d12902f8e`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `80bc7659c656654c7ab6295874f76659fbd2974be99cd7061872cb64b74f333b`.
+Runtime: node 24.20.0; V8 heap limit 8791261184 bytes; driver node:sqlite; linux/x64; AMD Ryzen 9 5900HX with Radeon Graphics; 16 logical CPUs; 33009844224 bytes of system memory. The benchmark command grants Node 8 GiB of old-space heap for retained admission; this allowance is not an RSS cap.
 
-Decision: **not-evaluated**; product default unchanged. Live paired, judge and separately licensed parity measurements require their own registered plans and explicit approval.
+| Chunks | Preparation ms | Promotion ms | Hybrid p50 ms | Hybrid p95 ms | Peak RSS bytes | Rows read | Skipped |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 100 | 732.9701029999999 | 4109.212947 | 23.101685000000543 | 28.770120999999563 | 475058176 | 8475 | 0 |
+| 1000 | 8256.564163000001 | 53651.220431999995 | 215.28461299999617 | 248.547882999992 | 2307313664 | 73518 | 0 |
+| 10000 | 277625.517398 | 638042.657662 | 2874.689250999945 | 3038.795253999997 | 8159989760 | 721542 | 0 |
+Backend decision: **scale-row-registered**. The unchanged target is SQLite hybrid p95 ≤ 250 ms at 10,000 chunks. Receipt `75a4b641531ba0ff9b981bd046a8cbce556675bb78ec562f6cad846006bcb29b`, source `acb14a3c75376c5a51d066c56ff5d80e572346a5fcfd7d04cc6dcdbb3ce78e65`. These are observed timings, separate from clock-free retrieval scores. Rows read count logical records returned by graph/document reads, not physical database pages. Peak RSS is the process lifetime high-water mark and includes earlier sizes.
+
+## Paired answer tier
+
+Status: **not-run**, tier **not-run**. No matching explicit live authorization was supplied.
+
+The immutable flat control uses the same 16 grounding questions, recursive 450/48 chunking, k 6, minimum score 0, at most 2 chunks per source, 1 neighbour, the shared grounded answer schema, one repair and seed 17753. The planned stack is z-ai/glm-5.3-flash with baai/bge-m3 (1024 dimensions), thinking default. Graph modes retain the registered 4,000-token bound. Their engine instruction is independently pinned and differs from the flat instruction; this is a comparison of shipped lanes, not a claim that only context changed.
+
+| Planned row | Planning | Answers | Query embeddings ≤ | Repair allowance | Requests ≤ |
+|---|---:|---:|---:|---:|---:|
+| flat-grounded | 0 | 16 | 16 | 16 | 48 |
+| lightrag-low | 16 | 16 | 16 | 32 | 80 |
+| lightrag-high | 16 | 16 | 16 | 32 | 80 |
+| lightrag-hybrid-no-original | 16 | 16 | 32 | 32 | 96 |
+| lightrag-hybrid | 16 | 16 | 32 | 32 | 96 |
+
+Indexing: 9 document embedding calls, 16 scheduled extraction passes plus 16 repair allowance, profiling ≤ 27648 plus its repair allowance, review ≤ 512 plus its repair allowance, graph embeddings ≤ 192. Model-dependent canonical counts cannot be known before extraction; conservative bounds use the closed extraction schema and every potentially affected preceding canonical. These bounds are allocations, not observations. Total requests ≤ 56953; configured ceiling 200. Cache hits may reduce purchases, but mutable cache state is never subtracted from this safety bound.
+
+Plan `9cad8fc23cf1b0b93bab4061bdb405f10041f6a01c31f4568f1f9e669669520c`. no key — set OPENROUTER_AI_KEY in .env (see .env.example) The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded. Run `npm run benchmark:lightrag -- --live` to print the current credential-free plan, or select independently authorizable rows with `--rows flat-grounded`. No provider request occurs without `--authorize <plan-id>`; retries count against a guard reserved before each physical request. The fixture test environment can exercise large conservative plans without changing workspace guards.
+
+Before any paid run, the adoption policy is registered: a complete paid pair, positive two-sided 95% supported-claim F1 bootstrap interval (10,000 resamples, seed 17753), valid citations, and token/p95 ratios at most 1. Indexing tokens are charged in full across the question set. Token accounting uses provider usage or the shared character estimate, including embedding input and unsuccessful calls. All control drift is published. These conservative cost limits were registered before live measurement; the SQLite retrieval target remains a separate 250 ms scale condition.
+
+## Judge and licensed parity
+
+Judge: **not-run**. A completed graph live report with retained per-question attempts is required. no key — set OPENROUTER_AI_KEY in .env (see .env.example) Plan `abe899187c5b0563f4219a262767d7ddd88ccea4bbc77714bfeb6015704a8e18`: 128 calls for 4 comparisons, 16 question pairs and two orders each, with no repair. Dimensions are comprehensiveness, diversity, empowerment and overall. Failed orders: 0; dimension disagreements: 0. Judge output never enters the default decision. Use `--judge --live-json <receipt>`; execution needs its own `--authorize-judge <plan-id>`.
+
+UltraDomain: **not-run**. No separately obtained UltraDomain dataset path was supplied. No dataset licence acknowledgement was supplied. No matching separate parity authorization was supplied. This entry records a protocol only. The four licensed corpora, generated questions, original prompt bytes, exact model snapshots, embedder, tokenizer, overlap and baseline settings need independent parity qualification before execution. The Tangle prompt revisions in this plan identify the mechanism port, not exact upstream prompt parity. Protocol: Agriculture, CS, Legal and Mix, 125 questions each, GPT-4o-mini, chunk size 1,200 and gleaning 1, with swapped answer order. `npm run benchmark:lightrag:parity` prints the protocol; a dataset path, licence acknowledgement and exact authorization bind a separate plan. No paper-score comparison is made.
+
+The immutable flat handoff SHA-256 is `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. Gate: **passed**. Source `c693374c07d9b5255049cf30c0846976f826469aec05fd4123f9da2057a450d4`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `dbafbf65336a0c29abd5b985679b492dac428aefc6dcdce3d282fae4ac517a08`.
+
+Decision: **not-evaluated**; product default unchanged. Paid paired quality, judge diagnostics and licensed parity retain separate authorization.

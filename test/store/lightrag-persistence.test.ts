@@ -9,6 +9,8 @@ import { createMemoryUnit } from '@tangleai/memory';
 import { LIGHTRAG_COLLECTIONS } from '../../packages/store/src/lightrag-model.ts';
 import { createLightRagDbPersistence, lightRagReadDocument } from '../../packages/store/src/lightrag-store.ts';
 import { lightRagStored } from '../../packages/lightrag/src/persistence.ts';
+import type { LightRagReadQuery, LightRagTable } from '../../packages/lightrag/src/persistence.ts';
+import { createMemoryLightRagPersistence } from '../../packages/lightrag/src/memory-persistence.ts';
 import type { GraphEntityClaim, GraphRelation } from '../../packages/lightrag/src/contracts.gen.ts';
 import { buildTemporalFixture } from '../../benchmark/lib/temporal-runtime-fixtures.ts';
 import { TEMPORAL_FIXTURES } from '../fixtures/temporal.ts';
@@ -47,6 +49,42 @@ it('SQL adjacency includes both directions while keeping unrelated edges out', a
         assert.deepEqual(rows.map(row => row.id), ['1'.repeat(64), '2'.repeat(64)]);
         assert.deepEqual(await persistence.read(scope => scope.query('relations', { entityIds: [] })), []);
         assert.ok(await db.collection('lightrag_relations').explain(lightRagReadDocument({ entityIds: ['a'], status: 'active' })));
+    } finally { await db.close(); }
+});
+it('large SQL membership filters preserve memory parity, intersections and unique ordered rows', async () => {
+    const db = await openStore(model, { driver: pickDriver() }), sql = createLightRagDbPersistence(db), memory = createMemoryLightRagPersistence();
+    const absent = Array.from({ length: 2200 }, (_, index) => 'absent-' + index);
+    const values = (...matches: string[]) => [...absent.slice(0, 1100), ...matches, ...absent.slice(1100), ...matches];
+    const relation = (id: string, sourceEntityId: string, targetEntityId: string): GraphRelation => ({
+        id, sourceEntityId, targetEntityId, themes: ['transport'], strength: 1, profile: 'An evidenced transport link.',
+        supportClaimIds: [claim.id], supportChunkIds: ['c'], embedding: [1, 0], embeddedBy: { model: 'fixture', dims: 2 }, status: 'active', revision: 'c'.repeat(64),
+    });
+    try {
+        for (const persistence of [sql, memory]) await persistence.transaction(async scope => {
+            await scope.put('entity_claims', lightRagStored('entity_claims', claim, 'first'));
+            await scope.put('entity_claims', lightRagStored('entity_claims', claim, 'second'));
+            await scope.put('entity_claims', lightRagStored('entity_claims', { ...claim, id: 'd'.repeat(64), normalizedName: 'other' }, 'first'));
+            for (const row of [relation('1'.repeat(64), 'a', 'b'), relation('2'.repeat(64), 'b', 'a'), relation('3'.repeat(64), 'c', 'd')])
+                await scope.put('relations', lightRagStored('relations', row));
+        });
+        const cases: Array<{ table: LightRagTable; query: LightRagReadQuery; count: number }> = [
+            { table: 'entity_claims', query: { normalizedNames: values('beacon') }, count: 2 },
+            { table: 'entity_claims', query: { claimIds: values(claim.id) }, count: 2 },
+            { table: 'entity_claims', query: { ids: values('first:' + claim.id) }, count: 1 },
+            { table: 'entity_claims', query: { claimIds: values(claim.id), normalizedNames: values('beacon', 'other'), projectionId: 'second', sourceId: 's', versionId: 'v' }, count: 1 },
+            { table: 'entity_claims', query: { ids: values('first:' + claim.id), normalizedNames: values('other') }, count: 0 },
+            { table: 'entity_claims', query: { normalizedNames: values('beacon'), claimIds: [] }, count: 0 },
+            { table: 'relations', query: { entityIds: values('a', 'b'), status: 'active' }, count: 2 },
+            { table: 'relations', query: { entityIds: values('a', 'b'), ids: values('2'.repeat(64), '3'.repeat(64)), status: 'active' }, count: 1 },
+            { table: 'relations', query: { entityIds: values('a'), status: 'inactive' }, count: 0 },
+            { table: 'relations', query: { entityIds: [] }, count: 0 },
+        ];
+        for (const { table, query, count } of cases) {
+            const expected = await memory.read(scope => scope.query(table, query));
+            assert.equal(expected.length, count);
+            assert.deepEqual(await sql.read(scope => scope.query(table, query)), expected);
+        }
+        assert.equal((await db.integrityCheck()).ok, true);
     } finally { await db.close(); }
 });
 it('the additive graph model preserves existing memories, document sources and temporal state on real reopen', async () => {

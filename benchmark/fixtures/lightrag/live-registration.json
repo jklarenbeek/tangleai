@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "rows": [
+    "flat-grounded",
+    "lightrag-low",
+    "lightrag-high",
+    "lightrag-hybrid-no-original",
+    "lightrag-hybrid"
+  ],
+  "model": "z-ai/glm-5.3-flash",
+  "embedModel": "baai/bge-m3",
+  "dims": 1024,
+  "thinking": "default",
+  "gleaning": 1,
+  "maxRepairs": 1,
+  "coreferenceDecisionsPerSource": 64,
+  "embeddingBatchSize": 32,
+  "contextTokens": 4000,
+  "seed": 17753,
+  "resamples": 10000,
+  "confidence": 0.95,
+  "primary": "supported-claim-f1",
+  "treatment": "lightrag-hybrid",
+  "control": "flat-grounded",
+  "maxTotalTokenRatio": 1,
+  "maxP95Ratio": 1,
+  "indexingCost": "amortize all indexing tokens over the complete question set",
+  "decision": "positive primary interval, complete paid pair, every control drift reported, resolved citations and cost/latency ratios within limits; judge is diagnostic only",
+  "tokenAccounting": "provider usage when supplied; otherwise the shared character estimate, including embedding inputs and unsuccessful calls"
+}

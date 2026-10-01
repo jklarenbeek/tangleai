@@ -49,6 +49,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 @tangleai/hera        evaluated query-specific orchestration over MAS:
                       scoped experience, role-prompt and topology learning,
                       immutable snapshots and read-only evidence review
+@tangleai/lightrag    immutable document-bound graph claims and canonical profiles;
+                      atomic incremental projections, bounded dual-level retrieval,
+                      evidence sections and a separately metered grounded answer engine
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,
@@ -315,9 +318,33 @@ The fitness signal (LoCoMo — `LOCOMO_RECALL.md`, `LOCOMO_BENCHMARK.md`)
 comes before any further policy work —
 memflow's core mistake was self-evolution with no external benchmark, and the
 jarenjs suite's own history (recursive.js shipping unmeasured) says the same
-thing. Graph indexing of `relations` remains roadmap work. GMPL, temporal and
-consolidation mechanisms are shipped; live model-quality improvement, deployment
+thing. Graph retrieval, GMPL, temporal and consolidation mechanisms are shipped;
+live model-quality improvement, deployment
 cost qualification and explicit host/default adoption remain open.
+
+## Graph retrieval
+
+`@tangleai/lightrag` owns graph policy over injected stores, models, an embedder,
+budget and clock. Immutable claims cite retained document chunks; canonical
+entities and directed, themed relations retain exact active support. Preparation
+extracts, reviews collisions and profiles affected records. `@tangleai/store`
+atomically activates the document bundle and graph projection under one source
+head fence. Replacement withdraws unsupported facts; retained reactivation reuses
+the original evidence without extraction or embedding calls.
+
+Structured query planning separates entity-name and relation-theme keywords.
+Low, high and hybrid modes perform identity-checked cosine ranking and one
+bounded incident expansion. The one context serializer supplies entities,
+relations and original chunks within the recorded budget; the no-original
+ablation keeps its citation vocabulary while omitting verbatim chunk text.
+The answer engine uses the shared grounded-answer contract, validates exactly
+the supplied chunk ids and records repairs, failed calls and degradation.
+
+The desktop exposes experimental status and retrieval reads in Documents; the
+headless answer engine has an optional injected record sink. Flat chat remains
+the default. The [measurement](LIGHTRAG_BENCHMARK.md) publishes dense and graph
+rows, losses, incremental work, a separately timed SQLite ladder and explicit
+unrun paid and licensed tiers. Scripted mechanics establish no live quality win.
 
 ## The surfaces (added 2026-08-24)
 

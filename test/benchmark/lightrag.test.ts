@@ -27,12 +27,16 @@ it('all four graph rows execute with named candidate sources, observed denominat
     const hashes=['12169967f92fe16a1c1280c022f0c427afd30432d794ef23a84aecb92cffbaea','c8c9a4b6bf4b391c4e1197777cd1afd44880c04dbe34da5704e8ddb8e204043f','c55fc169d88aede12cc44440f3d8fa95c3e8954f6a9135299ea65b587732b2c8'];
     for(const [i,row]of report.rows.entries()){
         assert.equal(row.status,'executed');assert.equal(row.cases.length,18);assert.equal(row.byKind.length,3);assert.deepEqual(row.cost,{calls:0,tokens:0,ms:0});
-        if(i<3){assert.equal(createHash('sha256').update(JSON.stringify(row)).digest('hex'),hashes[i]);continue;}
+        if(i<3){const {resolution,...citations}=row.citations;assert.equal(resolution,1);assert.equal(createHash('sha256').update(JSON.stringify({...row,citations})).digest('hex'),hashes[i]);continue;}
         assert.equal(row.identity.providerStatus,'scripted');assert.equal(row.graph!.skipped.unresolvable,0);assert.equal(row.metrics.graph!.entityQuestions,18);assert.equal(row.metrics.graph!.relationQuestions,18);
         assert.ok(row.cases.every(value=>value.graph!.contextTokens<=row.limits.contextTokens));
         assert.equal(row.graph!.candidateSources.entityKeywords,row.key!=='lightrag-high');assert.equal(row.graph!.candidateSources.relationKeywords,row.key!=='lightrag-low');assert.equal(row.graph!.candidateSources.originalChunks,row.key!=='lightrag-hybrid-no-original');
     }
-    assert.deepEqual(report.graphBuild,{backend:'memory',contributions:7,entities:20,relations:18,entityClaims:62,relationClaims:38,localCalls:14,budgetTokens:214,providerCalls:0,providerTokens:0});
+    const {stages,...indexing}=report.indexing;assert.deepEqual(indexing,{backend:'memory',contributions:7,entities:20,relations:18,entityClaims:62,relationClaims:38,localCalls:14,budgetTokens:214,providerCalls:0,providerTokens:0,documentEmbeddingCalls:7,extractionPasses:34,profiledCanonicals:51,coreferenceCalls:4});assert.equal(stages.length,7);
+    assert.equal(report.incremental.length,2);const {fixtureId,...guild}=report.incremental[0];assert.equal(fixtureId,loaded.fixtureId);
+    assert.deepEqual(guild,{source:'guild',previousVersion:'guild@1',version:'guild@2',chunks:2,reextractedChunks:2,unrelatedChunksExtracted:0,canonicalsTouched:8,unaffectedCanonicals:6,unaffectedRevisionsChanged:0,claimsWithdrawn:13,withdrawnSupportRemaining:0,localCalls:2,budgetTokens:27,providerCalls:0});
+    assert.deepEqual(report.incremental[1],{fixtureId:'b3af26a423ff7f1210e4c03b119ffe295530c539930c60f68a64334c240f5285',source:'relay-history',previousVersion:'relay-history@1',version:'relay-history@2',chunks:1,reextractedChunks:1,unrelatedChunksExtracted:0,canonicalsTouched:5,unaffectedCanonicals:1,unaffectedRevisionsChanged:0,claimsWithdrawn:3,withdrawnSupportRemaining:0,localCalls:2,budgetTokens:13,providerCalls:0});
+    assert.equal(report.graphCoverage.entities.fraction,1);assert.equal(report.graphCoverage.relations.fraction,1);assert.ok(report.rows.every(row=>row.citations.resolution===1));
 });
 it('specific low and abstract high queries retrieve every gold citation, while expansion alone reaches the distinct one-hop fact',()=>{
     for(const [key,kind]of [['lightrag-low','specific'],['lightrag-high','abstract']])for(const row of report.rows.find(row=>row.key===key)!.cases.filter(row=>row.kind===kind)){
@@ -49,7 +53,7 @@ it('native assertions reject forged graph costs, strata, recall, ablations, budg
         value=>{value.rows[3].graph!.candidateSources.relationKeywords=true;},value=>{value.rows[3].cases[0].graph!.candidates.relationKeywords=1;},value=>{value.rows[3].cases[0].graph!.entityRecall=0;},
         value=>{value.rows[3].cases[0].graph!.contextTokens=4001;},value=>{value.rows[3].cases[0].graph!.prune['context-budget']++;},value=>{value.rows[3].cases[0].graph!.skipped.width++;},
         value=>{value.rows[6].cases[0].graph!.originalChunks=1;},value=>{value.rows[6].cases[0].ranked.reverse();},value=>{value.gate.oneHop.oneHopFound=false;},value=>{value.gate.oneHop.withExpansion.chunkKeys.push('far-fact');},
-        value=>{value.graphBuild.entities--;},value=>{value.rows[3].cases.splice(0,1);}
+        value=>{value.indexing.entities--;},value=>{value.indexing.profiledCanonicals++;},value=>{value.indexing.stages[0].profileCalls++;},value=>{value.incremental[0].unrelatedChunksExtracted++;},value=>{value.incremental[0].unaffectedRevisionsChanged++;},value=>{value.incremental[0].reextractedChunks++;},value=>{value.graphCoverage.entities.reached.pop();},value=>{value.rows[3].citations.resolution=0;},value=>{value.rows[3].cases.splice(0,1);}
     ];for(const [i,mutate]of mutations.entries()){const copy=structuredClone(report);mutate(copy);assert.equal(validate(copy).valid,false,'mutation '+i);}
 });
 it('the schema refuses a row without corpus, question-set, retrieval, identity, embedder, cost or limits', () => {
@@ -116,7 +120,8 @@ it('the CLI writes only gated artifacts, checks without writing and refuses live
         await exec(process.execPath,['benchmark/lightrag.ts','--json',json,'--md',md]);
         assert.equal(await readFile(json,'utf8'),renderLightRagReport(report)); assert.equal(await readFile(md,'utf8'),renderLightRagDocument(report));
         await exec(process.execPath,['benchmark/lightrag.ts','--check','--json',json,'--md',md]);
-        await assert.rejects(exec(process.execPath,['benchmark/lightrag.ts','--live']), /Live tier arrives with the ablation order; zero requests/);
+        const dry=await exec(process.execPath,['benchmark/lightrag.ts','--live'],{maxBuffer:16*1024*1024});assert.match(dry.stdout,/lightrag-live-plan/);assert.match(dry.stderr,/Zero provider requests/);
+        await assert.rejects(exec(process.execPath,['benchmark/lightrag.ts','--live','--authorize','incorrect'],{maxBuffer:16*1024*1024}),/zero requests/);
         await writeFile(json,'{}'); await assert.rejects(exec(process.execPath,['benchmark/lightrag.ts','--check','--json',json,'--md',md]), /artifact drift/);
     } finally { await rm(root,{recursive:true,force:true}); }
 });

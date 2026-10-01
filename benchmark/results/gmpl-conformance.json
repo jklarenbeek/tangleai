@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "6117dd1041d9e5fb781eca296c7c966b814eb5f7",
+    "head": "9529ecd00e5079e09baf14a0af176ec78792fa99",
     "clean": false,
     "files": [
       {
@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "2934aff76c6d6326c80f25d745b01e4fdab9735ba2d1b040fc55118bbe9bd2dd"
+        "sha256": "166397de9a87efe4caf0fa0c8dc6ee8bbc7d1d2a40cd8f7a6cf7af7712046ffe"
       },
       {
         "path": "packages/agents/package.json",
@@ -843,7 +843,7 @@
       },
       {
         "path": "packages/store/src/lightrag-store.ts",
-        "sha256": "41e0f72da2eb7f4aa6719727d059bde29440c7d9e97c37c42166eb345be90419"
+        "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -1078,7 +1078,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "ecb44f2d7ccfe2ea9b4ffd8ffaf63e7853d8adeea0f28a11ae2fbe31fa387526"
+    "sha256": "f6853bb582c081275754446d14db35ec79ec16280602198b6ded2e5e4ed35ba8"
   },
   "ablations": [
     {
@@ -76632,5 +76632,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "a3fc9edf11603dd51661c8e4dac143533f5292a813e909ba184f8a51ce857be7"
+  "reportId": "b9352a77bd5fd478d11a2286819e7f6ec8c7f5547030cf001f2496cb2c28a60c"
 }

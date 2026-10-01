@@ -164,10 +164,12 @@
     "grounding:artifacts": "node scripts/grounding-artifacts.ts",
     "grounding:workflow": "node scripts/grounding-workflow.ts",
     "benchmark:lightrag": "node benchmark/lightrag.ts",
-    "emit:lightrag-report": "jaren-emit --schema benchmark/schemas/lightrag.schema.json --out benchmark/lib --bundle lightrag.types.ts",
+    "emit:lightrag-report": "node scripts/lightrag-report-schema.ts",
     "emit:lightrag": "node scripts/lightrag-schema.ts",
     "test:lightrag": "node --test \"test/lightrag/*.test.ts\" \"test/store/lightrag*.test.ts\"",
-    "lightrag:prompts": "node scripts/lightrag-prompts.ts"
+    "lightrag:prompts": "node scripts/lightrag-prompts.ts",
+    "benchmark:lightrag:ladder": "node --max-old-space-size=8192 benchmark/lightrag-ladder.ts",
+    "benchmark:lightrag:parity": "node benchmark/lightrag-ultradomain.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

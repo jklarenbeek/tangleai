@@ -31,6 +31,7 @@ revision checks as manual edits; hosts retain execution and lifecycle ownership.
 | durable memory | `@tangleai/context` ledger: 4 kinds, evidence-mandatory, 4-method storage seam (+ optional `rank`); a memory carries `embedding` + `embeddedBy` as a pair | `@tangleai/memory` store of full units (the same pair, plus confidence, supersession, provenance) |
 | memory hygiene | *(none — ROADMAP names the missing measurement)* | novelty gate, crystallizer, contradiction resolution, outcome learning |
 | retrieval ranking | ledger `recall({ near })`: cosine through the embedder seam, refused without it, refused across identities, skips reported; over `@jarenjs/db`, `derive: 'vector'` + the k-nearest plan | `recallByEmbedding` — the same rule over Tangle's own units (supersession-aware), and the pairwise comparisons inside the policies; `rankDocumentChunks` is the sole document semantic ranker, with active-version and parent expansion policy above it |
+| graph retrieval | Jaren vector kernels, bounded entity includes, closed schemas and structured-output repair | `@tangleai/lightrag`: immutable claims and active canonical projections, name/theme folding, co-reference policy, fixed-root one-hop expansion, keyword planning and the metered grounded answer engine; `@tangleai/store` commits document and graph heads together |
 | governed intent planning | Models owns structured-output repair; GMPL owns prompt artifacts and the clarification pattern; MAS owns interaction waits, replay and shared budget accounting | `@tangleai/grounding` owns rules-first triage, curated field questions, verbatim host-response projection, closed-vocabulary fact gates and profile query expansion. Its SQLite adapter drives the existing MAS queue; intent-only clarification is an opt-in deterministic terminal projection, not another executor. |
 | composed grounded sessions | Native MAS node lifecycle, revision-bound agent components, GMPL interactions and the Jaren SQLite job worker | `@tangleai/grounding` composes rules, planning, local/web evidence, conflict interpretation and validated claim ledgers in one workflow. Desktop reads retained identities and presents seven commands/reads through the existing contract dispatcher; no separate runtime, polling loop or subscription. |
 | LLM judgment | `@tangleai/models` `createStructuredOutput` + gates + repair loop | the contradiction judge (verdict schema + messages live in `@tangleai/memory/contradiction`) |
@@ -60,6 +61,11 @@ validation, patching, statistics, rendering and execution mechanisms stay at
 their existing owners.
 
 ## What the suite already has — read before building
+
+The suite's entity includes are bounded one-hop relation loading. They do not
+provide a k-hop graph policy. Tangle's graph lane uses those storage primitives,
+the existing vector kernels and structured output; its fixed-root expansion,
+claim provenance, active projections and answer policy remain Tangle-owned.
 
 Current Jaren 0.91.4 adoption: [integration audit](JARENJS_INTEGRATION.md).
 Current ownership: [migration handoff](JAREN_AI_MIGRATION.md).

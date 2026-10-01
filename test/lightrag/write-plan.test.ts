@@ -6,11 +6,36 @@ import { planProjectionWrites, planRetraction } from '../../packages/lightrag/sr
 import { validateGraphProjection } from '../../packages/lightrag/src/projection.ts';
 import { lightragMust } from '../../packages/lightrag/src/errors.ts';
 import { validateLightRagShape } from '../../packages/lightrag/src/schema.ts';
+import { validateGraphContribution } from '../../packages/lightrag/src/contribution.ts';
+import { createMemoryLightRagStore } from '../../packages/lightrag/src/store.ts';
+import { openTangleDb, createLightRagStore } from '@tangleai/store';
+import { lightragRevisionOf } from '../../packages/lightrag/src/identity.ts';
 import { graphClaim, graphEntity, graphInput, stagedGraphProjection } from '../fixtures/lightrag-records.ts';
 import type { GraphProjection, ProjectionWritePlan } from '../../packages/lightrag/src/contracts.gen.ts';
 const projected = (plan: ProjectionWritePlan): GraphProjection => {
     const row=plan.writes.at(-1)!;assert.equal(row.table,'projections');if(row.table!=='projections')throw Error('Projection must commit last.');return row.row;
 };
+it('a write plan bounds retained preparation duplication and persists its exact bytes on both adapters', async () => {
+    const claim=await graphClaim('Cedar',{description:'Cedar retains independently evidenced equipment. '.repeat(400)}),entity=await graphEntity(claim);
+    const contribution=lightragMust(await planContribution(graphInput([claim],[entity]))),projection=await stagedGraphProjection(contribution);
+    projection.prepared=lightragMust(await validateGraphContribution({sourceId:projection.sourceId,versionId:projection.versionId,plan:contribution,
+        identities:projection.identities,contributionRevision:projection.contributionRevision,spend:projection.spend,warnings:[],failures:[],partial:false,
+        completedChunkIds:projection.chunkIds,stats:{completedChunks:1,failedChunks:0,entityClaims:1,relationClaims:0,entities:1,relations:0,merges:0,decisions:0,embeddingCalls:0}}));
+    const plan=lightragMust(await planProjectionWrites({projection,contribution,projections:[],actualHead:EMPTY_HEAD,expectedHead:EMPTY_HEAD,at:null}));
+    assert.ok(JSON.stringify(plan).length < 3*JSON.stringify(projection.prepared).length,'Retained preparation must not multiply into both projection writes.');
+    const db=await openTangleDb();
+    try { for (const store of [createMemoryLightRagStore(),createLightRagStore(db)]) {
+        lightragMust(await store.apply(plan));
+        const active=await store.activeProjectionFor(projection.sourceId);assert.deepEqual(active?.prepared,projection.prepared);
+        const replay=lightragMust(await store.apply(plan));assert.equal(replay.replayed,true);assert.equal(replay.writes,0);
+        const forged=structuredClone(plan),last=forged.writes.at(-1)!;
+        if(last.table!=='projections')throw Error('Projection must commit last.');
+        last.row.prepared={...projection.prepared,warnings:['unbound retained bytes']};
+        const {revision:_,...body}=forged;forged.revision=await lightragRevisionOf(body);
+        const refused=await store.apply(forged);assert.equal(refused.valid,false);if(!refused.valid)assert.equal(refused.issues[0].code,'TLRAG1002');
+        assert.deepEqual(await store.activeProjectionFor(projection.sourceId),active);
+    }} finally { await db.close(); }
+});
 it('activation stages members before canonical writes and commits the native fence last', async () => {
     const claim=await graphClaim('Cedar'),entity=await graphEntity(claim),contribution=lightragMust(await planContribution(graphInput([claim],[entity]))),projection=await stagedGraphProjection(contribution);
     const plan=lightragMust(await planProjectionWrites({projection,contribution,projections:[],actualHead:EMPTY_HEAD,expectedHead:EMPTY_HEAD,at:null}));

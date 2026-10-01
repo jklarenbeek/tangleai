@@ -41,9 +41,19 @@ Each retained projection keeps its activation/retraction fences, contribution-pl
 revision and claim-bound co-reference decisions with their reasons. Injected
 failures roll back every write. Exact replay changes zero rows or
 revisions. Identical retained contributions reactivate without new claim writes.
+
+Write plans bind retained preparation in their request and prior projection
+snapshots. Projection writes omit that duplicate payload; the checked apply
+boundary restores its exact bytes before storage. Pass the complete plan to
+`storedLightRagWrite(write, plan)` when inspecting a physical write. Recompute
+serialized write plans created with the older expanded representation before
+applying them; stored projections and retained contributions keep their format.
+
 Default claim/profile reads expose active contributions; historical or staged
 reads must be requested explicitly. SQLite collections retain their own physical
 membership metadata while the package owns the logical validation.
+Large membership filters use bounded native queries within the same transaction,
+preserving filter intersections, distinct physical rows and stable id ordering.
 
 Content boundaries return `{ valid, value }` or `{ valid: false, issues }` with
 `TLRAG1001`–`TLRAG1010`. The scoped apply helper throws an internal refusal to
@@ -164,3 +174,37 @@ Run `npm run lightrag:smoke` for the public keyless lifecycle, all four modes
 through memory and SQLite graphs, a no-model answer and a conservative GC dry
 run. Its ambient fetch trap must observe zero requests. The packed consumer runs
 the same example from installed JavaScript under Node and Bun.
+
+`npm run benchmark:lightrag` publishes the authored corpus's oracle, random,
+dense and four graph rows, citation resolution, graph coverage and every loss.
+It also measures replacement in the immutable grounding relay history without
+re-extracting unrelated chunks or changing their canonical revisions.
+`npm run benchmark:lightrag:ladder` records native SQLite observations at
+100, 1,000 and 10,000 chunks; the registered target is hybrid p95 at most 250 ms
+at 10,000. The receipt distinguishes logical records read from physical database
+pages and records its machine, source and process peak RSS.
+The command grants Node an 8 GiB old-space heap allowance for the full retained
+10,000-chunk admission; this is not a process RSS cap. A default-heap run
+exhausted memory during admission. Reopening that aborted SQLite transaction
+confirmed zero persisted document or graph rows; the same preparation committed
+successfully with the larger allowance. Query latency and peak RSS remain
+separate measurements in the registered receipt.
+
+`npm run benchmark:lightrag -- --live` prints a credential-free plan and spends
+nothing. `--rows` selects separately authorizable rows; the exact plan id is
+required by `--authorize`. Extraction is counted by active chunks and gleaning;
+unknown profile/review work has explicit conservative bounds, including repairs.
+A plan exceeding the configured request ceiling is refused. The regenerated
+flat control retains the immutable handoff settings, records every scalar drift,
+and shares the existing claim/citation scorer. Per-question attempts and all
+failures survive in the receipt. Paid, replayed, mixed and scripted work are
+labelled separately; the physical guard reserves before every request.
+
+The paired default gate requires the registered positive supported-claim F1
+interval and cost/latency limits. No measured keyless row changes the default.
+`--judge --live-json <receipt>` prints a separate order-swapped diagnostic plan;
+its four dimensions and both orders never enter that gate. The UltraDomain
+entry, `npm run benchmark:lightrag:parity`, records a separate licensed-dataset
+protocol and remains explicitly unrun. See the generated
+[benchmark report](../../docs/LIGHTRAG_BENCHMARK.md) for current observations,
+bound identities, approval commands and remaining limits.

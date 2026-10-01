@@ -450,6 +450,10 @@ export interface RowCitations {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   unresolved: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  resolution: number;
 }
 
 
@@ -464,7 +468,7 @@ export interface RowGraph {
 
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.reason",null]},{"$eq":["$.metrics.count",{"$count":"$.cases[*]"}]},{"$eq":[{"$sum":"$.byKind[*].metrics.count"},{"$count":"$.cases[*]"}]},{"$eq":["$.metrics.mrr",{"$avg":"$.cases[*].mrr"}]},{"$eq":["$.skipped",{"$sum":"$.cases[*].skipped"}]},{"$eq":["$.failed",{"$sum":"$.cases[*].failed"}]},{"$eq":["$.citations.resolved",{"$sum":"$.cases[*].resolved"}]},{"$eq":["$.citations.unresolved",{"$sum":"$.cases[*].unresolved"}]},{"$eq":["$.metrics.recall['1']",{"$avg":"$.cases[*].recall['1']"}]},{"$eq":["$.metrics.recall['3']",{"$avg":"$.cases[*].recall['3']"}]},{"$eq":["$.metrics.recall['5']",{"$avg":"$.cases[*].recall['5']"}]},{"$eq":[["$.byKind[*].kind"],["specific","abstract","one-hop"]]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.count",{"$count":"$.cases[?(@.kind=='specific')]"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='specific')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='specific')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='specific')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='specific')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.count",{"$count":"$.cases[?(@.kind=='abstract')]"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='abstract')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.count",{"$count":"$.cases[?(@.kind=='one-hop')]"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='one-hop')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['5']"}]},{"$if":[{"$eq":["$.identity.providerStatus","scripted"]},{"$and":[{"$eq":["$.identity.model",{"provider":"fixture","model":"scripted"}]},{"$eq":[{"$count":"$.identity.prompts.*"},4]},{"$eq":["$.identity.providerStatus","scripted"]},{"$eq":[{"$count":"$.cases[*].graph"},{"$count":"$.cases[*]"}]},{"$eq":["$.graph.candidateSources.entityKeywords",{"$ne":["$.key","lightrag-high"]}]},{"$eq":["$.graph.candidateSources.relationKeywords",{"$ne":["$.key","lightrag-low"]}]},{"$eq":["$.graph.candidateSources.originalChunks",{"$ne":["$.key","lightrag-hybrid-no-original"]}]},{"$eq":["$.graph.prune.identity",{"$sum":"$.cases[*].graph.prune.identity"}]},{"$eq":["$.graph.prune.width",{"$sum":"$.cases[*].graph.prune.width"}]},{"$eq":["$.graph.prune.unresolvable",{"$sum":"$.cases[*].graph.prune.unresolvable"}]},{"$eq":["$.graph.prune['expansion-limit']",{"$sum":"$.cases[*].graph.prune['expansion-limit']"}]},{"$eq":["$.graph.prune['source-limit']",{"$sum":"$.cases[*].graph.prune['source-limit']"}]},{"$eq":["$.graph.prune['context-budget']",{"$sum":"$.cases[*].graph.prune['context-budget']"}]},{"$eq":["$.graph.prune['no-original']",{"$sum":"$.cases[*].graph.prune['no-original']"}]},{"$eq":["$.graph.prune['candidate-limit']",{"$sum":"$.cases[*].graph.prune['candidate-limit']"}]},{"$eq":["$.graph.skipped.identity",{"$sum":"$.cases[*].graph.skipped.identity"}]},{"$eq":["$.graph.skipped.width",{"$sum":"$.cases[*].graph.skipped.width"}]},{"$eq":["$.graph.skipped.unresolvable",{"$sum":"$.cases[*].graph.skipped.unresolvable"}]},{"$eq":["$.graph.candidates.entityKeywords",{"$sum":"$.cases[*].graph.candidates.entityKeywords"}]},{"$eq":["$.graph.candidates.relationKeywords",{"$sum":"$.cases[*].graph.candidates.relationKeywords"}]},{"$eq":["$.graph.candidates.endpoints",{"$sum":"$.cases[*].graph.candidates.endpoints"}]},{"$eq":["$.graph.candidates.oneHop",{"$sum":"$.cases[*].graph.candidates.oneHop"}]},{"$eq":["$.graph.localCalls",{"$sum":"$.cases[*].graph.localCalls"}]},{"$eq":["$.graph.budgetTokens",{"$sum":"$.cases[*].graph.budgetTokens"}]},{"$eq":["$.metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$every":{"c":"$.cases[*]"},"$satisfies":{"$and":[{"$eq":["$c.skipped",{"$add":[{"$add":["$c.graph.skipped.identity","$c.graph.skipped.width"]},"$c.graph.skipped.unresolvable"]}]},{"$le":["$c.graph.contextTokens","$.limits.contextTokens"]},{"$if":["$.graph.candidateSources.entityKeywords",true,{"$eq":["$c.graph.candidates.entityKeywords",0]}]},{"$if":["$.graph.candidateSources.relationKeywords",true,{"$eq":["$c.graph.candidates.relationKeywords",0]}]},{"$if":["$.graph.candidateSources.originalChunks",true,{"$eq":["$c.graph.originalChunks",0]}]}]}}]},{"$and":[{"$eq":["$.identity.model",null]},{"$eq":["$.identity.prompts",null]},{"$eq":["$.identity.providerStatus","not-run"]},{"$eq":[{"$count":"$.graph"},0]},{"$eq":[{"$count":"$.cases[*].graph"},0]},{"$eq":[{"$count":"$.metrics.graph"},0]},{"$eq":[{"$count":"$.byKind[*].metrics.graph"},0]}]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.reason",null]},{"$eq":["$.metrics.count",{"$count":"$.cases[*]"}]},{"$eq":[{"$sum":"$.byKind[*].metrics.count"},{"$count":"$.cases[*]"}]},{"$eq":["$.metrics.mrr",{"$avg":"$.cases[*].mrr"}]},{"$eq":["$.skipped",{"$sum":"$.cases[*].skipped"}]},{"$eq":["$.failed",{"$sum":"$.cases[*].failed"}]},{"$eq":["$.citations.resolved",{"$sum":"$.cases[*].resolved"}]},{"$eq":["$.citations.unresolved",{"$sum":"$.cases[*].unresolved"}]},{"$eq":["$.metrics.recall['1']",{"$avg":"$.cases[*].recall['1']"}]},{"$eq":["$.metrics.recall['3']",{"$avg":"$.cases[*].recall['3']"}]},{"$eq":["$.metrics.recall['5']",{"$avg":"$.cases[*].recall['5']"}]},{"$eq":[["$.byKind[*].kind"],["specific","abstract","one-hop"]]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.count",{"$count":"$.cases[?(@.kind=='specific')]"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='specific')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='specific')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='specific')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='specific')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.count",{"$count":"$.cases[?(@.kind=='abstract')]"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='abstract')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.count",{"$count":"$.cases[?(@.kind=='one-hop')]"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='one-hop')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['5']"}]},{"$if":[{"$eq":["$.identity.providerStatus","scripted"]},{"$and":[{"$eq":["$.identity.model",{"provider":"fixture","model":"scripted"}]},{"$eq":[{"$count":"$.identity.prompts.*"},4]},{"$eq":["$.identity.providerStatus","scripted"]},{"$eq":[{"$count":"$.cases[*].graph"},{"$count":"$.cases[*]"}]},{"$eq":["$.graph.candidateSources.entityKeywords",{"$ne":["$.key","lightrag-high"]}]},{"$eq":["$.graph.candidateSources.relationKeywords",{"$ne":["$.key","lightrag-low"]}]},{"$eq":["$.graph.candidateSources.originalChunks",{"$ne":["$.key","lightrag-hybrid-no-original"]}]},{"$eq":["$.graph.prune.identity",{"$sum":"$.cases[*].graph.prune.identity"}]},{"$eq":["$.graph.prune.width",{"$sum":"$.cases[*].graph.prune.width"}]},{"$eq":["$.graph.prune.unresolvable",{"$sum":"$.cases[*].graph.prune.unresolvable"}]},{"$eq":["$.graph.prune['expansion-limit']",{"$sum":"$.cases[*].graph.prune['expansion-limit']"}]},{"$eq":["$.graph.prune['source-limit']",{"$sum":"$.cases[*].graph.prune['source-limit']"}]},{"$eq":["$.graph.prune['context-budget']",{"$sum":"$.cases[*].graph.prune['context-budget']"}]},{"$eq":["$.graph.prune['no-original']",{"$sum":"$.cases[*].graph.prune['no-original']"}]},{"$eq":["$.graph.prune['candidate-limit']",{"$sum":"$.cases[*].graph.prune['candidate-limit']"}]},{"$eq":["$.graph.skipped.identity",{"$sum":"$.cases[*].graph.skipped.identity"}]},{"$eq":["$.graph.skipped.width",{"$sum":"$.cases[*].graph.skipped.width"}]},{"$eq":["$.graph.skipped.unresolvable",{"$sum":"$.cases[*].graph.skipped.unresolvable"}]},{"$eq":["$.graph.candidates.entityKeywords",{"$sum":"$.cases[*].graph.candidates.entityKeywords"}]},{"$eq":["$.graph.candidates.relationKeywords",{"$sum":"$.cases[*].graph.candidates.relationKeywords"}]},{"$eq":["$.graph.candidates.endpoints",{"$sum":"$.cases[*].graph.candidates.endpoints"}]},{"$eq":["$.graph.candidates.oneHop",{"$sum":"$.cases[*].graph.candidates.oneHop"}]},{"$eq":["$.graph.localCalls",{"$sum":"$.cases[*].graph.localCalls"}]},{"$eq":["$.graph.budgetTokens",{"$sum":"$.cases[*].graph.budgetTokens"}]},{"$eq":["$.metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$every":{"c":"$.cases[*]"},"$satisfies":{"$and":[{"$eq":["$c.skipped",{"$add":[{"$add":["$c.graph.skipped.identity","$c.graph.skipped.width"]},"$c.graph.skipped.unresolvable"]}]},{"$le":["$c.graph.contextTokens","$.limits.contextTokens"]},{"$if":["$.graph.candidateSources.entityKeywords",true,{"$eq":["$c.graph.candidates.entityKeywords",0]}]},{"$if":["$.graph.candidateSources.relationKeywords",true,{"$eq":["$c.graph.candidates.relationKeywords",0]}]},{"$if":["$.graph.candidateSources.originalChunks",true,{"$eq":["$c.graph.originalChunks",0]}]}]}}]},{"$and":[{"$eq":["$.identity.model",null]},{"$eq":["$.identity.prompts",null]},{"$eq":["$.identity.providerStatus","not-run"]},{"$eq":[{"$count":"$.graph"},0]},{"$eq":[{"$count":"$.cases[*].graph"},0]},{"$eq":[{"$count":"$.metrics.graph"},0]},{"$eq":[{"$count":"$.byKind[*].metrics.graph"},0]}]}]},{"$eq":["$.citations.resolution",{"$if":[{"$eq":[{"$add":["$.citations.resolved","$.citations.unresolved"]},0]},1,{"$div":["$.citations.resolved",{"$add":["$.citations.resolved","$.citations.unresolved"]}]}]}]}]}
  */
 export interface Row {
   key: "oracle" | "random" | "dense-chunk" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original";
@@ -596,7 +600,70 @@ export interface Registration {
 }
 
 
-export interface GraphBuild {
+export interface LightLiveDecision {
+  state: "not-evaluated" | "keep-experimental" | "eligible-for-default-review";
+  defaultChanged: false;
+  clauses: Array<{ clause: Id; passed: boolean; detail: Id; }>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.extractionPasses",{"$mul":["$.chunks",2]}]},{"$eq":["$.profileCalls","$.profileUpdates"]},{"$le":["$.profileUpdates","$.canonicalsTouched"]}]}
+ */
+export interface GraphIndexingStage {
+  source: Id;
+  version: Id;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entityClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relationClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  canonicalsTouched: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  extractionPasses: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profileCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  coreferenceCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documentEmbeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  graphEmbeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  graphBudgetTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profileUpdates: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.contributions",{"$count":"$.stages[*]"}]},{"$eq":["$.entityClaims",{"$sum":"$.stages[*].entityClaims"}]},{"$eq":["$.relationClaims",{"$sum":"$.stages[*].relationClaims"}]},{"$eq":["$.localCalls",{"$sum":"$.stages[*].graphEmbeddingCalls"}]},{"$eq":["$.budgetTokens",{"$sum":"$.stages[*].graphBudgetTokens"}]},{"$eq":["$.extractionPasses",{"$sum":"$.stages[*].extractionPasses"}]},{"$eq":["$.profiledCanonicals",{"$sum":"$.stages[*].profileCalls"}]},{"$eq":["$.coreferenceCalls",{"$sum":"$.stages[*].coreferenceCalls"}]},{"$eq":["$.documentEmbeddingCalls",{"$sum":"$.stages[*].documentEmbeddingCalls"}]}]}
+ */
+export interface Indexing {
   backend: "memory";
   contributions: Count;
   entities: Count;
@@ -607,11 +674,1323 @@ export interface GraphBuild {
   budgetTokens: Count;
   providerCalls: 0;
   providerTokens: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documentEmbeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  extractionPasses: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profiledCanonicals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  coreferenceCalls: number;
+  stages: Array<GraphIndexingStage>;
 }
 
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].key"],"$.registration.rows"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.identity.corpusId","$.registration.fixtureId"]},{"$eq":["$r.identity.questionSetId","$.registration.questionSetId"]},{"$eq":["$r.limits","$.registration.limits"]},{"$eq":["$r.identity.chunker","$.registration.chunker"]},{"$eq":[["$r.cases[*].question"],"$.registration.questionIds"]}]}},{"$eq":["$.rows[?(@.key=='oracle')].identity.retrievalMode","oracle"]},{"$eq":["$.rows[?(@.key=='oracle')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='random')].identity.retrievalMode","random"]},{"$eq":["$.rows[?(@.key=='random')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.retrievalMode","dense-chunk"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.retrievalMode","low"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.retrievalMode","high"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.retrievalMode","hybrid"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.retrievalMode","hybrid-no-original"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.providerStatus","scripted"]},{"$eq":["$.graphBuild.entities","$.fixture.entities"]},{"$eq":["$.graphBuild.relations","$.fixture.relations"]},{"$eq":["$.graphBuild.contributions","$.fixture.versions"]},{"$every":{"n":"$.rows[?(@.key=='lightrag-hybrid-no-original')].cases[*]"},"$satisfies":{"$some":{"h":"$.rows[?(@.key=='lightrag-hybrid')].cases[*]"},"$satisfies":{"$and":[{"$eq":["$n.question","$h.question"]},{"$eq":["$n.ranked","$h.ranked"]},{"$eq":["$n.recall","$h.recall"]},{"$eq":["$n.mrr","$h.mrr"]},{"$eq":["$n.graph.entities","$h.graph.entities"]},{"$eq":["$n.graph.relations","$h.graph.relations"]},{"$eq":["$n.graph.goldEntities","$h.graph.goldEntities"]},{"$eq":["$n.graph.goldRelations","$h.graph.goldRelations"]}]}}}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.reextractedChunks","$.chunks"]},{"$eq":["$.unrelatedChunksExtracted",0]},{"$eq":["$.unaffectedRevisionsChanged",0]},{"$eq":["$.withdrawnSupportRemaining",0]}]}
+ */
+export interface GraphIncrementalObservation {
+  source: Id;
+  previousVersion: Id;
+  version: Id;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reextractedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unrelatedChunksExtracted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  canonicalsTouched: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unaffectedCanonicals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unaffectedRevisionsChanged: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  claimsWithdrawn: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  withdrawnSupportRemaining: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  localCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budgetTokens: number;
+  providerCalls: 0;
+  fixtureId: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.fraction",{"$if":[{"$eq":["$.total",0]},1,{"$div":[{"$count":"$.reached[*]"},"$.total"]}]}]}
+ */
+export interface GraphCoverageLevel {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  reached: Array<Id>;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  fraction: number;
+}
+
+
+export interface GraphCoverage {
+  entities: GraphCoverageLevel;
+  relations: GraphCoverageLevel;
+}
+
+
+export type LightLiveRegistration = {"version":1,"rows":["flat-grounded","lightrag-low","lightrag-high","lightrag-hybrid-no-original","lightrag-hybrid"],"model":"z-ai/glm-5.3-flash","embedModel":"baai/bge-m3","dims":1024,"thinking":"default","gleaning":1,"maxRepairs":1,"coreferenceDecisionsPerSource":64,"embeddingBatchSize":32,"contextTokens":4000,"seed":17753,"resamples":10000,"confidence":0.95,"primary":"supported-claim-f1","treatment":"lightrag-hybrid","control":"flat-grounded","maxTotalTokenRatio":1,"maxP95Ratio":1,"indexingCost":"amortize all indexing tokens over the complete question set","decision":"positive primary interval, complete paid pair, every control drift reported, resolved citations and cost/latency ratios within limits; judge is diagnostic only","tokenAccounting":"provider usage when supplied; otherwise the shared character estimate, including embedding inputs and unsuccessful calls"};
+
+export type LightLiveRowKey = "flat-grounded" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid-no-original" | "lightrag-hybrid";
+
+export interface LightragLivePlanWire {
+  provider: Id;
+  base: string | null;
+  model: Id;
+  embedModel: Id;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+  thinking: "default";
+}
+
+
+export interface LightragLivePlanCorpus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activeChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  activeSources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documentEmbeddingCalls: number;
+}
+
+
+export interface LightLiveIndexingPlan {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documentEmbeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  extraction: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  extractionRepairAllowance: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profilingUpperBound: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profilingRepairAllowance: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  coreferenceUpperBound: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  coreferenceRepairAllowance: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  graphEmbeddingUpperBound: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.maxCalls",{"$add":[{"$add":["$.planning","$.answers"]},{"$add":["$.queryEmbeddingUpperBound","$.repairAllowance"]}]}]}
+ */
+export interface LightLiveCalls {
+  key: LightLiveRowKey;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planning: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answers: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  queryEmbeddingUpperBound: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairAllowance: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.maxRequests",{"$add":["$.indexing.maxCalls",{"$sum":"$.rowCalls[*].maxCalls"}]}]},{"$eq":[["$.rows[*]"],["$.rowCalls[*].key"]]},{"$eq":["$.runnable",{"$eq":[{"$count":"$.refusals[*]"},0]}]}]}
+ */
+export interface LightragLivePlan {
+  document: "lightrag-live-plan";
+  planId: Sha256;
+  registrationId: Sha256;
+  registration: LightLiveRegistration;
+  fixtureId: Sha256;
+  handoffSha256: Sha256;
+  source: SourceReceipt;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  questionIds: Array<Id>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  rows: Array<LightLiveRowKey>;
+  wire: LightragLivePlanWire;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxCalls: number;
+  fresh: boolean;
+  cache: string;
+  corpus: LightragLivePlanCorpus;
+  indexing: LightLiveIndexingPlan;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rowCalls: Array<LightLiveCalls>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxRequests: number;
+  runnable: boolean;
+  refusals: Array<Id>;
+  prompts: { extraction: Sha256; profiling: Sha256; deduplication: Sha256; planning: Sha256; generation: Sha256; flat: Sha256; };
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1, maximum=4
+ */
+export type LightLiveAttemptCategoryOneOf1 = number;
+
+/**
+ * What happened to one question in one row. `analytic` belongs only to the no-generation row; a failure stays in the attempt and makes the paired comparison ineligible.
+ */
+export type GroundOwner_liveStatus = "answered" | "invalid" | "wire-failure" | "budget-stop" | "analytic";
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundOwner_liveTraceRetrievedItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundOwner_liveTraceSuppliedItem = string;
+
+/**
+ * The exact retrieval/supply trace of one question through the current path: ranked candidates, raw serialized blocks with duplicate neighbour expansion retained, unique supplied chunks, and the prompt bytes they cost.
+ */
+export interface GroundOwner_liveTrace {
+  retrieved: Array<GroundOwner_liveTraceRetrievedItem>;
+  supplied: Array<GroundOwner_liveTraceSuppliedItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  blocks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uniqueSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateExpansions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  characters: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundOwner_answerClaimCitationsItem = string;
+
+export interface GroundOwner_answerClaim {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  citations: Array<GroundOwner_answerClaimCitationsItem>;
+}
+
+
+export interface GroundOwner_answerValueOneOf1 {
+  disposition: "answer";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claims: Array<GroundOwner_answerClaim>;
+}
+
+
+export interface GroundOwner_answerValueOneOf2 {
+  disposition: "abstain";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=0
+   */
+  claims: Array<unknown>;
+}
+
+
+/**
+ * The one answer contract of both the scripted and live paths. There is no free-prose member a material claim can hide in: the visible answer is rendered from the claim texts in array order, or from the abstention reason.
+ */
+export type GroundOwner_answerValue = GroundOwner_answerValueOneOf1 | GroundOwner_answerValueOneOf2;
+
+/**
+ * The one ordered terminal outcome of a visible citation, walked in exactly this order against the attempt trace: unknown address first, then supply, then version status, then cutoff eligibility, then oracle support. A citation may not skip a state and may not carry two outcomes.
+ */
+export type GroundOwner_citationOutcome = "supporting" | "resolved-not-supporting" | "not-supplied" | "inactive-version" | "future-evidence" | "unknown-evidence";
+
+/**
+ * One visible citation occurrence, claim-scoped, in reply order. Raw: duplicates remain here and are deduplicated only for set metrics.
+ */
+export interface GroundOwner_citationRecord {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  claimId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  citation: string;
+  outcome: GroundOwner_citationOutcome;
+}
+
+
+export interface GroundOwner_outcomeCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  supporting: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolvedNotSupporting: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  notSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  inactiveVersion: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  futureEvidence: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unknownEvidence: number;
+}
+
+
+export interface GroundOwner_citationCounts {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  raw: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unique: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolvedUnique: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  supportingUnique: number;
+  byOutcome: GroundOwner_outcomeCounts;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9@:_-]*$"
+ */
+export type GroundOwner_fixtureKey = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundOwner_claimMatchPredictedIdOneOf1 = string;
+
+export interface GroundOwner_claimMatch {
+  claim: GroundOwner_fixtureKey;
+  predictedId: GroundOwner_claimMatchPredictedIdOneOf1 | null;
+  matched: boolean;
+  supported: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundOwner_claimScoreF1OneOf1 = number;
+
+/**
+ * One-to-one predicate assignment and the supported-material-claim counts. A matched claim without a supporting terminal citation is one FP and one FN, never half credit. `f1` is null on a non-answerable question: it has no claim denominator.
+ */
+export interface GroundOwner_claimScore {
+  expected: Array<GroundOwner_fixtureKey>;
+  matches: Array<GroundOwner_claimMatch>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tp: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fp: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fn: number;
+  f1: GroundOwner_claimScoreF1OneOf1 | null;
+}
+
+
+export interface GroundOwner_abstentionScore {
+  expected: boolean;
+  given: boolean;
+  correct: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveAttemptAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveAttemptRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveAttemptSuppliedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveAttemptCitedRecallOneOf1 = number;
+
+export interface LightLiveCost {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type LightLiveAttemptCompletionLatenciesItem = number;
+
+/**
+ * One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.tokens","$.cost.tokens"]},{"$eq":["$.ms","$.cost.ms"]},{"$eq":["$.replayed","$.cost.replayed"]},{"$eq":["$.attempts","$.cost.turns"]},{"$eq":[{"$count":"$.completionLatencies[*]"},"$.cost.turns"]}]}
+ */
+export interface LightLiveAttempt {
+  category: LightLiveAttemptCategoryOneOf1 | null;
+  status: GroundOwner_liveStatus;
+  trace: GroundOwner_liveTrace | null;
+  answer: GroundOwner_answerValue | null;
+  rendered: string | null;
+  citations: Array<GroundOwner_citationRecord>;
+  citationCounts: GroundOwner_citationCounts | null;
+  claims: GroundOwner_claimScore | null;
+  abstention: GroundOwner_abstentionScore | null;
+  answerF1: LightLiveAttemptAnswerF1OneOf1 | null;
+  retrievedRecall: LightLiveAttemptRetrievedRecallOneOf1 | null;
+  suppliedRecall: LightLiveAttemptSuppliedRecallOneOf1 | null;
+  citedRecall: LightLiveAttemptCitedRecallOneOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  questionId: string;
+  cost: LightLiveCost;
+  retrievalCost: LightLiveCost;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  elapsedMs: number;
+  completionLatencies: Array<LightLiveAttemptCompletionLatenciesItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalRequests: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+ */
+export type GroundOwner_sha256 = string;
+
+export interface LightLiveSummaryQuestionsUnanswered {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wire: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budget: number;
+}
+
+
+export interface LightLiveSummaryQuestions {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  planned: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  answered: number;
+  unanswered: LightLiveSummaryQuestionsUnanswered;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  invalid: number;
+}
+
+
+export interface GroundOwner_liveClaims {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tp: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fp: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fn: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  microPrecision: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  microRecall: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  microF1: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  meanF1: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveSummaryAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveSummaryAbstentionOneOf1AccuracyOneOf1 = number;
+
+export interface LightLiveSummaryAbstentionOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  correct: number;
+  accuracy: LightLiveSummaryAbstentionOneOf1AccuracyOneOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveSummaryCitedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveSummaryRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LightLiveSummarySuppliedRecallOneOf1 = number;
+
+export interface LightLiveSummarySupplyOneOf1 {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  candidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  blocks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  uniqueSupplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateExpansions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  characters: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  estimatedTokens: number;
+}
+
+
+export interface GroundOwner_liveCost {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promptTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completionTokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+}
+
+
+export interface GroundOwner_liveLatency {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  count: number;
+  medianMs: number | null;
+  p95Ms: number | null;
+}
+
+
+/**
+ * One of the three registered rows. `documents-retrieved` never generates: it is the retrieval/supply ceiling, its results are `analytic` and its config-identity row is `not-run`. The two generated rows share every control and are comparable only on complete identical question sets.
+ */
+export interface LightLiveSummary {
+  generates: boolean;
+  /**
+   * Canonical SHA-256 of the row's sorted successfully-answered question ids — what eligibility compares instead of walking two lists.
+   */
+  questionSet: GroundOwner_sha256;
+  questions: LightLiveSummaryQuestions;
+  claims: GroundOwner_liveClaims | null;
+  answerF1: LightLiveSummaryAnswerF1OneOf1 | null;
+  abstention: LightLiveSummaryAbstentionOneOf1 | null;
+  citations: GroundOwner_citationCounts | null;
+  citedRecall: LightLiveSummaryCitedRecallOneOf1 | null;
+  retrievedRecall: LightLiveSummaryRetrievedRecallOneOf1 | null;
+  suppliedRecall: LightLiveSummarySuppliedRecallOneOf1 | null;
+  supply: LightLiveSummarySupplyOneOf1 | null;
+  cost: GroundOwner_liveCost | null;
+  latency: GroundOwner_liveLatency | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type LightLiveRowLatencyMedianMsAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type LightLiveRowLatencyP95MsAnyOf1 = number;
+
+export interface LightLiveRowLatency {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  count: number;
+  medianMs: LightLiveRowLatencyMedianMsAnyOf1 | null;
+  p95Ms: LightLiveRowLatencyP95MsAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.questions.planned",{"$count":"$.attempts[*]"}]},{"$eq":["$.summary.questions.answered",{"$count":"$.attempts[?(@.status=='answered')]"}]},{"$eq":["$.summary.questions.invalid",{"$count":"$.attempts[?(@.status=='invalid')]"}]},{"$eq":["$.summary.claims.tp",{"$sum":"$.attempts[*].claims.tp"}]},{"$eq":["$.summary.claims.fp",{"$sum":"$.attempts[*].claims.fp"}]},{"$eq":["$.summary.claims.fn",{"$sum":"$.attempts[*].claims.fn"}]}]}
+ */
+export interface LightLiveRow {
+  key: LightLiveRowKey;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  attempts: Array<LightLiveAttempt>;
+  summary: LightLiveSummary;
+  totalCost: LightLiveCost;
+  retrievalCost: LightLiveCost;
+  latency: LightLiveRowLatency;
+  tier: "scripted" | "paid" | "replayed" | "mixed";
+}
+
+
+export interface LightragLiveIndexing {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completedSources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failedSources: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalRequests: number;
+}
+
+
+export interface LightragLiveLogicalSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.changed",{"$not":{"$eq":["$.expected","$.actual"]}}]}
+ */
+export interface LightControlDriftFieldsItem {
+  path: Id;
+  expected: string | number | boolean | null;
+  actual: string | number | boolean | null;
+  changed: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.changed",{"$count":"$.fields[?(@.changed==true)]"}]}
+ */
+export interface LightControlDrift {
+  reportId: Sha256;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  changed: number;
+  fields: Array<LightControlDriftFieldsItem>;
+}
+
+
+export interface LightLiveComparisonPower {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  pairedSd: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  standardError: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  minimumDetectableEffect: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tiedPairs: number;
+}
+
+
+export interface LightLiveComparison {
+  metric: "supported-claim-f1" | "answer-f1";
+  treatment: "lightrag-hybrid";
+  control: "flat-grounded";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  pairs: number;
+  mean: number;
+  interval: { low: number; high: number; };
+  oneSidedLowerBound: number;
+  power: LightLiveComparisonPower;
+}
+
+
+export interface LightLivePairing {
+  eligible: boolean;
+  reasons: Array<Id>;
+  comparisons: Array<LightLiveComparison>;
+  costTokenDelta: number | null;
+  p95DeltaMs: number | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$le":["$.physicalRequests","$.plan.maxCalls"]},{"$if":[{"$eq":["$.status","not-run"]},{"$and":[{"$eq":[{"$count":"$.rows[*]"},0]},{"$eq":["$.physicalRequests",0]}]},{"$eq":[["$.rows[*].key"],"$.plan.rows"]}]}]}
+ */
+export interface LightragLive {
+  document: "lightrag-live";
+  reportId: Sha256;
+  status: "not-run" | "executed";
+  tier: "not-run" | "scripted" | "paid" | "replayed" | "mixed";
+  reason: Id | null;
+  plan: LightragLivePlan;
+  rows: Array<LightLiveRow>;
+  indexing: LightragLiveIndexing;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalRequests: number;
+  logicalSpend: LightragLiveLogicalSpend;
+  controlDrift: LightControlDrift | null;
+  pairing: LightLivePairing;
+  decision: LightLiveDecision;
+}
+
+
+export interface LightragJudgePlan {
+  document: "lightrag-judge-plan";
+  planId: Sha256;
+  source: SourceReceipt;
+  reportId: Sha256 | null;
+  promptRevision: Sha256;
+  provider: Id;
+  model: Id;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  questionIds: Array<Id>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  comparisons: Array<LightLiveRowKey>;
+  dimensions: ["comprehensiveness","diversity","empowerment","overall"];
+  orders: ["control-first","treatment-first"];
+  maxRepairs: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  maxCalls: number;
+  runnable: boolean;
+  refusals: Array<Id>;
+  base: string | null;
+  cache: string;
+  fresh: boolean;
+}
+
+
+export interface LightJudgeReply {
+  comprehensiveness: { winner: "A" | "B" | "tie"; reason: Id; };
+  diversity: { winner: "A" | "B" | "tie"; reason: Id; };
+  empowerment: { winner: "A" | "B" | "tie"; reason: Id; };
+  overall: { winner: "A" | "B" | "tie"; reason: Id; };
+}
+
+
+export interface LightJudgeOrderSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+}
+
+
+export interface LightJudgeOrder {
+  order: "control-first" | "treatment-first";
+  status: "answered" | "invalid" | "wire-failure" | "budget-stop";
+  reply: LightJudgeReply | null;
+  winners: { comprehensiveness: "flat-grounded" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original" | "tie"; diversity: "flat-grounded" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original" | "tie"; empowerment: "flat-grounded" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original" | "tie"; overall: "flat-grounded" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original" | "tie"; } | null;
+  spend: LightJudgeOrderSpend;
+  replayed: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalRequests: number;
+}
+
+
+export interface LightJudgePair {
+  questionId: Id;
+  treatment: LightLiveRowKey;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  orders: Array<LightJudgeOrder>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  disagreements: Array<"comprehensiveness" | "diversity" | "empowerment" | "overall">;
+}
+
+
+export interface LightragJudgeSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+}
+
+
+export interface LightragJudge {
+  document: "lightrag-judge";
+  reportId: Sha256;
+  plan: LightragJudgePlan;
+  status: "not-run" | "executed";
+  tier: "not-run" | "scripted" | "paid" | "replayed" | "mixed";
+  reason: Id | null;
+  pairs: Array<LightJudgePair>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failedOrders: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  disagreements: number;
+  spend: LightragJudgeSpend;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalRequests: number;
+  defaultInput: false;
+}
+
+
+export interface LightragParity {
+  document: "lightrag-parity";
+  planId: Sha256;
+  status: "not-run";
+  reason: Id;
+  datasetPath: Id | null;
+  datasetSha256: Sha256 | null;
+  licenseAcknowledged: boolean;
+  authorized: boolean;
+  protocol: {"paper":"2410.05779v3","subsets":["Agriculture","CS","Legal","Mix"],"questionsPerSubset":125,"questionGeneration":"five users, five tasks per user and five questions per task over the complete subset","llm":"gpt-4o-mini","judge":"gpt-4o-mini","gleaning":1,"chunkSize":1200,"ordering":["control-first","treatment-first"],"dimensions":["comprehensiveness","diversity","empowerment","overall"],"measurement":"No paper-score comparison until corpus, generated questions, prompt bytes, model snapshots, embedder, tokenizer, overlap and all baseline settings are pinned and the full separately authorized protocol executes."};
+  promptRevisions: { extraction: Sha256; profiling: Sha256; deduplication: Sha256; planning: Sha256; generation: Sha256; judge: Sha256; };
+  physicalRequests: 0;
+  paperComparison: false;
+}
+
+
+export type LightragLadderRegistration = {"version":"synthetic-directed-pairs/1","sizes":[100,1000,10000],"seed":24105779,"sourcesPerSize":1,"entitiesPerChunk":2,"relationsPerChunk":1,"topology":"Distinct directed pairs with seeded fixture names and themes; ordinal suffixes prevent canonical collapse.","chunker":{"version":"heading-recursive/1","maxTokens":100,"overlapTokens":0},"embeddedBy":{"model":"hash-trigram-64","dims":64},"mode":"hybrid","questions":18,"warmupQueries":1,"samplesPerQuestion":1,"targetChunks":10000,"maxP95Ms":250,"quantile":"nearest-rank","rowsRead":"Logical rows returned by graph and document store reads; not physical SQLite page scans.","rss":"Process lifetime high-water RSS at the end of each size; includes earlier sizes.","limits":{"keywordsPerLevel":8,"candidatesPerKeyword":10,"expansionEntities":20,"expansionRelations":40,"chunksPerSource":3,"contextTokens":4000},"extract":{"maxElementsPerChunk":3,"minUsefulChars":1,"allowPartial":false},"minParagraphCharacters":240,"paddingSentence":" This is registered synthetic evidence.","questionIds":["specific-equipment","specific-funding","specific-launch","specific-archive-host","specific-timber","specific-produce","abstract-training","abstract-grant-admin","abstract-cargo","abstract-festival-host","abstract-restoration","abstract-school-funding","hop-shelves","hop-launch","hop-archive-host","hop-timber","hop-grant-admin","hop-opening"]};
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type LadderMachineLoadAverageItem = number;
+
+export interface LadderMachine {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  platform: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  arch: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  cpu: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  logicalCpus: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  totalMemoryBytes: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runtime: string;
+  driver: "node:sqlite";
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  loadAverage: Array<LadderMachineLoadAverageItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1
+ */
+export type LightragLadderSizesItem = number;
+
+export interface LadderRowRowsRead {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  graph: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documents: number;
+}
+
+
+export interface LadderRowSkipped {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  identity: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  width: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unresolvable: number;
+}
+
+
+export interface LadderRowCitationResolution {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  supplied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolved: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  ratio: number;
+}
+
+
+export interface LadderSample {
+  questionId: Id;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  graphRows: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  documentRows: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  skipped: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  citations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  localCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budgetTokens: number;
+}
+
+
+export interface LadderRowRetrieval {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p50Ms: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p95Ms: number;
+  /**
+   * Schema constraints this type cannot express: minItems=18, maxItems=18
+   */
+  samples: Array<LadderSample>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.entities",{"$mul":["$.chunks",2]}]},{"$eq":["$.relations","$.chunks"]},{"$eq":["$.claims",{"$mul":["$.chunks",3]}]},{"$eq":["$.extractedChunks","$.chunks"]},{"$eq":["$.profiledCanonicals",{"$mul":["$.chunks",3]}]},{"$eq":["$.reviewCalls",0]},{"$eq":["$.rowsRead.graph",{"$sum":"$.retrieval.samples[*].graphRows"}]},{"$eq":["$.rowsRead.documents",{"$sum":"$.retrieval.samples[*].documentRows"}]},{"$eq":["$.citationResolution.supplied",{"$sum":"$.retrieval.samples[*].citations"}]},{"$eq":["$.citationResolution.resolved","$.citationResolution.supplied"]},{"$eq":["$.citationResolution.ratio",1]},{"$eq":["$.retrieval.p95Ms",{"$max":"$.retrieval.samples[*].ms"}]},{"$ge":[{"$count":{"$for":{"r":"$.retrieval.samples[*]"},"$where":{"$le":["$r.ms","$.retrieval.p50Ms"]},"$return":"$r"}},9]},{"$lt":[{"$count":{"$for":{"r":"$.retrieval.samples[*]"},"$where":{"$lt":["$r.ms","$.retrieval.p50Ms"]},"$return":"$r"}},9]},{"$some":{"r":"$.retrieval.samples[*]"},"$satisfies":{"$eq":["$r.ms","$.retrieval.p50Ms"]}},{"$eq":[["$.retrieval.samples[*].questionId"],["specific-equipment","specific-funding","specific-launch","specific-archive-host","specific-timber","specific-produce","abstract-training","abstract-grant-admin","abstract-cargo","abstract-festival-host","abstract-restoration","abstract-school-funding","hop-shelves","hop-launch","hop-archive-host","hop-timber","hop-grant-admin","hop-opening"]]},{"$eq":["$.queryLocalCalls",{"$sum":"$.retrieval.samples[*].localCalls"}]},{"$eq":["$.queryBudgetTokens",{"$sum":"$.retrieval.samples[*].budgetTokens"}]},{"$eq":["$.embeddingTexts",{"$mul":["$.chunks",4]}]},{"$eq":[{"$sum":"$.retrieval.samples[*].skipped"},{"$add":[{"$add":["$.skipped.identity","$.skipped.width"]},"$.skipped.unresolvable"]}]}]}
+ */
+export interface LadderRow {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  chunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entities: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  claims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  extractedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  profiledCanonicals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reviewCalls: number;
+  providerCalls: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingTexts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  budgetTokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  indexingMs: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  promotionMs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  peakRssBytes: number;
+  corpusSha256: Sha256;
+  rowsRead: LadderRowRowsRead;
+  skipped: LadderRowSkipped;
+  citationResolution: LadderRowCitationResolution;
+  retrieval: LadderRowRetrieval;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  queryLocalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  queryBudgetTokens: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].chunks"],"$.sizes"]},{"$eq":["$.status",{"$if":[{"$eq":["$.sizes",[100,1000,10000]]},"measured","probe"]}]},{"$eq":["$.backendDecision",{"$if":[{"$eq":["$.status","probe"]},null,{"$if":[{"$le":[{"$head":{"$for":{"r":"$.rows[*]"},"$where":{"$eq":["$r.chunks",10000]},"$return":"$r.retrieval.p95Ms"}},250]},"sqlite-sufficient","scale-row-registered"]}]}]}]}
+ */
+export interface LightragLadder {
+  document: "lightrag-ladder";
+  schemaVersion: 1;
+  status: "measured" | "probe";
+  receiptId: Sha256;
+  registration: LightragLadderRegistration;
+  registrationId: Sha256;
+  fixtureId: Sha256;
+  source: SourceReceipt;
+  identity: LadderMachine;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  at: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  sizes: Array<LightragLadderSizesItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rows: Array<LadderRow>;
+  backendDecision: "sqlite-sufficient" | "scale-row-registered" | null;
+  physicalRequests: 0;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].key"],"$.registration.rows"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.identity.corpusId","$.registration.fixtureId"]},{"$eq":["$r.identity.questionSetId","$.registration.questionSetId"]},{"$eq":["$r.limits","$.registration.limits"]},{"$eq":["$r.identity.chunker","$.registration.chunker"]},{"$eq":[["$r.cases[*].question"],"$.registration.questionIds"]}]}},{"$eq":["$.rows[?(@.key=='oracle')].identity.retrievalMode","oracle"]},{"$eq":["$.rows[?(@.key=='oracle')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='random')].identity.retrievalMode","random"]},{"$eq":["$.rows[?(@.key=='random')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.retrievalMode","dense-chunk"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.retrievalMode","low"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.retrievalMode","high"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.retrievalMode","hybrid"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.retrievalMode","hybrid-no-original"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.providerStatus","scripted"]},{"$eq":["$.indexing.entities","$.fixture.entities"]},{"$eq":["$.indexing.relations","$.fixture.relations"]},{"$eq":["$.indexing.contributions","$.fixture.versions"]},{"$every":{"n":"$.rows[?(@.key=='lightrag-hybrid-no-original')].cases[*]"},"$satisfies":{"$some":{"h":"$.rows[?(@.key=='lightrag-hybrid')].cases[*]"},"$satisfies":{"$and":[{"$eq":["$n.question","$h.question"]},{"$eq":["$n.ranked","$h.ranked"]},{"$eq":["$n.recall","$h.recall"]},{"$eq":["$n.mrr","$h.mrr"]},{"$eq":["$n.graph.entities","$h.graph.entities"]},{"$eq":["$n.graph.relations","$h.graph.relations"]},{"$eq":["$n.graph.goldEntities","$h.graph.goldEntities"]},{"$eq":["$n.graph.goldRelations","$h.graph.goldRelations"]}]}}},{"$eq":["$.graphCoverage.entities.total","$.indexing.entities"]},{"$every":{"id":"$.graphCoverage.entities.reached[*]"},"$satisfies":{"$some":{"v":"$.rows[*].cases[*].graph.entities[*]"},"$satisfies":{"$eq":["$id","$v"]}}},{"$every":{"v":"$.rows[*].cases[*].graph.entities[*]"},"$satisfies":{"$some":{"id":"$.graphCoverage.entities.reached[*]"},"$satisfies":{"$eq":["$id","$v"]}}},{"$eq":["$.graphCoverage.relations.total","$.indexing.relations"]},{"$every":{"id":"$.graphCoverage.relations.reached[*]"},"$satisfies":{"$some":{"v":"$.rows[*].cases[*].graph.relations[*]"},"$satisfies":{"$eq":["$id","$v"]}}},{"$every":{"v":"$.rows[*].cases[*].graph.relations[*]"},"$satisfies":{"$some":{"id":"$.graphCoverage.relations.reached[*]"},"$satisfies":{"$eq":["$id","$v"]}}},{"$eq":["$.decision","$.live.decision"]}]}
  */
 export interface LightragReport {
   document: "lightrag-report";
@@ -626,30 +2005,84 @@ export interface LightragReport {
    */
   rows: Array<Row>;
   gate: Gate;
-  decision: {"state":"not-evaluated","defaultChanged":false,"reason":"Scripted graph mechanisms are measured; live answer quality is unmeasured."};
+  decision: LightLiveDecision;
   reportId: Sha256;
-  graphBuild: GraphBuild;
+  indexing: Indexing;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  incremental: Array<GraphIncrementalObservation>;
+  graphCoverage: GraphCoverage;
+  live: LightragLive;
+  judge: LightragJudge;
+  parity: LightragParity;
+  ladder: LightragLadder | null;
 }
 
 
-export interface LightragLive {
-  document: "lightrag-live";
-  status: "not-run";
-  reason: "Live paired quality, judge and separately licensed parity tiers require later registered plans and new explicit spend approval.";
-  registrationId: Sha256;
-  physicalRequests: 0;
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=1, maximum=4
+ */
+export type GroundOwner_liveQuestionResultCategoryOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundOwner_liveQuestionResultAnswerF1OneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundOwner_liveQuestionResultRetrievedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundOwner_liveQuestionResultSuppliedRecallOneOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type GroundOwner_liveQuestionResultCitedRecallOneOf1 = number;
+
+/**
+ * One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.
+ */
+export interface GroundOwner_liveQuestionResult {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  category: GroundOwner_liveQuestionResultCategoryOneOf1 | null;
+  status: GroundOwner_liveStatus;
+  trace: GroundOwner_liveTrace | null;
+  answer: GroundOwner_answerValue | null;
+  rendered: string | null;
+  citations: Array<GroundOwner_citationRecord>;
+  citationCounts: GroundOwner_citationCounts | null;
+  claims: GroundOwner_claimScore | null;
+  abstention: GroundOwner_abstentionScore | null;
+  answerF1: GroundOwner_liveQuestionResultAnswerF1OneOf1 | null;
+  retrievedRecall: GroundOwner_liveQuestionResultRetrievedRecallOneOf1 | null;
+  suppliedRecall: GroundOwner_liveQuestionResultSuppliedRecallOneOf1 | null;
+  citedRecall: GroundOwner_liveQuestionResultCitedRecallOneOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts: number;
 }
 
 
-export interface LightragLadder {
-  document: "lightrag-ladder";
-  status: "not-run";
-  reason: "Graph retrieval implementation is required before the registered scale measurement.";
-  sizes: [100,1000,10000];
-  maxP95Ms: 250;
-  registrationId: Sha256;
-  latency: null;
-}
-
-
-export type Lightrag = LightragFixture | LightragReport | LightragLive | LightragLadder | OneHopFixture;
+export type Lightrag = LightragFixture | LightragReport | LightragLive | LightragLadder | OneHopFixture | LightragLivePlan | LightragJudgePlan | LightragJudge | LightragParity;

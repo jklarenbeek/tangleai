@@ -2,7 +2,7 @@ import { it } from 'node:test';
 import assert from 'node:assert/strict';
 import { claimIdOf, canonicalEntityIdOf, canonicalRelationIdOf, canonicalGraphRevisionOf } from '../../packages/lightrag/src/identity.ts';
 import { foldEntityName } from '../../packages/lightrag/src/normalize.ts';
-import { validateGraphClaim, validateCanonicalEntity, validateCanonicalRelation } from '../../packages/lightrag/src/integrity.ts';
+import { validateGraphClaim, validateCanonicalEntity, validateCanonicalRelation, createCanonicalIntegrity } from '../../packages/lightrag/src/integrity.ts';
 import type { GraphEntityClaim, GraphRelationClaim, GraphEntity, GraphRelation } from '../../packages/lightrag/src/contracts.gen.ts';
 const modelIdentity = { provider: 'fixture', model: 'scripted' }, embeddedBy = { model: 'hash', dims: 2 };
 const address = { sourceId: 'source', versionId: 'version', chunkId: 'chunk', ordinal: 0, promptRevision: 'b'.repeat(64), modelIdentity, extractedAt: null };
@@ -25,6 +25,25 @@ async function edge(a: GraphEntity, b: GraphEntity): Promise<{ claim: GraphRelat
     return { claim, row: { ...value, revision: await canonicalGraphRevisionOf(value) } };
 }
 function code(result: { valid: boolean; issues?: Array<{ code: string }> }): string | undefined { return result.issues?.[0].code; }
+it('one checked evidence index validates repeated canonicals with only their supporting lookups', async () => {
+    const claims = await Promise.all(Array.from({ length: 20 }, (_, index) => entityClaim('Beacon ' + index)));
+    const rows = await Promise.all(claims.map(claim => entity(claim))), relation = await edge(rows[0], rows[1]);
+    const byClaim = new Map(claims.map(claim => [claim.id, claim])), byRelation = new Map([[relation.claim.id, relation.claim]]), byEntity = new Map(rows.map(row => [row.id, row]));
+    let entityReads = 0, relationReads = 0, endpointReads = 0;
+    const checked = createCanonicalIntegrity({ get: id => { entityReads++; return byClaim.get(id); } },
+        { get: id => { relationReads++; return byRelation.get(id); } });
+    const endpoints = { get: (id: string) => { endpointReads++; return byEntity.get(id); } };
+    for (let repeat = 0; repeat < 3; repeat++) {
+        for (const row of rows) assert.deepEqual(await checked.entity(row, { expectedEmbeddedBy: embeddedBy }), await validateCanonicalEntity(row, claims, { expectedEmbeddedBy: embeddedBy }));
+        assert.deepEqual(await checked.relation(relation.row, endpoints), await validateCanonicalRelation(relation.row, [relation.claim], rows));
+    }
+    assert.equal(entityReads, rows.length * 3); assert.equal(relationReads, 3); assert.equal(endpointReads, 6);
+    for (const row of [{ ...rows[0], supportClaimIds: ['f'.repeat(64)] }, { ...rows[0], supportChunkIds: ['foreign'] }, { ...rows[0], embedding: [1] }])
+        assert.deepEqual(await checked.entity(row), await validateCanonicalEntity(row, claims));
+    const retired = { ...rows[1], status: 'retracted' as const }, changedEndpoints = new Map(byEntity); changedEndpoints.set(retired.id, retired);
+    assert.deepEqual(await checked.relation(relation.row, changedEndpoints), await validateCanonicalRelation(relation.row, [relation.claim], [...changedEndpoints.values()]));
+    assert.equal(code(await checked.relation(relation.row, new Map())), 'TLRAG1003');
+});
 it('claims resolve to the exact source version and immutable bytes before they can support a canonical', async () => {
     const claim = await entityClaim('Beacon'), chunks = [{ id: claim.chunkId, sourceId: claim.sourceId, versionId: claim.versionId }];
     assert.equal((await validateGraphClaim('entity', claim, chunks)).valid, true);

@@ -2,7 +2,7 @@
 import { cloneJson, equalsJson as same } from '@jarenjs/core/object';
 import type { GraphEntity, GraphRelation, GraphEntityClaim, GraphRelationClaim, GraphContributionInput, GraphContributionPlan } from './contracts.gen.ts';
 import { validateLightRagShape } from './schema.ts';
-import { validateGraphClaim, validateCanonicalEntity, validateCanonicalRelation } from './integrity.ts';
+import { validateGraphClaim, createCanonicalIntegrity } from './integrity.ts';
 import { canonicalGraphRevisionOf, canonicalRelationIdOf, lightragRevisionOf, immutableLightRagJson } from './identity.ts';
 import { lightragMust, lightragReject, lightragFailure, type LightRagOutcome } from './errors.ts';
 const ids = (values: readonly string[]): string[] => [...new Set(values)].sort();
@@ -26,23 +26,30 @@ function claimUnion<T extends GraphEntityClaim | GraphRelationClaim>(old: T[], i
     }
     return values;
 }
+function grouped<T extends { id: string }>(rows: readonly T[]): Map<string, T[]> {
+    const byId = new Map<string, T[]>();
+    for (const row of rows) { const group = byId.get(row.id) ?? []; group.push(row); byId.set(row.id, group); }
+    return byId;
+}
 /** Profile text is accepted only with its complete current claim basis. */
-function profileFor(input: GraphContributionInput, kind: 'entity' | 'relation', row: GraphEntity | GraphRelation, support: string[], prepare = false): string {
-    if (!support.length) return '';
-    const updates = input.profileUpdates.filter(value => value.kind === kind && value.id === row.id);
-    if (updates.length > 1) lightragReject('TLRAG1001', '/profileUpdates', 'A canonical has more than one prepared profile.');
-    if (updates.length) {
-        if (!same(ids(updates[0].claimIds), support)) lightragReject('TLRAG1003', '/profileUpdates', 'A profile must bind every current supporting claim and no withdrawn claim.');
-        return updates[0].profile;
-    }
-    const originals = kind === 'entity' ? [...input.candidates.entities, ...input.existing.canonicals.entities] : [...input.candidates.relations, ...input.existing.canonicals.relations];
-    const exact = originals.find(value => value.id === row.id && same(ids(value.supportClaimIds), support));
-    if (!exact && prepare) {
-        const claims = kind === 'entity' ? [...input.existing.claims.entities, ...input.claims.entities] : [...input.existing.claims.relations, ...input.claims.relations];
-        return support.map(id => claims.find(claim => claim.id === id)!.description).join('\n');
-    }
-    if (!exact) lightragReject('TLRAG1003', '/profileUpdates', 'Changed support requires a profile prepared from exactly the resulting claims.');
-    return exact.profile;
+function profilesFor(input: GraphContributionInput, prepare: boolean) {
+    const updates = { entity: grouped(input.profileUpdates.filter(row => row.kind === 'entity')), relation: grouped(input.profileUpdates.filter(row => row.kind === 'relation')) };
+    // Preserve every candidate-before-existing basis for an address and the first claim bytes.
+    const originals = { entity: grouped([...input.candidates.entities, ...input.existing.canonicals.entities]), relation: grouped([...input.candidates.relations, ...input.existing.canonicals.relations]) };
+    const claims = { entity: grouped([...input.existing.claims.entities, ...input.claims.entities]), relation: grouped([...input.existing.claims.relations, ...input.claims.relations]) };
+    return (kind: 'entity' | 'relation', row: GraphEntity | GraphRelation, support: string[]): string => {
+        if (!support.length) return '';
+        const prepared = updates[kind].get(row.id) ?? [];
+        if (prepared.length > 1) lightragReject('TLRAG1001', '/profileUpdates', 'A canonical has more than one prepared profile.');
+        if (prepared.length) {
+            if (!same(ids(prepared[0].claimIds), support)) lightragReject('TLRAG1003', '/profileUpdates', 'A profile must bind every current supporting claim and no withdrawn claim.');
+            return prepared[0].profile;
+        }
+        const exact = originals[kind].get(row.id)?.find(value => same(ids(value.supportClaimIds), support));
+        if (!exact && prepare) return support.map(id => claims[kind].get(id)![0].description).join('\n');
+        if (!exact) lightragReject('TLRAG1003', '/profileUpdates', 'Changed support requires a profile prepared from exactly the resulting claims.');
+        return exact.profile;
+    };
 }
 function reviewed(input: GraphContributionInput, a: string, b: string, decision: 'merge' | 'keep-apart'): boolean {
     return input.reviews.some(row => row.decision === decision && row.claimIds.includes(a) && row.claimIds.includes(b));
@@ -52,9 +59,11 @@ function checkGrouping(input: GraphContributionInput, entities: GraphEntity[], c
     const before = new Map<string,string>();
     for (const row of input.existing.canonicals.entities.filter(row => row.status === 'active')) for (const claim of row.supportClaimIds) before.set(claim, row.id);
     const groups = entities.filter(row => row.status === 'active');
-    for (let i = 0; i < groups.length; i++) for (let j = i; j < groups.length; j++) {
+    const peers = new Map<string, number[]>(), keyOf = (row: GraphEntity) => JSON.stringify([row.normalizedName, row.types[0]]);
+    for (let i = 0; i < groups.length; i++) { const key = keyOf(groups[i]), group = peers.get(key) ?? []; group.push(i); peers.set(key, group); }
+    for (let i = 0; i < groups.length; i++) for (const j of peers.get(keyOf(groups[i]))!) {
+        if (j < i) continue;
         const a = groups[i], b = groups[j];
-        if (a.normalizedName !== b.normalizedName || a.types[0] !== b.types[0]) continue;
         for (const left of a.supportClaimIds) for (const right of b.supportClaimIds) {
             if (left >= right && i === j) continue;
             const x = claims.get(left)!, y = claims.get(right)!;
@@ -69,9 +78,12 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
     try {
         const input = lightragMust(validateLightRagShape('graphContributionInput', value));
         if (new Set(input.chunks.map(chunk => chunk.id)).size !== input.chunks.length) lightragReject('TLRAG1003', '/chunks', 'Supplied chunk addresses must be unique.');
+        const chunks = new Map(input.chunks.map(chunk => [chunk.id, [chunk]]));
         const entityClaims = claimUnion(input.existing.claims.entities, input.claims.entities), relationClaims = claimUnion(input.existing.claims.relations, input.claims.relations);
-        for (const claim of entityClaims.values()) lightragMust(await validateGraphClaim('entity', claim, input.chunks));
-        for (const claim of relationClaims.values()) lightragMust(await validateGraphClaim('relation', claim, input.chunks));
+        for (const claim of entityClaims.values()) lightragMust(await validateGraphClaim('entity', claim, chunks.get(claim.chunkId) ?? []));
+        for (const claim of relationClaims.values()) lightragMust(await validateGraphClaim('relation', claim, chunks.get(claim.chunkId) ?? []));
+        const checked = createCanonicalIntegrity(entityClaims, relationClaims), profileFor = profilesFor(input, prepare);
+        const incomingEntities = new Set(input.claims.entities.map(claim => claim.id)), incomingRelations = new Set(input.claims.relations.map(claim => claim.id));
         const retired = new Set(input.retiredClaimIds);
         for (const id of retired) if (!entityClaims.has(id) && !relationClaims.has(id)) lightragReject('TLRAG1003', '/retiredClaimIds', 'A withdrawn claim must be present in the supplied evidence.');
         for (const claim of [...input.claims.entities, ...input.claims.relations]) if (retired.has(claim.id)) lightragReject('TLRAG1006', '/claims', 'One transition cannot both introduce and withdraw the same claim.');
@@ -85,19 +97,19 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
             if (input.reviews[i].decision !== input.reviews[j].decision && input.reviews[i].claimIds.filter(id => input.reviews[j].claimIds.includes(id)).length > 1)
                 lightragReject('TLRAG1006', '/reviews', 'Contradictory co-reference decisions cannot enter one contribution.');
         for (const profile of input.profiles) {
-            const chunk = input.chunks.find(row => row.id === profile.chunkId);
+            const chunk = chunks.get(profile.chunkId)?.[0];
             if (!chunk || chunk.versionId !== profile.versionId) lightragReject('TLRAG1003', '/profiles', 'A chunk profile must resolve to its supplied version.');
         }
         if (new Set(input.profiles.map(row => row.chunkId)).size !== input.profiles.length) lightragReject('TLRAG1001', '/profiles', 'Chunk profiles must have unique addresses.');
         const previousEntities = keyed(input.existing.canonicals.entities, '/existing/entities'), previousRelations = keyed(input.existing.canonicals.relations, '/existing/relations');
-        for (const row of previousEntities.values()) lightragMust(await validateCanonicalEntity(row, [...entityClaims.values()], { previous: row, expectedEmbeddedBy: input.embeddedBy }));
-        for (const row of previousRelations.values()) lightragMust(await validateCanonicalRelation(row, [...relationClaims.values()], [...previousEntities.values()], { expectedEmbeddedBy: input.embeddedBy }));
+        for (const row of previousEntities.values()) lightragMust(await checked.entity(row, { previous: row, expectedEmbeddedBy: input.embeddedBy }));
+        for (const row of previousRelations.values()) lightragMust(await checked.relation(row, previousEntities, { expectedEmbeddedBy: input.embeddedBy }));
         const entities = new Map([...previousEntities].map(([id, row]) => [id, cloneJson(row)])), relations = new Map([...previousRelations].map(([id, row]) => [id, cloneJson(row)]));
         for (const candidate of keyed(input.candidates.entities, '/candidates/entities').values()) {
             if (candidate.status !== 'active') lightragReject('TLRAG1006', '/candidates', 'Only active canonical candidates can enter a contribution.');
-            if (candidate.supportClaimIds.some(id => !input.claims.entities.some(claim => claim.id === id)))
+            if (candidate.supportClaimIds.some(id => !incomingEntities.has(id)))
                 lightragReject('TLRAG1003', '/candidates/entities', 'A prepared source candidate can contain only its incoming entity claims.');
-            lightragMust(await validateCanonicalEntity(candidate, [...entityClaims.values()], { previous: previousEntities.get(candidate.id), expectedEmbeddedBy: input.embeddedBy }));
+            lightragMust(await checked.entity(candidate, { previous: previousEntities.get(candidate.id), expectedEmbeddedBy: input.embeddedBy }));
             const old = entities.get(candidate.id);
             if (old?.status === 'merged') lightragReject('TLRAG1006', '/candidates', 'A merged identity must be resolved through its retained survivor.');
             entities.set(candidate.id, { ...candidate, supportClaimIds: ids([...(old?.supportClaimIds ?? []), ...candidate.supportClaimIds]) });
@@ -126,17 +138,17 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
             const supportClaimIds = ids(row.supportClaimIds.filter(claim => !retired.has(claim))), supporting = supportClaimIds.map(claim => entityClaims.get(claim)!);
             const next = await stamp({ ...row, supportClaimIds, supportChunkIds: ids(supporting.map(claim => claim.chunkId)),
                 aliases: ids(supporting.map(claim => claim.name).filter(name => name !== row.name)),
-                profile: profileFor(input, 'entity', row, supportClaimIds, prepare), status: supportClaimIds.length ? 'active' as const : 'retracted' as const });
+                profile: profileFor('entity', row, supportClaimIds), status: supportClaimIds.length ? 'active' as const : 'retracted' as const });
             entities.set(id, next);
         }
         checkGrouping(input, [...entities.values()], entityClaims);
+        const endpointRows = new Map([...previousEntities.values(), ...input.candidates.entities].map(row => [row.id, row]));
         for (const candidate of keyed(input.candidates.relations, '/candidates/relations').values()) {
             if (candidate.status !== 'active') lightragReject('TLRAG1006', '/candidates', 'Only active relation candidates can enter a contribution.');
-            if (candidate.supportClaimIds.some(id => !input.claims.relations.some(claim => claim.id === id)))
+            if (candidate.supportClaimIds.some(id => !incomingRelations.has(id)))
                 lightragReject('TLRAG1003', '/candidates/relations', 'A prepared source candidate can contain only its incoming relation claims.');
             // Candidate endpoints may merge in this same plan; validate their pre-merge addresses first.
-            const endpointRows = [...new Map([...previousEntities.values(), ...input.candidates.entities].map(row => [row.id, row])).values()];
-            lightragMust(await validateCanonicalRelation(candidate, [...relationClaims.values()], endpointRows, { expectedEmbeddedBy: input.embeddedBy }));
+            lightragMust(await checked.relation(candidate, endpointRows, { expectedEmbeddedBy: input.embeddedBy }));
             const old = relations.get(candidate.id);
             if (old?.status === 'merged') lightragReject('TLRAG1006', '/candidates', 'A merged relation must be resolved through its retained successor.');
             relations.set(candidate.id, { ...candidate, supportClaimIds: ids([...(old?.supportClaimIds ?? []), ...candidate.supportClaimIds]) });
@@ -155,7 +167,7 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
             if (row.status === 'merged') continue;
             const supportClaimIds = ids(row.supportClaimIds.filter(claim => !retired.has(claim))), supporting = supportClaimIds.map(claim => relationClaims.get(claim)!);
             relations.set(id, await stamp({ ...row, supportClaimIds, supportChunkIds: ids(supporting.map(claim => claim.chunkId)),
-                profile: profileFor(input, 'relation', row, supportClaimIds, prepare), strength: supporting.length ? Math.max(...supporting.map(claim => claim.strength)) : 0,
+                profile: profileFor('relation', row, supportClaimIds), strength: supporting.length ? Math.max(...supporting.map(claim => claim.strength)) : 0,
                 status: supportClaimIds.length ? 'active' as const : 'retracted' as const }));
         }
         const incoming = new Set([...input.claims.entities, ...input.claims.relations].map(row => row.id));
@@ -176,8 +188,8 @@ async function planContributionInternal(value: GraphContributionInput, prepare: 
             if (!retired.has(claim) && activeEntityOwners.get(claim) !== (redirects.get(old.id) ?? old.id))
                 lightragReject('TLRAG1006', '/supportClaimIds', 'An existing entity claim can move only through an explicit merge.');
         }
-        for (const row of entities.values()) lightragMust(await validateCanonicalEntity(row, [...entityClaims.values()], { previous: previousEntities.get(row.id), expectedEmbeddedBy: input.embeddedBy }));
-        for (const row of relations.values()) lightragMust(await validateCanonicalRelation(row, [...relationClaims.values()], [...entities.values()], { expectedEmbeddedBy: input.embeddedBy }));
+        for (const row of entities.values()) lightragMust(await checked.entity(row, { previous: previousEntities.get(row.id), expectedEmbeddedBy: input.embeddedBy }));
+        for (const row of relations.values()) lightragMust(await checked.relation(row, entities, { expectedEmbeddedBy: input.embeddedBy }));
         const body = { input, canonicals: { entities: sorted(entities.values()), relations: sorted(relations.values()) },
             touchedEntityIds: sorted(entities.values()).filter(row => !same(previousEntities.get(row.id) ?? null, row)).map(row => row.id),
             touchedRelationIds: sorted(relations.values()).filter(row => !same(previousRelations.get(row.id) ?? null, row)).map(row => row.id) };
@@ -195,13 +207,16 @@ export interface GraphProfileBasis {
 export async function prepareGraphProfileBasis(value: GraphContributionInput): Promise<LightRagOutcome<GraphProfileBasis[]>> {
     const planned = await planContributionInternal(value, true);
     if (!planned.valid) return planned;
-    const plan = planned.value, basis: GraphProfileBasis[] = [];
+    const plan = planned.value, basis: GraphProfileBasis[] = [], entities = new Map(plan.canonicals.entities.map(row => [row.id, row]));
     for (const [kind, rows, touched, claims] of [
         ['entity', plan.canonicals.entities, plan.touchedEntityIds, [...value.existing.claims.entities, ...value.claims.entities]],
         ['relation', plan.canonicals.relations, plan.touchedRelationIds, [...value.existing.claims.relations, ...value.claims.relations]],
-    ] as const) for (const row of rows) if (row.status === 'active' && touched.includes(row.id)) {
-        const name = 'name' in row ? row.name : `${plan.canonicals.entities.find(entity => entity.id === row.sourceEntityId)!.name} → ${plan.canonicals.entities.find(entity => entity.id === row.targetEntityId)!.name}: ${row.themes.join(', ')}`;
-        basis.push({kind,id:row.id,name,claimIds:row.supportClaimIds,claims:row.supportClaimIds.map(id=>claims.find(claim=>claim.id===id)!)});
+    ] as const) {
+        const touchedIds = new Set(touched), byClaim = grouped<GraphEntityClaim | GraphRelationClaim>(claims);
+        for (const row of rows) if (row.status === 'active' && touchedIds.has(row.id)) {
+            const name = 'name' in row ? row.name : `${entities.get(row.sourceEntityId)!.name} → ${entities.get(row.targetEntityId)!.name}: ${row.themes.join(', ')}`;
+            basis.push({kind,id:row.id,name,claimIds:row.supportClaimIds,claims:row.supportClaimIds.map(id=>byClaim.get(id)![0])});
+        }
     }
     return {valid:true,value:immutableLightRagJson(basis)};
 }

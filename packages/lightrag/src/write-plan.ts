@@ -80,8 +80,17 @@ async function buildWrites(operation: ProjectionWritePlan['operation'], options:
         for (const row of contribution.canonicals.relations) if (contribution.touchedRelationIds.includes(row.id)) writes.push({ table: 'relations', row });
         if (operation === 'activate' && active && active.id !== request.id) writes.push({ table: 'projections', row: { ...active, status: 'superseded', supersededAt: options.at } });
         writes.push({ table: 'projections', row: projection });
+        // Retained preparation is already bound by request/priorProjections.
+        // Repeating it in both projection writes can exceed the JSON string
+        // limit for an otherwise admissible source. The apply owner restores
+        // those exact bytes from the checked snapshots before physical writes.
+        const compactWrites = writes.map(write => {
+            if (write.table !== 'projections') return write;
+            const { prepared: _prepared, ...row } = write.row;
+            return { ...write, row };
+        });
         const body = { operation, request, contribution, priorProjections, actualHead: options.actualHead, expectedHead: options.expectedHead, nextHead,
-            at: options.at, reactivation, writes, ...(document ? { document } : {}), ...(options.profilePolicy ? { profilePolicy: options.profilePolicy } : {}) };
+            at: options.at, reactivation, writes: compactWrites, ...(document ? { document } : {}), ...(options.profilePolicy ? { profilePolicy: options.profilePolicy } : {}) };
         return { valid: true, value: immutableLightRagJson(lightragMust(validateLightRagShape('projectionWritePlan', { ...body, revision: await lightragRevisionOf(body) }))) };
     } catch (cause) { return lightragFailure(cause); }
 }

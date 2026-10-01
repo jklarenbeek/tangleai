@@ -1,0 +1,66 @@
+{
+  "version": "synthetic-directed-pairs/1",
+  "sizes": [
+    100,
+    1000,
+    10000
+  ],
+  "seed": 24105779,
+  "sourcesPerSize": 1,
+  "entitiesPerChunk": 2,
+  "relationsPerChunk": 1,
+  "topology": "Distinct directed pairs with seeded fixture names and themes; ordinal suffixes prevent canonical collapse.",
+  "chunker": {
+    "version": "heading-recursive/1",
+    "maxTokens": 100,
+    "overlapTokens": 0
+  },
+  "embeddedBy": {
+    "model": "hash-trigram-64",
+    "dims": 64
+  },
+  "mode": "hybrid",
+  "questions": 18,
+  "warmupQueries": 1,
+  "samplesPerQuestion": 1,
+  "targetChunks": 10000,
+  "maxP95Ms": 250,
+  "quantile": "nearest-rank",
+  "rowsRead": "Logical rows returned by graph and document store reads; not physical SQLite page scans.",
+  "rss": "Process lifetime high-water RSS at the end of each size; includes earlier sizes.",
+  "limits": {
+    "keywordsPerLevel": 8,
+    "candidatesPerKeyword": 10,
+    "expansionEntities": 20,
+    "expansionRelations": 40,
+    "chunksPerSource": 3,
+    "contextTokens": 4000
+  },
+  "extract": {
+    "maxElementsPerChunk": 3,
+    "minUsefulChars": 1,
+    "allowPartial": false
+  },
+  "minParagraphCharacters": 240,
+  "paddingSentence": " This is registered synthetic evidence.",
+  "questionIds": [
+    "specific-equipment",
+    "specific-funding",
+    "specific-launch",
+    "specific-archive-host",
+    "specific-timber",
+    "specific-produce",
+    "abstract-training",
+    "abstract-grant-admin",
+    "abstract-cargo",
+    "abstract-festival-host",
+    "abstract-restoration",
+    "abstract-school-funding",
+    "hop-shelves",
+    "hop-launch",
+    "hop-archive-host",
+    "hop-timber",
+    "hop-grant-admin",
+    "hop-opening"
+  ]
+}

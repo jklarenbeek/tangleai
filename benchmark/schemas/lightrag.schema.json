@@ -17,6 +17,18 @@
     },
     {
       "$ref": "#/$defs/oneHopFixture"
+    },
+    {
+      "$ref": "#/$defs/lightragLivePlan"
+    },
+    {
+      "$ref": "#/$defs/lightragJudgePlan"
+    },
+    {
+      "$ref": "#/$defs/lightragJudge"
+    },
+    {
+      "$ref": "#/$defs/lightragParity"
     }
   ],
   "$defs": {
@@ -1183,7 +1195,8 @@
           "additionalProperties": false,
           "required": [
             "resolved",
-            "unresolved"
+            "unresolved",
+            "resolution"
           ],
           "properties": {
             "resolved": {
@@ -1193,6 +1206,11 @@
             "unresolved": {
               "type": "integer",
               "minimum": 0
+            },
+            "resolution": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
             }
           }
         },
@@ -2302,6 +2320,38 @@
                 ]
               }
             ]
+          },
+          {
+            "$eq": [
+              "$.citations.resolution",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      {
+                        "$add": [
+                          "$.citations.resolved",
+                          "$.citations.unresolved"
+                        ]
+                      },
+                      0
+                    ]
+                  },
+                  1,
+                  {
+                    "$div": [
+                      "$.citations.resolved",
+                      {
+                        "$add": [
+                          "$.citations.resolved",
+                          "$.citations.unresolved"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
@@ -2596,7 +2646,13 @@
         "gate",
         "decision",
         "reportId",
-        "graphBuild"
+        "indexing",
+        "incremental",
+        "graphCoverage",
+        "live",
+        "judge",
+        "parity",
+        "ladder"
       ],
       "properties": {
         "document": {
@@ -2632,17 +2688,42 @@
           "$ref": "#/$defs/gate"
         },
         "decision": {
-          "const": {
-            "state": "not-evaluated",
-            "defaultChanged": false,
-            "reason": "Scripted graph mechanisms are measured; live answer quality is unmeasured."
-          }
+          "$ref": "#/$defs/lightLiveDecision"
         },
         "reportId": {
           "$ref": "#/$defs/sha256"
         },
-        "graphBuild": {
-          "$ref": "#/$defs/graphBuild"
+        "indexing": {
+          "$ref": "#/$defs/indexing"
+        },
+        "incremental": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphIncrementalObservation"
+          },
+          "minItems": 1
+        },
+        "graphCoverage": {
+          "$ref": "#/$defs/graphCoverage"
+        },
+        "live": {
+          "$ref": "#/$defs/lightragLive"
+        },
+        "judge": {
+          "$ref": "#/$defs/lightragJudge"
+        },
+        "parity": {
+          "$ref": "#/$defs/lightragParity"
+        },
+        "ladder": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/lightragLadder"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "$query": {
@@ -2782,19 +2863,19 @@
           },
           {
             "$eq": [
-              "$.graphBuild.entities",
+              "$.indexing.entities",
               "$.fixture.entities"
             ]
           },
           {
             "$eq": [
-              "$.graphBuild.relations",
+              "$.indexing.relations",
               "$.fixture.relations"
             ]
           },
           {
             "$eq": [
-              "$.graphBuild.contributions",
+              "$.indexing.contributions",
               "$.fixture.versions"
             ]
           },
@@ -2859,6 +2940,88 @@
                 ]
               }
             }
+          },
+          {
+            "$eq": [
+              "$.graphCoverage.entities.total",
+              "$.indexing.entities"
+            ]
+          },
+          {
+            "$every": {
+              "id": "$.graphCoverage.entities.reached[*]"
+            },
+            "$satisfies": {
+              "$some": {
+                "v": "$.rows[*].cases[*].graph.entities[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$id",
+                  "$v"
+                ]
+              }
+            }
+          },
+          {
+            "$every": {
+              "v": "$.rows[*].cases[*].graph.entities[*]"
+            },
+            "$satisfies": {
+              "$some": {
+                "id": "$.graphCoverage.entities.reached[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$id",
+                  "$v"
+                ]
+              }
+            }
+          },
+          {
+            "$eq": [
+              "$.graphCoverage.relations.total",
+              "$.indexing.relations"
+            ]
+          },
+          {
+            "$every": {
+              "id": "$.graphCoverage.relations.reached[*]"
+            },
+            "$satisfies": {
+              "$some": {
+                "v": "$.rows[*].cases[*].graph.relations[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$id",
+                  "$v"
+                ]
+              }
+            }
+          },
+          {
+            "$every": {
+              "v": "$.rows[*].cases[*].graph.relations[*]"
+            },
+            "$satisfies": {
+              "$some": {
+                "id": "$.graphCoverage.relations.reached[*]"
+              },
+              "$satisfies": {
+                "$eq": [
+                  "$id",
+                  "$v"
+                ]
+              }
+            }
+          },
+          {
+            "$eq": [
+              "$.decision",
+              "$.live.decision"
+            ]
           }
         ]
       }
@@ -2868,27 +3031,187 @@
       "additionalProperties": false,
       "required": [
         "document",
+        "reportId",
         "status",
+        "tier",
         "reason",
-        "registrationId",
-        "physicalRequests"
+        "plan",
+        "rows",
+        "indexing",
+        "physicalRequests",
+        "logicalSpend",
+        "controlDrift",
+        "pairing",
+        "decision"
       ],
       "properties": {
         "document": {
           "const": "lightrag-live"
         },
-        "status": {
-          "const": "not-run"
-        },
-        "reason": {
-          "const": "Live paired quality, judge and separately licensed parity tiers require later registered plans and new explicit spend approval."
-        },
-        "registrationId": {
+        "reportId": {
           "$ref": "#/$defs/sha256"
         },
+        "status": {
+          "enum": [
+            "not-run",
+            "executed"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "not-run",
+            "scripted",
+            "paid",
+            "replayed",
+            "mixed"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plan": {
+          "$ref": "#/$defs/lightragLivePlan"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveRow"
+          }
+        },
+        "indexing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "completedSources",
+            "failedSources",
+            "physicalRequests"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "completedSources": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "failedSources": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "physicalRequests": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
         "physicalRequests": {
-          "const": 0
+          "type": "integer",
+          "minimum": 0
+        },
+        "logicalSpend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "controlDrift": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/lightControlDrift"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pairing": {
+          "$ref": "#/$defs/lightLivePairing"
+        },
+        "decision": {
+          "$ref": "#/$defs/lightLiveDecision"
         }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$le": [
+              "$.physicalRequests",
+              "$.plan.maxCalls"
+            ]
+          },
+          {
+            "$if": [
+              {
+                "$eq": [
+                  "$.status",
+                  "not-run"
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.rows[*]"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.physicalRequests",
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "$eq": [
+                  [
+                    "$.rows[*].key"
+                  ],
+                  "$.plan.rows"
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     "lightragLadder": {
@@ -2896,39 +3219,155 @@
       "additionalProperties": false,
       "required": [
         "document",
+        "schemaVersion",
         "status",
-        "reason",
-        "sizes",
-        "maxP95Ms",
+        "receiptId",
+        "registration",
         "registrationId",
-        "latency"
+        "fixtureId",
+        "source",
+        "identity",
+        "at",
+        "sizes",
+        "rows",
+        "backendDecision",
+        "physicalRequests"
       ],
       "properties": {
         "document": {
           "const": "lightrag-ladder"
         },
+        "schemaVersion": {
+          "const": 1
+        },
         "status": {
-          "const": "not-run"
-        },
-        "reason": {
-          "const": "Graph retrieval implementation is required before the registered scale measurement."
-        },
-        "sizes": {
-          "const": [
-            100,
-            1000,
-            10000
+          "enum": [
+            "measured",
+            "probe"
           ]
         },
-        "maxP95Ms": {
-          "const": 250
+        "receiptId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "registration": {
+          "$ref": "#/$defs/lightragLadderRegistration"
         },
         "registrationId": {
           "$ref": "#/$defs/sha256"
         },
-        "latency": {
-          "type": "null"
+        "fixtureId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceReceipt"
+        },
+        "identity": {
+          "$ref": "#/$defs/ladderMachine"
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sizes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ladderRow"
+          },
+          "minItems": 1
+        },
+        "backendDecision": {
+          "enum": [
+            "sqlite-sufficient",
+            "scale-row-registered",
+            null
+          ]
+        },
+        "physicalRequests": {
+          "const": 0
         }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              [
+                "$.rows[*].chunks"
+              ],
+              "$.sizes"
+            ]
+          },
+          {
+            "$eq": [
+              "$.status",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.sizes",
+                      [
+                        100,
+                        1000,
+                        10000
+                      ]
+                    ]
+                  },
+                  "measured",
+                  "probe"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.backendDecision",
+              {
+                "$if": [
+                  {
+                    "$eq": [
+                      "$.status",
+                      "probe"
+                    ]
+                  },
+                  null,
+                  {
+                    "$if": [
+                      {
+                        "$le": [
+                          {
+                            "$head": {
+                              "$for": {
+                                "r": "$.rows[*]"
+                              },
+                              "$where": {
+                                "$eq": [
+                                  "$r.chunks",
+                                  10000
+                                ]
+                              },
+                              "$return": "$r.retrieval.p95Ms"
+                            }
+                          },
+                          250
+                        ]
+                      },
+                      "sqlite-sufficient",
+                      "scale-row-registered"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     "pruneCounts": {
@@ -3260,7 +3699,7 @@
         }
       }
     },
-    "graphBuild": {
+    "indexing": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -3273,7 +3712,12 @@
         "localCalls",
         "budgetTokens",
         "providerCalls",
-        "providerTokens"
+        "providerTokens",
+        "documentEmbeddingCalls",
+        "extractionPasses",
+        "profiledCanonicals",
+        "coreferenceCalls",
+        "stages"
       ],
       "properties": {
         "backend": {
@@ -3305,7 +3749,105 @@
         },
         "providerTokens": {
           "const": 0
+        },
+        "documentEmbeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extractionPasses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profiledCanonicals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coreferenceCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphIndexingStage"
+          }
         }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.contributions",
+              {
+                "$count": "$.stages[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.entityClaims",
+              {
+                "$sum": "$.stages[*].entityClaims"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.relationClaims",
+              {
+                "$sum": "$.stages[*].relationClaims"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.localCalls",
+              {
+                "$sum": "$.stages[*].graphEmbeddingCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.budgetTokens",
+              {
+                "$sum": "$.stages[*].graphBudgetTokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.extractionPasses",
+              {
+                "$sum": "$.stages[*].extractionPasses"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.profiledCanonicals",
+              {
+                "$sum": "$.stages[*].profileCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.coreferenceCalls",
+              {
+                "$sum": "$.stages[*].coreferenceCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.documentEmbeddingCalls",
+              {
+                "$sum": "$.stages[*].documentEmbeddingCalls"
+              }
+            ]
+          }
+        ]
       }
     },
     "oneHopFixture": {
@@ -3565,6 +4107,3383 @@
             ]
           }
         ]
+      }
+    },
+    "lightragLadderRegistration": {
+      "const": {
+        "version": "synthetic-directed-pairs/1",
+        "sizes": [
+          100,
+          1000,
+          10000
+        ],
+        "seed": 24105779,
+        "sourcesPerSize": 1,
+        "entitiesPerChunk": 2,
+        "relationsPerChunk": 1,
+        "topology": "Distinct directed pairs with seeded fixture names and themes; ordinal suffixes prevent canonical collapse.",
+        "chunker": {
+          "version": "heading-recursive/1",
+          "maxTokens": 100,
+          "overlapTokens": 0
+        },
+        "embeddedBy": {
+          "model": "hash-trigram-64",
+          "dims": 64
+        },
+        "mode": "hybrid",
+        "questions": 18,
+        "warmupQueries": 1,
+        "samplesPerQuestion": 1,
+        "targetChunks": 10000,
+        "maxP95Ms": 250,
+        "quantile": "nearest-rank",
+        "rowsRead": "Logical rows returned by graph and document store reads; not physical SQLite page scans.",
+        "rss": "Process lifetime high-water RSS at the end of each size; includes earlier sizes.",
+        "limits": {
+          "keywordsPerLevel": 8,
+          "candidatesPerKeyword": 10,
+          "expansionEntities": 20,
+          "expansionRelations": 40,
+          "chunksPerSource": 3,
+          "contextTokens": 4000
+        },
+        "extract": {
+          "maxElementsPerChunk": 3,
+          "minUsefulChars": 1,
+          "allowPartial": false
+        },
+        "minParagraphCharacters": 240,
+        "paddingSentence": " This is registered synthetic evidence.",
+        "questionIds": [
+          "specific-equipment",
+          "specific-funding",
+          "specific-launch",
+          "specific-archive-host",
+          "specific-timber",
+          "specific-produce",
+          "abstract-training",
+          "abstract-grant-admin",
+          "abstract-cargo",
+          "abstract-festival-host",
+          "abstract-restoration",
+          "abstract-school-funding",
+          "hop-shelves",
+          "hop-launch",
+          "hop-archive-host",
+          "hop-timber",
+          "hop-grant-admin",
+          "hop-opening"
+        ]
+      }
+    },
+    "ladderMachine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "arch",
+        "cpu",
+        "logicalCpus",
+        "totalMemoryBytes",
+        "runtime",
+        "driver",
+        "loadAverage"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cpu": {
+          "type": "string",
+          "minLength": 1
+        },
+        "logicalCpus": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "totalMemoryBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "runtime": {
+          "type": "string",
+          "minLength": 1
+        },
+        "driver": {
+          "const": "node:sqlite"
+        },
+        "loadAverage": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "ladderSample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "ms",
+        "graphRows",
+        "documentRows",
+        "skipped",
+        "citations",
+        "localCalls",
+        "budgetTokens"
+      ],
+      "properties": {
+        "questionId": {
+          "$ref": "#/$defs/id"
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "graphRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "documentRows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "localCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budgetTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ladderRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunks",
+        "entities",
+        "relations",
+        "claims",
+        "extractedChunks",
+        "profiledCanonicals",
+        "reviewCalls",
+        "providerCalls",
+        "embeddingCalls",
+        "embeddingTexts",
+        "budgetTokens",
+        "indexingMs",
+        "promotionMs",
+        "peakRssBytes",
+        "corpusSha256",
+        "rowsRead",
+        "skipped",
+        "citationResolution",
+        "retrieval",
+        "queryLocalCalls",
+        "queryBudgetTokens"
+      ],
+      "properties": {
+        "chunks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "entities": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "claims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extractedChunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profiledCanonicals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reviewCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerCalls": {
+          "const": 0
+        },
+        "embeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingTexts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budgetTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "indexingMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "promotionMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peakRssBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "corpusSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "rowsRead": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "graph",
+            "documents"
+          ],
+          "properties": {
+            "graph": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "documents": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "skipped": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity",
+            "width",
+            "unresolvable"
+          ],
+          "properties": {
+            "identity": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unresolvable": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "citationResolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "supplied",
+            "resolved",
+            "ratio"
+          ],
+          "properties": {
+            "supplied": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resolved": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "retrieval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "p50Ms",
+            "p95Ms",
+            "samples"
+          ],
+          "properties": {
+            "p50Ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "p95Ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "samples": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ladderSample"
+              },
+              "minItems": 18,
+              "maxItems": 18
+            }
+          }
+        },
+        "queryLocalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queryBudgetTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.entities",
+              {
+                "$mul": [
+                  "$.chunks",
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.relations",
+              "$.chunks"
+            ]
+          },
+          {
+            "$eq": [
+              "$.claims",
+              {
+                "$mul": [
+                  "$.chunks",
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.extractedChunks",
+              "$.chunks"
+            ]
+          },
+          {
+            "$eq": [
+              "$.profiledCanonicals",
+              {
+                "$mul": [
+                  "$.chunks",
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reviewCalls",
+              0
+            ]
+          },
+          {
+            "$eq": [
+              "$.rowsRead.graph",
+              {
+                "$sum": "$.retrieval.samples[*].graphRows"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rowsRead.documents",
+              {
+                "$sum": "$.retrieval.samples[*].documentRows"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.citationResolution.supplied",
+              {
+                "$sum": "$.retrieval.samples[*].citations"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.citationResolution.resolved",
+              "$.citationResolution.supplied"
+            ]
+          },
+          {
+            "$eq": [
+              "$.citationResolution.ratio",
+              1
+            ]
+          },
+          {
+            "$eq": [
+              "$.retrieval.p95Ms",
+              {
+                "$max": "$.retrieval.samples[*].ms"
+              }
+            ]
+          },
+          {
+            "$ge": [
+              {
+                "$count": {
+                  "$for": {
+                    "r": "$.retrieval.samples[*]"
+                  },
+                  "$where": {
+                    "$le": [
+                      "$r.ms",
+                      "$.retrieval.p50Ms"
+                    ]
+                  },
+                  "$return": "$r"
+                }
+              },
+              9
+            ]
+          },
+          {
+            "$lt": [
+              {
+                "$count": {
+                  "$for": {
+                    "r": "$.retrieval.samples[*]"
+                  },
+                  "$where": {
+                    "$lt": [
+                      "$r.ms",
+                      "$.retrieval.p50Ms"
+                    ]
+                  },
+                  "$return": "$r"
+                }
+              },
+              9
+            ]
+          },
+          {
+            "$some": {
+              "r": "$.retrieval.samples[*]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$r.ms",
+                "$.retrieval.p50Ms"
+              ]
+            }
+          },
+          {
+            "$eq": [
+              [
+                "$.retrieval.samples[*].questionId"
+              ],
+              [
+                "specific-equipment",
+                "specific-funding",
+                "specific-launch",
+                "specific-archive-host",
+                "specific-timber",
+                "specific-produce",
+                "abstract-training",
+                "abstract-grant-admin",
+                "abstract-cargo",
+                "abstract-festival-host",
+                "abstract-restoration",
+                "abstract-school-funding",
+                "hop-shelves",
+                "hop-launch",
+                "hop-archive-host",
+                "hop-timber",
+                "hop-grant-admin",
+                "hop-opening"
+              ]
+            ]
+          },
+          {
+            "$eq": [
+              "$.queryLocalCalls",
+              {
+                "$sum": "$.retrieval.samples[*].localCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.queryBudgetTokens",
+              {
+                "$sum": "$.retrieval.samples[*].budgetTokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.embeddingTexts",
+              {
+                "$mul": [
+                  "$.chunks",
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$sum": "$.retrieval.samples[*].skipped"
+              },
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      "$.skipped.identity",
+                      "$.skipped.width"
+                    ]
+                  },
+                  "$.skipped.unresolvable"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "graphIncrementalObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "previousVersion",
+        "version",
+        "chunks",
+        "reextractedChunks",
+        "unrelatedChunksExtracted",
+        "canonicalsTouched",
+        "unaffectedCanonicals",
+        "unaffectedRevisionsChanged",
+        "claimsWithdrawn",
+        "withdrawnSupportRemaining",
+        "localCalls",
+        "budgetTokens",
+        "providerCalls",
+        "fixtureId"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "previousVersion": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/id"
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reextractedChunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unrelatedChunksExtracted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canonicalsTouched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unaffectedCanonicals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unaffectedRevisionsChanged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "claimsWithdrawn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "withdrawnSupportRemaining": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "localCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "budgetTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerCalls": {
+          "const": 0
+        },
+        "fixtureId": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.reextractedChunks",
+              "$.chunks"
+            ]
+          },
+          {
+            "$eq": [
+              "$.unrelatedChunksExtracted",
+              0
+            ]
+          },
+          {
+            "$eq": [
+              "$.unaffectedRevisionsChanged",
+              0
+            ]
+          },
+          {
+            "$eq": [
+              "$.withdrawnSupportRemaining",
+              0
+            ]
+          }
+        ]
+      }
+    },
+    "graphCoverageLevel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "reached",
+        "fraction"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reached": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true
+        },
+        "fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.fraction",
+          {
+            "$if": [
+              {
+                "$eq": [
+                  "$.total",
+                  0
+                ]
+              },
+              1,
+              {
+                "$div": [
+                  {
+                    "$count": "$.reached[*]"
+                  },
+                  "$.total"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "graphCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entities",
+        "relations"
+      ],
+      "properties": {
+        "entities": {
+          "$ref": "#/$defs/graphCoverageLevel"
+        },
+        "relations": {
+          "$ref": "#/$defs/graphCoverageLevel"
+        }
+      }
+    },
+    "graphIndexingStage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "version",
+        "chunks",
+        "entityClaims",
+        "relationClaims",
+        "canonicalsTouched",
+        "extractionPasses",
+        "profileCalls",
+        "coreferenceCalls",
+        "documentEmbeddingCalls",
+        "graphEmbeddingCalls",
+        "graphBudgetTokens",
+        "profileUpdates"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/id"
+        },
+        "version": {
+          "$ref": "#/$defs/id"
+        },
+        "chunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entityClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relationClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canonicalsTouched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extractionPasses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profileCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coreferenceCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "documentEmbeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "graphEmbeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "graphBudgetTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profileUpdates": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.extractionPasses",
+              {
+                "$mul": [
+                  "$.chunks",
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.profileCalls",
+              "$.profileUpdates"
+            ]
+          },
+          {
+            "$le": [
+              "$.profileUpdates",
+              "$.canonicalsTouched"
+            ]
+          }
+        ]
+      }
+    },
+    "lightLiveRowKey": {
+      "enum": [
+        "flat-grounded",
+        "lightrag-low",
+        "lightrag-high",
+        "lightrag-hybrid-no-original",
+        "lightrag-hybrid"
+      ]
+    },
+    "lightLiveCalls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "planning",
+        "answers",
+        "queryEmbeddingUpperBound",
+        "repairAllowance",
+        "maxCalls"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/lightLiveRowKey"
+        },
+        "planning": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "answers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queryEmbeddingUpperBound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairAllowance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.maxCalls",
+          {
+            "$add": [
+              {
+                "$add": [
+                  "$.planning",
+                  "$.answers"
+                ]
+              },
+              {
+                "$add": [
+                  "$.queryEmbeddingUpperBound",
+                  "$.repairAllowance"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "lightLiveIndexingPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentEmbeddingCalls",
+        "extraction",
+        "extractionRepairAllowance",
+        "profilingUpperBound",
+        "profilingRepairAllowance",
+        "coreferenceUpperBound",
+        "coreferenceRepairAllowance",
+        "graphEmbeddingUpperBound",
+        "maxCalls"
+      ],
+      "properties": {
+        "documentEmbeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extractionRepairAllowance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profilingUpperBound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profilingRepairAllowance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coreferenceUpperBound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "coreferenceRepairAllowance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "graphEmbeddingUpperBound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lightragLivePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "planId",
+        "registrationId",
+        "registration",
+        "fixtureId",
+        "handoffSha256",
+        "source",
+        "questionIds",
+        "rows",
+        "wire",
+        "maxCalls",
+        "fresh",
+        "cache",
+        "corpus",
+        "indexing",
+        "rowCalls",
+        "maxRequests",
+        "runnable",
+        "refusals",
+        "prompts"
+      ],
+      "properties": {
+        "document": {
+          "const": "lightrag-live-plan"
+        },
+        "planId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "registrationId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "registration": {
+          "$ref": "#/$defs/lightLiveRegistration"
+        },
+        "fixtureId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "handoffSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceReceipt"
+        },
+        "questionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveRowKey"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "wire": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "provider",
+            "base",
+            "model",
+            "embedModel",
+            "dims",
+            "thinking"
+          ],
+          "properties": {
+            "provider": {
+              "$ref": "#/$defs/id"
+            },
+            "base": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "model": {
+              "$ref": "#/$defs/id"
+            },
+            "embedModel": {
+              "$ref": "#/$defs/id"
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "thinking": {
+              "const": "default"
+            }
+          }
+        },
+        "maxCalls": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fresh": {
+          "type": "boolean"
+        },
+        "cache": {
+          "type": "string"
+        },
+        "corpus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chunks",
+            "activeChunks",
+            "activeSources",
+            "documentEmbeddingCalls"
+          ],
+          "properties": {
+            "chunks": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "activeChunks": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "activeSources": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "documentEmbeddingCalls": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "indexing": {
+          "$ref": "#/$defs/lightLiveIndexingPlan"
+        },
+        "rowCalls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveCalls"
+          },
+          "minItems": 1
+        },
+        "maxRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runnable": {
+          "type": "boolean"
+        },
+        "refusals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "prompts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "extraction",
+            "profiling",
+            "deduplication",
+            "planning",
+            "generation",
+            "flat"
+          ],
+          "properties": {
+            "extraction": {
+              "$ref": "#/$defs/sha256"
+            },
+            "profiling": {
+              "$ref": "#/$defs/sha256"
+            },
+            "deduplication": {
+              "$ref": "#/$defs/sha256"
+            },
+            "planning": {
+              "$ref": "#/$defs/sha256"
+            },
+            "generation": {
+              "$ref": "#/$defs/sha256"
+            },
+            "flat": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.maxRequests",
+              {
+                "$add": [
+                  "$.indexing.maxCalls",
+                  {
+                    "$sum": "$.rowCalls[*].maxCalls"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              [
+                "$.rows[*]"
+              ],
+              [
+                "$.rowCalls[*].key"
+              ]
+            ]
+          },
+          {
+            "$eq": [
+              "$.runnable",
+              {
+                "$eq": [
+                  {
+                    "$count": "$.refusals[*]"
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "lightLiveCost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "turns",
+        "tokens",
+        "promptTokens",
+        "completionTokens",
+        "ms",
+        "replayed"
+      ],
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lightLiveAttempt": {
+      "description": "One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.",
+      "type": "object",
+      "required": [
+        "questionId",
+        "category",
+        "status",
+        "trace",
+        "answer",
+        "rendered",
+        "citations",
+        "citationCounts",
+        "claims",
+        "abstention",
+        "answerF1",
+        "retrievedRecall",
+        "suppliedRecall",
+        "citedRecall",
+        "tokens",
+        "ms",
+        "replayed",
+        "attempts",
+        "cost",
+        "retrievalCost",
+        "elapsedMs",
+        "completionLatencies",
+        "physicalRequests"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/groundOwner_liveStatus"
+        },
+        "trace": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_liveTrace"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answer": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_answerValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rendered": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundOwner_citationRecord"
+          }
+        },
+        "citationCounts": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_citationCounts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claims": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_claimScore"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "abstention": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_abstentionScore"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answerF1": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrievedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "suppliedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cost": {
+          "$ref": "#/$defs/lightLiveCost"
+        },
+        "retrievalCost": {
+          "$ref": "#/$defs/lightLiveCost"
+        },
+        "elapsedMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "completionLatencies": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "physicalRequests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.tokens",
+              "$.cost.tokens"
+            ]
+          },
+          {
+            "$eq": [
+              "$.ms",
+              "$.cost.ms"
+            ]
+          },
+          {
+            "$eq": [
+              "$.replayed",
+              "$.cost.replayed"
+            ]
+          },
+          {
+            "$eq": [
+              "$.attempts",
+              "$.cost.turns"
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.completionLatencies[*]"
+              },
+              "$.cost.turns"
+            ]
+          }
+        ]
+      },
+      "$comment": "Derived from grounding liveQuestionResult; questionId is its id and cost fields are graph instrument observations."
+    },
+    "lightLiveSummary": {
+      "description": "One of the three registered rows. `documents-retrieved` never generates: it is the retrieval/supply ceiling, its results are `analytic` and its config-identity row is `not-run`. The two generated rows share every control and are comparable only on complete identical question sets.",
+      "type": "object",
+      "required": [
+        "generates",
+        "questionSet",
+        "questions",
+        "claims",
+        "answerF1",
+        "abstention",
+        "citations",
+        "citedRecall",
+        "retrievedRecall",
+        "suppliedRecall",
+        "supply",
+        "cost",
+        "latency"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "generates": {
+          "type": "boolean"
+        },
+        "questionSet": {
+          "description": "Canonical SHA-256 of the row's sorted successfully-answered question ids — what eligibility compares instead of walking two lists.",
+          "$ref": "#/$defs/groundOwner_sha256"
+        },
+        "questions": {
+          "type": "object",
+          "required": [
+            "planned",
+            "answered",
+            "unanswered",
+            "invalid"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "answered": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unanswered": {
+              "type": "object",
+              "required": [
+                "wire",
+                "budget"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "wire": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "budget": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "invalid": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "claims": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_liveClaims"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answerF1": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "abstention": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "expected",
+                "correct",
+                "accuracy"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "expected": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "correct": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "accuracy": {
+                  "oneOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citations": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_citationCounts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrievedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "suppliedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "supply": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "candidates",
+                "blocks",
+                "uniqueSupplied",
+                "duplicateExpansions",
+                "characters",
+                "estimatedTokens"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "candidates": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "blocks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "uniqueSupplied": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "duplicateExpansions": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "characters": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "estimatedTokens": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_liveCost"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "latency": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_liveLatency"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "$comment": "Derived from grounding liveRow; shared rowBlock owns aggregates, attempts remain in the containing graph row."
+    },
+    "lightLiveRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "attempts",
+        "summary",
+        "totalCost",
+        "retrievalCost",
+        "latency",
+        "tier"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/lightLiveRowKey"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveAttempt"
+          },
+          "minItems": 1
+        },
+        "summary": {
+          "$ref": "#/$defs/lightLiveSummary"
+        },
+        "totalCost": {
+          "$ref": "#/$defs/lightLiveCost"
+        },
+        "retrievalCost": {
+          "$ref": "#/$defs/lightLiveCost"
+        },
+        "latency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "medianMs",
+            "p95Ms"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medianMs": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "p95Ms": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "tier": {
+          "enum": [
+            "scripted",
+            "paid",
+            "replayed",
+            "mixed"
+          ]
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.summary.questions.planned",
+              {
+                "$count": "$.attempts[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.questions.answered",
+              {
+                "$count": "$.attempts[?(@.status=='answered')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.questions.invalid",
+              {
+                "$count": "$.attempts[?(@.status=='invalid')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.claims.tp",
+              {
+                "$sum": "$.attempts[*].claims.tp"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.claims.fp",
+              {
+                "$sum": "$.attempts[*].claims.fp"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.summary.claims.fn",
+              {
+                "$sum": "$.attempts[*].claims.fn"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "lightControlDrift": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reportId",
+        "changed",
+        "fields"
+      ],
+      "properties": {
+        "reportId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "expected",
+              "actual",
+              "changed"
+            ],
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/id"
+              },
+              "expected": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "actual": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "changed": {
+                "type": "boolean"
+              }
+            },
+            "$query": {
+              "$eq": [
+                "$.changed",
+                {
+                  "$not": {
+                    "$eq": [
+                      "$.expected",
+                      "$.actual"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.changed",
+          {
+            "$count": "$.fields[?(@.changed==true)]"
+          }
+        ]
+      }
+    },
+    "lightLiveComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric",
+        "treatment",
+        "control",
+        "pairs",
+        "mean",
+        "interval",
+        "oneSidedLowerBound",
+        "power"
+      ],
+      "properties": {
+        "metric": {
+          "enum": [
+            "supported-claim-f1",
+            "answer-f1"
+          ]
+        },
+        "treatment": {
+          "const": "lightrag-hybrid"
+        },
+        "control": {
+          "const": "flat-grounded"
+        },
+        "pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mean": {
+          "type": "number"
+        },
+        "interval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "low",
+            "high"
+          ],
+          "properties": {
+            "low": {
+              "type": "number"
+            },
+            "high": {
+              "type": "number"
+            }
+          }
+        },
+        "oneSidedLowerBound": {
+          "type": "number"
+        },
+        "power": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "pairedSd",
+            "standardError",
+            "minimumDetectableEffect",
+            "tiedPairs"
+          ],
+          "properties": {
+            "pairedSd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "standardError": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minimumDetectableEffect": {
+              "type": "number",
+              "minimum": 0
+            },
+            "tiedPairs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "lightLivePairing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eligible",
+        "reasons",
+        "comparisons",
+        "costTokenDelta",
+        "p95DeltaMs"
+      ],
+      "properties": {
+        "eligible": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveComparison"
+          }
+        },
+        "costTokenDelta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "p95DeltaMs": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "lightLiveDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "defaultChanged",
+        "clauses"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not-evaluated",
+            "keep-experimental",
+            "eligible-for-default-review"
+          ]
+        },
+        "defaultChanged": {
+          "const": false
+        },
+        "clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "clause",
+              "passed",
+              "detail"
+            ],
+            "properties": {
+              "clause": {
+                "$ref": "#/$defs/id"
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "detail": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        }
+      }
+    },
+    "lightLiveRegistration": {
+      "const": {
+        "version": 1,
+        "rows": [
+          "flat-grounded",
+          "lightrag-low",
+          "lightrag-high",
+          "lightrag-hybrid-no-original",
+          "lightrag-hybrid"
+        ],
+        "model": "z-ai/glm-5.3-flash",
+        "embedModel": "baai/bge-m3",
+        "dims": 1024,
+        "thinking": "default",
+        "gleaning": 1,
+        "maxRepairs": 1,
+        "coreferenceDecisionsPerSource": 64,
+        "embeddingBatchSize": 32,
+        "contextTokens": 4000,
+        "seed": 17753,
+        "resamples": 10000,
+        "confidence": 0.95,
+        "primary": "supported-claim-f1",
+        "treatment": "lightrag-hybrid",
+        "control": "flat-grounded",
+        "maxTotalTokenRatio": 1,
+        "maxP95Ratio": 1,
+        "indexingCost": "amortize all indexing tokens over the complete question set",
+        "decision": "positive primary interval, complete paid pair, every control drift reported, resolved citations and cost/latency ratios within limits; judge is diagnostic only",
+        "tokenAccounting": "provider usage when supplied; otherwise the shared character estimate, including embedding inputs and unsuccessful calls"
+      }
+    },
+    "lightJudgeReply": {
+      "type": "object",
+      "required": [
+        "comprehensiveness",
+        "diversity",
+        "empowerment",
+        "overall"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "comprehensiveness": {
+          "type": "object",
+          "required": [
+            "winner",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "winner": {
+              "enum": [
+                "A",
+                "B",
+                "tie"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        },
+        "diversity": {
+          "type": "object",
+          "required": [
+            "winner",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "winner": {
+              "enum": [
+                "A",
+                "B",
+                "tie"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        },
+        "empowerment": {
+          "type": "object",
+          "required": [
+            "winner",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "winner": {
+              "enum": [
+                "A",
+                "B",
+                "tie"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        },
+        "overall": {
+          "type": "object",
+          "required": [
+            "winner",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "winner": {
+              "enum": [
+                "A",
+                "B",
+                "tie"
+              ]
+            },
+            "reason": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      }
+    },
+    "lightragJudgePlan": {
+      "type": "object",
+      "required": [
+        "document",
+        "planId",
+        "source",
+        "reportId",
+        "promptRevision",
+        "provider",
+        "model",
+        "questionIds",
+        "comparisons",
+        "dimensions",
+        "orders",
+        "maxRepairs",
+        "maxRequests",
+        "maxCalls",
+        "runnable",
+        "refusals",
+        "base",
+        "cache",
+        "fresh"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document": {
+          "const": "lightrag-judge-plan"
+        },
+        "planId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source": {
+          "$ref": "#/$defs/sourceReceipt"
+        },
+        "reportId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "promptRevision": {
+          "$ref": "#/$defs/sha256"
+        },
+        "provider": {
+          "$ref": "#/$defs/id"
+        },
+        "model": {
+          "$ref": "#/$defs/id"
+        },
+        "questionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightLiveRowKey"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "dimensions": {
+          "const": [
+            "comprehensiveness",
+            "diversity",
+            "empowerment",
+            "overall"
+          ]
+        },
+        "orders": {
+          "const": [
+            "control-first",
+            "treatment-first"
+          ]
+        },
+        "maxRepairs": {
+          "const": 0
+        },
+        "maxRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxCalls": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "runnable": {
+          "type": "boolean"
+        },
+        "refusals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "base": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cache": {
+          "type": "string"
+        },
+        "fresh": {
+          "type": "boolean"
+        }
+      }
+    },
+    "lightJudgeOrder": {
+      "type": "object",
+      "required": [
+        "order",
+        "status",
+        "reply",
+        "winners",
+        "spend",
+        "replayed",
+        "physicalRequests"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "order": {
+          "enum": [
+            "control-first",
+            "treatment-first"
+          ]
+        },
+        "status": {
+          "enum": [
+            "answered",
+            "invalid",
+            "wire-failure",
+            "budget-stop"
+          ]
+        },
+        "reply": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/lightJudgeReply"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "winners": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "comprehensiveness",
+                "diversity",
+                "empowerment",
+                "overall"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "comprehensiveness": {
+                  "enum": [
+                    "flat-grounded",
+                    "lightrag-low",
+                    "lightrag-high",
+                    "lightrag-hybrid",
+                    "lightrag-hybrid-no-original",
+                    "tie"
+                  ]
+                },
+                "diversity": {
+                  "enum": [
+                    "flat-grounded",
+                    "lightrag-low",
+                    "lightrag-high",
+                    "lightrag-hybrid",
+                    "lightrag-hybrid-no-original",
+                    "tie"
+                  ]
+                },
+                "empowerment": {
+                  "enum": [
+                    "flat-grounded",
+                    "lightrag-low",
+                    "lightrag-high",
+                    "lightrag-hybrid",
+                    "lightrag-hybrid-no-original",
+                    "tie"
+                  ]
+                },
+                "overall": {
+                  "enum": [
+                    "flat-grounded",
+                    "lightrag-low",
+                    "lightrag-high",
+                    "lightrag-hybrid",
+                    "lightrag-hybrid-no-original",
+                    "tie"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "physicalRequests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lightJudgePair": {
+      "type": "object",
+      "required": [
+        "questionId",
+        "treatment",
+        "orders",
+        "disagreements"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "questionId": {
+          "$ref": "#/$defs/id"
+        },
+        "treatment": {
+          "$ref": "#/$defs/lightLiveRowKey"
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightJudgeOrder"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "disagreements": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "comprehensiveness",
+              "diversity",
+              "empowerment",
+              "overall"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "lightragJudge": {
+      "type": "object",
+      "required": [
+        "document",
+        "reportId",
+        "plan",
+        "status",
+        "tier",
+        "reason",
+        "pairs",
+        "failedOrders",
+        "disagreements",
+        "spend",
+        "physicalRequests",
+        "defaultInput"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document": {
+          "const": "lightrag-judge"
+        },
+        "reportId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "plan": {
+          "$ref": "#/$defs/lightragJudgePlan"
+        },
+        "status": {
+          "enum": [
+            "not-run",
+            "executed"
+          ]
+        },
+        "tier": {
+          "enum": [
+            "not-run",
+            "scripted",
+            "paid",
+            "replayed",
+            "mixed"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightJudgePair"
+          }
+        },
+        "failedOrders": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disagreements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "physicalRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "defaultInput": {
+          "const": false
+        }
+      }
+    },
+    "lightragParity": {
+      "type": "object",
+      "required": [
+        "document",
+        "planId",
+        "status",
+        "reason",
+        "datasetPath",
+        "datasetSha256",
+        "licenseAcknowledged",
+        "authorized",
+        "protocol",
+        "promptRevisions",
+        "physicalRequests",
+        "paperComparison"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document": {
+          "const": "lightrag-parity"
+        },
+        "planId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "const": "not-run"
+        },
+        "reason": {
+          "$ref": "#/$defs/id"
+        },
+        "datasetPath": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "datasetSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "licenseAcknowledged": {
+          "type": "boolean"
+        },
+        "authorized": {
+          "type": "boolean"
+        },
+        "protocol": {
+          "const": {
+            "paper": "2410.05779v3",
+            "subsets": [
+              "Agriculture",
+              "CS",
+              "Legal",
+              "Mix"
+            ],
+            "questionsPerSubset": 125,
+            "questionGeneration": "five users, five tasks per user and five questions per task over the complete subset",
+            "llm": "gpt-4o-mini",
+            "judge": "gpt-4o-mini",
+            "gleaning": 1,
+            "chunkSize": 1200,
+            "ordering": [
+              "control-first",
+              "treatment-first"
+            ],
+            "dimensions": [
+              "comprehensiveness",
+              "diversity",
+              "empowerment",
+              "overall"
+            ],
+            "measurement": "No paper-score comparison until corpus, generated questions, prompt bytes, model snapshots, embedder, tokenizer, overlap and all baseline settings are pinned and the full separately authorized protocol executes."
+          }
+        },
+        "promptRevisions": {
+          "type": "object",
+          "required": [
+            "extraction",
+            "profiling",
+            "deduplication",
+            "planning",
+            "generation",
+            "judge"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "extraction": {
+              "$ref": "#/$defs/sha256"
+            },
+            "profiling": {
+              "$ref": "#/$defs/sha256"
+            },
+            "deduplication": {
+              "$ref": "#/$defs/sha256"
+            },
+            "planning": {
+              "$ref": "#/$defs/sha256"
+            },
+            "generation": {
+              "$ref": "#/$defs/sha256"
+            },
+            "judge": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "paperComparison": {
+          "const": false
+        }
+      }
+    },
+    "groundOwner_liveStatus": {
+      "description": "What happened to one question in one row. `analytic` belongs only to the no-generation row; a failure stays in the attempt and makes the paired comparison ineligible.",
+      "enum": [
+        "answered",
+        "invalid",
+        "wire-failure",
+        "budget-stop",
+        "analytic"
+      ]
+    },
+    "groundOwner_liveTrace": {
+      "description": "The exact retrieval/supply trace of one question through the current path: ranked candidates, raw serialized blocks with duplicate neighbour expansion retained, unique supplied chunks, and the prompt bytes they cost.",
+      "type": "object",
+      "required": [
+        "retrieved",
+        "supplied",
+        "blocks",
+        "uniqueSupplied",
+        "duplicateExpansions",
+        "characters",
+        "estimatedTokens"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "retrieved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "supplied": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "blocks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uniqueSupplied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicateExpansions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "characters": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimatedTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "groundOwner_answerValue": {
+      "description": "The one answer contract of both the scripted and live paths. There is no free-prose member a material claim can hide in: the visible answer is rendered from the claim texts in array order, or from the abstention reason.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "disposition",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "answer"
+            },
+            "claims": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/groundOwner_answerClaim"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "disposition",
+            "reason",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "abstain"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claims": {
+              "type": "array",
+              "maxItems": 0
+            }
+          }
+        }
+      ]
+    },
+    "groundOwner_answerClaim": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "groundOwner_citationRecord": {
+      "description": "One visible citation occurrence, claim-scoped, in reply order. Raw: duplicates remain here and are deduplicated only for set metrics.",
+      "type": "object",
+      "required": [
+        "claimId",
+        "citation",
+        "outcome"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "claimId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "outcome": {
+          "$ref": "#/$defs/groundOwner_citationOutcome"
+        }
+      }
+    },
+    "groundOwner_citationOutcome": {
+      "description": "The one ordered terminal outcome of a visible citation, walked in exactly this order against the attempt trace: unknown address first, then supply, then version status, then cutoff eligibility, then oracle support. A citation may not skip a state and may not carry two outcomes.",
+      "enum": [
+        "supporting",
+        "resolved-not-supporting",
+        "not-supplied",
+        "inactive-version",
+        "future-evidence",
+        "unknown-evidence"
+      ]
+    },
+    "groundOwner_citationCounts": {
+      "type": "object",
+      "required": [
+        "raw",
+        "unique",
+        "resolvedUnique",
+        "supportingUnique",
+        "byOutcome"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "raw": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unique": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolvedUnique": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supportingUnique": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "byOutcome": {
+          "$ref": "#/$defs/groundOwner_outcomeCounts"
+        }
+      }
+    },
+    "groundOwner_outcomeCounts": {
+      "type": "object",
+      "required": [
+        "supporting",
+        "resolvedNotSupporting",
+        "notSupplied",
+        "inactiveVersion",
+        "futureEvidence",
+        "unknownEvidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "supporting": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolvedNotSupporting": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notSupplied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inactiveVersion": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "futureEvidence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknownEvidence": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "groundOwner_claimScore": {
+      "description": "One-to-one predicate assignment and the supported-material-claim counts. A matched claim without a supporting terminal citation is one FP and one FN, never half credit. `f1` is null on a non-answerable question: it has no claim denominator.",
+      "type": "object",
+      "required": [
+        "expected",
+        "matches",
+        "tp",
+        "fp",
+        "fn",
+        "f1"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundOwner_fixtureKey"
+          }
+        },
+        "matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundOwner_claimMatch"
+          }
+        },
+        "tp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "f1": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "groundOwner_fixtureKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9@:_-]*$"
+    },
+    "groundOwner_claimMatch": {
+      "type": "object",
+      "required": [
+        "claim",
+        "predictedId",
+        "matched",
+        "supported"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "$ref": "#/$defs/groundOwner_fixtureKey"
+        },
+        "predictedId": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "matched": {
+          "type": "boolean"
+        },
+        "supported": {
+          "type": "boolean"
+        }
+      }
+    },
+    "groundOwner_abstentionScore": {
+      "type": "object",
+      "required": [
+        "expected",
+        "given",
+        "correct"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "type": "boolean"
+        },
+        "given": {
+          "type": "boolean"
+        },
+        "correct": {
+          "type": "boolean"
+        }
+      }
+    },
+    "groundOwner_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "groundOwner_liveQuestionResult": {
+      "description": "One question in one row, raw: the answer value, every visible citation with its terminal outcome, the claim assignment and the per-question cost stay in the report so every claim and citation outcome is auditable.",
+      "type": "object",
+      "required": [
+        "id",
+        "category",
+        "status",
+        "trace",
+        "answer",
+        "rendered",
+        "citations",
+        "citationCounts",
+        "claims",
+        "abstention",
+        "answerF1",
+        "retrievedRecall",
+        "suppliedRecall",
+        "citedRecall",
+        "tokens",
+        "ms",
+        "replayed",
+        "attempts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/groundOwner_liveStatus"
+        },
+        "trace": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_liveTrace"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answer": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_answerValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rendered": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundOwner_citationRecord"
+          }
+        },
+        "citationCounts": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_citationCounts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claims": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_claimScore"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "abstention": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/groundOwner_abstentionScore"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "answerF1": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrievedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "suppliedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "citedRecall": {
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "groundOwner_liveClaims": {
+      "type": "object",
+      "required": [
+        "tp",
+        "fp",
+        "fn",
+        "microPrecision",
+        "microRecall",
+        "microF1",
+        "meanF1"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "microPrecision": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "microRecall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "microF1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "meanF1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "groundOwner_liveCost": {
+      "type": "object",
+      "required": [
+        "turns",
+        "tokens",
+        "promptTokens",
+        "completionTokens",
+        "ms",
+        "replayed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promptTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completionTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "groundOwner_liveLatency": {
+      "type": "object",
+      "required": [
+        "count",
+        "medianMs",
+        "p95Ms"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "medianMs": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "p95Ms": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       }
     }
   }

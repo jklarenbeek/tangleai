@@ -309,30 +309,21 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   of being explicitly refreshed. *Closes on:* dated paired live evidence,
   reviewed domain/privacy gates, measured search scale and a resumable session
   event projection with exact accounting.
-- [ ] **The graph question, and LightRAG's answer to it.** *Wanted:* to decide
-  graph indexing of `relations` only when a real query needs a traversal —
-  document-shaped relations have no ceiling until then, and Memgraph / a neo4j
-  driver are allowed on Tangle's side of the boundary only if they buy a measured
-  capability. The strongest candidate for that capability is LightRAG's
-  mechanism: entities and relationships extracted and profiled from chunks into
-  a canonical graph with document-version and chunk provenance; entity names and
-  relation themes embedded and indexed separately; a query split into low-level
-  (entity) and high-level (theme) keywords under a pinned prompt identity;
-  low, high and hybrid retrieval with deterministic one-hop expansion; a context
-  bundle with explicit entity, relationship and original-chunk sections inside a
-  recorded budget; incremental update that touches only affected contributions
-  and promotes atomically. *Constraint:* `MemoryUnit.relations` is an optional
-  document-shaped field nothing extracts, indexes or traverses, and the desktop's
-  two lanes are not LightRAG's two levels. *Salvage:* what the predecessor's
-  graph layer looked like and cost — `docs/attic/memflow-ARCHITECTURE.md` (the
-  ~25-label data model) and `docs/attic/memflow-modules/graph.md`; the two ideas worth
-  keeping are query-before-dedup incremental indexing and LLM-summarized
-  community nodes as a high-level corpus. The flat row to beat is the immutable
-  measured grounding handoff (`benchmark/results/grounding-handoff.json`); a
-  graph treatment registers its own identity against that exact row rather
-  than re-rendering a friendlier flat baseline. *Closes on:* flat, low-only,
-  high-only, no-original and full-hybrid rows under one instrument, including
-  losses — a recall-quality or latency number the document store cannot reach.
+- [ ] **Graph retrieval qualification.** The claims, canonical projections,
+  incremental admission, dual-level retrieval and grounded answer engine ship;
+  the [measurement](LIGHTRAG_BENCHMARK.md) publishes their keyless ablations,
+  losses and operational SQLite ladder. Open work is the paid paired
+  supported-claim F1 gate against the regenerated immutable flat control, within
+  the registered cost/p95 limits, and separately licensed UltraDomain parity.
+  A Memgraph or Neo4j investigation is conditional on the ladder recording
+  `scale-row-registered`; architecture resemblance cannot open it or change a
+  default. Conservative model-dependent call bounds must fit an explicitly
+  approved live plan before provider work can start.
+  Large retained-source admission also remains memory intensive: the registered
+  10,000-chunk command grants Node 8 GiB of old-space heap after default-heap
+  exhaustion. Reducing retained-payload memory cost must preserve complete
+  canonical validation, retained reactivation and atomic rollback, with peak RSS
+  measured on the same corpus.
 
 ## Configuration and persistence
 
@@ -350,6 +341,13 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   Tangle's sizes; then pin `dims` in settings and declare the column.
 
 ## Surfaces
+
+- [ ] **Flat chat accounting and citation targets.** Degradation events are
+  recorded, but generation retains only the final provider usage rather than
+  complete repair and failed-call spend, and cited neighbour chunks are remapped
+  to ranked candidates. The graph answer engine's complete attempt accounting
+  and exact named chunk targets are the reference for a separately measured
+  correction; the immutable flat control must remain reproducible.
 
 - [ ] **The desktop's open ends.** Streamed chat, run-addressed resumable
   subscriptions, the watched folder, evidenced outcome feedback, the instrument

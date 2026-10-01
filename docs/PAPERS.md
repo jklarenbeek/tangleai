@@ -11,6 +11,16 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
 
 ## Ported — running in this repo
 
+- **LightRAG** (arXiv:2410.05779v3) — document-bound entity/relation claims,
+  structured extraction and affected profiling, name/theme retrieval, bounded
+  one-hop expansion, three evidence sections, atomic incremental admission and
+  a separately metered grounded answer engine ship in `@tangleai/lightrag`.
+  The [keyless measurement](LIGHTRAG_BENCHMARK.md) publishes all retrieval
+  ablations, losses and the registered SQLite ladder. Live paired improvement,
+  default adoption and separately licensed UltraDomain parity remain open.
+  Scripted mechanics are not the paper’s model-quality result.
+  - 📄 [`refs/2410.05779v3.pdf`](refs/2410.05779v3.pdf)
+
 - **PriHA / DRAG** (arXiv:2604.14215v1)
   - `@tangleai/grounding` composes governed clarification, hybrid parent/child
     retrieval, iterative safelisted web reads, authority/time reconciliation and
@@ -147,7 +157,6 @@ implementing any single one.
 
 ## Reference-only
 
-- **LightRAG** (arXiv:2410.05779v3) — graph+vector fusion; the roadmap's graph question names its mechanism as the candidate. 📄 [`refs/2410.05779v3.pdf`](refs/2410.05779v3.pdf)
 - **5 Proven Query Translation Techniques** (TDS, 2024) — HyDE, multi-query, step-back. 📄 [`refs/5 Proven Query Translation Techniques.pdf`](refs/5%20Proven%20Query%20Translation%20Techniques.pdf)
 - **AutoSkill** (arXiv:2604.17614v1) — activation-space skill characterization. 📄 [`refs/2604.17614v1.pdf`](refs/2604.17614v1.pdf)
 - **Memo, Not True Memory** (arXiv:2604.27707v1) — the generalization-ceiling argument for

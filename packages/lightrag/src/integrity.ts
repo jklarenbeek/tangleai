@@ -31,8 +31,10 @@ function vectorOf(row: GraphEntity | GraphRelation, expected?: LightRagEmbeddedB
     if (!isVector(row.embedding, row.embeddedBy.dims) || expected !== undefined && !sameIdentity(row.embeddedBy, expected))
         lightragReject('TLRAG1002', '/embeddedBy', 'A canonical vector differs from its declared or requested embedding identity.');
 }
-function supportOf<T extends GraphEntityClaim | GraphRelationClaim>(row: GraphEntity | GraphRelation, claims: readonly T[]): T[] {
-    const byId = new Map(claims.map(claim => [claim.id, claim]));
+type Lookup<T> = Pick<ReadonlyMap<string, T>, 'get'>;
+type EntityOptions = { expectedEmbeddedBy?: LightRagEmbeddedBy; previous?: GraphEntity };
+type RelationOptions = { expectedEmbeddedBy?: LightRagEmbeddedBy };
+function supportOf<T extends GraphEntityClaim | GraphRelationClaim>(row: GraphEntity | GraphRelation, byId: Lookup<T>): T[] {
     const support = row.supportClaimIds.map(id => byId.get(id));
     if (support.some(claim => claim === undefined)) lightragReject('TLRAG1003', '/supportClaimIds', 'A canonical names a claim absent from its supplied evidence.');
     const resolved = support as T[];
@@ -40,12 +42,10 @@ function supportOf<T extends GraphEntityClaim | GraphRelationClaim>(row: GraphEn
         lightragReject('TLRAG1003', '/supportChunkIds', 'Canonical chunk support must equal the union of its supporting claims.');
     return resolved;
 }
-export async function validateCanonicalEntity(value: unknown, claims: readonly GraphEntityClaim[], options: {
-    expectedEmbeddedBy?: LightRagEmbeddedBy; previous?: GraphEntity;
-} = {}): Promise<LightRagOutcome<GraphEntity>> {
+async function validateEntity(value: unknown, claims: () => Lookup<GraphEntityClaim>, options: EntityOptions): Promise<LightRagOutcome<GraphEntity>> {
     try {
         const row = lightragMust(validateLightRagShape('graphEntity', value)); vectorOf(row, options.expectedEmbeddedBy);
-        const support = supportOf(row, claims);
+        const support = supportOf(row, claims());
         if (row.normalizedName !== foldEntityName(row.name) || row.id !== await canonicalEntityIdOf(row.name, row.types[0], row.identityClaimId)
             || row.revision !== await canonicalGraphRevisionOf(row)) lightragReject('TLRAG1002', '/id', 'Canonical entity identity or revision differs from its content.');
         if (support.some(claim => claim.type !== row.types[0] || claim.normalizedName !== row.normalizedName)
@@ -60,12 +60,10 @@ export async function validateCanonicalEntity(value: unknown, claims: readonly G
         return { valid: true, value: row };
     } catch (cause) { return lightragFailure(cause); }
 }
-export async function validateCanonicalRelation(value: unknown, claims: readonly GraphRelationClaim[], entities: readonly GraphEntity[], options: {
-    expectedEmbeddedBy?: LightRagEmbeddedBy;
-} = {}): Promise<LightRagOutcome<GraphRelation>> {
+async function validateRelation(value: unknown, claims: () => Lookup<GraphRelationClaim>, entity: (id: string) => GraphEntity | undefined, options: RelationOptions): Promise<LightRagOutcome<GraphRelation>> {
     try {
         const row = lightragMust(validateLightRagShape('graphRelation', value)); vectorOf(row, options.expectedEmbeddedBy);
-        const support = supportOf(row, claims), source = entities.find(entity => entity.id === row.sourceEntityId), target = entities.find(entity => entity.id === row.targetEntityId);
+        const support = supportOf(row, claims()), source = entity(row.sourceEntityId), target = entity(row.targetEntityId);
         if (!source || !target) lightragReject('TLRAG1003', '/sourceEntityId', 'A relation endpoint is absent from its supplied canonical entities.');
         if (!same(row.themes, foldThemes(row.themes)) || row.id !== await canonicalRelationIdOf(row.sourceEntityId, row.targetEntityId, row.themes)
             || row.revision !== await canonicalGraphRevisionOf(row)) lightragReject('TLRAG1002', '/id', 'Canonical relation identity or revision differs from its content.');
@@ -76,4 +74,17 @@ export async function validateCanonicalRelation(value: unknown, claims: readonly
         if (row.status === 'merged' && row.mergedInto === row.id) lightragReject('TLRAG1006', '/mergedInto', 'A canonical cannot merge into itself.');
         return { valid: true, value: row };
     } catch (cause) { return lightragFailure(cause); }
+}
+export function validateCanonicalEntity(value: unknown, claims: readonly GraphEntityClaim[], options: EntityOptions = {}): Promise<LightRagOutcome<GraphEntity>> {
+    return validateEntity(value, () => new Map(claims.map(claim => [claim.id, claim])), options);
+}
+export function validateCanonicalRelation(value: unknown, claims: readonly GraphRelationClaim[], entities: readonly GraphEntity[], options: RelationOptions = {}): Promise<LightRagOutcome<GraphRelation>> {
+    return validateRelation(value, () => new Map(claims.map(claim => [claim.id, claim])), id => entities.find(entity => entity.id === id), options);
+}
+/** Reuse one contribution's evidence lookups without changing any canonical checks. */
+export function createCanonicalIntegrity(entityClaims: Lookup<GraphEntityClaim>, relationClaims: Lookup<GraphRelationClaim>) {
+    return {
+        entity: (value: unknown, options: EntityOptions = {}) => validateEntity(value, () => entityClaims, options),
+        relation: (value: unknown, entities: Lookup<GraphEntity>, options: RelationOptions = {}) => validateRelation(value, () => relationClaims, id => entities.get(id), options),
+    };
 }

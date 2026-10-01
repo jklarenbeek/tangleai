@@ -17,6 +17,32 @@ export function lightRagReadDocument(query: LightRagReadQuery): object {
         ['sourceEntityId', 'targetEntityId'].map(field => ({ $eq: ['$r.' + field, { $const: value }] }))) } : { $const: false });
     return { $for: { r: '$[*]' }, ...(where.length ? { $where: { $and: where } } : {}), $orderby: '$r.id', $return: '$r' };
 }
+/** Keep native indexed predicates below SQLite's expression and parameter limits. */
+async function readWithin<K extends LightRagTable>(scope: TransactionStore, table: K, query: LightRagReadQuery): Promise<LightRagStored<K>[]> {
+    const { ids, claimIds, normalizedNames, entityIds, ...scalar } = query;
+    const groups = ([['ids', ids], ['claimIds', claimIds], ['normalizedNames', normalizedNames], ['entityIds', entityIds]] as const)
+        .filter((entry): entry is readonly [typeof entry[0], readonly string[]] => entry[1] !== undefined)
+        .map(([key, values]) => ({ key, values: [...new Set(values)] }));
+    if (groups.some(group => group.values.length === 0)) return [];
+    const maxTerms = 256;
+    const execute = async (part: LightRagReadQuery) => asRows(await scope.collection<LightRagStored<K>>('lightrag_' + table)
+        .execute<LightRagStored<K>>(lightRagReadDocument(part)));
+    if (groups.reduce((sum, group) => sum + group.values.length * (group.key === 'entityIds' ? 2 : 1), 0) <= maxTerms)
+        return execute({ ...scalar, ...Object.fromEntries(groups.map(group => [group.key, group.values])) });
+    // Union each membership filter's batches, then intersect the filters by
+    // physical row identity. The caller's one transaction owns every read.
+    // This avoids a Cartesian product when several filters are large.
+    let selected: Map<string, LightRagStored<K>> | undefined;
+    for (const group of groups.sort((a, b) => a.values.length - b.values.length)) {
+        const matches = new Map<string, LightRagStored<K>>(), size = group.key === 'entityIds' ? maxTerms / 2 : maxTerms;
+        for (let offset = 0; offset < group.values.length; offset += size)
+            for (const row of await execute({ ...scalar, [group.key]: group.values.slice(offset, offset + size) }))
+                if (selected === undefined || selected.has(row.id)) matches.set(row.id, row);
+        if (!matches.size) return [];
+        selected = matches;
+    }
+    return [...selected!.values()].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+}
 export function lightRagViewWithin(scope: TransactionStore, options: LightRagDbOptions = {}): LightRagWriteView {
     return {
         async get<K extends LightRagTable>(table: K, id: string) { return scope.collection<LightRagStored<K>>('lightrag_' + table).get(id); },
@@ -24,7 +50,7 @@ export function lightRagViewWithin(scope: TransactionStore, options: LightRagDbO
             await scope.collection<LightRagStored<K>>('lightrag_' + table).put(row); await options.applyProbe?.('put:' + table);
         },
         async query<K extends LightRagTable>(table: K, query: LightRagReadQuery) {
-            return asRows(await scope.collection<LightRagStored<K>>('lightrag_' + table).execute<LightRagStored<K>>(lightRagReadDocument(query)));
+            return readWithin(scope, table, query);
         },
     };
 }

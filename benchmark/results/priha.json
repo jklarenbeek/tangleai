@@ -539,7 +539,7 @@
       },
       {
         "path": "benchmark/lib/grounding-run.ts",
-        "sha256": "82857273f5472646d05d5873a328e1e739ef6317a73e1dac58a73773af754cce"
+        "sha256": "9a2293dc4aa9e0128fa0679f91a33dda3b17f62f49087b8f692fdb309309caae"
       },
       {
         "path": "benchmark/lib/grounding-web.ts",
@@ -615,19 +615,39 @@
       },
       {
         "path": "benchmark/lib/lightrag-corpus.ts",
-        "sha256": "9a82f3935a583129d1a73440c012edca9e65b735ef0c9932ab62441321f428d2"
+        "sha256": "ba6ef4fe9037cd2c555151501cf241b379a18afd7ae3303bc937a3afac57f14e"
+      },
+      {
+        "path": "benchmark/lib/lightrag-incremental.ts",
+        "sha256": "7aba950ebe7b6592085b0d350d43252e72ac22f83e7f8935d5c31d50ff200246"
+      },
+      {
+        "path": "benchmark/lib/lightrag-judge.ts",
+        "sha256": "4939ed326949a34da082e43765c0e2778969ad451067146257b93aae5eb6f25a"
+      },
+      {
+        "path": "benchmark/lib/lightrag-ladder.ts",
+        "sha256": "ccc58cd661913cc6fa9942e40ed3b6fde71a59d57b51a0feccec0ecd5e3d0d93"
       },
       {
         "path": "benchmark/lib/lightrag-measure.ts",
         "sha256": "b6c48fd57b01e0bdf3d821bd25c6d83d73be62d12e4deea14f2ed336a682974b"
       },
       {
+        "path": "benchmark/lib/lightrag-parity.ts",
+        "sha256": "ca2ba3d6b12e6625705dcade2446825b1786b1bc5521dc108515c80e5d7daf3c"
+      },
+      {
+        "path": "benchmark/lib/lightrag-run.ts",
+        "sha256": "a17f579c652ca7c294061bf6910610e5774530c3b3f76a26a3ecad8613f7e58a"
+      },
+      {
         "path": "benchmark/lib/lightrag.ts",
-        "sha256": "b82d0e2a187e41da746ff94031f9cece98dc8a69021efbe6e111b41bb5f60a78"
+        "sha256": "15e6cdd1b76daaf9cbdb69f73e145e0b9976f23f6c67f90a84bb3eed17b20d21"
       },
       {
         "path": "benchmark/lib/lightrag.types.ts",
-        "sha256": "e784ed708121ef0d4486b8bd24796176688ba0202c095a4310f4610bde79dd3c"
+        "sha256": "85563e12e29a292bcd4dbe5f7f138bd1a3d8b70db467eb62521c50273937a5b7"
       },
       {
         "path": "benchmark/lib/locomo-corpus.ts",
@@ -991,7 +1011,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "2934aff76c6d6326c80f25d745b01e4fdab9735ba2d1b040fc55118bbe9bd2dd"
+        "sha256": "166397de9a87efe4caf0fa0c8dc6ee8bbc7d1d2a40cd8f7a6cf7af7712046ffe"
       },
       {
         "path": "packages/agents/package.json",
@@ -1223,7 +1243,7 @@
       },
       {
         "path": "packages/documents/src/grounding.ts",
-        "sha256": "3978a5349d5d6267d07d8aacfd9763be9904359e58f01fe2f90da8337dcdd75c"
+        "sha256": "5de1bcb66ef6dbd31872c3541195f70905358d0ba7b9f0e49871c2a1c879acf3"
       },
       {
         "path": "packages/documents/src/index.ts",
@@ -2099,7 +2119,7 @@
       },
       {
         "path": "packages/lightrag/src/apply.ts",
-        "sha256": "6b627779a7e45a6192c2f78d44844532d0966ff65477fd8a28302f93a732833c"
+        "sha256": "5882f13a44532dcf08e84f5a00c5dda38754d7f053f2cb5c935383420376eef4"
       },
       {
         "path": "packages/lightrag/src/catalog.ts",
@@ -2139,7 +2159,7 @@
       },
       {
         "path": "packages/lightrag/src/integrity.ts",
-        "sha256": "633aaf0aef0051f4c4ce4953d43754d5c2806f39efb8cd3fa9c7d78bc702f8ff"
+        "sha256": "e58d3c495d0c55aaaf5c931f8520a0c00bfc0bfe529c3157beb8d2862bf232e8"
       },
       {
         "path": "packages/lightrag/src/limits.ts",
@@ -2167,7 +2187,7 @@
       },
       {
         "path": "packages/lightrag/src/plan.ts",
-        "sha256": "0d978b8abb298d32c5d4811f05e3f90b0633f4435f3b8665f6f1fd7aea3f899e"
+        "sha256": "509972b638c06d82295853cead4a36717f62b174b0b9e29ab3d43cae399b3715"
       },
       {
         "path": "packages/lightrag/src/profile.ts",
@@ -2211,7 +2231,7 @@
       },
       {
         "path": "packages/lightrag/src/write-plan.ts",
-        "sha256": "cfeabe3869efc3ffd9ee431da2f745865b0afe8744acda2d17cb7913c3b8ebf3"
+        "sha256": "b806e22eb75560b00fdbe94575924ded645811909cd76c1f5d9349bd75e9c54a"
       },
       {
         "path": "packages/linq/package.json",
@@ -2843,7 +2863,7 @@
       },
       {
         "path": "packages/store/src/lightrag-store.ts",
-        "sha256": "41e0f72da2eb7f4aa6719727d059bde29440c7d9e97c37c42166eb345be90419"
+        "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -3022,7 +3042,7 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "8172dd9653e394a7cc5dbe36d4da252c27eeab68a92783e41c26f08ccc0ab07b"
+    "sha256": "4d2ee374a50c04276b4ec5f7ea7cb05d063181404f4c0b36fe63db1df029a840"
   },
   "fixtureSource": {
     "files": [
@@ -68212,7 +68232,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "8172dd9653e394a7cc5dbe36d4da252c27eeab68a92783e41c26f08ccc0ab07b",
+      "sourceSha256": "4d2ee374a50c04276b4ec5f7ea7cb05d063181404f4c0b36fe63db1df029a840",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68296,7 +68316,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "1fd3c0a33683c7d23ea93c9cca6b06e699116f3f29bea0b3cf00326828d2d644"
+      "planId": "695b5ced9f9b07ef3fa681b4d85ac248cc2a6658d1892d90b70df894b80f7fa9"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68543,5 +68563,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "2948ffe4bf3eb68729cb51809e16fb1525f24b2437c30c149cc4c61131d1f183"
+  "reportId": "1753827cf33a05aa2bebd28eec8288459968ef4349a4b732a85cc0cfac9ba8b7"
 }
