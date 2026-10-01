@@ -25,11 +25,15 @@ export function planQuestionTransition(input: ForecastQuestion, command: Questio
     if (command.earlier) {
       const earlier = checkShape<ForecastResolution>('forecastResolution', command.earlier);
       if (earlier.questionId !== question.id) reject('TFCT1003', 'The earlier resolution belongs to another question.');
+      if (command.type === 'resolution.correct') {
+        if (!['resolved','disputed'].includes(question.status) || equalsJson(earlier.outcome,resolution.outcome) || resolution.correctionOf !== earlier.id) reject('TFCT1004','A correction requires a conflicting outcome and its retained original resolution.');
+        return { before: question,after: { ...question,status: 'disputed' as const } };
+      }
       if (!equalsJson(earlier.outcome, resolution.outcome)) reject('TFCT1004', 'Resolution conflicts with earlier record ' + earlier.id + '.', '/outcome');
       if (equalsJson(earlier, resolution) && question.status === 'resolved' && command.type === 'resolution.record') return { before: question, after: question };
     }
-    if (question.status !== 'open' || !['resolution.record','resolution.correct'].includes(command.type)) reject('TFCT1004', 'The question cannot take this resolution transition.');
-    return { before: question, after: { ...question, status: command.type === 'resolution.record' ? 'resolved' as const : 'disputed' as const } };
+    if (question.status !== 'open' || command.type !== 'resolution.record') reject('TFCT1004', 'The question cannot take this resolution transition.');
+    return { before: question, after: { ...question, status: 'resolved' as const } };
   });
 }
 export type CheckpointCommand = { type: 'checkpoint.start'; at: string } | { type: 'checkpoint.finalize' | 'checkpoint.fail'; at: string };
@@ -84,7 +88,7 @@ export function visibleHarness(input: ForecastQuestion, candidate: ForecastHarne
   return pure(() => {
     const question = checkShape<ForecastQuestion>('forecastQuestion', input), version = checkShape<ForecastHarnessVersion>('forecastHarnessVersion', candidate);
     if (version.scopeKey !== question.scopeKey) reject('TFCT1003', 'The harness belongs to another scope.');
-    if (['staged','provisional'].includes(version.status) && version.questionId !== question.id && !(version.questionId === null && version.provenance.seed))
+    if (version.status !== 'checked-ref' && version.questionId !== question.id && !(version.questionId === null && version.provenance.seed))
       reject('TFCT1003', 'The provisional harness belongs to another question.');
     if (['rejected','archived'].includes(version.status)) reject('TFCT1004', 'The harness is not visible for checkpoint execution.');
     if (version.status === 'checked-ref' && !version.checkedVersionId) reject('TFCT1004', 'The checked reference has no outcome version.');

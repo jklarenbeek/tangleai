@@ -24,3 +24,8 @@ export * from './refiner.ts';
 export * from './editor-toolbox.ts';
 export * from './feedback.ts';
 export * from './revision.ts';
+export * from './outcome-adapter.ts';
+export * from './outcome-host.ts';
+export * from './outcome-commands.ts';
+export * from './retrospective.ts';
+export * from './lifecycle.ts';

@@ -140,3 +140,8 @@ reservation and fences its prior attempt. Histories retain these attempts even
 before a terminal operation receipt exists. The reference store is browser
 importable; SQLite remains in the separate store package and providers require
 explicit host injection.
+
+Pure adapter interpreters may return JSON synchronously or asynchronously. The
+service awaits them during checked decision reproduction and paired evaluation;
+rejections become the existing ineligible held-out issue. Interpreters remain
+deterministic and perform no provider purchase or mutable host operation.

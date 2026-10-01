@@ -82,8 +82,7 @@ atomically retains the revision, staged-to-provisional candidate, question head
 and cumulative checkpoint spend. Retrying the same publication writes zero rows.
 A no-op may retain the revision and spend receipt while creating no harness.
 Only the same question's next scheduled checkpoint can select a provisional
-candidate. The scripted evolving row measures this editing path; outcome-gated
-evaluation and checked promotion are not yet part of that measurement.
+candidate. The scripted evolving row measures editing and the outcome-gated lifecycle below.
 
 Run `npm run forecast:tick -- --db /tmp/forecast.db --now
 2025-01-25T00:00:00.000Z --fixture` for three scripted checkpoints. A second
@@ -110,6 +109,62 @@ ordinal claims, additive upgrades and zero-write replay after reopening.
 
 Revision and retrospective ids bind their immutable inputs and omit forward
 result references to candidates, which themselves cite the originating record.
-Those result records remain immutable: publishing different result bytes under
-the same id is refused. Checked references cannot be inserted directly; an
-outcome activation event belongs to the promotion policy, never a raw store put.
+Revision results remain immutable. Retrospective result links and the scoring receipt of an outcome/v1 resolution advance only through package commands; their immutable evidence and proposal identities do not change. Checked references cannot be inserted directly; publication verifies the outcome service’s current checked head and its retained activation event.
+
+
+`createForecastHarnessAdapter` provides one outcome lineage for choice and numeric
+questions. Its pure asynchronous interpreter hashes the supplied harness with
+canonical SHA-256 and looks up an explicitly retained prediction. Missing digest
+predictions score failure. Output carries the input-bound answer adapter; a new
+question does not create a new artifact lineage. `SEED_HARNESS` is the fixed
+baseline, with the same digest as the registered fixture.
+
+`createForecastOutcomeHost` binds an opaque forecast store, an outcome store,
+immutable scope key, subject, approval principal, clock and optional paired
+prediction provider. It returns the outcome service and its evidence authority.
+The resolver attests retained original facts for the exact decision and scope;
+nonempty memory-id authorization is refused. `forecastQuestionCreateFromOutcome`
+captures the verified checked head when admitting a question and replays its
+original creation identity. The checkpoint host's optional `outcomeHost` binding
+records finalized harness predictions in its final `decision-record` MAS stage.
+
+`createForecastLifecycleHost` admits a separate typed resolution workflow through
+the same MAS segment queue: resolution-record → predictions-score →
+retrospective-run → harness-promote-or-retain. This separate admission reflects
+that the outcome arrives after checkpoint execution. It starts no timer. The
+retrospective client is constructed only inside a running MAS attempt. Its four
+read tools expose the resolved question’s archived chain, notes and bounded
+traces; they grant no web access or mutation capability. Exactly one verdict
+covers each committed guidance item. The same guarded refiner checks every
+procedural addition and the complete candidate against the captured checked
+parent. Failed repairs retain their spend and no candidate.
+
+`forecastResolutionBegin` retains an immutable evidence fact before the resolver
+can attest it. `forecastPredictionsScore` calls the outcome service outside
+forecast transactions, then attaches its score ids atomically. Stable request
+keys recover a stop between those services with no duplicate outcomes. Decisions
+finished after observation are counted as post-resolution skips. An explicit
+`forecastResolutionCorrect` retains conflicting evidence and marks the question
+disputed; it never changes the original scores. Rescoring and revoking previously
+transferred guidance after a correction are not implemented.
+
+Promotion consumes only other resolved questions in the same scope, with both
+parent and candidate predictions, strictly earlier cutoffs and fresh held-out
+content. The outcome service owns evaluation, approval and head CAS. All-validate
+retains, all-reject records rejection, and a no-op creates no version. A tie,
+regression, absent paired slot or stale parent cannot promote. Operational
+refusals preserve the originating outcome issues, including retryability.
+
+The keyless fixture resolves five questions and scores fifteen checkpoints:
+one promotion, one retention, one rejection and two ineligible candidates. The
+civic candidate improves held-out mean utility by two thirds; its successor
+ties. The release-date candidate regresses by two thirds and that scope retains
+an empty checked head. The next civic question starts from the checked harness.
+These are conformance results from authored replies, not evidence of live model
+quality. See the generated forecast benchmark for every count and candidate.
+
+Run `npm run forecast:smoke -- --db /tmp/forecast-outcomes.db` twice. The second
+run reports zero new forecast/outcome writes and zero model calls. The example
+traps network access. Eight resolution publication/MAS boundaries reopen SQLite
+with identical artifacts and no extra purchases; checkpoint and revision
+recovery remain independently measured.

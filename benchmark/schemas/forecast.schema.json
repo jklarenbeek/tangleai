@@ -34,8 +34,8 @@
       "items": {
         "$ref": "#/$defs/probe"
       },
-      "minItems": 16,
-      "maxItems": 16
+      "minItems": 22,
+      "maxItems": 22
     },
     "evidenceAudit": {
       "type": "array",
@@ -1330,7 +1330,14 @@
           "$ref": "#/$defs/revisionCensus"
         },
         "lifecycle": {
-          "type": "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/lifecycleCensus"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1735,6 +1742,244 @@
           }
         ]
       }
+    },
+    "lifecycleCensus": {
+      "type": "object",
+      "properties": {
+        "resolutions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scoredCheckpoints": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "postResolutionSkips": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promoted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retained": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ineligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrospectiveCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "$ref": "#/$defs/cost"
+        },
+        "pairedCandidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "retrospectiveId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "versionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "parentDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "candidateDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "caseIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "maxItems": 10000
+              },
+              "baselineUtility": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "candidateUtility": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "delta": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": -1,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "eligible": {
+                "type": "boolean"
+              },
+              "issues": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "maxItems": 10000
+              }
+            },
+            "required": [
+              "retrospectiveId",
+              "versionId",
+              "parentDigest",
+              "candidateDigest",
+              "caseIds",
+              "baselineUtility",
+              "candidateUtility",
+              "delta",
+              "eligible",
+              "issues"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 10000
+        },
+        "checkedHeads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scopeKey": {
+                "type": "string",
+                "minLength": 1
+              },
+              "versionId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "digest": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "scopeKey",
+              "versionId",
+              "revision",
+              "digest"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 10000
+        },
+        "records": {
+          "type": "object",
+          "properties": {
+            "resolutions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "maxItems": 10000
+            },
+            "retrospectives": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "maxItems": 10000
+            },
+            "checkedReferences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "maxItems": 10000
+            },
+            "outcomes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "maxItems": 10000
+            }
+          },
+          "required": [
+            "resolutions",
+            "retrospectives",
+            "checkedReferences",
+            "outcomes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "resolutions",
+        "scoredCheckpoints",
+        "postResolutionSkips",
+        "promoted",
+        "retained",
+        "rejected",
+        "ineligible",
+        "retrospectiveCalls",
+        "spend",
+        "pairedCandidates",
+        "checkedHeads",
+        "records"
+      ],
+      "additionalProperties": false
     }
   }
 }

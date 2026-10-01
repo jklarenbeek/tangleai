@@ -42,9 +42,9 @@ describe('registered forecasting measurement',()=>{
     try{const r=await buildForecastReport({source});assert.equal(r.rows[0].utility,1);assert.deepEqual(r.rows[0].counts,{planned:18,available:15,pending:3,scored:15,failed:0,notRun:0});
       assert.equal(r.rows[1].utility,.2);assert.equal(r.band.low,.1);assert.equal(r.band.high,2/3);assert.equal(r.rows[2].utility,.8);assert.deepEqual(r.rows[2].byHorizon.map(h=>h.utility),[.6,.8,1]);
       assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.equal(r.rows[5].status,'implementation-missing');assert.equal(r.rows[5].counts.notRun,15);
-      assert.equal(r.rows[6].status,'measured');assert.equal(r.rows[6].revisions!.attempted,12);assert.equal(r.rows[6].revisions!.staged,12);assert.equal(r.rows[6].cost.calls,84);assert.equal(r.rows[6].lifecycle,null);
-      assert.throws(()=>requireCapability(r,'evolving'),/evolving-harness lifecycle census/);
-      requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/scaffold-no-harness, evolving-harness/);
+      assert.equal(r.rows[6].status,'measured');assert.equal(r.rows[6].revisions!.attempted,12);assert.equal(r.rows[6].revisions!.staged,11);assert.equal(r.rows[6].cost.calls,89);assert.equal(r.rows[6].lifecycle!.promoted,1);assert.equal(r.rows[6].lifecycle!.ineligible,2);
+      requireCapability(r,'evolving');
+      requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/scaffold-no-harness/);
     }finally{globalThis.fetch=fetch;}
   });
   it('refuses a row missing any model, tool, prompt, note, scorer, cutoff or cost identity',async()=>{

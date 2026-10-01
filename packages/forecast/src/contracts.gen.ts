@@ -21,6 +21,7 @@ export interface ForecastIssue {
    */
   detail: string;
   retryable: boolean;
+  cause?: Json;
 }
 
 
@@ -889,6 +890,9 @@ export interface ForecastResolutionSkippedItem {
 }
 
 
+/**
+ * Schema constraints this type cannot express: dependencies={"protocol":["scoringStatus"],"scoringStatus":["protocol"]}
+ */
 export interface ForecastResolution {
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
@@ -927,6 +931,12 @@ export interface ForecastResolution {
    * Schema constraints this type cannot express: minItems=0, maxItems=1000
    */
   skipped: Array<ForecastResolutionSkippedItem>;
+  protocol?: "outcome/v1";
+  scoringStatus?: "pending" | "complete";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  correctionOf?: string;
 }
 
 
@@ -945,6 +955,11 @@ export type RetrospectiveCheckNoteIdsItem = string;
  */
 export type RetrospectiveCheckVerdictsItemSourcesItem = string;
 
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=512
+ */
+export type RetrospectiveCheckVerdictsItemRefinedTextAnyOf1 = string;
+
 export interface RetrospectiveCheckVerdictsItem {
   /**
    * Schema constraints this type cannot express: minLength=1, pattern="\\S"
@@ -952,13 +967,14 @@ export interface RetrospectiveCheckVerdictsItem {
   guidanceRef: string;
   verdict: "validate" | "refine" | "reject";
   /**
-   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="\\S"
    */
   reason: string;
   /**
    * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
    */
   sources: Array<RetrospectiveCheckVerdictsItemSourcesItem>;
+  refinedText: RetrospectiveCheckVerdictsItemRefinedTextAnyOf1 | null;
 }
 
 
@@ -982,11 +998,13 @@ export interface RetrospectiveCheckReflectAnyOf1 {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type RetrospectiveCheckEvaluationAnyOf1EvaluationIdAnyOf1 = string;
+
 export interface RetrospectiveCheckEvaluationAnyOf1 {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  evaluationId: string;
+  evaluationId: RetrospectiveCheckEvaluationAnyOf1EvaluationIdAnyOf1 | null;
   eligible: boolean;
   /**
    * Schema constraints this type cannot express: minItems=0, maxItems=1000
@@ -1007,6 +1025,11 @@ export interface RetrospectiveCheckPromotionAnyOf1 {
   head: Head;
 }
 
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type RetrospectiveCheckApprovalIdAnyOf1 = string;
 
 export interface RetrospectiveCheck {
   /**
@@ -1037,7 +1060,7 @@ export interface RetrospectiveCheck {
   reflect: RetrospectiveCheckReflectAnyOf1 | null;
   evaluation: RetrospectiveCheckEvaluationAnyOf1 | null;
   promotion: RetrospectiveCheckPromotionAnyOf1 | null;
-  outcome: "promoted" | "retained" | "rejected" | "ineligible";
+  outcome: "promoted" | "retained" | "rejected" | "ineligible" | "pending";
   configuration: Configuration;
   /**
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
@@ -1051,6 +1074,26 @@ export interface RetrospectiveCheck {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   noteSchemaRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  recordedAt?: string;
+  candidateDocument?: HarnessDocument | null;
+  parentHead?: Head;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  parentHarnessId?: string;
+  receipt?: ForecastStageReceipt;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  issues?: Array<ForecastIssue>;
+  approvalId?: RetrospectiveCheckApprovalIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceReads?: number;
 }
 
 
@@ -1195,6 +1238,137 @@ export interface VolatileFactVerdict {
    * Schema constraints this type cannot express: maxItems=32
    */
   verdicts: Array<VolatileFactVerdictVerdictsItem>;
+}
+
+
+export interface ForecastResolutionCorrectionEvidenceItem {
+  address: EvidenceAddress;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  excerpt: string;
+}
+
+
+export interface ForecastResolutionCorrectionLossesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  decisionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  resolutionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  scoreId: string;
+  category: "success" | "partial" | "failure";
+  utility: 0 | 0.5 | 1;
+}
+
+
+export interface ForecastResolutionCorrectionSkippedItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  checkpointId: string;
+  reason: "post-resolution" | "failed" | "no-decision";
+}
+
+
+/**
+ * Schema constraints this type cannot express: dependencies={"protocol":["scoringStatus"],"scoringStatus":["protocol"]}
+ */
+export interface ForecastResolutionCorrection {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  observedAt: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+   */
+  receivedAt: string;
+  outcome: string | number;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=1000
+   */
+  evidence: Array<ForecastResolutionCorrectionEvidenceItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  scorerId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  scorerVersion: string;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=1000
+   */
+  losses: Array<ForecastResolutionCorrectionLossesItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=1000
+   */
+  skipped: Array<ForecastResolutionCorrectionSkippedItem>;
+  protocol?: "outcome/v1";
+  scoringStatus?: "pending" | "complete";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  correctionOf: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+ */
+export type RetrospectiveProposalVerdictsItemSourcesItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=512
+ */
+export type RetrospectiveProposalVerdictsItemRefinedTextAnyOf1 = string;
+
+export interface RetrospectiveProposalVerdictsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1, pattern="\\S"
+   */
+  guidanceRef: string;
+  verdict: "validate" | "refine" | "reject";
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=512, pattern="\\S"
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=32, uniqueItems=true
+   */
+  sources: Array<RetrospectiveProposalVerdictsItemSourcesItem>;
+  refinedText: RetrospectiveProposalVerdictsItemRefinedTextAnyOf1 | null;
+}
+
+
+export interface RetrospectiveProposal {
+  /**
+   * Schema constraints this type cannot express: minItems=0, maxItems=1000
+   */
+  verdicts: Array<RetrospectiveProposalVerdictsItem>;
+  candidate: HarnessDocument | null;
 }
 
 

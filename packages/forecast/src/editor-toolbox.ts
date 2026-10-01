@@ -19,16 +19,24 @@ export async function forecastEditorToolset() {
   ];
   return { definitions: deepFreeze(definitions),names: FORECAST_EDITOR_TOOL_NAMES,revision: await forecastRevision(await Promise.all([...definitions].sort((a,b) => a.name.localeCompare(b.name)).map(async d => ({ name: d.name,description: d.description,inputSchemaRevision: await forecastRevision(d.inputSchema) })))) };
 }
-export async function createEditorToolbox(options: { store: ForecastStore; question: ForecastQuestion; checkpoint: ForecastCheckpoint; limits?: Partial<HarnessLimits> }) {
+export async function createEditorToolbox(options: { store: ForecastStore; question: ForecastQuestion; checkpoint: ForecastCheckpoint; limits?: Partial<HarnessLimits>; retrospective?: { resolutionId: string;harnessId: string } }) {
   const question = await validateForecastRecord('questions',options.question), checkpoint = await validateForecastRecord('checkpoints',options.checkpoint), limits = checkedHarnessLimits(options.limits);
   if (checkpoint.questionId !== question.id) reject('TFCT1003','The editor checkpoint belongs to another question.');
   const retainedQuestion = forecastMust(await forecastGet(options.store,'questions',question.id)), retainedCheckpoint = forecastMust(await forecastGet(options.store,'checkpoints',checkpoint.id));
   if (!equalsJson(retainedQuestion,question) || !equalsJson(retainedCheckpoint,checkpoint)) reject('TFCT1002','Editor inputs differ from retained records.');
+  const retrospective = options.retrospective;
+  if (retrospective) {
+    const resolution = forecastMust(await forecastGet(options.store,'resolutions',retrospective.resolutionId));
+    if (!resolution || resolution.questionId !== question.id || resolution.correctionOf) reject('TFCT1003','Retrospective evidence belongs to another question.');
+    if (question.status !== 'resolved' || resolution.scoringStatus !== 'complete') reject('TFCT1004','Retrospective reads require the scored original resolution.');
+  }
   const checkpoints = forecastMust(await forecastQuery(options.store,'checkpoints',{ questionId: question.id,limit: 1000 })).filter(c => c.ordinal <= checkpoint.ordinal).sort((a,b) => a.ordinal - b.ordinal), allowed = new Map(checkpoints.map(c => [c.id,c]));
   const notes = forecastMust(await forecastQuery(options.store,'notes',{ questionId: question.id,limit: 1000 })).filter(n => allowed.get(n.checkpointId)?.noteId === n.id).sort((a,b) => allowed.get(a.checkpointId)!.ordinal - allowed.get(b.checkpointId)!.ordinal);
-  const revisions = forecastMust(await forecastQuery(options.store,'revisions',{ questionId: question.id,limit: 1000 })).filter(r => allowed.has(r.checkpointId) && allowed.get(r.checkpointId)!.ordinal < checkpoint.ordinal).sort((a,b) => allowed.get(a.checkpointId)!.ordinal - allowed.get(b.checkpointId)!.ordinal);
-  const harness = checkpoint.inputHarnessVersionId ? forecastMust(await forecastGet(options.store,'harnesses',checkpoint.inputHarnessVersionId)) : null;
-  if (!harness || harness.digest !== checkpoint.inputHarnessDigest) reject('TFCT1012','The feedback editor needs its immutable input harness.');
+  const revisions = forecastMust(await forecastQuery(options.store,'revisions',{ questionId: question.id,limit: 1000 })).filter(r => allowed.has(r.checkpointId) && (retrospective || allowed.get(r.checkpointId)!.ordinal < checkpoint.ordinal)).sort((a,b) => allowed.get(a.checkpointId)!.ordinal - allowed.get(b.checkpointId)!.ordinal);
+  const harnessId = retrospective?.harnessId ?? checkpoint.inputHarnessVersionId;
+  const harness = harnessId ? forecastMust(await forecastGet(options.store,'harnesses',harnessId)) : null;
+  if (!harness || !retrospective && harness.digest !== checkpoint.inputHarnessDigest) reject('TFCT1012','The feedback editor needs its immutable input harness.');
+  if (harness.scopeKey !== question.scopeKey || harness.questionId !== question.id && !harness.provenance.seed && harness.status !== 'checked-ref') reject('TFCT1003','The editor harness belongs to another question or scope.');
   const evidence = (await Promise.all(checkpoints.flatMap(c => c.evidenceIds).map(async id => forecastMust(await forecastGet(options.store,'evidence',id))))).filter(e => e?.admitted);
   const sourceIds = [...notes.map(n => 'note:' + n.id),...revisions.map(r => 'revision:' + r.id),...checkpoints.filter(c => c.traceId).map(c => 'trace:' + c.traceId)];
   const metadata = await forecastEditorToolset(), box = createToolbox();
@@ -59,7 +67,7 @@ export async function createEditorToolbox(options: { store: ForecastStore; quest
       if (stopped) return refused('TFCT1004','The feedback read session is closed.');
       if (!(FORECAST_EDITOR_TOOL_NAMES as readonly string[]).includes(name)) return refused('TFCT1003','The requested tool is outside the editor view.');
       const current = forecastMust(await forecastGet(options.store,'questions',question.id));
-      if (current?.status !== 'open') return refused('TFCT1004','Feedback reads require an unresolved question.');
+      if (current?.status !== (retrospective ? 'resolved' : 'open')) return refused('TFCT1004',retrospective ? 'Retrospective reads require a resolved question.' : 'Feedback reads require an unresolved question.');
       const result = await box.execute(name,input); return result?.error && !result.code ? refused('TFCT1001',String(result.error)) : result;
     } catch (error) { return error instanceof ForecastRefusal ? refused(error.code,error.message) : refused('TFCT1012','The injected editor read failed.'); }
   };

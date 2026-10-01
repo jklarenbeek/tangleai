@@ -466,7 +466,7 @@ describe('the chat-answer outcome domain', () => {
       disposition: 'refusal', citations: 0, agreed: true,
     });
     assert.deepEqual(
-      adapter.interpret({ messageId: 'c-1', questionDigest: 'a'.repeat(64), disposition: 'answer', citations: 2 } as any, adapter.staticPayload),
+      await adapter.interpret({ messageId: 'c-1', questionDigest: 'a'.repeat(64), disposition: 'answer', citations: 2 } as any, adapter.staticPayload),
       { disposition: 'answer', citations: 2 },
     );
   });

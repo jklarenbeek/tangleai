@@ -84,7 +84,7 @@ export async function pairedResults(context: ServiceContext, version: ArtifactVe
   for (const c of registration.cases) {
     try {
       const input = domain.input(c.input), actual = domain.resolution(c.source.payload);
-      const output = domain.output(adapter.interpret(input, version.payload)), baselineOutput = domain.output(adapter.interpret(input, baseline));
+      const output = domain.output(await adapter.interpret(input, version.payload)), baselineOutput = domain.output(await adapter.interpret(input, baseline));
       const category = checkShape<CaseResult['category']>('category', adapter.score(output, actual).outcome), baselineCategory = checkShape<CaseResult['category']>('category', adapter.score(baselineOutput, actual).outcome);
       rows.push({ id: c.id, contentDigest: await outcomeRevision({ domain: c.domain, input: c.input, outcome: c.source.payload }), output, baselineOutput, category, baselineCategory, utility: scoreUtility(category), baselineUtility: scoreUtility(baselineCategory) });
     } catch { issues.push(issue('OUTC1011', `Held-out case could not be scored: ${c.id}.`)); }

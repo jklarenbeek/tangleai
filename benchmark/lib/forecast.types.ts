@@ -733,6 +733,148 @@ export interface RevisionCensus {
 
 
 /**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type LifecycleCensusPairedCandidatesItemCaseIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LifecycleCensusPairedCandidatesItemBaselineUtilityAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0, maximum=1
+ */
+export type LifecycleCensusPairedCandidatesItemCandidateUtilityAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=-1, maximum=1
+ */
+export type LifecycleCensusPairedCandidatesItemDeltaAnyOf1 = number;
+
+export interface LifecycleCensusPairedCandidatesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  retrospectiveId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  versionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  parentDigest: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  candidateDigest: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  caseIds: Array<LifecycleCensusPairedCandidatesItemCaseIdsItem>;
+  baselineUtility: LifecycleCensusPairedCandidatesItemBaselineUtilityAnyOf1 | null;
+  candidateUtility: LifecycleCensusPairedCandidatesItemCandidateUtilityAnyOf1 | null;
+  delta: LifecycleCensusPairedCandidatesItemDeltaAnyOf1 | null;
+  eligible: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  issues: Array<{ [key: string]: unknown; }>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type LifecycleCensusCheckedHeadsItemVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type LifecycleCensusCheckedHeadsItemDigestAnyOf1 = string;
+
+export interface LifecycleCensusCheckedHeadsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scopeKey: string;
+  versionId: LifecycleCensusCheckedHeadsItemVersionIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  digest: LifecycleCensusCheckedHeadsItemDigestAnyOf1 | null;
+}
+
+
+export interface LifecycleCensusRecords {
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  resolutions: Array<{ [key: string]: unknown; }>;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  retrospectives: Array<{ [key: string]: unknown; }>;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  checkedReferences: Array<{ [key: string]: unknown; }>;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  outcomes: Array<{ [key: string]: unknown; }>;
+}
+
+
+export interface LifecycleCensus {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolutions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scoredCheckpoints: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  postResolutionSkips: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promoted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retained: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ineligible: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retrospectiveCalls: number;
+  spend: Cost;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  pairedCandidates: Array<LifecycleCensusPairedCandidatesItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  checkedHeads: Array<LifecycleCensusCheckedHeadsItem>;
+  records: LifecycleCensusRecords;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.counts.planned",{"$count":"$.cases[*]"}]},{"$eq":["$.counts.planned",{"$add":["$.counts.available","$.counts.pending"]}]},{"$eq":["$.counts.available",{"$add":[{"$add":["$.counts.scored","$.counts.failed"]},"$.counts.notRun"]}]},{"$eq":[{"$count":"$.cases[*].checkpointId"},{"$count":{"$distinct":"$.cases[*].checkpointId"}}]},{"$if":[{"$eq":["$.status","measured"]},{"$and":[{"$ne":["$.identity.configuration",null]},{"$ne":["$.identity.toolset",null]},{"$ne":["$.identity.promptRevision",null]},{"$ne":["$.identity.noteSchemaRevision",null]},{"$ne":["$.identity.scorer",null]},{"$ne":["$.identity.cutoffPolicy",null]}]},true]}]}
  */
 export interface Row {
@@ -757,7 +899,7 @@ export interface Row {
   probes: Array<Probe>;
   runtime: RowRuntimeAnyOf1 | null;
   revisions?: RevisionCensus;
-  lifecycle?: null;
+  lifecycle?: LifecycleCensus | null;
 }
 
 
@@ -857,7 +999,7 @@ export interface Forecast {
    */
   rows: Array<Row>;
   /**
-   * Schema constraints this type cannot express: minItems=16, maxItems=16
+   * Schema constraints this type cannot express: minItems=22, maxItems=22
    */
   probes: Array<Probe>;
   /**

@@ -24,11 +24,12 @@ const identityOmissions: Partial<Record<ForecastTable, readonly string[]>> = {
   // Candidates refer back to these records. Excluding the forward result links
   // avoids circular hashes; immutable publication still binds every result byte.
   revisions: ['candidateVersionId'],
-  retrospectives: ['candidateVersionId','reflect','evaluation','promotion','outcome'],
+  retrospectives: ['candidateVersionId','reflect','evaluation','promotion','outcome','issues','approvalId'],
 };
 export const forecastRevision = canonicalSha256;
 export function forecastRecordId<K extends ForecastTable>(table: K, value: Omit<ForecastTables[K], 'id'> | ForecastTables[K]): Promise<string> {
-  const data = Object.fromEntries(Object.entries(value).filter(([key]) => key !== 'id' && !identityOmissions[table]?.includes(key)));
+  const omissions = table === 'resolutions' && 'protocol' in value && value.protocol === 'outcome/v1' ? ['losses','skipped','scoringStatus'] : identityOmissions[table];
+  const data = Object.fromEntries(Object.entries(value).filter(([key]) => key !== 'id' && !omissions?.includes(key)));
   return canonicalSha256({ table, ...data });
 }
 export async function validateForecastRecord<K extends ForecastTable>(table: K, input: unknown): Promise<ForecastTables[K]> {

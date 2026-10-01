@@ -15,7 +15,7 @@ rollback to the root. Times, request keys and fixtures are fixed for replay.
 
 An `OutcomeAdapter` supplies four closed JSON schemas (input, decision output,
 resolution and artifact), a schema/scorer revision identity, a static payload,
-a pure `interpret(input, payload)`, a pure `score(output, resolution)`, and
+a pure `interpret(input, payload)` returning JSON or a promise of JSON, a pure `score(output, resolution)`, and
 semantic `validatePayload`. Optional normalization runs before artifact hashing.
 Schema digests and the complete adapter identity are checked at construction.
 Register immutable adapters; do not change their functions behind a revision.

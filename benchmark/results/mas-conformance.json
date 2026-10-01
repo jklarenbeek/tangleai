@@ -4,7 +4,7 @@
     "entry": "benchmark/mas-conformance.ts"
   },
   "source": {
-    "head": "c77869c6f331e1e4a09ca57c820d71cbd54b6cf9",
+    "head": "0ce15cbf7fbd6f467e6f8b744e7d65ad4e41e9ee",
     "clean": false,
     "files": [
       {
@@ -128,7 +128,7 @@
         "sha256": "3b05fd2e51a975a9b4bc25ab13813f6e887bf1fcbc1b48c37f6529b4c235f409"
       }
     ],
-    "sha256": "c8059ad9cc228ca08c0d83f059bd73b00a576b97c4cc1339602ee03f2cb2ad86"
+    "sha256": "829675daa194ef671808f0b9ab74ab52830d54466265e51f985acf0de28cd3ff"
   },
   "suite": {
     "packages": [
@@ -1275,7 +1275,7 @@
     "state": "not-run",
     "reason": "no authorized live plan"
   },
-  "reportId": "6fe1f397ced0a35af25e5269028af24aba3477884251f81653cdab3d0101f6ed",
+  "reportId": "18bb2a413c18075882d8c31256e3abc19e51d377f235ff78cc3f600258f8dc83",
   "decision": {
     "outcome": "runtime-conformant",
     "failedClauses": [],

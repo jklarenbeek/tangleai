@@ -40,7 +40,7 @@ export async function runOutcomeExample(store: OutcomeStore = createMemoryOutcom
     const input: Json = numeric ? { base: 0 } : { token: 'training:one' };
     const actual: Json = numeric ? { actual: 0.06 } : { label: 'yes' };
     const decisionId = id(await service.create(command('decision', {
-      decisionKey: 'training', adapter: adapter.identity, input, output: adapter.interpret(input, adapter.staticPayload),
+      decisionKey: 'training', adapter: adapter.identity, input, output: await adapter.interpret(input, adapter.staticPayload),
       decidedAt: at, cutoffAt: at, expectedResolutionAt: later, memoryIds: [memoryId, memoryId, 'absent:' + memoryId],
       configuration: { kind: 'scripted', revision }, usedVersionId: null, staticPayload: adapter.staticPayload,
     }, at)), 'decisionId');

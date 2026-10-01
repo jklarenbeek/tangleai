@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/forecast": "./schemas/forecast.schema.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./schemas/outcome-adapter": "./schemas/outcome-adapter.schema.json"
   },
   "engines": {
     "node": ">=24"

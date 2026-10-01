@@ -24,7 +24,7 @@ export interface ForecastTransaction {
   put<K extends ForecastTable>(table: K, value: ForecastTables[K]): Promise<number>;
   query<K extends ForecastTable>(table: K, query: ForecastQuery): Promise<ForecastTables[K][]>;
 }
-type MutableTable = 'questions' | 'schedules' | 'checkpoints' | 'harnesses';
+type MutableTable = 'questions' | 'schedules' | 'checkpoints' | 'harnesses' | 'resolutions' | 'retrospectives';
 /** Internal command capability, never exposed by the public transaction wrapper. */
 export interface ForecastCommandTransaction extends ForecastTransaction {
   replace<K extends MutableTable>(table: K, before: ForecastTables[K], after: ForecastTables[K]): Promise<number>;
@@ -128,7 +128,7 @@ async function transact<T>(store: ForecastStore, task: (tx: ForecastCommandTrans
         }),
         replace: (table,before,after) => guard(async () => {
           checkAddress(table,before.id);
-          if (!['questions','schedules','checkpoints','harnesses'].includes(table)) reject('TFCT1004', 'This forecast record has no mutable lifecycle.');
+          if (!['questions','schedules','checkpoints','harnesses','resolutions','retrospectives'].includes(table)) reject('TFCT1004', 'This forecast record has no mutable lifecycle.');
           const current = await raw.get(table,before.id);
           if (!current || !equalsJson(current.payload,before)) reject('TFCT1004', 'The lifecycle record changed after planning.');
           const next = await validateForecastRecord(table,after);

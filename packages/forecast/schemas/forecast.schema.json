@@ -69,6 +69,9 @@
         },
         "retryable": {
           "type": "boolean"
+        },
+        "cause": {
+          "$ref": "#/$defs/json"
         }
       },
       "required": [
@@ -1650,6 +1653,19 @@
           },
           "minItems": 0,
           "maxItems": 1000
+        },
+        "protocol": {
+          "const": "outcome/v1"
+        },
+        "scoringStatus": {
+          "enum": [
+            "pending",
+            "complete"
+          ]
+        },
+        "correctionOf": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
         }
       },
       "required": [
@@ -1663,7 +1679,15 @@
         "scorerVersion",
         "losses",
         "skipped"
-      ]
+      ],
+      "dependencies": {
+        "protocol": [
+          "scoringStatus"
+        ],
+        "scoringStatus": [
+          "protocol"
+        ]
+      }
     },
     "retrospectiveCheck": {
       "type": "object",
@@ -1722,7 +1746,8 @@
               "reason": {
                 "type": "string",
                 "minLength": 1,
-                "pattern": "\\S"
+                "pattern": "\\S",
+                "maxLength": 512
               },
               "sources": {
                 "type": "array",
@@ -1734,13 +1759,26 @@
                 "minItems": 1,
                 "maxItems": 32,
                 "uniqueItems": true
+              },
+              "refinedText": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             },
             "required": [
               "guidanceRef",
               "verdict",
               "reason",
-              "sources"
+              "sources",
+              "refinedText"
             ]
           },
           "minItems": 0,
@@ -1800,8 +1838,15 @@
               "additionalProperties": false,
               "properties": {
                 "evaluationId": {
-                  "type": "string",
-                  "pattern": "^[a-f0-9]{64}$"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "eligible": {
                   "type": "boolean"
@@ -1860,7 +1905,8 @@
             "promoted",
             "retained",
             "rejected",
-            "ineligible"
+            "ineligible",
+            "pending"
           ]
         },
         "configuration": {
@@ -1877,6 +1923,52 @@
         "noteSchemaRevision": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "recordedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "candidateDocument": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/harnessDocument"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parentHead": {
+          "$ref": "#/$defs/head"
+        },
+        "parentHarnessId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "receipt": {
+          "$ref": "#/$defs/forecastStageReceipt"
+        },
+        "issues": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "$ref": "#/$defs/forecastIssue"
+          }
+        },
+        "approvalId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "traceReads": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -2306,6 +2398,260 @@
       },
       "required": [
         "verdicts"
+      ]
+    },
+    "forecastResolutionCorrection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "observedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "receivedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "address": {
+                "$ref": "#/$defs/evidenceAddress"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "excerpt": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "address",
+              "sha256",
+              "excerpt"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "scorerId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "scorerVersion": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "losses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "decisionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "resolutionId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scoreId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "category": {
+                "enum": [
+                  "success",
+                  "partial",
+                  "failure"
+                ]
+              },
+              "utility": {
+                "enum": [
+                  0,
+                  0.5,
+                  1
+                ]
+              }
+            },
+            "required": [
+              "checkpointId",
+              "decisionId",
+              "resolutionId",
+              "scoreId",
+              "category",
+              "utility"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "reason": {
+                "enum": [
+                  "post-resolution",
+                  "failed",
+                  "no-decision"
+                ]
+              }
+            },
+            "required": [
+              "checkpointId",
+              "reason"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "protocol": {
+          "const": "outcome/v1"
+        },
+        "scoringStatus": {
+          "enum": [
+            "pending",
+            "complete"
+          ]
+        },
+        "correctionOf": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "questionId",
+        "observedAt",
+        "receivedAt",
+        "outcome",
+        "evidence",
+        "scorerId",
+        "scorerVersion",
+        "losses",
+        "skipped",
+        "correctionOf"
+      ],
+      "dependencies": {
+        "protocol": [
+          "scoringStatus"
+        ],
+        "scoringStatus": [
+          "protocol"
+        ]
+      }
+    },
+    "retrospectiveProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "guidanceRef": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "verdict": {
+                "enum": [
+                  "validate",
+                  "refine",
+                  "reject"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "maxLength": 512
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 1,
+                "maxItems": 32,
+                "uniqueItems": true
+              },
+              "refinedText": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "guidanceRef",
+              "verdict",
+              "reason",
+              "sources",
+              "refinedText"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "candidate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/harnessDocument"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "verdicts",
+        "candidate"
       ]
     }
   }

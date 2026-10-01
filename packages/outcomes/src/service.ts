@@ -62,7 +62,7 @@ export async function createOutcomeService(options: OutcomeServiceOptions) {
         const version = await recordOf(tx, i.usedVersionId, c.scopeId, c.artifactKey, 'artifactVersion');
         const head = await headFor(tx, c.scopeId, c.artifactKey);
         if (head.versionId !== version.id || !equalsJson(version.adapter, i.adapter)) reject('OUTC1013', 'Decision did not use the current checked artifact.');
-        if (!equalsJson(domain.output(adapter.interpret(i.input, checked.payload)), i.output)) reject('OUTC1008', 'Decision output does not reproduce with its checked artifact.');
+        if (!equalsJson(domain.output(await adapter.interpret(i.input, checked.payload)), i.output)) reject('OUTC1008', 'Decision output does not reproduce with its checked artifact.');
       }
       const decision = await seal('decision', c.scopeId, c.artifactKey, c.at, { ...i, scope: context.scope });
       await putRecord(tx, decision); await unique(tx, c.scopeId, 'decision', i.decisionKey, decision.id);

@@ -42,6 +42,6 @@ it('publication refuses rehashed candidate drift and no-op feedback creates no h
 it('a forced stop after the revision commit resumes to the same revision and version ids without extra purchases',async () => {
   const report = await measureForecastRevisionResume(); assert.equal(report.stages.length,2); assert.equal(report.logicalCalls,14); assert.equal(report.physicalRequests,0); assert.equal(report.duplicateDeliveries,3);
   assert.ok(report.stages.every(s => s.stops === 2 && s.resumed === 2 && s.extraCalls === 0 && s.artifactDigest === report.artifactDigest));
-  assert.equal(report.executableRevision,'07d953d3cd82c5305a950ad9685f8e78e63dfff08d40685cf68f97de2e3d571f');
+  assert.equal(report.executableRevision,'a57678c857810999f0faab1fb9bc26952f52f5a5a9bfe865db4f277a9a9c245a');
   const workflow = await prepareForecastWorkflow('forecast-scripted'); assert.equal(workflow.plan.executableRevision,report.executableRevision);
 });

@@ -43,7 +43,8 @@ describe('pure forecast lifecycle policy', () => {
     const conflicting = await sealForecastRecord('resolutions',{ ...f.resolutions,outcome: 'reject' });
     refusal(planQuestionTransition(resolved,{ type: 'resolution.record',resolution: conflicting,earlier: f.resolutions }),'TFCT1004','Resolution conflicts with earlier record ' + f.resolutions.id + '.');
     assert.deepEqual(must(planQuestionTransition(resolved,{ type: 'resolution.record',resolution: f.resolutions,earlier: f.resolutions })).after,resolved);
-    assert.equal(must(planQuestionTransition(f.questions,{ type: 'resolution.correct',resolution: conflicting })).after.status,'disputed');
+    assert.equal(must(planQuestionTransition(resolved,{ type: 'resolution.correct',resolution: { ...conflicting,correctionOf: f.resolutions.id },earlier: f.resolutions })).after.status,'disputed');
+    refusal(planQuestionTransition(f.questions,{ type: 'resolution.correct',resolution: conflicting }),'TFCT1004','The question cannot take this resolution transition.');
     refusal(planQuestionTransition(resolved,{ type: 'resolution.correct',resolution: f.resolutions }),'TFCT1004','The question cannot take this resolution transition.');
   });
   it('returns due checkpoints at equality in time/question/ordinal order without mutating input',async () => {

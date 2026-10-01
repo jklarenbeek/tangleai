@@ -14,7 +14,7 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | no-harness | measured | 15 / 18 | 0.3333333333333333 | 0 / 0 / 1 | 0.8 | 3 / 2 | true | 72 / 2340 / 0 |
 | static-harness | measured | 15 / 18 | 0.5333333333333333 | 0 / 1 / 0.6 | 0.8 | 3 / 2 | true | 72 / 2340 / 0 |
 | scaffold-no-harness | implementation-missing | 15 / 18 | — | unmeasured / unmeasured / unmeasured | 0.8 | 3 / 2 | true | 0 / 0 / 0 |
-| evolving-harness | measured | 15 / 18 | 0.6 | 0 / 1 / 0.8 | 0.8 | 3 / 2 | true | 84 / 2940 / 0 |
+| evolving-harness | measured | 15 / 18 | 0.6 | 0 / 1 / 0.8 | 0.8 | 3 / 2 | true | 89 / 3240 / 0 |
 
 | Checkpoint | Scope | Status | Oracle utility | Evidence ceiling | Admitted | Future / undated |
 |---|---:|---:|---:|---:|---:|---:|
@@ -53,22 +53,28 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 | admission-parity | true | 1152 snapshot/cutoff pairs agree with the independent oracle. |
 | adapter-score-parity | true | 75 authored predictions agree with the independent scorer. |
 | stop-reason-census | true | future: stop, cutoff refusal TFCT1006, 4 calls; length: length, TFCT1005, 3 calls; tool-limit: tool-limit, TFCT1005, 2 calls; budget-turns: budget-turns, TFCT1005, 0 calls; malformed: stop, TFCT1009, 3 calls |
-| resume-identity | true | 27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 07d953d3cd82c5305a950ad9685f8e78e63dfff08d40685cf68f97de2e3d571f. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3. |
+| resume-identity | true | 27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable a57678c857810999f0faab1fb9bc26952f52f5a5a9bfe865db4f277a9a9c245a. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3. |
 | duplicate-delivery | true | 3 TMAS2001 deliveries create no extra forecast artifact or spend; second ticks start zero runs. |
 | ordinal-discipline | true | One out-of-order ordinal is refused as TFCT1004 before any model purchase. |
 | revision-skipped-at-ordinal-1 | true | Checkpoint one takes revision-skip; later checkpoints return a counted not-implemented revision value. |
 | volatile-fact-gate | true | 8 registered leaks refused by kind; 13 reusable and harness strings admitted. These are separate gate probes, not revision purchases. |
-| provisional-invisible | true | 180 other-question and scope reads refuse provisional harnesses as TFCT1003. |
+| provisional-invisible | true | 165 other-question and scope reads refuse question-owned harnesses as TFCT1003. |
 | editor-toolbox-names | true | Every measured revision pins exactly four read tools; no web or store write tool. |
-| revision-digest-agreement | true | All six questions follow seed → 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 → c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d; the last generation is never executed in its own question. |
+| revision-digest-agreement | true | Unrelated questions follow seed → 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 → c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d; a related question starts from the checked generation and its repeated final proposal stages nothing. |
 | no-op-revision-writes-nothing | true | An unchanged guarded proposal is counted as deferred and invokes no harness publication. A host can still retain the revision and its spent receipt. |
-| revision-resume-identity | true | 2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 07d953d3cd82c5305a950ad9685f8e78e63dfff08d40685cf68f97de2e3d571f. |
+| revision-resume-identity | true | 2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable a57678c857810999f0faab1fb9bc26952f52f5a5a9bfe865db4f277a9a9c245a. |
+| adapter-score-parity | true | 45 choice/numeric candidate predictions reproduce the independent fixture scorer; the total digest miss remains a failure. |
+| promotion-fencing | true | One checked activation advances its captured parent by one; the losing release-date scope has no eligible candidate and no head. Concurrency is separately exercised by two service hosts. |
+| checked-scope-transfer | true | The next related question uses the independently promoted head; an unrelated scope starts from its seed. |
+| post-resolution-skip | true | A separate early-observation control scores four checkpoints and retains two post-resolution skips without resolving those late decisions. |
+| held-out-forward-only | true | 9 disjoint forward-only paired cases exclude their training question. An equal-cutoff observation is refused before evaluation; consumed pairs are not reused. |
+| lifecycle-resume-identity | true | Eight committed forecast/MAS boundaries reopen SQLite with identical artifact digest 60dca5b2f400d31fba2ef9899bcbe8dd47aea222fdc1de91460a9b61d503dd39; 30 logical calls, zero extra purchases, 0 physical requests and 2 duplicate deliveries. |
 
 - The fictional fixture measures conformance; it does not establish learned forecasting quality or reproduce paper results.
 - Pending checkpoints execute on the scripted tier and remain in planned denominators with no utility.
 - The shared audit counts unique registered attachments once. Each measured treatment separately captures three future and two undated refusals; negative scripts are separate probes.
 - Static rows run the real bounded agent, read-only tools, note builder and atomic memory store against authored responses. Calls and usage are scripted accounting, not purchased tokens; the injected clock gives zero elapsed time.
-- The evolving row measures pre-resolution editing through the durable MAS host. Lifecycle evaluation and outcome-gated promotion remain absent; the evolving capability is false. The optional semantic classifier is not injected in this keyless row.
+- The evolving row includes durable MAS editing, fifteen outcome-service scores and five retrospectives. One civic candidate improves fresh held-out pairs and promotes; the civic successor ties and the release-date candidate regresses, so both are ineligible. The release-date checked head remains empty. The optional semantic classifier is not injected in this keyless row.
 - A proven parent-registration anchor preserves static inputs and row bytes while feedback is re-keyed by harness digest and ordinal.
 - No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. Unimplemented identities remain null.
 - No live plan is registered yet.
@@ -81,7 +87,7 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 
 | Revision row | Attempted / staged / deferred / refused | Guidance committed / deferred / refused | Trace reads / exhausted | Editor / classifier calls | Usage known | Lifecycle |
 |---|---:|---:|---:|---:|---:|---:|
-| evolving-harness | 12 / 12 / 0 / 0 | 12 / 0 / 0 | 0 / 0 | 12 / 0 | true | unmeasured |
+| evolving-harness | 12 / 11 / 1 / 0 | 11 / 1 / 0 | 0 / 0 | 12 / 0 | true | measured |
 
 | Gate kind | Refused guidance |
 |---|---:|
@@ -95,38 +101,53 @@ Seeded reference utility: 0.2000. Exact central 99% band: [0.1000, 0.6667]; expe
 
 | Revision | Patch operations |
 |---|---:|
-| 0e569fe32ed58b9d43909f85842cf7452951198982bfa3ac045c65fb55b6ed05 | 1 |
-| 2f2f74b61db168f95380a11b48413ab5bcc9ad00acff39a41e9033373c41794f | 1 |
-| 7cfeeaf7ee69a8eaa4ca8a27b9fade277750f7c2933c2f49386850b542ffb7cc | 1 |
-| 679c7dc815241d72e19293be7e86ba5c09f0f21e37c15004652865faf77326e7 | 1 |
-| 8da4e4a4c13ddc752eb61119b0ddc5c98c0d5b7f9936c46f6a5afb52106d3063 | 1 |
-| 39df9518000cea80b9bf76b74d5b5256b1f1f3591a3735ee6c71b03f2fc6c78b | 1 |
-| 9354ef9ba4c5ff214d0317385beeca184e5f00dd2baf2d81a3cffbd692ad660d | 1 |
-| 5e868f33312b2fc7db0f98124c96c77788165f94e58938c4b440ed80da1bb859 | 1 |
-| 3b66059922f89b37674c2c96a739e17d8fa71abf8bf4ab3f8c609a0686e99555 | 1 |
-| a7a07416dff9cc6373c45b2e9092ddccad6094e0b57fc6cdb10ab0103c29c189 | 1 |
-| 290f589b4f1057b1ffaefaccf417785249c2fdab9b40ff0b9dd6bb2f987da954 | 1 |
-| 304cd7a43196de5470b9bac50c4052bcb579cd0baf5faa75b0cd485393504d57 | 1 |
+| bf614068c669eb25c5bce603c93ab58607b39745a6e9d3edff15193ae7837f4e | 1 |
+| 3d3567b7f5b545b18f6f2956fb5ecff2a704ef16cccb0bd8af9147b07be3cafd | 1 |
+| 833bd005438ed7e4072b634afa3080c8ad1cc3be149c1e1a920448cf238f0c44 | 1 |
+| 3eb9779f570f1e91beb3e6d38b2e384cfb007445fcd0b258181dd15866ad0548 | 1 |
+| 747a1138b9edd4a2c786149bf16e293b0fbbccdcd1b77eec061bae663bcdfa96 | 1 |
+| a97dccf1d78e9c26b9679003ddd0f9dbbd4591fbd5356a72c9f4ed4ca0d44084 | 0 |
+| a36fe758ef03e5a59eaf234c9706c79b56bbe5258cf118c16520f7d654011611 | 1 |
+| 87ee7eefcfe4559d1b8ce186fe70d9e6be813d1ea777e464dd75344773080776 | 1 |
+| 6a535e363f6526241d8221023c2cf50654a3e4521bce0ccf07dce16b4f33a6e0 | 1 |
+| 4ba0c9adf7888c597c833c2404b03f762c1e79826baf9a076053829560e8a532 | 1 |
+| 5287f67ea947a8d7e598580019c6590e4b5c6b7984033fa95d9d39812d00f4ff | 1 |
+| 6f22584d27174683745cdefd1c1c14df251ee4b5c336a40c7058230e7f947f25 | 1 |
 
 | Harness version | Digest | Canonical bytes |
 |---|---:|---:|
-| 43a0b10f2ea3da4fdf88d4ad6ec4bf036d6d78ef1c12be0a928dfecd8c8c32ee | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
-| 8d21de0c787a8ac65f7cf1795a3630105561f11e26e9c1b162ef88e95d28907b | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 68ea5ed481d075d3c6f3434d74f1dc49badc5ab733f0b487a95178dc4688723b | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| f645a7c1aee6d4fa1840679190bfeb50fa411d981cea60d8c036009e891f2f41 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
 | 5241fb2cee342eb3e388bf176401d5c1e784ffe5ccf4b72502ad35f7eae55afb | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
-| 54f921a007b6155a68d3503c6c24513c7bffad17aaf271384df060e5044afa54 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
-| ac9b26251942efc56fa07a243df6b6e982b827be458a59c811e9039a73a07099 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
+| 138f81748b827bffb5ca44309230ad7ad7fb27b3669471cba30b645fde9d3f33 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 409bb65b50bbadf0d552d879780cbba8cd7cc2cc31a33fb3ce3da13e61ae8f23 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
+| f487a47aa3fcadade070496ad06a8365cfdfa8f3186c9ef02b357a399f019ba8 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
 | a0d3f1dc07d66fcf19c2d90b5fcf77d8fd640f18f2fbe86352449456d7363904 | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
-| cd9f66c11953b5a7a5e231e73c658fd4fede2dde8a9ce769638a760b96de5647 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
-| e0da44f83779d87f02e96f4dac104d63c4df98d902eadada0dd3e3619716884a | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 0d1c4f7cb4125a85dad4aa9a45fe65e1bd9cee0687ce4ac6aa38016d51ff99e1 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
 | de5e7b20ec7563278705145e3e70d77ffe073947cc65b68d96a35c28e843768f | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
-| 39cae7086e1e3ada4957e1273859a42e701c3394d9a6220d9368e7581b2edaeb | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
-| ccc42eb00c34013fa5b4272e788eaf2dcfc3b730d72b5291ef60987e5bc70271 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 362dba29d7e77146d9546c4c79379a3e985b0b23b7dd3ea48747b817ae06d709 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 7d9d1f59bf12903297911676f348e118b0adac41bf756562ffc625d9cdf44e8d | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
 | 53650b0a9a1114446728398ae78f1a1b338a2e74e4afa9ed74b9e142468e09ac | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
-| 375fae318d5e5f0f3c7e195c05fd2ef4fa927e4f6de2656658932161f8a1c3d3 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
-| b2744771e5bcf8dea0659fa3c7fd5922f730290d316f0706f9c5a74c1389aa9f | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
+| 6c484844ffab09786184ccb96788e848f648c88e9d4accf252ef89cfdd1b6022 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 751d75b41184171d755c7963a9b9dc499e970d70c556ee085a2f23c0584d1fb6 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
 | dfd2ec1f68ce9a39381bf35d1f36504cfe3474723a6104cc79d0c15193de5783 | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
-| 03b683be0d0da12dffe2511330b068111d52723ef2a7af85081e6657329b0bff | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
-| 590396804e7076ff2c7dc45dc467d0c88fb7a44e98017776e515a3fa39ce4057 | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
+| 186f1cee4b8b5fae2c53aa550a5e66562b290650c74ccdbb5c706d1b1881163f | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 | 284 |
+| e37fd634d3c6b9c4a8d7b566cb8b4cd5e9748761e6c2dab0862b282a6690b29f | c745be447db96521a5677636d8f4fea1bb4c4d47d335041fcb48d8447b2f277d | 351 |
 | d9acb05b7030ab5bf95507a5a13febef75c5dd955f5041a46bc912b3bf7b19db | 314cf26cc10be0a2166304685e10ddcf2886c05c4e17825d80980595d92c27fb | 220 |
 
-Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `5258eb3da88d71313635866b4c73bdc131728ce469fc40ff1aa2d275bd576e0f`. Report: `6d2693d8f9d8716013417b5c820d65af639da02b25321766443f230d36315312`.
+| Lifecycle row | Resolutions / scored checkpoints | Promoted / retained / rejected / ineligible | Retrospective calls / tokens | Post-resolution skips |
+|---|---:|---:|---:|---:|
+| evolving-harness | 5 / 15 | 1 / 1 / 1 / 2 | 5 / 300 | 0 |
+
+| Candidate version | Baseline utility | Candidate utility | Paired delta | Eligible | Issues |
+|---|---:|---:|---:|---:|---:|
+| 0c631b0389800bbf5333aa6f5454621c779e418f47c1cc67e97e89bee96df615 | 0.6666666666666666 | 0 | -0.6666666666666666 | false | [{"code":"TFCT1011","path":"","detail":"The candidate failed its paired held-out gate.","retryable":false,"cause":[{"code":"OUTC1011","path":"","detail":"Paired held-out utility did not strictly improve.","retryable":false},{"code":"OUTC1011","path":"","detail":"A registered domain regressed.","retryable":false}]}] |
+| fb3cdc8b30b1c1868eb13f2371a29ab85804a09b392994623c5dce9e40e90aaf | 1 | 1 | 0 | false | [{"code":"TFCT1011","path":"","detail":"The candidate failed its paired held-out gate.","retryable":false,"cause":[{"code":"OUTC1011","path":"","detail":"Paired held-out utility did not strictly improve.","retryable":false}]}] |
+| e4a7014d7d907af0909e286dae2b818b685b56e280a6429a07624fe30e4ec08b | 0.3333333333333333 | 1 | 0.6666666666666667 | true | [] |
+
+| Scope | Checked version | Revision | Harness digest |
+|---|---:|---:|---:|
+| tidewater/civic-votes | e4a7014d7d907af0909e286dae2b818b685b56e280a6429a07624fe30e4ec08b | 1 | 1becc4519ccf3720263b1f64f021b7ccd96acf66cb21cfd30b9adc1f41a1ffe0 |
+| tidewater/release-dates | none | 0 | none |
+
+Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `9b5c13ce0fa1e03216241a781da122711783da2b77955fa627872886b7891f04`. Report: `5a087c2b5353d772328541549b1731f4829315bce28439197eb5cf5700c343a9`.

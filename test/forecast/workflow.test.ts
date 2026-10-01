@@ -4,8 +4,8 @@ import { prepareForecastWorkflow, FORECAST_HANDLER_POLICY, selectForecastHarness
 import { makeForecastFixture } from './fixtures.ts';
 it('validates and pins the single checkpoint workflow and its task effect policies',async () => {
   const p = await prepareForecastWorkflow('forecast-scripted');
-  assert.equal(p.workflow.versionId,'d2f099ee69901892a30c76c3cf60f799772419d4f7b6ccc33cbc050eb21f8d74');
-  assert.equal(p.plan.executableRevision,'07d953d3cd82c5305a950ad9685f8e78e63dfff08d40685cf68f97de2e3d571f');
+  assert.equal(p.workflow.versionId,'d77bdb098ef45490fe47537fd91fbc3276df6401e59fdb59e0e1a5de0844f259');
+  assert.equal(p.plan.executableRevision,'a57678c857810999f0faab1fb9bc26952f52f5a5a9bfe865db4f277a9a9c245a');
   assert.equal(p.workflow.workflowId,'forecast-checkpoint-v1');
   for (const handler of FORECAST_HANDLER_POLICY) assert.equal(p.snapshot.document.handlers.find(h => h.id === handler.id)!.idempotency,handler.effect === 'effectful' ? 'honored' : 'not-required');
 });

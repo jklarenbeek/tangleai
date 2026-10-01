@@ -14,6 +14,8 @@ import { createForecastToolbox, type ForecastToolboxOptions } from './toolbox.ts
 import { createNoteBuilder } from './note.ts';
 import { createInternalFeedbackEditor, type InternalFeedbackOptions } from './feedback.ts';
 import { forecastRevisionCommit } from './revision.ts';
+import { forecastDecisionRecord } from './outcome-commands.ts';
+import type { ForecastOutcomeHost } from './outcome-host.ts';
 import type { ForecastChatClient } from './meter.ts';
 import type { ForecastQuestion, ForecastCheckpoint, ForecastHarnessVersion, ForecastWorkflowRequest } from './contracts.gen.ts';
 
@@ -23,8 +25,9 @@ export interface ForecastHandlerOptions {
   executor: (context: ForecastHandlerContext) => Pick<ForecastToolboxOptions,'cutoffPolicy'|'search'|'fetcher'|'extract'> & { client: ForecastChatClient };
   noteBuilder: (context: ForecastHandlerContext) => { client: ForecastChatClient };
   feedbackEditor?: (context: ForecastHandlerContext) => Pick<InternalFeedbackOptions,'client'|'classifier'|'limits'|'gate'>;
+  outcomeHost?: (context: ForecastHandlerContext) => ForecastOutcomeHost | Promise<ForecastOutcomeHost>;
   now: () => string; clock: () => number;
-  afterStage?: (stage: 'checkpoint-run' | 'note-create' | 'checkpoint-complete' | 'put:forecast_revisions' | 'put:forecast_harnesses', checkpoint: ForecastCheckpoint) => void | Promise<void>;
+  afterStage?: (stage: 'checkpoint-run' | 'note-create' | 'checkpoint-complete' | 'put:forecast_revisions' | 'put:forecast_harnesses' | 'decision-record', checkpoint: ForecastCheckpoint) => void | Promise<void>;
 }
 export const forecastRunId = (questionId: string,scheduledAt: string) => forecastRevision({ questionId,scheduledAt });
 export function createForecastHandlers(options: ForecastHandlerOptions): Record<string,MasTaskHandlerBinding> {
@@ -55,6 +58,15 @@ export function createForecastHandlers(options: ForecastHandlerOptions): Record<
     return { completed: { checkpointId: c.id,status: c.status,traceId: c.traceId,noteId: c.noteId,predictionId: c.predictionId,revision } };
   };
   return {
+    'decision-record': async input => {
+      const value = await context(input);
+      if (options.outcomeHost && value.checkpoint.status === 'finalized' && value.checkpoint.inputHarnessVersionId) {
+        const host = await options.outcomeHost(value);
+        const saved = forecastMust(await forecastDecisionRecord(host,value.checkpoint.id));
+        await afterStage('decision-record',saved);
+      }
+      return { completed: input.value.completed };
+    },
     'checkpoint-plan': async input => {
       const value = await context(input), { checkpoint,question,request } = value;
       if (checkpoint.status === 'planned') forecastMust(planCheckpointTransition(checkpoint,{ type: 'checkpoint.start',at: options.now() },{ ordinals: question.checkpointPolicy.ordinals,checkpoints: forecastMust(await forecastQuery(store,'checkpoints',{ questionId: question.id })) }));

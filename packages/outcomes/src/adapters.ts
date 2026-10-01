@@ -15,7 +15,7 @@ export interface OutcomeAdapter {
         outcome: 'success' | 'partial' | 'failure';
         diagnostics: Json;
     };
-    interpret(input: Json, payload: Json): Json;
+    interpret(input: Json, payload: Json): Json | Promise<Json>;
     validatePayload(payload: Json): Issue[];
     normalizePayload?(payload: Json): Json;
 }

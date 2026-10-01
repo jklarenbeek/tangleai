@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/forecast-outcome-adapter",
+  "title": "Forecast harness outcome adapter",
+  "$defs": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "checkpointId",
+        "ordinal",
+        "cutoffAt",
+        "adapter",
+        "usedHarnessDigest",
+        "predictions"
+      ],
+      "properties": {
+        "questionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpointId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cutoffAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        "adapter": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "const": "choice/v1"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "minItems": 2,
+                  "maxItems": 1000,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "options"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "const": "numeric/v1"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "tolerance": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "tolerance",
+                "range"
+              ]
+            }
+          ]
+        },
+        "usedHarnessDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "predictions": {
+          "type": "object",
+          "maxProperties": 64,
+          "patternProperties": {
+            "^[a-f0-9]{64}$": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "answer",
+        "status",
+        "adapter"
+      ],
+      "properties": {
+        "answer": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "predicted",
+            "not-run-under-harness"
+          ]
+        },
+        "adapter": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "const": "choice/v1"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "minItems": 2,
+                  "maxItems": 1000,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "options"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "const": "numeric/v1"
+                },
+                "version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "tolerance": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "tolerance",
+                "range"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome"
+      ],
+      "properties": {
+        "outcome": {
+          "type": [
+            "string",
+            "number"
+          ]
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "factorTracking": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        },
+        "evidenceHandling": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        },
+        "uncertaintyHandling": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "factorTracking",
+        "evidenceHandling",
+        "uncertaintyHandling"
+      ]
+    }
+  }
+}

@@ -44,8 +44,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 @tangleai/forecast    closed question/checkpoint/harness contracts, immutable
                       records and atomic lifecycle commands over injected stores;
                       bounded agents, cutoff-audited read tools and six-section notes;
-                      guarded question-local feedback, manual MAS admission and
-                      durable, budget-preserving stage receipts
+                      guarded question-local feedback, manual checkpoint/resolution MAS admission,
+                      durable spend receipts and outcome-gated checked promotion
 @tangleai/hera        evaluated query-specific orchestration over MAS:
                       scoped experience, role-prompt and topology learning,
                       immutable snapshots and read-only evidence review

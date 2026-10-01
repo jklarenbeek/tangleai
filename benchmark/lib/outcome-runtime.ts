@@ -61,7 +61,7 @@ export async function measureOutcomeReplay(f: OutcomeFixtures, options: { mode?:
       for (const c of f.quality.filter(v => v.domain === domain && v.round === round)) {
         await measured.store.memories.put({ id: c.id, kind: 'fact', text: c.id, tags: [], evidence: 'registered replay source', at: c.decidedAt, confidence: 0.5 }); seedWrites++;
         const command = { scopeId, artifactKey: 'policy', requestKey: 'create:' + c.id, at: c.decidedAt, input: {
-          decisionKey: c.id, adapter: adapter.identity, input: c.input, output: adapter.interpret(c.input, payload),
+          decisionKey: c.id, adapter: adapter.identity, input: c.input, output: await adapter.interpret(c.input, payload),
           decidedAt: c.decidedAt, cutoffAt: c.decidedAt, expectedResolutionAt: c.observedAt,
           memoryIds: [c.id, c.id, 'missing:' + c.id], configuration: { kind: 'scripted', revision }, usedVersionId: head.versionId, staticPayload: adapter.staticPayload,
         } };

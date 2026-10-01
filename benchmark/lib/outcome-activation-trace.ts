@@ -44,7 +44,7 @@ export async function validateActivationRecords(row: Row, records: OutcomeRecord
       const content = await canonicalSha256({ domain: c.domain, input: c.input, outcome: c.source.payload });
       if (consumed.has(content) || trainingContent.has(content)) throw Error('Activation trace reuses held-out content'); consumed.add(content);
       const measured = evaluation.caseResults.find(r => r.id === c.id); if (!measured) throw Error('Activation trace omits a held-out case');
-      const output = adapter.interpret(c.input, version.payload), baselineOutput = adapter.interpret(c.input, baseline);
+      const output = await adapter.interpret(c.input, version.payload), baselineOutput = await adapter.interpret(c.input, baseline);
       const category = baselineScore(c.domain, output, c.source.payload), baselineCategory = baselineScore(c.domain, baselineOutput, c.source.payload);
       if (!equalsJson(measured, { id: c.id, contentDigest: content, output, baselineOutput, category, baselineCategory, utility: utilityOf(category), baselineUtility: utilityOf(baselineCategory) })) throw Error('Activation trace paired scores do not reproduce');
     }
@@ -72,6 +72,6 @@ export async function validateActivationRecords(row: Row, records: OutcomeRecord
     const head = eventsBefore[0]?.nextHead.versionId ?? null;
     if (decision.usedVersionId !== head) throw Error('Decision did not bind its historical checked head');
     const payload = head === null ? adapter.staticPayload : get(head, 'artifactVersion').payload;
-    if (!equalsJson(decision.output, adapter.interpret(decision.input, payload))) throw Error('Decision output does not reproduce with its bound payload');
+    if (!equalsJson(decision.output, await adapter.interpret(decision.input, payload))) throw Error('Decision output does not reproduce with its bound payload');
   }
 }
