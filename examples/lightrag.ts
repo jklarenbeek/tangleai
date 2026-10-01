@@ -2,7 +2,7 @@
 import {createBudgetAccount} from '@tangleai/agents';
 import {createDocumentIngester,SafeStaticFetcher} from '@tangleai/documents';
 import {createHashEmbedder} from '@tangleai/models/embed';
-import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,lightRagPrompt,lightragMust} from '@tangleai/lightrag';
+import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,lightRagPrompt,lightragMust,createScriptedPlanner,retrieveLightRag} from '@tangleai/lightrag';
 import {createDocumentStore,createLightRagStore,createCorpusPromotion,collectDocumentGarbage,type TangleDb} from '@tangleai/store';
 export async function runLightRagExample(db:TangleDb){
     const documents=createDocumentStore(db),lightrag=createLightRagStore(db),promotion=createCorpusPromotion({db,documents,lightrag});
@@ -27,9 +27,17 @@ export async function runLightRagExample(db:TangleDb){
     edition=2;const second=await prepare();if(second.status!=='prepared')throw Error('Expected a replacement.');lightragMust(await promotion.promote(second));
     const removed=lightragMust(await promotion.retract(activated.sourceId));edition=1;
     const before=extractions,retained=await prepare();if(retained.status!=='prepared')throw Error('Expected a retained version.');const restored=lightragMust(await promotion.promote(retained));
+    const planner=createScriptedPlanner([{text:'Where does Cedar Guild keep equipment?',lowKeywords:['Cedar Guild'],highKeywords:['equipment']}]);
+    async function query(mode:'hybrid'|'hybrid-no-original'){
+        const plan=lightragMust(await planner('Where does Cedar Guild keep equipment?',{mode}));
+        return lightragMust(await retrieveLightRag({store:lightrag,documents,embedder,plan,budget:createBudgetAccount({turns:4,tokens:10000},()=>0),clock:()=>0}));
+    }
+    const context=await query('hybrid'),noOriginal=await query('hybrid-no-original');
+    const retrieval={mode:context.mode,entities:context.entities.length,relations:context.relations.length,citations:context.citations.length,localCalls:context.spend.calls,
+        withinBudget:context.bundle.tokenCount<=context.limits.contextTokens,noOriginal:noOriginal.bundle.sections.chunks==='',sameCitations:JSON.stringify(context.citations)===JSON.stringify(noOriginal.citations)};
     // Collection is explicit and conservative. Referenced superseded graph evidence remains addressable.
     const garbage=await collectDocumentGarbage(db,{dryRun:true});
     return {unchanged:unchanged.status,replayWrites:replay.documentWrites+replay.graph.writes,removedDocumentWrites:removed.documentWrites,
         reactivated:restored.graph.reactivation,reactivationClaims:restored.graph.newClaims,reactivationCalls:restored.spend.calls,reactivationExtractions:extractions-before,
-        head:restored.graph.head.revision,retainedVersions:garbage.retained.length,activeEntities:(await lightrag.listEntities()).length,activeRelations:(await lightrag.listRelations()).length};
+        head:restored.graph.head.revision,retainedVersions:garbage.retained.length,activeEntities:(await lightrag.listEntities()).length,activeRelations:(await lightrag.listRelations()).length,retrieval};
 }

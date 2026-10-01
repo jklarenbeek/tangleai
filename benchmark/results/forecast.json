@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "0e81abc0b6593217113ae5aa1a5ff0e53c0819e6",
+    "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
     "clean": false,
     "files": [
       {
@@ -358,12 +358,24 @@
         "sha256": "8327cf26450eb4172b5a03e3471c51e3eea997ec54c10675b94ea08802fd420d"
       },
       {
+        "path": "benchmark/lib/lightrag-controls.ts",
+        "sha256": "31e2babee68e4b183ccd1e6d8be6e07ede71718e41890936808af50ccce31dd9"
+      },
+      {
+        "path": "benchmark/lib/lightrag-corpus.ts",
+        "sha256": "9a82f3935a583129d1a73440c012edca9e65b735ef0c9932ab62441321f428d2"
+      },
+      {
+        "path": "benchmark/lib/lightrag-measure.ts",
+        "sha256": "b6c48fd57b01e0bdf3d821bd25c6d83d73be62d12e4deea14f2ed336a682974b"
+      },
+      {
         "path": "benchmark/lib/lightrag.ts",
-        "sha256": "05084ce55d1e3e4fb47080261f4bdc33ecaf67d3e8ef9d90aabf325fdc5e891d"
+        "sha256": "8929bebb6581f0533d42c9879d7be347ed43f8d2248fcc3ee0ffcb38d108cd0b"
       },
       {
         "path": "benchmark/lib/lightrag.types.ts",
-        "sha256": "2913387e48cd6d74dccc2a6a525aca7cb33375edd66aea7ee55dbb6133a7ff3c"
+        "sha256": "e784ed708121ef0d4486b8bd24796176688ba0202c095a4310f4610bde79dd3c"
       },
       {
         "path": "benchmark/lib/locomo-corpus.ts",
@@ -1398,7 +1410,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "107e95c50207dafaa2d3768fd2a5203ef0fa2f2e5d28194bd9de3479e93ee723"
+    "sha256": "134142e5edef2b53bb302b7a37bf0ae4002f8920a9d5909116d7818a0537fa3d"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44863,5 +44875,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "744691f760f950075cbff49520db9afd6d0de69cd8a40bd4336e8c7d90f077b7"
+  "reportId": "354d6d72197825846fae3a0086a12a6014494f5945d61124c003be2cd190565f"
 }

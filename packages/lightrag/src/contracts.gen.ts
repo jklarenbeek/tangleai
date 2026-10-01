@@ -433,7 +433,7 @@ export interface GraphProjection {
 
 export interface LightRagLimits {
   /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=32
    */
   keywordsPerLevel: number;
   /**
@@ -478,7 +478,7 @@ export interface LightRagCandidate {
   score: number;
   reason: "low" | "high" | "endpoint" | "one-hop" | "support";
   fromId: string | null;
-  prune: "identity" | "width" | "unresolvable" | "expansion-limit" | "source-limit" | "context-budget" | "no-original" | null;
+  prune: "identity" | "width" | "unresolvable" | "expansion-limit" | "source-limit" | "context-budget" | "no-original" | "candidate-limit" | null;
 }
 
 

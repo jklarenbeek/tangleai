@@ -1,5 +1,6 @@
 /** An independent scorer gate precedes every graph mechanism and published score. */
 import { it } from 'node:test';
+import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir, mkdtemp, cp, rm, readdir, access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -7,6 +8,7 @@ import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { loadLightRagFixture, buildLightRagReport, createLightRagValidator, requireLightRagGate, renderLightRagDocument, renderLightRagReport, LIGHTRAG_ROWS } from '../../benchmark/lib/lightrag.ts';
+import { graphMetrics } from '../../benchmark/lib/lightrag-measure.ts';
 const exec = promisify(execFile), loaded = await loadLightRagFixture(), report = await buildLightRagReport({ loaded }), validate = createLightRagValidator();
 it('the fixture freezes graph identities, repeated source elements and six questions of each kind', () => {
     assert.equal(report.fixture.sources, 6); assert.equal(report.fixture.questions, 18); assert.equal(report.fixture.entities, 20); assert.equal(report.fixture.relations, 18);
@@ -20,13 +22,35 @@ it('gold and support ids all resolve and the oracle equals its exact ceilings', 
     assert.equal(report.gate.resolution.unresolved, 0); assert.deepEqual(report.gate.oracle.actual, report.gate.oracle.expected);
     assert.ok(report.gate.random.every(row => row.passed)); assert.equal(validate(report).valid, true);
 });
-it('dense retrieval executes while every graph row retains null missing measurements', () => {
+it('all four graph rows execute with named candidate sources, observed denominators and unchanged baseline rows', () => {
     assert.deepEqual(report.rows.map(row => row.key), LIGHTRAG_ROWS);
-    assert.equal(report.rows[2].status, 'executed'); assert.equal(report.rows[2].cases.length, 18); assert.equal(report.rows[2].byKind.length, 3);
-    for (const row of report.rows.slice(3)) {
-        assert.equal(row.status, 'not-run'); assert.equal(row.reason, 'implementation-missing'); assert.equal(row.metrics, null);
-        assert.deepEqual(row.cost, { calls: null, tokens: null, ms: null }); assert.equal(row.citations, null); assert.deepEqual(row.cases, []);
+    const hashes=['12169967f92fe16a1c1280c022f0c427afd30432d794ef23a84aecb92cffbaea','c8c9a4b6bf4b391c4e1197777cd1afd44880c04dbe34da5704e8ddb8e204043f','c55fc169d88aede12cc44440f3d8fa95c3e8954f6a9135299ea65b587732b2c8'];
+    for(const [i,row]of report.rows.entries()){
+        assert.equal(row.status,'executed');assert.equal(row.cases.length,18);assert.equal(row.byKind.length,3);assert.deepEqual(row.cost,{calls:0,tokens:0,ms:0});
+        if(i<3){assert.equal(createHash('sha256').update(JSON.stringify(row)).digest('hex'),hashes[i]);continue;}
+        assert.equal(row.identity.providerStatus,'scripted');assert.equal(row.graph!.skipped.unresolvable,0);assert.equal(row.metrics.graph!.entityQuestions,18);assert.equal(row.metrics.graph!.relationQuestions,18);
+        assert.ok(row.cases.every(value=>value.graph!.contextTokens<=row.limits.contextTokens));
+        assert.equal(row.graph!.candidateSources.entityKeywords,row.key!=='lightrag-high');assert.equal(row.graph!.candidateSources.relationKeywords,row.key!=='lightrag-low');assert.equal(row.graph!.candidateSources.originalChunks,row.key!=='lightrag-hybrid-no-original');
     }
+    assert.deepEqual(report.graphBuild,{backend:'memory',contributions:7,entities:20,relations:18,entityClaims:62,relationClaims:38,localCalls:14,budgetTokens:214,providerCalls:0,providerTokens:0});
+});
+it('specific low and abstract high queries retrieve every gold citation, while expansion alone reaches the distinct one-hop fact',()=>{
+    for(const [key,kind]of [['lightrag-low','specific'],['lightrag-high','abstract']])for(const row of report.rows.find(row=>row.key===key)!.cases.filter(row=>row.kind===kind)){
+        const question=loaded.fixture.questions.find(question=>question.id===row.question)!;assert.ok(question.goldChunks.every(id=>row.ranked.includes(id)),row.question);
+    }
+    assert.equal(report.gate.oneHop.oneHopFound,true);assert.equal(report.gate.oneHop.twoHopFound,false);assert.equal(report.gate.oneHop.withoutExpansionOneHopFound,false);
+    const hybrid=report.rows[5],ablated=report.rows[6];assert.deepEqual(hybrid.metrics,ablated.metrics);
+    for(const [i,row]of hybrid.cases.entries()){assert.deepEqual(row.ranked,ablated.cases[i].ranked);assert.deepEqual(row.graph!.entities,ablated.cases[i].graph!.entities);assert.deepEqual(row.graph!.relations,ablated.cases[i].graph!.relations);assert.equal(ablated.cases[i].graph!.originalChunks,0);}
+    const document=renderLightRagDocument(report);assert.ok(document.indexOf('same chunk recall as hybrid by construction')<document.indexOf('| Row |'));assert.match(document,/Every graph loss against dense/);assert.ok(report.rows[2].metrics.recall[5]>report.rows[5].metrics.recall[5]);
+});
+it('native assertions reject forged graph costs, strata, recall, ablations, budgets and hop outcomes',()=>{
+    const mutations:Array<(value:typeof report)=>void>=[
+        value=>{value.rows[3].graph!.localCalls++;},value=>{value.rows[3].byKind[0].metrics.graph!.entityQuestions--;},value=>{value.rows[3].byKind[0].metrics.recall[3]=0;},
+        value=>{value.rows[3].graph!.candidateSources.relationKeywords=true;},value=>{value.rows[3].cases[0].graph!.candidates.relationKeywords=1;},value=>{value.rows[3].cases[0].graph!.entityRecall=0;},
+        value=>{value.rows[3].cases[0].graph!.contextTokens=4001;},value=>{value.rows[3].cases[0].graph!.prune['context-budget']++;},value=>{value.rows[3].cases[0].graph!.skipped.width++;},
+        value=>{value.rows[6].cases[0].graph!.originalChunks=1;},value=>{value.rows[6].cases[0].ranked.reverse();},value=>{value.gate.oneHop.oneHopFound=false;},value=>{value.gate.oneHop.withExpansion.chunkKeys.push('far-fact');},
+        value=>{value.graphBuild.entities--;},value=>{value.rows[3].cases.splice(0,1);}
+    ];for(const [i,mutate]of mutations.entries()){const copy=structuredClone(report);mutate(copy);assert.equal(validate(copy).valid,false,'mutation '+i);}
 });
 it('the schema refuses a row without corpus, question-set, retrieval, identity, embedder, cost or limits', () => {
     for (const key of ['corpusId','questionSetId','retrievalMode','model','prompts','embeddedBy','chunker']) {
@@ -105,4 +129,10 @@ it('registered adversaries carry the future native refusal vocabulary', async ()
     assert.equal(names.length,8);const codes=new Set<string>();
     for(const name of names){const value=JSON.parse(await readFile(join(directory,name),'utf8'));assert.match(value.expectedCode,/^TLRAG100[13689]$/);codes.add(value.expectedCode);}
     assert.deepEqual([...codes].sort(),['TLRAG1001','TLRAG1003','TLRAG1006','TLRAG1008','TLRAG1009']);
+});
+
+it('absent graph gold has a null recall and a zero observed denominator',()=>{
+    const original=report.rows[3].cases[0],copy=structuredClone(original);copy.graph!.goldEntities=[];copy.graph!.goldRelations=[];copy.graph!.entityRecall=null;copy.graph!.relationRecall=null;
+    assert.deepEqual(graphMetrics([copy]),{entityRecall:null,relationRecall:null,entityQuestions:0,relationQuestions:0});
+    assert.deepEqual(graphMetrics([copy,original]),{entityRecall:original.graph!.entityRecall,relationRecall:original.graph!.relationRecall,entityQuestions:1,relationQuestions:1});
 });

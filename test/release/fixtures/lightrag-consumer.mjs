@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { createLightRagStore, openTangleDb } from '@tangleai/store';
 import schema from '@tangleai/lightrag/schemas/lightrag' with {type:'json'};
-import { qualifyLightRagBrowser, qualifyLightRagPreparation } from './lightrag-browser.mjs';
+import { qualifyLightRagBrowser, qualifyLightRagPreparation, qualifyLightRagRetrieval } from './lightrag-browser.mjs';
 assert.match(import.meta.resolve('@tangleai/lightrag'),/\.js$/);
 assert.equal(schema.$id,'https://tangleai.dev/schemas/lightrag-contracts');
 const root=process.env.TANGLE_FIXTURE_DIRECTORY;assert.ok(root);
 assert.deepEqual(await qualifyLightRagPreparation(),{entities:2,relations:1,claims:3,embeddingCalls:2,calls:2,decisions:0,partial:false,lookups:1,packs:4,valid:true});
+assert.deepEqual(await qualifyLightRagRetrieval(),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true});
 const db=await openTangleDb({path:join(root,'lightrag.db')});
 try {
     const memory=await qualifyLightRagBrowser(),durable=await qualifyLightRagBrowser(createLightRagStore(db));
@@ -20,6 +21,6 @@ console.log('Installed graph preparation, contracts, atomic activation, replay a
 
 const {runLightRagExample}=await import('./lightrag-example.mjs');
 const corpusDb=await openTangleDb();
-try{assert.deepEqual(await runLightRagExample(corpusDb),{unchanged:'unchanged',replayWrites:0,removedDocumentWrites:2,reactivated:true,reactivationClaims:0,reactivationCalls:0,reactivationExtractions:0,head:4,retainedVersions:1,activeEntities:2,activeRelations:1});}
+try{assert.deepEqual(await runLightRagExample(corpusDb),{unchanged:'unchanged',replayWrites:0,removedDocumentWrites:2,reactivated:true,reactivationClaims:0,reactivationCalls:0,reactivationExtractions:0,head:4,retainedVersions:1,activeEntities:2,activeRelations:1,retrieval:{mode:'hybrid',entities:2,relations:1,citations:1,localCalls:2,withinBudget:true,noOriginal:true,sameCitations:true}});}
 finally{await corpusDb.close();}
 console.log('Installed document preparation, joint promotion, replacement, retraction, zero-call reactivation and reference-aware collection passed.');

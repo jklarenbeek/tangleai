@@ -50,10 +50,11 @@ Content boundaries return `{ valid, value }` or `{ valid: false, issues }` with
 unwind its caller's atomic transaction; the public store converts it to a value.
 No root import opens a database, reads a prompt file, or constructs a model wire.
 
-These are contract, lifecycle and scripted extraction guarantees. Live extraction,
-keyword planning, graph retrieval and generated answer quality are not measured
-by this package's fixtures. The independently registered benchmark keeps those graph rows
-unexecuted until their mechanisms are qualified.
+These are contract, lifecycle and scripted mechanism guarantees. The independently
+registered benchmark executes low, high, hybrid and hybrid-no-original retrieval
+beside unchanged dense, random and oracle controls. It publishes losses as well
+as gains. Live model extraction, planning and generated answer quality remain
+unmeasured; graph retrieval is experimental and does not change the default.
 
 `buildContribution` prepares one source and document version through injected
 extractor, profiler, candidate resolver and embedder functions. It returns a
@@ -102,3 +103,35 @@ changed current profile bases become explicit deterministic description unions.
 planner. `@tangleai/store` verifies real document evidence and commits both heads
 together. Activation audits bind the document bundle, previous source fence and
 profile policy; exact replay and zero-call reactivation remain separate receipts.
+
+`createKeywordPlanner` calls the shared structured-output mechanism with one
+repair. `createScriptedPlanner` supplies the same checked plan from authored
+questions. Both fold and bound low entity keywords and high relation keywords;
+an empty required level returns `TLRAG1008`. The whole question is never used as
+a replacement vector. The planner and query embeddings consume the host's shared
+budget account, retain incurred spend on failure and use an injected clock.
+
+`retrieveLightRag` matches entity names for low mode and relation themes for high
+mode. Hybrid combines both. It adds relation endpoints and makes exactly one
+indexed adjacency pass from the initial roots. Newly reached endpoints do not
+start another pass. Identity or width mismatches are skipped and counted. Every
+canonical support address must resolve to the source's active document version;
+source and graph fences are checked again before a result is returned.
+
+`LIGHTRAG_LIMITS` records 8 keywords per level, 10 candidates per keyword,
+20 added entities, 40 added relations, 3 citation chunks per source and 4,000
+estimated context tokens. Host overrides are explicit; the keyword artifact's
+hard maximum is 32 per level. Ties use score descending then id ascending.
+`serializeLightRagContext` owns the entity, relation and verbatim chunk sections.
+The context budget drops chunks, then relations, then entities from the lowest
+score, without altering retained evidence. Every prune is recorded in the trace.
+Canonical support is filtered to the supplied citation vocabulary when rendered.
+
+Hybrid-no-original selects under the same full-context budget as hybrid, then
+omits verbatim chunks while keeping the same graph records and citation targets.
+Its chunk recall therefore equals hybrid by construction; any independent answer
+quality claim requires a measured generation experiment. Runtime phase timings
+may be omitted with `includeTimings: false` for deterministic artifacts. A graph
+or document head change during retrieval returns `TLRAG1008` for a host retry.
+See `examples/lightrag.ts` for preparation, joint admission, reactivation and a
+query through the public packages.

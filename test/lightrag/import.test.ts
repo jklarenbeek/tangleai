@@ -48,3 +48,12 @@ it('the public graph preparation runs in a browser bundle with injected time and
         assert.deepEqual(JSON.parse(JSON.stringify(observed)),{entities:2,relations:1,claims:3,embeddingCalls:2,calls:2,decisions:0,partial:false,lookups:1,packs:4,valid:true});
     });
 });
+
+it('the public retrieval planner and serializer run in a browser bundle with no provider or ambient clock',async()=>{
+    const path=resolve('test/release/fixtures/lightrag-browser.mjs');
+    await browserProgram(`import {qualifyLightRagRetrieval} from ${JSON.stringify(path)};globalThis.graphQualification=qualifyLightRagRetrieval();`,async source=>{
+        const browser=browserContext();vm.runInNewContext(source,browser);
+        const observed=await browser.graphQualification;
+        assert.deepEqual(JSON.parse(JSON.stringify(observed)),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true});
+    });
+});

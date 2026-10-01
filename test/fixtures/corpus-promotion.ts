@@ -5,8 +5,8 @@ import {SafeStaticFetcher,createDocumentIngester,type PreparedOutcome} from '@ta
 import {openTangleDb,createDocumentStore,createLightRagStore,createCorpusPromotion,type CorpusGraphPreparationOptions} from '@tangleai/store';
 import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,lightRagPrompt,lightragMust,type GraphExtractionReply} from '@tangleai/lightrag';
 import {asRows} from '../../packages/store/src/memory-store.ts';
-export async function corpusFixture(options:{probe?:(step:string)=>void|Promise<void>}={}){
-    const db=await openTangleDb(),documents=createDocumentStore(db),graph=createLightRagStore(db),hash=createHashEmbedder({dims:16}),modelIdentity={provider:'fixture',model:'scripted'},now=()=> '2026-06-01T00:00:00.000Z';
+export async function corpusFixture(options:{probe?:(step:string)=>void|Promise<void>;dims?:number}={}){
+    const db=await openTangleDb(),documents=createDocumentStore(db),graph=createLightRagStore(db),hash=createHashEmbedder({dims:options.dims??16}),modelIdentity={provider:'fixture',model:'scripted'},now=()=> '2026-06-01T00:00:00.000Z';
     const counts={documentEmbedding:0,extraction:0,profiling:0,judging:0,graphEmbedding:0},bodies=new Map<string,{body:string;mimeType:string}>();
     const embedder={...hash,embed:async(texts:string[])=>{counts.documentEmbedding++;return hash.embed(texts);}},graphEmbedder={...hash,embed:async(texts:string[])=>{counts.graphEmbedding++;return hash.embed(texts);}};
     const ingester=createDocumentIngester({store:documents,embedder,now,fetcher:new SafeStaticFetcher({now,lookup:async()=>[{address:'93.184.216.34',family:4}],limits:{respectRobots:false,perHostDelayMs:0},fetch:async input=>{const found=bodies.get(String(input));return new Response(found?.body??'',{headers:{'content-type':found?.mimeType??'text/html'}});}})});

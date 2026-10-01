@@ -41,3 +41,17 @@ export async function qualifyLightRagPreparation(){
     return {entities:bundle.stats.entities,relations:bundle.stats.relations,claims:bundle.stats.entityClaims+bundle.stats.relationClaims,embeddingCalls:bundle.stats.embeddingCalls,
         calls:bundle.spend.calls,decisions:bundle.stats.decisions,partial:bundle.partial,lookups,packs:promptArtifacts.packs.length,valid:(await validateGraphContribution(bundle)).valid};
 }
+
+import {createScriptedPlanner,retrieveLightRag,serializeLightRagContext} from '@tangleai/lightrag';
+export async function qualifyLightRagRetrieval(){
+    const store=createMemoryLightRagStore();await qualifyLightRagBrowser(store);
+    const source={id:'consumer-source',status:'ready',activeVersionId:'consumer-version',canonicalUrl:'https://docs.example/cedar',title:'Cedar register'},version={id:'consumer-version',sourceId:source.id,status:'active'};
+    const chunk={id:'consumer-chunk',sourceId:source.id,versionId:version.id,text:'Cedar maintains the workshop register.',headingPath:[],elementIds:['consumer-element']};
+    const documents={getSource:async id=>id===source.id?source:undefined,getVersion:async id=>id===version.id?version:undefined,listChunks:async id=>id===version.id?[chunk]:[]};
+    const planner=createScriptedPlanner(()=>({lowLevelKeywords:['Cedar'],highLevelKeywords:['workshop']})),embedder={model:'fixture-names',dims:2,embed:async texts=>texts.map(()=>new Float32Array([1,0]))};
+    async function run(mode){const plan=lightragMust(await planner('Who maintains the register?',{mode}));return lightragMust(await retrieveLightRag({store,documents,embedder,plan,budget:createBudgetAccount({turns:2,tokens:1000},()=>0),clock:()=>0,includeTimings:false}));}
+    const low=await run('low'),hybrid=await run('hybrid'),noOriginal=await run('hybrid-no-original');
+    if(JSON.stringify(serializeLightRagContext(low))!==JSON.stringify(low.bundle))throw Error('The public serializer changed retrieval bytes.');
+    return {entities:low.entities.length,citations:low.citations.length,localCalls:low.spend.calls,withinBudget:low.bundle.tokenCount<=low.limits.contextTokens,
+        noOriginal:noOriginal.bundle.sections.chunks==='',sameCitations:JSON.stringify(hybrid.citations)===JSON.stringify(noOriginal.citations),timingsOmitted:low.timings===undefined};
+}

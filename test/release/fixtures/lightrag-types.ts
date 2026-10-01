@@ -44,3 +44,15 @@ corpus.promote(unfenced);
 // @ts-expect-error reference resolvers cannot mutate candidate addresses
 const invalidResolver={name:'reports',resolve:(candidate:DocumentGarbageCandidate)=>{candidate.chunkIds.push('invented');return [];}};
 void [admitted,retired,collected,expected,invalidResolver];
+
+import {createKeywordPlanner,createScriptedPlanner,retrieveLightRag,serializeLightRagContext,LIGHTRAG_LIMITS,type LightRagRetrievalOptions,type LightRagContextBundle} from '@tangleai/lightrag';
+declare const retrievalOptions:LightRagRetrievalOptions;
+const planner=createKeywordPlanner(modelOptions),scripted=createScriptedPlanner([{text:'Cedar?',lowKeywords:['Cedar'],highKeywords:['equipment']}]);
+const queryPlan=await scripted('Cedar?',{mode:'hybrid',limits:{contextTokens:64}}),retrieval=await retrieveLightRag(retrievalOptions);
+if(retrieval.valid){const bundle:LightRagContextBundle=serializeLightRagContext(retrieval.value);const citations:string[]=bundle.suppliedChunkIds;void citations;}
+// @ts-expect-error a caller cannot invent a graph retrieval mode
+scripted('Cedar?',{mode:'global-community'});
+const {budget:queryBudget,...unmeteredQuery}=retrievalOptions;
+// @ts-expect-error keyword embeddings require the shared query account
+retrieveLightRag(unmeteredQuery);
+void [planner,queryPlan,queryBudget,LIGHTRAG_LIMITS];

@@ -5,9 +5,9 @@ import { createHash } from 'node:crypto';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { drawDistinct, mulberry32 } from '@jarenjs/core/random';
 import { mean } from '@jarenjs/core/stats';
-import { createHashEmbedder } from '@tangleai/models/embed';
-import { SafeStaticFetcher, createDocumentIngester, recallDocumentChunks } from '@tangleai/documents';
-import { createDocumentStore, openTangleDb } from '@tangleai/store';
+import { recallDocumentChunks } from '@tangleai/documents';
+import { createBudgetAccount } from '@tangleai/agents';
+import { createScriptedPlanner, retrieveLightRag, lightRagPrompt, lightragMust, LIGHTRAG_LIMITS, type LightRagMode } from '@tangleai/lightrag';
 import { createReportValidator, describeErrors } from './validate.ts';
 import { analyticEnvelope } from './report-envelope.ts';
 import { sourceManifest } from './source-manifest.ts';
@@ -17,6 +17,10 @@ import { table, score } from './table.ts';
 import schema from '../schemas/lightrag.schema.json' with { type: 'json' };
 import identitySchema from '../../packages/config/schemas/run-identity.schema.json' with { type: 'json' };
 import type { LightragFixture, LightragReport, Row, Case, Metrics, Limits, RowIdentity } from './lightrag.types.ts';
+import { createLightRagFixtureCorpus, graphFixturePrompts, LIGHTRAG_SCRIPTED_MODEL } from './lightrag-corpus.ts';
+import { measureLightRagOneHop, LIGHTRAG_ONE_HOP_PATH } from './lightrag-controls.ts';
+import { observeGraphCase, observeGraphRow, graphMetrics } from './lightrag-measure.ts';
+export { createLightRagFixtureCorpus } from './lightrag-corpus.ts';
 
 export const LIGHTRAG_ROWS = ['oracle', 'random', 'dense-chunk', 'lightrag-low', 'lightrag-high', 'lightrag-hybrid', 'lightrag-hybrid-no-original'] as const;
 export const LIGHTRAG_SEED = 24105779;
@@ -73,40 +77,10 @@ export async function loadLightRagFixture(root = process.cwd()): Promise<LoadedL
     return { fixture, fixtureId: await canonicalSha256(fixture), files: files.sort((a,b) => a.path.localeCompare(b.path)), bodies };
 }
 
-/** The real fetch/extract/chunk/embed/store path verifies every declared chunk before ranking. */
-export async function createLightRagFixtureCorpus(loaded: LoadedLightRagFixture) {
-    const db = await openTangleDb(), store = createDocumentStore(db), embedder = createHashEmbedder(loaded.fixture.chunker.embeddedBy);
-    const served = new Map<string, { bytes: Uint8Array; mime: string }>(), keyById = new Map<string, string>(), idByKey = new Map<string, string>();
-    let clock = '1970-01-01T00:00:00.000Z';
-    const fetcher = new SafeStaticFetcher({ lookup: async () => [{ address: '93.184.216.34', family: 4 }], now: () => clock,
-        limits: { respectRobots: false, perHostDelayMs: 0 }, fetch: async input => {
-            const body = served.get(String(input)); if (!body) throw Error('No registered LightRAG fixture response.');
-            return new Response(body.bytes.slice() as BodyInit, { headers: { 'content-type': body.mime } });
-        } });
-    const ingester = createDocumentIngester({ store, embedder, fetcher, now: () => clock });
-    try {
-        for (const source of loaded.fixture.sources) for (const version of source.versions) {
-            clock = version.admittedAt; served.set(source.url, { bytes: loaded.bodies.get(version.key)!, mime: source.mimeType });
-            const out = await ingester.ingest({ url: source.url, strategy: 'recursive', ...loaded.fixture.chunker.config, force: true });
-            if (out.status !== 'ingested') throw Error('LightRAG fixture ingestion did not complete: ' + source.key);
-            if (out.version.chunkerVersion !== loaded.fixture.chunker.version) throw Error('LightRAG fixture chunker identity changed.');
-            const actual = await store.listChunks(out.version.id), declared = loaded.fixture.chunks.filter(chunk => chunk.version === version.key);
-            const elements = new Map((await store.listElements(out.version.id)).map(element => [element.id, element.order]));
-            if (actual.length !== declared.length) throw Error('LightRAG fixture chunk count changed.');
-            for (const chunk of actual) {
-                const expected = declared.find(row => row.order === chunk.order);
-                if (!expected || digest(chunk.text) !== expected.textSha256 || JSON.stringify(chunk.elementIds.map(id => elements.get(id))) !== JSON.stringify(expected.elementOrders))
-                    throw Error('LightRAG fixture chunk bytes or provenance changed.');
-                keyById.set(chunk.id, expected.key); idByKey.set(expected.key, chunk.id);
-            }
-        }
-        return { db, store, embedder, keyById, idByKey, close: () => db.close() };
-    } catch (error) { await db.close(); throw error; }
-}
 function recallOf(read: (k: 1 | 3 | 5) => number): Metrics['recall'] { return { '1': read(1), '3': read(3), '5': read(5) }; }
 function metricsOf(cases: Case[]): Metrics {
     if (!cases.length) throw Error('LightRAG metrics require an observed question denominator.');
-    return { count: cases.length, recall: recallOf(k => mean(cases.map(row => row.recall[k]))!), mrr: mean(cases.map(row => row.mrr))! };
+    return { count: cases.length, recall: recallOf(k => mean(cases.map(row => row.recall[k]))!), mrr: mean(cases.map(row => row.mrr))!, ...(cases[0].graph ? { graph: graphMetrics(cases) } : {}) };
 }
 /** The existing relevance scorer owns fractional recall and reciprocal rank. */
 function scoreCase(question: LightragFixture['questions'][number], ranked: string[], available: Set<string>, skipped = 0): Case {
@@ -124,14 +98,27 @@ export async function buildLightRagReport(options: { root?: string; loaded?: Loa
     const registration = { ...registrationBody, registrationId: await canonicalSha256(registrationBody) } as LightragReport['registration'];
     const activeVersions = new Set(fixture.sources.flatMap(source => source.versions.filter(version => version.status === 'active').map(version => version.key)));
     const universe = fixture.chunks.filter(chunk => activeVersions.has(chunk.version)).map(chunk => chunk.key), available = new Set(universe), random = mulberry32(LIGHTRAG_SEED);
-    const corpus = await createLightRagFixtureCorpus(loaded), rows: Row[] = [];
+    const corpus = await createLightRagFixtureCorpus(loaded, { graph: 'memory' }), rows: Row[] = [];
+    const planner = createScriptedPlanner(fixture.questions), graphBuild = { backend: 'memory' as const, contributions: corpus.contributions.length,
+        entities: (await corpus.graph!.listEntities()).length, relations: (await corpus.graph!.listRelations()).length,
+        entityClaims: corpus.contributions.reduce((n, row) => n + row.plan.input.claims.entities.length, 0), relationClaims: corpus.contributions.reduce((n, row) => n + row.plan.input.claims.relations.length, 0),
+        localCalls: corpus.indexing.calls, budgetTokens: corpus.indexing.tokens, providerCalls: 0 as const, providerTokens: 0 as const };
     try {
         for (const key of LIGHTRAG_ROWS) {
-            const missing = key.startsWith('lightrag-'), cases: Case[] = [];
-            const identity: RowIdentity = { corpusId: loaded.fixtureId, questionSetId, retrievalMode: (missing ? key.slice('lightrag-'.length) : key) as RowIdentity['retrievalMode'],
-                model: null, prompts: null, chunker: fixture.chunker, embeddedBy: fixture.chunker.embeddedBy, providerStatus: 'not-run' };
-            if (!missing) for (const question of fixture.questions) {
+            const isGraph = key.startsWith('lightrag-'), cases: Case[] = [], mode = key.slice('lightrag-'.length) as LightRagMode;
+            const identity: RowIdentity = { corpusId: loaded.fixtureId, questionSetId, retrievalMode: (isGraph ? mode : key) as RowIdentity['retrievalMode'],
+                model: isGraph ? LIGHTRAG_SCRIPTED_MODEL as { provider: 'fixture'; model: 'scripted' } : null,
+                prompts: isGraph ? { ...graphFixturePrompts(), planning: lightRagPrompt('graph-planner').revision } : null,
+                chunker: fixture.chunker, embeddedBy: fixture.chunker.embeddedBy, providerStatus: isGraph ? 'scripted' : 'not-run' };
+            for (const question of fixture.questions) {
                 let ranked: string[], skipped = 0;
+                if (isGraph) {
+                    const plan = lightragMust(await planner(question.text, { mode, limits: LIGHTRAG_LIMITS }));
+                    const value = lightragMust(await retrieveLightRag({ store: corpus.graph!, documents: corpus.store, embedder: corpus.embedder, plan,
+                        budget: createBudgetAccount({ turns: 8, tokens: 100000 }, () => 0), clock: () => 0, includeTimings: false }));
+                    const measured = observeGraphCase(question, value, corpus);
+                    cases.push({ ...scoreCase(question, measured.ranked, available, measured.skipped), graph: measured.graph }); continue;
+                }
                 if (key === 'oracle') ranked = [...question.goldChunks.filter(id => available.has(id)), ...universe.filter(id => !question.goldChunks.includes(id))].slice(0, limits.k);
                 else if (key === 'random') ranked = drawDistinct(random, universe.length, limits.k).map(index => universe[index]);
                 else {
@@ -141,13 +128,14 @@ export async function buildLightRagReport(options: { root?: string; loaded?: Loa
                 }
                 cases.push(scoreCase(question, ranked, available, skipped));
             }
-            rows.push({ key, status: missing ? 'not-run' : 'executed', reason: missing ? 'implementation-missing' : null, identity, limits,
-                cost: { calls: missing ? null : 0, tokens: missing ? null : 0, ms: missing ? null : 0 }, cases,
-                metrics: missing ? null : metricsOf(cases), byKind: missing ? [] : (['specific','abstract','one-hop'] as const).map(kind => ({ kind, metrics: metricsOf(cases.filter(row => row.kind === kind)) })),
-                skipped: missing ? null : cases.reduce((n,row) => n + row.skipped, 0), failed: missing ? null : 0,
-                citations: missing ? null : { resolved: cases.reduce((n,row) => n + row.resolved, 0), unresolved: cases.reduce((n,row) => n + row.unresolved, 0) } });
+            rows.push({ key, status: 'executed', reason: null, identity, limits, cost: { calls: 0, tokens: 0, ms: 0 }, cases,
+                metrics: metricsOf(cases), byKind: (['specific','abstract','one-hop'] as const).map(kind => ({ kind, metrics: metricsOf(cases.filter(row => row.kind === kind)) })),
+                skipped: cases.reduce((n,row) => n + row.skipped, 0), failed: 0,
+                citations: { resolved: cases.reduce((n,row) => n + row.resolved, 0), unresolved: cases.reduce((n,row) => n + row.unresolved, 0) },
+                ...(isGraph ? { graph: observeGraphRow(mode, cases) } : {}) });
         }
     } finally { await corpus.close(); }
+    const oneHop = await measureLightRagOneHop(root);
     const gold: GoldQuestion[] = fixture.questions.map(question => ({ category: ['specific','abstract','one-hop'].indexOf(question.kind), gold: question.goldChunks,
         resolvable: question.goldChunks.filter(id => available.has(id)).length, universe: universe.length }));
     const expected = recallOf(k => oracleCeiling(gold, k));
@@ -156,14 +144,14 @@ export async function buildLightRagReport(options: { root?: string; loaded?: Loa
         return { k: k as 1|3|5, expected: band.floor, low: band.low, high: band.high, actual, passed: actual >= band.low && actual <= band.high }; });
     const references = [...fixture.questions.flatMap(question => question.goldChunks), ...fixture.entities.flatMap(row => row.supportChunks), ...fixture.relations.flatMap(row => row.supportChunks)];
     const unresolved = references.filter(id => !available.has(id)).length, resolution = { gold: fixture.questions.reduce((n,q) => n + q.goldChunks.length, 0), support: references.length - fixture.questions.reduce((n,q) => n + q.goldChunks.length, 0), unresolved, passed: unresolved === 0 };
-    const failures = [...(!oracle.passed ? ['oracle does not equal its analytic ceiling'] : []), ...bands.filter(row => !row.passed).map(row => 'random recall@' + row.k + ' outside its analytic band'), ...(!resolution.passed ? ['oracle/support references unresolved'] : [])];
+    const failures = [...(!oracle.passed ? ['oracle does not equal its analytic ceiling'] : []), ...bands.filter(row => !row.passed).map(row => 'random recall@' + row.k + ' outside its analytic band'), ...(!resolution.passed ? ['oracle/support references unresolved'] : []), ...(!oneHop.passed ? ['registered one-hop control failed'] : [])];
     const manifest = await sourceManifest(root, [...loaded.files.map(file => file.path), 'benchmark/lightrag.ts', 'benchmark/lib/lightrag.ts', 'benchmark/lib/lightrag.types.ts',
-        'benchmark/schemas/lightrag.schema.json', 'benchmark/lib/relevance.ts', 'benchmark/lib/recall.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/table.ts',
-        'packages/documents/src/chunking.ts', 'packages/documents/src/retrieval.ts', 'packages/documents/src/ingest.ts', 'packages/store/src/document-store.ts', 'packages/models/src/embed.ts']);
+        'benchmark/schemas/lightrag.schema.json', 'benchmark/lib/lightrag-corpus.ts', 'benchmark/lib/lightrag-controls.ts', 'benchmark/lib/lightrag-measure.ts', LIGHTRAG_ONE_HOP_PATH, ...['entity_extraction','entity_profiling','deduplication','keyword_planning'].map(name => 'prompts/graph/' + name + '.toml'), 'benchmark/lib/relevance.ts', 'benchmark/lib/recall.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/table.ts',
+        'packages/documents/src/chunking.ts', 'packages/documents/src/retrieval.ts', 'packages/documents/src/ingest.ts', 'packages/documents/src/contracts.ts', 'packages/context/src/ledger.ts', 'packages/core/src/tokens.ts', 'packages/agents/src/recursive.ts', 'packages/models/src/structured.ts', 'packages/store/src/document-store.ts', 'packages/store/src/document-state.ts', 'packages/store/src/corpus-promotion.ts', 'packages/store/src/lightrag-store.ts', 'packages/store/src/lightrag-model.ts', 'packages/models/src/embed.ts'], ['packages/lightrag']);
     const source = { files: manifest.files, sha256: await canonicalSha256({ files: manifest.files }) };
     const body = { document: 'lightrag-report' as const, benchmark: 'lightrag' as const, schemaVersion: 1 as const, registration, fixture: fixture.census, source,
-        configIdentities: analyticEnvelope(LIGHTRAG_ROWS), rows, gate: { passed: failures.length === 0, oracle, random: bands, resolution, failures },
-        decision: { state: 'not-evaluated' as const, defaultChanged: false as const, reason: 'Graph mechanisms and live answer quality are unmeasured.' as const } };
+        configIdentities: analyticEnvelope(LIGHTRAG_ROWS), rows, graphBuild, gate: { passed: failures.length === 0, oracle, random: bands, resolution, failures, oneHop },
+        decision: { state: 'not-evaluated' as const, defaultChanged: false as const, reason: 'Scripted graph mechanisms are measured; live answer quality is unmeasured.' as const } };
     const report = { ...body, reportId: await canonicalSha256(body) }; mustValidate(report); return report;
 }
 export function requireLightRagGate(report: LightragReport) {
@@ -171,19 +159,37 @@ export function requireLightRagGate(report: LightragReport) {
 }
 export const renderLightRagReport = (report: LightragReport) => JSON.stringify(report, null, 2) + '\n';
 export function renderLightRagDocument(report: LightragReport) {
+    const dense = report.rows.find(row => row.key === 'dense-chunk')!, graph = report.rows.filter(row => row.graph);
+    const losses = graph.flatMap(row => row.byKind.flatMap(group => {
+        const baseline = dense.byKind.find(value => value.kind === group.kind)!.metrics;
+        return [1,3,5].flatMap(k => group.metrics.recall[k as 1|3|5] < baseline.recall[k as 1|3|5] ? [[row.key, group.kind, 'Recall@'+k, score(group.metrics.recall[k as 1|3|5]), score(baseline.recall[k as 1|3|5])]] : [])
+            .concat(group.metrics.mrr < baseline.mrr ? [[row.key, group.kind, 'MRR', score(group.metrics.mrr), score(baseline.mrr)]] : []);
+    }));
+    const control = report.gate.oneHop;
     return ['# Graph retrieval benchmark', '', 'Generated by `npm run benchmark:lightrag` from the original MIT fictional Windmere corpus.', '',
-        'Graph rows are **not-run (implementation-missing)**. Dense chunk retrieval uses the shipped document ingester, hash-trigram embedder and semantic recall. These are software mechanism measurements; live model quality and the paper dataset, judge and scores are unmeasured.', '',
+        'All seven rows execute without a provider. Graph extraction, profiling, co-reference and planning use frozen scripted replies; entity names, relation themes and query keywords use the shipped hash-trigram embedder. These are software mechanism measurements. Live answer quality and the paper dataset, judge and scores remain unmeasured.', '',
+        '**The hybrid-no-original row has the same chunk recall as hybrid by construction:** both select the same candidates and citation targets under the same full-context budget; the ablation then removes verbatim chunk text. Its independent answer-quality meaning belongs to the live tier.', '',
         `Corpus: ${report.fixture.sources} sources, ${report.fixture.versions} versions, ${report.fixture.chunks} retained chunks (${report.fixture.activeChunks} active), ${report.fixture.entities} entities, ${report.fixture.relations} directed relations and ${report.fixture.questions} questions, six each specific, abstract and one-hop. Two alias pairs, two same-name/different-type collisions, one reversed-edge pair, one pair with distinct relation themes and ${report.fixture.duplicateElementPairs} adjacent pairs sharing source elements are registered.`, '',
         `Chunker \`${report.registration.chunker.version}\`, ${report.fixture.maxTokens}/${report.fixture.overlapTokens} token/overlap budgets; embedder \`${report.registration.chunker.embeddedBy.model}\`, ${report.registration.chunker.embeddedBy.dims} dimensions. Seed ${report.registration.seed}. The superseded source remains addressable and is excluded from active retrieval.`, '',
-        table({ head: ['Row','Status','Recall@1','Recall@3','Recall@5','MRR','Unresolved','Provider calls'], rows: report.rows.map(row => [row.key,row.reason ?? row.status,
-            ...[1,3,5].map(k => row.metrics ? score(row.metrics.recall[k as 1|3|5]) : null), row.metrics ? score(row.metrics.mrr) : null, row.citations?.unresolved ?? null,row.cost.calls]) }), '',
-        table({ head: ['Row / question kind','Questions','Recall@1','Recall@3','Recall@5','MRR'], rows: report.rows.flatMap(row => row.byKind.map(group => [row.key+' / '+group.kind,group.metrics.count,
-            ...[1,3,5].map(k => score(group.metrics.recall[k as 1|3|5])),score(group.metrics.mrr)])) }), '',
+        table({ head: ['Row','Recall@1','Recall@3','Recall@5','MRR','Entity recall','Relation recall','Unresolved','Provider calls'], rows: report.rows.map(row => [row.key,
+            ...[1,3,5].map(k => score(row.metrics.recall[k as 1|3|5])), score(row.metrics.mrr), row.metrics.graph?.entityRecall == null ? null : score(row.metrics.graph.entityRecall),
+            row.metrics.graph?.relationRecall == null ? null : score(row.metrics.graph.relationRecall), row.citations.unresolved, row.cost.calls]) }), '',
+        table({ head: ['Row / question kind','Questions','Recall@1','Recall@3','Recall@5','MRR','Entity recall (n)','Relation recall (n)'], rows: report.rows.flatMap(row => row.byKind.map(group => [row.key+' / '+group.kind,group.metrics.count,
+            ...[1,3,5].map(k => score(group.metrics.recall[k as 1|3|5])),score(group.metrics.mrr), group.metrics.graph ? score(group.metrics.graph.entityRecall)+' ('+group.metrics.graph.entityQuestions+')' : null,
+            group.metrics.graph ? score(group.metrics.graph.relationRecall)+' ('+group.metrics.graph.relationQuestions+')' : null])) }), '',
+        'Every graph loss against dense retrieval is printed below, including individual cutoffs and MRR. Retrieving a relevant citation somewhere in the context does not imply a good position at a smaller cutoff.', '',
+        table({ head: ['Graph row','Question kind','Metric','Graph','Dense'], rows: losses }), '',
+        table({ head: ['Graph row','Name candidates','Theme candidates','Original text','Prune events','Skipped identity / width / unresolved','Local embedding calls','Estimated budget tokens'], rows: graph.map(row => [row.key,
+            row.graph!.candidateSources.entityKeywords ? 'yes' : 'no', row.graph!.candidateSources.relationKeywords ? 'yes' : 'no', row.graph!.candidateSources.originalChunks ? 'yes' : 'no',
+            Object.values(row.graph!.prune).reduce((n,value) => n+value,0), [row.graph!.skipped.identity,row.graph!.skipped.width,row.graph!.skipped.unresolvable].join(' / '), row.graph!.localCalls,row.graph!.budgetTokens]) }), '',
+        'Pruning counts trace events, including candidates beyond per-keyword limits; skipped counts distinct canonical identities for each refusal reason. Each report case records every prune reason, the actual context token estimate and its selected graph ids. Entity and relation recall average only questions with corresponding gold ids; empty denominators remain null. Citation targets are ranked by their maximum supporting graph score, then their original chunk id, using the same deterministic order as retrieval.', '',
+        `One shared graph build admits ${report.graphBuild.contributions} contributions with ${report.graphBuild.entityClaims} entity claims and ${report.graphBuild.relationClaims} relation claims: ${report.graphBuild.localCalls} local hash-embedding calls and ${report.graphBuild.budgetTokens} estimated budget tokens. Query rows count their own local work separately. Provider calls and provider tokens are zero. The clock-free cost field is zero by construction, not measured latency; runtime timings stay outside this report.`, '',
         table({ head: ['Cutoff','Oracle ceiling','Observed oracle','Random expectation','Random band','Observed random'], rows: report.gate.random.map(row => [row.k,
             score(report.gate.oracle.expected[row.k]),score(report.gate.oracle.actual[row.k]),score(row.expected),'['+score(row.low)+', '+score(row.high)+']',score(row.actual)]) }), '',
-        'Fractional recall and MRR reuse the existing relevance scorer. Oracle ceilings depend on each question’s number of resolvable gold chunks; an oracle can fall below 1 at a smaller cutoff without losing any reachable evidence. Random draws are without replacement and use the registered analytic band. Every gold and graph support reference resolves before a table is published.', '',
-        'Provider calls and tokens are zero. The keyless clock-free cost field is zero by construction, not measured latency. Missing graph counts and scores remain null. No graph-specific extraction, planning, expansion or generation has been executed by this registration. Scale targets are registered at 100, 1,000 and 10,000 chunks, with hybrid p95 at most 250 ms at 10,000; no scale performance is claimed.', '',
-        `Limits: dense k ${report.registration.limits.k}, minimum score ${report.registration.limits.minScore}, at most ${report.registration.limits.maxPerSource} chunks per source, no neighbours. Future graph context has ${report.registration.limits.contextTokens} tokens. The immutable flat handoff SHA-256 is \`${report.registration.flatHandoffSha256}\`.`, '',
-        `Gate: **${report.gate.passed ? 'passed' : 'failed'}**. Source \`${report.source.sha256}\`; registration \`${report.registration.registrationId}\`; report \`${report.reportId}\`.`, '',
+        'Fractional recall and MRR reuse the existing relevance scorer. Oracle ceilings depend on each question’s number of resolvable gold chunks; an oracle can fall below 1 at a smaller cutoff without losing reachable evidence. Random draws are without replacement and use the registered analytic band. Every gold and graph support reference resolves before publication. The oracle, random and dense row objects are unchanged from the pre-graph control.', '',
+        `The separately preregistered one-hop control keeps marker facts in distinct source chunks. The reachable Bridge fact is found: **${control.oneHopFound}**; the Far fact two hops away is found: **${control.twoHopFound}**; Bridge is found without expansion: **${control.withoutExpansionOneHopFound}**. With expansion it returns ${control.withExpansion.chunkKeys.join(', ')}; without expansion it returns ${control.withoutExpansion.chunkKeys.join(', ')}. The Bridge–Far connection chunk contains an endpoint claim, but it cannot satisfy the separate Far marker fact. Registration bytes: \`${control.sha256}\`.`, '',
+        `Limits: ${report.registration.limits.keywordsPerLevel} keywords per level, ${report.registration.limits.candidatesPerKeyword} candidates per keyword, ${report.registration.limits.expansionEntities} added entities, ${report.registration.limits.expansionRelations} added relations, ${report.registration.limits.chunksPerSource} citation chunks per source and ${report.registration.limits.contextTokens} estimated context tokens. Dense remains k ${report.registration.limits.k}, minimum score ${report.registration.limits.minScore}, at most ${report.registration.limits.maxPerSource} chunks per source, no neighbours. Host overrides are explicit and recorded.`, '',
+        'Scale targets remain registered at 100, 1,000 and 10,000 chunks, with SQLite hybrid p95 at most 250 ms at 10,000. This mechanism report makes no scale-performance claim.', '',
+        `The immutable flat handoff SHA-256 is \`${report.registration.flatHandoffSha256}\`. Gate: **${report.gate.passed ? 'passed' : 'failed'}**. Source \`${report.source.sha256}\`; registration \`${report.registration.registrationId}\`; report \`${report.reportId}\`.`, '',
         'Decision: **not-evaluated**; product default unchanged. Live paired, judge and separately licensed parity measurements require their own registered plans and explicit approval.', ''].join('\n');
 }

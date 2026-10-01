@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "0e81abc0b6593217113ae5aa1a5ff0e53c0819e6",
-      "sha256": "107e95c50207dafaa2d3768fd2a5203ef0fa2f2e5d28194bd9de3479e93ee723",
+      "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
+      "sha256": "134142e5edef2b53bb302b7a37bf0ae4002f8920a9d5909116d7818a0537fa3d",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -361,12 +361,24 @@
           "sha256": "8327cf26450eb4172b5a03e3471c51e3eea997ec54c10675b94ea08802fd420d"
         },
         {
+          "path": "benchmark/lib/lightrag-controls.ts",
+          "sha256": "31e2babee68e4b183ccd1e6d8be6e07ede71718e41890936808af50ccce31dd9"
+        },
+        {
+          "path": "benchmark/lib/lightrag-corpus.ts",
+          "sha256": "9a82f3935a583129d1a73440c012edca9e65b735ef0c9932ab62441321f428d2"
+        },
+        {
+          "path": "benchmark/lib/lightrag-measure.ts",
+          "sha256": "b6c48fd57b01e0bdf3d821bd25c6d83d73be62d12e4deea14f2ed336a682974b"
+        },
+        {
           "path": "benchmark/lib/lightrag.ts",
-          "sha256": "05084ce55d1e3e4fb47080261f4bdc33ecaf67d3e8ef9d90aabf325fdc5e891d"
+          "sha256": "8929bebb6581f0533d42c9879d7be347ed43f8d2248fcc3ee0ffcb38d108cd0b"
         },
         {
           "path": "benchmark/lib/lightrag.types.ts",
-          "sha256": "2913387e48cd6d74dccc2a6a525aca7cb33375edd66aea7ee55dbb6133a7ff3c"
+          "sha256": "e784ed708121ef0d4486b8bd24796176688ba0202c095a4310f4610bde79dd3c"
         },
         {
           "path": "benchmark/lib/locomo-corpus.ts",
@@ -1637,7 +1649,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "2c81e17b2e5b2b2096a1d22595bea909428105ecaec4c8b2a7a56625942d4b5c",
+    "planId": "3520b84567d40b80daf7208d9b426db3e52f584f9c36449503e5ea8357166ab0",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "0e81abc0b6593217113ae5aa1a5ff0e53c0819e6",
+    "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
     "clean": false,
     "files": [
       {
@@ -1199,7 +1199,7 @@
       },
       {
         "path": "packages/lightrag/artifacts/prompts.json",
-        "sha256": "f63c143643cd06b55e2f26de426dd80ebfdfefd0a03214eb3bea6d8a62aa3abf"
+        "sha256": "64e91ba89858782176dda4c639745c149c2de3037354cdf6818dd779a0a09912"
       },
       {
         "path": "packages/lightrag/package.json",
@@ -1207,7 +1207,7 @@
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
-        "sha256": "1800f6e09019d129244e4f55925e905aff2785e056c887628402088c9bbcdff1"
+        "sha256": "507f8d40e1b0cbe1aab6f88919a83329cbcfbfab55740d58ecc8fe2ea6a66ef4"
       },
       {
         "path": "packages/lightrag/src/apply.ts",
@@ -1218,8 +1218,12 @@
         "sha256": "c99966399a4cd7b92873e47afa9024565b3ef2d0ba5a1a3d5e8f98904f357092"
       },
       {
+        "path": "packages/lightrag/src/context.ts",
+        "sha256": "0ffc8e34fbf6e5361a085bc9264bef9576ec5c94c54137e8dbba60ff38563ba1"
+      },
+      {
         "path": "packages/lightrag/src/contracts.gen.ts",
-        "sha256": "b0378d8c7b24905b1626f40c59e4bf2c6a20a4b53b1664219d8dfbb4eefabf87"
+        "sha256": "c8d5b84148304db99a0da7b3ba837004345a3df1a54b68ab84de3746a88e1947"
       },
       {
         "path": "packages/lightrag/src/contribution.ts",
@@ -1243,11 +1247,15 @@
       },
       {
         "path": "packages/lightrag/src/index.ts",
-        "sha256": "259746c9d64c1b8692842d8c0ae107d32428f07cdcbd17d5eb8564f658e76eb2"
+        "sha256": "ee3d13a3a5c01d9470830a54b962c97b46706ce1e631f41049b9ca50eca88dd0"
       },
       {
         "path": "packages/lightrag/src/integrity.ts",
         "sha256": "633aaf0aef0051f4c4ce4953d43754d5c2806f39efb8cd3fa9c7d78bc702f8ff"
+      },
+      {
+        "path": "packages/lightrag/src/limits.ts",
+        "sha256": "3d554223292cf2621970fc58b8a82ac712b5af641dfcd8031e1df58bd6486f50"
       },
       {
         "path": "packages/lightrag/src/memory-persistence.ts",
@@ -1264,6 +1272,10 @@
       {
         "path": "packages/lightrag/src/persistence.ts",
         "sha256": "739d9fde6deef894b05faddb18818cb4bd27e47e24e53c803b82bda4a8fa9187"
+      },
+      {
+        "path": "packages/lightrag/src/plan-query.ts",
+        "sha256": "46552e73d3402d3d3f58cd4aff7f4dbabba7ffa2aad695ac0cdb4c4611503b4d"
       },
       {
         "path": "packages/lightrag/src/plan.ts",
@@ -1284,6 +1296,10 @@
       {
         "path": "packages/lightrag/src/resolve.ts",
         "sha256": "9812b714ed4d76758cd100f5708120492482fd1532bc0b2aad639b9db7ee2019"
+      },
+      {
+        "path": "packages/lightrag/src/retrieve.ts",
+        "sha256": "2e83de153fe2bae8fe92b4471ec0d24e8aabb08acf4434fa39e0ac4d9688d5d3"
       },
       {
         "path": "packages/lightrag/src/reuse.ts",
@@ -2122,7 +2138,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "d5c050c103b87ea232a3ad3db74874c7ad61ea7d7295aa765a46f8153d31df4d"
+    "sha256": "b7dcd63ad9b620a792212ee9305acf19a87d57ba45da806ebb67910b0ec33dcc"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85308,5 +85324,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "4d8bd3c2f444eed93a3c3da13513eddc4afcce99afb15519a49637b101817238"
+  "reportId": "c5b712548c2a5faaa2aae9c8b2bfd3d670218c5d8767c281b1bf78f7f8e38a6d"
 }

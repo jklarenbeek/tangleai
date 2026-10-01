@@ -309,6 +309,62 @@ export interface Recall {
 }
 
 
+export interface CandidateCounts {
+  entityKeywords: Count;
+  relationKeywords: Count;
+  endpoints: Count;
+  oneHop: Count;
+}
+
+
+export interface PruneCounts {
+  identity: Count;
+  width: Count;
+  unresolvable: Count;
+  "expansion-limit": Count;
+  "source-limit": Count;
+  "context-budget": Count;
+  "no-original": Count;
+  "candidate-limit": Count;
+}
+
+
+export interface SkipCounts {
+  identity: Count;
+  width: Count;
+  unresolvable: Count;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.entityRecall",{"$if":[{"$eq":[{"$count":"$.goldEntities[*]"},0]},null,{"$div":[{"$count":{"$for":{"g":"$.goldEntities[*]"},"$where":{"$some":{"v":"$.entities[*]"},"$satisfies":{"$eq":["$g","$v"]}},"$return":"$g"}},{"$count":"$.goldEntities[*]"}]}]}]},{"$eq":["$.relationRecall",{"$if":[{"$eq":[{"$count":"$.goldRelations[*]"},0]},null,{"$div":[{"$count":{"$for":{"g":"$.goldRelations[*]"},"$where":{"$some":{"v":"$.relations[*]"},"$satisfies":{"$eq":["$g","$v"]}},"$return":"$g"}},{"$count":"$.goldRelations[*]"}]}]}]}]}
+ */
+export interface GraphCase {
+  entities: Ids;
+  relations: Ids;
+  goldEntities: Ids;
+  goldRelations: Ids;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  entityRecall: number | null;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relationRecall: number | null;
+  candidates: CandidateCounts;
+  prune: PruneCounts;
+  skipped: SkipCounts;
+  localCalls: Count;
+  budgetTokens: Count;
+  contextTokens: Count;
+  originalChunks: Count;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":[{"$add":["$.resolved","$.unresolved"]},{"$count":"$.ranked[*]"}]}
+ */
 export interface Case {
   question: Id;
   kind: "specific" | "abstract" | "one-hop";
@@ -331,6 +387,21 @@ export interface Case {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   failed: number;
+  graph?: GraphCase;
+}
+
+
+export interface GraphMetrics {
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  entityRecall: number | null;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relationRecall: number | null;
+  entityQuestions: Count;
+  relationQuestions: Count;
 }
 
 
@@ -341,6 +412,7 @@ export interface Metrics {
   count: number;
   recall: Recall;
   mrr: Ratio;
+  graph?: GraphMetrics;
 }
 
 
@@ -361,15 +433,15 @@ export interface RowIdentity {
   corpusId: Sha256;
   questionSetId: Sha256;
   retrievalMode: "oracle" | "random" | "dense-chunk" | "low" | "high" | "hybrid" | "hybrid-no-original";
-  model: null;
-  prompts: null;
+  model: null | {"provider":"fixture","model":"scripted"};
+  prompts: null | { extraction: Sha256; profiling: Sha256; deduplication: Sha256; planning: Sha256; };
   chunker: Chunker;
   embeddedBy: Embedder;
-  providerStatus: "not-run";
+  providerStatus: "not-run" | "scripted";
 }
 
 
-export interface RowCitationsOneOf1 {
+export interface RowCitations {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
@@ -381,22 +453,36 @@ export interface RowCitationsOneOf1 {
 }
 
 
+export interface RowGraph {
+  candidateSources: { entityKeywords: boolean; relationKeywords: boolean; originalChunks: boolean; };
+  candidates: CandidateCounts;
+  prune: PruneCounts;
+  skipped: SkipCounts;
+  localCalls: Count;
+  budgetTokens: Count;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$if":[{"$eq":["$.status","not-run"]},{"$and":[{"$eq":["$.reason","implementation-missing"]},{"$eq":["$.metrics",null]},{"$eq":["$.skipped",null]},{"$eq":["$.failed",null]},{"$eq":["$.citations",null]},{"$eq":[{"$count":"$.cases[*]"},0]},{"$eq":[{"$count":"$.byKind[*]"},0]},{"$eq":["$.cost.calls",null]},{"$eq":["$.cost.tokens",null]},{"$eq":["$.cost.ms",null]}]},{"$and":[{"$eq":["$.reason",null]},{"$eq":["$.metrics.count",{"$count":"$.cases[*]"}]},{"$eq":[{"$sum":"$.byKind[*].metrics.count"},{"$count":"$.cases[*]"}]},{"$eq":["$.metrics.mrr",{"$avg":"$.cases[*].mrr"}]},{"$eq":["$.skipped",{"$sum":"$.cases[*].skipped"}]},{"$eq":["$.failed",{"$sum":"$.cases[*].failed"}]},{"$eq":["$.citations.resolved",{"$sum":"$.cases[*].resolved"}]},{"$eq":["$.citations.unresolved",{"$sum":"$.cases[*].unresolved"}]},{"$eq":["$.metrics.recall['1']",{"$avg":"$.cases[*].recall['1']"}]},{"$eq":["$.metrics.recall['3']",{"$avg":"$.cases[*].recall['3']"}]},{"$eq":["$.metrics.recall['5']",{"$avg":"$.cases[*].recall['5']"}]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.reason",null]},{"$eq":["$.metrics.count",{"$count":"$.cases[*]"}]},{"$eq":[{"$sum":"$.byKind[*].metrics.count"},{"$count":"$.cases[*]"}]},{"$eq":["$.metrics.mrr",{"$avg":"$.cases[*].mrr"}]},{"$eq":["$.skipped",{"$sum":"$.cases[*].skipped"}]},{"$eq":["$.failed",{"$sum":"$.cases[*].failed"}]},{"$eq":["$.citations.resolved",{"$sum":"$.cases[*].resolved"}]},{"$eq":["$.citations.unresolved",{"$sum":"$.cases[*].unresolved"}]},{"$eq":["$.metrics.recall['1']",{"$avg":"$.cases[*].recall['1']"}]},{"$eq":["$.metrics.recall['3']",{"$avg":"$.cases[*].recall['3']"}]},{"$eq":["$.metrics.recall['5']",{"$avg":"$.cases[*].recall['5']"}]},{"$eq":[["$.byKind[*].kind"],["specific","abstract","one-hop"]]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.count",{"$count":"$.cases[?(@.kind=='specific')]"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='specific')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='specific')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='specific')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='specific')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.count",{"$count":"$.cases[?(@.kind=='abstract')]"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='abstract')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='abstract')].recall['5']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.count",{"$count":"$.cases[?(@.kind=='one-hop')]"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.mrr",{"$avg":"$.cases[?(@.kind=='one-hop')].mrr"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['1']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['1']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['3']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['3']"}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.recall['5']",{"$avg":"$.cases[?(@.kind=='one-hop')].recall['5']"}]},{"$if":[{"$eq":["$.identity.providerStatus","scripted"]},{"$and":[{"$eq":["$.identity.model",{"provider":"fixture","model":"scripted"}]},{"$eq":[{"$count":"$.identity.prompts.*"},4]},{"$eq":["$.identity.providerStatus","scripted"]},{"$eq":[{"$count":"$.cases[*].graph"},{"$count":"$.cases[*]"}]},{"$eq":["$.graph.candidateSources.entityKeywords",{"$ne":["$.key","lightrag-high"]}]},{"$eq":["$.graph.candidateSources.relationKeywords",{"$ne":["$.key","lightrag-low"]}]},{"$eq":["$.graph.candidateSources.originalChunks",{"$ne":["$.key","lightrag-hybrid-no-original"]}]},{"$eq":["$.graph.prune.identity",{"$sum":"$.cases[*].graph.prune.identity"}]},{"$eq":["$.graph.prune.width",{"$sum":"$.cases[*].graph.prune.width"}]},{"$eq":["$.graph.prune.unresolvable",{"$sum":"$.cases[*].graph.prune.unresolvable"}]},{"$eq":["$.graph.prune['expansion-limit']",{"$sum":"$.cases[*].graph.prune['expansion-limit']"}]},{"$eq":["$.graph.prune['source-limit']",{"$sum":"$.cases[*].graph.prune['source-limit']"}]},{"$eq":["$.graph.prune['context-budget']",{"$sum":"$.cases[*].graph.prune['context-budget']"}]},{"$eq":["$.graph.prune['no-original']",{"$sum":"$.cases[*].graph.prune['no-original']"}]},{"$eq":["$.graph.prune['candidate-limit']",{"$sum":"$.cases[*].graph.prune['candidate-limit']"}]},{"$eq":["$.graph.skipped.identity",{"$sum":"$.cases[*].graph.skipped.identity"}]},{"$eq":["$.graph.skipped.width",{"$sum":"$.cases[*].graph.skipped.width"}]},{"$eq":["$.graph.skipped.unresolvable",{"$sum":"$.cases[*].graph.skipped.unresolvable"}]},{"$eq":["$.graph.candidates.entityKeywords",{"$sum":"$.cases[*].graph.candidates.entityKeywords"}]},{"$eq":["$.graph.candidates.relationKeywords",{"$sum":"$.cases[*].graph.candidates.relationKeywords"}]},{"$eq":["$.graph.candidates.endpoints",{"$sum":"$.cases[*].graph.candidates.endpoints"}]},{"$eq":["$.graph.candidates.oneHop",{"$sum":"$.cases[*].graph.candidates.oneHop"}]},{"$eq":["$.graph.localCalls",{"$sum":"$.cases[*].graph.localCalls"}]},{"$eq":["$.graph.budgetTokens",{"$sum":"$.cases[*].graph.budgetTokens"}]},{"$eq":["$.metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[*]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='specific')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='specific')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='abstract')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='abstract')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.entityRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldEntities[*]"},0]},"$return":"$c.graph.entityRecall"}}]}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationQuestions",{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]},{"$eq":["$.byKind[?(@.kind=='one-hop')].metrics.graph.relationRecall",{"$if":[{"$eq":[{"$count":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}},0]},null,{"$avg":{"$for":{"c":"$.cases[?(@.kind=='one-hop')]"},"$where":{"$gt":[{"$count":"$c.graph.goldRelations[*]"},0]},"$return":"$c.graph.relationRecall"}}]}]},{"$every":{"c":"$.cases[*]"},"$satisfies":{"$and":[{"$eq":["$c.skipped",{"$add":[{"$add":["$c.graph.skipped.identity","$c.graph.skipped.width"]},"$c.graph.skipped.unresolvable"]}]},{"$le":["$c.graph.contextTokens","$.limits.contextTokens"]},{"$if":["$.graph.candidateSources.entityKeywords",true,{"$eq":["$c.graph.candidates.entityKeywords",0]}]},{"$if":["$.graph.candidateSources.relationKeywords",true,{"$eq":["$c.graph.candidates.relationKeywords",0]}]},{"$if":["$.graph.candidateSources.originalChunks",true,{"$eq":["$c.graph.originalChunks",0]}]}]}}]},{"$and":[{"$eq":["$.identity.model",null]},{"$eq":["$.identity.prompts",null]},{"$eq":["$.identity.providerStatus","not-run"]},{"$eq":[{"$count":"$.graph"},0]},{"$eq":[{"$count":"$.cases[*].graph"},0]},{"$eq":[{"$count":"$.metrics.graph"},0]},{"$eq":[{"$count":"$.byKind[*].metrics.graph"},0]}]}]}]}
  */
 export interface Row {
   key: "oracle" | "random" | "dense-chunk" | "lightrag-low" | "lightrag-high" | "lightrag-hybrid" | "lightrag-hybrid-no-original";
-  status: "executed" | "not-run";
-  reason: "implementation-missing" | null;
+  status: "executed";
+  reason: null;
   identity: RowIdentity;
   limits: Limits;
-  cost: Cost;
+  cost: { calls: 0; tokens: 0; ms: 0; };
   cases: Array<Case>;
-  metrics: Metrics | null;
+  metrics: Metrics;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
   byKind: Array<Stratum>;
-  skipped: NullableCount;
-  failed: NullableCount;
-  citations: RowCitationsOneOf1 | null;
+  skipped: Count;
+  failed: Count;
+  citations: RowCitations;
+  graph?: RowGraph;
 }
 
 
@@ -442,8 +528,38 @@ export interface GateResolution {
 }
 
 
+export type OneHopFixture = {"document":"lightrag-one-hop-control","schemaVersion":1,"license":"MIT","purpose":"Register distinct evidence for a reachable one-hop fact and an unreachable two-hop fact before graph scoring.","sources":[{"key":"start","text":"Start is the entry depot.","entities":["Start"],"relations":[]},{"key":"start-bridge","text":"Start connects to Bridge.","entities":["Start","Bridge"],"relations":[["Start","Bridge"]]},{"key":"bridge-fact","text":"Bridge stores the blue marker.","entities":["Bridge"],"relations":[]},{"key":"bridge-far","text":"Bridge connects to Far.","entities":["Bridge","Far"],"relations":[["Bridge","Far"]]},{"key":"far-fact","text":"Far stores the violet marker.","entities":["Far"],"relations":[]}],"query":"Which marker is stored one hop from Start?","mode":"low","lowLevelKeywords":["Start"],"highLevelKeywords":[],"limits":{"keywordsPerLevel":8,"candidatesPerKeyword":1,"expansionEntities":20,"expansionRelations":40,"chunksPerSource":3,"contextTokens":4000},"expected":{"seedEntity":"Start","oneHopEntity":"Bridge","oneHopChunk":"bridge-fact","twoHopEntity":"Far","twoHopChunk":"far-fact","oneHopFound":true,"twoHopFound":false,"withoutExpansionOneHopFound":false},"qualification":"Endpoint claims also occur in their relation chunks. The gold marker facts occur only in separate source chunks, so mere endpoint colocation cannot satisfy either fact."};
+
+export interface ControlObservation {
+  entityNames: Ids;
+  relationPairs: Ids;
+  chunkKeys: Ids;
+  localCalls: Count;
+  budgetTokens: Count;
+  contextTokens: Count;
+  pruned: Count;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$eq":["$.passed",{"$and":["$.oracle.passed","$.resolution.passed",{"$eq":[{"$count":"$.random[?(@.passed==false)]"},0]},{"$eq":[{"$count":"$.failures[*]"},0]}]}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.oneHopFound",{"$some":{"v":"$.withExpansion.chunkKeys[*]"},"$satisfies":{"$eq":["$v","$.fixture.expected.oneHopChunk"]}}]},{"$eq":["$.twoHopFound",{"$some":{"v":"$.withExpansion.chunkKeys[*]"},"$satisfies":{"$eq":["$v","$.fixture.expected.twoHopChunk"]}}]},{"$eq":["$.withoutExpansionOneHopFound",{"$some":{"v":"$.withoutExpansion.chunkKeys[*]"},"$satisfies":{"$eq":["$v","$.fixture.expected.oneHopChunk"]}}]},{"$eq":["$.passed",{"$and":[{"$eq":["$.oneHopFound",true]},{"$eq":["$.twoHopFound",false]},{"$eq":["$.withoutExpansionOneHopFound",false]}]}]}]}
+ */
+export interface OneHopControl {
+  fixture: OneHopFixture;
+  sha256: "9787cac71bdb0bf652fdbab5c161f1120d49ba40c5f70b50e7c0fddac0df2dc3";
+  embeddedBy: {"model":"hash-trigram-64","dims":64};
+  chunker: {"version":"heading-recursive/1","config":{"maxTokens":100,"overlapTokens":16}};
+  withExpansion: ControlObservation;
+  withoutExpansion: ControlObservation;
+  oneHopFound: boolean;
+  twoHopFound: boolean;
+  withoutExpansionOneHopFound: boolean;
+  passed: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.passed",{"$and":["$.oracle.passed","$.resolution.passed",{"$eq":[{"$count":"$.random[?(@.passed==false)]"},0]},{"$eq":[{"$count":"$.failures[*]"},0]},"$.oneHop.passed"]}]}
  */
 export interface Gate {
   passed: boolean;
@@ -460,6 +576,7 @@ export interface Gate {
    */
   resolution: GateResolution;
   failures: Ids;
+  oneHop: OneHopControl;
 }
 
 
@@ -479,8 +596,22 @@ export interface Registration {
 }
 
 
+export interface GraphBuild {
+  backend: "memory";
+  contributions: Count;
+  entities: Count;
+  relations: Count;
+  entityClaims: Count;
+  relationClaims: Count;
+  localCalls: Count;
+  budgetTokens: Count;
+  providerCalls: 0;
+  providerTokens: 0;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].key"],"$.registration.rows"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.identity.corpusId","$.registration.fixtureId"]},{"$eq":["$r.identity.questionSetId","$.registration.questionSetId"]},{"$eq":["$r.limits","$.registration.limits"]},{"$eq":["$r.identity.chunker","$.registration.chunker"]},{"$if":[{"$eq":["$r.status","executed"]},{"$eq":[["$r.cases[*].question"],"$.registration.questionIds"]},true]}]}}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":[["$.rows[*].key"],"$.registration.rows"]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$and":[{"$eq":["$r.identity.corpusId","$.registration.fixtureId"]},{"$eq":["$r.identity.questionSetId","$.registration.questionSetId"]},{"$eq":["$r.limits","$.registration.limits"]},{"$eq":["$r.identity.chunker","$.registration.chunker"]},{"$eq":[["$r.cases[*].question"],"$.registration.questionIds"]}]}},{"$eq":["$.rows[?(@.key=='oracle')].identity.retrievalMode","oracle"]},{"$eq":["$.rows[?(@.key=='oracle')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='random')].identity.retrievalMode","random"]},{"$eq":["$.rows[?(@.key=='random')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.retrievalMode","dense-chunk"]},{"$eq":["$.rows[?(@.key=='dense-chunk')].identity.providerStatus","not-run"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.retrievalMode","low"]},{"$eq":["$.rows[?(@.key=='lightrag-low')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.retrievalMode","high"]},{"$eq":["$.rows[?(@.key=='lightrag-high')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.retrievalMode","hybrid"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid')].identity.providerStatus","scripted"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.retrievalMode","hybrid-no-original"]},{"$eq":["$.rows[?(@.key=='lightrag-hybrid-no-original')].identity.providerStatus","scripted"]},{"$eq":["$.graphBuild.entities","$.fixture.entities"]},{"$eq":["$.graphBuild.relations","$.fixture.relations"]},{"$eq":["$.graphBuild.contributions","$.fixture.versions"]},{"$every":{"n":"$.rows[?(@.key=='lightrag-hybrid-no-original')].cases[*]"},"$satisfies":{"$some":{"h":"$.rows[?(@.key=='lightrag-hybrid')].cases[*]"},"$satisfies":{"$and":[{"$eq":["$n.question","$h.question"]},{"$eq":["$n.ranked","$h.ranked"]},{"$eq":["$n.recall","$h.recall"]},{"$eq":["$n.mrr","$h.mrr"]},{"$eq":["$n.graph.entities","$h.graph.entities"]},{"$eq":["$n.graph.relations","$h.graph.relations"]},{"$eq":["$n.graph.goldEntities","$h.graph.goldEntities"]},{"$eq":["$n.graph.goldRelations","$h.graph.goldRelations"]}]}}}]}
  */
 export interface LightragReport {
   document: "lightrag-report";
@@ -495,8 +626,9 @@ export interface LightragReport {
    */
   rows: Array<Row>;
   gate: Gate;
-  decision: {"state":"not-evaluated","defaultChanged":false,"reason":"Graph mechanisms and live answer quality are unmeasured."};
+  decision: {"state":"not-evaluated","defaultChanged":false,"reason":"Scripted graph mechanisms are measured; live answer quality is unmeasured."};
   reportId: Sha256;
+  graphBuild: GraphBuild;
 }
 
 
@@ -520,4 +652,4 @@ export interface LightragLadder {
 }
 
 
-export type Lightrag = LightragFixture | LightragReport | LightragLive | LightragLadder;
+export type Lightrag = LightragFixture | LightragReport | LightragLive | LightragLadder | OneHopFixture;

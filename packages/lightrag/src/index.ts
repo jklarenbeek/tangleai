@@ -24,3 +24,7 @@ export * from './embed.ts';
 export * from './contribution.ts';
 export * from './snapshot.ts';
 export * from './reuse.ts';
+export * from './limits.ts';
+export * from './plan-query.ts';
+export * from './context.ts';
+export * from './retrieve.ts';

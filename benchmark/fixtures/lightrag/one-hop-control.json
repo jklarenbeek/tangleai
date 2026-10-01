@@ -1,0 +1,20 @@
+{
+  "document": "lightrag-one-hop-control",
+  "schemaVersion": 1,
+  "license": "MIT",
+  "purpose": "Register distinct evidence for a reachable one-hop fact and an unreachable two-hop fact before graph scoring.",
+  "sources": [
+    {"key":"start","text":"Start is the entry depot.","entities":["Start"],"relations":[]},
+    {"key":"start-bridge","text":"Start connects to Bridge.","entities":["Start","Bridge"],"relations":[["Start","Bridge"]]},
+    {"key":"bridge-fact","text":"Bridge stores the blue marker.","entities":["Bridge"],"relations":[]},
+    {"key":"bridge-far","text":"Bridge connects to Far.","entities":["Bridge","Far"],"relations":[["Bridge","Far"]]},
+    {"key":"far-fact","text":"Far stores the violet marker.","entities":["Far"],"relations":[]}
+  ],
+  "query":"Which marker is stored one hop from Start?",
+  "mode":"low",
+  "lowLevelKeywords":["Start"],
+  "highLevelKeywords":[],
+  "limits":{"keywordsPerLevel":8,"candidatesPerKeyword":1,"expansionEntities":20,"expansionRelations":40,"chunksPerSource":3,"contextTokens":4000},
+  "expected":{"seedEntity":"Start","oneHopEntity":"Bridge","oneHopChunk":"bridge-fact","twoHopEntity":"Far","twoHopChunk":"far-fact","oneHopFound":true,"twoHopFound":false,"withoutExpansionOneHopFound":false},
+  "qualification":"Endpoint claims also occur in their relation chunks. The gold marker facts occur only in separate source chunks, so mere endpoint colocation cannot satisfy either fact."
+}

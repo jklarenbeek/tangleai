@@ -1,4 +1,4 @@
-import { qualifyLightRagBrowser, qualifyLightRagPreparation } from './lightrag-browser.mjs';
+import { qualifyLightRagBrowser, qualifyLightRagPreparation, qualifyLightRagRetrieval } from './lightrag-browser.mjs';
 import { qualifyGroundingBrowser } from './grounding-browser.mjs';
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
@@ -17,6 +17,7 @@ import { createModelProposer, selectExperiment, EVOLVE_SELECTION_DEFAULT } from 
 globalThis.tangleConsumer = {
   lightrag: qualifyLightRagBrowser(),
   lightragPreparation: qualifyLightRagPreparation(),
+  lightragRetrieval: qualifyLightRagRetrieval(),
   evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
   grounding: qualifyGroundingBrowser(),
