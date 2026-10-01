@@ -114,6 +114,6 @@ Limits: 8 keywords per level, 10 candidates per keyword, 20 added entities, 40 a
 
 Scale targets remain registered at 100, 1,000 and 10,000 chunks, with SQLite hybrid p95 at most 250 ms at 10,000. This mechanism report makes no scale-performance claim.
 
-The immutable flat handoff SHA-256 is `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. Gate: **passed**. Source `44660877746bb26b01e56b3a2c97296914af841a8cf34c234069cd41dc19fcc8`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `ec5262d3994ea6142294fa9925148f249c22957709346850ce7a6e91987ba339`.
+The immutable flat handoff SHA-256 is `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. Gate: **passed**. Source `67b023eed954172245e2124617dc5fbb35410b2bf83e9260b1e6770d12902f8e`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `80bc7659c656654c7ab6295874f76659fbd2974be99cd7061872cb64b74f333b`.
 
 Decision: **not-evaluated**; product default unchanged. Live paired, judge and separately licensed parity measurements require their own registered plans and explicit approval.

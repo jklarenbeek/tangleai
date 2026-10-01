@@ -54,6 +54,6 @@ it('the public retrieval planner and serializer run in a browser bundle with no 
     await browserProgram(`import {qualifyLightRagRetrieval} from ${JSON.stringify(path)};globalThis.graphQualification=qualifyLightRagRetrieval();`,async source=>{
         const browser=browserContext();vm.runInNewContext(source,browser);
         const observed=await browser.graphQualification;
-        assert.deepEqual(JSON.parse(JSON.stringify(observed)),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true});
+        assert.deepEqual(JSON.parse(JSON.stringify(observed)),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true,answer:{disposition:'no-model',citation:'consumer-chunk',rendered:true,sharedSchema:true}});
     });
 });

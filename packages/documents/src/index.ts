@@ -6,3 +6,4 @@ export * from './fetch.ts';
 export * from './ingest.ts';
 export * from './retrieval.ts';
 export * from './url-policy.ts';
+export * from './grounding.ts';

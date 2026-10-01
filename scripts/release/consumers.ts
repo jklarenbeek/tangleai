@@ -217,7 +217,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       assert.equal(heraBrowser.roles, 8);
       assert.equal(heraBrowser.staleRefused, true);
       assert.match(heraBrowser.rendered, /Literal \{\{question\}\}/);
-      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.lightragRetrieval)),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true});
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.lightragRetrieval)),{entities:1,citations:1,localCalls:1,withinBudget:true,noOriginal:true,sameCitations:true,timingsOmitted:true,answer:{disposition:'no-model',citation:'consumer-chunk',rendered:true,sharedSchema:true}});
       const temporalBrowser = await browser.tangleConsumer.temporal;
       const consolidationBrowser = await browser.tangleConsumer.consolidation;
       const skillBrowser = await browser.tangleConsumer.trace2skill;

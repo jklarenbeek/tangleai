@@ -73,7 +73,11 @@ await page.click('button.send:has-text("save")');
 await page.waitForFunction(async () => (await (await fetch('/api/settings')).json()).profile === null,
   null, { timeout: 8000, polling: 100 }).catch(() => fail('the selection was not cleared'));
 const cleared = await page.evaluate(async () => (await fetch('/api/config')).json());
-if (cleared.request.kind !== 'legacy' || cleared.resolution.state !== 'ready') {
+const clearedState = process.env.TANGLE_LIGHTRAG_FIXTURE === '1' ? 'provisional' : 'ready';
+if (clearedState === 'provisional' && (cleared.resolution.issues?.[0]?.code !== 'TCFG1012' || cleared.request.embed?.model !== 'hash-trigram-32')) {
+  await fail(`the registered embedding fixture returned another resolution: ${JSON.stringify(cleared)}`);
+}
+if (cleared.request.kind !== 'legacy' || cleared.resolution.state !== clearedState) {
   await fail(`clearing the selection did not restore the projection: ${JSON.stringify(cleared.resolution)}`);
 }
 // loom: sync, watch the DAG light up, run history appears
@@ -139,6 +143,29 @@ if (skillRuns === 0) {
 const skillsApi = await page.evaluate(async () => (await fetch('/api/skills/runs')).status);
 if (skillsApi !== 200) await fail(`skills.runs.list answered ${skillsApi}`);
 await page.screenshot({ path: `${shots}/skills.png`, fullPage: true });
+
+// Graph inspection is an explicit read. The optional keyless host supplies real
+// admitted evidence and a scripted planner; this browser supplies no mock data.
+await page.click('.tabs button:has-text("Documents")');
+await page.waitForSelector('.lightrag-panel', { timeout: 8000 }).catch(() => fail('graph retrieval panel never rendered'));
+if (!(await page.locator('.lightrag-panel').innerText()).includes('Experimental: LightRAG retrieval')) await fail('graph inspection lost its experimental label');
+await page.fill('.lightrag-panel input[type="search"]', 'Where does Cedar Guild keep equipment?');
+for (const mode of ['low', 'high', 'hybrid', 'hybrid-no-original']) {
+  await page.locator('.lightrag-panel select').selectOption(mode);
+  await page.locator('.lightrag-panel button[type="submit"]').click();
+  await page.waitForFunction((wanted) => {
+    const button = document.querySelector('.lightrag-panel button[type="submit"]');
+    return button && !button.disabled && document.querySelector('.graph-result')?.textContent.includes(`mode ${wanted} · graph revision `);
+  }, mode, { timeout: 12000 }).catch(() => fail(`no completed graph read for ${mode}`));
+  const graph = await page.locator('.graph-result').innerText();
+  if (!/graph revision [a-f0-9]{64}/.test(graph)) await fail('graph retrieval omitted its revision');
+  if (process.env.TANGLE_LIGHTRAG_FIXTURE === '1') {
+    for (const marker of ['Cedar Guild', 'Entities', 'Relations', 'Original chunks']) if (!graph.includes(marker)) await fail(`${mode} omitted ${marker}`);
+    if (await page.locator('.graph-result a[href="https://docs.example/graph-example"]').count() !== 1) await fail(`${mode} lost its supplied citation target`);
+    if (mode === 'hybrid-no-original' && !graph.includes('Original chunk text omitted by this mode.')) await fail('the ablation showed original chunk text');
+  } else if (!graph.includes('TLRAG1008')) await fail('an unconfigured planner returned no named refusal');
+}
+await page.screenshot({ path: `${shots}/lightrag.png`, fullPage: true });
 
 // memory: units are listed
 await page.click('.tabs button:has-text("Memory")');

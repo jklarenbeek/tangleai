@@ -42,7 +42,8 @@ export async function qualifyLightRagPreparation(){
         calls:bundle.spend.calls,decisions:bundle.stats.decisions,partial:bundle.partial,lookups,packs:promptArtifacts.packs.length,valid:(await validateGraphContribution(bundle)).valid};
 }
 
-import {createScriptedPlanner,retrieveLightRag,serializeLightRagContext} from '@tangleai/lightrag';
+import {createScriptedPlanner,retrieveLightRag,serializeLightRagContext,createLightRagRetriever,createLightRagEngine,validateLightRagAnswerRecord,renderLightRagAnswer} from '@tangleai/lightrag';
+import {GROUNDED_ANSWER_SCHEMA} from '@tangleai/documents/grounding';
 export async function qualifyLightRagRetrieval(){
     const store=createMemoryLightRagStore();await qualifyLightRagBrowser(store);
     const source={id:'consumer-source',status:'ready',activeVersionId:'consumer-version',canonicalUrl:'https://docs.example/cedar',title:'Cedar register'},version={id:'consumer-version',sourceId:source.id,status:'active'};
@@ -52,6 +53,11 @@ export async function qualifyLightRagRetrieval(){
     async function run(mode){const plan=lightragMust(await planner('Who maintains the register?',{mode}));return lightragMust(await retrieveLightRag({store,documents,embedder,plan,budget:createBudgetAccount({turns:2,tokens:1000},()=>0),clock:()=>0,includeTimings:false}));}
     const low=await run('low'),hybrid=await run('hybrid'),noOriginal=await run('hybrid-no-original');
     if(JSON.stringify(serializeLightRagContext(low))!==JSON.stringify(low.bundle))throw Error('The public serializer changed retrieval bytes.');
+    const engine=createLightRagEngine({retrieve:createLightRagRetriever({store,documents,planner}),client:null,budget:createBudgetAccount({turns:2,tokens:1000},()=>0),embedder,
+        identities:{prompts:{},embedder:{model:embedder.model,dims:2},runIdentityId:null},clock:()=>0,now:()=> '2026-06-01T00:00:00.000Z'});
+    const answer=lightragMust(await engine.answer('Who maintains the register?',{mode:'low'}));
+    lightragMust(await validateLightRagAnswerRecord(answer));
     return {entities:low.entities.length,citations:low.citations.length,localCalls:low.spend.calls,withinBudget:low.bundle.tokenCount<=low.limits.contextTokens,
-        noOriginal:noOriginal.bundle.sections.chunks==='',sameCitations:JSON.stringify(hybrid.citations)===JSON.stringify(noOriginal.citations),timingsOmitted:low.timings===undefined};
+        noOriginal:noOriginal.bundle.sections.chunks==='',sameCitations:JSON.stringify(hybrid.citations)===JSON.stringify(noOriginal.citations),timingsOmitted:low.timings===undefined,
+        answer:{disposition:answer.answer.disposition,citation:answer.citations[0].chunkId,rendered:renderLightRagAnswer(answer)===low.bundle.text,sharedSchema:GROUNDED_ANSWER_SCHEMA.$id==='https://tangleai.dev/schemas/grounding-answer'}};
 }

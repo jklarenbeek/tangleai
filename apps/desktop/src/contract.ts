@@ -20,6 +20,7 @@
  */
 
 import { FRAME_KINDS } from '@tangleai/store';
+import {LIGHTRAG_DEFINITIONS,lightRagReadOperations} from './lightrag-contract.ts';
 import { GROUNDING_DEFINITIONS, GROUNDING_OPERATIONS } from './grounding-contract.ts';
 
 import manifest from '../package.json' with { type: 'json' };
@@ -393,7 +394,7 @@ export const DESKTOP_CONTRACT = {
   // removed or narrowed since the freeze, so a client built at that
   // release can still speak here and the gate refuses silence about it.
   compat: ['0.28.0'],
-  $defs: GROUNDING_DEFINITIONS,
+  $defs: {...GROUNDING_DEFINITIONS,...LIGHTRAG_DEFINITIONS},
   operations: {
     ...GROUNDING_OPERATIONS,
     'status.get': {
@@ -648,6 +649,7 @@ export const DESKTOP_CONTRACT = {
       output: { type: 'array', items: DOCUMENT_SOURCE },
       http: { method: 'GET', path: '/api/documents' },
     },
+    ...lightRagReadOperations(DOCUMENT_CITATION_TARGET),
     'documents.search': {
       kind: 'read',
       input: {

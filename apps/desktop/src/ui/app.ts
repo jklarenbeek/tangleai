@@ -81,7 +81,19 @@ export function createTangleUi(options: TangleUiOptions): any {
   const client = options.client;
 
   let groundingRequest = 0;
+  let graphRequest = 0;
   const effects = {
+    /** Retrieval is an explicit read; a late result cannot replace a newer request. */
+    graphRetrieve: (props: any, dispatch: Dispatch): void => {
+      const request = ++graphRequest;
+      void client.invoke('lightrag.retrieve', { q: props.q, mode: props.mode }).then((outcome: any) => {
+        if (request !== graphRequest) return;
+        if (outcome.ok) dispatch('lightrag/done', outcome.value);
+        else dispatch('lightrag/fail', failText(outcome));
+      }).catch((cause: unknown) => {
+        if (request === graphRequest) dispatch('lightrag/fail', cause instanceof Error ? cause.message : 'Graph retrieval failed.');
+      });
+    },
     /** One requested session and its addressed reads; no polling or subscription. */
     groundingLoad: (props: any, dispatch: Dispatch): void => {
       const request = ++groundingRequest;

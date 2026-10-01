@@ -1,8 +1,9 @@
 /** Keyless public corpus lifecycle; the fetch and model seams are deterministic fixtures. */
 import {createBudgetAccount} from '@tangleai/agents';
+import {EMPTY_HEAD} from '@tangleai/outcomes';
 import {createDocumentIngester,SafeStaticFetcher} from '@tangleai/documents';
 import {createHashEmbedder} from '@tangleai/models/embed';
-import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,lightRagPrompt,lightragMust,createScriptedPlanner,retrieveLightRag} from '@tangleai/lightrag';
+import {createScriptedExtractor,createScriptedProfiler,createScriptedCoreferenceJudge,lightRagPrompt,lightragMust,createScriptedPlanner,retrieveLightRag,createMemoryLightRagStore,projectionForContribution,planProjectionWrites,createLightRagRetriever,createLightRagEngine,type LightRagMode} from '@tangleai/lightrag';
 import {createDocumentStore,createLightRagStore,createCorpusPromotion,collectDocumentGarbage,type TangleDb} from '@tangleai/store';
 export async function runLightRagExample(db:TangleDb){
     const documents=createDocumentStore(db),lightrag=createLightRagStore(db),promotion=createCorpusPromotion({db,documents,lightrag});
@@ -28,16 +29,26 @@ export async function runLightRagExample(db:TangleDb){
     const removed=lightragMust(await promotion.retract(activated.sourceId));edition=1;
     const before=extractions,retained=await prepare();if(retained.status!=='prepared')throw Error('Expected a retained version.');const restored=lightragMust(await promotion.promote(retained));
     const planner=createScriptedPlanner([{text:'Where does Cedar Guild keep equipment?',lowKeywords:['Cedar Guild'],highKeywords:['equipment']}]);
-    async function query(mode:'hybrid'|'hybrid-no-original'){
+    async function query(mode:LightRagMode,store=lightrag){
         const plan=lightragMust(await planner('Where does Cedar Guild keep equipment?',{mode}));
-        return lightragMust(await retrieveLightRag({store:lightrag,documents,embedder,plan,budget:createBudgetAccount({turns:4,tokens:10000},()=>0),clock:()=>0}));
+        return lightragMust(await retrieveLightRag({store,documents,embedder,plan,budget:createBudgetAccount({turns:4,tokens:10000},()=>0),clock:()=>0}));
     }
     const context=await query('hybrid'),noOriginal=await query('hybrid-no-original');
     const retrieval={mode:context.mode,entities:context.entities.length,relations:context.relations.length,citations:context.citations.length,localCalls:context.spend.calls,
         withinBudget:context.bundle.tokenCount<=context.limits.contextTokens,noOriginal:noOriginal.bundle.sections.chunks==='',sameCitations:JSON.stringify(context.citations)===JSON.stringify(noOriginal.citations)};
+    // An independent in-memory graph publishes the already prepared fixture in one apply.
+    // SQL owns document admission; the memory adapter owns graph state only.
+    const memory=createMemoryLightRagStore(),projection=lightragMust(await projectionForContribution(first.contribution));
+    lightragMust(await memory.apply(lightragMust(await planProjectionWrites({projection,contribution:first.contribution.plan,projections:[],actualHead:EMPTY_HEAD,expectedHead:EMPTY_HEAD,at:now()}))));
+    const modes:LightRagMode[]=['low','high','hybrid','hybrid-no-original'];let memoryParity=true;
+    for(const mode of modes){const durable=await query(mode),volatile=await query(mode,memory);memoryParity&&=durable.bundle.text===volatile.bundle.text&&JSON.stringify(durable.citations)===JSON.stringify(volatile.citations);}
+    if(!memoryParity)throw Error('The two graph adapters disagree about supplied evidence.');
+    const engine=createLightRagEngine({retrieve:createLightRagRetriever({store:memory,documents,planner}),client:null,budget:createBudgetAccount({turns:4,tokens:10000},()=>0),embedder,
+        identities:{prompts,embedder:{model:embedder.model,dims:32},runIdentityId:null},clock:()=>0,now});
+    const answer=lightragMust(await engine.answer('Where does Cedar Guild keep equipment?',{mode:'hybrid'}));
     // Collection is explicit and conservative. Referenced superseded graph evidence remains addressable.
     const garbage=await collectDocumentGarbage(db,{dryRun:true});
     return {unchanged:unchanged.status,replayWrites:replay.documentWrites+replay.graph.writes,removedDocumentWrites:removed.documentWrites,
         reactivated:restored.graph.reactivation,reactivationClaims:restored.graph.newClaims,reactivationCalls:restored.spend.calls,reactivationExtractions:extractions-before,
-        head:restored.graph.head.revision,retainedVersions:garbage.retained.length,activeEntities:(await lightrag.listEntities()).length,activeRelations:(await lightrag.listRelations()).length,retrieval};
+        head:restored.graph.head.revision,retainedVersions:garbage.retained.length,activeEntities:(await lightrag.listEntities()).length,activeRelations:(await lightrag.listRelations()).length,retrieval,modes,memoryParity,answer:{disposition:answer.answer.disposition,citations:answer.citations.length,stopReason:answer.stopReason},gcDryRun:garbage.dryRun};
 }

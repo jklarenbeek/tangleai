@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
+    "head": "6117dd1041d9e5fb781eca296c7c966b814eb5f7",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
+        "sha256": "2934aff76c6d6326c80f25d745b01e4fdab9735ba2d1b040fc55118bbe9bd2dd"
       },
       {
         "path": "packages/agents/package.json",
@@ -311,7 +311,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "458f899e1f47575f84ffbc3664c72ea23767671d430a47e791d4fbf5ca139533"
+        "sha256": "c381dfda689e7b3efa4a37e2140a416b791aa0d3c3b946d2bd1fb6ae375d6216"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -342,8 +342,12 @@
         "sha256": "94e7f86a00fed8f673b6707edb285e7f73a2ea367b19cd9d55c38ad43dce091c"
       },
       {
+        "path": "packages/documents/src/grounding.ts",
+        "sha256": "3978a5349d5d6267d07d8aacfd9763be9904359e58f01fe2f90da8337dcdd75c"
+      },
+      {
         "path": "packages/documents/src/index.ts",
-        "sha256": "c37a0f8419c97d058cc48de13cb3bc714ee7d32589706bfede6875bc5c3824f4"
+        "sha256": "1689484279c75431c2b54542bfea7fd680f9a1a9d29dcf2e0234b2caa142bcfe"
       },
       {
         "path": "packages/documents/src/ingest.ts",
@@ -1199,7 +1203,7 @@
       },
       {
         "path": "packages/lightrag/artifacts/prompts.json",
-        "sha256": "64e91ba89858782176dda4c639745c149c2de3037354cdf6818dd779a0a09912"
+        "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
       },
       {
         "path": "packages/lightrag/package.json",
@@ -1207,7 +1211,11 @@
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
-        "sha256": "507f8d40e1b0cbe1aab6f88919a83329cbcfbfab55740d58ecc8fe2ea6a66ef4"
+        "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+      },
+      {
+        "path": "packages/lightrag/src/answer.ts",
+        "sha256": "7923edc62130a342fc56385badc7dde1b2e369f158a2319fe98b912d5ea8c485"
       },
       {
         "path": "packages/lightrag/src/apply.ts",
@@ -1223,7 +1231,7 @@
       },
       {
         "path": "packages/lightrag/src/contracts.gen.ts",
-        "sha256": "c8d5b84148304db99a0da7b3ba837004345a3df1a54b68ab84de3746a88e1947"
+        "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
       },
       {
         "path": "packages/lightrag/src/contribution.ts",
@@ -1247,7 +1255,7 @@
       },
       {
         "path": "packages/lightrag/src/index.ts",
-        "sha256": "ee3d13a3a5c01d9470830a54b962c97b46706ce1e631f41049b9ca50eca88dd0"
+        "sha256": "a9474956ea3fc092cc88ba06f0daa666e05347b4491942aebbf25b10883b2291"
       },
       {
         "path": "packages/lightrag/src/integrity.ts",
@@ -1299,7 +1307,7 @@
       },
       {
         "path": "packages/lightrag/src/retrieve.ts",
-        "sha256": "2e83de153fe2bae8fe92b4471ec0d24e8aabb08acf4434fa39e0ac4d9688d5d3"
+        "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
       },
       {
         "path": "packages/lightrag/src/reuse.ts",
@@ -2138,7 +2146,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "b7dcd63ad9b620a792212ee9305acf19a87d57ba45da806ebb67910b0ec33dcc"
+    "sha256": "6ec263058bcc7516ab3502e3014a51a6157803d218b565294eb83932adc2bc35"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85324,5 +85332,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "c5b712548c2a5faaa2aae9c8b2bfd3d670218c5d8767c281b1bf78f7f8e38a6d"
+  "reportId": "4bb914a1f7b2d32af06bac6340f1dca59ef9b575cd5ca2c653c97bad09a9bb43"
 }

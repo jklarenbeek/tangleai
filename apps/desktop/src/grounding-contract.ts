@@ -1,20 +1,8 @@
 /** Relocate the existing schema resources into the self-contained desktop contract. */
 import { groundingSchema } from '@tangleai/grounding';
 import { runIdentitySchema } from '@tangleai/config';
-// This changes reference addresses only. Native contract/validator own validation.
-function relocate(value: unknown, scope: 'grounding' | 'config'): any {
-  if (Array.isArray(value)) return value.map(item => relocate(item, scope));
-  if (!value || typeof value !== 'object') return value;
-  return Object.fromEntries(Object.entries(value).filter(([key]) => key !== '$id' && key !== '$schema').map(([key, item]) => {
-    if (key === '$ref' && typeof item === 'string') {
-      if (item.startsWith('#/')) return [key, '#/$defs/' + scope + item.slice(1)];
-      if (item === runIdentitySchema.$id || scope === 'config' && item === '#runIdentity') return [key, '#/$defs/config'];
-      throw new TypeError('Unregistered grounding surface schema reference: ' + item);
-    }
-    return [key, relocate(item, scope)];
-  }));
-}
-export const GROUNDING_DEFINITIONS = { grounding: relocate(groundingSchema, 'grounding'), config: relocate(runIdentitySchema, 'config') };
+import {contractSchemaResource} from './schema-resources.ts';
+export const GROUNDING_DEFINITIONS = { grounding: contractSchemaResource(groundingSchema,'#/$defs/grounding',{[runIdentitySchema.$id]:'#/$defs/config'}), config: contractSchemaResource(runIdentitySchema,'#/$defs/config',{[runIdentitySchema.$id]:'#/$defs/config','#runIdentity':'#/$defs/config'}) };
 const ref = (name: string) => ({ $ref: '#/$defs/grounding/$defs/' + name });
 const text = { type: 'string', minLength: 1, maxLength: 256 };
 const session = { type: 'object', additionalProperties: false, required: ['sessionId'], properties: { sessionId: text } };

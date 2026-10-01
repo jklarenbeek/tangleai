@@ -24,6 +24,8 @@ type Selection<T extends GraphRow>={row:T;score:number};
 const compare=(a:{id:string;score:number},b:{id:string;score:number})=>b.score-a.score||(a.id<b.id?-1:a.id>b.id?1:0);
 const ordered=<T extends GraphRow>(rows:Map<string,Selection<T>>)=>[...rows.values()].sort((a,b)=>compare({id:a.row.id,score:a.score},{id:b.row.id,score:b.score}));
 const stamps=(projections:GraphProjection[])=>projections.map(row=>({id:row.id,sourceId:row.sourceId,versionId:row.versionId,contributionRevision:row.contributionRevision,head:row.head})).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
+/** Source heads determine the graph revision shown by retrieval and read surfaces. */
+export const lightRagGraphRevisionOf=(projections:GraphProjection[])=>lightragRevisionOf(stamps(projections.filter(row=>row.status==='active')));
 export async function retrieveLightRag(options:LightRagRetrievalOptions):Promise<LightRagStageOutcome<LightRagRetrieval>>{
     let spend=emptyGraphSpend();
     try{

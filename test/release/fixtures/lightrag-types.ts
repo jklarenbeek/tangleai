@@ -56,3 +56,16 @@ const {budget:queryBudget,...unmeteredQuery}=retrievalOptions;
 // @ts-expect-error keyword embeddings require the shared query account
 retrieveLightRag(unmeteredQuery);
 void [planner,queryPlan,queryBudget,LIGHTRAG_LIMITS];
+
+import {createLightRagEngine,createLightRagRetriever,validateLightRagAnswerRecord,renderLightRagAnswer,type LightRagEngineOptions,type LightRagAnswerRecord} from '@tangleai/lightrag';
+import {GROUNDED_ANSWER_SCHEMA,type GroundedAnswer} from '@tangleai/documents/grounding';
+import {GROUNDED_ANSWER_SCHEMA as barrelAnswerSchema} from '@tangleai/documents';
+declare const engineOptions:LightRagEngineOptions,grounded:GroundedAnswer;
+const engine=createLightRagEngine(engineOptions),answer=await engine.answer('Cedar?',{mode:'low'});
+if(answer.valid){const record:LightRagAnswerRecord=answer.value;const text:string=renderLightRagAnswer(record);await validateLightRagAnswerRecord(record);void text;}
+const composed=createLightRagRetriever({store:memory,documents,planner});
+// @ts-expect-error graph generation requires a caller-owned budget account
+createLightRagEngine({retrieve:composed,client:null,embedder:engineOptions.embedder,identities:engineOptions.identities,clock:()=>0,now:()=>''});
+// @ts-expect-error a host cannot invent an answer mode
+engine.answer('Cedar?',{mode:'global-community'});
+void [GROUNDED_ANSWER_SCHEMA,barrelAnswerSchema,grounded];

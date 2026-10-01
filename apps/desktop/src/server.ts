@@ -18,10 +18,11 @@ import { compileContract } from '@jarenjs/contract';
 import { serveHttp } from '@jarenjs/contract/http';
 import { toNodeHandler } from '@jarenjs/contract/node';
 import { createScheduler } from '@jarenjs/core/schedule';
-import { createDbMemoryStore, createDocumentStore, createIdentityRepository, createOutcomeStore, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
+import { createDbMemoryStore, createDocumentStore, createLightRagStore, createIdentityRepository, createOutcomeStore, createRunLog, openTangleDb, type TangleDb } from '@tangleai/store';
 import { SafeStaticFetcher, type StaticFetchOptions } from '@tangleai/documents';
 
 import { DESKTOP_CONTRACT } from './contract.ts';
+import type {DesktopLightRagOptions} from './lightrag.ts';
 import { ASSETS } from './assets.gen.ts';
 import { createFolderSync, createHandlers } from './handlers.ts';
 import { createSettingsStore, type Settings } from './settings.ts';
@@ -76,6 +77,7 @@ export interface DesktopOptions {
   documentFetch?: Omit<StaticFetchOptions, 'fetch' | 'now'>;
   watch?: DesktopWatchOptions;
   grounding?: DesktopGroundingOptions;
+  lightrag?: DesktopLightRagOptions;
   /**
    * What this host can measure. A host that has no measurement
    * workspace beside it passes nothing, and the surface says so — the
@@ -176,6 +178,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
   const contract = compileContract(DESKTOP_CONTRACT);
   const handlers = createHandlers({
     db, memoryStore, runLog, settings, identities, stackFor: settingsStack, inflight, chat, folderSync, watcher, feedback, reports, documentStore, documentFetcher, grounding,
+    lightragStore: createLightRagStore(db), lightragPlannerFor: options.lightrag?.plannerFor, clock: runtime.now,
     version: DESKTOP_VERSION,
     fetch: options.fetch,
     now,

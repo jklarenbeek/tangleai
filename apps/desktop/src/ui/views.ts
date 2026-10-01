@@ -504,6 +504,36 @@ function skillsPage(state: any): any {
 
 // -- documents --------------------------------------------------------------
 
+function graphRetrievalPanel(graph: any): any {
+  const result = graph.result, status = graph.status;
+  const issues = (rows: any[]) => rows.map((row: any, index: number) => ['li', { key: index }, `${row.code} ${row.path}: ${row.detail}`]);
+  return ['section', { class: 'lightrag-panel units' },
+    ['div', { class: 'loom-head' }, ['h3', {}, 'Experimental: LightRAG retrieval'],
+      ['button', { class: 'tab', type: 'button', on: { click: on('lightrag/refresh') } }, 'refresh graph status']],
+    ['p', { class: 'hint' }, 'Inspect graph evidence. Retrieval uses the configured model for keyword planning and the configured embedder.'],
+    status?.status === 'ok' ? ['p', { class: 'hint' }, `${status.graph.entities} entities · ${status.graph.relations} relations · ${status.graph.claims} claims`] : null,
+    status?.status === 'refused' ? ['ul', { class: 'error-inline' }, issues(status.issues)] : null,
+    ['form', { class: 'composer', on: { submit: { action: 'lightrag/retrieve', preventDefault: true } } },
+      ['label', { class: 'field' }, ['span', {}, 'Retrieval mode'],
+        ['select', { 'aria-label': 'Retrieval mode', disabled: graph.busy ? true : null, on: { change: on('lightrag/mode', undefined, ['value']) } },
+          ['low', 'high', 'hybrid', 'hybrid-no-original'].map(mode => ['option', { key: mode, value: mode, selected: graph.mode === mode ? true : null }, mode])]],
+      ['input', { class: 'chat-input', type: 'search', placeholder: 'Ask the evidence graph…', value: graph.q, disabled: graph.busy ? true : null, on: { input: on('lightrag/q', undefined, ['value']) } }],
+      ['button', { class: 'send', type: 'submit', disabled: graph.busy || graph.q.trim() === '' ? true : null }, graph.busy ? 'retrieving…' : 'retrieve']],
+    graph.error ? ['p', { class: 'error-inline' }, graph.error] : null,
+    result === null ? null : ['div', { class: 'graph-result' },
+      ['p', { class: 'unit-meta' }, `mode ${result.mode} · graph revision ${result.graphRevision}`],
+      result.status === 'refused' ? ['ul', { class: 'error-inline' }, issues(result.issues)] : [
+        ['p', { class: 'hint' }, `${result.spend.calls} calls · ${result.spend.tokens} tokens · ${result.prune} pruned candidates`],
+        ['p', { class: 'hint' }, Object.entries(result.skipped).map(([reason, count]) => `${reason}: ${count}`).join(' · ')],
+        ...(['entities', 'relations', 'chunks'] as const).map(section => ['section', { key: section }, ['h4', {}, section === 'chunks' ? 'Original chunks' : section === 'entities' ? 'Entities' : 'Relations'],
+          ['pre', { class: 'unit-text' }, result.sections[section] || (section === 'chunks' && result.mode === 'hybrid-no-original' ? 'Original chunk text omitted by this mode.' : 'No retained evidence in this section.')]]),
+        ['ul', { class: 'citations' }, result.citations.map((citation: any) => ['li', { key: citation.chunkId },
+          ['a', { href: citation.url, target: '_blank', rel: 'noreferrer' }, citation.title ?? citation.url],
+          ['span', { class: 'hint' }, ` · ${citation.chunkId}${citation.page ? ` · page ${citation.page}` : ''}${citation.headingPath.length ? ` · ${citation.headingPath.join(' › ')}` : ''}`]])]],
+    ],
+  ];
+}
+
 function documentPage(state: any): any {
   const documents = state.documents;
   const capability = documents.browser;
@@ -582,6 +612,7 @@ function documentPage(state: any): any {
                 : null],
           ])]
       : null,
+    graphRetrievalPanel(documents.graph),
     ['h3', {}, 'Sources'],
     ['div', { class: 'units' },
       documents.items.length === 0

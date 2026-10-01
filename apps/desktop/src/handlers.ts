@@ -5,6 +5,8 @@
  */
 
 import { stat } from 'node:fs/promises';
+import {createDesktopLightRag,type LightRagPlannerFactory} from './lightrag.ts';
+import type {LightRagStore,LightRagClock} from '@tangleai/lightrag';
 
 import { probeProvider } from '@tangleai/models/providers';
 import { probeEmbeddings } from '@tangleai/models/embed';
@@ -64,6 +66,9 @@ export interface HandlerSeams {
   /** What this host can measure, and what it kept; a build with no workspace beside it registers nothing. */
   reports: ReportService;
   documentStore: DocumentCorpusStore;
+  lightragStore: LightRagStore;
+  lightragPlannerFor?: LightRagPlannerFactory;
+  clock: LightRagClock;
   documentFetcher: SafeStaticFetcher;
   version: string;
   fetch?: typeof globalThis.fetch;
@@ -302,6 +307,7 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
     return null;
   };
 
+  const graphReads=createDesktopLightRag({store:seams.lightragStore,documents:documentStore,settings,stackFor:seams.stackFor,clock:seams.clock,fetch:seams.fetch,plannerFor:seams.lightragPlannerFor});
   const stackForRun = createStackResolver(seams);
 
   return {
@@ -512,6 +518,8 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
     },
 
     'documents.list': () => documentStore.listSources(),
+    'lightrag.status': () => graphReads.status(),
+    'lightrag.retrieve': graphReads.retrieve,
 
     'documents.search': async (input: { q: string; limit?: number }) => {
       const current = await settings.read();

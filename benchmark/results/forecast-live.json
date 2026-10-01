@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
-      "sha256": "134142e5edef2b53bb302b7a37bf0ae4002f8920a9d5909116d7818a0537fa3d",
+      "head": "6117dd1041d9e5fb781eca296c7c966b814eb5f7",
+      "sha256": "46bd72b299f4e1a8048cb46d46e02902bbc9809f0d7e806304d4ec0a1aab3b71",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -374,7 +374,7 @@
         },
         {
           "path": "benchmark/lib/lightrag.ts",
-          "sha256": "8929bebb6581f0533d42c9879d7be347ed43f8d2248fcc3ee0ffcb38d108cd0b"
+          "sha256": "b82d0e2a187e41da746ff94031f9cece98dc8a69021efbe6e111b41bb5f60a78"
         },
         {
           "path": "benchmark/lib/lightrag.types.ts",
@@ -742,7 +742,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
+          "sha256": "2934aff76c6d6326c80f25d745b01e4fdab9735ba2d1b040fc55118bbe9bd2dd"
         },
         {
           "path": "packages/agents/package.json",
@@ -846,7 +846,7 @@
         },
         {
           "path": "packages/documents/package.json",
-          "sha256": "458f899e1f47575f84ffbc3664c72ea23767671d430a47e791d4fbf5ca139533"
+          "sha256": "c381dfda689e7b3efa4a37e2140a416b791aa0d3c3b946d2bd1fb6ae375d6216"
         },
         {
           "path": "packages/documents/src/browser.ts",
@@ -877,8 +877,12 @@
           "sha256": "94e7f86a00fed8f673b6707edb285e7f73a2ea367b19cd9d55c38ad43dce091c"
         },
         {
+          "path": "packages/documents/src/grounding.ts",
+          "sha256": "3978a5349d5d6267d07d8aacfd9763be9904359e58f01fe2f90da8337dcdd75c"
+        },
+        {
           "path": "packages/documents/src/index.ts",
-          "sha256": "c37a0f8419c97d058cc48de13cb3bc714ee7d32589706bfede6875bc5c3824f4"
+          "sha256": "1689484279c75431c2b54542bfea7fd680f9a1a9d29dcf2e0234b2caa142bcfe"
         },
         {
           "path": "packages/documents/src/ingest.ts",
@@ -1649,7 +1653,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "3520b84567d40b80daf7208d9b426db3e52f584f9c36449503e5ea8357166ab0",
+    "planId": "b1122c8eec0e9d43831e436bf9f42c4b0035d1efda1565f3f63851f2c2c72237",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

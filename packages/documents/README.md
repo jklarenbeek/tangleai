@@ -60,3 +60,10 @@ A retained complete version can be prepared again without re-embedding its
 children or parents. The store keeps superseded evidence addressable; recall
 requests only the ready sources' active versions. Storage reclamation is an
 explicit reference-aware operation in `@tangleai/store`.
+
+The `./grounding` subpath and root barrel export the shared grounded-answer
+schema, types, renderer, supplied-reference gate and structured generator. The
+generator allows one repair and checks claims against exactly the supplied
+chunk ids. It performs no retrieval, citation remapping or persistence. Desktop
+flat grounding and graph generation consume this same owner; the flat evidence
+serializer and retrieval defaults remain desktop responsibilities.

@@ -135,3 +135,32 @@ may be omitted with `includeTimings: false` for deterministic artifacts. A graph
 or document head change during retrieval returns `TLRAG1008` for a host retry.
 See `examples/lightrag.ts` for preparation, joint admission, reactivation and a
 query through the public packages.
+
+`createLightRagRetriever` composes a keyword planner and retrieval under the
+caller's shared budget. `createLightRagEngine` consumes that retriever and the
+shared `@tangleai/documents/grounding` answer contract. It returns a content
+addressed answer record with query, mode, graph revision, source projections,
+retrieval trace, prompt/model/embedding identities, spend and stop reason.
+Generation treats all supplied profiles and chunks as untrusted evidence.
+Only supplied document chunk ids are citable; entity and relation ids fail the
+same reference gate. A named chunk is never replaced with a different citation.
+
+A null client returns `no-model` grounded recall. Empty model output, invalid
+citations after one repair, a dead wire and a spent budget return named recall
+values containing the same evidence and citation targets. Model attempts reserve
+budget before awaiting the client and retain incurred spend. An optional
+`recordSink` receives the validated immutable record; the package does not choose
+a persistence destination. `validateLightRagAnswerRecord` checks schema, content
+identity and the exact relationship between generated claims and citations.
+
+The desktop exposes experimental `lightrag.status` and `lightrag.retrieve` reads.
+The Documents panel displays the returned mode, graph revision, three evidence
+sections, skips, pruning, spend and citation links. Retrieval can call the
+configured planner and embedder, but creates no chat, run or model-identity rows.
+The answer engine remains a separate public composition. Inspecting evidence
+does not establish an answer-quality improvement or change flat chat defaults.
+
+Run `npm run lightrag:smoke` for the public keyless lifecycle, all four modes
+through memory and SQLite graphs, a no-model answer and a conservative GC dry
+run. Its ambient fetch trap must observe zero requests. The packed consumer runs
+the same example from installed JavaScript under Node and Bun.

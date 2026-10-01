@@ -18,6 +18,7 @@ import { toFetchHandler } from '@jarenjs/contract/fetch';
 import { createDesktop, type Desktop } from '../../apps/desktop/src/server.ts';
 import { DESKTOP_CONTRACT } from '../../apps/desktop/src/contract.ts';
 import { createTangleUi } from '../../apps/desktop/src/ui/app.ts';
+import { GRAPH_QUESTION, lightRagDesktop } from '../fixtures/lightrag-desktop.ts';
 
 /** Wait for the app to reach a condition (default: one macrotask breath) — a fixed sleep loses races under a loaded runner. */
 const settle = async (done: () => boolean = () => true, deadlineMs = 4000): Promise<void> => {
@@ -26,6 +27,30 @@ const settle = async (done: () => boolean = () => true, deadlineMs = 4000): Prom
     await new Promise((resolve) => setTimeout(resolve, 25));
   } while (!done() && Date.now() - start < deadlineMs);
 };
+
+it('the Documents panel shows each actual graph mode, revision and citation through the native read client', async () => {
+  const {desktop, requests} = await lightRagDesktop(), handler = toFetchHandler(desktop.dispatcher), errors: unknown[] = [];
+  const client = openHttpClient(compileContract(DESKTOP_CONTRACT), {
+    baseUrl: 'http://tangle.test', fetch: (url: any, init: any) => handler(new Request(url, init)),
+  });
+  const app = createTangleUi({client: {invoke: client.invoke}, onError: issue => errors.push(issue)});
+  try {
+    app.dispatch('nav', 'documents');
+    await settle(() => app.getState().documents.graph.status !== null);
+    assert.equal(app.getState().documents.graph.status.status, 'ok');
+    assert.ok(JSON.stringify(app.getVnode()).includes('Experimental: LightRAG retrieval'));assert.equal(requests(), 0);
+    for (const mode of ['low', 'high', 'hybrid', 'hybrid-no-original']) {
+      app.setState({...app.getState(), documents: {...app.getState().documents, graph: {...app.getState().documents.graph, q: GRAPH_QUESTION, mode}}});
+      app.dispatch('lightrag/retrieve');await settle(() => !app.getState().documents.graph.busy);
+      const graph = app.getState().documents.graph, rendered = JSON.stringify(app.getVnode());
+      assert.equal(graph.error, null);assert.equal(graph.result.status, 'ok');assert.equal(graph.result.mode, mode);
+      for (const marker of [`mode ${mode}`, graph.result.graphRevision, 'Cedar Guild', 'Entities', 'Relations', 'Original chunks', 'https://docs.example/graph-example', graph.result.citations[0].chunkId])
+        assert.ok(rendered.includes(marker), marker);
+      if (mode === 'hybrid-no-original') assert.ok(rendered.includes('Original chunk text omitted by this mode.'));
+    }
+    assert.equal(requests(), 6);assert.deepEqual(errors, []);
+  } finally {app.destroy();client.close();await desktop.close();}
+});
 
 describe('tangle desktop UI (headless)', () => {
   let desktop: Desktop;

@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "44c24f870e0dc4ca9ecef58e9d7321a052682430",
+    "head": "6117dd1041d9e5fb781eca296c7c966b814eb5f7",
     "clean": false,
     "files": [
       {
@@ -17,11 +17,11 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "39d762e8fb1a1c3481ccfddaefc8aa21ef8f4094844075c73db4797644a7a882"
+        "sha256": "ca1422621116cc16e05fd246d09b035b2656b297bf7236a836198f519b12cd66"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "948e29078a6b0fe3d76640b2be09cafdc9a1cbc470a420b33de343297c91fa19"
+        "sha256": "8571cdb4ca89847ccd1098006872f85a1263efb17d4b6df08924509e87befa5c"
       },
       {
         "path": "apps/desktop/src/settings.ts",
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "a889979bb1eb336bfdab86b8c9016587f765af91c62dcd6023042b558385a097"
+    "sha256": "32a485f497e10445c1ae852843ef39f67437a2599d9834c9eef629285302682e"
   },
   "suite": {
     "packages": [
@@ -343,8 +343,8 @@
       }
     ],
     "desktopContract": {
-      "operations": 44,
-      "revision": "b00cdd4cf3637c49fedcdc8a766281eea5c8a7bc8f89d1398117bd1e039bd9de"
+      "operations": 46,
+      "revision": "496b4b1fe69dad7829770a512427a4b0b58220c59d4d11e2b7efdaaa0ec96c6a"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "7dbee46a2049c851a1d48aae3a116436ca2dc489379c77ec2be2ffc44ba7d892"
+  "reportId": "f7e398e08b81fbd2680b0b2202a3db1452ce2c0eacb88ee11e8b4b912c6f7aee"
 }

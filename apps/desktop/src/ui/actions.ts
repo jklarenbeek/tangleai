@@ -85,6 +85,7 @@ export const INITIAL_STATE = {
     error: null as string | null,
   },
   documents: {
+    graph: { q: '', mode: 'hybrid', busy: false, error: null as string | null, status: null as any, result: null as any },
     url: '',
     q: '',
     busy: false,
@@ -130,6 +131,7 @@ export const ACTIONS: Record<string, any> = {
       invoke('runs.list', {}, 'runs/done', 'noop'),
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
       invoke('documents.list', {}, 'documents/done', 'noop'),
+      invoke('lightrag.status', {}, 'lightrag/status', 'lightrag/fail'),
       invoke('browser.status', {}, 'browser/done', 'noop'),
       invoke('skills.runs.list', {}, 'skills/runs', 'noop'),
       invoke('settings.get', {}, 'settings/done', 'noop'),
@@ -432,6 +434,16 @@ export const ACTIONS: Record<string, any> = {
   'reports/close': { patch: [{ op: 'replace', path: '/reports/detail', value: null }] },
 
   'documents/url': { patch: [{ op: 'replace', path: '/documents/url', value: '$event.value' }] },
+  'lightrag/q': { patch: [{ op: 'replace', path: '/documents/graph/q', value: '$event.value' }] },
+  'lightrag/mode': { patch: [{ op: 'replace', path: '/documents/graph/mode', value: '$event.value' }] },
+  'lightrag/status': { patch: [{ op: 'replace', path: '/documents/graph/status', value: '$payload' }] },
+  'lightrag/refresh': { effects: [invoke('lightrag.status', {}, 'lightrag/status', 'lightrag/fail')] },
+  'lightrag/retrieve': {
+    patch: [{ op: 'replace', path: '/documents/graph/busy', value: true }, { op: 'replace', path: '/documents/graph/error', value: null }],
+    effects: [{ run: 'graphRetrieve', with: { q: '$.documents.graph.q', mode: '$.documents.graph.mode' } }],
+  },
+  'lightrag/done': { patch: [{ op: 'replace', path: '/documents/graph/busy', value: false }, { op: 'replace', path: '/documents/graph/result', value: '$payload' }] },
+  'lightrag/fail': { patch: [{ op: 'replace', path: '/documents/graph/busy', value: false }, { op: 'replace', path: '/documents/graph/error', value: '$payload' }] },
   'documents/q': {
     patch: [{ op: 'replace', path: '/documents/q', value: '$event.value' }],
     effects: [{ run: 'documentSearch', with: { q: '$event.value' } }],

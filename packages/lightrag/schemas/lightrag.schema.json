@@ -1260,8 +1260,14 @@
           }
         },
         "answer": {
-          "type": "null",
-          "description": "This record currently represents ungenerated answers only."
+          "oneOf": [
+            {
+              "$ref": "#/$defs/lightRagGroundedAnswer"
+            },
+            {
+              "$ref": "#/$defs/lightRagRecalledAnswer"
+            }
+          ]
         },
         "citations": {
           "type": "array",
@@ -2545,6 +2551,102 @@
           "$ref": "#/$defs/lightRagRevision"
         }
       }
+    },
+    "lightRagRecalledAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "text"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "no-model",
+            "empty-model",
+            "invalid",
+            "wire",
+            "budget-stop"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "lightRagGroundedAnswer": {
+      "$comment": "Derived from https://tangleai.dev/schemas/grounding-answer in @tangleai/documents/grounding. Regenerate; the shared module is the only answer-contract owner.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "disposition",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "answer"
+            },
+            "claims": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "text",
+                  "citations"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "A reply-local claim id, unique within this answer."
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "One factual proposition, complete on its own."
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "description": "The evidence ids this claim was read from — only ids listed in the prompt."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "disposition",
+            "reason",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "abstain"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Why the supplied evidence cannot answer the question."
+            },
+            "claims": {
+              "type": "array",
+              "maxItems": 0
+            }
+          }
+        }
+      ]
     }
   }
 }

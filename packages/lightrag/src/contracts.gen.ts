@@ -592,6 +592,60 @@ export interface LightRagRetrieval {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type LightRagGroundedAnswerOneOf1ClaimsItemCitationsItem = string;
+
+export interface LightRagGroundedAnswerOneOf1ClaimsItem {
+  /**
+   * A reply-local claim id, unique within this answer.
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * One factual proposition, complete on its own.
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * The evidence ids this claim was read from — only ids listed in the prompt.
+   */
+  citations: Array<LightRagGroundedAnswerOneOf1ClaimsItemCitationsItem>;
+}
+
+
+export interface LightRagGroundedAnswerOneOf1 {
+  disposition: "answer";
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claims: Array<LightRagGroundedAnswerOneOf1ClaimsItem>;
+}
+
+
+export interface LightRagGroundedAnswerOneOf2 {
+  disposition: "abstain";
+  /**
+   * Why the supplied evidence cannot answer the question.
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=0
+   */
+  claims: Array<unknown>;
+}
+
+
+export type LightRagGroundedAnswer = LightRagGroundedAnswerOneOf1 | LightRagGroundedAnswerOneOf2;
+
+export interface LightRagRecalledAnswer {
+  disposition: "no-model" | "empty-model" | "invalid" | "wire" | "budget-stop";
+  text: string;
+}
+
+
 export interface LightRagAnswerRecord {
   id: LightRagRevision;
   query: LightRagId;
@@ -603,10 +657,7 @@ export interface LightRagAnswerRecord {
   projectionIds: Array<LightRagRevision>;
   plan: LightRagQueryPlan;
   retrievalTrace: Array<LightRagCandidate>;
-  /**
-   * This record currently represents ungenerated answers only.
-   */
-  answer: null;
+  answer: LightRagGroundedAnswer | LightRagRecalledAnswer;
   citations: Array<LightRagCitation>;
   identities: { prompts: LightRagPromptRevisions; model: LightRagModelIdentity | null; embedder: LightRagEmbeddedBy; runIdentityId: LightRagRevision | null; };
   spend: LightRagSpend;

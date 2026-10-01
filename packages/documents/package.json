@@ -16,7 +16,8 @@
     "./retrieval": "./src/retrieval.ts",
     "./url-policy": "./src/url-policy.ts",
     "./package.json": "./package.json",
-    "./extract-static": "./src/extract-static.ts"
+    "./extract-static": "./src/extract-static.ts",
+    "./grounding": "./src/grounding.ts"
   },
   "engines": {
     "node": ">=24",

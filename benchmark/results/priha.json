@@ -215,7 +215,7 @@
       },
       {
         "path": "apps/desktop/src/contract.ts",
-        "sha256": "39d762e8fb1a1c3481ccfddaefc8aa21ef8f4094844075c73db4797644a7a882"
+        "sha256": "ca1422621116cc16e05fd246d09b035b2656b297bf7236a836198f519b12cd66"
       },
       {
         "path": "apps/desktop/src/feedback.ts",
@@ -227,7 +227,7 @@
       },
       {
         "path": "apps/desktop/src/grounding-contract.ts",
-        "sha256": "6ea056ad683d3263ed1b3d70b53945f08a54d10c84b7078caf5ef8cf4583e8a9"
+        "sha256": "b26a58dab54ac5765c9d2a92ff1df318566e6dddf3446e106cdcba03b27a2749"
       },
       {
         "path": "apps/desktop/src/grounding-session.ts",
@@ -235,11 +235,11 @@
       },
       {
         "path": "apps/desktop/src/grounding.ts",
-        "sha256": "51b27b967dcb652d538bbfabdc0a84c3116ad2d5e98d88e6fad109add4fc5e01"
+        "sha256": "019ac6b87f1fad15605425aa9c59c3c26f6f28a94c4c6d9f403a9249aae6cb34"
       },
       {
         "path": "apps/desktop/src/handlers.ts",
-        "sha256": "948e29078a6b0fe3d76640b2be09cafdc9a1cbc470a420b33de343297c91fa19"
+        "sha256": "8571cdb4ca89847ccd1098006872f85a1263efb17d4b6df08924509e87befa5c"
       },
       {
         "path": "apps/desktop/src/ingest.ts",
@@ -254,6 +254,14 @@
         "sha256": "364eae59c7d260bdd6fa4994dfdb05383fca9850784173560adf9fff04a86690"
       },
       {
+        "path": "apps/desktop/src/lightrag-contract.ts",
+        "sha256": "3c5741e65d40cfe35fba3e22ee9520e34404b033ab92b0719a68cd6b0336f301"
+      },
+      {
+        "path": "apps/desktop/src/lightrag.ts",
+        "sha256": "228095ddd5d797e19ab45f538bdf4bf7556baa30f8adbdcda1d73fa665ebd5e8"
+      },
+      {
         "path": "apps/desktop/src/main.ts",
         "sha256": "1c7af0c91e32740b9473e96e34525e3b654ccf4b9475dea9330f417fcc22c86f"
       },
@@ -262,8 +270,12 @@
         "sha256": "65d6a1f00c5dd384efe21eb5d03fca6db8fb75eb16b23effb567c6f483e72a28"
       },
       {
+        "path": "apps/desktop/src/schema-resources.ts",
+        "sha256": "7bb46d6f1f94be1d89c8f4eca935500ad22bf1ff9a7b2c25132d9fc65b313919"
+      },
+      {
         "path": "apps/desktop/src/server.ts",
-        "sha256": "17ba7f6542f7fb3b2b140ae01ed25cd8004d0f9aaea65ddfa7fae33c50fa2cb8"
+        "sha256": "65e75d4a17fb72502f8b1067f6f3eed02e79cc865ecbddc28360c6b0705a9e6c"
       },
       {
         "path": "apps/desktop/src/settings.ts",
@@ -271,11 +283,11 @@
       },
       {
         "path": "apps/desktop/src/ui/actions.ts",
-        "sha256": "dfc09d3147a1c3a42dcae55eb170c9e5bf3c7ed8bde5ce08d93dcb14234909ac"
+        "sha256": "a222ac467e4406552214472bb8265d1061111049d2535386b562b2b8ddf11faa"
       },
       {
         "path": "apps/desktop/src/ui/app.ts",
-        "sha256": "fe870656c91e487787f75b1a9d2f4584b4b893d80b0a18b26a264329c22c3918"
+        "sha256": "a2ebc40df2591da06fe0f09232242dd16d779210d91129d298cda1ebee272949"
       },
       {
         "path": "apps/desktop/src/ui/main.ts",
@@ -287,7 +299,7 @@
       },
       {
         "path": "apps/desktop/src/ui/views.ts",
-        "sha256": "ac844027919c3e24892edf25d77b8f04b23b7a47c41f721bf8125f9c039cd434"
+        "sha256": "1ca8ee88e6083485d8121800d4475abba0d419e9c0a701bf200405d71707c0e6"
       },
       {
         "path": "apps/desktop/src/watch.ts",
@@ -611,7 +623,7 @@
       },
       {
         "path": "benchmark/lib/lightrag.ts",
-        "sha256": "8929bebb6581f0533d42c9879d7be347ed43f8d2248fcc3ee0ffcb38d108cd0b"
+        "sha256": "b82d0e2a187e41da746ff94031f9cece98dc8a69021efbe6e111b41bb5f60a78"
       },
       {
         "path": "benchmark/lib/lightrag.types.ts",
@@ -979,7 +991,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
+        "sha256": "2934aff76c6d6326c80f25d745b01e4fdab9735ba2d1b040fc55118bbe9bd2dd"
       },
       {
         "path": "packages/agents/package.json",
@@ -1179,7 +1191,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "458f899e1f47575f84ffbc3664c72ea23767671d430a47e791d4fbf5ca139533"
+        "sha256": "c381dfda689e7b3efa4a37e2140a416b791aa0d3c3b946d2bd1fb6ae375d6216"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -1210,8 +1222,12 @@
         "sha256": "94e7f86a00fed8f673b6707edb285e7f73a2ea367b19cd9d55c38ad43dce091c"
       },
       {
+        "path": "packages/documents/src/grounding.ts",
+        "sha256": "3978a5349d5d6267d07d8aacfd9763be9904359e58f01fe2f90da8337dcdd75c"
+      },
+      {
         "path": "packages/documents/src/index.ts",
-        "sha256": "c37a0f8419c97d058cc48de13cb3bc714ee7d32589706bfede6875bc5c3824f4"
+        "sha256": "1689484279c75431c2b54542bfea7fd680f9a1a9d29dcf2e0234b2caa142bcfe"
       },
       {
         "path": "packages/documents/src/ingest.ts",
@@ -2067,7 +2083,7 @@
       },
       {
         "path": "packages/lightrag/artifacts/prompts.json",
-        "sha256": "64e91ba89858782176dda4c639745c149c2de3037354cdf6818dd779a0a09912"
+        "sha256": "7d0f8d9b96c43690edbda792c469131fc4d3a3edf2e205afcebf6fbcaed10e0c"
       },
       {
         "path": "packages/lightrag/package.json",
@@ -2075,7 +2091,11 @@
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
-        "sha256": "507f8d40e1b0cbe1aab6f88919a83329cbcfbfab55740d58ecc8fe2ea6a66ef4"
+        "sha256": "07df3c80de5b4b4003a036b86b9a4b3f89ef7e973aab57502d8f396c41f4e298"
+      },
+      {
+        "path": "packages/lightrag/src/answer.ts",
+        "sha256": "7923edc62130a342fc56385badc7dde1b2e369f158a2319fe98b912d5ea8c485"
       },
       {
         "path": "packages/lightrag/src/apply.ts",
@@ -2091,7 +2111,7 @@
       },
       {
         "path": "packages/lightrag/src/contracts.gen.ts",
-        "sha256": "c8d5b84148304db99a0da7b3ba837004345a3df1a54b68ab84de3746a88e1947"
+        "sha256": "93941658827d5f677f33f6a3f0d9e08c1cb71cf45d8b0a1f2c79707011a6c271"
       },
       {
         "path": "packages/lightrag/src/contribution.ts",
@@ -2115,7 +2135,7 @@
       },
       {
         "path": "packages/lightrag/src/index.ts",
-        "sha256": "ee3d13a3a5c01d9470830a54b962c97b46706ce1e631f41049b9ca50eca88dd0"
+        "sha256": "a9474956ea3fc092cc88ba06f0daa666e05347b4491942aebbf25b10883b2291"
       },
       {
         "path": "packages/lightrag/src/integrity.ts",
@@ -2167,7 +2187,7 @@
       },
       {
         "path": "packages/lightrag/src/retrieve.ts",
-        "sha256": "2e83de153fe2bae8fe92b4471ec0d24e8aabb08acf4434fa39e0ac4d9688d5d3"
+        "sha256": "85191aebb4dd4efdb63097d1a2d4a22e229c65c83ad47dcefdd8ccd2e2e367e4"
       },
       {
         "path": "packages/lightrag/src/reuse.ts",
@@ -3002,7 +3022,7 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "910fee897291b22cf9f9c118e7c5dbc8125ebae89c230d9f3f534d0fa94e010f"
+    "sha256": "8172dd9653e394a7cc5dbe36d4da252c27eeab68a92783e41c26f08ccc0ab07b"
   },
   "fixtureSource": {
     "files": [
@@ -68192,7 +68212,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "910fee897291b22cf9f9c118e7c5dbc8125ebae89c230d9f3f534d0fa94e010f",
+      "sourceSha256": "8172dd9653e394a7cc5dbe36d4da252c27eeab68a92783e41c26f08ccc0ab07b",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68276,7 +68296,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "d611ebf40b9acdd260dcba0b9bcf6f58af05084972454259b5e6bf8daafa7e22"
+      "planId": "1fd3c0a33683c7d23ea93c9cca6b06e699116f3f29bea0b3cf00326828d2d644"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68523,5 +68543,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "6becaa05acf8e2d0ab84f200f44a2a6cfa47e6f098df338d5bcdee786b71ce9a"
+  "reportId": "2948ffe4bf3eb68729cb51809e16fb1525f24b2437c30c149cc4c61131d1f183"
 }
