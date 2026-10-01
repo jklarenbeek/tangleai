@@ -584,3 +584,34 @@ candidates, diffs, merge trees, evaluations and the active head — and claims n
 improvement beyond an evaluation row's own numbers. The measurement is
 [`TRACE2SKILL_BENCHMARK.md`](TRACE2SKILL_BENCHMARK.md), rendered from a keyless
 scripted fixture; live quality on a real domain adapter is unmeasured.
+
+## Evolving forecast harnesses (added 2026-10-01)
+
+`@tangleai/forecast` keeps question-scoped checkpoints, predictions, audited
+evidence, six-section notes, traces and small three-component harnesses.
+An injected host admits ordered checkpoints into the existing MAS runtime
+and SQLite queue. Durable stage receipts retain calls and usage before
+resumption. Prompts and tools are content-pinned; package imports open no
+files, database, timers or network.
+
+After the first checkpoint, a bounded editor may propose cited reusable
+procedures from that question's notes. The Jaren guarded engine checks the
+patch and the forecast volatile-fact policy refuses question-specific facts.
+A provisional version is visible only to that question. Original resolutions
+are immutable evidence, and the outcome service scores finalized predictions.
+The separate retrospective workflow may retain, reject or propose a candidate;
+only independent paired held-out improvement plus outcome authority and CAS
+can move the checked head for a related question. Corrections mark disputes
+and preserve the original scores.
+
+Thirteen authenticated contract reads expose bounded records without raw
+transcripts or tool-result bodies. The host owns scope and question authority;
+the outcome service owns the current head. Local and HTTP bindings preserve
+native contract diagnostics.
+
+The [scripted measurement](FORECAST_BENCHMARK.md) covers six questions and
+eighteen checkpoints, five resolutions, deterministic long-run generations,
+read-only counterfactual accounting and recovery. Its registered paired claim
+is not demonstrated: evolving utility 0.600 versus scaffold 0.533, with 95%
+interval [-0.133, 0.267]. Writeback stays experimental and opt-in. Provider
+quality, official benchmark parity and correction rescoring are unmeasured.

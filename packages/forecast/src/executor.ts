@@ -23,7 +23,7 @@ export function createForecastExecutor(options: ForecastExecutorOptions) {
     if (used) reject('TFCT1004', 'A forecast executor runs one checkpoint once.');
     used = true;
     const question = await validateForecastRecord('questions',input.question), checkpoint = await validateForecastRecord('checkpoints',input.checkpoint);
-    const harness = options.harness ? await validateForecastRecord('harnesses',options.harness) : null, revisions = await forecastPromptRevisions();
+    const harness = options.harness ? await validateForecastRecord('harnesses',options.harness) : null, revisions = await forecastPromptRevisions(checkpoint.treatment);
     if (checkpoint.questionId !== question.id || options.toolbox.checkpointId !== checkpoint.id) reject('TFCT1003', 'The executor question, checkpoint and toolbox differ.');
     if (checkpoint.status !== 'running') reject('TFCT1004', 'Start the checkpoint before executing it.');
     if (checkpoint.promptRevision !== revisions.executor || checkpoint.noteSchemaRevision !== revisions.noteSchema || checkpoint.toolsetRevision !== options.toolbox.revision || checkpoint.inputHarnessVersionId !== (harness?.id ?? null) || checkpoint.inputHarnessDigest !== (harness?.digest ?? null)) reject('TFCT1002', 'The executor differs from its pinned producer or harness identity.');
@@ -38,7 +38,7 @@ export function createForecastExecutor(options: ForecastExecutorOptions) {
       // This account alone owns token admission, including known zero usage;
       // the loop still enforces turn/time and tool-round limits itself.
       const agentBudget = { turns: budget.turns,ms: budget.ms,spent: { turns: budget.spent?.turns ?? 0,ms: budget.spent?.ms ?? 0 } };
-      const agent = createAgent({ client: meter.client,toolbox: options.toolbox,system: forecastExecutorPrompt(harness),...limits,budget: agentBudget,now: options.now });
+      const agent = createAgent({ client: meter.client,toolbox: options.toolbox,system: forecastExecutorPrompt(harness,checkpoint.treatment),...limits,budget: agentBudget,now: options.now });
       const result = await agent.send([user],{ signal: input.signal,onToolCall: call => { toolArguments = call.arguments; },onToolResult: ({ name,result }) => { capturedSteps.push({ name,arguments: toolArguments,result }); } });
       ({ messages,steps,stopReason } = result); finalMessage = result.message;
       if (stopReason !== 'stop') reject('TFCT1005', 'The executor stopped with ' + stopReason + '.');

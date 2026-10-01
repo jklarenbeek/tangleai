@@ -204,19 +204,19 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   mechanism behavior only. Source-correction semantics, learned gate/retention
   policy, automatic promotion and consumer review UI remain unimplemented and
   need separate registered comparisons and host authority decisions.
-- [ ] **Harness evolution for forecasting (Milkyway).** *Wanted:* the domain loop
-  that consumes the shipped outcome lifecycle — an unresolved forecasting question run at
-  two or more ordered checkpoints under version-pinned prompts and tools, each
-  with a cutoff-audited evidence set, prediction, raw trace, a six-part local note,
-  spend and stop reason; from checkpoint two, source-backed internal feedback and a
-  small provisional update to the factor / evidence / uncertainty procedure,
-  invisible outside its question until resolution; resolution scoring every
-  checkpoint through a declared adapter; a retrospective check that validates,
-  refines or rejects the provisional guidance and atomically promotes exactly one
-  checked harness to the next related question — and not to an unrelated one, and
-  not after a failed retrospective. *Constraint:* a repeated chat over changing
-  documents is not this, and `applyOutcome` alone is not a retrospective check.
-  *Closes on:* a controlled ablation with costs, published including a loss.
+- [ ] **Live forecasting quality and benchmark parity (Milkyway).** *Wanted:*
+  a prospective controlled comparison on a real forecasting domain with actual
+  provider spend and independently scored outcomes. The shipped scripted
+  mechanism has not demonstrated its registered claim against the scaffold.
+  *Constraint:* future candidate predictions need fresh, metered held-out replay;
+  immutable executed decision bags cannot be backfilled. Official FutureX and
+  FutureWorld slices require their own protocols, licensing and scorers, not
+  the repository's fictional choice/numeric oracle. Conflicting resolution
+  evidence currently marks a question `disputed`; original scores stay intact
+  and no correction rescoring or dependent-head revocation policy is defined.
+  *Closes on:* a registered live comparison publishing paired uncertainty,
+  costs, failures and losses; official scorer parity on the named slices; and
+  an evidenced, idempotent correction/revocation protocol with recovery tests.
 - [ ] **A trading domain (TradingAgents), if it earns its fixture.** *Wanted:*
   analyst team → debate → trader → risk → fund manager as a flow document over
   point-in-time market data, a portfolio, a broker simulator and a replay

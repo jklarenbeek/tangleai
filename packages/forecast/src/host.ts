@@ -73,7 +73,7 @@ export async function createForecastHost(options: ForecastHostOptions) {
       runId = await forecastRunId(questionId,schedule.scheduledAt);
       const existing = await options.masStore.getRun(runId), policy = cloneJson(options.policy(question));
       checkShape('checkpointBudget',policy.budget); checkShape('configuration',policy.configuration);
-      const prompts = await forecastPromptRevisions(), toolset = await forecastExecutorToolset(policy.treatment);
+      const prompts = await forecastPromptRevisions(policy.treatment), toolset = await forecastExecutorToolset(policy.treatment);
       const prior = (await all(options.forecastStore,'checkpoints',{ questionId })).find(c => c.ordinal === ordinal);
       let checkpoint: ForecastCheckpoint;
       if (prior) {

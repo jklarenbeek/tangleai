@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "2d64db7607deb10e611e6cf9da1a01362d1aa39a",
+    "head": "77493ea99ee5e0b15256ef736ff8fc0cdd9fffe0",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "3cf3bcabd82349f94d7452bba58f07eef1304fdc44a2a5aa547b9d4f636eabd8"
+        "sha256": "2eed6ac7a76cab5e3ac6f1b5376c06cf16cede1062f5bd37b0f746e5d24e4c11"
       },
       {
         "path": "packages/agents/package.json",
@@ -587,7 +587,7 @@
       },
       {
         "path": "packages/forecast/src/executor.ts",
-        "sha256": "5d0188c3767630a6770c3275b058b80cf9c1abc94c05383c2a2c5e81a2e2ea02"
+        "sha256": "416a8a305a762b8de041aa72210a1ffb7d25dbb2d52c73429a69f90f415f6d53"
       },
       {
         "path": "packages/forecast/src/feedback.ts",
@@ -603,7 +603,7 @@
       },
       {
         "path": "packages/forecast/src/host.ts",
-        "sha256": "56feb532f3261547e0a5058db11e468aaea187f56229ae1b1d45717518877c73"
+        "sha256": "5c3b11eaf46de1f7954489f62424c51ad6497bb504026adab817467b813c2e27"
       },
       {
         "path": "packages/forecast/src/identity.ts",
@@ -647,7 +647,7 @@
       },
       {
         "path": "packages/forecast/src/prompts.ts",
-        "sha256": "59b18d5e1c23987373c41f982092ea1a656b58873996cad6abf145a924255a3a"
+        "sha256": "5a553b0cc67713ef106929ede707743d7b7329e04bbc0a7a9083e6a21f3498b4"
       },
       {
         "path": "packages/forecast/src/read-handlers.ts",
@@ -1802,7 +1802,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "4c7e12a9d7c2f2ee27649c82f105fa9c4f71c9c47f8ae7253c700314316cbc76"
+    "sha256": "3e87a682123865b30515129b0f5832f08196cc474dc2377a142c0ba9fb0309b0"
   },
   "registration": {
     "schemaVersion": 1,
@@ -84988,5 +84988,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "ee7b6bef1c001130e8d2c2b6a6aaaf446e1eb538e5ffbd727b213d9ce240ea5c"
+  "reportId": "e80a36bd75b36b05e4f8e535e80f239c507818050eaa02168ffda75a280c4890"
 }

@@ -10,7 +10,8 @@ import { scoreForecast } from './forecast-oracle.ts';
 import type { ForecastFixtures } from './forecast-fixtures.ts';
 import type { Row, Case, Probe } from './forecast.types.ts';
 
-export async function measureEvolvingForecast(fixture: ForecastFixtures, options: { db?: TangleDb } = {}) {
+async function measureForecastWorkflow(fixture: ForecastFixtures, treatment: 'evolving-harness' | 'scaffold-no-harness', options: { db?: TangleDb } = {}) {
+  const evolving = treatment === 'evolving-harness';
   const db = options.db ?? await openTangleDb({ jobs: {} }), counters: ForecastScriptCounter[] = [];
   let writes = 0, replayed = 0; const probe = (step: string) => { if (step.startsWith('put:')) writes++; };
   const store = createForecastStore(db,{ applyProbe: probe }), outcomeHosts = new Map<string,Awaited<ReturnType<typeof fixtureForecastOutcome>>>();
@@ -19,10 +20,10 @@ export async function measureEvolvingForecast(fixture: ForecastFixtures, options
   try {
     for (const [questionIndex,registered] of fixture.questions.entries()) {
       let instant = registered.issuedAt;
-      const outcome = await fixtureForecastOutcome({ db,store,fixture,scopeKey: registered.scopeKey,instant: () => instant,applyProbe: probe }); outcomeHosts.set(registered.scopeKey,outcome);
+      const outcome = evolving ? await fixtureForecastOutcome({ db,store,fixture,scopeKey: registered.scopeKey,instant: () => instant,applyProbe: probe }) : null;if (outcome) outcomeHosts.set(registered.scopeKey,outcome);
       const priorQuestion = forecastMust(await forecastQuery(store,'questions',{ scopeKey: registered.scopeKey })).find(q => q.prompt === registered.prompt && q.issuedAt === registered.issuedAt);
-      const active = priorQuestion ? null : await outcome.checked();
-      const f = await fixtureForecastHost({ db,fixture,questionIndex,evolving: true,instant: () => instant,counters,forecastStore: store,outcomeAdmission: outcome,outcomeHost: () => outcome,startedFromCheckedVersionId: priorQuestion ? priorQuestion.startedFromCheckedVersionId : active?.versionId ?? null,policy: { configuration: { kind: 'scripted',revision: await forecastRevision({ registrationId: fixture.manifest.registrationId,retrospectives: SCRIPTED_RETROSPECTIVES }) } } });
+      const active = priorQuestion ? null : await outcome?.checked();
+      const f = await fixtureForecastHost({ db,fixture,questionIndex,evolving,instant: () => instant,counters,forecastStore: store,outcomeAdmission: outcome ?? undefined,outcomeHost: outcome ? () => outcome : undefined,startedFromCheckedVersionId: priorQuestion ? priorQuestion.startedFromCheckedVersionId : active?.versionId ?? null,policy: evolving ? { configuration: { kind: 'scripted',revision: await forecastRevision({ registrationId: fixture.manifest.registrationId,retrospectives: SCRIPTED_RETROSPECTIVES }) } } : { treatment,revise: false } });
       for (const scheduled of registered.checkpoints) {
         instant = scheduled.scheduledAt;
         const tick = await f.host.tick(instant);
@@ -37,17 +38,17 @@ export async function measureEvolvingForecast(fixture: ForecastFixtures, options
         if (candidate && candidate.digest !== (checkpoint.inputHarnessDigest === fixture.manifest.seedHarnessDigest ? fixture.candidates[0].digest : fixture.candidates[1].digest)) reject('TFCT1002','Runtime feedback does not reproduce its registered candidate digest.');
         if (revision) revisions.push(revision);
         stops[checkpoint.stopReason!] = (stops[checkpoint.stopReason!] ?? 0) + 1;
-        const tools = await forecastExecutorToolset('evolving-harness');
+        const tools = await forecastExecutorToolset(treatment);
         retained.push({ fixtureCheckpointId: scheduled.id,question: f.question,harness,checkpoint,evidence,prediction,trace,note,revision,candidate,executorCalls: checkpoint.progress!.execution.calls,noteCalls: checkpoint.progress!.note?.calls ?? [],editorCalls: checkpoint.progress!.revision?.calls ?? [],refusals: evidence.filter(e => !e.admitted).map(e => e.refusal),tools: { names: tools.names,revision: tools.revision } });
         // Outcomes enter only the independent scorer after all runtime writes.
         const resolution = fixture.resolutions.find(r => r.questionId === registered.id), score = resolution && prediction ? scoreForecast(registered.adapter,prediction.normalized,resolution.outcome) : null;
         cases.push({ questionId: registered.id,checkpointId: scheduled.id,ordinal: scheduled.ordinal,scopeKey: registered.scopeKey,cutoffAt: scheduled.cutoffAt,available: !!resolution,status: !resolution ? 'pending' : prediction ? 'scored' : 'failed',failure: checkpoint.failure,prediction: prediction?.normalized ?? null,outcome: resolution?.outcome ?? null,category: score?.category ?? null,utility: score?.utility ?? null,evidenceAdmitted: evidence.filter(e => e.admitted).map(e => e.citationId),evidenceRefused: { postCutoff: evidence.filter(e => e.refusal?.reason === 'post-cutoff').length,undated: evidence.filter(e => e.refusal?.reason === 'undated').length },refused: evidence.filter(e => !e.admitted).map(e => ({ id: e.citationId,reason: e.refusal!.reason as 'post-cutoff'|'undated' })) });
       }
       const resolution = fixture.resolutions.find(r => r.questionId === registered.id);
-      if (resolution) { instant = resolution.observedAt; const finished = await fixtureForecastResolution({ db,fixture,host: outcome,masStore: f.masStore,question: f.question,registeredId: registered.id,instant: () => instant,counters }); if (finished?.delivered.duplicate) replayed++; }
+      if (resolution && outcome) { instant = resolution.observedAt; const finished = await fixtureForecastResolution({ db,fixture,host: outcome,masStore: f.masStore,question: f.question,registeredId: registered.id,instant: () => instant,counters }); if (finished?.delivered.duplicate) replayed++; }
       versions.push(...forecastMust(await forecastQuery(f.store,'harnesses',{ questionId: f.question.id,limit: 1000 })));
       versions.push(f.harness);
-      const prompts = await forecastPromptRevisions(), tools = await forecastExecutorToolset('evolving-harness');
+      const prompts = await forecastPromptRevisions(treatment), tools = await forecastExecutorToolset(treatment);
       Object.assign(identity,{ configuration: f.policy.configuration,toolset: { names: tools.names,revision: tools.revision },promptRevision: prompts.executor,noteSchemaRevision: prompts.noteSchema,notePromptRevision: prompts.note,noteToolsetRevision: await forecastRevision([]) });
     }
     const gateCount = (kind: string) => revisions.reduce((n,r) => n + r.gate.volatileFact.items.filter(item => item === kind).length,0);
@@ -73,6 +74,8 @@ export async function measureEvolvingForecast(fixture: ForecastFixtures, options
     return { cases,retained,identity,cost: combineForecastSpend(...retained.map(r => r.checkpoint.spend),lifecycle.spend),stops,logicalCalls: counters.reduce((n,c) => n + c.calls(),0),physicalCalls: counters.reduce((n,c) => n + c.physicalCalls(),0),revisions: census,lifecycle: { ...lifecycle,records: { resolutions: lifecycle.records.resolutions.map(r => ({ ...r })),retrospectives: lifecycle.records.retrospectives.map(r => ({ ...r })),checkedReferences: lifecycle.records.checkedReferences.map(r => ({ ...r })),outcomes: lifecycle.records.outcomes.map(r => ({ ...r })) } },writes,replayed };
   } finally { if (!options.db) await db.close(); }
 }
+export const measureEvolvingForecast = (fixture: ForecastFixtures, options: { db?: TangleDb } = {}) => measureForecastWorkflow(fixture,'evolving-harness',options);
+export const measureScaffoldForecast = (fixture: ForecastFixtures) => measureForecastWorkflow(fixture,'scaffold-no-harness');
 export async function forecastEditingProbes(fixture: ForecastFixtures, measured: Awaited<ReturnType<typeof measureEvolvingForecast>>): Promise<Probe[]> {
   const probes: Probe[] = [], add = (id: string,holds: boolean,detail: string) => { if(!holds) throw Error('Forecast editing probe failed: ' + id); probes.push({ id,holds: true,detail }); };
   const leaks = fixture.leaks as { refuse: string[];allow: string[] }, first = fixture.questions[0];

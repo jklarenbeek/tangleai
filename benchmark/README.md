@@ -85,16 +85,18 @@ Tidewater questions and eighteen checkpoints. Fifteen checkpoints have known
 resolutions; three remain pending. The independent oracle reaches utility 1,
 the seeded reference scores 0.2 inside its exact 99% band, and the evidence
 ceiling is 0.8. A shared cutoff audit counts three future and two undated
-attachments once. The four harness mechanisms remain `implementation-missing`.
+attachments once. All four harness treatments are measured; evolving 0.600
+versus scaffold 0.533 does not pass the registered paired interval gate.
 `npm run benchmark:forecast` is keyless; `--check` verifies without writing,
-`--out-dir` redirects every output, and `--require complete` names the missing
-mechanisms. Live execution has no registered plan and is refused.
+`--out-dir` redirects every output, and `--require complete` requires all rows.
+`--live` prints a frozen credential-free plan and makes no request. Execution
+requires new approval of its exact `planId`; live forecasting quality is unmeasured.
 
 ## Contents
 
 | Instrument | What it answers | Command |
 |---|---|---|
-| [`forecast.ts`](./forecast.ts) | Frozen forecasting oracle, exact seeded reference band, evidence ceiling and pending/cutoff census; four unimplemented harness treatments remain explicit. [Report](../docs/FORECAST_BENCHMARK.md). | `npm run benchmark:forecast` (`--check`, `--out-dir`, `--require oracle`) |
+| [`forecast.ts`](./forecast.ts) | Seven measured forecasting rows, cutoff/revision/lifecycle censuses, paired claim gate, counterfactual accounting and two-run generation stability; live quality remains unmeasured. [Report](../docs/FORECAST_BENCHMARK.md). | `npm run benchmark:forecast -- --require complete` (`--check`, `--out-dir`, `--live` dry plan) |
 | [`consolidate.ts`](./consolidate.ts) | Nine frozen raw/deterministic/semantic/combined comparisons with fixed exact-source budgets, per-category and held-out LoCoMo recall/verbatim floors, counted failures, memory/Node/Bun activation/execution/trigger probes and existing compaction/program controls. [Report](../docs/CONSOLIDATE_BENCHMARK.md); keyless/scripted evidence never qualifies a live QA default. | `node benchmark/consolidate.ts --require --json /tmp/consolidation.json --md docs/CONSOLIDATE_BENCHMARK.md` |
 | [`locomo-census.ts`](./locomo-census.ts) | What is actually in the LoCoMo release — categories, ground truth, parseable timestamps, and how many evidence ids resolve | `npm run benchmark:locomo:census` |
 | [`scripts/locomo-parity-fixtures.py`](./scripts/locomo-parity-fixtures.py) | The parity oracle: loads the official `task_eval/evaluation.py` verbatim (`bert_score` stubbed) and RUNS it over a hand-authored table and over the release's vocabulary, writing `test/fixtures/locomo-parity*.json` — the rows the TypeScript scorer must reproduce at ten decimals. Needs Python with `nltk`, `regex`, `numpy` | `npm run benchmark:locomo:parity` |

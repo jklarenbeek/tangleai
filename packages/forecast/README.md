@@ -43,7 +43,7 @@ note budget's `spent` field so repairs consume the remaining checkpoint
 allowance. Both roles retain actual request digests through the injected
 client's `requestKey(request)` method, reported usage or null, and replay
 markers. Each artifact identifies its own producer prompt and toolset; the
-note builder has no tools. `forecastPromptRevisions()` computes constant-text
+note builder has no tools. `forecastPromptRevisions(treatment?)` computes constant-text
 revisions lazily without filesystem access.
 
 `createForecastHost` validates and lowers one MAS workflow, then exposes a
@@ -215,3 +215,39 @@ advertises transport support independently of this read-only document. A host
 can set `ledger: null` on `serveHttp`; no read operation sends or consumes an
 idempotency key. Resolution histories scan past full pages to find their
 original fact and signal when displayed corrections are truncated.
+
+## Qualification and limits
+
+The [complete controlled ablation](../../docs/FORECAST_BENCHMARK.md) measures
+no-harness, static-harness, scaffold-no-harness and evolving-harness on the same
+Tangle-authored fictional fixture. Scaffold uses the same checkpoint workflow,
+evidence gate and six-section notes, with a prompt omitting harness discovery,
+no harness tool and revisions disabled. The evolving row has utility 0.600
+versus scaffold 0.533; its paired 95% interval is [-0.133, 0.267]. The registered
+claim is **not demonstrated**. Costs are 89/72 scripted calls and 3240/2340
+scripted tokens. Both retain pending checkpoints in their denominators.
+
+Harness writeback is experimental and requires explicit host bindings and
+`revise: true`; no background worker or default activation is installed.
+Promotion is stricter than a retrospective verdict: an unchanged candidate
+cannot strictly improve, and the outcome gate refuses ties, regressions and
+unavailable pairs. Two full keyless replays preserve heads, generation tables
+and retained artifact bytes. This establishes orchestration and accounting;
+live forecasting quality is not measured.
+
+`npm run benchmark:forecast -- --require complete` regenerates the report and
+credential-free `not-run` live registration. `--check` verifies all artifacts.
+`--live` reads the shared AI environment, states a skip without a configured
+wire, or prints a dry plan with exact rows, caps and `planId`. It spends nothing.
+A separate operator approval of that current plan is required before
+`--live --authorize <planId>` sends requests. The live runner uses the public
+MAS and outcome hosts over frozen cutoff evidence, records actual provider
+usage, disables retries and bounds requests and output tokens. An exclusive
+execution receipt prevents a repeated CLI invocation from purchasing again.
+A stopped execution retains its database and incomplete receipt for review.
+
+The live runner registers only predictions it actually executed. A newly
+generated candidate has no retroactively purchased held-out prediction bag;
+missing pairs remain ineligible and original decisions stay immutable.
+Prospective real-domain evaluation, fresh candidate replay, the official
+FutureX/FutureWorld protocols and disputed-outcome rescoring remain open.

@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tangleai.dev/schemas/forecast-live",
+  "title": "ForecastLive",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "instrument": {
+      "const": "forecast-live"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "const": "not-run"
+    },
+    "plan": {
+      "$ref": "#/$defs/livePlan"
+    },
+    "physicalRequests": {
+      "const": 0
+    },
+    "reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "instrument",
+    "schemaVersion",
+    "status",
+    "plan",
+    "physicalRequests",
+    "reason"
+  ],
+  "$defs": {
+    "livePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "head": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256"
+                ]
+              }
+            }
+          },
+          "required": [
+            "head",
+            "sha256",
+            "files"
+          ]
+        },
+        "wire": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "provider": {
+              "type": "string"
+            },
+            "base": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "model": {
+              "type": "string"
+            },
+            "embedModel": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "keySource": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "thinking": {
+              "const": "off"
+            },
+            "maxCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxConcurrency": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "provider",
+            "base",
+            "model",
+            "embedModel",
+            "keySource",
+            "thinking",
+            "maxCalls",
+            "maxConcurrency"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "checkpointCalls": {
+              "const": 8
+            },
+            "retrospectiveCalls": {
+              "const": 4
+            },
+            "maxOutputTokens": {
+              "const": 1024
+            },
+            "checkpointMs": {
+              "const": 60000
+            },
+            "retrospectiveMs": {
+              "const": 30000
+            },
+            "concurrency": {
+              "const": 1
+            },
+            "retryAttempts": {
+              "const": 1
+            }
+          },
+          "required": [
+            "checkpointCalls",
+            "retrospectiveCalls",
+            "maxOutputTokens",
+            "checkpointMs",
+            "retrospectiveMs",
+            "concurrency",
+            "retryAttempts"
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "enum": [
+                  "no-harness",
+                  "static-harness",
+                  "scaffold-no-harness",
+                  "evolving-harness"
+                ]
+              },
+              "questions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "checkpoints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "maxFreshCalls": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cacheHits": {
+                "const": 0
+              },
+              "prompts": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "executor": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "note": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "noteSchema": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "feedback": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "feedbackSchema": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "volatileFact": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "volatileFactSchema": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "retrospective": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "retrospectiveSchema": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "executor",
+                  "note",
+                  "noteSchema",
+                  "feedback",
+                  "feedbackSchema",
+                  "volatileFact",
+                  "volatileFactSchema",
+                  "retrospective",
+                  "retrospectiveSchema"
+                ]
+              },
+              "toolset": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "revision": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "names",
+                  "revision"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "questions",
+              "checkpoints",
+              "maxFreshCalls",
+              "cacheHits",
+              "prompts",
+              "toolset"
+            ]
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "maxFreshTotal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cache": {
+          "const": "none"
+        },
+        "evidence": {
+          "const": "frozen-cutoff-replay"
+        },
+        "pairedEvaluation": {
+          "const": "executed-digests-only"
+        },
+        "planId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "skipped": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "registrationId",
+        "source",
+        "wire",
+        "limits",
+        "rows",
+        "maxFreshTotal",
+        "cache",
+        "evidence",
+        "pairedEvaluation",
+        "planId",
+        "skipped"
+      ]
+    }
+  }
+}

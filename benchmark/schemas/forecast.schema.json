@@ -34,8 +34,8 @@
       "items": {
         "$ref": "#/$defs/probe"
       },
-      "minItems": 22,
-      "maxItems": 22
+      "minItems": 24,
+      "maxItems": 24
     },
     "evidenceAudit": {
       "type": "array",
@@ -112,6 +112,15 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "longRun": {
+      "$ref": "#/$defs/forecastLongRun"
+    },
+    "counterfactuals": {
+      "$ref": "#/$defs/forecastCounterfactuals"
+    },
+    "claim": {
+      "$ref": "#/$defs/forecastClaim"
     }
   },
   "required": [
@@ -128,7 +137,10 @@
     "band",
     "capabilities",
     "identity",
-    "limitations"
+    "limitations",
+    "longRun",
+    "counterfactuals",
+    "claim"
   ],
   "additionalProperties": false,
   "$query": {
@@ -1980,6 +1992,652 @@
         "records"
       ],
       "additionalProperties": false
+    },
+    "forecastTransfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "measured",
+            "not-run"
+          ]
+        },
+        "nextQuestionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "harnessDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string"
+              },
+              "utility": {
+                "type": "number"
+              },
+              "seedUtility": {
+                "type": "number"
+              },
+              "delta": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "checkpointId",
+              "utility",
+              "seedUtility",
+              "delta"
+            ]
+          },
+          "maxItems": 1000
+        },
+        "missingCheckpointIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000
+        },
+        "utility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seedUtility": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "nextQuestionId",
+        "harnessDigest",
+        "cases",
+        "missingCheckpointIds",
+        "utility",
+        "seedUtility",
+        "delta",
+        "reason"
+      ]
+    },
+    "forecastGeneration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scopeKey": {
+          "type": "string"
+        },
+        "questionId": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "startedFromDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "harnessDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkedVersionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "harnessBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "componentsChanged": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "factorTracking",
+              "evidenceHandling",
+              "uncertaintyHandling"
+            ]
+          },
+          "maxItems": 3
+        },
+        "patchOperations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guidanceCarried": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guidanceRefined": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "guidanceDropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outcome": {
+          "enum": [
+            "promoted",
+            "retained",
+            "rejected",
+            "ineligible",
+            "pending"
+          ]
+        },
+        "spend": {
+          "$ref": "#/$defs/cost"
+        },
+        "cumulative": {
+          "$ref": "#/$defs/cost"
+        },
+        "transfer": {
+          "$ref": "#/$defs/forecastTransfer"
+        }
+      },
+      "required": [
+        "scopeKey",
+        "questionId",
+        "generation",
+        "startedFromDigest",
+        "harnessDigest",
+        "checkedVersionId",
+        "harnessBytes",
+        "componentsChanged",
+        "patchOperations",
+        "guidanceCarried",
+        "guidanceRefined",
+        "guidanceDropped",
+        "outcome",
+        "spend",
+        "cumulative",
+        "transfer"
+      ]
+    },
+    "forecastLongRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/forecastGeneration"
+          },
+          "maxItems": 6,
+          "minItems": 6
+        },
+        "checkedHeads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scopeKey": {
+                "type": "string",
+                "minLength": 1
+              },
+              "versionId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "digest": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "scopeKey",
+              "versionId",
+              "revision",
+              "digest"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 10000
+        },
+        "independentReplays": {
+          "const": 2
+        },
+        "artifactDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "generationDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "physicalRequests": {
+          "const": 0
+        }
+      },
+      "required": [
+        "generations",
+        "checkedHeads",
+        "independentReplays",
+        "artifactDigest",
+        "generationDigest",
+        "physicalRequests"
+      ]
+    },
+    "forecastCounterfactuals": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gateCounterfactual": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "revisionAttempts": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refusedRevisions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "guidanceRefused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "byKind": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "semanticRefusals": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "excludedGuidanceBytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "newWrites": {
+              "const": 0
+            },
+            "scope": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "revisionAttempts",
+            "refusedRevisions",
+            "guidanceRefused",
+            "byKind",
+            "semanticRefusals",
+            "excludedGuidanceBytes",
+            "newWrites",
+            "scope"
+          ]
+        },
+        "verdictOnlyPromotion": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "refinedCandidates": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "promoted": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "refused": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "versionId": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "delta": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "eligible": {
+                    "type": "boolean"
+                  },
+                  "issues": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "maxItems": 10000
+                  }
+                },
+                "required": [
+                  "versionId",
+                  "delta",
+                  "eligible",
+                  "issues"
+                ]
+              },
+              "maxItems": 10000
+            },
+            "newWrites": {
+              "const": 0
+            }
+          },
+          "required": [
+            "refinedCandidates",
+            "promoted",
+            "refused",
+            "candidates",
+            "newWrites"
+          ]
+        }
+      },
+      "required": [
+        "gateCounterfactual",
+        "verdictOnlyPromotion"
+      ]
+    },
+    "forecastClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "forecast-paired-utility/v1"
+            },
+            "treatment": {
+              "const": "evolving-harness"
+            },
+            "control": {
+              "const": "scaffold-no-harness"
+            },
+            "resamples": {
+              "const": 10000
+            },
+            "seed": {
+              "const": 17753
+            },
+            "level": {
+              "const": 0.95
+            },
+            "budget": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "maxCallsPerCheckpoint": {
+                  "const": 8
+                },
+                "maxRetrospectiveCalls": {
+                  "const": 4
+                },
+                "maxTokensPerCall": {
+                  "const": 1024
+                },
+                "maxPhysicalRequests": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "maxCallsPerCheckpoint",
+                "maxRetrospectiveCalls",
+                "maxTokensPerCall",
+                "maxPhysicalRequests"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "treatment",
+            "control",
+            "resamples",
+            "seed",
+            "level",
+            "budget"
+          ]
+        },
+        "policyId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkpointId": {
+                "type": "string"
+              },
+              "treatment": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "control": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "delta": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "checkpointId",
+              "treatment",
+              "control",
+              "delta"
+            ]
+          },
+          "maxItems": 18
+        },
+        "delta": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "interval": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "low": {
+              "type": "number"
+            },
+            "high": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "low",
+            "high"
+          ]
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "maxCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxTokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxPhysicalRequests": {
+              "const": 0
+            }
+          },
+          "required": [
+            "maxCalls",
+            "maxTokens",
+            "maxPhysicalRequests"
+          ]
+        },
+        "withinBudget": {
+          "type": "boolean"
+        },
+        "cutoffViolations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "crossScopeLeaks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verdict": {
+          "enum": [
+            "positive",
+            "not-demonstrated"
+          ]
+        },
+        "quality": {
+          "const": "unmeasured-scripted-conformance"
+        },
+        "writeback": {
+          "const": "experimental-opt-in"
+        },
+        "cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "treatment": {
+              "$ref": "#/$defs/cost"
+            },
+            "control": {
+              "$ref": "#/$defs/cost"
+            }
+          },
+          "required": [
+            "treatment",
+            "control"
+          ]
+        }
+      },
+      "required": [
+        "policy",
+        "policyId",
+        "pairs",
+        "delta",
+        "interval",
+        "complete",
+        "budget",
+        "withinBudget",
+        "cutoffViolations",
+        "crossScopeLeaks",
+        "verdict",
+        "quality",
+        "writeback",
+        "cost"
+      ]
     }
   }
 }

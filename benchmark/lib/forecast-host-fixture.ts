@@ -30,8 +30,9 @@ export async function fixtureForecastHost(options: {
   fixture?: ForecastFixtures; questionIndex?: number;
   policy?: Partial<ForecastHostPolicy>; segments?: (store: MasStore) => ForecastSegments;
 }) {
-  const fixture = options.fixture ?? await loadForecastFixtures(), registered = fixture.questions[options.questionIndex ?? 0], prompts = await forecastPromptRevisions();
+  const fixture = options.fixture ?? await loadForecastFixtures(), registered = fixture.questions[options.questionIndex ?? 0];
   const treatment = options.policy?.treatment ?? (options.evolving ? 'evolving-harness' : 'static-harness'), tools = await forecastExecutorToolset(treatment), budget = options.policy?.budget ?? { turns: 8,ms: 1000 };
+  const prompts = await forecastPromptRevisions(treatment);
   const registrationId = treatment === 'evolving-harness' ? fixture.manifest.registrationId : fixture.manifest.baseline!.registrationId;
   const policy: ForecastHostPolicy = { treatment,budget,revise: true,configuration: { kind: 'scripted',revision: await forecastRevision({ ...SCRIPTED_FORECAST_CONFIGURATION,registrationId,treatment,budget }) },...options.policy };
   const store = options.forecastStore ?? createForecastStore(options.db), masStore = options.masStore ?? createMasStore(options.db,{ now: options.instant });

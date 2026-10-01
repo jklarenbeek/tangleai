@@ -11,6 +11,23 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
 
 ## Ported — running in this repo
 
+- **Milkyway harness evolution** (arXiv:2604.15719v2, Xu et al., Apr 2026)
+  - `@tangleai/forecast` implements ordered checkpoints under pinned prompts and
+    tools, cutoff-audited evidence, six-section notes, question-local guarded
+    revisions with a volatile-fact gate, outcome-service resolution scoring
+    and retrospective proposals promoted only through a measured held-out gate.
+    Thirteen read operations expose the retained evidence with host authority.
+  - The [controlled scripted ablation](FORECAST_BENCHMARK.md) publishes a failed
+    claim: evolving utility 0.600 versus scaffold 0.533, paired 95% interval
+    [-0.133, 0.267]. The keyless tier establishes mechanism and accounting;
+    live forecasting quality remains unmeasured and writeback is opt-in.
+  - Not implemented: the paper's datasets/cohort, official FutureX/FutureWorld
+    slices and scorers, real-domain live qualification, browser/image/code or
+    sub-agent tools. Disputed resolutions retain original scores without
+    rescoring. Promotion requires strict improvement, so unchanged candidates
+    are ineligible even when a retrospective validates their guidance.
+  - 📄 [`refs/2604.15719v2.pdf`](refs/2604.15719v2.pdf)
+
 - **LightMem: Lightweight and Efficient Memory-Augmented Generation** (arXiv:2510.18866v4, Fang et al., ICLR 2026)
   - The sensory novelty filter is `@tangleai/memory/novelty`. The opt-in
     `@tangleai/memory/consolidation` API supplies bounded segmentation/previews,
@@ -97,9 +114,6 @@ implementing any single one.
 
 ## Planned — an open roadmap entry names each
 
-- **Milkyway harness evolution** (arXiv:2604.15719v2, Xu et al., Apr 2026) — versioned
-  prediction harnesses with retrospective validation. Harness evolution for forecasting.
-  - 📄 [`refs/2604.15719v2.pdf`](refs/2604.15719v2.pdf)
 - **HERA: Experience as a Compass** (arXiv:2604.00901v2, Li & Ramakrishnan, Apr 2026) —
   experience-guided topology and prompt evolution. The bounded mechanism ships:
   eight registered roles, evaluated experience/prompt updates, topology mutation

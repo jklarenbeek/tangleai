@@ -952,6 +952,242 @@ export interface AnalyticBand {
 }
 
 
+export interface ForecastTransfer {
+  status: "measured" | "not-run";
+  nextQuestionId: string | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  harnessDigest: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  cases: Array<{ checkpointId: string; utility: number; seedUtility: number; delta: number; }>;
+  /**
+   * Schema constraints this type cannot express: maxItems=1000
+   */
+  missingCheckpointIds: Array<string>;
+  utility: number | null;
+  seedUtility: number | null;
+  delta: number | null;
+  reason: string | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastGenerationCheckedVersionIdAnyOf1 = string;
+
+export interface ForecastGeneration {
+  scopeKey: string;
+  questionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  generation: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  startedFromDigest: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  harnessDigest: string;
+  checkedVersionId: ForecastGenerationCheckedVersionIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  harnessBytes: number;
+  /**
+   * Schema constraints this type cannot express: maxItems=3
+   */
+  componentsChanged: Array<"factorTracking" | "evidenceHandling" | "uncertaintyHandling">;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  patchOperations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceCarried: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceRefined: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceDropped: number;
+  outcome: "promoted" | "retained" | "rejected" | "ineligible" | "pending";
+  spend: Cost;
+  cumulative: Cost;
+  transfer: ForecastTransfer;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastLongRunCheckedHeadsItemVersionIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type ForecastLongRunCheckedHeadsItemDigestAnyOf1 = string;
+
+export interface ForecastLongRunCheckedHeadsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  scopeKey: string;
+  versionId: ForecastLongRunCheckedHeadsItemVersionIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  digest: ForecastLongRunCheckedHeadsItemDigestAnyOf1 | null;
+}
+
+
+export interface ForecastLongRun {
+  /**
+   * Schema constraints this type cannot express: minItems=6, maxItems=6
+   */
+  generations: Array<ForecastGeneration>;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  checkedHeads: Array<ForecastLongRunCheckedHeadsItem>;
+  independentReplays: 2;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  artifactDigest: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  generationDigest: string;
+  physicalRequests: 0;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type ForecastCounterfactualsGateCounterfactualByKindAdditional = number;
+
+export interface ForecastCounterfactualsGateCounterfactual {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revisionAttempts: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedRevisions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  guidanceRefused: number;
+  byKind: { [key: string]: ForecastCounterfactualsGateCounterfactualByKindAdditional; };
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  semanticRefusals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  excludedGuidanceBytes: number;
+  newWrites: 0;
+  scope: string;
+}
+
+
+export interface ForecastCounterfactualsVerdictOnlyPromotionCandidatesItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  versionId: string;
+  delta: number | null;
+  eligible: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  issues: Array<{ [key: string]: unknown; }>;
+}
+
+
+export interface ForecastCounterfactualsVerdictOnlyPromotion {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refinedCandidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  promoted: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refused: number;
+  /**
+   * Schema constraints this type cannot express: maxItems=10000
+   */
+  candidates: Array<ForecastCounterfactualsVerdictOnlyPromotionCandidatesItem>;
+  newWrites: 0;
+}
+
+
+export interface ForecastCounterfactuals {
+  gateCounterfactual: ForecastCounterfactualsGateCounterfactual;
+  verdictOnlyPromotion: ForecastCounterfactualsVerdictOnlyPromotion;
+}
+
+
+export interface ForecastClaimBudget {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  maxTokens: number;
+  maxPhysicalRequests: 0;
+}
+
+
+export interface ForecastClaim {
+  policy: { id: "forecast-paired-utility/v1"; treatment: "evolving-harness"; control: "scaffold-no-harness"; resamples: 10000; seed: 17753; level: 0.95; budget: { maxCallsPerCheckpoint: 8; maxRetrospectiveCalls: 4; maxTokensPerCall: 1024; maxPhysicalRequests: 0; }; };
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  policyId: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=18
+   */
+  pairs: Array<{ checkpointId: string; treatment: number | null; control: number | null; delta: number | null; }>;
+  delta: number | null;
+  interval: { low: number; high: number; };
+  complete: boolean;
+  budget: ForecastClaimBudget;
+  withinBudget: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cutoffViolations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  crossScopeLeaks: number;
+  verdict: "positive" | "not-demonstrated";
+  quality: "unmeasured-scripted-conformance";
+  writeback: "experimental-opt-in";
+  cost: { treatment: Cost; control: Cost; };
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -999,7 +1235,7 @@ export interface Forecast {
    */
   rows: Array<Row>;
   /**
-   * Schema constraints this type cannot express: minItems=22, maxItems=22
+   * Schema constraints this type cannot express: minItems=24, maxItems=24
    */
   probes: Array<Probe>;
   /**
@@ -1011,4 +1247,7 @@ export interface Forecast {
   capabilities: { oracle: boolean; static: boolean; scaffold: boolean; evolving: boolean; complete: boolean; };
   identity: unknown;
   limitations: Array<ForecastLimitationsItem>;
+  longRun: ForecastLongRun;
+  counterfactuals: ForecastCounterfactuals;
+  claim: ForecastClaim;
 }

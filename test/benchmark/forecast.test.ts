@@ -1,4 +1,4 @@
-import {describe,it} from 'node:test';
+import {describe,it,before} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,mkdtemp,cp,rm,stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -10,11 +10,24 @@ import {authorForecastFixture} from './forecast-fixture.ts';
 import {loadForecastFixtures} from '../../benchmark/lib/forecast-fixtures.ts';
 import {scoreForecast,parseBoxed,cutoffAdmits,analyticBand} from '../../benchmark/lib/forecast-oracle.ts';
 import {buildForecastReport,validateForecastReport,renderReport,renderDocument,requireCapability} from '../../benchmark/lib/forecast-report.ts';
+import {forecastClaimGate,forecastClaimObservations} from '../../benchmark/lib/forecast-ablations.ts';
+import {buildForecastLive} from '../../benchmark/lib/forecast-live.ts';
+import type {ForecastLive} from '../../benchmark/lib/forecast-live.types.ts';
 import type {Forecast} from '../../benchmark/lib/forecast.types.ts';
 const source={head:'a'.repeat(40),clean:false,files:[{path:'fixture',sha256:'b'.repeat(64)}],sha256:''};
 source.sha256=await canonicalSha256({head:source.head,files:source.files});
 const rehash=async(r:Forecast)=>{const {reportId:_,...body}=r;r.reportId=await canonicalSha256(body);return r;};
+async function assertRetainedLivePlan(retained:ForecastLive,current:ForecastLive){
+  const {planId,skipped:_,...body}=retained.plan;
+  assert.equal(planId,await canonicalSha256(body));
+  assert.equal(retained.plan.source.sha256,await canonicalSha256({head:retained.plan.source.head,files:retained.plan.source.files}));
+  assert.deepEqual(current.plan.source.files,retained.plan.source.files);
+  // The receipt keeps its measured commit; execution still authorizes the current checkout.
+  assert.deepEqual({...current,plan:{...current.plan,source:retained.plan.source,planId}},retained);
+}
 describe('registered forecasting measurement',()=>{
+  let measured:Forecast;
+  before(async()=>{const saved=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Keyless fixture reached a transport.');};try{measured=await buildForecastReport({source});}finally{globalThis.fetch=saved;}});
   it('freezes six questions, eighteen checkpoints, five resolutions and the authored harnesses',async()=>{
     const f=await loadForecastFixtures();assert.deepEqual(f.manifest.census,{questions:6,checkpoints:18,resolutions:5,pending:1,resolvedCheckpoints:15,snapshots:64,postCutoff:3,undated:2});
     assert.equal(f.manifest.registrationId,'f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3');
@@ -39,16 +52,16 @@ describe('registered forecasting measurement',()=>{
   });
   it('reaches the oracle ceiling, retains pending cases and counts injected evidence once',async()=>{
     const fetch=globalThis.fetch;globalThis.fetch=async()=>{throw Error('Keyless forecasting reached fetch.');};
-    try{const r=await buildForecastReport({source});assert.equal(r.rows[0].utility,1);assert.deepEqual(r.rows[0].counts,{planned:18,available:15,pending:3,scored:15,failed:0,notRun:0});
+    try{const r=structuredClone(measured);assert.equal(r.rows[0].utility,1);assert.deepEqual(r.rows[0].counts,{planned:18,available:15,pending:3,scored:15,failed:0,notRun:0});
       assert.equal(r.rows[1].utility,.2);assert.equal(r.band.low,.1);assert.equal(r.band.high,2/3);assert.equal(r.rows[2].utility,.8);assert.deepEqual(r.rows[2].byHorizon.map(h=>h.utility),[.6,.8,1]);
-      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.equal(r.rows[5].status,'implementation-missing');assert.equal(r.rows[5].counts.notRun,15);
+      assert.equal(r.refusals.postCutoff,3);assert.equal(r.refusals.undated,2);assert.equal(r.refusals.ids.length,5);assert.equal(r.rows[5].status,'measured');assert.equal(r.rows[5].counts.notRun,0);assert.equal(r.rows[5].cost.calls,72);
       assert.equal(r.rows[6].status,'measured');assert.equal(r.rows[6].revisions!.attempted,12);assert.equal(r.rows[6].revisions!.staged,11);assert.equal(r.rows[6].cost.calls,89);assert.equal(r.rows[6].lifecycle!.promoted,1);assert.equal(r.rows[6].lifecycle!.ineligible,2);
       requireCapability(r,'evolving');
-      requireCapability(r,'oracle');assert.throws(()=>requireCapability(r,'complete'),/scaffold-no-harness/);
+      requireCapability(r,'oracle');requireCapability(r,'complete');
     }finally{globalThis.fetch=fetch;}
   });
   it('refuses a row missing any model, tool, prompt, note, scorer, cutoff or cost identity',async()=>{
-    const r=await buildForecastReport({source});
+    const r=structuredClone(measured);
     for(const key of ['configuration','toolset','promptRevision','noteSchemaRevision','scorer','cutoffPolicy']){
       const x=structuredClone(r);delete (x.rows[0].identity as unknown as Record<string,unknown>)[key];await assert.rejects(validateForecastReport(await rehash(x)));
       const missing=structuredClone(r);(missing.rows[0].identity as unknown as Record<string,unknown>)[key]=null;await assert.rejects(validateForecastReport(await rehash(missing)));
@@ -56,7 +69,7 @@ describe('registered forecasting measurement',()=>{
     const x=structuredClone(r);delete (x.rows[0] as unknown as Record<string,unknown>).cost;await assert.rejects(validateForecastReport(await rehash(x)));
   });
   it('measures both static rows through retained runtime artifacts and rejects rehashed producer or cost substitutions',async()=>{
-    const r=await buildForecastReport({source});requireCapability(r,'static');
+    const r=structuredClone(measured);requireCapability(r,'static');
     assert.equal(await canonicalSha256(r.rows[4]),'be33fc21badf82f749a56ce49b81de83329844483d775820cf6955e1593e1247');
     for(const row of r.rows.slice(3,5)){
       assert.equal(row.status,'measured');assert.equal(row.counts.scored,15);assert.equal(row.counts.pending,3);
@@ -70,8 +83,8 @@ describe('registered forecasting measurement',()=>{
     }
   });
   it('rejects hidden cases, forged scores, denominators, audit totals, capabilities and false probes after rehash',async()=>{
-    const r=await buildForecastReport({source});
-    for(const change of [(x:Forecast)=>{x.rows[0].cases.pop();},(x:Forecast)=>{x.rows[0].counts.scored--;},(x:Forecast)=>{x.rows[0].cases[0].utility=0;},(x:Forecast)=>{x.rows[5].status='measured';},(x:Forecast)=>{x.refusals.postCutoff--;},(x:Forecast)=>{x.evidenceAudit[0].admitted.push('q01-c1-future');},(x:Forecast)=>{x.capabilities.complete=true;},(x:Forecast)=>{(x.probes[0] as {holds:boolean}).holds=false;},(x:Forecast)=>{(x as unknown as Record<string,unknown>).unregistered=true;},(x:Forecast)=>{x.band.high=1;}]){
+    const r=structuredClone(measured);
+    for(const change of [(x:Forecast)=>{x.rows[0].cases.pop();},(x:Forecast)=>{x.rows[0].counts.scored--;},(x:Forecast)=>{x.rows[0].cases[0].utility=0;},(x:Forecast)=>{x.rows[5].status='implementation-missing';},(x:Forecast)=>{x.refusals.postCutoff--;},(x:Forecast)=>{x.evidenceAudit[0].admitted.push('q01-c1-future');},(x:Forecast)=>{x.capabilities.complete=false;},(x:Forecast)=>{(x.probes[0] as {holds:boolean}).holds=false;},(x:Forecast)=>{(x as unknown as Record<string,unknown>).unregistered=true;},(x:Forecast)=>{x.band.high=1;}]){
       const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)));
     }
   });
@@ -82,9 +95,17 @@ describe('registered forecasting measurement',()=>{
       const mp=join(base,'manifest.json'),m=JSON.parse(await readFile(mp,'utf8'));m.files.find((f:{path:string})=>f.path==='questions.json').digest=await canonicalSha256(q);const {registrationId:_,...body}=m;m.registrationId=await canonicalSha256(body);await writeFile(mp,JSON.stringify(m));await assert.rejects(loadForecastFixtures(dir),/crosses a question/);
     }finally{await rm(dir,{recursive:true,force:true});}
   });
-  it('renders two clock-free runs byte-identically',async()=>{
-    const a=await buildForecastReport({source}),b=await buildForecastReport({source});assert.equal(renderReport(a),renderReport(b));assert.equal(renderDocument(a),renderDocument(b));
+  it('the long-run replay is stable and renders two clock-free runs byte-identically',async()=>{
+    const a=measured,b=await buildForecastReport({source});assert.deepEqual(a.longRun,b.longRun);assert.equal(a.longRun.independentReplays,2);assert.equal(a.longRun.generations.length,6);assert.deepEqual(a.longRun.generations.map(g=>g.transfer.delta),[0,0,null,0,null,null]);assert.equal(renderReport(a),renderReport(b));assert.equal(renderDocument(a),renderDocument(b));
     assert.doesNotMatch(renderReport(a),/hostname|\/tmp\//);assert.match(renderDocument(a),/1\.000 over 15\/18/);
+  });
+  it('the claim gate is registered, recomputed and publishes a failed interval beside the loss',async()=>{
+    const r=measured;assert.deepEqual(await forecastClaimGate(r.rows,forecastClaimObservations(r.rows)),r.claim);
+    assert.equal(r.claim.verdict,'not-demonstrated');assert.equal(r.claim.delta,1/15);assert.deepEqual(r.claim.interval,{low:-2/15,high:4/15});assert.equal(r.claim.withinBudget,true);
+    const losses=r.claim.pairs.filter(p=>p.delta!<0);assert.deepEqual(losses.map(p=>p.checkpointId),['q05-c3']);assert.ok(renderDocument(r).indexOf('q05-c3')<renderDocument(r).indexOf('q01-c3'));
+    for(const change of [(x:Forecast)=>{x.claim.verdict='positive';},(x:Forecast)=>{x.claim.interval.low=.01;},(x:Forecast)=>{x.longRun.generations[0].harnessBytes++;},(x:Forecast)=>{x.counterfactuals.verdictOnlyPromotion.refused=0;}]){const x=structuredClone(r);change(x);await assert.rejects(validateForecastReport(await rehash(x)),/qualification/);}
+    for(const path of ['packages/forecast/README.md','docs/PAPERS.md','docs/ARCHITECTURE.md','docs/FORECAST_BENCHMARK.md'])assert.doesNotMatch(await readFile(path,'utf8'),/\bself-improving\b|\blearns\b/i,path);
+    const roadmap=await readFile('docs/ROADMAP.md','utf8');for(const term of ['Live forecasting quality','FutureX','FutureWorld','disputed','rescoring'])assert.ok(roadmap.includes(term));
   });
   it('refuses an impossible calendar date even after the fixture is rehashed',async()=>{
     const dir=await mkdtemp(join(tmpdir(),'forecast-calendar-'));try{
@@ -99,17 +120,32 @@ describe('registered forecasting measurement',()=>{
   it('publishes a valid current-source report and its exact generated document',async()=>{
     const report=JSON.parse(await readFile('benchmark/results/forecast.json','utf8')) as Forecast;await validateForecastReport(report);
     assert.equal(await readFile('docs/FORECAST_BENCHMARK.md','utf8'),renderDocument(report));
+    const live=JSON.parse(await readFile('benchmark/results/forecast-live.json','utf8')) as ForecastLive;
+    assert.deepEqual(live.plan.source,{head:report.source.head,sha256:report.source.sha256,files:report.source.files});
+    await assertRetainedLivePlan(live,await buildForecastLive());
     for(const file of report.source.files)assert.equal(createHash('sha256').update(await readFile(file.path)).digest('hex'),file.sha256,file.path);
     assert.ok(report.source.files.every(f=>!f.path.includes('benchmark/results/')));
   });
-  it('redirects every output, checks drift without writing and refuses unknown capabilities and live execution',async()=>{
+  it('retains measured live provenance across a source-identical commit and rejects changed source bytes',async()=>{
+    const retained=await buildForecastLive(),current=structuredClone(retained);
+    current.plan.source.head='e'.repeat(40);
+    current.plan.source.sha256=await canonicalSha256({head:current.plan.source.head,files:current.plan.source.files});
+    const {planId:_,skipped:__,...body}=current.plan;current.plan.planId=await canonicalSha256(body);
+    assert.notEqual(current.plan.planId,retained.plan.planId);
+    await assertRetainedLivePlan(retained,current);
+    const changed=structuredClone(current);changed.plan.source.files[0].sha256='0'.repeat(64);
+    await assert.rejects(assertRetainedLivePlan(retained,changed));
+    const forged=structuredClone(retained);forged.plan.planId='0'.repeat(64);
+    await assert.rejects(assertRetainedLivePlan(forged,current));
+  });
+  it('redirects every output, checks drift without writing and refuses unknown capabilities and misplaced authorization',async()=>{
     const dir=await mkdtemp(join(tmpdir(),'forecast-cli-')),other=await mkdtemp(join(tmpdir(),'forecast-cli-'));try{
       const run=(args:string[])=>execFileSync(process.execPath,['benchmark/forecast.ts',...args],{stdio:'pipe'});
-      run(['--out-dir',dir]);run(['--out-dir',other]);
-      for(const file of ['forecast.json','FORECAST_BENCHMARK.md'])assert.equal(await readFile(join(dir,file),'utf8'),await readFile(join(other,file),'utf8'));
+      run(['--out-dir',dir,'--require','complete']);run(['--out-dir',other]);
+      for(const file of ['forecast.json','FORECAST_BENCHMARK.md','forecast-live.json'])assert.equal(await readFile(join(dir,file),'utf8'),await readFile(join(other,file),'utf8'));
       const path=join(dir,'forecast.json'),before=(await stat(path)).mtimeMs;run(['--out-dir',dir,'--check']);assert.equal((await stat(path)).mtimeMs,before);
       await writeFile(join(dir,'FORECAST_BENCHMARK.md'),'drift');assert.throws(()=>run(['--out-dir',dir,'--check']));
-      for(const args of [['--require','unregistered'],['--require','complete'],['--live'],['--unknown'],['stray']])assert.throws(()=>run(args));
+      for(const args of [['--require','unregistered'],['--authorize','wrong'],['--unknown'],['stray']])assert.throws(()=>run(args));
     }finally{await rm(dir,{recursive:true,force:true});await rm(other,{recursive:true,force:true});}
   });
 });
