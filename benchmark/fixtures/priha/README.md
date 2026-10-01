@@ -30,3 +30,14 @@ guard fixture, not a clinical taxonomy. Completion and normalization requests ar
 listed separately. The six conversations register 27 requests in total, with a
 maximum of 12 for the two-turn resolved path and zero for deterministic refusals.
 The raw-query comparator preserves refusal policy but omits optimizer stages.
+
+The web-execution registration adds thirteen cases and eleven supplemental
+captures. An explicit search alias changes only query-parameter serialization,
+preserving the historical capture key and bytes. Original HTML has no provable
+content dates; its analytic annotations are never injected into runtime facts.
+Supplemental HTML carries explicit future/expiry metadata and a Last-Modified
+control. Each web treatment runs separately, reopens SQLite and repeats from
+retained evidence. This measures retrieval/control flow, not answer quality.
+The initial budget-fetch control omitted its expected rejected-tool count;
+the registration now counts that failure and omits a model turn after refusal.
+The runtime stops before dispatching that extra turn. Other gold remains fixed.

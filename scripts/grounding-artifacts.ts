@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { compileGmplPromptPack, gmplSchemaOf, gmplCatalogDocument, createGmplCatalog,
     type GmplPromptArtifact, type GmplVariables } from '@tangleai/gmpl';
 import { TRIAGE_SCHEMA, CLARIFICATION_QUESTION_SCHEMA, QUERY_PLAN_SCHEMA, RESOLUTION_SCHEMA } from '../packages/grounding/src/schemas/optimizer.ts';
+import { WEB_SUFFICIENCY_SCHEMA, WEB_RERANK_SCHEMA, WEB_AGENT_SCHEMA } from '../packages/grounding/src/schemas/web.ts';
 const args = process.argv.slice(2);
 if (args.some(arg => arg !== '--check') || args.length > 1) throw Error('usage: grounding-artifacts.ts [--check]');
 const variables: GmplVariables = { query: { schema: { type: 'string', minLength: 1 }, render: 'text' },
@@ -10,7 +11,8 @@ const variables: GmplVariables = { query: { schema: { type: 'string', minLength:
     context: { schema: { type: 'object' }, render: 'json' } };
 const prompts: GmplPromptArtifact[] = [];
 for (const [name, outputSchema] of [['triage', TRIAGE_SCHEMA], ['question', CLARIFICATION_QUESTION_SCHEMA],
-    ['resolve', RESOLUTION_SCHEMA], ['plan', QUERY_PLAN_SCHEMA]] as const) {
+    ['resolve', RESOLUTION_SCHEMA], ['plan', QUERY_PLAN_SCHEMA], ['web-agent', WEB_AGENT_SCHEMA],
+    ['web-sufficiency', WEB_SUFFICIENCY_SCHEMA], ['web-rerank', WEB_RERANK_SCHEMA]] as const) {
     const artifact = await compileGmplPromptPack(await readFile(`prompts/grounding/${name}.toml`, 'utf8'), { variables, outputSchema });
     if (!artifact.valid) throw Error(JSON.stringify(artifact.issues)); prompts.push(artifact.value);
 }

@@ -137,3 +137,63 @@ cooperative request cancellation. Durable checkpoints pin artifacts, vocabulary,
 models and limits. A model operation with an unknown outcome is not retried
 automatically. Explicit refresh starts a new clarification run while preserving
 retained evidence and earlier answers.
+
+## Bounded web evidence
+
+`createWebLane({ profile, client, modelIdentity, transport, store, budgets,
+clock, now, ranker? })` executes an applied plan's web query with
+`lane.retrieve(session, queryId)`. The native agent exposes only `web_search`
+and `web_fetch`; one structured-output sufficiency call permits one repair.
+Reflection changes query text, never authority policy or budget ceilings.
+Every search response, page and redirect goes through `SafeStaticFetcher`.
+The default browser-safe extractor handles HTML, Markdown and plain text.
+Node/Bun hosts can provide `extractor: { id, extract: extractDocument }` from
+`@tangleai/documents/extract` for PDF support; its declared identity is pinned
+and recorded. The static default reports PDF as `unsupported-mime`.
+Its per-hop admission runs after public-address validation and before robots.
+Search API requests explicitly omit robots; page robots requests are themselves
+admitted. DNS lookups are injected in browser hosts and replay.
+
+`createReplayWebTransport(records, { searxBase })` verifies exact capture keys,
+SHA-256 bytes and permitted response headers before use. It returns fresh
+Responses without network or DNS fallback. The key format is exported by
+`@tangleai/core/http-capture`; query parameter order is significant. The
+transport's revision identifies the captured response set. A live host supplies
+its own fetch, public-address lookup, search base and configuration revision.
+Importing the package never selects a provider or performs network work.
+
+The lane pins profile, model, prompt catalog, transport, plan and ranker
+identities. Limits may only narrow the profile. Calls, tokens, active time,
+searches, page fetch attempts and delivered bytes accumulate across every web
+query of the same plan, including a reopened store. Every query of that plan keeps the same pinned
+web configuration; a later query cannot widen an earlier limit. The native shared model
+account includes sufficiency repairs and optional model reranking. Calls that
+fail still count. A tool budget refusal stops before another model dispatch.
+Token usage can exceed the remaining allowance on its final response; a
+stream can similarly deliver a chunk larger than the remaining byte allowance.
+The full delivered usage is retained, the stream is cancelled, and no further
+request is dispatched. Search and robots bytes count toward the same allowance.
+
+Each fetched page retains an exact-byte digest, original/final URL, redirects,
+fetch time, extracted text and profile-derived authority. Snippets are counted
+only as discovery hints. Title-only and empty pages produce no evidence.
+Publication/effective/expiry/review dates come only from valid, unambiguous
+structured HTML metadata. `Last-Modified` and ETag remain under `transport`;
+fetch time never becomes publication time. HTML canonical links cannot rewrite
+citation destinations. Freshness eligibility is a separate reconciliation step.
+
+The default `web-rank/1` combines search order with lexical scores over the
+fetched title and text through core's lexical index and reciprocal-rank fusion.
+A `CandidateRanker<WebRankCandidate>` may reorder immutable evidence while
+preserving its facts and raw scores. `createModelWebRanker({ client,
+modelIdentity })` is optional and binds to the lane's shared account. Failure
+or exhausted budget retains the deterministic ranking under its actual identity
+and records a named stop; no model-ranking success is implied.
+
+`putWebResult` atomically commits the complete run and its evidence through the
+existing grounding store. Runs retain individual HTTP outcomes, denied hops,
+failed operations, snippets, spend and stop reason. A completed run replay
+returns identical retained records with zero fetches or model calls. Calls on
+one lane instance serialize. Cross-process dispatch belongs to the host worker;
+an interrupted uncommitted external read is not promised exactly-once delivery.
+No web read promotes content into the persistent corpus or generates an answer.

@@ -1,10 +1,10 @@
 /** Grounding owns validation and write plans; trusted adapters own atomic persistence. */
 import { equalsJson } from '@jarenjs/core/object';
 import { assertStoredDocumentBundle, type StoredDocumentBundle } from '@tangleai/documents/contracts';
-import { identityIdOf, validateRunIdentity } from '@tangleai/config';
+import { checkGroundingModelIdentity } from './model-identity.ts';
 import type { ClarifiedIntent, CorpusManifest, EvidenceCandidate, EvidenceConflict, GroundedAnswer, GroundingProfile, GroundingSession, GroundingTrace, QueryPlan, WebRetrievalRun } from './contracts.gen.ts';
 import { GroundingAbort, groundingIssue, groundingMust, groundingReject, type StoreOutcome } from './errors.ts';
-import { groundingIdOf, immutableGroundingJson } from './identity.ts';
+import { groundingIdOf, groundingRevisionOf, immutableGroundingJson } from './identity.ts';
 import { loadGroundingProfile, evaluateProfileRules } from './profile.ts';
 import { validateGroundingShape } from './schema.ts';
 import { planSessionTransition, type SessionCommand } from './session.ts';
@@ -42,6 +42,8 @@ export interface GroundingStore {
     putIntent(intent: ClarifiedIntent): Promise<StoreOutcome<{ id: string }>>;
     putPlan(plan: QueryPlan): Promise<StoreOutcome<{ id: string }>>;
     putEvidence(evidence: EvidenceCandidate[]): Promise<StoreOutcome<{ ids: string[] }>>;
+    /** Commits all exact evidence and its owning run in the same transaction. */
+    putWebResult(run: WebRetrievalRun, evidence: EvidenceCandidate[]): Promise<StoreOutcome<{ id: string }>>;
     putWebRun(run: WebRetrievalRun): Promise<StoreOutcome<{ id: string }>>;
     putConflict(conflicts: EvidenceConflict[]): Promise<StoreOutcome<{ ids: string[] }>>;
     /** Optional CAS commits the answer and its terminal session in the same transaction. */
@@ -67,13 +69,6 @@ function checkProvenance(input: unknown) {
         const rules = (value.authority as Record<string, unknown>).ruleIds;
         if (!Array.isArray(rules) || !rules.length) groundingReject('TGRD1005', '/authority/ruleIds', 'Authority facts require rule provenance.');
     }
-}
-async function checkModelIdentity(value: unknown, path: string) {
-    if (value === null) return;
-    const shape = validateRunIdentity(value);
-    if (!shape.ok) groundingReject('TGRD1002', path + (shape.issues[0]?.path ?? ''), 'Invalid configuration identity.', shape.issues[0]);
-    const { identityId, ...payload } = shape.value;
-    if (identityId !== await identityIdOf(payload)) groundingReject('TGRD1002', path + '/identityId', 'Configuration identity differs from its canonical payload.');
 }
 export function createGroundingStoreAdapter(persistence: GroundingPersistence): GroundingStore {
     if (typeof persistence?.transaction !== 'function') throw new TypeError('An atomic grounding persistence adapter is required.');
@@ -131,8 +126,8 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                             }
                             for (const dimension of ['calls', 'tokens', 'ms'] as const)
                                 if (optimization.budget[dimension] > profile.budgets[dimension]) groundingReject('TGRD1007', '/optimization/budget/' + dimension, 'Optimizer budgets cannot widen the profile.');
-                            await checkModelIdentity(optimization.models.triage, '/optimization/models/triage');
-                            await checkModelIdentity(optimization.models.plan, '/optimization/models/plan');
+                            await checkGroundingModelIdentity(optimization.models.triage, '/optimization/models/triage');
+                            await checkGroundingModelIdentity(optimization.models.plan, '/optimization/models/plan');
                             if (optimization.intentId && (await raw.get('intents', optimization.intentId))?.sessionId !== session.id)
                                 groundingReject('TGRD1004', '/optimization/intentId', 'The optimizer intent belongs to another session.');
                             if (optimization.planId && ((await sessionForPlan(optimization.planId)).id !== session.id
@@ -179,7 +174,21 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                                 if (!authority || [e.address.url, ...e.address.redirects].some(url => !policy.authorityOf(url))) groundingReject('TGRD1006', '/address', 'The retained web address or redirect is outside profile policy.');
                                 if (authority.tier !== e.authority.tier || authority.institution !== e.authority.institution || !e.authority.ruleIds.includes(authority.ruleId)) groundingReject('TGRD1005', '/authority', 'Web authority must match its profile rule provenance.');
                             }
-                        } else if (!query.lanes.web) groundingReject('TGRD1004', '/queryId', 'This query did not authorize web retrieval.');
+                        } else {
+                            const run = value as WebRetrievalRun;
+                            if (!query.lanes.web) groundingReject('TGRD1004', '/queryId', 'This query did not authorize web retrieval.');
+                            if (run.identity) {
+                                if (run.identity.planId !== plan.id || run.identity.profileRevision !== profile.revision || run.identity.queryRevision !== await groundingRevisionOf(query)) groundingReject('TGRD1004', '/identity', 'The web run differs from its session plan or profile.');
+                                await checkGroundingModelIdentity(run.identity.modelIdentity, '/identity/modelIdentity');
+                                if (run.identity.rankerModelIdentity !== undefined) await checkGroundingModelIdentity(run.identity.rankerModelIdentity, '/identity/rankerModelIdentity');
+                                for (const key of ['calls', 'tokens', 'ms', 'searches', 'fetches', 'bytes'] as const)
+                                    if (run.identity.budgets[key] > profile.budgets[key]) groundingReject('TGRD1007', '/identity/budgets/' + key, 'Web budgets cannot widen the profile.');
+                            }
+                            for (const id of run.evidenceIds ?? []) {
+                                const evidence = (await raw.get('evidence', id))?.payload;
+                                if (!evidence || evidence.lane !== 'web' || evidence.sessionId !== session.id || evidence.queryId !== query.id) groundingReject('TGRD1004', '/evidenceIds', 'The web run references foreign or missing evidence.');
+                            }
+                        }
                     }
                     if (table === 'conflicts') {
                         for (const id of (value as EvidenceConflict).evidenceIds) if ((await raw.get('evidence', id))?.sessionId !== session.id) groundingReject('TGRD1004', '/evidenceIds', 'A conflict references foreign or missing evidence.');
@@ -215,10 +224,10 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
                     if (prior && !equalsJson(prior.payload, value)) groundingReject('TGRD1002', '/id', 'An immutable address already contains different bytes.');
                     // Exact retained replay remains legal after later lifecycle transitions.
                     if (prior) return;
-                    if ('modelIdentity' in value) await checkModelIdentity(value.modelIdentity, '/modelIdentity');
+                    if ('modelIdentity' in value) await checkGroundingModelIdentity(value.modelIdentity, '/modelIdentity');
                     if (table === 'answers') {
                         const identities = (value as GroundedAnswer).identities;
-                        await checkModelIdentity(identities.modelIdentity, '/identities/modelIdentity');
+                        await checkGroundingModelIdentity(identities.modelIdentity, '/identities/modelIdentity');
                         if (identities.modelIdentity !== null && identities.configIdentityId !== (identities.modelIdentity as { identityId: string }).identityId) groundingReject('TGRD1002', '/identities/configIdentityId', 'The answer must reference its effective configuration identity.');
                     }
                     await raw.put(table, await rowFor(table, value)); changes++;
@@ -299,6 +308,11 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
             await replace(transition.next); return transition.next;
         }),
         putIntent: value => one('intents', value), putPlan: value => one('plans', value), putWebRun: value => one('web_runs', value),
+        putWebResult: (run, evidence) => mutate(async (_tx, write) => {
+            if (!Array.isArray(evidence) || !equalsJson(run.evidenceIds, evidence.map(row => row.id))) groundingReject('TGRD1004', '/evidenceIds', 'The web result must include exactly its declared evidence in order.');
+            for (const row of evidence) await write('evidence', row);
+            await write('web_runs', run); return { id: run.id };
+        }),
         putEvidence: values => mutate(async (_tx, write) => { if (!Array.isArray(values)) groundingReject('TGRD1001', '', 'Evidence is a batch.'); for (const value of values) await write('evidence', value); return { ids: values.map(v => v.id) }; }),
         putConflict: values => mutate(async (_tx, write) => { if (!Array.isArray(values)) groundingReject('TGRD1001', '', 'Conflicts are a batch.'); for (const value of values) await write('conflicts', value); return { ids: values.map(v => v.id) }; }),
         putAnswer: (answer, expectedRevision) => mutate(async (tx, write, replace) => {

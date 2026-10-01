@@ -1,4 +1,4 @@
-import { loadGroundingProfile, createMemoryGroundingStore, planSessionTransition, type GroundingProfile, type GroundingSession, type GroundingStore, type EvidenceCandidate, type GroundedAnswer } from '@tangleai/grounding';
+import { createWebLane, createReplayWebTransport, type WebLaneOptions, type WebReplayRecord, loadGroundingProfile, createMemoryGroundingStore, planSessionTransition, type GroundingProfile, type GroundingSession, type GroundingStore, type EvidenceCandidate, type GroundedAnswer } from '@tangleai/grounding';
 import type { GroundingIssue } from '@tangleai/grounding/contracts';
 import profile from '@tangleai/grounding/profiles/priha-hk' with { type: 'json' };
 import schema from '@tangleai/grounding/schemas/grounding' with { type: 'json' };
@@ -17,3 +17,8 @@ const bad: GroundingIssue = { code: 'invented', path: '', detail: 'Wrong.' };
 // @ts-expect-error a discovery snippet is not an evidence lane
 const lane: EvidenceCandidate['lane'] = 'snippet';
 void [schema, bad, lane];
+
+declare const webOptions: WebLaneOptions, records: WebReplayRecord[];
+const transport = await createReplayWebTransport(records, { searxBase: "https://search.example" });
+const webResult = await createWebLane({ ...webOptions, transport }).retrieve(session, "atomic-query");
+if (webResult.ok) { const candidates: EvidenceCandidate[] = webResult.candidates; await durable.putWebResult(webResult.run, candidates); }

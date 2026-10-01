@@ -29,7 +29,8 @@
     "@jarenjs/formats": "0.91.4",
     "@tangleai/mas": "^0.33.0",
     "@tangleai/gmpl": "^0.33.0",
-    "@tangleai/agents": "^0.33.0"
+    "@tangleai/agents": "^0.33.0",
+    "@tangleai/search": "^0.33.0"
   },
   "private": false,
   "types": "./src/index.ts",

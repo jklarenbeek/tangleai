@@ -3,11 +3,12 @@
   "benchmark": "priha",
   "schemaVersion": 1,
   "registration": {
-    "optimizerCatalogRevision": "18a369c93fbc5c1bf01033e38b122da60eb7d0f912c68d98260e01e31d36406c",
+    "webExecutionId": "b2ea5c2664f32141588176cc0ece2c5232d49916132a3d5b8d8811f90d6131c8",
+    "optimizerCatalogRevision": "de3d3e38e44cced565c2974f6ab024970e8a2677e404c7559ec079752a09c5c3",
     "optimizerVocabularyRevision": "886d38817f536e23af2737a6c2dd76d3db064941f1dfa5a7f3851d87c0721dd2",
     "localCorpusAddressId": "1519d9434098aaacd3cc905d9d719b22ddc9a3825cbd8c4121769043b10e34a4",
     "localQueryId": "7f1c1ca99128279d4ecd5750a1276809de959e8cb8a8ea61408981a1255479cf",
-    "fixtureId": "609945b22ea45d51f9abfb7c503bc8f596eb048025ba30095ab9013fb47d6dd2",
+    "fixtureId": "219e8323c25a988b8395921b8c918e389f9018f6b1c07c6605830f9c663f1bf2",
     "control": {
       "reportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727",
       "registrationId": "a604b2d67d36e7f2f485935fe290866a1fdde485b9b02e5c70ebf4e416f42292",
@@ -191,7 +192,7 @@
         ]
       }
     ],
-    "registrationId": "a73ce659b6e6afd31d216c136fe15d0541ba209159ee0d32d2961d3ffcef068a"
+    "registrationId": "d37eefd44e547457c311876d4d0a184c14207407b460e491e50b8c593098df80"
   },
   "source": {
     "files": [
@@ -577,7 +578,7 @@
       },
       {
         "path": "benchmark/lib/http-capture.ts",
-        "sha256": "18144d9dd4ee623348390f8487cdcbf5755b52eec58d2bc733ce827d9c883a6e"
+        "sha256": "fb259111a78482f80a4b8307f8fb9bd3c1f0899669e5f8ba058251b1ce1c3351"
       },
       {
         "path": "benchmark/lib/ledger-db.ts",
@@ -729,15 +730,19 @@
       },
       {
         "path": "benchmark/lib/priha-replay.ts",
-        "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
+        "sha256": "cc1d9e9227aad3f958c8561b8d20a2bf24bfb8953ebca2195a9dd519e4c1cf69"
+      },
+      {
+        "path": "benchmark/lib/priha-web.ts",
+        "sha256": "ac367e1b91aa95eb386639764f7fceda067ec36dbac954373264fc1aab25a5ef"
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "b0d65453527d210e678e01d975f6d6f2666bd984cea3d4513a5d95fe3ee71550"
+        "sha256": "02a987f6a7ff5fe1f1a63a1629d34d851c45f2c4c8bbbb06d57b4eef507cf1cf"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "2495560b7bb5207cf8e06a19d761e5158a822938697d0d26ad20c5d2bb22de7c"
+        "sha256": "97eed8309c822cf3876dfcbaa9bf84cfa698c822e37c260330f4f62611866eb6"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -905,11 +910,11 @@
       },
       {
         "path": "benchmark/schemas/priha.schema.json",
-        "sha256": "8368e5b47e9d3e17e2529a7fa7a1275dc758921d80a18a544544df7012cf14d8"
+        "sha256": "bd697681f99200159182fb63d34119ae98413644364a440bc4d8ee891ff49021"
       },
       {
         "path": "package-lock.json",
-        "sha256": "1fd45b35bd00a8005aaa0266b78c98a595c06799e97f0bec4895aad08c58efd5"
+        "sha256": "68e701fcab5c6bea8b5796f042b3b84948b79cd5a41af261b2ae8f8960a4d203"
       },
       {
         "path": "package.json",
@@ -1053,7 +1058,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "4630311f5beb967e036cd3db33d6c24509ccb012cbe43d75cda205c5885bbcd7"
+        "sha256": "35bb7b5ca6412077135ffffba188927b9eab99cc02c6497066fa90461a073183"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
@@ -1070,6 +1075,10 @@
       {
         "path": "packages/core/src/errors.ts",
         "sha256": "3da1bad0dec4172170e80cc3543758bcf195ed3c4817e92c635194c472ec8979"
+      },
+      {
+        "path": "packages/core/src/http-capture.ts",
+        "sha256": "9f2a0b9bbd8762483f71e2e5d209da1f0fc6bd6aa8e364a40f8fc624ab41ae2c"
       },
       {
         "path": "packages/core/src/index.ts",
@@ -1109,7 +1118,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "397a08a984924c3e324fd42ce9735924952a568ead6acdcfb17781df93c8a1ba"
+        "sha256": "de95489b95d6072204b492ad70df85a5e1942351121c3cbe92c94f037a10324e"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -1121,15 +1130,23 @@
       },
       {
         "path": "packages/documents/src/contracts.ts",
-        "sha256": "1fd10f33a244f1791e9a10bb77497d08e93918e77000e6e7910116587eef4086"
+        "sha256": "abf9f8bfc5cb61997ac663516d6aa4bd63bfd3c3601db0cc42778a2cbf66671e"
+      },
+      {
+        "path": "packages/documents/src/extract-common.ts",
+        "sha256": "3080fdc4f47e4de14ab02cbfce997a2a0e819057b903a0ef8321afef4db83376"
+      },
+      {
+        "path": "packages/documents/src/extract-static.ts",
+        "sha256": "e53702569f261ac12add6156db712b1d1e9e84ee72c0921884c2789994527864"
       },
       {
         "path": "packages/documents/src/extract.ts",
-        "sha256": "cacb2ce27fb63cf92266b39231da0bd4d357071b61400b82f8dcfdfa9988d15c"
+        "sha256": "2730ca7dac406865133ca3ba014789901b9fe7353597077bc6328a7b86bcab2d"
       },
       {
         "path": "packages/documents/src/fetch.ts",
-        "sha256": "cd68c20d0bdbdf1a96f1fc8360a42cb03fc6c1fa7bb7d7447eafe5968c74c7ad"
+        "sha256": "f9ab3ef1f3a25bab092b87a1452a42c95a77cd9016b0f447062bdae661407ceb"
       },
       {
         "path": "packages/documents/src/index.ts",
@@ -1145,7 +1162,7 @@
       },
       {
         "path": "packages/documents/src/url-policy.ts",
-        "sha256": "f4c03cb82ce8e4b10564023372cf680795534180117f92d3abe104fbf280d542"
+        "sha256": "15d22a3916e39395b7f4dccbd31acf507b1707e535540ab630fa8d8237754ffe"
       },
       {
         "path": "packages/evolve/package.json",
@@ -1625,11 +1642,11 @@
       },
       {
         "path": "packages/grounding/artifacts/catalog.json",
-        "sha256": "9f122124ca37c1d8a8b2022fc16e64ad52ccea8bc8264fc39c2d0ce5eeed49e5"
+        "sha256": "1842b859aba5fc352e0e98a2755ab56377debd20e3c94149229ddeb606531f0c"
       },
       {
         "path": "packages/grounding/package.json",
-        "sha256": "30ee630127e13ee973d62386411e3bb79324feba15ecb5dca0be0d2afd548499"
+        "sha256": "7174c2bd4cd4da160cdc3b6fa06757a877ab74cb2092944ead6ad23c7efbc1b4"
       },
       {
         "path": "packages/grounding/profiles/priha-hk.json",
@@ -1637,7 +1654,7 @@
       },
       {
         "path": "packages/grounding/schemas/grounding.schema.json",
-        "sha256": "4f2bf98ab47e835d570ead55189608f98320df8de7fa1d06d0a134d5005ac2b4"
+        "sha256": "e9e98c7387ae78951fa2886b90ec5beac03ed9b4cacd2796a79acc7b17146817"
       },
       {
         "path": "packages/grounding/src/clarification.ts",
@@ -1645,7 +1662,7 @@
       },
       {
         "path": "packages/grounding/src/contracts.gen.ts",
-        "sha256": "2c48c375cd6d7e38d847009f538ed06e2f710da8de9308c37ed84fc1829a3bea"
+        "sha256": "aa1cd8516281879c3e178120921200db696d8cc7329f45709e1095d8a9a50c60"
       },
       {
         "path": "packages/grounding/src/errors.ts",
@@ -1657,7 +1674,7 @@
       },
       {
         "path": "packages/grounding/src/index.ts",
-        "sha256": "97a8cf446e73b966653c86995164d73efad8b6cdafd7896776240d7594ecb1cd"
+        "sha256": "f112e1215496b7e0077f9950fceba82e951189f6b113b90ce94b4a84b4bc6ace"
       },
       {
         "path": "packages/grounding/src/intent.ts",
@@ -1670,6 +1687,10 @@
       {
         "path": "packages/grounding/src/memory-store.ts",
         "sha256": "ada667d8a785eb745968c3c74b091eac20c2fcd69efe38df8d90c460ed83af2d"
+      },
+      {
+        "path": "packages/grounding/src/model-identity.ts",
+        "sha256": "2ce07fd38b0a784a413278d043cc04f0c5b498ab94cd2fa5a0b98e9b2fa7bacc"
       },
       {
         "path": "packages/grounding/src/optimizer-artifacts.ts",
@@ -1689,15 +1710,19 @@
       },
       {
         "path": "packages/grounding/src/ranker.ts",
-        "sha256": "cfaa3899895faae99e821db651a8a2f13859b4c15bab2b94195752369b6f9baf"
+        "sha256": "7d777922baba8691e9217e9f3ca46a985a277db442da939f0d9e7ae378616656"
       },
       {
         "path": "packages/grounding/src/schema.ts",
-        "sha256": "ec9263b0f97961927fde7fe30906905c2de9787aa11f77b8ab49f02e81d0cc1e"
+        "sha256": "b94432e935362a60f5fc388958f21ad9480a8b5ff806838b6668776c76c25b2a"
       },
       {
         "path": "packages/grounding/src/schemas/optimizer.ts",
         "sha256": "e8ca9ec94fce5d0af997c9894f5aa2c3b841e3d0a2cf1ee0d033aea04e0b3a1f"
+      },
+      {
+        "path": "packages/grounding/src/schemas/web.ts",
+        "sha256": "60d97d08e58469b836c0d4b823df593d31a12c94a874d831408718703af5e72c"
       },
       {
         "path": "packages/grounding/src/session.ts",
@@ -1705,7 +1730,19 @@
       },
       {
         "path": "packages/grounding/src/store.ts",
-        "sha256": "c185c68deb3f8ef0ad15f44ac847c4a4fca0bf7227685bd854550b6561356253"
+        "sha256": "383e54bdbdc3f8b4f7e95b7e7bad6755e9574cc508771307006c3ff4bda08cee"
+      },
+      {
+        "path": "packages/grounding/src/web-ranker.ts",
+        "sha256": "d3f2d73b2d6f59f0f6d29f56029222a8a624c10243c3cfeab0f539ea6bf9b3bc"
+      },
+      {
+        "path": "packages/grounding/src/web-transport.ts",
+        "sha256": "ba418242bce02180d6b42baf45dd722882c1ef2b5017a7e81f1a0696467e4251"
+      },
+      {
+        "path": "packages/grounding/src/web.ts",
+        "sha256": "bce47ea2745fdfdabf0f038b1d4b7158a86be19df3daec89c40e373741431216"
       },
       {
         "path": "packages/hera/artifacts/catalog.json",
@@ -2704,7 +2741,7 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "1653ee9434114d839a8c7e05709c1978cad58af2eecccfdc318b5a04f5951cbf"
+    "sha256": "91b636b8b18a5c8aa0e860cfd52b53e158a7523be096cd4439696fb2db502563"
   },
   "fixtureSource": {
     "files": [
@@ -2738,7 +2775,7 @@
       },
       {
         "path": "benchmark/fixtures/priha/manifest.json",
-        "sha256": "9cc7700ad31370331237e6388a4a5b3a33c43082da9efc50ba3b8b53a638e65c"
+        "sha256": "2c9092ce7dd9c079273fa153b0f2c70e5d2248bae64ae0094e6892a718776842"
       },
       {
         "path": "benchmark/fixtures/priha/sources/access-v1.html",
@@ -2797,6 +2834,54 @@
         "sha256": "e807b063517f110c726eaa038791ffa638e441b8be3035ed7c8a248f7664e063"
       },
       {
+        "path": "benchmark/fixtures/priha/web-execution.json",
+        "sha256": "5fe66fa9bf5756d654cbedcb3fde5f55030f85128164d7fa2bc671b6b01568de"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/dated-expired.html",
+        "sha256": "b6df3c3911b66054ee368457ed3b104bab3367f04b6e8cce07106623b3391a50"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/dated-future.html",
+        "sha256": "3213ae00814139b365a26ce9a739ac2531754f9b3822bb407dea3e81f467836e"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/last-modified.html",
+        "sha256": "0e4695ea738cd6afa3d0f5cfbf27a26aee929eb79079f0c0a215e366f8247ea6"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/robots.txt",
+        "sha256": "44f3f8eafdf064cf69acb05f23ee4dfc9ab5b3d67d81c64246bc29f7e438789a"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-dates.json",
+        "sha256": "b544ce857b1b846316d75ada01881c97fbf1317f934b420a1e1e1fa68128c398"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-gap.json",
+        "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-injection.json",
+        "sha256": "d3a9537ac6ca5fb337e9cf1c8d49d9441da7915a618901c86ae5251233e65572"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-missing.json",
+        "sha256": "2d7efaef0751213dd391371938647fd2c002f613c268c363732d1e4046df59cd"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-outside.json",
+        "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-replay-missing.json",
+        "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84"
+      },
+      {
+        "path": "benchmark/fixtures/priha/web-execution/search-weekend.json",
+        "sha256": "eb612f8686333050a455d51f390a475e4317519a0318faf395609412e2a2acd0"
+      },
+      {
         "path": "benchmark/fixtures/priha/web/booking-rumour.html",
         "sha256": "b2fa87910700363305033ea04aebaade50bc370c9418256356826030ac38b9fe"
       },
@@ -2833,7 +2918,7 @@
         "sha256": "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
       }
     ],
-    "sha256": "d711c2fb4e39b963661c79280373190813f8cff44501e0aa4ed19661e5e5c011"
+    "sha256": "fab59597124fe28f049dd249852dcfe532cb354f3aa22dfcda0441b19acdbae1"
   },
   "replay": {
     "requests": 9,
@@ -4305,12 +4390,12 @@
     },
     {
       "key": "web-only",
-      "status": "implementation-missing",
-      "reason": "The safelisted web retrieval capability is not implemented.",
+      "status": "not-run",
+      "reason": "The web component executes independently; full answer and workflow measurements remain unexecuted.",
       "retrieval": {
-        "status": "implementation-missing",
-        "reason": "The safelisted web retrieval capability is not implemented.",
-        "cases": 0
+        "status": "executed",
+        "reason": "Registered web component and controls only; no answer-quality measurement.",
+        "cases": 13
       },
       "optimizer": {
         "status": "implementation-missing",
@@ -4379,11 +4464,11 @@
     {
       "key": "drag-no-optimizer",
       "status": "not-run",
-      "reason": "The scripted plan census executes; retrieval, claim generation and the complete workflow remain unexecuted.",
+      "reason": "The web component executes independently; full answer and workflow measurements remain unexecuted.",
       "retrieval": {
-        "status": "implementation-missing",
-        "reason": "Dual retrieval and reconciliation are not implemented.",
-        "cases": 0
+        "status": "executed",
+        "reason": "Registered web component and controls only; no answer-quality measurement.",
+        "cases": 13
       },
       "optimizer": {
         "status": "executed",
@@ -4452,11 +4537,11 @@
     {
       "key": "priha-full",
       "status": "not-run",
-      "reason": "The scripted plan census executes; retrieval, claim generation and the complete workflow remain unexecuted.",
+      "reason": "The web component executes independently; full answer and workflow measurements remain unexecuted.",
       "retrieval": {
-        "status": "implementation-missing",
-        "reason": "The clarification, dual retrieval and composed workflow capabilities are not implemented.",
-        "cases": 0
+        "status": "executed",
+        "reason": "Registered web component and controls only; no answer-quality measurement.",
+        "cases": 13
       },
       "optimizer": {
         "status": "executed",
@@ -4724,12 +4809,8 @@
     },
     {
       "id": "web",
-      "passed": false,
-      "missing": [
-        "web-only.retrieval",
-        "drag-no-optimizer.retrieval",
-        "priha-full.retrieval"
-      ]
+      "passed": true,
+      "missing": []
     },
     {
       "id": "reconcile",
@@ -25455,7 +25536,7 @@
   "optimizer": {
     "status": "executed",
     "tier": "scripted",
-    "catalogRevision": "18a369c93fbc5c1bf01033e38b122da60eb7d0f912c68d98260e01e31d36406c",
+    "catalogRevision": "de3d3e38e44cced565c2974f6ab024970e8a2677e404c7559ec079752a09c5c3",
     "vocabularyRevision": "886d38817f536e23af2737a6c2dd76d3db064941f1dfa5a7f3851d87c0721dd2",
     "rows": [
       {
@@ -25744,7 +25825,7 @@
             "reopens": 2,
             "replayedNodes": 8,
             "sessionId": "session-75c302dbbdff52209765d44acff0b5b1",
-            "runId": "clarification-f58ee4779d4aa94869a5564e742755a9",
+            "runId": "clarification-b61fca69ab1ff650eec4fb4078b6eee3",
             "triageCorrect": true,
             "planCorrect": true,
             "outcomeCorrect": true,
@@ -25777,7 +25858,7 @@
             "reopens": 2,
             "replayedNodes": 8,
             "sessionId": "session-52540a7cd925cdaf7851af1bb2182b65",
-            "runId": "clarification-6fbdd1f09d8ca9f51341ba5fc5ab58a5",
+            "runId": "clarification-87c6c98e4836ac835aef1989c672faa1",
             "triageCorrect": true,
             "planCorrect": true,
             "outcomeCorrect": true,
@@ -25910,6 +25991,1363 @@
     "networkRequests": 0,
     "latency": "not-measured",
     "limitations": "Registered scripted responses test software control flow and closed-vocabulary fact checks. Raw-query controls retain deterministic refusal rules. These are plan-level observations, not answer or live model quality. The deterministic clock is not a latency measurement."
+  },
+  "web": {
+    "status": "executed",
+    "tier": "scripted",
+    "executionId": "b2ea5c2664f32141588176cc0ece2c5232d49916132a3d5b8d8811f90d6131c8",
+    "catalogRevision": "de3d3e38e44cced565c2974f6ab024970e8a2677e404c7559ec079752a09c5c3",
+    "transportRevision": "9e72ec91a67a286f80351b79b8e69b5220274a7ab43fcaf7a172fd4799a6c7a3",
+    "rankerId": "web-rank/1",
+    "rows": [
+      {
+        "key": "web-only",
+        "status": "executed",
+        "cases": [
+          {
+            "id": "booking",
+            "question": "q23",
+            "runId": "web-run-0f00488b1a54d19e173ffd54f2059045",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "booking-update",
+              "injection"
+            ],
+            "hashes": [
+              "9f314221ba1cd8a31f4cc4ed2a545f864cc90bafe44a4d1973f4b6fe6278ee89",
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 3,
+            "denied": 2,
+            "redirectDenied": 1,
+            "failed": 2,
+            "snippets": 8,
+            "searches": 1,
+            "fetches": 6,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 1573,
+            "requests": 7,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "weekend",
+            "question": "q24",
+            "runId": "web-run-a5910097a31b1d9855ee5b27ddb5bd2a",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "future",
+              "weekend-desk"
+            ],
+            "hashes": [
+              "c2c389873a79eba2f7c53d3a6e84c92c1f4bbbe67a75f6623a85fa84d282a521",
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 2,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 1,
+            "fetches": 2,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 458,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "gap",
+            "question": null,
+            "runId": "web-run-12f672975d333a697085f8c87d213464",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "weekend-desk"
+            ],
+            "hashes": [
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 1,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 2,
+            "fetches": 1,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 381,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "snippet",
+            "question": null,
+            "runId": "web-run-348b37672549827950ae8aa2b4f46e03",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 1,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 137,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "missing-capture",
+            "question": null,
+            "runId": "web-run-750a868b1ff05205dc7e5cd553762d30",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 36,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "injection",
+            "question": null,
+            "runId": "web-run-b526aafca296e945c08609a421ed6ceb",
+            "stopReason": "insufficient-after-reflection",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "injection"
+            ],
+            "hashes": [
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 1,
+            "denied": 2,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 1,
+            "searches": 2,
+            "fetches": 3,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 267,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "time-facts",
+            "question": null,
+            "runId": "web-run-0fdae1f30592ff75e3c730bcf268eb60",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "dated-future",
+              "dated-expired",
+              "last-modified"
+            ],
+            "hashes": [
+              "3213ae00814139b365a26ce9a739ac2531754f9b3822bb407dea3e81f467836e",
+              "b6df3c3911b66054ee368457ed3b104bab3367f04b6e8cce07106623b3391a50",
+              "0e4695ea738cd6afa3d0f5cfbf27a26aee929eb79079f0c0a215e366f8247ea6"
+            ],
+            "admitted": 3,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 3,
+            "searches": 1,
+            "fetches": 3,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 846,
+            "requests": 5,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-calls",
+            "question": null,
+            "runId": "web-run-a57db4d2cdf3a1d8602326b47ad0547b",
+            "stopReason": "budget-turns",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-tokens",
+            "question": null,
+            "runId": "web-run-fff858c07947870ef8747142ec06705f",
+            "stopReason": "budget-tokens",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-ms",
+            "question": null,
+            "runId": "web-run-e21a35bf02c21ac8f6f0deb6480f5f8f",
+            "stopReason": "budget-ms",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-searches",
+            "question": null,
+            "runId": "web-run-b6e7267d2a66c4848d049d8d1b12e0bc",
+            "stopReason": "budget-searches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-fetches",
+            "question": null,
+            "runId": "web-run-f78d1eeefac5148b5ee273939396173b",
+            "stopReason": "budget-fetches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 1,
+            "tokens": 10,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-bytes",
+            "question": null,
+            "runId": "web-run-3ffd9a3495b17e66adcb327042853665",
+            "stopReason": "budget-bytes",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "metrics": {
+          "required": 2,
+          "recovered": 2,
+          "admitted": 10,
+          "denied": 4,
+          "redirectDenied": 1,
+          "failed": 5,
+          "snippets": 17,
+          "searches": 9,
+          "fetches": 17,
+          "calls": 35,
+          "tokens": 350,
+          "bytes": 3698,
+          "requests": 30,
+          "replayFetches": 0,
+          "replayCalls": 0,
+          "deniedRequests": 0,
+          "cases": 13,
+          "recall": 1,
+          "refined": 2,
+          "sufficient": 4,
+          "passed": 13
+        }
+      },
+      {
+        "key": "drag-no-optimizer",
+        "status": "executed",
+        "cases": [
+          {
+            "id": "booking",
+            "question": "q23",
+            "runId": "web-run-ec51f492847277917e4cae99f164090e",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "booking-update",
+              "injection"
+            ],
+            "hashes": [
+              "9f314221ba1cd8a31f4cc4ed2a545f864cc90bafe44a4d1973f4b6fe6278ee89",
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 3,
+            "denied": 2,
+            "redirectDenied": 1,
+            "failed": 2,
+            "snippets": 8,
+            "searches": 1,
+            "fetches": 6,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 1573,
+            "requests": 7,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "weekend",
+            "question": "q24",
+            "runId": "web-run-656bc64ddf26f297af68d04e37766b35",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "future",
+              "weekend-desk"
+            ],
+            "hashes": [
+              "c2c389873a79eba2f7c53d3a6e84c92c1f4bbbe67a75f6623a85fa84d282a521",
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 2,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 1,
+            "fetches": 2,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 458,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "gap",
+            "question": null,
+            "runId": "web-run-38f00cb2b9ce31a29883759ba83fe191",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "weekend-desk"
+            ],
+            "hashes": [
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 1,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 2,
+            "fetches": 1,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 381,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "snippet",
+            "question": null,
+            "runId": "web-run-18cb65a76f14038de63c5bef038b0e50",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 1,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 137,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "missing-capture",
+            "question": null,
+            "runId": "web-run-62971ef001346273e4d1602e9dda88c1",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 36,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "injection",
+            "question": null,
+            "runId": "web-run-00a1517b17f58113049008fa86178fa8",
+            "stopReason": "insufficient-after-reflection",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "injection"
+            ],
+            "hashes": [
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 1,
+            "denied": 2,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 1,
+            "searches": 2,
+            "fetches": 3,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 267,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "time-facts",
+            "question": null,
+            "runId": "web-run-a53833c172173a142436a6b1c404c6dc",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "dated-future",
+              "dated-expired",
+              "last-modified"
+            ],
+            "hashes": [
+              "3213ae00814139b365a26ce9a739ac2531754f9b3822bb407dea3e81f467836e",
+              "b6df3c3911b66054ee368457ed3b104bab3367f04b6e8cce07106623b3391a50",
+              "0e4695ea738cd6afa3d0f5cfbf27a26aee929eb79079f0c0a215e366f8247ea6"
+            ],
+            "admitted": 3,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 3,
+            "searches": 1,
+            "fetches": 3,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 846,
+            "requests": 5,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-calls",
+            "question": null,
+            "runId": "web-run-1eea9f7ee5ca7700e8f8bc35265da3d4",
+            "stopReason": "budget-turns",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-tokens",
+            "question": null,
+            "runId": "web-run-da0dcfdb54eaac3b6f3a9462dadf4e9f",
+            "stopReason": "budget-tokens",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-ms",
+            "question": null,
+            "runId": "web-run-522ca3e82ddfad261a5d539faec1bbbf",
+            "stopReason": "budget-ms",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-searches",
+            "question": null,
+            "runId": "web-run-2e1ef88f0b3a6de4d9e781ebfba369ba",
+            "stopReason": "budget-searches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-fetches",
+            "question": null,
+            "runId": "web-run-ccd743c451d5b6e8a0af0ee608b75ef9",
+            "stopReason": "budget-fetches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 1,
+            "tokens": 10,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-bytes",
+            "question": null,
+            "runId": "web-run-2ec889e545921e95e54e4fca1b429a89",
+            "stopReason": "budget-bytes",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "metrics": {
+          "required": 2,
+          "recovered": 2,
+          "admitted": 10,
+          "denied": 4,
+          "redirectDenied": 1,
+          "failed": 5,
+          "snippets": 17,
+          "searches": 9,
+          "fetches": 17,
+          "calls": 35,
+          "tokens": 350,
+          "bytes": 3698,
+          "requests": 30,
+          "replayFetches": 0,
+          "replayCalls": 0,
+          "deniedRequests": 0,
+          "cases": 13,
+          "recall": 1,
+          "refined": 2,
+          "sufficient": 4,
+          "passed": 13
+        }
+      },
+      {
+        "key": "priha-full",
+        "status": "executed",
+        "cases": [
+          {
+            "id": "booking",
+            "question": "q23",
+            "runId": "web-run-6dce440e24db47d6469419357268515e",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "booking-update",
+              "injection"
+            ],
+            "hashes": [
+              "9f314221ba1cd8a31f4cc4ed2a545f864cc90bafe44a4d1973f4b6fe6278ee89",
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 3,
+            "denied": 2,
+            "redirectDenied": 1,
+            "failed": 2,
+            "snippets": 8,
+            "searches": 1,
+            "fetches": 6,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 1573,
+            "requests": 7,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "weekend",
+            "question": "q24",
+            "runId": "web-run-376a49ba380232e82ba9e281038ee615",
+            "stopReason": "sufficient",
+            "required": 1,
+            "recovered": 1,
+            "evidence": [
+              "future",
+              "weekend-desk"
+            ],
+            "hashes": [
+              "c2c389873a79eba2f7c53d3a6e84c92c1f4bbbe67a75f6623a85fa84d282a521",
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 2,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 1,
+            "fetches": 2,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 458,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "gap",
+            "question": null,
+            "runId": "web-run-4e9610249801dc8025aa0124f151b863",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "weekend-desk"
+            ],
+            "hashes": [
+              "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
+            ],
+            "admitted": 1,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 2,
+            "searches": 2,
+            "fetches": 1,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 381,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "snippet",
+            "question": null,
+            "runId": "web-run-3762bde64801a6615a1480af6b5e0173",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 1,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 137,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "missing-capture",
+            "question": null,
+            "runId": "web-run-bb1d2016624b1d38a74052a4e470c570",
+            "stopReason": "no-admitted-results",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 1,
+            "fetches": 1,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 36,
+            "requests": 3,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "injection",
+            "question": null,
+            "runId": "web-run-8ee7b9e63c090de4a17b1ec4c6c27c4f",
+            "stopReason": "insufficient-after-reflection",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "injection"
+            ],
+            "hashes": [
+              "f2517bad69a405afdd7eea5726d8342a517e365246e17c046d2af6014dc5ebc9"
+            ],
+            "admitted": 1,
+            "denied": 2,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 1,
+            "searches": 2,
+            "fetches": 3,
+            "calls": 7,
+            "tokens": 70,
+            "bytes": 267,
+            "requests": 4,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": true,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "time-facts",
+            "question": null,
+            "runId": "web-run-c08cf028bbf0ccb4e03bc7c9494b8dcb",
+            "stopReason": "sufficient",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [
+              "dated-future",
+              "dated-expired",
+              "last-modified"
+            ],
+            "hashes": [
+              "3213ae00814139b365a26ce9a739ac2531754f9b3822bb407dea3e81f467836e",
+              "b6df3c3911b66054ee368457ed3b104bab3367f04b6e8cce07106623b3391a50",
+              "0e4695ea738cd6afa3d0f5cfbf27a26aee929eb79079f0c0a215e366f8247ea6"
+            ],
+            "admitted": 3,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 3,
+            "searches": 1,
+            "fetches": 3,
+            "calls": 4,
+            "tokens": 40,
+            "bytes": 846,
+            "requests": 5,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": true,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-calls",
+            "question": null,
+            "runId": "web-run-ff8e54aceac0ca348c7de2e8f87e84e2",
+            "stopReason": "budget-turns",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-tokens",
+            "question": null,
+            "runId": "web-run-ec8a71b0c3a66d483667382d64ada67a",
+            "stopReason": "budget-tokens",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-ms",
+            "question": null,
+            "runId": "web-run-8d9d889e3a260b339ebc34243db6a875",
+            "stopReason": "budget-ms",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-searches",
+            "question": null,
+            "runId": "web-run-01e94aa481d052969764981e9a15c45e",
+            "stopReason": "budget-searches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-fetches",
+            "question": null,
+            "runId": "web-run-93653cada26a37427c37056db5cf2eba",
+            "stopReason": "budget-fetches",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 1,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 1,
+            "tokens": 10,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          },
+          {
+            "id": "budget-bytes",
+            "question": null,
+            "runId": "web-run-da9a415ad31e3064243fc1bfcb2abab2",
+            "stopReason": "budget-bytes",
+            "required": 0,
+            "recovered": 0,
+            "evidence": [],
+            "hashes": [],
+            "admitted": 0,
+            "denied": 0,
+            "redirectDenied": 0,
+            "failed": 0,
+            "snippets": 0,
+            "searches": 0,
+            "fetches": 0,
+            "calls": 0,
+            "tokens": 0,
+            "bytes": 0,
+            "requests": 0,
+            "replayFetches": 0,
+            "replayCalls": 0,
+            "deniedRequests": 0,
+            "refined": false,
+            "sufficient": false,
+            "replayIdentical": true,
+            "timeFactsCorrect": true,
+            "passed": true,
+            "error": null
+          }
+        ],
+        "metrics": {
+          "required": 2,
+          "recovered": 2,
+          "admitted": 10,
+          "denied": 4,
+          "redirectDenied": 1,
+          "failed": 5,
+          "snippets": 17,
+          "searches": 9,
+          "fetches": 17,
+          "calls": 35,
+          "tokens": 350,
+          "bytes": 3698,
+          "requests": 30,
+          "replayFetches": 0,
+          "replayCalls": 0,
+          "deniedRequests": 0,
+          "cases": 13,
+          "recall": 1,
+          "refined": 2,
+          "sufficient": 4,
+          "passed": 13
+        }
+      }
+    ],
+    "failed": 0,
+    "scriptedRequests": 105,
+    "providerRequests": 0,
+    "networkRequests": 0,
+    "latency": "not-measured",
+    "limitations": "Each treatment independently executes the same registered web component and safety cases. Original date annotations are not injected into runtime evidence; supplemental HTML registers actual metadata. This is fetched-evidence recall and control-flow coverage, not end-to-end answering or live model quality. Replay closes and reopens SQLite. The deterministic clock is not measured latency."
   },
   "pairing": {
     "eligible": false,
@@ -26170,11 +27608,11 @@
   ],
   "summary": {
     "rows": 6,
-    "missing": 1,
+    "missing": 0,
     "cases": 32,
     "badControls": 8,
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "408701d608be8bb4069874e5c740edfbdbfc2526b6cf0c0de8785e58aba41b0c"
+  "reportId": "4acbc9daf916d45f3e8a2e9f7346f1576e81449e27abcf2d1776aeed93e301bb"
 }

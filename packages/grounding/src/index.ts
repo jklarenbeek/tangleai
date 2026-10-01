@@ -21,3 +21,7 @@ export * from './optimizer.ts';
 export * from './optimizer-artifacts.ts';
 export * from './intent.ts';
 export * from './schemas/optimizer.ts';
+export * from './web.ts';
+export * from './web-transport.ts';
+export * from './web-ranker.ts';
+export * from './schemas/web.ts';

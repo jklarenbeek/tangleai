@@ -31,15 +31,13 @@ import { dirname } from 'node:path';
 import { openStore, type Collection, type OpenStoreOptions, type Store } from '@jarenjs/db';
 import { bunDriver } from '@jarenjs/db/bun';
 import { nodeDriver } from '@jarenjs/db/node';
-import { canonicalSha256 } from '@jarenjs/json/canonical';
+import { captureKeyOf, CAPTURED_HEADERS, type CaptureKind } from '@tangleai/core/http-capture';
+export { captureKeyOf, CAPTURED_HEADERS, type CaptureKind } from '@tangleai/core/http-capture';
 
 /** Where the capture lives, relative to the repository root. Gitignored with the rest of `benchmark/cache/`. */
 export const HTTP_CAPTURE_PATH = 'benchmark/cache/grounding-http.sqlite';
 
 /** The response headers extraction and the safe fetcher read; nothing else is retained. */
-export const CAPTURED_HEADERS = ['content-type', 'content-length', 'etag', 'last-modified', 'location'] as const;
-
-export type CaptureKind = 'searxng' | 'document';
 
 const CAPTURE_MODEL = {
   $model: '0.1',
@@ -123,13 +121,6 @@ function pickDriver(): OpenStoreOptions['driver'] {
 }
 
 /** The canonical, credential-free capture key. Userinfo is refused, never hashed. */
-export async function captureKeyOf(kind: CaptureKind, method: string, url: string): Promise<string> {
-  const parsed = new URL(url);
-  if (parsed.username !== '' || parsed.password !== '') {
-    throw new Error('a capture key may not cover a credential-bearing URL; credentials travel in no capture, manifest or report');
-  }
-  return canonicalSha256({ kind, method: method.toUpperCase(), url: parsed.toString() });
-}
 
 export interface OpenHttpCaptureOptions {
   path?: string;

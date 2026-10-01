@@ -7,10 +7,10 @@ export interface LocalCandidate {
     source: DocumentSource;
     scores: EvidenceCandidate['scores'];
 }
-export interface CandidateRanker {
+export interface CandidateRanker<T = LocalCandidate> {
     id: string;
     version: string;
-    rank(query: string, candidates: readonly LocalCandidate[]): Promise<LocalCandidate[]>;
+    rank(query: string, candidates: readonly T[], context?: { signal?: AbortSignal }): Promise<T[]>;
 }
 /** Both raw lanes survive fusion. The suite owns reciprocal-rank arithmetic. */
 export function createRrfRanker(k = 60): CandidateRanker {

@@ -116,7 +116,7 @@ describe('the registered PriHA instrument', () => {
         assert.deepEqual(report.rows.map(r => r.key), PRIHA_ROWS);
         assert.deepEqual(report.registration.capabilityRows, PRIHA_CAPABILITY_ROWS);
         for (const row of report.rows.slice(1)) {
-            assert.equal(row.status, ['flat-semantic', 'local-hybrid', 'drag-no-optimizer', 'priha-full'].includes(row.key) ? 'not-run' : 'implementation-missing');
+            assert.equal(row.status, 'not-run');
             assert.ok(row.reason);
             assert.equal(row.metrics, null);
             assert.equal(row.counts.notRun, 32);
@@ -125,9 +125,10 @@ describe('the registered PriHA instrument', () => {
         requirePrihaCapability(report, 'contracts');
         requirePrihaCapability(report, 'local');
         requirePrihaCapability(report, 'optimizer');
+        requirePrihaCapability(report, 'web');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(4))
+        for (const c of report.capabilities.slice(5))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
@@ -302,7 +303,7 @@ describe('the registered PriHA instrument', () => {
             assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
             assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'web'], ['--unknown']])
+            for (const flags of [['--require', 'reconcile'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;
@@ -315,4 +316,31 @@ describe('the registered PriHA instrument', () => {
             await rm(root, { recursive: true, force: true });
         }
     });
+});
+
+it('executes the web component independently with exact replay and denied-origin zero requests', () => {
+    assert.equal(report.web.failed, 0); assert.equal(report.web.rows.length, 3); assert.equal(report.web.scriptedRequests, 105);
+    for (const row of report.web.rows) {
+        assert.equal(row.metrics.cases, 13); assert.equal(row.metrics.passed, 13); assert.equal(row.metrics.required, 2); assert.equal(row.metrics.recovered, 2);
+        assert.equal(row.metrics.denied, 4); assert.equal(row.metrics.redirectDenied, 1); assert.equal(row.metrics.snippets, 17);
+        assert.equal(row.metrics.deniedRequests, 0); assert.equal(row.metrics.replayFetches, 0); assert.equal(row.metrics.replayCalls, 0);
+        assert.ok(row.cases.every(value => value.replayIdentical && value.timeFactsCorrect));
+        assert.deepEqual(row.cases.filter(value => value.id.startsWith('budget-')).map(value => value.stopReason), ['budget-turns','budget-tokens','budget-ms','budget-searches','budget-fetches','budget-bytes']);
+    }
+});
+it('native web assertions refuse forged counts, identities and capability acceptance', () => {
+    for (const alter of [
+        (value: typeof report) => { value.web.rows[0].metrics.calls++; },
+        (value: typeof report) => { value.web.rows[0].metrics.deniedRequests++; },
+        (value: typeof report) => { value.web.rows[0].cases[0].passed = false; },
+        (value: typeof report) => { value.web.executionId = '0'.repeat(64); },
+        (value: typeof report) => { value.capabilities.find(row => row.id === 'web')!.passed = false; },
+    ]) { const copy = structuredClone(report); alter(copy); assert.equal(validate(copy).valid, false); }
+});
+it('the web gate rejects an injected script that fetches a denied page in place of its required support', async () => {
+    const changed = { ...loaded, webExecution: structuredClone(loaded.webExecution) };
+    changed.webExecution.cases[0].script[1].reply.toolCalls![0].arguments = JSON.stringify({ url: 'https://outside.example/forged' });
+    const result = await buildPrihaReport({ loaded: changed });
+    assert.ok(result.web.failed > 0); assert.throws(() => requirePrihaCapability(result, 'web'), /requires.*booking/);
+    assert.equal(result.web.rows[0].cases[0].recovered, 0); assert.equal(result.web.rows[0].cases[0].deniedRequests, 0);
 });

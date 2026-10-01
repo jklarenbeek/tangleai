@@ -28,3 +28,8 @@ limits, generation and source revision; query ties preserve source order.
 `fuseReciprocalRanks` delegates arithmetic to Jaren, gives each id one vote per
 lane and returns scores plus first-appearance order. Ties use appearance by
 default; `{ ties: 'id' }` preserves the existing consolidation ordering.
+
+The browser-safe `./http-capture` subpath exports the shared exact HTTP capture
+key and retained response-header vocabulary. Keys preserve URL query-parameter
+order and reject credential-bearing URLs. Benchmark storage and governed web
+replay consume this same format.

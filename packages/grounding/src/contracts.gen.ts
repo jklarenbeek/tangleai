@@ -777,6 +777,18 @@ export interface WebEvidenceAddress {
  */
 export type EvidenceCandidatePart1 = unknown;
 
+export interface EvidenceCandidateScores {
+  semantic?: number;
+  lexical?: number;
+  fusion?: number;
+  rank?: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relevance?: number;
+}
+
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -812,7 +824,17 @@ export interface EvidenceCandidateAdmitted {
 }
 
 
-export type EvidenceCandidate = EvidenceCandidatePart1 & { id: string; sessionId: string; profileRevision: string; queryId: string; lane: "local" | "web"; address: LocalEvidenceAddress | WebEvidenceAddress; excerpt: string; scores: { semantic?: number; lexical?: number; fusion?: number; rank?: number; }; rankerId: string; authority: EvidenceCandidateAuthority; times: EvidenceTimes; admitted: EvidenceCandidateAdmitted; citation: EvidenceCitation; };
+export interface EvidenceCandidateTransport {
+  lastModified?: string;
+  etag?: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  extractionVersion: string;
+}
+
+
+export type EvidenceCandidate = EvidenceCandidatePart1 & { id: string; sessionId: string; profileRevision: string; queryId: string; lane: "local" | "web"; address: LocalEvidenceAddress | WebEvidenceAddress; excerpt: string; scores: EvidenceCandidateScores; rankerId: string; authority: EvidenceCandidateAuthority; times: EvidenceTimes; admitted: EvidenceCandidateAdmitted; citation: EvidenceCitation; transport?: EvidenceCandidateTransport; };
 
 /**
  * Schema constraints this type cannot express: pattern="^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
@@ -825,6 +847,11 @@ export interface WebRetrievalRunAttemptsItemDeniedItem {
    * Schema constraints this type cannot express: minLength=1
    */
   reason: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  hop?: number;
+  redirects?: Array<string>;
 }
 
 
@@ -899,6 +926,88 @@ export interface WebRetrievalRunSufficiency {
 }
 
 
+export interface WebRunIdentityBudgets {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  searches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fetches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  bytes: number;
+}
+
+
+export interface WebRunIdentity {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  profileRevision: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  planId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  queryRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  transportRevision: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  rankerId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  promptRevision: string;
+  modelIdentity: unknown;
+  budgets: WebRunIdentityBudgets;
+  rankerModelIdentity?: unknown;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  extractorId?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=100000
+   */
+  maxToolResultChars?: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type WebRetrievalRunEvidenceIdsItem = string;
+
+export interface WebRetrievalRunRequestsItem {
+  url: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=100, maximum=599
+   */
+  status: number | null;
+  code: string | null;
+}
+
+
 export interface WebRetrievalRun {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -919,6 +1028,13 @@ export interface WebRetrievalRun {
    * Schema constraints this type cannot express: minLength=1
    */
   stopReason: string;
+  identity?: WebRunIdentity;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  evidenceIds?: Array<WebRetrievalRunEvidenceIdsItem>;
+  issue?: GroundingIssue;
+  requests?: Array<WebRetrievalRunRequestsItem>;
 }
 
 
@@ -1174,6 +1290,58 @@ export interface ClarificationQuestion {
    * Schema constraints this type cannot express: minItems=1, maxItems=1
    */
   questions: Array<ClarificationQuestionQuestionsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type WebSufficiencyMissingItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=4000
+ */
+export type WebSufficiencyRefinedQueriesItem = string;
+
+export interface WebSufficiency {
+  sufficient: boolean;
+  /**
+   * Schema constraints this type cannot express: maxItems=16, uniqueItems=true
+   */
+  missing: Array<WebSufficiencyMissingItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=3, uniqueItems=true
+   */
+  refinedQueries: Array<WebSufficiencyRefinedQueriesItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=4000
+   */
+  reason: string;
+}
+
+
+export interface WebRerankItem {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  index: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  relevance: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: maxItems=100
+ */
+export type WebRerank = Array<WebRerankItem>;
+
+export interface WebAgentResult {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  summary: string;
 }
 
 

@@ -39,6 +39,22 @@ export function groundingStoreTests(name: string, create: (probe?: (step: string
                 assert.deepEqual((await host.store.readTrace(f.session.id))!.evidence.map(e => e.id).sort(), [f.local.id, f.web.id].sort());
             } finally { await host.close(); }
         });
+        it('web evidence and its terminal run commit atomically or leave no partial rows', async () => {
+            let failRun = false;
+            const host = await create(step => { if (failRun && step === 'put:grounding_web_runs') throw Object.assign(Error('Web run write fault.'), { code: 'WEB_WRITE_FAULT' }); });
+            try {
+                const f = await preparePrihaContractLifecycle(host.store);
+                const evidence = { ...f.web, id: 'new-atomic-web-evidence' }, run = { ...f.webRun, id: 'new-atomic-web-run', evidenceIds: [evidence.id] };
+                failRun = true; const failed = await host.store.putWebResult(run, [evidence]);
+                assert.equal(failed.ok, false); assert.equal(failed.issue.code, 'TGRD1009'); assert.equal(failed.issue.cause?.code, 'WEB_WRITE_FAULT');
+                failRun = false; const trace = (await host.store.readTrace(f.session.id))!;
+                assert.ok(!trace.evidence.some(row => row.id === evidence.id)); assert.ok(!trace.webRuns.some(row => row.id === run.id));
+                const retry = await host.store.putWebResult(run, [evidence]); assert.ok(retry.ok); assert.equal(retry.changes, 2);
+                const replay = await host.store.putWebResult(run, [evidence]); assert.ok(replay.ok); assert.equal(replay.changes, 0);
+                const foreign = await host.store.putWebResult({ ...run, id: 'foreign-web-run', evidenceIds: ['missing'] }, [evidence]);
+                assert.equal(foreign.ok, false); assert.equal(foreign.issue.code, 'TGRD1004');
+            } finally { await host.close(); }
+        });
         it('admits exactly one concurrent transition for an expected revision', async () => {
             const host = await create();
             try {

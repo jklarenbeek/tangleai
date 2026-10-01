@@ -35,3 +35,23 @@ export function createPrihaReplay(records: readonly PrihaWebRecord[], bodies: Re
         },
     };
 }
+
+import type { WebReplayRecord } from '@tangleai/grounding';
+import type { PrihaWebExecution } from './priha.types.ts';
+/** Add only registered executable addresses; the historical capture records remain untouched. */
+export async function prihaWebReplayRecords(original: PrihaWebRecord[], execution: PrihaWebExecution, bodies: ReadonlyMap<string, Uint8Array>): Promise<WebReplayRecord[]> {
+    const descriptors = [...original, ...execution.records];
+    for (const alias of execution.aliases) {
+        const source = original.find(row => row.name === alias.record);
+        if (!source || source.kind !== 'searxng' || alias.key !== await captureKeyOf(source.kind, 'GET', alias.url)) throw Error('Invalid registered search capture alias.');
+        const prior = new URL(source.url), target = new URL(alias.url);
+        if (prior.origin !== target.origin || prior.pathname !== target.pathname || JSON.stringify([...prior.searchParams].sort()) !== JSON.stringify([...target.searchParams].sort()))
+            throw Error('A capture alias can change only query-parameter order.');
+        descriptors.push({ ...source, key: alias.key, url: alias.url });
+    }
+    return descriptors.map(row => {
+        const bytes = bodies.get(row.file);
+        if (!bytes) throw Error('Web capture body is missing: ' + row.file);
+        return { key: row.key, kind: row.kind, method: 'GET', url: row.url, status: row.status, headers: row.headers as [string, string][], bytes, sha256: row.sha256 };
+    });
+}

@@ -1,5 +1,6 @@
-import { lookup as nodeLookup } from 'node:dns/promises';
-import { isIP } from 'node:net';
+import { isValidIPv4, isValidIPv6 } from '@jarenjs/core/text';
+
+const isIP = (address: string): 0 | 4 | 6 => isValidIPv4(address) ? 4 : isValidIPv6(address) ? 6 : 0;
 
 import { DocumentError } from './contracts.ts';
 
@@ -63,7 +64,14 @@ export function isReservedAddress(input: string): boolean {
   }
 
   if (isIP(address) !== 6) return true;
-  const lower = address.toLowerCase();
+  // Normalize expanded and dotted IPv6 with the platform URL parser before
+  // applying address policy. URL hostnames convert dotted mapped IPv4 to hex.
+  const lower = new URL(`http://[${address}]/`).hostname.slice(1, -1).toLowerCase();
+  const embedded = lower.match(/^::ffff:([a-f0-9]{1,4}):([a-f0-9]{1,4})$/);
+  if (embedded) {
+    const high = Number.parseInt(embedded[1]!, 16), low = Number.parseInt(embedded[2]!, 16);
+    return isReservedAddress([high >>> 8, high & 255, low >>> 8, low & 255].join('.'));
+  }
   return lower === '::' || lower === '::1'
     || lower.startsWith('fc') || lower.startsWith('fd')
     || /^fe[89ab]/.test(lower)
@@ -75,7 +83,10 @@ const defaultLookup: AddressLookup = async (hostname) => {
   const host = bareHost(hostname);
   const literal = isIP(host);
   if (literal !== 0) return [{ address: host, family: literal }];
-  return nodeLookup(host, { all: true, verbatim: true });
+  if (typeof process === 'undefined' || !process.versions?.node)
+    throw new DocumentError('dns-unavailable', 'This host requires an injected public-address lookup.');
+  const { lookup } = await import('node:dns/promises');
+  return lookup(host, { all: true, verbatim: true });
 };
 
 /** Resolve and validate every address immediately before each request. */

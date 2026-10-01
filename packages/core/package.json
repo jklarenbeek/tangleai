@@ -16,7 +16,8 @@
     "./schemas/temporal.schema.json": "./schemas/temporal.schema.json",
     "./schemas/consolidation": "./src/schemas/consolidation.ts",
     "./schemas/consolidation.schema.json": "./schemas/consolidation.schema.json",
-    "./lexical": "./src/lexical.ts"
+    "./lexical": "./src/lexical.ts",
+    "./http-capture": "./src/http-capture.ts"
   },
   "engines": {
     "node": ">=24"
@@ -25,7 +26,8 @@
   "dependencies": {
     "@tangleai/context": "^0.33.0",
     "@jarenjs/validate": "0.91.4",
-    "@jarenjs/core": "0.91.4"
+    "@jarenjs/core": "0.91.4",
+    "@jarenjs/json": "0.91.4"
   },
   "private": false,
   "types": "./src/index.ts",

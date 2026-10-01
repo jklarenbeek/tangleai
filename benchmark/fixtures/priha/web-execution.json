@@ -1,0 +1,879 @@
+{
+  "document": "priha-web-execution",
+  "version": 1,
+  "license": "MIT",
+  "searxBase": "https://search.harbour.example",
+  "description": "Registered before web measurement. Original captures and gold remain unchanged. Search address alias preserves query ordering. Supplemental bytes make structured dates explicit; originals have unknown content times. All three rows execute the same web component independently; no answer quality is measured.",
+  "aliases": [
+    {
+      "record": "search-booking",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+booking",
+      "key": "1fe2f51f92dfd3243091e888611758794dae30726048b8175b4c2fa52e084f31"
+    }
+  ],
+  "records": [
+    {
+      "name": "robots",
+      "key": "c1a3f5aa3991c38a4f290d12ef8327cd4d2dd611dcac3e0358faa63ab87ebd91",
+      "kind": "document",
+      "method": "GET",
+      "url": "https://official.harbour.example/robots.txt",
+      "file": "web-execution/robots.txt",
+      "sha256": "44f3f8eafdf064cf69acb05f23ee4dfc9ab5b3d67d81c64246bc29f7e438789a",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "text/plain"
+        ]
+      ]
+    },
+    {
+      "name": "search-weekend",
+      "key": "e0c8051b4f81018c574317c1d0e52ac27949cc772c4a5a8ca326926015b5a0aa",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+weekend+desk",
+      "file": "web-execution/search-weekend.json",
+      "sha256": "eb612f8686333050a455d51f390a475e4317519a0318faf395609412e2a2acd0",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "search-gap",
+      "key": "bdf3270d90d163a51d1001afae7a9fa1344d47f23bff6ac53f511dc9a4f8920a",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+empty+first",
+      "file": "web-execution/search-gap.json",
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "search-missing",
+      "key": "4d1c05d50063a1e71f5e9b073e2ab8f26d2f7e39a23cda290a47f183a246639c",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+missing+page",
+      "file": "web-execution/search-missing.json",
+      "sha256": "2d7efaef0751213dd391371938647fd2c002f613c268c363732d1e4046df59cd",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "search-replay-missing",
+      "key": "3da5406b03109371c9873d33c8ae9b29df293a2bbc37d39de3be868a8f468ba6",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+replay+missing",
+      "file": "web-execution/search-replay-missing.json",
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "search-injection",
+      "key": "df77d0a7cced29f8165b9dfdf40078949622d493ee132867965e54b580e2bc3a",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+injection",
+      "file": "web-execution/search-injection.json",
+      "sha256": "d3a9537ac6ca5fb337e9cf1c8d49d9441da7915a618901c86ae5251233e65572",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "search-outside",
+      "key": "6af95b10e58bebbe7556e3f0fb177275d588b3fc3889387e47362f5a7cf53b70",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=outside+harbour",
+      "file": "web-execution/search-outside.json",
+      "sha256": "5021e624e752b001ce3e3846e8f158ed4aeb93a4c9a72fdb35a0c5b14a0eea84",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    },
+    {
+      "name": "dated-future",
+      "key": "dfe7b9009deba0ae0f226cad6a89f3245b84bead0e9f77fc39806bedd851e248",
+      "kind": "document",
+      "method": "GET",
+      "url": "https://official.harbour.example/dated-future",
+      "file": "web-execution/dated-future.html",
+      "sha256": "3213ae00814139b365a26ce9a739ac2531754f9b3822bb407dea3e81f467836e",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "text/html"
+        ],
+        [
+          "last-modified",
+          "Fri, 01 May 2026 00:00:00 GMT"
+        ]
+      ]
+    },
+    {
+      "name": "dated-expired",
+      "key": "ae72b943f854b059676664832fa7681d4ad006bb2af57310455ea018f9483c0f",
+      "kind": "document",
+      "method": "GET",
+      "url": "https://official.harbour.example/dated-expired",
+      "file": "web-execution/dated-expired.html",
+      "sha256": "b6df3c3911b66054ee368457ed3b104bab3367f04b6e8cce07106623b3391a50",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "text/html"
+        ],
+        [
+          "last-modified",
+          "Fri, 01 May 2026 00:00:00 GMT"
+        ]
+      ]
+    },
+    {
+      "name": "last-modified",
+      "key": "482f5a783a010a2d20bcb214b4f3dcbd8cb18d91cb0cd4a2de9496d635fd2e52",
+      "kind": "document",
+      "method": "GET",
+      "url": "https://official.harbour.example/last-modified",
+      "file": "web-execution/last-modified.html",
+      "sha256": "0e4695ea738cd6afa3d0f5cfbf27a26aee929eb79079f0c0a215e366f8247ea6",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "text/html"
+        ],
+        [
+          "last-modified",
+          "Fri, 01 May 2026 00:00:00 GMT"
+        ]
+      ]
+    },
+    {
+      "name": "search-dates",
+      "key": "4c7f7b4280b49e976c8761801a58165acc7145e455064ceedb441a0b088fd940",
+      "kind": "searxng",
+      "method": "GET",
+      "url": "https://search.harbour.example/search?format=json&q=Harbour+structured+dates",
+      "file": "web-execution/search-dates.json",
+      "sha256": "b544ce857b1b846316d75ada01881c97fbf1317f934b420a1e1e1fa68128c398",
+      "status": 200,
+      "headers": [
+        [
+          "content-type",
+          "application/json"
+        ]
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "booking",
+      "question": "q23",
+      "query": "Harbour booking",
+      "budgets": {},
+      "required": [
+        "e-web-booking-update"
+      ],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour booking\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/booking-update\"}"
+              },
+              {
+                "id": "call-1",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://forum.harbour.example/booking-rumour\"}"
+              },
+              {
+                "id": "call-2",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/redirect\"}"
+              },
+              {
+                "id": "call-3",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/missing\"}"
+              },
+              {
+                "id": "call-4",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/injection\"}"
+              },
+              {
+                "id": "call-5",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/empty\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "sufficient",
+        "evidence": [
+          "booking-update",
+          "injection"
+        ],
+        "searches": 1,
+        "fetches": 6,
+        "denied": 2,
+        "redirectDenied": 1,
+        "failed": 2
+      }
+    },
+    {
+      "id": "weekend",
+      "question": "q24",
+      "query": "Harbour weekend desk",
+      "budgets": {},
+      "required": [
+        "e-web-weekend-desk"
+      ],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour weekend desk\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/future\"}"
+              },
+              {
+                "id": "call-1",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/weekend-desk\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "sufficient",
+        "evidence": [
+          "future",
+          "weekend-desk"
+        ],
+        "searches": 1,
+        "fetches": 2,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "gap",
+      "question": null,
+      "query": "Harbour empty first",
+      "budgets": {},
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour empty first\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":false,\"missing\":[\"Fetched support.\"],\"refinedQueries\":[\"Harbour weekend desk\"],\"reason\":\"Registered software assessment.\"}"
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour weekend desk\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/weekend-desk\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "sufficient",
+        "evidence": [
+          "weekend-desk"
+        ],
+        "searches": 2,
+        "fetches": 1,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "snippet",
+      "question": null,
+      "query": "Harbour missing page",
+      "budgets": {},
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour missing page\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/missing\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":false,\"missing\":[\"Fetched support.\"],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "no-admitted-results",
+        "evidence": [],
+        "searches": 1,
+        "fetches": 1,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 1
+      }
+    },
+    {
+      "id": "missing-capture",
+      "question": null,
+      "query": "Harbour replay missing",
+      "budgets": {},
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour replay missing\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/unregistered\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "no-admitted-results",
+        "evidence": [],
+        "searches": 1,
+        "fetches": 1,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 1
+      }
+    },
+    {
+      "id": "injection",
+      "question": null,
+      "query": "Harbour injection",
+      "budgets": {},
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour injection\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/injection\"}"
+              },
+              {
+                "id": "call-1",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://outside.example/page\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":false,\"missing\":[\"Fetched support.\"],\"refinedQueries\":[\"outside harbour\"],\"reason\":\"Registered software assessment.\"}"
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"outside harbour\"}"
+              },
+              {
+                "id": "call-1",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://outside.example/page\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":false,\"missing\":[\"Fetched support.\"],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "insufficient-after-reflection",
+        "evidence": [
+          "injection"
+        ],
+        "searches": 2,
+        "fetches": 3,
+        "denied": 2,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "time-facts",
+      "question": null,
+      "query": "Harbour structured dates",
+      "budgets": {},
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_search",
+                "arguments": "{\"query\":\"Harbour structured dates\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/dated-future\"}"
+              },
+              {
+                "id": "call-1",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/dated-expired\"}"
+              },
+              {
+                "id": "call-2",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/last-modified\"}"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "Assess fetched evidence."
+          }
+        },
+        {
+          "stage": "web-sufficiency",
+          "promptRevision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe",
+          "reply": {
+            "content": "{\"sufficient\":true,\"missing\":[],\"refinedQueries\":[],\"reason\":\"Registered software assessment.\"}"
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "sufficient",
+        "evidence": [
+          "dated-future",
+          "dated-expired",
+          "last-modified"
+        ],
+        "searches": 1,
+        "fetches": 3,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "budget-calls",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "calls": 0
+      },
+      "required": [],
+      "script": [],
+      "expected": {
+        "stopReason": "budget-turns",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "budget-tokens",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "tokens": 0
+      },
+      "required": [],
+      "script": [],
+      "expected": {
+        "stopReason": "budget-tokens",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "budget-ms",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "ms": 0
+      },
+      "required": [],
+      "script": [],
+      "expected": {
+        "stopReason": "budget-ms",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "budget-searches",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "searches": 0
+      },
+      "required": [],
+      "script": [],
+      "expected": {
+        "stopReason": "budget-searches",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    },
+    {
+      "id": "budget-fetches",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "fetches": 0
+      },
+      "required": [],
+      "script": [
+        {
+          "stage": "web-agent",
+          "promptRevision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471",
+          "reply": {
+            "content": "",
+            "toolCalls": [
+              {
+                "id": "call-0",
+                "name": "web_fetch",
+                "arguments": "{\"url\":\"https://official.harbour.example/booking-update\"}"
+              }
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "stopReason": "budget-fetches",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 1
+      }
+    },
+    {
+      "id": "budget-bytes",
+      "question": null,
+      "query": "Harbour booking",
+      "budgets": {
+        "bytes": 0
+      },
+      "required": [],
+      "script": [],
+      "expected": {
+        "stopReason": "budget-bytes",
+        "evidence": [],
+        "searches": 0,
+        "fetches": 0,
+        "denied": 0,
+        "redirectDenied": 0,
+        "failed": 0
+      }
+    }
+  ]
+}

@@ -130,6 +130,8 @@ export interface DocumentParent {
 }
 
 export interface ExtractedDocument {
+  /** Uninterpreted structured page metadata; consumers validate time semantics. */
+  metadata?: { publishedAt?: string; effectiveAt?: string; expiresAt?: string; reviewedAt?: string };
   title: string | null;
   canonicalUrl?: string;
   elements: Omit<DocumentElement, 'id' | 'sourceId' | 'versionId'>[];

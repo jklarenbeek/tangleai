@@ -248,3 +248,13 @@ out of the tree being edited, so a change cannot move the goalposts that judge
 it. A policy like that is only meaningful next to the instrument it protects.
 Migrated down into a general-purpose suite it would become a configurable file
 filter, which is the same mechanism with the argument removed.
+
+Governed web retrieval composes the native agent/toolbox, one structured-output
+repair owner, SearxNG and SafeStaticFetcher. Admission remains inside the fetcher
+on each hop, including robots; the public replay adapter consumes core's exact
+HTTP capture format. Static HTML/text extraction has one shared browser-safe
+owner; the existing complete document extractor adds PDF support for Node/Bun.
+Jaren's provider executor does support safe reads and successful-text replay.
+It is not layered over the document fetcher here because scheduling, robots,
+redirect admission and byte budgets already belong to that fetcher, and the
+fixture requires exact redirects and unsuccessful HTTP responses too.

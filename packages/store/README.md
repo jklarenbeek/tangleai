@@ -180,3 +180,8 @@ its terminal session revision commit together when `putAnswer` receives the
 expected revision. Identical record replay reports zero changes, stale revisions
 refuse, and any partial write rolls back. Curated manifests require explicit
 curator provenance; request-local web evidence is never automatically promoted.
+
+Grounding `putWebResult(run, evidence)` validates the run and its evidence
+ownership and commits them on the same existing transaction. No separate web
+database or persistence owner is introduced. Retained web traces replay without
+new network or model work.

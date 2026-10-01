@@ -1158,6 +1158,11 @@
             },
             "rank": {
               "type": "number"
+            },
+            "relevance": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
             }
           }
         },
@@ -1219,6 +1224,25 @@
         },
         "citation": {
           "$ref": "#/$defs/evidenceCitation"
+        },
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "extractionVersion"
+          ],
+          "properties": {
+            "lastModified": {
+              "type": "string"
+            },
+            "etag": {
+              "type": "string"
+            },
+            "extractionVersion": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       },
       "allOf": [
@@ -1323,6 +1347,16 @@
                     "reason": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "hop": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "redirects": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -1421,6 +1455,51 @@
         "stopReason": {
           "type": "string",
           "minLength": 1
+        },
+        "identity": {
+          "$ref": "#/$defs/webRunIdentity"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "issue": {
+          "$ref": "#/$defs/groundingIssue"
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "url",
+              "status",
+              "code"
+            ],
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "status": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 100,
+                "maximum": 599
+              },
+              "code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         }
       }
     },
@@ -2169,6 +2248,188 @@
         "spent",
         "startRevision"
       ]
+    },
+    "webSufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sufficient",
+        "missing",
+        "refinedQueries",
+        "reason"
+      ],
+      "properties": {
+        "sufficient": {
+          "type": "boolean"
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "refinedQueries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "webRerank": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "index",
+          "relevance"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "relevance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "webAgentResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "webRunIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileRevision",
+        "planId",
+        "queryRevision",
+        "transportRevision",
+        "rankerId",
+        "promptRevision",
+        "modelIdentity",
+        "budgets"
+      ],
+      "properties": {
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "planId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queryRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "transportRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rankerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "modelIdentity": {
+          "oneOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/run-identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "searches",
+            "fetches",
+            "bytes"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "searches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fetches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "rankerModelIdentity": {
+          "oneOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/run-identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extractorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maxToolResultChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        }
+      }
     }
   }
 }
