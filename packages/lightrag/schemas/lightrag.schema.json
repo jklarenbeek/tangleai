@@ -1773,6 +1773,732 @@
           "$ref": "#/$defs/lightRagRevision"
         }
       }
+    },
+    "graphExtractionEntity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "description"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "$ref": "#/$defs/lightRagType"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "graphExtractionRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "target",
+        "description",
+        "themes",
+        "strength"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "graphExtractionReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entities",
+        "relations",
+        "contentKeywords"
+      ],
+      "properties": {
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphExtractionEntity"
+          },
+          "maxItems": 128
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphExtractionRelation"
+          },
+          "maxItems": 256
+        },
+        "contentKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      }
+    },
+    "graphPromptChunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceId",
+        "versionId",
+        "text",
+        "order"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "graphExtractionInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunk",
+        "entityTypes",
+        "pass",
+        "previous"
+      ],
+      "properties": {
+        "chunk": {
+          "$ref": "#/$defs/graphPromptChunk"
+        },
+        "entityTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightRagType"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "pass": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "previous": {
+          "$ref": "#/$defs/graphExtractionReply"
+        }
+      }
+    },
+    "graphProfileContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimId",
+        "chunkId",
+        "ordinal",
+        "description"
+      ],
+      "properties": {
+        "claimId": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "chunkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "graphProfileInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "name",
+        "contexts"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "entity",
+            "relation"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphProfileContext"
+          },
+          "minItems": 1,
+          "maxItems": 128
+        }
+      }
+    },
+    "graphProfileReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "themes"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      }
+    },
+    "graphCoreferenceSubject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "type",
+        "description",
+        "canonicalId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "$ref": "#/$defs/lightRagType"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonicalId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/lightRagRevision"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "graphCoreferenceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjects"
+      ],
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphCoreferenceSubject"
+          },
+          "minItems": 2,
+          "maxItems": 128
+        }
+      }
+    },
+    "graphCoreferenceReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "groups",
+        "reasons"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/lightRagRevision"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "minItems": 1,
+          "maxItems": 128
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 128
+        }
+      }
+    },
+    "graphKeywordInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query",
+        "mode",
+        "maxKeywords"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "low",
+            "high",
+            "hybrid",
+            "hybrid-no-original"
+          ]
+        },
+        "maxKeywords": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        }
+      }
+    },
+    "graphKeywordReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "highLevelKeywords",
+        "lowLevelKeywords"
+      ],
+      "properties": {
+        "highLevelKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "lowLevelKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "maxItems": 32,
+          "uniqueItems": true
+        }
+      }
+    },
+    "lightRagPromptPack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "meta",
+        "system",
+        "user"
+      ],
+      "properties": {
+        "meta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "version",
+            "role"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "enum": [
+                "graph-extractor",
+                "graph-profiler",
+                "graph-deduplicator",
+                "graph-planner"
+              ]
+            }
+          }
+        },
+        "system": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "content"
+          ],
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "user": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "content"
+          ],
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "lightRagPromptSchemaReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$ref"
+      ],
+      "properties": {
+        "$ref": {
+          "enum": [
+            "https://tangleai.dev/schemas/lightrag-contracts/graphExtractionInput",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphExtractionReply",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphProfileInput",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphProfileReply",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphCoreferenceInput",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphCoreferenceReply",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphKeywordInput",
+            "https://tangleai.dev/schemas/lightrag-contracts/graphKeywordReply"
+          ]
+        }
+      }
+    },
+    "lightRagPromptArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "role",
+        "system",
+        "user",
+        "inputSchema",
+        "outputSchema",
+        "schemaRevision",
+        "sourceDigest",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "graph-extractor",
+            "graph-profiler",
+            "graph-deduplicator",
+            "graph-planner"
+          ]
+        },
+        "system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "user": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputSchema": {
+          "$ref": "#/$defs/lightRagPromptSchemaReference"
+        },
+        "outputSchema": {
+          "$ref": "#/$defs/lightRagPromptSchemaReference"
+        },
+        "schemaRevision": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "sourceDigest": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "revision": {
+          "$ref": "#/$defs/lightRagRevision"
+        }
+      }
+    },
+    "lightRagPromptCatalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "packs"
+      ],
+      "properties": {
+        "policyVersion": {
+          "const": "lightrag-static-json-v1"
+        },
+        "packs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightRagPromptArtifact"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
+      }
+    },
+    "graphChunkFailure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunkId",
+        "issues",
+        "attempts",
+        "spend"
+      ],
+      "properties": {
+        "chunkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightRagIssue"
+          },
+          "minItems": 1
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "$ref": "#/$defs/lightRagSpend"
+        }
+      }
+    },
+    "graphPreparationStats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completedChunks",
+        "failedChunks",
+        "entityClaims",
+        "relationClaims",
+        "entities",
+        "relations",
+        "merges",
+        "decisions",
+        "embeddingCalls"
+      ],
+      "properties": {
+        "completedChunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failedChunks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entityClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relationClaims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entities": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "merges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "embeddingCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "graphContribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "versionId",
+        "plan",
+        "identities",
+        "contributionRevision",
+        "spend",
+        "warnings",
+        "failures",
+        "partial",
+        "completedChunkIds",
+        "stats"
+      ],
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "plan": {
+          "$ref": "#/$defs/graphContributionPlan"
+        },
+        "identities": {
+          "$ref": "#/$defs/lightRagIdentities"
+        },
+        "contributionRevision": {
+          "$ref": "#/$defs/lightRagRevision"
+        },
+        "spend": {
+          "$ref": "#/$defs/lightRagSpend"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/graphChunkFailure"
+          }
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "completedChunkIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "stats": {
+          "$ref": "#/$defs/graphPreparationStats"
+        }
+      }
+    },
+    "graphPreparationFailure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issues",
+        "spend",
+        "completedChunkIds",
+        "stopReason"
+      ],
+      "properties": {
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lightRagIssue"
+          },
+          "minItems": 1
+        },
+        "spend": {
+          "$ref": "#/$defs/lightRagSpend"
+        },
+        "completedChunkIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "stopReason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }

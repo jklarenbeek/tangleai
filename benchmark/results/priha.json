@@ -967,7 +967,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
+        "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
       },
       {
         "path": "packages/agents/package.json",
@@ -2054,24 +2054,44 @@
         "sha256": "b40421cff01439bb8808c6052d514c854c8817bd94849a904e19571b63eedd9f"
       },
       {
+        "path": "packages/lightrag/artifacts/prompts.json",
+        "sha256": "1fe40cdc4e7813297f99a2981eb83b28b4d681b15040cee9f8b8e0532500cdf8"
+      },
+      {
         "path": "packages/lightrag/package.json",
-        "sha256": "88daffd1d947a0723248e9b231f185efa48ddf035301a376f00869d16a7f21b5"
+        "sha256": "01dc4c7d62860f795c5f7de897d189327e610a265d7ab79c9b7acc3f773b1355"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
-        "sha256": "1351e8402b92c4ca753466c0bb7617bc5fd1db34a9ef6ebfe6321a204805f76e"
+        "sha256": "1e642e0038b0e7b97cf4a815078681a28d14838f814cd9779ee8b283d1f00241"
       },
       {
         "path": "packages/lightrag/src/apply.ts",
         "sha256": "d60670622639a09d80d96c280088b06d14adaf1f6135402db78be8411c0774e4"
       },
       {
+        "path": "packages/lightrag/src/catalog.ts",
+        "sha256": "c99966399a4cd7b92873e47afa9024565b3ef2d0ba5a1a3d5e8f98904f357092"
+      },
+      {
         "path": "packages/lightrag/src/contracts.gen.ts",
-        "sha256": "ef7d7103d6b92bfad43430b522b77563d039c824f96b5194548309c956bd3996"
+        "sha256": "1df2537bdf0666b26dbf0825c726df675ef86ec31ad8854d5101e11866eb1885"
+      },
+      {
+        "path": "packages/lightrag/src/contribution.ts",
+        "sha256": "0086a9c7f3f6215e4a1f48df5e78c70936630093bd3f0fdea7054aabb3867464"
+      },
+      {
+        "path": "packages/lightrag/src/embed.ts",
+        "sha256": "242c61518634c8ffaf1950fee64ef66eef2d51ef028b4070d9b7acd2b1a3da83"
       },
       {
         "path": "packages/lightrag/src/errors.ts",
         "sha256": "7f86a93b67411ad36f7ae27a7aa5d489e52d6a96412eeb0374a9a0c8368bc5c8"
+      },
+      {
+        "path": "packages/lightrag/src/extract.ts",
+        "sha256": "a411cbb2863bf97ba2953fbd3f560bffc863ad6012928d2cb96c33b058856c01"
       },
       {
         "path": "packages/lightrag/src/identity.ts",
@@ -2079,7 +2099,7 @@
       },
       {
         "path": "packages/lightrag/src/index.ts",
-        "sha256": "dc98b411679135f67911c8b5b9b0b3f7ba5294c88c589eac041fd04adb7cdc14"
+        "sha256": "df3784ef5934a01802cb07076a8ca591c098c4f3671752bf1c25f27bd03763f6"
       },
       {
         "path": "packages/lightrag/src/integrity.ts",
@@ -2088,6 +2108,10 @@
       {
         "path": "packages/lightrag/src/memory-persistence.ts",
         "sha256": "7f1f440f513388adc9fdd57f7f3cf79591b43415ec7091d613a78c571a6fa773"
+      },
+      {
+        "path": "packages/lightrag/src/meter.ts",
+        "sha256": "33f9f0717046bc7e77fa521177a497cb358ce188aca18d16f0152729b33f93da"
       },
       {
         "path": "packages/lightrag/src/normalize.ts",
@@ -2099,19 +2123,35 @@
       },
       {
         "path": "packages/lightrag/src/plan.ts",
-        "sha256": "4636d2f1ec13444035bec68eb2a18922d0e68a45ba10f26ce37fc733d7020a92"
+        "sha256": "0d978b8abb298d32c5d4811f05e3f90b0633f4435f3b8665f6f1fd7aea3f899e"
+      },
+      {
+        "path": "packages/lightrag/src/profile.ts",
+        "sha256": "c135fffa20e619dfd0a7d0ef3fb365f3030117ddfd01622fef5a59c622cdf660"
       },
       {
         "path": "packages/lightrag/src/projection.ts",
         "sha256": "b3bfe9b5013e0ed86e64cbf7c8078d09b9855dde8f9cab98becedb3515fa406a"
       },
       {
+        "path": "packages/lightrag/src/prompts.ts",
+        "sha256": "69d4f3e7e186ecdde505518faba07f1b4596d5c7907c56e9aaaf72caf38bc031"
+      },
+      {
+        "path": "packages/lightrag/src/resolve.ts",
+        "sha256": "54ccefc642ccc6c264c84b1e6f625d32c26858703670193f121b796da7008875"
+      },
+      {
         "path": "packages/lightrag/src/schema.ts",
-        "sha256": "4fb5fc15243183855d2f899ba79ee89ce0703e2bcc55d8f223eefcb04d66ebdc"
+        "sha256": "46a8f464c52d5c7d3ffe92da29312ac08c1b716d7f50413f0fbe4b2c0206e092"
       },
       {
         "path": "packages/lightrag/src/store.ts",
         "sha256": "be5185b913a60150c8315e32291b1650b0bfb086bec4ee010d16d7e518cf7c6b"
+      },
+      {
+        "path": "packages/lightrag/src/structured.ts",
+        "sha256": "9854a17c8fba5091df7aaf40cfe1bacf1c54a9e52b3b8c5af8648e2802a84e88"
       },
       {
         "path": "packages/lightrag/src/write-plan.ts",
@@ -2918,7 +2958,7 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "d9e87dae4aeea403a25cace746679dd2c6cf4c666d7afbc180cbec5e8f5c84ed"
+    "sha256": "fd633b7be504b700ad494f50c5ce855c4734ab4417e259b8c06087931c453e9a"
   },
   "fixtureSource": {
     "files": [
@@ -68108,7 +68148,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "d9e87dae4aeea403a25cace746679dd2c6cf4c666d7afbc180cbec5e8f5c84ed",
+      "sourceSha256": "fd633b7be504b700ad494f50c5ce855c4734ab4417e259b8c06087931c453e9a",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68192,7 +68232,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "a62f50e606d4640aeae72aab7e343d54037a347e628056341a72c69515018f48"
+      "planId": "edfa4d4e8d9a3bde680ce217c2efe699aa75361a8aa47d1d90c3e1bf96a4ba5c"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68439,5 +68479,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "e3880f2c6383a0686ea379c070cc962ce4d90f011186613510369fe42b83e55a"
+  "reportId": "01dab2f3e633c61ef35cbe60620e3310285d0bcb99c9a9e51aec1b644da475ce"
 }

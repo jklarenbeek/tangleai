@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
+    "head": "9564a6a29fda71f215bea8c8779e0dc830fb11bd",
     "clean": false,
     "files": [
       {
@@ -727,7 +727,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
+        "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
       },
       {
         "path": "packages/agents/package.json",
@@ -1390,7 +1390,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "92f8adbeda5247c8081d1c3b2191b2be00a356549eb88d766a0468fb7b6cc217"
+    "sha256": "d3e37a9fbacce0211da88049d06c3239c1496bc9c535c4d451a430a66958085a"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44855,5 +44855,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "8a9373d5d04c0cc8e4d87e372f5b747366afe283efc5ab8b153dac43fd019cbd"
+  "reportId": "4d8f0b9e606592b01a439779a01d5897c04ac4ce537b8981815e21a6d0ae269a"
 }

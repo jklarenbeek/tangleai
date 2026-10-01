@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
-      "sha256": "92f8adbeda5247c8081d1c3b2191b2be00a356549eb88d766a0468fb7b6cc217",
+      "head": "9564a6a29fda71f215bea8c8779e0dc830fb11bd",
+      "sha256": "d3e37a9fbacce0211da88049d06c3239c1496bc9c535c4d451a430a66958085a",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -730,7 +730,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
+          "sha256": "4da04439ff2ae0020194fc6f1e6ac3783c948e1d6e5c5d2bf4597b27afcdb304"
         },
         {
           "path": "packages/agents/package.json",
@@ -1629,7 +1629,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "f32f5c1b680dee0dc9ee0a171ebf37661004a47e33992939f4e8e7c7541a3e24",
+    "planId": "7d0233faa302502e609f98961dc18a98ec30095326c2d0fbf89bd9027d65bca2",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

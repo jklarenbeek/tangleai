@@ -531,4 +531,421 @@ export interface ProjectionWritePlan {
 }
 
 
+export interface GraphExtractionEntity {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  type: LightRagType;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphExtractionRelationThemesItem = string;
+
+export interface GraphExtractionRelation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  source: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  target: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  themes: Array<GraphExtractionRelationThemesItem>;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  strength: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphExtractionReplyContentKeywordsItem = string;
+
+export interface GraphExtractionReply {
+  /**
+   * Schema constraints this type cannot express: maxItems=128
+   */
+  entities: Array<GraphExtractionEntity>;
+  /**
+   * Schema constraints this type cannot express: maxItems=256
+   */
+  relations: Array<GraphExtractionRelation>;
+  /**
+   * Schema constraints this type cannot express: maxItems=32, uniqueItems=true
+   */
+  contentKeywords: Array<GraphExtractionReplyContentKeywordsItem>;
+}
+
+
+export interface GraphPromptChunk {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sourceId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  versionId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  order: number;
+}
+
+
+export interface GraphExtractionInput {
+  chunk: GraphPromptChunk;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  entityTypes: Array<LightRagType>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0, maximum=16
+   */
+  pass: number;
+  previous: GraphExtractionReply;
+}
+
+
+export interface GraphProfileContext {
+  claimId: LightRagRevision;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  chunkId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ordinal: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+}
+
+
+export interface GraphProfileInput {
+  kind: "entity" | "relation";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128
+   */
+  contexts: Array<GraphProfileContext>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphProfileReplyThemesItem = string;
+
+export interface GraphProfileReply {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  profile: string;
+  /**
+   * Schema constraints this type cannot express: maxItems=32, uniqueItems=true
+   */
+  themes: Array<GraphProfileReplyThemesItem>;
+}
+
+
+export interface GraphCoreferenceSubject {
+  id: LightRagRevision;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  type: LightRagType;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  description: string;
+  canonicalId: LightRagRevision | null;
+}
+
+
+export interface GraphCoreferenceInput {
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=128
+   */
+  subjects: Array<GraphCoreferenceSubject>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+ */
+export type GraphCoreferenceReplyGroupsItem = Array<LightRagRevision>;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphCoreferenceReplyReasonsItem = string;
+
+export interface GraphCoreferenceReply {
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128
+   */
+  groups: Array<GraphCoreferenceReplyGroupsItem>;
+  /**
+   * Schema constraints this type cannot express: minItems=1, maxItems=128
+   */
+  reasons: Array<GraphCoreferenceReplyReasonsItem>;
+}
+
+
+export interface GraphKeywordInput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  query: string;
+  mode: "low" | "high" | "hybrid" | "hybrid-no-original";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=32
+   */
+  maxKeywords: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphKeywordReplyHighLevelKeywordsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphKeywordReplyLowLevelKeywordsItem = string;
+
+export interface GraphKeywordReply {
+  /**
+   * Schema constraints this type cannot express: maxItems=32, uniqueItems=true
+   */
+  highLevelKeywords: Array<GraphKeywordReplyHighLevelKeywordsItem>;
+  /**
+   * Schema constraints this type cannot express: maxItems=32, uniqueItems=true
+   */
+  lowLevelKeywords: Array<GraphKeywordReplyLowLevelKeywordsItem>;
+}
+
+
+export interface LightRagPromptPackMeta {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  role: "graph-extractor" | "graph-profiler" | "graph-deduplicator" | "graph-planner";
+}
+
+
+export interface LightRagPromptPackSystem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  content: string;
+}
+
+
+export interface LightRagPromptPackUser {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  content: string;
+}
+
+
+export interface LightRagPromptPack {
+  meta: LightRagPromptPackMeta;
+  system: LightRagPromptPackSystem;
+  user: LightRagPromptPackUser;
+}
+
+
+export interface LightRagPromptSchemaReference {
+  $ref: "https://tangleai.dev/schemas/lightrag-contracts/graphExtractionInput" | "https://tangleai.dev/schemas/lightrag-contracts/graphExtractionReply" | "https://tangleai.dev/schemas/lightrag-contracts/graphProfileInput" | "https://tangleai.dev/schemas/lightrag-contracts/graphProfileReply" | "https://tangleai.dev/schemas/lightrag-contracts/graphCoreferenceInput" | "https://tangleai.dev/schemas/lightrag-contracts/graphCoreferenceReply" | "https://tangleai.dev/schemas/lightrag-contracts/graphKeywordInput" | "https://tangleai.dev/schemas/lightrag-contracts/graphKeywordReply";
+}
+
+
+export interface LightRagPromptArtifact {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  role: "graph-extractor" | "graph-profiler" | "graph-deduplicator" | "graph-planner";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  system: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  user: string;
+  inputSchema: LightRagPromptSchemaReference;
+  outputSchema: LightRagPromptSchemaReference;
+  schemaRevision: LightRagRevision;
+  sourceDigest: LightRagRevision;
+  revision: LightRagRevision;
+}
+
+
+export interface LightRagPromptCatalog {
+  policyVersion: "lightrag-static-json-v1";
+  /**
+   * Schema constraints this type cannot express: minItems=4, maxItems=4
+   */
+  packs: Array<LightRagPromptArtifact>;
+}
+
+
+export interface GraphChunkFailure {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  chunkId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<LightRagIssue>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts: number;
+  spend: LightRagSpend;
+}
+
+
+export interface GraphPreparationStats {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entityClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relationClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entities: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  merges: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  decisions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphContributionWarningsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphContributionCompletedChunkIdsItem = string;
+
+export interface GraphContribution {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sourceId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  versionId: string;
+  plan: GraphContributionPlan;
+  identities: LightRagIdentities;
+  contributionRevision: LightRagRevision;
+  spend: LightRagSpend;
+  warnings: Array<GraphContributionWarningsItem>;
+  failures: Array<GraphChunkFailure>;
+  partial: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  completedChunkIds: Array<GraphContributionCompletedChunkIdsItem>;
+  stats: GraphPreparationStats;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphPreparationFailureCompletedChunkIdsItem = string;
+
+export interface GraphPreparationFailure {
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<LightRagIssue>;
+  spend: LightRagSpend;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  completedChunkIds: Array<GraphPreparationFailureCompletedChunkIdsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  stopReason: string;
+}
+
+
 export type Lightrag = unknown;

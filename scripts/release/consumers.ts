@@ -186,6 +186,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       const gmplBrowser = await browser.tangleConsumer.gmpl;
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;
+      const graphPreparation = await browser.tangleConsumer.lightragPreparation;
+      assert.deepEqual(JSON.parse(JSON.stringify(graphPreparation)), { entities: 2, relations: 1, claims: 3, embeddingCalls: 2, calls: 2, decisions: 0, partial: false, lookups: 1, packs: 4, valid: true });
       assert.equal(graphBrowser.writes, 5);
       assert.equal(graphBrowser.replayWrites, 0);
       assert.equal(graphBrowser.newClaims, 1);

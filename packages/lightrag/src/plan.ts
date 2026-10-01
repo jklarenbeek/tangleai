@@ -27,7 +27,7 @@ function claimUnion<T extends GraphEntityClaim | GraphRelationClaim>(old: T[], i
     return values;
 }
 /** Profile text is accepted only with its complete current claim basis. */
-function profileFor(input: GraphContributionInput, kind: 'entity' | 'relation', row: GraphEntity | GraphRelation, support: string[]): string {
+function profileFor(input: GraphContributionInput, kind: 'entity' | 'relation', row: GraphEntity | GraphRelation, support: string[], prepare = false): string {
     if (!support.length) return '';
     const updates = input.profileUpdates.filter(value => value.kind === kind && value.id === row.id);
     if (updates.length > 1) lightragReject('TLRAG1001', '/profileUpdates', 'A canonical has more than one prepared profile.');
@@ -37,6 +37,10 @@ function profileFor(input: GraphContributionInput, kind: 'entity' | 'relation', 
     }
     const originals = kind === 'entity' ? [...input.candidates.entities, ...input.existing.canonicals.entities] : [...input.candidates.relations, ...input.existing.canonicals.relations];
     const exact = originals.find(value => value.id === row.id && same(ids(value.supportClaimIds), support));
+    if (!exact && prepare) {
+        const claims = kind === 'entity' ? [...input.existing.claims.entities, ...input.claims.entities] : [...input.existing.claims.relations, ...input.claims.relations];
+        return support.map(id => claims.find(claim => claim.id === id)!.description).join('\n');
+    }
     if (!exact) lightragReject('TLRAG1003', '/profileUpdates', 'Changed support requires a profile prepared from exactly the resulting claims.');
     return exact.profile;
 }
@@ -61,7 +65,7 @@ function checkGrouping(input: GraphContributionInput, entities: GraphEntity[], c
         }
     }
 }
-export async function planContribution(value: GraphContributionInput): Promise<LightRagOutcome<GraphContributionPlan>> {
+async function planContributionInternal(value: GraphContributionInput, prepare: boolean): Promise<LightRagOutcome<GraphContributionPlan>> {
     try {
         const input = lightragMust(validateLightRagShape('graphContributionInput', value));
         if (new Set(input.chunks.map(chunk => chunk.id)).size !== input.chunks.length) lightragReject('TLRAG1003', '/chunks', 'Supplied chunk addresses must be unique.');
@@ -122,7 +126,7 @@ export async function planContribution(value: GraphContributionInput): Promise<L
             const supportClaimIds = ids(row.supportClaimIds.filter(claim => !retired.has(claim))), supporting = supportClaimIds.map(claim => entityClaims.get(claim)!);
             const next = await stamp({ ...row, supportClaimIds, supportChunkIds: ids(supporting.map(claim => claim.chunkId)),
                 aliases: ids(supporting.map(claim => claim.name).filter(name => name !== row.name)),
-                profile: profileFor(input, 'entity', row, supportClaimIds), status: supportClaimIds.length ? 'active' as const : 'retracted' as const });
+                profile: profileFor(input, 'entity', row, supportClaimIds, prepare), status: supportClaimIds.length ? 'active' as const : 'retracted' as const });
             entities.set(id, next);
         }
         checkGrouping(input, [...entities.values()], entityClaims);
@@ -151,7 +155,7 @@ export async function planContribution(value: GraphContributionInput): Promise<L
             if (row.status === 'merged') continue;
             const supportClaimIds = ids(row.supportClaimIds.filter(claim => !retired.has(claim))), supporting = supportClaimIds.map(claim => relationClaims.get(claim)!);
             relations.set(id, await stamp({ ...row, supportClaimIds, supportChunkIds: ids(supporting.map(claim => claim.chunkId)),
-                profile: profileFor(input, 'relation', row, supportClaimIds), strength: supporting.length ? Math.max(...supporting.map(claim => claim.strength)) : 0,
+                profile: profileFor(input, 'relation', row, supportClaimIds, prepare), strength: supporting.length ? Math.max(...supporting.map(claim => claim.strength)) : 0,
                 status: supportClaimIds.length ? 'active' as const : 'retracted' as const }));
         }
         const incoming = new Set([...input.claims.entities, ...input.claims.relations].map(row => row.id));
@@ -179,4 +183,25 @@ export async function planContribution(value: GraphContributionInput): Promise<L
             touchedRelationIds: sorted(relations.values()).filter(row => !same(previousRelations.get(row.id) ?? null, row)).map(row => row.id) };
         return { valid: true, value: immutableLightRagJson({ ...body, revision: await lightragRevisionOf(body) }) };
     } catch (cause) { return lightragFailure(cause); }
+}
+
+export function planContribution(value: GraphContributionInput): Promise<LightRagOutcome<GraphContributionPlan>> {
+    return planContributionInternal(value, false);
+}
+export interface GraphProfileBasis {
+    kind: 'entity' | 'relation'; id: string; name: string; claimIds: string[]; claims: (GraphEntityClaim | GraphRelationClaim)[];
+}
+/** Return only the changed evidence bases; provisional description text cannot escape as an applicable plan. */
+export async function prepareGraphProfileBasis(value: GraphContributionInput): Promise<LightRagOutcome<GraphProfileBasis[]>> {
+    const planned = await planContributionInternal(value, true);
+    if (!planned.valid) return planned;
+    const plan = planned.value, basis: GraphProfileBasis[] = [];
+    for (const [kind, rows, touched, claims] of [
+        ['entity', plan.canonicals.entities, plan.touchedEntityIds, [...value.existing.claims.entities, ...value.claims.entities]],
+        ['relation', plan.canonicals.relations, plan.touchedRelationIds, [...value.existing.claims.relations, ...value.claims.relations]],
+    ] as const) for (const row of rows) if (row.status === 'active' && touched.includes(row.id)) {
+        const name = 'name' in row ? row.name : `${plan.canonicals.entities.find(entity => entity.id === row.sourceEntityId)!.name} → ${plan.canonicals.entities.find(entity => entity.id === row.targetEntityId)!.name}: ${row.themes.join(', ')}`;
+        basis.push({kind,id:row.id,name,claimIds:row.supportClaimIds,claims:row.supportClaimIds.map(id=>claims.find(claim=>claim.id===id)!)});
+    }
+    return {valid:true,value:immutableLightRagJson(basis)};
 }

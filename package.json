@@ -2,7 +2,7 @@
   "name": "tangleai",
   "version": "0.34.0",
   "private": true,
-  "description": "Tangle AI — self-improving memory and retrieval for agents, built on the @jarenjs suite",
+  "description": "Tangle AI \u2014 self-improving memory and retrieval for agents, built on the @jarenjs suite",
   "author": "Joham <jklarenbeek@gmail.com>",
   "license": "MIT",
   "type": "module",
@@ -56,7 +56,7 @@
     "benchmark:locomo:parity": "python3 benchmark/scripts/locomo-parity-fixtures.py",
     "documents:live-smoke": "bun scripts/live-openrouter-smoke.ts",
     "pages:build": "bun apps/pages/build.ts",
-    "check": "npm run jaren:check && npm run emit:check && npm run gmpl:artifacts -- --check && npm run grounding:artifacts -- --check && npm run grounding:workflow -- --check && npm run hera:artifacts -- --check && npm run trace2skill:artifacts -- --check && npm run benchmark:evolve -- --check && npm run policy:check && npm run policy:contract:check && npm run outcomes:contract:check && npm run forecast:contract:check && npm run hera:contract:check && npm run typecheck && npm run test:tree-shaking && npm run migration:docs:check && npm test",
+    "check": "npm run jaren:check && npm run emit:check && npm run gmpl:artifacts -- --check && npm run grounding:artifacts -- --check && npm run grounding:workflow -- --check && npm run hera:artifacts -- --check && npm run trace2skill:artifacts -- --check && npm run benchmark:evolve -- --check && npm run policy:check && npm run policy:contract:check && npm run outcomes:contract:check && npm run forecast:contract:check && npm run hera:contract:check && npm run lightrag:prompts -- --check && npm run typecheck && npm run test:tree-shaking && npm run migration:docs:check && npm test",
     "test:tree-shaking": "node scripts/check-program-bundle.ts",
     "jaren:check": "node scripts/check-jaren.ts",
     "benchmark:jaren": "node benchmark/jaren-strategies.ts && bun benchmark/jaren-strategies.ts && node benchmark/jaren-summary.ts",
@@ -165,7 +165,8 @@
     "benchmark:lightrag": "node benchmark/lightrag.ts",
     "emit:lightrag-report": "jaren-emit --schema benchmark/schemas/lightrag.schema.json --out benchmark/lib --bundle lightrag.types.ts",
     "emit:lightrag": "jaren-emit --schema packages/lightrag/schemas/lightrag.schema.json --out packages/lightrag/src --bundle contracts.gen.ts",
-    "test:lightrag": "node --test \"test/lightrag/*.test.ts\" \"test/store/lightrag*.test.ts\""
+    "test:lightrag": "node --test \"test/lightrag/*.test.ts\" \"test/store/lightrag*.test.ts\"",
+    "lightrag:prompts": "node scripts/lightrag-prompts.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

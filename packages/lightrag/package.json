@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/lightrag": "./schemas/lightrag.schema.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./artifacts": "./artifacts/prompts.json"
   },
   "engines": {
     "node": ">=24"

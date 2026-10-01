@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { createLightRagStore, openTangleDb } from '@tangleai/store';
 import schema from '@tangleai/lightrag/schemas/lightrag' with {type:'json'};
-import { qualifyLightRagBrowser } from './lightrag-browser.mjs';
+import { qualifyLightRagBrowser, qualifyLightRagPreparation } from './lightrag-browser.mjs';
 assert.match(import.meta.resolve('@tangleai/lightrag'),/\.js$/);
 assert.equal(schema.$id,'https://tangleai.dev/schemas/lightrag-contracts');
 const root=process.env.TANGLE_FIXTURE_DIRECTORY;assert.ok(root);
+assert.deepEqual(await qualifyLightRagPreparation(),{entities:2,relations:1,claims:3,embeddingCalls:2,calls:2,decisions:0,partial:false,lookups:1,packs:4,valid:true});
 const db=await openTangleDb({path:join(root,'lightrag.db')});
 try {
     const memory=await qualifyLightRagBrowser(),durable=await qualifyLightRagBrowser(createLightRagStore(db));
@@ -15,4 +16,4 @@ try {
 const reopened=await openTangleDb({path:join(root,'lightrag.db')});
 try {const store=createLightRagStore(reopened);assert.equal((await store.listEntities()).length,1);assert.equal((await store.activeProjectionFor('consumer-source')).head.revision,1);}
 finally {await reopened.close();}
-console.log('Installed graph contracts, atomic activation, replay and durable reopen passed.');
+console.log('Installed graph preparation, contracts, atomic activation, replay and durable reopen passed.');

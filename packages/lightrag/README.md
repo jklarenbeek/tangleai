@@ -50,7 +50,40 @@ Content boundaries return `{ valid, value }` or `{ valid: false, issues }` with
 unwind its caller's atomic transaction; the public store converts it to a value.
 No root import opens a database, reads a prompt file, or constructs a model wire.
 
-These are contract and lifecycle guarantees. Extraction, keyword planning,
-graph retrieval and generated answer quality are not measured by this package's
-contract fixture. The independently registered benchmark keeps those graph rows
+These are contract, lifecycle and scripted extraction guarantees. Live extraction,
+keyword planning, graph retrieval and generated answer quality are not measured
+by this package's fixtures. The independently registered benchmark keeps those graph rows
 unexecuted until their mechanisms are qualified.
+
+`buildContribution` prepares one source and document version through injected
+extractor, profiler, candidate resolver and embedder functions. It returns a
+validated contribution plan, content identity, partial failures, completed chunk
+ids, warnings and counted calls, tokens and milliseconds. It receives no writable
+graph store. Hosts decide whether a partial contribution is eligible to activate.
+
+`createStructuredExtractor` uses the shared structured-output mechanism with at
+most one repair and one additional gleaning pass by default. Claims retain the
+credential-free client model and extraction prompt revision. Scripted variants
+make no provider calls. Every live seam and the embedder share the caller's
+`createBudgetAccount` instance and injected clock; reservation happens before
+asynchronous work starts. Budget exhaustion returns `TLRAG1005` with incurred
+spend and completed chunks. Invalid provider usage cannot poison the account.
+
+`createCandidateResolver` queries existing evidence before considering a
+co-reference decision. Only normalized-name and type collisions need review;
+claim ids distinguish identical-name homonyms. Decisions must partition all
+supplied claims, preserve existing groups and include reasons. A vector is never
+an input to this judge. Name and relation-theme vectors are embedded in separate
+batches and checked against one declared model and width.
+
+Profiles use a deterministic bounded set of supporting descriptions and report
+omitted contexts. The plan still binds each profile to its complete current
+claim basis, including withdrawal and endpoint changes. Unaffected canonicals
+are not reprofiled. `prepareGraphProfileBasis` returns evidence bases only;
+`planContribution` retains the strict requirement for prepared profile text.
+
+Four owned prompt roles are available through `lightRagPrompt` and the
+`./artifacts` JSON export. Build-time TOML compiles static instructions; runtime
+input follows as one canonical JSON block. The artifact revision binds the
+resolved input and output schemas. No template interpolation or runtime file
+read occurs. Run `npm run lightrag:prompts -- --check` to check source drift.

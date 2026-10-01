@@ -1,19 +1,10 @@
 [meta]
-name = "deduplication"
-version = "1.0"
-description = "Entity deduplication"
-module = "MemgraphGraph"
+id = "entity-coreference"
+version = "2.0"
+role = "graph-deduplicator"
 
-[config]
-temperature = 0.0
-max_tokens = 512
+[system]
+content = """Decide which supplied claims describe the same real entity. The subjects already share a normalized name and type. Equal names alone do not prove identity. Use the descriptions and existing canonical memberships; vectors are not evidence."""
 
-[[messages]]
-role = "user"
-content = """
-Determine which of these entity names refer to the same real-world entity. Group them.
-
-Entities: {{entity_list}}
-
-Output JSON array of groups: [["Entity A", "Entity A variant"], ["Entity B"]]"""
-
+[user]
+content = """Partition every supplied claim ID into exactly one group and provide one reason per group. Keep distinct homonyms apart. Preserve the existing grouping of claims already assigned to the same canonical. Use claim IDs so identical names remain distinguishable. Return only the requested JSON object."""

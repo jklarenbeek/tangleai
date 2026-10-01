@@ -39,3 +39,12 @@ it('the public graph transaction runs in a browser bundle without a database dri
         assert.deepEqual(JSON.parse(JSON.stringify(observed)),{writes:5,replayWrites:0,newClaims:1,revision:1,entities:1,support:['consumer-chunk'],fold:'cedar',shape:true});
     });
 });
+
+it('the public graph preparation runs in a browser bundle with injected time and no provider',async()=>{
+    const path=resolve('test/release/fixtures/lightrag-browser.mjs');
+    await browserProgram(`import {qualifyLightRagPreparation} from ${JSON.stringify(path)};globalThis.graphQualification=qualifyLightRagPreparation();`,async source=>{
+        const browser=browserContext();vm.runInNewContext(source,browser);
+        let observed:unknown;try{observed=await browser.graphQualification;}catch(error){throw Error(JSON.stringify(error));}
+        assert.deepEqual(JSON.parse(JSON.stringify(observed)),{entities:2,relations:1,claims:3,embeddingCalls:2,calls:2,decisions:0,partial:false,lookups:1,packs:4,valid:true});
+    });
+});

@@ -15,3 +15,17 @@ const badIssue:LightRagIssue={code:'TLRAG9999',path:'',detail:'Unknown code.'};
 // @ts-expect-error a contribution cannot drop its claim set
 planContribution({existing:input.existing});
 void [schema,memory,durable,address,writes,badType,badIssue];
+
+import { buildContribution,createStructuredExtractor,createStructuredProfiler,createCandidateResolver,createStructuredCoreferenceJudge,lightRagPrompt,renderLightRagPrompt,type BuildContributionOptions,type StructuredGraphOptions,type GraphContribution,type GraphPreparationFailure } from '@tangleai/lightrag';
+import artifacts from '@tangleai/lightrag/artifacts' with {type:'json'};
+declare const buildOptions:BuildContributionOptions,modelOptions:StructuredGraphOptions;
+const contribution=await buildContribution(buildOptions);
+if(contribution.valid){const bundle:GraphContribution=contribution.value;const calls:number=bundle.spend.calls;void calls;}
+else{const failure:GraphPreparationFailure=contribution;const completed:string[]=failure.completedChunkIds;void completed;}
+const extractor=createStructuredExtractor(modelOptions),profiler=createStructuredProfiler(modelOptions),judge=createStructuredCoreferenceJudge(modelOptions);
+const resolver=createCandidateResolver({lookup:async()=>input.existing,judge});
+const rendered=await renderLightRagPrompt(lightRagPrompt('graph-extractor'),{chunk,entityTypes:['ORGANIZATION'],pass:0,previous:{entities:[],relations:[],contentKeywords:[]}});
+const {budget:account,...unmetered}=buildOptions;
+// @ts-expect-error graph preparation requires the caller's shared budget account
+buildContribution(unmetered);
+void [artifacts,extractor,profiler,resolver,rendered,account];
