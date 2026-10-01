@@ -169,3 +169,14 @@ external outcomes remain held until explicit stopped-host resolution. The store
 never invokes a provider or retries work. Host runners persist pending arrival
 and successful completion for count/time/manual eligibility; close a runner and
 await its active work before closing its database.
+
+## Grounding state
+
+`createGroundingStore(db)` implements `GroundingStore` from
+`@tangleai/grounding` over nine additive collections. The domain package owns
+closed validation, immutable record checks and the session transition planner;
+the adapter supplies one immediate transaction for each operation. An answer and
+its terminal session revision commit together when `putAnswer` receives the
+expected revision. Identical record replay reports zero changes, stale revisions
+refuse, and any partial write rolls back. Curated manifests require explicit
+curator provenance; request-local web evidence is never automatically promoted.

@@ -96,7 +96,8 @@ The [governed retrieval instrument](../docs/PRIHA_BENCHMARK.md) freezes an origi
 MIT Harbour District corpus, 32 questions, three chunk granularities and nine
 exact-byte web captures. Its analytic oracle reaches ten exact ceilings; eight
 bad controls expose citation, policy, clarification and reconciliation errors.
-Five named retrieval mechanisms remain explicitly missing. The unchanged flat
+Versioned profile rules and identical memory/SQLite lifecycle probes execute without
+provider calls. Five named retrieval mechanisms remain explicitly missing. The unchanged flat
 claim scorer and the immutable grounding handoff define the comparison.
 `npm run benchmark:priha -- --require instrument` generates both artifacts;
 `--check` verifies without writing, and `--json` / `--md` redirect outputs.

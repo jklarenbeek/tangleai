@@ -1,3 +1,4 @@
+import { qualifyGroundingBrowser } from './grounding-browser.mjs';
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyHeraBrowser } from './hera-browser.mjs';
@@ -15,6 +16,7 @@ import { createModelProposer, selectExperiment, EVOLVE_SELECTION_DEFAULT } from 
 globalThis.tangleConsumer = {
   evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
+  grounding: qualifyGroundingBrowser(),
   hera: qualifyHeraBrowser(),
   forecast: qualifyForecastBrowser(),
   consolidation: qualifyConsolidation(),

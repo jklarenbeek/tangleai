@@ -1,0 +1,69 @@
+/** Pure state planning. Stores supply retained records and apply one revision. */
+import type { GroundingSession, SessionStatus } from './contracts.gen.ts';
+import { groundingIssue, type StoreOutcome } from './errors.ts';
+import { immutableGroundingJson } from './identity.ts';
+import { validateGroundingShape } from './schema.ts';
+
+export type SessionCommand =
+    | { kind: 'start'; session: GroundingSession }
+    | { kind: 'triage' }
+    | { kind: 'askClarification' }
+    | { kind: 'answerClarification'; fields: Record<string, string> }
+    | { kind: 'plan'; intentId: string; planId: string }
+    | { kind: 'retrieve' }
+    | { kind: 'reconcile' }
+    | { kind: 'answer'; answerId?: string }
+    | { kind: 'refuse'; answerId?: string }
+    | { kind: 'fail'; reason: string }
+    | { kind: 'refresh'; reason: string };
+export type SessionTransition = { ok: true; next: GroundingSession } | Extract<StoreOutcome<never>, { ok: false }>;
+const terminal: SessionStatus[] = ['answered', 'refused', 'failed'];
+const transitions: Record<Exclude<SessionCommand['kind'], 'start' | 'answer'>, { from: SessionStatus[]; to: SessionStatus }> = {
+    triage: { from: ['open'], to: 'triaging' },
+    askClarification: { from: ['triaging'], to: 'awaiting_clarification' },
+    answerClarification: { from: ['awaiting_clarification'], to: 'triaging' },
+    plan: { from: ['triaging'], to: 'planning' },
+    retrieve: { from: ['planning'], to: 'retrieving' },
+    reconcile: { from: ['retrieving'], to: 'reconciling' },
+    refuse: { from: ['triaging', 'retrieving', 'reconciling', 'generating'], to: 'refused' },
+    fail: { from: ['open', 'triaging', 'awaiting_clarification', 'planning', 'retrieving', 'reconciling', 'generating'], to: 'failed' },
+    refresh: { from: terminal, to: 'triaging' },
+};
+const keys: Record<SessionCommand['kind'], string[]> = {
+    start: ['kind', 'session'], triage: ['kind'], askClarification: ['kind'], answerClarification: ['kind', 'fields'],
+    plan: ['kind', 'intentId', 'planId'], retrieve: ['kind'], reconcile: ['kind'], answer: ['kind', 'answerId'],
+    refuse: ['kind', 'answerId'], fail: ['kind', 'reason'], refresh: ['kind', 'reason'],
+};
+export function planSessionTransition(current: GroundingSession | undefined, command: SessionCommand): SessionTransition {
+    if (!command || typeof command !== 'object' || !Object.hasOwn(keys, command.kind) || Object.keys(command).some(key => !keys[command.kind].includes(key)))
+        return { ok: false, issue: groundingIssue('TGRD1001', '/command', 'Invalid session command.') };
+    if (current) {
+        const shape = validateGroundingShape('groundingSession', current);
+        if (!shape.valid) return { ok: false, issue: shape.issues[0]! };
+    }
+    if (command.kind === 'start') {
+        if (current) return { ok: false, issue: groundingIssue('TGRD1003', '/status', `Illegal status pair '${current.status}' -> 'open'.`) };
+        const shape = validateGroundingShape('groundingSession', command.session);
+        if (!shape.valid) return { ok: false, issue: shape.issues[0]! };
+        if (shape.value.status !== 'open' || shape.value.revision !== 1 || shape.value.turn !== 0 || shape.value.intentId || shape.value.planId || shape.value.answerIds.length)
+            return { ok: false, issue: groundingIssue('TGRD1003', '/status', 'A start creates an open session at revision 1 with no prior work.') };
+        return { ok: true, next: shape.value };
+    }
+    const rule = command.kind === 'answer'
+        ? command.answerId === undefined ? { from: ['reconciling'], to: 'generating' as const } : { from: ['generating'], to: 'answered' as const }
+        : transitions[command.kind];
+    if (!current || !rule.from.includes(current.status)) return { ok: false, issue: groundingIssue('TGRD1003', '/status', `Illegal status pair '${current?.status ?? 'absent'}' -> '${rule.to}'.`) };
+    if ((command.kind === 'refresh' || command.kind === 'fail') && (typeof command.reason !== 'string' || !command.reason.trim()))
+        return { ok: false, issue: groundingIssue('TGRD1001', '/reason', 'This command requires an explicit reason.') };
+    const next: GroundingSession = { ...current, status: rule.to, revision: current.revision + 1 };
+    if (command.kind === 'answerClarification') {
+        if (!command.fields || typeof command.fields !== 'object' || Array.isArray(command.fields)) return { ok: false, issue: groundingIssue('TGRD1001', '/fields', 'A clarification response must name fields.') };
+        next.userContext = { ...current.userContext, ...command.fields };
+        next.turn++;
+    }
+    if (command.kind === 'plan') { next.intentId = command.intentId; next.planId = command.planId; }
+    if ((command.kind === 'answer' || command.kind === 'refuse') && command.answerId !== undefined) next.answerIds = [...current.answerIds, command.answerId];
+    if (command.kind === 'refresh') { delete next.intentId; delete next.planId; next.turn = 0; }
+    const shape = validateGroundingShape('groundingSession', next);
+    return shape.valid ? { ok: true, next: immutableGroundingJson(shape.value) } : { ok: false, issue: shape.issues[0]! };
+}

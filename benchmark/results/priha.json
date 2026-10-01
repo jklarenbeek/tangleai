@@ -3,7 +3,7 @@
   "benchmark": "priha",
   "schemaVersion": 1,
   "registration": {
-    "fixtureId": "2cc342aa824246fab0bec6d25187d593a94141bce32c4c808d67a05fcee79a2f",
+    "fixtureId": "b8ba1a3c90123faeb8045add02bdfca51405687feb03a77a5f3157ef282b92aa",
     "control": {
       "reportId": "c797a85141543cf3d5c04563d533e12170bc1b01960c3966060239dc971f2727",
       "registrationId": "a604b2d67d36e7f2f485935fe290866a1fdde485b9b02e5c70ebf4e416f42292",
@@ -106,7 +106,7 @@
     "rankerId": "rrf/1",
     "profile": {
       "id": "priha-hk",
-      "revision": null
+      "revision": "5e2a4f1a44c9175952dbc8f921e9131e5a05aa68202ce0d3b288cb474d63d781"
     },
     "promptIdentity": null,
     "modelIdentity": null,
@@ -187,7 +187,7 @@
         ]
       }
     ],
-    "registrationId": "5941f003b56128c3ea476ff0549fba6222a7edcf2d90bea6e206197e4dda6a44"
+    "registrationId": "6fce7a1a6aa81c0019371af585c4d167c1aa250e0f2f57742bb352c4f82c960a"
   },
   "source": {
     "files": [
@@ -712,16 +712,20 @@
         "sha256": "fedb3b07a8af014f62948cb6dc075a89cf9e09457525deacc4785dc1881eb967"
       },
       {
+        "path": "benchmark/lib/priha-contracts.ts",
+        "sha256": "1f71c9c1bc789059fcf2656d9c8ef73a9a851f8594cebebe4df9eb7a72d434ba"
+      },
+      {
         "path": "benchmark/lib/priha-replay.ts",
         "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "0fbdb03c656fc9a60f0d50ae8cb0ff860d25446fd8f63ec2d61b80cce62c39cb"
+        "sha256": "36375c073c6d75e404401494dc987d035009f34fc4a7f83a542f3c2d78ed202b"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "238d1a863de2c95d91d77e1f4adb499e9c335e4e01bf291d96201fd818e752ca"
+        "sha256": "c81f23694372382e9462e544996f4a9320ecb54f24a1df2ce7ce1ea3befc9f96"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -889,15 +893,15 @@
       },
       {
         "path": "benchmark/schemas/priha.schema.json",
-        "sha256": "ff9f1373cf8dee3f2cfe1827e72125e0d28d6435fcffbf3c793991bb04f8ee75"
+        "sha256": "ba4c27f432f6513b6dc652f8fd6a01a758d0e0e1aefcb2718d8f2955f725ca25"
       },
       {
         "path": "package-lock.json",
-        "sha256": "f87a16f2550379354517714a91283d5cd6c079e6c8629b8a80e3cc5cf21162da"
+        "sha256": "6ff581a2a85977b9831e4e146379b5ddcbd3336a5265cae00eea50b4e4a27905"
       },
       {
         "path": "package.json",
-        "sha256": "b2228b5a630b5c3df665679a7e27dd9cb0c0bfe8bcc3be85f720488fcdc1f45e"
+        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
       },
       {
         "path": "packages/agents/package.json",
@@ -1602,6 +1606,54 @@
       {
         "path": "packages/gmpl/src/tasks.ts",
         "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+      },
+      {
+        "path": "packages/grounding/package.json",
+        "sha256": "8912bf2c14dbf22f40258c6d30f1959939d2fab5e29c6cff94e8b53d5e7b6428"
+      },
+      {
+        "path": "packages/grounding/profiles/priha-hk.json",
+        "sha256": "23123b42402b763d9215b5bf1eb3acb63bde29434d56cfb6bfd7061b2e309900"
+      },
+      {
+        "path": "packages/grounding/schemas/grounding.schema.json",
+        "sha256": "b53118b2067c4850332482f6a88d030c7806ed78158357e04f78180764642129"
+      },
+      {
+        "path": "packages/grounding/src/contracts.gen.ts",
+        "sha256": "126c7cf0561df5a3e322aade01aa679e0bc1f944722a17b187d27953b9ec44c4"
+      },
+      {
+        "path": "packages/grounding/src/errors.ts",
+        "sha256": "386dae8bbc1d6dac5d6ab13f7854b2604b01d140784a3e5baa99086fedb03c09"
+      },
+      {
+        "path": "packages/grounding/src/identity.ts",
+        "sha256": "2feb9b0523b92a3b912bead0032ef4c6b46aa4c8fb7ad1880022c1661a31db96"
+      },
+      {
+        "path": "packages/grounding/src/index.ts",
+        "sha256": "d78d743cd6322ef971d63b5a3d797ecf2677c1a29bc76f1e07026b5650fe6d14"
+      },
+      {
+        "path": "packages/grounding/src/memory-store.ts",
+        "sha256": "ada667d8a785eb745968c3c74b091eac20c2fcd69efe38df8d90c460ed83af2d"
+      },
+      {
+        "path": "packages/grounding/src/profile.ts",
+        "sha256": "58419d946291f50843c1cbdafa5c80fac546d87e4d2963ecc5aaa86f865d7db1"
+      },
+      {
+        "path": "packages/grounding/src/schema.ts",
+        "sha256": "3da542ffab96daa5976934711fead5c310542627ecfa7f3947249b08945b451d"
+      },
+      {
+        "path": "packages/grounding/src/session.ts",
+        "sha256": "8de3dc175b27487d52cd1e99e4baa306ef43881eda11ea371b79a890b629af50"
+      },
+      {
+        "path": "packages/grounding/src/store.ts",
+        "sha256": "1f986aa17bf8a38db8f92d899d4429261ffa6ce7db04bb74408ab3f5c6365282"
       },
       {
         "path": "packages/hera/artifacts/catalog.json",
@@ -2349,7 +2401,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b82b5ff5353b78fb9a3dc0741f7bc6a100333fb0612003b7f188f67dd039439c"
+        "sha256": "62c67d84cee71eb4aa67ede130ced848c5eef6cf23214d0bead862dce5b747ae"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -2388,6 +2440,14 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-model.ts",
+        "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
+      },
+      {
+        "path": "packages/store/src/grounding-store.ts",
+        "sha256": "e177d7897af6b34baa3943d8b750bef1daa6ad5a4e59764c5dc8e7e41049f07c"
+      },
+      {
         "path": "packages/store/src/hera-model.ts",
         "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
       },
@@ -2401,7 +2461,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "65054f7537599c3e57911c536ee1fae087cf4856e85e8a9f4aae81d151e8d783"
+        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -2421,7 +2481,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "09efde9d340523519392345e532d85aeb9b0258e67e2b61553a3cfc481705449"
+        "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -2584,7 +2644,7 @@
         "sha256": "87b5eef1b55c96c4276bdd054409e625d04e51fda411aa7dedef90fb5efa5a7a"
       }
     ],
-    "sha256": "517148d05819e21d6afb7ab74cee33f4e793e178420fca7cec625149b2a12895"
+    "sha256": "bd93e107b1825fe32eb2cf13370006c77da42bdda85cdaf0b9578673f7a2f274"
   },
   "fixtureSource": {
     "files": [
@@ -2614,7 +2674,7 @@
       },
       {
         "path": "benchmark/fixtures/priha/manifest.json",
-        "sha256": "f115bcf5ea29d1abb4b594ba8f4bc8d1dcf73ce13c62c696f35ccd3c8a76bde2"
+        "sha256": "d6d14293b1fc82f35e30ef8aed9827b6f999d66217eb3641c5fe206af041acf3"
       },
       {
         "path": "benchmark/fixtures/priha/sources/access-v1.html",
@@ -2705,7 +2765,7 @@
         "sha256": "a20b188d6c98ccc0fd347498394ed58aaadd23b47d7f85543fa651f3a321138c"
       }
     ],
-    "sha256": "1fcbc9ebfe51ea382353f2f473c1977782a318c415083a43a7e4852c0d8edebf"
+    "sha256": "d75cb168a9fa1f431d09e10aba2420f89a76b9271888f389878ec3f053a5f99b"
   },
   "replay": {
     "requests": 9,
@@ -4581,10 +4641,8 @@
     },
     {
       "id": "contracts",
-      "passed": false,
-      "missing": [
-        "grounding-contracts"
-      ]
+      "passed": true,
+      "missing": []
     },
     {
       "id": "local",
@@ -4649,6 +4707,175 @@
       ]
     }
   ],
+  "contracts": {
+    "status": "executed",
+    "profileRevision": "5e2a4f1a44c9175952dbc8f921e9131e5a05aa68202ce0d3b288cb474d63d781",
+    "rules": [
+      {
+        "id": "rule:emergency",
+        "actual": "emergency-route",
+        "expected": "emergency-route",
+        "passed": true
+      },
+      {
+        "id": "rule:dosage",
+        "actual": "out-of-scope-dosage",
+        "expected": "out-of-scope-dosage",
+        "passed": true
+      },
+      {
+        "id": "rule:community",
+        "actual": "community-first",
+        "expected": "community-first",
+        "passed": true
+      },
+      {
+        "id": "expansion-query:community",
+        "actual": "true",
+        "expected": "true",
+        "passed": true
+      }
+    ],
+    "memory": [
+      {
+        "id": "atomic-answer",
+        "actual": "ok",
+        "expected": "ok",
+        "passed": true
+      },
+      {
+        "id": "terminal-status",
+        "actual": "answered",
+        "expected": "answered",
+        "passed": true
+      },
+      {
+        "id": "immutable-replay",
+        "actual": "0",
+        "expected": "0",
+        "passed": true
+      },
+      {
+        "id": "changed-record",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "second-active",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "foreign-profile",
+        "actual": "TGRD1004",
+        "expected": "TGRD1004",
+        "passed": true
+      },
+      {
+        "id": "unproven-time",
+        "actual": "TGRD1005",
+        "expected": "TGRD1005",
+        "passed": true
+      },
+      {
+        "id": "dynamic-to-curated",
+        "actual": "TGRD1010",
+        "expected": "TGRD1010",
+        "passed": true
+      },
+      {
+        "id": "stale-revision",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "retained-unused",
+        "actual": "evidence-7b4fa6eddc29eb95afcc0aeb6e7022ee",
+        "expected": "evidence-7b4fa6eddc29eb95afcc0aeb6e7022ee",
+        "passed": true
+      },
+      {
+        "id": "one-terminal-revision",
+        "actual": "7",
+        "expected": "7",
+        "passed": true
+      }
+    ],
+    "sqlite": [
+      {
+        "id": "atomic-answer",
+        "actual": "ok",
+        "expected": "ok",
+        "passed": true
+      },
+      {
+        "id": "terminal-status",
+        "actual": "answered",
+        "expected": "answered",
+        "passed": true
+      },
+      {
+        "id": "immutable-replay",
+        "actual": "0",
+        "expected": "0",
+        "passed": true
+      },
+      {
+        "id": "changed-record",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "second-active",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "foreign-profile",
+        "actual": "TGRD1004",
+        "expected": "TGRD1004",
+        "passed": true
+      },
+      {
+        "id": "unproven-time",
+        "actual": "TGRD1005",
+        "expected": "TGRD1005",
+        "passed": true
+      },
+      {
+        "id": "dynamic-to-curated",
+        "actual": "TGRD1010",
+        "expected": "TGRD1010",
+        "passed": true
+      },
+      {
+        "id": "stale-revision",
+        "actual": "TGRD1002",
+        "expected": "TGRD1002",
+        "passed": true
+      },
+      {
+        "id": "retained-unused",
+        "actual": "evidence-7b4fa6eddc29eb95afcc0aeb6e7022ee",
+        "expected": "evidence-7b4fa6eddc29eb95afcc0aeb6e7022ee",
+        "passed": true
+      },
+      {
+        "id": "one-terminal-revision",
+        "actual": "7",
+        "expected": "7",
+        "passed": true
+      }
+    ],
+    "passed": 26,
+    "failed": 0,
+    "providerRequests": 0
+  },
   "pairing": {
     "eligible": false,
     "reasons": [
@@ -4914,5 +5141,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "4730980b74ec0e11f332e07282ada7ad7f693c4840d9607492fe525a386c8d07"
+  "reportId": "4b4a6f7bd4e7d6047604c6ba4f55f0c74f9ee110916cba96b5de25541e3d3af8"
 }

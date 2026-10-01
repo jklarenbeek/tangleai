@@ -230,4 +230,4 @@ Transfer to no registered successor: not-run; digest `314cf26cc10be0a2166304685e
 
 The credential-free [live registration](../benchmark/results/forecast-live.json) is `not-run`. A dry plan sends zero requests; execution needs new approval of its exact planId. Model requests on fictional replay evidence do not qualify a real forecasting domain. Missing future-candidate pairs remain ineligible, never backfilled into earlier decisions.
 
-Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `93a20ec9383dfad8e1bf08fa0f0a0994cd890b08adb866a9d3d9652dee42d007`. Report: `a111e4b844134d0da58d2a51e4e93b6c11adda259c1e41ab928516d3dc7ac77e`.
+Registration: `f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3`. Source: `45cfdf35a21a750aed954e63085c705237047243b5beea4b1ae56bd5d57b369a`. Report: `9b24c058bf9436f58416b38791561a827f07d48ceb546a51eb45316274bf90a8`.

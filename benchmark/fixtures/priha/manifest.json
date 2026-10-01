@@ -9108,5 +9108,22 @@
   "safelist": [
     "official.harbour.example",
     "search.harbour.example"
+  ],
+  "profileRevision": "5e2a4f1a44c9175952dbc8f921e9131e5a05aa68202ce0d3b288cb474d63d781",
+  "profileRuleInputs": [
+    {
+      "conversation": "emergency",
+      "intents": []
+    },
+    {
+      "conversation": "dosage",
+      "intents": []
+    },
+    {
+      "conversation": "community",
+      "intents": [
+        "care-navigation"
+      ]
+    }
   ]
 }

@@ -23,6 +23,7 @@
       "@tangleai/gmpl",
       "@tangleai/hera",
       "@tangleai/forecast",
+      "@tangleai/grounding",
       "@tangleai/store"
     ]
   ],

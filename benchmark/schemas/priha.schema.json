@@ -945,7 +945,9 @@
         "scripts",
         "budgets",
         "hypothesis",
-        "safelist"
+        "safelist",
+        "profileRevision",
+        "profileRuleInputs"
       ],
       "properties": {
         "document": {
@@ -1186,6 +1188,40 @@
             "minLength": 1
           },
           "minItems": 0
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "profileRuleInputs": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "conversation",
+              "intents"
+            ],
+            "properties": {
+              "conversation": {
+                "enum": [
+                  "emergency",
+                  "dosage",
+                  "community"
+                ]
+              },
+              "intents": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            }
+          }
         }
       },
       "$query": {
@@ -2503,7 +2539,8 @@
         "evidence",
         "summary",
         "reportId",
-        "replay"
+        "replay",
+        "contracts"
       ],
       "properties": {
         "document": {
@@ -2682,6 +2719,9 @@
               }
             ]
           }
+        },
+        "contracts": {
+          "$ref": "#/$defs/prihaContracts"
         }
       },
       "$query": {
@@ -2926,6 +2966,28 @@
                 ]
               }
             ]
+          },
+          {
+            "$eq": [
+              "$.contracts.profileRevision",
+              "$.registration.profile.revision"
+            ]
+          },
+          {
+            "$every": {
+              "c": "$.capabilities[?(@.id=='contracts')]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$.contracts.failed",
+                    0
+                  ]
+                }
+              ]
+            }
           }
         ]
       }
@@ -3166,6 +3228,145 @@
             }
           ]
         }
+      }
+    },
+    "prihaContractProbe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "passed",
+        "actual",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "actual": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$eq": [
+              "$.actual",
+              "$.expected"
+            ]
+          }
+        ]
+      }
+    },
+    "prihaContracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "profileRevision",
+        "rules",
+        "memory",
+        "sqlite",
+        "passed",
+        "failed",
+        "providerRequests"
+      ],
+      "properties": {
+        "status": {
+          "const": "executed"
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/prihaContractProbe"
+          }
+        },
+        "memory": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/prihaContractProbe"
+          }
+        },
+        "sqlite": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/prihaContractProbe"
+          }
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerRequests": {
+          "const": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.passed",
+              {
+                "$add": [
+                  {
+                    "$count": "$.rules[?(@.passed==true)]"
+                  },
+                  {
+                    "$add": [
+                      {
+                        "$count": "$.memory[?(@.passed==true)]"
+                      },
+                      {
+                        "$count": "$.sqlite[?(@.passed==true)]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.failed",
+              {
+                "$add": [
+                  {
+                    "$count": "$.rules[?(@.passed==false)]"
+                  },
+                  {
+                    "$add": [
+                      {
+                        "$count": "$.memory[?(@.passed==false)]"
+                      },
+                      {
+                        "$count": "$.sqlite[?(@.passed==false)]"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     }
   }

@@ -120,10 +120,23 @@ describe('the registered PriHA instrument', () => {
             assert.equal(row.counts.notRun, 32);
         }
         requirePrihaCapability(report, 'instrument');
-        for (const c of report.capabilities.slice(1))
+        requirePrihaCapability(report, 'contracts');
+        assert.equal(report.contracts.failed, 0);
+        assert.equal(report.contracts.passed, 26);
+        for (const c of report.capabilities.slice(2))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
+    });
+    it('measures both state adapters and rejects forged contract summaries', () => {
+        assert.equal(report.contracts.status, 'executed');
+        assert.deepEqual(report.contracts.memory, report.contracts.sqlite);
+        assert.equal(report.contracts.profileRevision, fixture.profileRevision);
+        for (const mutation of [
+            (value: typeof report) => { value.contracts.passed++; },
+            (value: typeof report) => { value.contracts.memory[0].passed = false; },
+            (value: typeof report) => { value.capabilities.find(c => c.id === 'contracts')!.passed = false; },
+        ]) { const forged = structuredClone(report); mutation(forged); assert.equal(validate(forged).valid, false); }
     });
     it('the report binds the immutable handoff', async () => {
         const raw = JSON.parse(await readFile('benchmark/results/grounding-handoff.json', 'utf8'));

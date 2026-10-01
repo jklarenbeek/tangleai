@@ -1,0 +1,123 @@
+{
+  "id": "harbour-admin",
+  "version": "1",
+  "revision": "ed4eea5688ba39bf2f331d5ea1152c46a573402f42850a23c68b34421f6008de",
+  "jurisdiction": "Harbour District",
+  "locales": [
+    "en"
+  ],
+  "purposes": [
+    "administrative-information"
+  ],
+  "emergency": {
+    "patterns": [
+      "urgent fixture signal"
+    ],
+    "response": {
+      "sourceKeys": [
+        "directory"
+      ]
+    }
+  },
+  "outOfScope": [
+    {
+      "id": "restricted-action",
+      "category": "prescribing",
+      "patterns": [
+        "restricted action"
+      ]
+    }
+  ],
+  "authority": {
+    "tiers": [
+      "official",
+      "professional",
+      "community",
+      "unverified"
+    ],
+    "hosts": [
+      {
+        "host": "official.harbour.example",
+        "tier": "official",
+        "institution": "Harbour District Service Office"
+      },
+      {
+        "host": "search.harbour.example",
+        "pathPrefix": "/search",
+        "tier": "unverified",
+        "institution": "Fictional fixture discovery index"
+      }
+    ]
+  },
+  "freshness": {
+    "requireProvenance": true,
+    "maxAgeDays": 365,
+    "preferEffectiveOverFetch": true
+  },
+  "expansions": [
+    {
+      "id": "local-first",
+      "when": {
+        "intents": [
+          "information"
+        ]
+      },
+      "addQueries": [
+        "administrative directory"
+      ]
+    }
+  ],
+  "models": {
+    "triage": "grounding-triage",
+    "plan": "grounding-plan",
+    "reconcile": "grounding-reconcile",
+    "generate": "grounding-generate"
+  },
+  "clarification": {
+    "requiredFields": [
+      {
+        "id": "service",
+        "intents": [
+          "service-navigation"
+        ],
+        "question": "Which service do you mean?",
+        "kind": "context"
+      },
+      {
+        "id": "purpose",
+        "intents": [
+          "service-navigation"
+        ],
+        "question": "What information do you need about that service?",
+        "kind": "priority"
+      }
+    ],
+    "maxTurns": 2,
+    "maxQueries": 6
+  },
+  "rankers": {
+    "local": "reciprocal-rank",
+    "web": "authority-recency"
+  },
+  "budgets": {
+    "calls": 12,
+    "tokens": 12000,
+    "ms": 60000,
+    "searches": 3,
+    "fetches": 6,
+    "bytes": 100000,
+    "clarificationTurns": 2,
+    "contextTokens": 1500
+  },
+  "userContext": {
+    "collectable": [
+      "service",
+      "purpose",
+      "district"
+    ],
+    "persistable": [
+      "service",
+      "purpose"
+    ]
+  }
+}

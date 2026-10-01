@@ -54,3 +54,6 @@ export { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
 export { createHeraStore, type HeraStoreOptions } from './hera-store.ts';
 export { createForecastStore, type ForecastStoreOptions } from './forecast-store.ts';
 export { FORECAST_COLLECTIONS } from './forecast-model.ts';
+
+export { createGroundingStore } from './grounding-store.ts';
+export type { GroundingStoreOptions } from './grounding-store.ts';

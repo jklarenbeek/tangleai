@@ -220,6 +220,8 @@ it('publication manifests preserve subpaths and schemas while removing source li
   assert.equal(result.scripts, undefined);
   assert.deepEqual(result.exports?.['./contracts'], { types: './src/contracts.gen.d.ts', import: './src/contracts.gen.js', default: './src/contracts.gen.js' });
   assert.equal(result.exports?.['./schemas/run-identity'], './schemas/run-identity.schema.json');
+  const grounding = distributionManifest(readJson(resolve(ROOT, 'packages/grounding/package.json')));
+  assert.equal(grounding.exports?.['./profiles/priha-hk'], './profiles/priha-hk.json');
   assert.throws(() => distributionManifest({ name: '@tangleai/test', version: '0.20.0', exports: { '.': '../secret.ts' } }), /match/);
 });
 

@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "289b202c872626f3b467ef04bd3b31fda6eb3aae",
+    "head": "8f8729405d5bfc856e73d8f08a17b3c80371e2da",
     "clean": false,
     "files": [
       {
@@ -490,16 +490,20 @@
         "sha256": "fedb3b07a8af014f62948cb6dc075a89cf9e09457525deacc4785dc1881eb967"
       },
       {
+        "path": "benchmark/lib/priha-contracts.ts",
+        "sha256": "1f71c9c1bc789059fcf2656d9c8ef73a9a851f8594cebebe4df9eb7a72d434ba"
+      },
+      {
         "path": "benchmark/lib/priha-replay.ts",
         "sha256": "559d0c24ab754ab09bc89927b8d5a03f9737e9c84b5654c043a5b5855f6be782"
       },
       {
         "path": "benchmark/lib/priha.ts",
-        "sha256": "0fbdb03c656fc9a60f0d50ae8cb0ff860d25446fd8f63ec2d61b80cce62c39cb"
+        "sha256": "36375c073c6d75e404401494dc987d035009f34fc4a7f83a542f3c2d78ed202b"
       },
       {
         "path": "benchmark/lib/priha.types.ts",
-        "sha256": "238d1a863de2c95d91d77e1f4adb499e9c335e4e01bf291d96201fd818e752ca"
+        "sha256": "c81f23694372382e9462e544996f4a9320ecb54f24a1df2ce7ce1ea3befc9f96"
       },
       {
         "path": "benchmark/lib/question-stream.ts",
@@ -671,11 +675,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "f87a16f2550379354517714a91283d5cd6c079e6c8629b8a80e3cc5cf21162da"
+        "sha256": "6ff581a2a85977b9831e4e146379b5ddcbd3336a5265cae00eea50b4e4a27905"
       },
       {
         "path": "package.json",
-        "sha256": "b2228b5a630b5c3df665679a7e27dd9cb0c0bfe8bcc3be85f720488fcdc1f45e"
+        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
       },
       {
         "path": "packages/agents/package.json",
@@ -1187,7 +1191,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b82b5ff5353b78fb9a3dc0741f7bc6a100333fb0612003b7f188f67dd039439c"
+        "sha256": "62c67d84cee71eb4aa67ede130ced848c5eef6cf23214d0bead862dce5b747ae"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1226,6 +1230,14 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-model.ts",
+        "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
+      },
+      {
+        "path": "packages/store/src/grounding-store.ts",
+        "sha256": "e177d7897af6b34baa3943d8b750bef1daa6ad5a4e59764c5dc8e7e41049f07c"
+      },
+      {
         "path": "packages/store/src/hera-model.ts",
         "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
       },
@@ -1239,7 +1251,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "65054f7537599c3e57911c536ee1fae087cf4856e85e8a9f4aae81d151e8d783"
+        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1259,7 +1271,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "09efde9d340523519392345e532d85aeb9b0258e67e2b61553a3cfc481705449"
+        "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1298,7 +1310,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "93a20ec9383dfad8e1bf08fa0f0a0994cd890b08adb866a9d3d9652dee42d007"
+    "sha256": "45cfdf35a21a750aed954e63085c705237047243b5beea4b1ae56bd5d57b369a"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44763,5 +44775,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "a111e4b844134d0da58d2a51e4e93b6c11adda259c1e41ab928516d3dc7ac77e"
+  "reportId": "9b24c058bf9436f58416b38791561a827f07d48ceb546a51eb45316274bf90a8"
 }

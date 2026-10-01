@@ -1,0 +1,55 @@
+{
+  "name": "@tangleai/grounding",
+  "version": "0.33.0",
+  "description": "Governed retrieval profiles, evidence records and atomic grounding session contracts",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts.gen.ts",
+    "./schemas/grounding": "./schemas/grounding.schema.json",
+    "./profiles/priha-hk": "./profiles/priha-hk.json",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@jarenjs/core": "0.91.4",
+    "@jarenjs/json": "0.91.4",
+    "@jarenjs/validate": "0.91.4",
+    "@tangleai/context": "^0.33.0",
+    "@tangleai/core": "^0.33.0",
+    "@tangleai/models": "^0.33.0",
+    "@tangleai/documents": "^0.33.0",
+    "@tangleai/config": "^0.33.0",
+    "@jarenjs/formats": "0.91.4"
+  },
+  "private": false,
+  "types": "./src/index.ts",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "schemas/**/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "docs/**/*.md",
+    "profiles/**/*.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklarenbeek/tangleai.git",
+    "directory": "packages/grounding"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/release/refuse-source-publish.ts",
+    "prepublishOnly": "node ../../scripts/release/refuse-source-publish.ts"
+  }
+}

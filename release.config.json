@@ -26,6 +26,7 @@
     "packages/gmpl",
     "packages/hera",
     "packages/forecast",
+    "packages/grounding",
     "packages/store"
   ],
   "privateWorkspaces": [

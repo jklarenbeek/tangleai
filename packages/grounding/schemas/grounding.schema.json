@@ -1,0 +1,1804 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/governed-grounding",
+  "title": "Governed grounding records",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/groundingProfile"
+    },
+    {
+      "$ref": "#/$defs/corpusManifest"
+    },
+    {
+      "$ref": "#/$defs/groundingSession"
+    },
+    {
+      "$ref": "#/$defs/clarifiedIntent"
+    },
+    {
+      "$ref": "#/$defs/queryPlan"
+    },
+    {
+      "$ref": "#/$defs/evidenceCandidate"
+    },
+    {
+      "$ref": "#/$defs/webRetrievalRun"
+    },
+    {
+      "$ref": "#/$defs/evidenceConflict"
+    },
+    {
+      "$ref": "#/$defs/groundedClaim"
+    },
+    {
+      "$ref": "#/$defs/groundedAnswer"
+    },
+    {
+      "$ref": "#/$defs/groundingIssue"
+    },
+    {
+      "$ref": "#/$defs/groundingSpend"
+    },
+    {
+      "$ref": "#/$defs/groundingTrace"
+    }
+  ],
+  "$defs": {
+    "authorityTier": {
+      "enum": [
+        "official",
+        "professional",
+        "community",
+        "unverified"
+      ]
+    },
+    "timeProvenance": {
+      "enum": [
+        "content",
+        "metadata",
+        "curator"
+      ]
+    },
+    "groundingIssue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "TGRD1001",
+            "TGRD1002",
+            "TGRD1003",
+            "TGRD1004",
+            "TGRD1005",
+            "TGRD1006",
+            "TGRD1007",
+            "TGRD1008",
+            "TGRD1009",
+            "TGRD1010"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cause": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "docPath",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "docPath": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "groundingSpend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "searches",
+        "fetches",
+        "bytes",
+        "clarificationTurns",
+        "contextTokens"
+      ],
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "searches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fetches": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clarificationTurns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextTokens": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "groundingProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "revision",
+        "jurisdiction",
+        "locales",
+        "purposes",
+        "emergency",
+        "outOfScope",
+        "authority",
+        "freshness",
+        "expansions",
+        "models",
+        "clarification",
+        "rankers",
+        "budgets",
+        "userContext"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locales": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "purposes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "emergency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "patterns",
+            "response"
+          ],
+          "properties": {
+            "patterns": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "response": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sourceKeys"
+              ],
+              "properties": {
+                "sourceKeys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        },
+        "outOfScope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "category",
+              "patterns"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "category": {
+                "enum": [
+                  "diagnosis",
+                  "prescribing",
+                  "dosage",
+                  "certainty"
+                ]
+              },
+              "patterns": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tiers",
+            "hosts"
+          ],
+          "properties": {
+            "tiers": {
+              "const": [
+                "official",
+                "professional",
+                "community",
+                "unverified"
+              ]
+            },
+            "hosts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "host",
+                  "tier",
+                  "institution"
+                ],
+                "properties": {
+                  "host": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"
+                  },
+                  "pathPrefix": {
+                    "type": "string",
+                    "pattern": "^/[^?#]*$"
+                  },
+                  "tier": {
+                    "$ref": "#/$defs/authorityTier"
+                  },
+                  "institution": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "freshness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requireProvenance",
+            "preferEffectiveOverFetch"
+          ],
+          "properties": {
+            "requireProvenance": {
+              "const": true
+            },
+            "maxAgeDays": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "preferEffectiveOverFetch": {
+              "const": true
+            }
+          }
+        },
+        "expansions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "when",
+              "addQueries"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "when": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "intents"
+                ],
+                "properties": {
+                  "intents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  }
+                }
+              },
+              "addQueries": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "models": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "triage",
+            "plan",
+            "reconcile",
+            "generate"
+          ],
+          "properties": {
+            "triage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "plan": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reconcile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "generate": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "clarification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requiredFields",
+            "maxTurns",
+            "maxQueries"
+          ],
+          "properties": {
+            "requiredFields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "intents",
+                  "question",
+                  "kind"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "intents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "question": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "enum": [
+                      "constraint",
+                      "priority",
+                      "context"
+                    ]
+                  }
+                }
+              }
+            },
+            "maxTurns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxQueries": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 32
+            }
+          }
+        },
+        "rankers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "local",
+            "web"
+          ],
+          "properties": {
+            "local": {
+              "type": "string",
+              "minLength": 1
+            },
+            "web": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "budgets": {
+          "$ref": "#/$defs/groundingSpend"
+        },
+        "userContext": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "collectable",
+            "persistable"
+          ],
+          "properties": {
+            "collectable": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "persistable": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    },
+    "evidenceTimes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provenance"
+      ],
+      "properties": {
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "effectiveAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "provenance": {
+          "$ref": "#/$defs/timeProvenance"
+        }
+      }
+    },
+    "corpusManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profileId",
+        "profileRevision",
+        "sourceId",
+        "versionId",
+        "status",
+        "canonicalUrl",
+        "institution",
+        "authorityTier",
+        "jurisdiction",
+        "language",
+        "contentHash",
+        "times",
+        "curator"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "active",
+            "superseded"
+          ]
+        },
+        "canonicalUrl": {
+          "type": "string",
+          "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+        },
+        "institution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorityTier": {
+          "$ref": "#/$defs/authorityTier"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "times": {
+          "$ref": "#/$defs/evidenceTimes"
+        },
+        "curator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "by",
+            "at"
+          ],
+          "properties": {
+            "decision": {
+              "enum": [
+                "admit",
+                "supersede",
+                "promote"
+              ]
+            },
+            "by": {
+              "type": "string",
+              "minLength": 1
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "sessionStatus": {
+      "enum": [
+        "open",
+        "triaging",
+        "awaiting_clarification",
+        "planning",
+        "retrieving",
+        "reconciling",
+        "generating",
+        "answered",
+        "refused",
+        "failed"
+      ]
+    },
+    "groundingSession": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "conversationId",
+        "profileId",
+        "profileRevision",
+        "status",
+        "turn",
+        "userContext",
+        "answerIds",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conversationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "status": {
+          "$ref": "#/$defs/sessionStatus"
+        },
+        "turn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "userContext": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-zA-Z0-9_-]{0,63}$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "intentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answerIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "clarifiedIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sessionId",
+        "originalQuery",
+        "triage",
+        "reason",
+        "answered",
+        "outstanding",
+        "constraints",
+        "priorities",
+        "summary",
+        "turnsUsed",
+        "ruleIds",
+        "promptRevision",
+        "modelIdentity"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "originalQuery": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
+        "triage": {
+          "enum": [
+            "simple",
+            "complex",
+            "emergency",
+            "out_of_scope"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answered": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-zA-Z0-9_-]{0,63}$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "outstanding": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "priorities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "turnsUsed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "modelIdentity": {
+          "oneOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/run-identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "queryPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "intentId",
+        "queries",
+        "promptRevision",
+        "modelIdentity"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "text",
+              "why",
+              "lanes",
+              "ruleIds"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "why": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lanes": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "local",
+                  "web"
+                ],
+                "properties": {
+                  "local": {
+                    "type": "boolean"
+                  },
+                  "web": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "ruleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 32
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "modelIdentity": {
+          "oneOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/run-identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "evidenceCitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "title",
+        "headingPath"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "headingPath": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "localEvidenceAddress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chunkId",
+        "versionId",
+        "sourceId"
+      ],
+      "properties": {
+        "chunkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parentChunkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "versionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "webEvidenceAddress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "finalUrl",
+        "sha256",
+        "fetchedAt",
+        "redirects"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+        },
+        "finalUrl": {
+          "type": "string",
+          "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fetchedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "redirects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+          }
+        }
+      }
+    },
+    "evidenceCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sessionId",
+        "profileRevision",
+        "queryId",
+        "lane",
+        "address",
+        "excerpt",
+        "scores",
+        "rankerId",
+        "authority",
+        "times",
+        "admitted",
+        "citation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "queryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lane": {
+          "enum": [
+            "local",
+            "web"
+          ]
+        },
+        "address": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/localEvidenceAddress"
+            },
+            {
+              "$ref": "#/$defs/webEvidenceAddress"
+            }
+          ]
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100000
+        },
+        "scores": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {
+            "semantic": {
+              "type": "number"
+            },
+            "lexical": {
+              "type": "number"
+            },
+            "fusion": {
+              "type": "number"
+            },
+            "rank": {
+              "type": "number"
+            }
+          }
+        },
+        "rankerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tier",
+            "ruleIds"
+          ],
+          "properties": {
+            "tier": {
+              "$ref": "#/$defs/authorityTier"
+            },
+            "institution": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ruleIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          }
+        },
+        "times": {
+          "$ref": "#/$defs/evidenceTimes"
+        },
+        "admitted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "by",
+            "at"
+          ],
+          "properties": {
+            "by": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            }
+          }
+        },
+        "citation": {
+          "$ref": "#/$defs/evidenceCitation"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "lane": {
+                "const": "local"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "address": {
+                "$ref": "#/$defs/localEvidenceAddress"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "address": {
+                "$ref": "#/$defs/webEvidenceAddress"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "webRetrievalRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sessionId",
+        "queryId",
+        "attempts",
+        "sufficiency",
+        "spend",
+        "stopReason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "queryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "query",
+              "results",
+              "snippets",
+              "admitted",
+              "denied",
+              "fetched",
+              "failed"
+            ],
+            "properties": {
+              "query": {
+                "type": "string",
+                "minLength": 1
+              },
+              "results": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "snippets": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "admitted": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+                },
+                "uniqueItems": true
+              },
+              "denied": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "url",
+                    "reason"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "fetched": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "url",
+                    "finalUrl",
+                    "sha256",
+                    "bytes",
+                    "status"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+                    },
+                    "finalUrl": {
+                      "type": "string",
+                      "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "bytes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "status": {
+                      "type": "integer",
+                      "minimum": 100,
+                      "maximum": 599
+                    },
+                    "redirects": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+                      }
+                    }
+                  }
+                }
+              },
+              "failed": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "url",
+                    "code"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sufficiency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "reason"
+          ],
+          "properties": {
+            "decision": {
+              "enum": [
+                "sufficient",
+                "insufficient",
+                "refused"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "spend": {
+          "$ref": "#/$defs/groundingSpend"
+        },
+        "stopReason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidenceConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sessionId",
+        "claimIds",
+        "evidenceIds",
+        "issue",
+        "comparison",
+        "severity",
+        "decision",
+        "ruleIds",
+        "modelIdentity"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "issue": {
+          "enum": [
+            "stale-vs-newer",
+            "official-vs-unofficial",
+            "official-vs-official",
+            "expired",
+            "jurisdiction"
+          ]
+        },
+        "comparison": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authority",
+            "time"
+          ],
+          "properties": {
+            "authority": {
+              "type": "string",
+              "minLength": 1
+            },
+            "time": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "material",
+            "minor"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "prefer-local",
+            "prefer-web",
+            "caveat",
+            "refuse",
+            "unresolved"
+          ]
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "modelIdentity": {
+          "oneOf": [
+            {
+              "$ref": "https://tangleai.dev/schemas/run-identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "groundedClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "critical",
+        "status",
+        "evidenceIds",
+        "conflictIds",
+        "caveats"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "qualified",
+            "unresolved",
+            "removed"
+          ]
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "conflictIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "answerCitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "url",
+        "title",
+        "headingPath"
+      ],
+      "properties": {
+        "evidenceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://[^@?#\\s]+(?:\\?[^#\\s]*)?$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "headingPath": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "groundedAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sessionId",
+        "planId",
+        "disposition",
+        "claims",
+        "citations",
+        "caveats",
+        "validation",
+        "identities",
+        "spend",
+        "stopReason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "planId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "answer",
+            "abstain",
+            "refuse",
+            "clarification"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundedClaim"
+          }
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/answerCitation"
+          }
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "valid",
+            "issues",
+            "repairs"
+          ],
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/groundingIssue"
+              }
+            },
+            "repairs": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "identities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profileRevision",
+            "promptRevision",
+            "modelIdentity",
+            "rankerIds",
+            "configIdentityId"
+          ],
+          "properties": {
+            "profileRevision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "promptRevision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "modelIdentity": {
+              "oneOf": [
+                {
+                  "$ref": "https://tangleai.dev/schemas/run-identity"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rankerIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "configIdentityId": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "spend": {
+          "$ref": "#/$defs/groundingSpend"
+        },
+        "stopReason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "groundingTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session",
+        "profile",
+        "intents",
+        "plans",
+        "evidence",
+        "webRuns",
+        "conflicts",
+        "answers",
+        "unused"
+      ],
+      "properties": {
+        "session": {
+          "$ref": "#/$defs/groundingSession"
+        },
+        "profile": {
+          "$ref": "#/$defs/groundingProfile"
+        },
+        "intents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/clarifiedIntent"
+          }
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/queryPlan"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceCandidate"
+          }
+        },
+        "webRuns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/webRetrievalRun"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceConflict"
+          }
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/groundedAnswer"
+          }
+        },
+        "unused": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

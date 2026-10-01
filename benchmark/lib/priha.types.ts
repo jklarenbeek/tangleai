@@ -641,6 +641,20 @@ export interface PrihaFixtureHypothesis {
 export type PrihaFixtureSafelistItem = string;
 
 /**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaFixtureProfileRuleInputsItemIntentsItem = string;
+
+export interface PrihaFixtureProfileRuleInputsItem {
+  conversation: "emergency" | "dosage" | "community";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  intents: Array<PrihaFixtureProfileRuleInputsItemIntentsItem>;
+}
+
+
+/**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.census.sources",{"$count":"$.sources[*]"}]},{"$eq":["$.census.questions",{"$count":"$.questions[*]"}]},{"$eq":["$.census.claims",{"$count":"$.claims[*]"}]},{"$eq":["$.census.elements",{"$count":"$.elements[*]"}]},{"$eq":["$.census.chunks",{"$count":"$.chunks[*]"}]},{"$eq":["$.census.parents",{"$count":"$.parents[*]"}]},{"$eq":["$.census.conversations",{"$count":"$.conversations[*]"}]},{"$eq":["$.census.versions",{"$count":"$.sources[*].versions[*]"}]},{"$eq":["$.census.webRecords",{"$count":"$.web[*]"}]},{"$eq":["$.census.answerable",{"$count":"$.questions[?(@.kind=='answerable')]"}]},{"$eq":["$.census.abstain",{"$count":"$.questions[?(@.kind=='abstain')]"}]},{"$eq":["$.census.refuse",{"$count":"$.questions[?(@.kind=='refuse')]"}]},{"$eq":[{"$count":"$.sources[*].key"},{"$count":{"$distinct":"$.sources[*].key"}}]},{"$eq":[{"$count":"$.questions[*].key"},{"$count":{"$distinct":"$.questions[*].key"}}]},{"$eq":[{"$count":"$.claims[*].key"},{"$count":{"$distinct":"$.claims[*].key"}}]},{"$eq":[{"$count":"$.elements[*].key"},{"$count":{"$distinct":"$.elements[*].key"}}]},{"$eq":[{"$count":"$.chunks[*].key"},{"$count":{"$distinct":"$.chunks[*].key"}}]},{"$eq":[{"$count":"$.parents[*].key"},{"$count":{"$distinct":"$.parents[*].key"}}]},{"$eq":[{"$count":"$.conversations[*].key"},{"$count":{"$distinct":"$.conversations[*].key"}}]},{"$eq":[{"$count":"$.scripts[*].key"},{"$count":{"$distinct":"$.scripts[*].key"}}]},{"$eq":[{"$count":"$.web[*].key"},{"$count":{"$distinct":"$.web[*].key"}}]},{"$eq":[{"$count":"$.sources[*].versions[*].key"},{"$count":{"$distinct":"$.sources[*].versions[*].key"}}]},{"$eq":[{"$count":"$.granularities[*].id"},{"$count":{"$distinct":"$.granularities[*].id"}}]}]}
  */
 export interface PrihaFixture {
@@ -705,6 +719,14 @@ export interface PrihaFixture {
    * Schema constraints this type cannot express: minItems=0
    */
   safelist: Array<PrihaFixtureSafelistItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  profileRevision: string;
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  profileRuleInputs: Array<PrihaFixtureProfileRuleInputsItem>;
 }
 
 
@@ -1362,7 +1384,54 @@ export interface PrihaReportReplay {
 
 
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]}]}
+ * Schema constraints this type cannot express: $query={"$eq":["$.passed",{"$eq":["$.actual","$.expected"]}]}
+ */
+export interface PrihaContractProbe {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  passed: boolean;
+  actual: string;
+  expected: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.passed",{"$add":[{"$count":"$.rules[?(@.passed==true)]"},{"$add":[{"$count":"$.memory[?(@.passed==true)]"},{"$count":"$.sqlite[?(@.passed==true)]"}]}]}]},{"$eq":["$.failed",{"$add":[{"$count":"$.rules[?(@.passed==false)]"},{"$add":[{"$count":"$.memory[?(@.passed==false)]"},{"$count":"$.sqlite[?(@.passed==false)]"}]}]}]}]}
+ */
+export interface PrihaContracts {
+  status: "executed";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  profileRevision: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  rules: Array<PrihaContractProbe>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  memory: Array<PrihaContractProbe>;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  sqlite: Array<PrihaContractProbe>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  passed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+  providerRequests: 0;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]},{"$eq":["$.contracts.profileRevision","$.registration.profile.revision"]},{"$every":{"c":"$.capabilities[?(@.id=='contracts')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.contracts.failed",0]}]}}]}
  */
 export interface PrihaReport {
   document: "priha-report";
@@ -1400,6 +1469,7 @@ export interface PrihaReport {
    * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.requests",{"$add":["$.hits","$.failed"]}]},{"$eq":["$.networkRequests",0]}]}
    */
   replay: PrihaReportReplay;
+  contracts: PrihaContracts;
 }
 
 

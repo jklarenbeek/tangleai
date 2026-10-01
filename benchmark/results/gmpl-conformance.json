@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "289b202c872626f3b467ef04bd3b31fda6eb3aae",
+    "head": "8f8729405d5bfc856e73d8f08a17b3c80371e2da",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "f87a16f2550379354517714a91283d5cd6c079e6c8629b8a80e3cc5cf21162da"
+        "sha256": "6ff581a2a85977b9831e4e146379b5ddcbd3336a5265cae00eea50b4e4a27905"
       },
       {
         "path": "package.json",
-        "sha256": "b2228b5a630b5c3df665679a7e27dd9cb0c0bfe8bcc3be85f720488fcdc1f45e"
+        "sha256": "fdfb7f8f4879934f93b3fe285a1d1c625173bf1648422b3930ba07bab1025dbc"
       },
       {
         "path": "packages/agents/package.json",
@@ -518,6 +518,10 @@
         "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
       },
       {
+        "path": "packages/grounding/package.json",
+        "sha256": "8912bf2c14dbf22f40258c6d30f1959939d2fab5e29c6cff94e8b53d5e7b6428"
+      },
+      {
         "path": "packages/hera/package.json",
         "sha256": "95aa11b2de153607265b358b4801538866f7928b84dee1cb360f027034506f42"
       },
@@ -731,7 +735,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b82b5ff5353b78fb9a3dc0741f7bc6a100333fb0612003b7f188f67dd039439c"
+        "sha256": "62c67d84cee71eb4aa67ede130ced848c5eef6cf23214d0bead862dce5b747ae"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -770,6 +774,14 @@
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
       },
       {
+        "path": "packages/store/src/grounding-model.ts",
+        "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
+      },
+      {
+        "path": "packages/store/src/grounding-store.ts",
+        "sha256": "e177d7897af6b34baa3943d8b750bef1daa6ad5a4e59764c5dc8e7e41049f07c"
+      },
+      {
         "path": "packages/store/src/hera-model.ts",
         "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
       },
@@ -783,7 +795,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "65054f7537599c3e57911c536ee1fae087cf4856e85e8a9f4aae81d151e8d783"
+        "sha256": "ff3c6b2f0f15bee07fe72267ecee914db68d38ee0f09a5790cb6edee8ea00ca8"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -803,7 +815,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "09efde9d340523519392345e532d85aeb9b0258e67e2b61553a3cfc481705449"
+        "sha256": "d92e2328b3b42a561c0ff72b1ef4b1254dcdae69f33eb3be0542109af3f2889e"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -895,7 +907,7 @@
       },
       {
         "path": "release.config.json",
-        "sha256": "526b69830203ff071ec166cb2133df931269cadf53194e1949a621b884131443"
+        "sha256": "86bebf20bff2ad85ea319395c14e980a45591c1a773b314efce108e7492d0e8e"
       },
       {
         "path": "scripts/gmpl-artifacts.ts",
@@ -911,11 +923,11 @@
       },
       {
         "path": "scripts/release/build.ts",
-        "sha256": "09b5a44d08932b98a582522f2fdcba17de66b4ee1f75dc5837516136524b0477"
+        "sha256": "2c8aef57c7f62b8c4fb338f4a417e2c0a5b732286ced5568690b6787e03e9000"
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "2143a43be629062002f7cbef4a423c57e6330671a5081ac783ab5fe2375f10e5"
+        "sha256": "f03cfee99bae45aafda01a89d6ddbd8f0d91ca9e72ad195770968d0901debad5"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1007,7 +1019,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "3ce73129b356b6f510bd433e7299c9a334d68c83fef25b1781598762100a50c7"
+        "sha256": "e10bc84af9f502a4c8d2a607aecf3f1257f19c3a09c6b6316889d7e87d4dda28"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1022,7 +1034,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "98512fcd0d71c2eae458dd0b11bbb3b310faa51b6c85c30d843e4be4b512ef93"
+    "sha256": "15e3db858d4846f507d3d432ed492eca9b69ab622de3f948de4df588aa9a786c"
   },
   "ablations": [
     {
@@ -76576,5 +76588,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "0320e57539077ecb8c65cd0fdec35c65c324898a75e0a444d0d2eaa160c86698"
+  "reportId": "3d13553af116ec2342343fffbc665ceaf51297bbcb7772f229ff601bef1b7be2"
 }

@@ -1,0 +1,150 @@
+{
+  "id": "priha-hk",
+  "version": "1",
+  "revision": "5e2a4f1a44c9175952dbc8f921e9131e5a05aa68202ce0d3b288cb474d63d781",
+  "jurisdiction": "Hong Kong",
+  "locales": [
+    "zh-HK",
+    "en-HK"
+  ],
+  "purposes": [
+    "administrative-information",
+    "care-navigation"
+  ],
+  "emergency": {
+    "patterns": [
+      "red flag",
+      "fictional emergency test phrase"
+    ],
+    "response": {
+      "sourceKeys": [
+        "directory"
+      ]
+    }
+  },
+  "outOfScope": [
+    {
+      "id": "out-of-scope-diagnosis",
+      "category": "diagnosis",
+      "patterns": [
+        "diagnose",
+        "diagnosis"
+      ]
+    },
+    {
+      "id": "out-of-scope-prescribing",
+      "category": "prescribing",
+      "patterns": [
+        "prescribe",
+        "prescribing"
+      ]
+    },
+    {
+      "id": "out-of-scope-dosage",
+      "category": "dosage",
+      "patterns": [
+        "dosage",
+        "change my dose"
+      ]
+    },
+    {
+      "id": "out-of-scope-certainty",
+      "category": "certainty",
+      "patterns": [
+        "guarantee a cure"
+      ]
+    }
+  ],
+  "authority": {
+    "tiers": [
+      "official",
+      "professional",
+      "community",
+      "unverified"
+    ],
+    "hosts": [
+      {
+        "host": "official.harbour.example",
+        "tier": "official",
+        "institution": "Harbour District Service Office"
+      },
+      {
+        "host": "search.harbour.example",
+        "pathPrefix": "/search",
+        "tier": "unverified",
+        "institution": "Fictional fixture discovery index"
+      }
+    ]
+  },
+  "freshness": {
+    "requireProvenance": true,
+    "maxAgeDays": 365,
+    "preferEffectiveOverFetch": true
+  },
+  "expansions": [
+    {
+      "id": "community-first",
+      "when": {
+        "intents": [
+          "care-navigation"
+        ]
+      },
+      "addQueries": [
+        "community information desk at a community health centre or district health centre"
+      ]
+    }
+  ],
+  "models": {
+    "triage": "grounding-triage",
+    "plan": "grounding-plan",
+    "reconcile": "grounding-reconcile",
+    "generate": "grounding-generate"
+  },
+  "clarification": {
+    "requiredFields": [
+      {
+        "id": "service",
+        "intents": [
+          "service-navigation"
+        ],
+        "question": "Which service do you mean?",
+        "kind": "context"
+      },
+      {
+        "id": "purpose",
+        "intents": [
+          "service-navigation"
+        ],
+        "question": "What information do you need about that service?",
+        "kind": "priority"
+      }
+    ],
+    "maxTurns": 2,
+    "maxQueries": 6
+  },
+  "rankers": {
+    "local": "reciprocal-rank",
+    "web": "authority-recency"
+  },
+  "budgets": {
+    "calls": 12,
+    "tokens": 12000,
+    "ms": 60000,
+    "searches": 3,
+    "fetches": 6,
+    "bytes": 100000,
+    "clarificationTurns": 2,
+    "contextTokens": 1500
+  },
+  "userContext": {
+    "collectable": [
+      "service",
+      "purpose",
+      "district"
+    ],
+    "persistable": [
+      "service",
+      "purpose"
+    ]
+  }
+}
