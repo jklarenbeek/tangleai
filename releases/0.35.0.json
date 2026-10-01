@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "version": "0.35.0",
+  "baseVersion": "0.34.0",
+  "baseCommit": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
+  "preparationCommit": "8df35fd9aad36b7978dda4fd286dd4ae33158617",
+  "initial": false,
+  "inputHash": "556d97e18a71caa21d88a2fb601661a3cdd9a935474079def0170429d1e4bf6f",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        }
+      ],
+      "summary": "Prepare document and graph evidence outside storage, then activate both under one checked source fence and atomic transaction. Preserve identity across incremental replacement, retract obsolete support, reuse retained contributions without new model or embedding calls, and collect only explicitly unreferenced historical document evidence. Ordinary document updates to indexed sources now require joint promotion; use createCorpusPromotion to preserve document and graph consistency.",
+      "id": "documents-prepare-activate"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        }
+      ],
+      "summary": "Prepare evidence-bound graph contributions through injected structured extraction, bounded gleaning, co-reference review, profiling, and separate name and theme embeddings. Compile four static prompt packs with owned schema identities, reserve the shared budget before each call, retain failure spend and partial evidence, and reproduce the complete keyless fixture without writing an active graph.",
+      "id": "lightrag-extraction"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/documents",
+          "type": "minor"
+        }
+      ],
+      "summary": "Share the grounded answer contract and generate auditable graph answers with exact supplied citations, metered repair and named recall fallbacks. Expose experimental desktop graph inspection through two read operations and exercise both graph stores in the keyless consumer.",
+      "id": "lightrag-generation"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add evidence-bound graph claims, canonical identity and support validation, checked source-head transitions, pure contribution plans, and identical atomic memory and SQLite lifecycle behavior. Retain superseded evidence and merged identities, reject stale or forged plans before writes, and make exact replay a zero-write operation. These contracts remain experimental and make no graph retrieval quality claim.",
+      "id": "lightrag-graph-contracts"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Measure graph coverage, incremental replacement and the registered SQLite scale ladder. Add separately authorized paired-answer and order-swapped judge instruments with retained attempts, request ceilings, control drift and explicit unrun licensed parity. Graph retrieval remains experimental.\n\nBound large SQLite graph membership filters while preserving transaction consistency, intersections, distinct rows and deterministic ordering.\n\nReuse contribution-scoped claim, endpoint and profile lookups while retaining the complete canonical validation and co-reference review rules.\n\nKeep retained preparation bound once in graph write-plan snapshots and restore its exact bytes at the atomic storage boundary. This prevents large source promotion from exceeding the runtime's JSON string limit through duplicated projection payloads. Recompute older serialized write plans before applying them; stored projections and contributions remain compatible.",
+      "id": "lightrag-measured"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/lightrag",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add bounded low, high and hybrid graph retrieval with metered keyword planning, one-hop expansion, active document citations and a shared context serializer. Publish deterministic scripted measurements and the original-text ablation beside unchanged dense controls.",
+      "id": "lightrag-retrieval"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.35.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.35.0"
+    }
+  ]
+}

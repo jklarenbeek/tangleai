@@ -1,5 +1,18 @@
 # @tangleai/documents
 
+## 0.35.0
+
+### Minor Changes
+
+- 44c24f8: Prepare document and graph evidence outside storage, then activate both under one checked source fence and atomic transaction. Preserve identity across incremental replacement, retract obsolete support, reuse retained contributions without new model or embedding calls, and collect only explicitly unreferenced historical document evidence. Ordinary document updates to indexed sources now require joint promotion; use createCorpusPromotion to preserve document and graph consistency.
+- 9529ecd: Share the grounded answer contract and generate auditable graph answers with exact supplied citations, metered repair and named recall fallbacks. Expose experimental desktop graph inspection through two read operations and exercise both graph stores in the keyless consumer.
+
+### Patch Changes
+
+- @tangleai/context@0.35.0
+  - @tangleai/core@0.35.0
+  - @tangleai/models@0.35.0
+
 ## 0.34.0
 
 ### Patch Changes

@@ -1,5 +1,40 @@
 # @tangleai/store
 
+## 0.35.0
+
+### Minor Changes
+
+- 44c24f8: Prepare document and graph evidence outside storage, then activate both under one checked source fence and atomic transaction. Preserve identity across incremental replacement, retract obsolete support, reuse retained contributions without new model or embedding calls, and collect only explicitly unreferenced historical document evidence. Ordinary document updates to indexed sources now require joint promotion; use createCorpusPromotion to preserve document and graph consistency.
+- 9564a6a: Add evidence-bound graph claims, canonical identity and support validation, checked source-head transitions, pure contribution plans, and identical atomic memory and SQLite lifecycle behavior. Retain superseded evidence and merged identities, reject stale or forged plans before writes, and make exact replay a zero-write operation. These contracts remain experimental and make no graph retrieval quality claim.
+
+### Patch Changes
+
+- 8df35fd: Measure graph coverage, incremental replacement and the registered SQLite scale ladder. Add separately authorized paired-answer and order-swapped judge instruments with retained attempts, request ceilings, control drift and explicit unrun licensed parity. Graph retrieval remains experimental.
+
+  Bound large SQLite graph membership filters while preserving transaction consistency, intersections, distinct rows and deterministic ordering.
+
+  Reuse contribution-scoped claim, endpoint and profile lookups while retaining the complete canonical validation and co-reference review rules.
+
+  Keep retained preparation bound once in graph write-plan snapshots and restore its exact bytes at the atomic storage boundary. This prevents large source promotion from exceeding the runtime's JSON string limit through duplicated projection payloads. Recompute older serialized write plans before applying them; stored projections and contributions remain compatible.
+- Updated dependencies [44c24f8]
+- Updated dependencies [0e81abc]
+- Updated dependencies [9529ecd]
+- Updated dependencies [9564a6a]
+- Updated dependencies [8df35fd]
+- Updated dependencies [6117dd1]
+  - @tangleai/documents@0.35.0
+  - @tangleai/lightrag@0.35.0
+  - @tangleai/forecast@0.35.0
+  - @tangleai/grounding@0.35.0
+  - @tangleai/hera@0.35.0
+  - @tangleai/config@0.35.0
+  - @tangleai/core@0.35.0
+  - @tangleai/evolve@0.35.0
+  - @tangleai/mas@0.35.0
+  - @tangleai/memory@0.35.0
+  - @tangleai/outcomes@0.35.0
+  - @tangleai/trace2skill@0.35.0
+
 ## 0.34.0
 
 ### Minor Changes

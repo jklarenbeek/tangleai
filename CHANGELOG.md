@@ -1,5 +1,25 @@
 # Tangle releases
 
+## 0.35.0
+
+Prepare document and graph evidence outside storage, then activate both under one checked source fence and atomic transaction. Preserve identity across incremental replacement, retract obsolete support, reuse retained contributions without new model or embedding calls, and collect only explicitly unreferenced historical document evidence. Ordinary document updates to indexed sources now require joint promotion; use createCorpusPromotion to preserve document and graph consistency.
+
+Prepare evidence-bound graph contributions through injected structured extraction, bounded gleaning, co-reference review, profiling, and separate name and theme embeddings. Compile four static prompt packs with owned schema identities, reserve the shared budget before each call, retain failure spend and partial evidence, and reproduce the complete keyless fixture without writing an active graph.
+
+Share the grounded answer contract and generate auditable graph answers with exact supplied citations, metered repair and named recall fallbacks. Expose experimental desktop graph inspection through two read operations and exercise both graph stores in the keyless consumer.
+
+Add evidence-bound graph claims, canonical identity and support validation, checked source-head transitions, pure contribution plans, and identical atomic memory and SQLite lifecycle behavior. Retain superseded evidence and merged identities, reject stale or forged plans before writes, and make exact replay a zero-write operation. These contracts remain experimental and make no graph retrieval quality claim.
+
+Measure graph coverage, incremental replacement and the registered SQLite scale ladder. Add separately authorized paired-answer and order-swapped judge instruments with retained attempts, request ceilings, control drift and explicit unrun licensed parity. Graph retrieval remains experimental.
+
+Bound large SQLite graph membership filters while preserving transaction consistency, intersections, distinct rows and deterministic ordering.
+
+Reuse contribution-scoped claim, endpoint and profile lookups while retaining the complete canonical validation and co-reference review rules.
+
+Keep retained preparation bound once in graph write-plan snapshots and restore its exact bytes at the atomic storage boundary. This prevents large source promotion from exceeding the runtime's JSON string limit through duplicated projection payloads. Recompute older serialized write plans before applying them; stored projections and contributions remain compatible.
+
+Add bounded low, high and hybrid graph retrieval with metered keyword planning, one-hop expansion, active document citations and a shared context serializer. Publish deterministic scripted measurements and the original-text ablation beside unchanged dense controls.
+
 ## 0.34.0
 
 Compose durable grounded sessions through the native MAS workflow and SQLite
