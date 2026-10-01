@@ -1,7 +1,7 @@
 {
   "name": "@tangleai/store",
   "version": "0.34.0",
-  "description": "Tangle AI persistence — the MemoryStore contract over SQLite via @jarenjs/db, plus the run/event log the DAG surface reads",
+  "description": "Tangle AI persistence \u2014 the MemoryStore contract over SQLite via @jarenjs/db, plus the run/event log the DAG surface reads",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",
@@ -23,7 +23,9 @@
     "./evolve-effects": "./src/evolve-effects.ts",
     "./forecast-store": "./src/forecast-store.ts",
     "./grounding-store": "./src/grounding-store.ts",
-    "./lightrag-store": "./src/lightrag-store.ts"
+    "./lightrag-store": "./src/lightrag-store.ts",
+    "./corpus-promotion": "./src/corpus-promotion.ts",
+    "./gc": "./src/gc.ts"
   },
   "engines": {
     "node": ">=24"

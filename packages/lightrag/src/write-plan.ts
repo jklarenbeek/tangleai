@@ -2,8 +2,9 @@
 import { equalsJson as same } from '@jarenjs/core/object';
 import type { Head } from '@tangleai/outcomes';
 import { sameIdentity } from '@tangleai/context/ledger';
-import type { GraphProjection, GraphContributionPlan, ProjectionWritePlan, LightRagWrite } from './contracts.gen.ts';
+import type { GraphProjection, GraphContributionPlan, ProjectionWritePlan, LightRagWrite, GraphDocumentBinding } from './contracts.gen.ts';
 import { planContribution } from './plan.ts';
+import { validateLightRagShape } from './schema.ts';
 import { validateGraphProjection, planProjectionActivation, planProjectionRetirement, sourceGraphHead } from './projection.ts';
 import { contributionRevisionOf, lightragRevisionOf, immutableLightRagJson } from './identity.ts';
 import { lightragMust, lightragReject, lightragFailure, type LightRagOutcome } from './errors.ts';
@@ -11,12 +12,18 @@ const ids = (values: readonly string[]) => [...new Set(values)].sort();
 export interface ProjectionPlanOptions {
     projection: GraphProjection; contribution: GraphContributionPlan; projections: readonly GraphProjection[];
     actualHead: Head; expectedHead: Head; at: string | null;
+    document?: GraphDocumentBinding; profilePolicy?: 'prepared' | 'retained-evidence';
 }
 export function planProjectionWrites(options: ProjectionPlanOptions): Promise<LightRagOutcome<ProjectionWritePlan>> { return buildWrites('activate', options); }
 export function planRetraction(options: ProjectionPlanOptions): Promise<LightRagOutcome<ProjectionWritePlan>> { return buildWrites('retract', options); }
 async function buildWrites(operation: ProjectionWritePlan['operation'], options: ProjectionPlanOptions): Promise<LightRagOutcome<ProjectionWritePlan>> {
     try {
         const request = lightragMust(await validateGraphProjection(options.projection)), priorProjections: GraphProjection[] = [];
+        const document = options.document === undefined ? undefined : lightragMust(validateLightRagShape('graphDocumentBinding', options.document));
+        if (document && (document.sourceId !== request.sourceId || document.versionId !== request.versionId))
+            lightragReject('TLRAG1006', '/document', 'The write plan must bind the projection document source and version.');
+        const admission = { ...(document ? { document, previousHead: options.actualHead } : {}), ...(options.profilePolicy ? { profilePolicy: options.profilePolicy } : {}) };
+
         for (const row of options.projections) {
             const checked = lightragMust(await validateGraphProjection(row));
             if (checked.sourceId !== request.sourceId) lightragReject('TLRAG1006', '/projections', 'The source fence cannot include another source.');
@@ -68,13 +75,13 @@ async function buildWrites(operation: ProjectionWritePlan['operation'], options:
             const retirement = lightragMust(await planProjectionRetirement({ projection: request, actualHead: options.actualHead, expectedHead: options.expectedHead, at: options.at }));
             ({ projection, nextHead } = retirement);
         }
-        projection = lightragMust(await validateGraphProjection({ ...projection, audit: [...(retained?.audit ?? []), { operation, head: nextHead, contributionPlanRevision: contribution.revision, reviews: contribution.input.reviews, at: options.at }] }));
+        projection = lightragMust(await validateGraphProjection({ ...projection, audit: [...(retained?.audit ?? []), { operation, head: nextHead, contributionPlanRevision: contribution.revision, reviews: contribution.input.reviews, at: options.at, ...admission }] }));
         for (const row of contribution.canonicals.entities) if (contribution.touchedEntityIds.includes(row.id)) writes.push({ table: 'entities', row });
         for (const row of contribution.canonicals.relations) if (contribution.touchedRelationIds.includes(row.id)) writes.push({ table: 'relations', row });
         if (operation === 'activate' && active && active.id !== request.id) writes.push({ table: 'projections', row: { ...active, status: 'superseded', supersededAt: options.at } });
         writes.push({ table: 'projections', row: projection });
         const body = { operation, request, contribution, priorProjections, actualHead: options.actualHead, expectedHead: options.expectedHead, nextHead,
-            at: options.at, reactivation, writes };
-        return { valid: true, value: immutableLightRagJson({ ...body, revision: await lightragRevisionOf(body) }) };
+            at: options.at, reactivation, writes, ...(document ? { document } : {}), ...(options.profilePolicy ? { profilePolicy: options.profilePolicy } : {}) };
+        return { valid: true, value: immutableLightRagJson(lightragMust(validateLightRagShape('projectionWritePlan', { ...body, revision: await lightragRevisionOf(body) }))) };
     } catch (cause) { return lightragFailure(cause); }
 }

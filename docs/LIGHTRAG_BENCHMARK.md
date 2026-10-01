@@ -42,6 +42,6 @@ Provider calls and tokens are zero. The keyless clock-free cost field is zero by
 
 Limits: dense k 5, minimum score 0, at most 2 chunks per source, no neighbours. Future graph context has 4000 tokens. The immutable flat handoff SHA-256 is `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`.
 
-Gate: **passed**. Source `d4d12d25ec2555b5702a44cfdfd093faadcfb3947fd21d6a87d408d148e4dde3`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `f24ab8bcf9e01a793d5af803bbbeebc00b9614f896f948353b5f124e94655016`.
+Gate: **passed**. Source `b8a2ea7bca335503e46aee663d0e0ecdc291ce12b8a082ef5ff055b7a81d22a4`; registration `d41e3900a96349ee65aa3491b794d1639467bc0c095d349ee6a60b7d8a8f7d54`; report `1e6467ad5cf0265b0cfb5a8e8d4c2240572306ab61906260bef182cda7d2193c`.
 
 Decision: **not-evaluated**; product default unchanged. Live paired, judge and separately licensed parity measurements require their own registered plans and explicit approval.

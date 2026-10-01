@@ -9,7 +9,7 @@ export function lightRagReadDocument(query: LightRagReadQuery): object {
     const where: object[] = [];
     for (const key of ['sourceId', 'versionId', 'projectionId', 'status'] as const)
         if (query[key] !== undefined) where.push({ $eq: ['$r.' + key, { $const: query[key] }] });
-    for (const [key, field] of [['ids', 'id'], ['normalizedNames', 'normalizedName']] as const) {
+    for (const [key, field] of [['ids', 'id'], ['claimIds', 'payload.id'], ['normalizedNames', 'normalizedName']] as const) {
         const values = query[key];
         if (values !== undefined) where.push(values.length ? { $or: values.map(value => ({ $eq: ['$r.' + field, { $const: value }] })) } : { $const: false });
     }

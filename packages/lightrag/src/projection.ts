@@ -4,6 +4,7 @@ import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
 import type { GraphProjection } from './contracts.gen.ts';
 import { validateLightRagShape } from './schema.ts';
+import { validateGraphContribution } from './contribution.ts';
 import { projectionIdOf, immutableLightRagJson } from './identity.ts';
 import { lightragMust, lightragReject, lightragFailure, type LightRagOutcome } from './errors.ts';
 export function projectionContent(projection: GraphProjection): object {
@@ -25,6 +26,21 @@ export async function validateGraphProjection(value: unknown): Promise<LightRagO
             || projection.audit.some((entry, index) => entry.head.versionId !== projection.id || entry.head.revision < 1
                 || index > 0 && entry.head.revision <= projection.audit![index - 1].head.revision)))
             lightragReject('TLRAG1006', '/audit', 'Projection audit entries must retain increasing native fences ending at the current projection head.');
+        for (const entry of projection.audit ?? []) {
+            if (entry.previousHead && !equalsJson(planHeadTransition(entry.previousHead, entry.previousHead, projection.id), entry.head))
+                lightragReject('TLRAG1006', '/audit', 'An admission audit must bind its previous native fence.');
+            if (entry.document && (entry.document.sourceId !== projection.sourceId || entry.document.versionId !== projection.versionId))
+                lightragReject('TLRAG1006', '/audit/document', 'A projection admission cannot bind another document.');
+        }
+        if (projection.prepared) {
+            const cached = lightragMust(await validateGraphContribution(projection.prepared));
+            if (cached.sourceId !== projection.sourceId || cached.versionId !== projection.versionId || cached.contributionRevision !== projection.contributionRevision
+                || !equalsJson(cached.identities, projection.identities)
+                || !equalsJson(cached.plan.input.claims.entities.map(row => row.id).sort(), [...projection.entityClaimIds].sort())
+                || !equalsJson(cached.plan.input.claims.relations.map(row => row.id).sort(), [...projection.relationClaimIds].sort())
+                || !equalsJson([...cached.completedChunkIds].sort(), [...projection.chunkIds].sort()))
+                lightragReject('TLRAG1002', '/prepared', 'Retained preparation must reproduce this exact immutable source contribution.');
+        }
         return { valid: true, value: projection };
     } catch (cause) { return lightragFailure(cause); }
 }

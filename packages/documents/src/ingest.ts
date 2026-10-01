@@ -3,12 +3,16 @@ import { createHash } from 'node:crypto';
 import type { Embedder } from '@tangleai/models/embed';
 import { mapConcurrent } from '@jarenjs/core/async';
 import { estimateTokens } from '@tangleai/core/tokens';
+import { equalsJson } from '@jarenjs/core/object';
 
 import { likelyDynamicShell, type BrowserFetcher, UnavailableBrowserFetcher } from './browser.ts';
 import { RecursiveDocumentChunker, S2DocumentChunker, SemanticBoundaryChunker, ParentChildChunker } from './chunking.ts';
 import {
   EXTRACTION_VERSION,
   DocumentError,
+  assertStoredDocumentBundle,
+  type PreparedDocumentIdentity,
+  type PreparedOutcome,
   type Chunker,
   type DocumentChunk,
   type DocumentParent,
@@ -65,6 +69,19 @@ function hash(value: string | Uint8Array): string {
   return createHash('sha256').update(value).digest('hex');
 }
 
+/** The sole identity projection used for unchanged and retained-version reuse. */
+export function preparedIdentityOf(value: PreparedDocumentIdentity): PreparedDocumentIdentity {
+  return { contentHash: value.contentHash, extractionVersion: value.extractionVersion, chunkerVersion: value.chunkerVersion,
+    chunkerConfig: { maxTokens: value.chunkerConfig.maxTokens, overlapTokens: value.chunkerConfig.overlapTokens,
+      ...(value.chunkerConfig.parentTokens === undefined ? {} : { parentTokens: value.chunkerConfig.parentTokens }) },
+    embeddedBy: { model: value.embeddedBy.model, dims: value.embeddedBy.dims } };
+}
+/** Preserve established known-width addresses while deriving every field from the identity owner. */
+function versionIdFor(source: string, value: PreparedDocumentIdentity): string {
+  const identity = preparedIdentityOf(value), config = identity.chunkerConfig;
+  return `ver-${hash(`${source}|${identity.contentHash}|${identity.extractionVersion}|${identity.chunkerVersion}|${config.maxTokens}|${config.overlapTokens}${config.parentTokens === undefined ? '' : '|' + config.parentTokens}|${identity.embeddedBy.model}|${identity.embeddedBy.dims}`).slice(0, 32)}`;
+}
+
 function sourceId(url: string): string {
   return `src-${hash(url).slice(0, 24)}`;
 }
@@ -88,6 +105,7 @@ function usefulChars(elements: Array<{ text: string }>): number {
 }
 
 export interface DocumentIngester {
+  prepare(input: IngestUrlInput): Promise<PreparedOutcome>;
   ingest(input: IngestUrlInput): Promise<IngestUrlOutcome>;
   ingestMany(inputs: IngestUrlInput[], options?: { concurrency?: number }): Promise<Array<{ url: string; outcome?: IngestUrlOutcome; error?: { code: string; message: string } }>>;
 }
@@ -99,7 +117,7 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
   const batchSize = Math.max(1, options.embedBatchSize ?? 32);
 
   return {
-    async ingest(input) {
+    async prepare(input) {
       const requestedUrl = normalizeUrl(input.url);
       const id = sourceId(requestedUrl);
       const existing = await store.getSource(id);
@@ -131,11 +149,10 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
       const chunkerConfig = { maxTokens: chunker.maxTokens, overlapTokens: chunker.overlapTokens,
         ...(chunker.parentTokens === undefined ? {} : { parentTokens: chunker.parentTokens }) };
       const priorVersion = existing?.activeVersionId === undefined ? undefined : await store.getVersion(existing.activeVersionId);
+      const identityFor = (content: string, dims: number): PreparedDocumentIdentity => preparedIdentityOf({ contentHash: content,
+        extractionVersion: EXTRACTION_VERSION, chunkerVersion: chunker.version, chunkerConfig, embeddedBy: { model: embedder.model, dims } });
       const compatible = (active: DocumentVersion | undefined): active is DocumentVersion => active !== undefined
-        && active.extractionVersion === EXTRACTION_VERSION && active.chunkerVersion === chunker.version
-        && active.chunkerConfig.maxTokens === chunkerConfig.maxTokens && active.chunkerConfig.overlapTokens === chunkerConfig.overlapTokens
-        && active.chunkerConfig.parentTokens === chunkerConfig.parentTokens
-        && active.embeddedBy.model === embedder.model && (embedder.dims === undefined || active.embeddedBy.dims === embedder.dims);
+        && equalsJson(preparedIdentityOf(active), identityFor(active.contentHash, embedder.dims ?? active.embeddedBy.dims));
 
       try {
         progress(now, input.onProgress, 'fetch', 'start');
@@ -194,7 +211,29 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           return { status: 'unchanged', source, version: active, browserFallback };
         }
 
-        const provisionalVersionId = `ver-${hash(`${id}|${contentHash}|${EXTRACTION_VERSION}|${chunker.version}|${chunkerConfig.maxTokens}|${chunkerConfig.overlapTokens}${chunkerConfig.parentTokens === undefined ? '' : '|' + chunkerConfig.parentTokens}|${identity.model}|${identity.dims}`).slice(0, 32)}`;
+        const sourceFor = (versionId: string): DocumentSource => ({ id, requestedUrl, finalUrl, canonicalUrl, title: extracted.title, mimeType,
+          fetchMode, status: 'ready', fetchedAt, etag, lastModified, activeVersionId: versionId });
+        if (input.force !== true) {
+          const retained = (await store.listVersions(id)).find(row => row.status === 'superseded' && compatible(row)
+            && equalsJson(preparedIdentityOf(row), identityFor(contentHash, embedder.dims ?? row.embeddedBy.dims)));
+          if (retained) {
+            const [elements, chunks, parents] = await Promise.all([store.listElements(retained.id), store.listChunks(retained.id), store.listParents(retained.id)]);
+            // A collected version has no complete bundle to reactivate; prepare fresh evidence below.
+            if (elements.length === retained.metrics.elements && chunks.length === retained.metrics.chunks && parents.length === (retained.metrics.parents ?? 0)) {
+              const metrics = { ...retained.metrics, extractionMs, chunkingMs: 0, embeddingMs: 0, embeddingCalls: 0, estimatedEmbeddingTokens: 0 };
+              const { activatedAt: _activated, supersededAt: _superseded, error: _error, ...retainedVersion } = retained;
+              const bundle = { source: sourceFor(retained.id), version: { ...retainedVersion, status: 'staging' as const, fetchedAt, metrics }, elements, chunks,
+                ...(retained.metrics.parents === undefined ? {} : { parents }) };
+              assertStoredDocumentBundle(bundle);
+              progress(now, input.onProgress, 'extract', 'ok', { elements: elements.length, ms: extractionMs, reused: true });
+              for (const stage of ['chunk', 'embed'] as const) {
+                progress(now, input.onProgress, stage, 'start'); progress(now, input.onProgress, stage, 'ok', { chunks: chunks.length, calls: 0, ms: 0, reused: true });
+              }
+              return { status: 'prepared', bundle, identity: preparedIdentityOf(bundle.version), metrics, browserFallback, reused: true };
+            }
+          }
+        }
+        let provisionalVersionId = versionIdFor(id, identityFor(contentHash, identity.dims));
         const elements: DocumentElement[] = extracted.elements.map((element, order) => ({
           ...element,
           id: `el-${hash(`${provisionalVersionId}|${order}|${element.text}`).slice(0, 32)}`,
@@ -230,6 +269,15 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           throw new DocumentError('embedding-width', 'Embedder returned inconsistent vector widths');
         }
         const embeddedBy = { model: embedder.model, dims };
+        const resolvedVersionId = versionIdFor(id, identityFor(contentHash, dims));
+        if (resolvedVersionId !== provisionalVersionId) {
+          const remapped = new Map(elements.map(element => [element.id, `el-${hash(`${resolvedVersionId}|${element.order}|${element.text}`).slice(0, 32)}`]));
+          for (const element of elements) { element.id = remapped.get(element.id)!; element.versionId = resolvedVersionId; }
+          for (const chunk of chunked.chunks) { chunk.elementIds = chunk.elementIds.map(element => remapped.get(element)!);
+            if (chunk.carriedElementIds) chunk.carriedElementIds = chunk.carriedElementIds.map(element => remapped.get(element)!); }
+          for (const parent of chunked.parents ?? []) parent.elementIds = parent.elementIds.map(element => remapped.get(element)!);
+          provisionalVersionId = resolvedVersionId;
+        }
         const chunkIds = chunked.chunks.map((chunk, order) => `chk-${hash(`${provisionalVersionId}|${order}|${chunk.text}`).slice(0, 32)}`);
         const parents: DocumentParent[] = (chunked.parents ?? []).map(({ childIndexes, contentStartOrder: _, ...parent }, order) => ({
           ...parent, id: `par-${hash(`${provisionalVersionId}|${order}|${parent.text}`).slice(0, 32)}`,
@@ -279,25 +327,9 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
             warnings,
           },
         };
-        const source: DocumentSource = {
-          id,
-          requestedUrl,
-          finalUrl,
-          canonicalUrl,
-          title: extracted.title,
-          mimeType,
-          fetchMode,
-          status: 'ready',
-          fetchedAt,
-          etag,
-          lastModified,
-          activeVersionId: version.id,
-        };
-        progress(now, input.onProgress, 'store', 'start');
-        await store.activate({ source, version, elements, chunks, ...(chunked.parents ? { parents } : {}) });
-        const activeVersion = { ...version, status: 'active' as const, activatedAt: fetchedAt };
-        progress(now, input.onProgress, 'store', 'ok', { versionId: version.id });
-        return { status: 'ingested', source, version: activeVersion, browserFallback };
+        const bundle = { source: sourceFor(version.id), version, elements, chunks, ...(chunked.parents ? { parents } : {}) };
+        assertStoredDocumentBundle(bundle);
+        return { status: 'prepared', bundle, identity: preparedIdentityOf(version), metrics: version.metrics, browserFallback, reused: false };
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
         const code = error instanceof DocumentError ? error.code : 'ingest-failed';
@@ -319,10 +351,33 @@ export function createDocumentIngester(options: DocumentIngesterOptions): Docume
           error: reason,
         };
         if (version !== undefined) version = { ...version, status: 'failed', error: reason };
-        await store.recordFailure(source, version);
         for (const stage of ['fetch', 'extract', 'chunk', 'embed', 'store'] as IngestStage[]) {
           progress(now, input.onProgress, stage, 'error', { code, error: reason });
         }
+        return { status: 'failed', source, ...(version ? { version } : {}), error: { code, message: reason,
+          ...(error instanceof DocumentError && error.details ? { details: error.details } : {}) } };
+      }
+    },
+
+    async ingest(input) {
+      const prepared = await this.prepare(input);
+      if (prepared.status === 'unchanged') return prepared;
+      if (prepared.status === 'failed') {
+        await store.recordFailure(prepared.source, prepared.version);
+        throw new DocumentError(prepared.error.code, prepared.error.message, prepared.error.details);
+      }
+      const { bundle, browserFallback } = prepared;
+      const previous = await store.getSource(bundle.source.id);
+      try {
+        progress(now, input.onProgress, 'store', 'start');
+        await store.activate(bundle);
+        const version = { ...bundle.version, status: 'active' as const, activatedAt: bundle.source.fetchedAt };
+        progress(now, input.onProgress, 'store', 'ok', { versionId: version.id });
+        return { status: 'ingested', source: bundle.source, version, browserFallback };
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error), code = error instanceof DocumentError ? error.code : 'ingest-failed';
+        await store.recordFailure({ ...bundle.source, status: 'failed', activeVersionId: previous?.activeVersionId, error: reason }, { ...bundle.version, status: 'failed', error: reason });
+        for (const stage of ['fetch', 'extract', 'chunk', 'embed', 'store'] as IngestStage[]) progress(now, input.onProgress, stage, 'error', { code, error: reason });
         throw error instanceof DocumentError ? error : new DocumentError(code, reason);
       }
     },

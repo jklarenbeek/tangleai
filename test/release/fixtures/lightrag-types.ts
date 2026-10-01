@@ -29,3 +29,18 @@ const {budget:account,...unmetered}=buildOptions;
 // @ts-expect-error graph preparation requires the caller's shared budget account
 buildContribution(unmetered);
 void [artifacts,extractor,profiler,resolver,rendered,account];
+
+import {createCorpusPromotion,createDocumentStore,collectDocumentGarbage,type CorpusPromotionRequest,type DocumentGarbageCandidate} from '@tangleai/store';
+import {createDocumentIngester,preparedIdentityOf,type DocumentIngesterOptions,type PreparedOutcome} from '@tangleai/documents';
+declare const documentOptions:DocumentIngesterOptions,promotionRequest:CorpusPromotionRequest;
+const documents=createDocumentStore(db),corpus=createCorpusPromotion({db,documents,lightrag:durable});
+const preparedDocument:PreparedOutcome=await createDocumentIngester(documentOptions).prepare({url:'https://docs.example/guide'});
+if(preparedDocument.status==='prepared'){const identity=preparedIdentityOf(preparedDocument.bundle.version);const width:number=identity.embeddedBy.dims;void width;}
+const admitted=await corpus.promote(promotionRequest),retired=await corpus.retract('source');
+const collected=await collectDocumentGarbage(db,{dryRun:true,resolvers:[{name:'reports',resolve:(candidate:DocumentGarbageCandidate)=>[candidate.versionId]}]});
+const {expectedHead:expected,...unfenced}=promotionRequest;
+// @ts-expect-error joint admission requires an expected native source head
+corpus.promote(unfenced);
+// @ts-expect-error reference resolvers cannot mutate candidate addresses
+const invalidResolver={name:'reports',resolve:(candidate:DocumentGarbageCandidate)=>{candidate.chunkIds.push('invented');return [];}};
+void [admitted,retired,collected,expected,invalidResolver];

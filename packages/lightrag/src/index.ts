@@ -22,3 +22,5 @@ export * from './profile.ts';
 export * from './resolve.ts';
 export * from './embed.ts';
 export * from './contribution.ts';
+export * from './snapshot.ts';
+export * from './reuse.ts';

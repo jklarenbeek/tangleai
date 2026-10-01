@@ -801,6 +801,9 @@
           "items": {
             "$ref": "#/$defs/graphProjectionAudit"
           }
+        },
+        "prepared": {
+          "$ref": "#/$defs/graphContribution"
         }
       }
     },
@@ -1710,6 +1713,18 @@
         },
         "at": {
           "$ref": "#/$defs/lightRagInstant"
+        },
+        "document": {
+          "$ref": "#/$defs/graphDocumentBinding"
+        },
+        "profilePolicy": {
+          "enum": [
+            "prepared",
+            "retained-evidence"
+          ]
+        },
+        "previousHead": {
+          "$ref": "#/$defs/lightRagHead"
         }
       }
     },
@@ -1771,6 +1786,15 @@
         },
         "revision": {
           "$ref": "#/$defs/lightRagRevision"
+        },
+        "document": {
+          "$ref": "#/$defs/graphDocumentBinding"
+        },
+        "profilePolicy": {
+          "enum": [
+            "prepared",
+            "retained-evidence"
+          ]
         }
       }
     },
@@ -2497,6 +2521,26 @@
         "stopReason": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "graphDocumentBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "versionId",
+        "revision"
+      ],
+      "properties": {
+        "sourceId": {
+          "$ref": "#/$defs/lightRagId"
+        },
+        "versionId": {
+          "$ref": "#/$defs/lightRagId"
+        },
+        "revision": {
+          "$ref": "#/$defs/lightRagRevision"
         }
       }
     }

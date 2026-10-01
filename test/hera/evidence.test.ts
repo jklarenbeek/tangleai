@@ -8,7 +8,10 @@ it('native document retrieval keeps exact digests, bounded results and supersede
   const db=await openTangleDb();try{
     const fixture=await loadHeraFixture(),host=await createHeraFixtureEvidence(db,fixture.corpus,fixture.manifest.revision),signal=new AbortController().signal;
     const units=await host.evidence.recall('Where did Mira move?',{k:2,signal});assert.equal(units.length,2);assert.ok((await validateHeraEvidenceUnits(units)).valid);assert.ok(units.every(u=>u.address.startsWith('document:hera-fixture/')));
-    const source=(await host.documents.getSource('hera-fixture'))!;await host.documents.putSource({...source,activeVersionId:'superseded'});
+    // A corpus pin changes through real activation, with new immutable evidence addresses.
+    await createHeraFixtureEvidence(db,fixture.corpus.map(unit=>({...unit,id:unit.id+'-replacement'})),'superseded');
+    assert.equal((await host.documents.getVersion(fixture.manifest.revision))?.status,'superseded');
+    assert.equal((await host.documents.listChunks(fixture.manifest.revision)).length,fixture.corpus.length);
     assert.equal((await assertHeraCorpus(host.evidence,fixture.manifest.revision)).valid,false);await assert.rejects(host.evidence.recall('Mira',{k:2,signal}),/superseded/);
   }finally{await db.close();}
 });

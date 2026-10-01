@@ -87,3 +87,18 @@ Four owned prompt roles are available through `lightRagPrompt` and the
 input follows as one canonical JSON block. The artifact revision binds the
 resolved input and output schemas. No template interpolation or runtime file
 read occurs. Run `npm run lightrag:prompts -- --check` to check source drift.
+
+`readContributionSnapshot` queries matching names, affected adjacency and exact
+support claims instead of scanning the whole graph. During replacement, withdrawn
+claims remain available to co-reference resolution as identity context; they
+never remain active support. An unchanged entity can preserve its canonical id,
+while a reviewed replacement homonym receives a distinct one.
+
+Retained projections store their original validated contribution. The source
+contribution address excludes mutable canonical state. `rebaseRetainedContribution`
+reuses immutable claims, profiles, vectors and persisted canonical lineage;
+changed current profile bases become explicit deterministic description unions.
+`prepareGraphRetraction` removes the withdrawn support using the same strict
+planner. `@tangleai/store` verifies real document evidence and commits both heads
+together. Activation audits bind the document bundle, previous source fence and
+profile policy; exact replay and zero-call reactivation remain separate receipts.

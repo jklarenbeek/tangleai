@@ -2,7 +2,7 @@
 import { canonicalizeJson } from '@jarenjs/json/canonical';
 import { equalsJson as same } from '@jarenjs/core/object';
 import { planHeadTransition } from '@tangleai/outcomes';
-import type { GraphProjection, GraphEntityClaim, GraphRelationClaim, ProjectionWritePlan, LightRagWrite } from './contracts.gen.ts';
+import type { GraphProjection, GraphEntityClaim, GraphRelationClaim, ProjectionWritePlan, LightRagWrite, GraphContributionPlan } from './contracts.gen.ts';
 import type { LightRagReadView, LightRagWriteView, LightRagStored, LightRagTable } from './persistence.ts';
 import { lightRagStored } from './persistence.ts';
 import { validateLightRagShape } from './schema.ts';
@@ -28,15 +28,15 @@ async function projectionsFor(view: LightRagReadView, sourceId: string): Promise
 async function unchangedResult(view: LightRagReadView, plan: ProjectionWritePlan): Promise<boolean> {
     const final = new Map<string, { table: LightRagTable; stored: LightRagStored }>();
     for (const write of plan.writes) { const stored = storedLightRagWrite(write); final.set(write.table + ':' + stored.id, { table: write.table, stored }); }
-    for (const row of plan.contribution.canonicals.entities) final.set('entities:' + row.id, { table: 'entities', stored: lightRagStored('entities', row) });
-    for (const row of plan.contribution.canonicals.relations) final.set('relations:' + row.id, { table: 'relations', stored: lightRagStored('relations', row) });
-    // Reactivation emits no member writes, but replay still verifies those retained bytes.
-    if (plan.operation === 'activate') {
-        for (const row of plan.contribution.input.claims.entities) { const stored = lightRagStored('entity_claims', row, plan.request.id); final.set('entity_claims:' + stored.id, { table: 'entity_claims', stored }); }
-        for (const row of plan.contribution.input.claims.relations) { const stored = lightRagStored('relation_claims', row, plan.request.id); final.set('relation_claims:' + stored.id, { table: 'relation_claims', stored }); }
-        for (const row of plan.contribution.input.profiles) { const stored = lightRagStored('chunk_profiles', row, plan.request.id); final.set('chunk_profiles:' + stored.id, { table: 'chunk_profiles', stored }); }
-    }
     for (const row of final.values()) if (!same(await view.get(row.table, row.stored.id) ?? null, row.stored)) return false;
+    return contributionResultMatchesWithin(view, plan.request.id, plan.contribution, plan.operation === 'activate');
+}
+/** A replay checks the complete resulting canonical and immutable member bytes. */
+export async function contributionResultMatchesWithin(view: LightRagReadView, projectionId: string, contribution: GraphContributionPlan, members = true): Promise<boolean> {
+    for (const [table, rows] of [['entities', contribution.canonicals.entities], ['relations', contribution.canonicals.relations]] as const)
+        for (const row of rows) if (!same(await view.get(table, row.id) ?? null, lightRagStored(table, row))) return false;
+    if (members) for (const [table, rows] of [['entity_claims', contribution.input.claims.entities], ['relation_claims', contribution.input.claims.relations], ['chunk_profiles', contribution.input.profiles]] as const)
+        for (const row of rows) { const stored = lightRagStored(table, row, projectionId); if (!same(await view.get(table, stored.id) ?? null, stored)) return false; }
     return true;
 }
 async function checkCanonicalSnapshot(view: LightRagReadView, plan: ProjectionWritePlan): Promise<void> {
@@ -97,19 +97,25 @@ async function checkClaimSnapshot(view: LightRagReadView, plan: ProjectionWriteP
     }
 }
 /** The host must call this inside its transaction; a refusal unwinds that scope. */
-export async function applyLightRagWritePlanWithin(view: LightRagWriteView, value: ProjectionWritePlan): Promise<LightRagApplyReceipt> {
+export async function checkLightRagWritePlanWithin(view: LightRagReadView, value: ProjectionWritePlan): Promise<{ plan: ProjectionWritePlan; replay: LightRagApplyReceipt | null }> {
     const plan = lightragMust(validateLightRagShape('projectionWritePlan', value));
     const recompute = plan.operation === 'activate' ? planProjectionWrites : planRetraction;
     const reproduced = lightragMust(await recompute({ projection: plan.request, contribution: plan.contribution, projections: plan.priorProjections,
-        actualHead: plan.actualHead, expectedHead: plan.expectedHead, at: plan.at }));
+        actualHead: plan.actualHead, expectedHead: plan.expectedHead, at: plan.at, document: plan.document, profilePolicy: plan.profilePolicy }));
     if (!same(plan, reproduced)) lightragReject('TLRAG1002', '/writes', 'The write plan differs from its independently reproduced transition.');
     const actualProjections = await projectionsFor(view, plan.request.sourceId), actualHead = lightragMust(sourceGraphHead(actualProjections, plan.request.sourceId));
-    if (same(actualHead, plan.nextHead) && await unchangedResult(view, plan)) return immutableLightRagJson({ projectionId: plan.request.id, head: actualHead, writes: 0, newClaims: 0, reactivation: plan.reactivation, replayed: true });
+    if (same(actualHead, plan.nextHead) && await unchangedResult(view, plan)) return { plan, replay: immutableLightRagJson({ projectionId: plan.request.id, head: actualHead, writes: 0, newClaims: 0, reactivation: plan.reactivation, replayed: true }) };
     let next;
     try { next = planHeadTransition(actualHead, plan.expectedHead, plan.request.id); }
     catch (cause) { lightragReject('TLRAG1006', '/expectedHead', 'The source graph head moved before this transaction.', cause); }
     if (!same(next, plan.nextHead) || !same(actualProjections, plan.priorProjections)) lightragReject('TLRAG1006', '/priorProjections', 'The prepared projection states differ from the transaction snapshot.');
     await checkCanonicalSnapshot(view, plan); await checkClaimSnapshot(view, plan);
+    return { plan, replay: null };
+}
+/** The host must call this inside its transaction; a refusal unwinds that scope. */
+export async function applyLightRagWritePlanWithin(view: LightRagWriteView, value: ProjectionWritePlan): Promise<LightRagApplyReceipt> {
+    const { plan, replay } = await checkLightRagWritePlanWithin(view, value);
+    if (replay) return replay;
     let writes = 0, newClaims = 0;
     for (const write of plan.writes) {
         const stored = storedLightRagWrite(write), before = await view.get(write.table, stored.id);

@@ -193,6 +193,20 @@ export interface StoredDocumentBundle {
   parents?: DocumentParent[];
 }
 
+/** Every field that changes reusable document preparation, independent of admission time. */
+export type PreparedDocumentIdentity = Pick<DocumentVersion, 'contentHash' | 'extractionVersion' | 'chunkerVersion' | 'chunkerConfig' | 'embeddedBy'>;
+export type PreparedOutcome = {
+  status: 'prepared'; bundle: StoredDocumentBundle; identity: PreparedDocumentIdentity;
+  metrics: DocumentVersionMetrics; browserFallback: boolean; reused: boolean;
+} | {
+  status: 'unchanged'; source: DocumentSource; version: DocumentVersion; browserFallback: boolean;
+} | {
+  status: 'failed'; source: DocumentSource; version?: DocumentVersion;
+  error: { code: string; message: string; details?: Record<string, unknown> };
+};
+
+/** Activation retains superseded elements, chunks and parents. Explicit version reads
+ * expose retained evidence; active retrieval uses each ready source's activeVersionId. */
 export interface DocumentCorpusStore {
   getSource(id: string): Promise<DocumentSource | undefined>;
   listSources(): Promise<DocumentSource[]>;
@@ -201,6 +215,7 @@ export interface DocumentCorpusStore {
   listElements(versionId: string): Promise<DocumentElement[]>;
   listChunks(versionId?: string): Promise<DocumentChunk[]>;
   listParents(versionId?: string): Promise<DocumentParent[]>;
+  /** Create or refresh source metadata; changing an existing active pointer requires activation. */
   putSource(source: DocumentSource): Promise<void>;
   activate(bundle: StoredDocumentBundle): Promise<void>;
   recordFailure(source: DocumentSource, version?: DocumentVersion): Promise<void>;

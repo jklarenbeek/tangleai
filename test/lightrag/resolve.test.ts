@@ -35,3 +35,23 @@ it('the decision ceiling refuses before another judge call and returns a seriali
     const result=await createCandidateResolver({judge,lookup:async()=>empty(),maxDecisions:0})({claims:[a,b]});
     assert.equal(result.valid,false);if(!result.valid)assert.equal(result.issues[0].code,'TLRAG1005');assert.equal(calls,0);assert.deepEqual(JSON.parse(JSON.stringify(result)),result);
 });
+it('replacement retains canonical identity from withdrawn claims without retaining their support',async()=>{
+    const before=await graphClaim('Cedar'),canonical=await graphEntity(before),after=await graphClaim('CEDAR',{source:'replacement'});
+    let calls=0;const judge=createScriptedCoreferenceJudge(()=>{calls++;throw Error('Equal descriptions require no decision.');},{modelIdentity,promptRevision});
+    const result=await createCandidateResolver({judge,lookup:async()=>({claims:{entities:[before],relations:[]},canonicals:{entities:[canonical],relations:[]}})})({claims:[after],retiredClaimIds:[before.id]});
+    assert.equal(result.valid,true);assert.equal(calls,0);if(result.valid){assert.equal(result.value.groups[0].id,canonical.id);assert.deepEqual(result.value.groups[0].claimIds,[after.id]);assert.deepEqual(result.value.groups[0].previousCanonicalIds,[canonical.id]);}
+});
+it('withdrawn descriptions still distinguish a replacement homonym through an explicit decision',async()=>{
+    const before=await graphClaim('Cedar'),canonical=await graphEntity(before),after=await graphClaim('Cedar',{source:'replacement',description:'A different organization in another town.'});let calls=0;
+    const judge=createScriptedCoreferenceJudge(input=>{calls++;return {groups:input.subjects.map(row=>[row.id]),reasons:input.subjects.map(row=>row.description)};},{modelIdentity,promptRevision});
+    const result=await createCandidateResolver({judge,lookup:async()=>({claims:{entities:[before],relations:[]},canonicals:{entities:[canonical],relations:[]}})})({claims:[after],retiredClaimIds:[before.id]});
+    assert.equal(result.valid,true);assert.equal(calls,1);if(result.valid){assert.equal(result.value.groups.length,1);assert.notEqual(result.value.groups[0].id,canonical.id);assert.deepEqual(result.value.groups[0].claimIds,[after.id]);assert.deepEqual(result.value.groups[0].previousCanonicalIds,[]);assert.equal(result.value.reviews[0].decision,'keep-apart');}
+});
+it('a retired canonical address cannot be rebound to an unreviewed new homonym',async()=>{
+    const {canonicalGraphRevisionOf}=await import('@tangleai/lightrag');
+    const before=await graphClaim('Cedar'),original=await graphEntity(before),body={...original,status:'retracted' as const,supportClaimIds:[],supportChunkIds:[],aliases:[],profile:''},retired={...body,revision:await canonicalGraphRevisionOf(body)};
+    const after=await graphClaim('Cedar',{source:'another-source',description:'An unrelated organization after the original source retired.'});
+    const judge=createScriptedCoreferenceJudge(()=>{throw Error('There is no active identity evidence to judge.');},{modelIdentity,promptRevision});
+    const result=await createCandidateResolver({judge,lookup:async()=>({claims:{entities:[],relations:[]},canonicals:{entities:[retired],relations:[]}})})({claims:[after]});
+    assert.equal(result.valid,true);if(result.valid){assert.notEqual(result.value.groups[0].id,retired.id);assert.equal(result.value.groups[0].identityClaimId,after.id);}
+});

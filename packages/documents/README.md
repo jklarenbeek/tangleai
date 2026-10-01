@@ -47,3 +47,16 @@ The `./extract-static` subpath owns shared HTML/text extraction and its limits
 without importing the PDF dependency. The existing `./extract` entry consumes
 that same implementation and adds PDF extraction. Browser web retrieval uses
 the static subpath; installed Node and Bun retain the complete extractor.
+
+`createDocumentIngester(...).prepare(input)` fetches, extracts, chunks and embeds
+without activating corpus evidence. It returns a prepared bundle, an unchanged
+source/version, or a serializable failure. Only an unchanged source's metadata
+may be refreshed during preparation. `ingest(input)` composes preparation with
+the store's activation and retains its progress and failure behavior.
+
+`preparedIdentityOf` includes content, extraction version, chunker/configuration
+and embedding model/width. An unchanged identity spends zero embedding calls.
+A retained complete version can be prepared again without re-embedding its
+children or parents. The store keeps superseded evidence addressable; recall
+requests only the ready sources' active versions. Storage reclamation is an
+explicit reference-aware operation in `@tangleai/store`.

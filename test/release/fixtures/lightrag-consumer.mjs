@@ -17,3 +17,9 @@ const reopened=await openTangleDb({path:join(root,'lightrag.db')});
 try {const store=createLightRagStore(reopened);assert.equal((await store.listEntities()).length,1);assert.equal((await store.activeProjectionFor('consumer-source')).head.revision,1);}
 finally {await reopened.close();}
 console.log('Installed graph preparation, contracts, atomic activation, replay and durable reopen passed.');
+
+const {runLightRagExample}=await import('./lightrag-example.mjs');
+const corpusDb=await openTangleDb();
+try{assert.deepEqual(await runLightRagExample(corpusDb),{unchanged:'unchanged',replayWrites:0,removedDocumentWrites:2,reactivated:true,reactivationClaims:0,reactivationCalls:0,reactivationExtractions:0,head:4,retainedVersions:1,activeEntities:2,activeRelations:1});}
+finally{await corpusDb.close();}
+console.log('Installed document preparation, joint promotion, replacement, retraction, zero-call reactivation and reference-aware collection passed.');

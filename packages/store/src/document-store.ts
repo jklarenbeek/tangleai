@@ -1,5 +1,6 @@
 import {
   assertDocumentSource,
+  DocumentError,
   assertDocumentVersion,
   type DocumentChunk,
   type DocumentCorpusStore,
@@ -13,7 +14,8 @@ import {
 import type { TransactionStore } from '@jarenjs/db';
 import type { TangleDb } from './db.ts';
 import { asRows } from './memory-store.ts';
-import { applyDocumentBundle } from './document-state.ts';
+import { applyDocumentBundle, serialDocumentSource } from './document-state.ts';
+export { applyDocumentBundle as activateDocumentWithin } from './document-state.ts';
 
 async function rows<T>(db: Pick<TransactionStore, 'collection'>, collection: string, fields: Record<string, unknown> = {}): Promise<T[]> {
   return asRows(await db.collection<T>(collection).execute<T>({
@@ -28,20 +30,6 @@ export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
   const versions = db.collection<DocumentVersion>('document_versions');
   const elements = db.collection<DocumentElement>('document_elements');
   const chunks = db.collection<DocumentChunk>('document_chunks');
-  const locks = new Map<string, Promise<void>>();
-
-  async function serial<T>(sourceId: string, operation: () => Promise<T>): Promise<T> {
-    while (locks.has(sourceId)) await locks.get(sourceId);
-    let release = (): void => {};
-    const held = new Promise<void>((resolve) => { release = resolve; });
-    locks.set(sourceId, held);
-    try {
-      return await operation();
-    } finally {
-      locks.delete(sourceId);
-      release();
-    }
-  }
 
   return {
     getSource: (id) => sources.get(id),
@@ -62,36 +50,43 @@ export function createDocumentStore(db: TangleDb): DocumentCorpusStore {
     },
     async listChunks(versionId) {
       return (await rows<DocumentChunk>(db, 'document_chunks', versionId === undefined ? {} : { versionId }))
-        .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.order - b.order);
+        .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.versionId.localeCompare(b.versionId) || a.order - b.order || a.id.localeCompare(b.id));
     },
     async listParents(versionId) {
       return (await rows<DocumentParent>(db, 'document_parents', versionId === undefined ? {} : { versionId }))
-        .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.order - b.order);
+        .sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.versionId.localeCompare(b.versionId) || a.order - b.order || a.id.localeCompare(b.id));
     },
     async putSource(source) {
       assertDocumentSource(source);
-      await sources.put(source);
+      await serialDocumentSource(db, source.id, () => db.transaction(async scope => {
+        const collection = scope.collection<DocumentSource>('sources'), previous = await collection.get(source.id);
+        if (previous && previous.activeVersionId !== source.activeVersionId)
+          throw new DocumentError('stale-source', 'Source metadata refresh cannot replace a concurrently changed active document');
+        await collection.put(source);
+      }, { mode: 'immediate' }));
     },
     async activate(bundle: StoredDocumentBundle) {
-      await serial(bundle.source.id, () => db.transaction(async transaction => {
+      await serialDocumentSource(db, bundle.source.id, () => db.transaction(async transaction => {
         await applyDocumentBundle(transaction, bundle);
       }, { mode: 'immediate' }));
     },
     async recordFailure(source, version) {
-      await serial(source.id, async () => {
+      await serialDocumentSource(db, source.id, () => db.transaction(async scope => {
         assertDocumentSource(source);
-        const current = await sources.get(source.id);
-        const activeVersionId = current?.activeVersionId ?? source.activeVersionId;
+        const scopedSources = scope.collection<DocumentSource>('sources'), scopedVersions = scope.collection<DocumentVersion>('document_versions');
+        const current = await scopedSources.get(source.id);
+        const activeVersionId = current === undefined ? source.activeVersionId : current.activeVersionId;
+        const { activeVersionId: _stalePointer, ...failedSource } = source;
         const retained = activeVersionId === undefined
-          ? source
+          ? failedSource
           : { ...(current ?? source), activeVersionId, status: 'ready' as const, error: source.error, fetchedAt: source.fetchedAt };
-        await sources.put(retained);
+        await scopedSources.put(retained);
         if (version !== undefined) {
           assertDocumentVersion(version);
-          const known = await versions.get(version.id);
-          if (known?.status !== 'active') await versions.put({ ...version, status: 'failed' });
+          const known = await scopedVersions.get(version.id);
+          if (known?.status !== 'active') await scopedVersions.put({ ...version, status: 'failed' });
         }
-      });
+      }, { mode: 'immediate' }));
     },
   };
 }

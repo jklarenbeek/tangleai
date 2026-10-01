@@ -1,12 +1,14 @@
 /** Logical graph reads never expose an uncommitted or implicitly staged contribution. */
 import { cloneJson } from '@jarenjs/core/object';
-import type { GraphProjection, GraphEntity, GraphRelation, GraphChunkProfile, GraphClaimSet, ProjectionWritePlan } from './contracts.gen.ts';
+import { readGraphSnapshotWithin,type GraphSnapshotRequest } from './snapshot.ts';
+import type { GraphProjection, GraphEntity, GraphRelation, GraphChunkProfile, GraphClaimSet, GraphContributionSnapshot, ProjectionWritePlan } from './contracts.gen.ts';
 import type { LightRagPersistence, LightRagReadView, LightRagReadQuery } from './persistence.ts';
 import { createMemoryLightRagPersistence, type MemoryLightRagOptions } from './memory-persistence.ts';
 import { applyLightRagWritePlanWithin, type LightRagApplyReceipt } from './apply.ts';
 import { lightragFailure, type LightRagOutcome } from './errors.ts';
 export interface LightRagVisibility { includeStaged?: boolean; includeSuperseded?: boolean }
 export interface LightRagStore {
+    readContributionSnapshot(request: GraphSnapshotRequest): Promise<GraphContributionSnapshot>;
     getProjection(id: string): Promise<GraphProjection | undefined>;
     listProjections(filter?: Partial<Pick<GraphProjection, 'sourceId' | 'versionId' | 'status'>>): Promise<GraphProjection[]>;
     activeProjectionFor(sourceId: string): Promise<GraphProjection | undefined>;
@@ -26,6 +28,7 @@ async function claimsWithin(view: LightRagReadView, projectionId: string, visibi
 export function createLightRagStoreAdapter(persistence: LightRagPersistence): LightRagStore {
     const projectionRows = (filter: LightRagReadQuery) => persistence.read(async view => (await view.query('projections', filter)).map(row => row.payload));
     return {
+        readContributionSnapshot: request => persistence.read(view => readGraphSnapshotWithin(view, request)),
         getProjection: id => persistence.read(async view => (await view.get('projections', id))?.payload),
         listProjections: (filter = {}) => projectionRows(filter),
         async activeProjectionFor(sourceId) { return (await projectionRows({ sourceId, status: 'active' }))[0]; },

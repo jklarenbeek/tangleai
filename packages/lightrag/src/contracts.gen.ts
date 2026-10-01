@@ -221,12 +221,186 @@ export interface GraphMergeReview {
 }
 
 
+export interface GraphDocumentBinding {
+  sourceId: LightRagId;
+  versionId: LightRagId;
+  revision: LightRagRevision;
+}
+
+
 export interface GraphProjectionAudit {
   operation: "activate" | "retract";
   head: LightRagHead;
   contributionPlanRevision: LightRagRevision;
   reviews: Array<GraphMergeReview>;
   at: LightRagInstant;
+  document?: GraphDocumentBinding;
+  profilePolicy?: "prepared" | "retained-evidence";
+  previousHead?: LightRagHead;
+}
+
+
+export interface GraphClaimSet {
+  entities: Array<GraphEntityClaim>;
+  relations: Array<GraphRelationClaim>;
+}
+
+
+export interface LightRagChunkAddress {
+  id: LightRagId;
+  sourceId: LightRagId;
+  versionId: LightRagId;
+}
+
+
+export interface GraphCanonicalSet {
+  entities: Array<GraphEntity>;
+  relations: Array<GraphRelation>;
+}
+
+
+export interface GraphContributionSnapshot {
+  claims: GraphClaimSet;
+  canonicals: GraphCanonicalSet;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minItems=2, uniqueItems=true
+ */
+export type GraphContributionInputMergesItem = Array<LightRagRevision>;
+
+export interface GraphCanonicalProfile {
+  kind: "entity" | "relation";
+  id: LightRagRevision;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  claimIds: Array<LightRagRevision>;
+  profile: LightRagId;
+}
+
+
+export interface GraphContributionInput {
+  claims: GraphClaimSet;
+  profiles: Array<GraphChunkProfile>;
+  chunks: Array<LightRagChunkAddress>;
+  existing: GraphContributionSnapshot;
+  candidates: GraphCanonicalSet;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  retiredClaimIds: Array<LightRagRevision>;
+  merges: Array<GraphContributionInputMergesItem>;
+  reviews: Array<GraphMergeReview>;
+  profileUpdates: Array<GraphCanonicalProfile>;
+  embeddedBy: LightRagEmbeddedBy;
+}
+
+
+export interface GraphContributionPlan {
+  input: GraphContributionInput;
+  canonicals: GraphCanonicalSet;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  touchedEntityIds: Array<LightRagRevision>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  touchedRelationIds: Array<LightRagRevision>;
+  revision: LightRagRevision;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphContributionWarningsItem = string;
+
+export interface GraphChunkFailure {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  chunkId: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<LightRagIssue>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  attempts: number;
+  spend: LightRagSpend;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GraphContributionCompletedChunkIdsItem = string;
+
+export interface GraphPreparationStats {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failedChunks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entityClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relationClaims: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entities: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  relations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  merges: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  decisions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  embeddingCalls: number;
+}
+
+
+export interface GraphContribution {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sourceId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  versionId: string;
+  plan: GraphContributionPlan;
+  identities: LightRagIdentities;
+  contributionRevision: LightRagRevision;
+  spend: LightRagSpend;
+  warnings: Array<GraphContributionWarningsItem>;
+  failures: Array<GraphChunkFailure>;
+  partial: boolean;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  completedChunkIds: Array<GraphContributionCompletedChunkIdsItem>;
+  stats: GraphPreparationStats;
 }
 
 
@@ -253,6 +427,7 @@ export interface GraphProjection {
   supersededAt?: LightRagInstant;
   error?: LightRagIssue;
   audit?: Array<GraphProjectionAudit>;
+  prepared?: GraphContribution;
 }
 
 
@@ -441,79 +616,6 @@ export interface LightRagAnswerRecord {
 }
 
 
-export interface LightRagChunkAddress {
-  id: LightRagId;
-  sourceId: LightRagId;
-  versionId: LightRagId;
-}
-
-
-export interface GraphClaimSet {
-  entities: Array<GraphEntityClaim>;
-  relations: Array<GraphRelationClaim>;
-}
-
-
-export interface GraphCanonicalSet {
-  entities: Array<GraphEntity>;
-  relations: Array<GraphRelation>;
-}
-
-
-export interface GraphContributionSnapshot {
-  claims: GraphClaimSet;
-  canonicals: GraphCanonicalSet;
-}
-
-
-export interface GraphCanonicalProfile {
-  kind: "entity" | "relation";
-  id: LightRagRevision;
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  claimIds: Array<LightRagRevision>;
-  profile: LightRagId;
-}
-
-
-/**
- * Schema constraints this type cannot express: minItems=2, uniqueItems=true
- */
-export type GraphContributionInputMergesItem = Array<LightRagRevision>;
-
-export interface GraphContributionInput {
-  claims: GraphClaimSet;
-  profiles: Array<GraphChunkProfile>;
-  chunks: Array<LightRagChunkAddress>;
-  existing: GraphContributionSnapshot;
-  candidates: GraphCanonicalSet;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  retiredClaimIds: Array<LightRagRevision>;
-  merges: Array<GraphContributionInputMergesItem>;
-  reviews: Array<GraphMergeReview>;
-  profileUpdates: Array<GraphCanonicalProfile>;
-  embeddedBy: LightRagEmbeddedBy;
-}
-
-
-export interface GraphContributionPlan {
-  input: GraphContributionInput;
-  canonicals: GraphCanonicalSet;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  touchedEntityIds: Array<LightRagRevision>;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  touchedRelationIds: Array<LightRagRevision>;
-  revision: LightRagRevision;
-}
-
-
 export type LightRagWrite = { table: "projections"; row: GraphProjection; } | { table: "entity_claims"; row: GraphEntityClaim; projectionId: LightRagRevision; } | { table: "relation_claims"; row: GraphRelationClaim; projectionId: LightRagRevision; } | { table: "chunk_profiles"; row: GraphChunkProfile; projectionId: LightRagRevision; } | { table: "entities"; row: GraphEntity; } | { table: "relations"; row: GraphRelation; };
 
 export interface ProjectionWritePlan {
@@ -528,6 +630,8 @@ export interface ProjectionWritePlan {
   reactivation: boolean;
   writes: Array<LightRagWrite>;
   revision: LightRagRevision;
+  document?: GraphDocumentBinding;
+  profilePolicy?: "prepared" | "retained-evidence";
 }
 
 
@@ -832,97 +936,6 @@ export interface LightRagPromptCatalog {
    * Schema constraints this type cannot express: minItems=4, maxItems=4
    */
   packs: Array<LightRagPromptArtifact>;
-}
-
-
-export interface GraphChunkFailure {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  chunkId: string;
-  /**
-   * Schema constraints this type cannot express: minItems=1
-   */
-  issues: Array<LightRagIssue>;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  attempts: number;
-  spend: LightRagSpend;
-}
-
-
-export interface GraphPreparationStats {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  completedChunks: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  failedChunks: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  entityClaims: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  relationClaims: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  entities: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  relations: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  merges: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  decisions: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  embeddingCalls: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type GraphContributionWarningsItem = string;
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type GraphContributionCompletedChunkIdsItem = string;
-
-export interface GraphContribution {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  sourceId: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  versionId: string;
-  plan: GraphContributionPlan;
-  identities: LightRagIdentities;
-  contributionRevision: LightRagRevision;
-  spend: LightRagSpend;
-  warnings: Array<GraphContributionWarningsItem>;
-  failures: Array<GraphChunkFailure>;
-  partial: boolean;
-  /**
-   * Schema constraints this type cannot express: uniqueItems=true
-   */
-  completedChunkIds: Array<GraphContributionCompletedChunkIdsItem>;
-  stats: GraphPreparationStats;
 }
 
 

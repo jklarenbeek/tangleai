@@ -71,6 +71,7 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['grounding-consumer.mjs', 'grounding-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'grounding-consumer.mjs']);
     await sqliteFixture('bun', ['grounding-consumer.mjs']);
+    writeFileSync(resolve(directory, 'lightrag-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/lightrag.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['lightrag-consumer.mjs', 'lightrag-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'lightrag-consumer.mjs']);
     await sqliteFixture('bun', ['lightrag-consumer.mjs']);

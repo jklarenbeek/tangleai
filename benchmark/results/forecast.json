@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "9564a6a29fda71f215bea8c8779e0dc830fb11bd",
+    "head": "0e81abc0b6593217113ae5aa1a5ff0e53c0819e6",
     "clean": false,
     "files": [
       {
@@ -843,7 +843,7 @@
       },
       {
         "path": "packages/documents/src/contracts.ts",
-        "sha256": "abf9f8bfc5cb61997ac663516d6aa4bd63bfd3c3601db0cc42778a2cbf66671e"
+        "sha256": "888e282066482201552d329d46b7925b9d536da63b53e67982df497f48926d5a"
       },
       {
         "path": "packages/documents/src/extract-common.ts",
@@ -867,11 +867,11 @@
       },
       {
         "path": "packages/documents/src/ingest.ts",
-        "sha256": "af9d1ec234062031b88ad0ecfbe8a3dc36ff615a95ffb1db05c62d3efeac289c"
+        "sha256": "a1d1ead8cbc500ea71169f664852d86d3ed1d2af2f65952d356ae2caa6044251"
       },
       {
         "path": "packages/documents/src/retrieval.ts",
-        "sha256": "331fffffc3ed2d6efb6af2d735bb99f5ea21d74ad5545655d434785717c4398d"
+        "sha256": "62cee952bb02f60c33b27e69b7e28b4a9d464ee38258523ca786ebc9a47ace92"
       },
       {
         "path": "packages/documents/src/url-policy.ts",
@@ -1251,7 +1251,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "d6a4c17cfa7d9f6ce7df4676c93cc65a83cd54cf1a0d03c708cc29f1101c0334"
+        "sha256": "24ade43ebf9bfe55c1175a857967a9315b869e291293140eb304f8355ad2ff2c"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1262,16 +1262,20 @@
         "sha256": "3ee37a6ada77d46849f3eae2c7d37a65213f5de5ad83aadbf5fe164bd23c20bc"
       },
       {
+        "path": "packages/store/src/corpus-promotion.ts",
+        "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+      },
+      {
         "path": "packages/store/src/db.ts",
         "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
       },
       {
         "path": "packages/store/src/document-state.ts",
-        "sha256": "8a989411e415e9d1670f4fa5555d76796f75a4d0f43f96963662cb68d18bb71f"
+        "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
       },
       {
         "path": "packages/store/src/document-store.ts",
-        "sha256": "f97b975732899198627b39304010aa2018eb4c4e4c43027bbfb0c7d2e97ae3f9"
+        "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
       },
       {
         "path": "packages/store/src/evolve-effects.ts",
@@ -1292,6 +1296,10 @@
       {
         "path": "packages/store/src/forecast-store.ts",
         "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
+      },
+      {
+        "path": "packages/store/src/gc.ts",
+        "sha256": "e95f99cb4e02e58f04f360710422ffe6ad00c167a35e6607b5a64289ba32eaf7"
       },
       {
         "path": "packages/store/src/grounding-clarification.ts",
@@ -1323,7 +1331,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "3235309ec248fabf75440b23778d2ad49955b91a4b95882f80e552ae93928064"
+        "sha256": "ce7bfe5264a5d099d9a77dc7ab0d79b70a5200a0865681289225259d2fe057e2"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1331,11 +1339,11 @@
       },
       {
         "path": "packages/store/src/lightrag-model.ts",
-        "sha256": "daacd36382c7bbe2c2b25a4d521e8db687e6372293e0682ec4312396b6210658"
+        "sha256": "de7e29cb7ef692aa86f423d33699a4c48521daf42f0578562ae367a57aa3ae0f"
       },
       {
         "path": "packages/store/src/lightrag-store.ts",
-        "sha256": "8c428d9007cee569de48afac171811168f90f17edee70ae871e0bcc64d0efc8f"
+        "sha256": "41e0f72da2eb7f4aa6719727d059bde29440c7d9e97c37c42166eb345be90419"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -1390,7 +1398,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "d3e37a9fbacce0211da88049d06c3239c1496bc9c535c4d451a430a66958085a"
+    "sha256": "107e95c50207dafaa2d3768fd2a5203ef0fa2f2e5d28194bd9de3479e93ee723"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44855,5 +44863,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "4d8f0b9e606592b01a439779a01d5897c04ac4ce537b8981815e21a6d0ae269a"
+  "reportId": "744691f760f950075cbff49520db9afd6d0de69cd8a40bd4336e8c7d90f077b7"
 }

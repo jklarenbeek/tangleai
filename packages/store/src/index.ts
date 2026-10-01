@@ -62,3 +62,7 @@ export type { GroundingStoreOptions } from './grounding-store.ts';
 
 export { createLightRagStore, applyLightRagPlanWithin, type LightRagDbOptions } from './lightrag-store.ts';
 export { LIGHTRAG_COLLECTIONS } from './lightrag-model.ts';
+
+export { activateDocumentWithin } from './document-store.ts';
+export * from './corpus-promotion.ts';
+export * from './gc.ts';

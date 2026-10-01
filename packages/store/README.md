@@ -193,3 +193,38 @@ worker owns leases, renewal, retries and polling. A bounded wait handles a
 competing process that claims the same job between inspection and worker start;
 it adds no polling loop or event channel. Desktop startup resumes unfinished
 runs, including a saved answer whose final workflow commit was interrupted.
+
+## Joint document and graph admission
+
+`createCorpusPromotion({db, documents, lightrag})` prepares graph contributions
+outside a transaction, then `promote({document, contribution, expectedHead})`
+activates both document and graph in one immediate transaction. It checks the
+native source fence, complete document/chunker/embedding identity, current
+canonical snapshot and actual evidence before the first write. Partial document
+or graph extraction requires explicit `allowPartial: true`. A refusal or thrown
+write failure leaves both previous heads unchanged. Exact replay writes zero rows.
+
+Preparation returns unchanged with zero graph calls when the document and graph
+identities agree. Replacement withdraws obsolete claims before adding new ones;
+unaffected canonical revisions remain stable. `retract(sourceId)` withdraws the
+active contribution while retaining document evidence and the last source fence.
+Identical retained contributions reactivate with zero new model or embedding
+calls. Exact cached profile bases are reused; changed bases use deterministic
+unions of the retained claim descriptions, identified as `retained-evidence` in
+the audit. This reuse does not claim fresh model profiling quality.
+
+Ordinary document activation refuses a version change for an indexed source;
+use joint promotion to keep its graph consistent. Metadata refresh and failure
+recording cannot restore a concurrently replaced or retracted source pointer.
+`activateDocumentWithin` exposes the same document transaction body for scoped
+host composition; callers own the surrounding transaction and admission checks.
+
+`collectDocumentGarbage(db, {dryRun, resolvers})` defaults to a dry run. It only
+collects evidence rows of superseded or failed versions, keeping version records.
+Active source pointers, retained graph records, chat citations, nested run
+summaries and named host resolvers protect referenced evidence. All resolver
+checks complete before deletion. The result lists eligible/deleted versions and
+every reference that retained a candidate; a second run deletes nothing. Host
+resolvers consume preloaded reference data and must not call a root database
+handle while this transaction is open. See `examples/lightrag.ts` for the public
+keyless lifecycle and explicit collection step.

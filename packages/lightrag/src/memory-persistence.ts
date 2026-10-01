@@ -16,6 +16,7 @@ export function createMemoryLightRagPersistence(options: MemoryLightRagOptions =
             const rows = [...snapshot.get(table)!.values()].filter(row =>
                 (['sourceId', 'versionId', 'projectionId', 'status'] as const).every(key => query[key] === undefined || row[key] === query[key])
                 && (query.ids === undefined || query.ids.includes(row.id))
+                && (query.claimIds === undefined || 'id' in row.payload && query.claimIds.includes(row.payload.id))
                 && (query.normalizedNames === undefined || row.normalizedName !== null && query.normalizedNames.includes(row.normalizedName))
                 && (query.entityIds === undefined || row.sourceEntityId !== null && query.entityIds.includes(row.sourceEntityId)
                     || row.targetEntityId !== null && query.entityIds.includes(row.targetEntityId)));

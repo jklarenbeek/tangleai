@@ -158,11 +158,11 @@
       },
       {
         "path": "packages/documents/src/ingest.ts",
-        "sha256": "af9d1ec234062031b88ad0ecfbe8a3dc36ff615a95ffb1db05c62d3efeac289c"
+        "sha256": "a1d1ead8cbc500ea71169f664852d86d3ed1d2af2f65952d356ae2caa6044251"
       },
       {
         "path": "packages/documents/src/retrieval.ts",
-        "sha256": "331fffffc3ed2d6efb6af2d735bb99f5ea21d74ad5545655d434785717c4398d"
+        "sha256": "62cee952bb02f60c33b27e69b7e28b4a9d464ee38258523ca786ebc9a47ace92"
       },
       {
         "path": "packages/models/src/embed.ts",
@@ -170,10 +170,10 @@
       },
       {
         "path": "packages/store/src/document-store.ts",
-        "sha256": "f97b975732899198627b39304010aa2018eb4c4e4c43027bbfb0c7d2e97ae3f9"
+        "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
       }
     ],
-    "sha256": "d4d12d25ec2555b5702a44cfdfd093faadcfb3947fd21d6a87d408d148e4dde3"
+    "sha256": "b8a2ea7bca335503e46aee663d0e0ecdc291ce12b8a082ef5ff055b7a81d22a4"
   },
   "configIdentities": {
     "identities": [],
@@ -1937,5 +1937,5 @@
     "defaultChanged": false,
     "reason": "Graph mechanisms and live answer quality are unmeasured."
   },
-  "reportId": "f24ab8bcf9e01a793d5af803bbbeebc00b9614f896f948353b5f124e94655016"
+  "reportId": "1e6467ad5cf0265b0cfb5a8e8d4c2240572306ab61906260bef182cda7d2193c"
 }

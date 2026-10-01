@@ -56,7 +56,8 @@ export async function recallDocumentChunks(
 ): Promise<DocumentRecall> {
   const sources = (await store.listSources()).filter((source) => source.status === 'ready' && source.activeVersionId !== undefined);
   const sourceByVersion = new Map(sources.map((source) => [source.activeVersionId as string, source]));
-  const chunks = (await store.listChunks()).filter((chunk) => sourceByVersion.has(chunk.versionId));
+  const versions = [...sourceByVersion.keys()].sort();
+  const chunks = (await Promise.all(versions.map(versionId => store.listChunks(versionId)))).flat();
   const ranking = rankDocumentChunks(chunks, query, identity, { minScore: options.minScore ?? 0 });
   const { skipped } = ranking;
   const scored = ranking.scored.map(item => ({ ...item, source: sourceByVersion.get(item.chunk.versionId)! }));
@@ -76,7 +77,7 @@ export async function recallDocumentChunks(
     const current = byElement.get(elementId);
     if (!current || chunk.order < current.order) byElement.set(elementId, chunk);
   }
-  const byParent = new Map((await store.listParents()).map(parent => [parent.id, parent]));
+  const byParent = new Map((await Promise.all(versions.map(versionId => store.listParents(versionId)))).flat().map(parent => [parent.id, parent]));
   const neighbours = Math.max(0, options.neighbours ?? 1);
   const ranked = selected.map<RankedDocumentChunk>((item) => {
     const parent = item.chunk.parentChunkId === undefined ? undefined : byParent.get(item.chunk.parentChunkId);

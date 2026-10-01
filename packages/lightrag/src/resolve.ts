@@ -76,9 +76,13 @@ export function createCandidateResolver(options:{lookup:GraphCandidateLookup;jud
             const keys=new Set(request.claims.map(groupKey));
             for(const claim of existing.claims.entities)if(retired.has(claim.id))keys.add(groupKey(claim));
             const groups:GraphResolvedGroup[]=[],merges:string[][]=[],reviews:GraphMergeReview[]=[];let decisions=0;
-            const occupied=new Set(existing.canonicals.entities.filter(row=>row.status!=='retracted').map(row=>row.id));
+            // A retained address keeps its historical identity even after withdrawal.
+            // Only explicit cached membership may reactivate that identity later.
+            const occupied=new Set(existing.canonicals.entities.map(row=>row.id));
             for(const key of [...keys].sort()){
-                const members=[...claims.values()].filter(row=>groupKey(row)===key&&!retired.has(row.id)&&(incoming.has(row.id)||owner.has(row.id))).sort((a,b)=>a.id<b.id?-1:1);
+                // Withdrawn claims remain identity context for this replacement. They
+                // may preserve an existing group, but never return as active support.
+                const members=[...claims.values()].filter(row=>groupKey(row)===key&&(incoming.has(row.id)||owner.has(row.id))).sort((a,b)=>a.id<b.id?-1:1);
                 if(!members.length)continue;
                 const newMembers=members.filter(row=>incoming.has(row.id)&&!owner.has(row.id)),oldIds=sorted(members.flatMap(row=>owner.has(row.id)?[owner.get(row.id)!]:[]));
                 let partitions:string[][],reasons:string[]=[];
@@ -98,13 +102,15 @@ export function createCandidateResolver(options:{lookup:GraphCandidateLookup;jud
                     partitions=oldIds.map(id=>members.filter(row=>owner.get(row.id)===id).map(row=>row.id));
                 }else partitions=[members.map(row=>row.id)];
                 for(const partition of [...partitions].map(sorted).sort((a,b)=>a[0]<b[0]?-1:1)){
+                    const activeClaims=partition.filter(id=>!retired.has(id));
+                    if(!activeClaims.length)continue;
                     const previousCanonicalIds=sorted(partition.flatMap(id=>owner.has(id)?[owner.get(id)!]:[]));
                     const previous=previousCanonicalIds.length?existing.canonicals.entities.find(row=>row.id===previousCanonicalIds[0])!:undefined,first=claims.get(partition[0])!;
                     const base=await canonicalEntityIdOf(first.name,first.type);let identityClaimId=previous?.identityClaimId,id=previous?.id;
                     if(id===undefined){if(occupied.has(base)){identityClaimId=first.id;id=await canonicalEntityIdOf(first.name,first.type,identityClaimId);}else id=base;}
                     occupied.add(id);
                     if(previousCanonicalIds.length>1)merges.push(previousCanonicalIds);
-                    groups.push({id,name:previous?.name??first.name,normalizedName:first.normalizedName,type:first.type,...(identityClaimId?{identityClaimId}:{}),claimIds:partition,incomingClaimIds:partition.filter(id=>incoming.has(id)),previousCanonicalIds});
+                    groups.push({id,name:previous?.name??first.name,normalizedName:first.normalizedName,type:first.type,...(identityClaimId?{identityClaimId}:{}),claimIds:activeClaims,incomingClaimIds:activeClaims.filter(id=>incoming.has(id)),previousCanonicalIds});
                 }
             }
             return {valid:true,value:immutableLightRagJson({existing,groups:groups.sort((a,b)=>a.id<b.id?-1:1),merges,reviews,decisions,lookupNames}),spend,attempts};

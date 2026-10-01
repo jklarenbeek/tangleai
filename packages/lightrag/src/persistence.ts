@@ -16,7 +16,7 @@ export interface LightRagIndexes {
 }
 export type LightRagStored<K extends LightRagTable = LightRagTable> = LightRagIndexes & { payload: LightRagTables[K] };
 export type LightRagReadQuery = Partial<Pick<LightRagIndexes, 'sourceId' | 'versionId' | 'projectionId' | 'status'>> & {
-    ids?: readonly string[]; normalizedNames?: readonly string[]; entityIds?: readonly string[];
+    ids?: readonly string[]; claimIds?: readonly string[]; normalizedNames?: readonly string[]; entityIds?: readonly string[];
 };
 export interface LightRagReadView {
     get<K extends LightRagTable>(table: K, id: string): Promise<LightRagStored<K> | undefined>;
