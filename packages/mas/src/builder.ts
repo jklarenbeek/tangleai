@@ -65,6 +65,7 @@ export function agentInvocation(options: CommonOptions & {
   tools?: string[],
   context?: string[],
   messageAdapter?: string,
+  executor?: string,
 }): AgentNode {
   return {
     ...common(options),
@@ -75,6 +76,7 @@ export function agentInvocation(options: CommonOptions & {
     tools: options.tools ?? [],
     context: options.context ?? [],
     messageAdapter: options.messageAdapter ?? 'json-schema',
+    ...(options.executor === undefined ? {} : { executor: options.executor }),
   };
 }
 

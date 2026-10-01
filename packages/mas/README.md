@@ -160,7 +160,7 @@ root ids retain their existing form. A wait ends the segment after already start
 sibling work settles; it holds no worker while awaiting the host. Reconciliation
 selects the response reserved for the next segment. Reusing a response key with
 different bytes refuses with `TMAS2007`. These semantics use checkpoint ABI
-`tangle-mas/6`; earlier executable identities cannot resume under this runtime.
+`tangle-mas/7`; earlier executable identities cannot resume under this runtime.
 Edge projections apply before live input validation and aggregation, including
 control boundaries, and persisted messages carry those same selected values.
 Agent attempt usage records unknown-token requests and estimated charges
@@ -190,3 +190,20 @@ node dispatch, preserving the previous valid spend. This lets direct structured
 proposals and MAS clarification share one physical-call budget; normalization and
 repair remain charged by the existing runtime. Omit the binding to retain the
 native account seeded from the run's durable spend.
+
+## Registered agent components
+
+An agent invocation may name an `executor` registered by id and content revision
+in `agentExecutors`. Its host supplies the matching `MasAgentComponent` through
+`MasHostBindings.agentComponents`; absent or mismatched bindings refuse before
+execution. The compiler captures the binding. Components receive the native
+wrapped client, tool dispatcher, cancellation signal and bounded accounting
+context. Physical requests, failed requests, tool steps and output validation
+remain native node-lifecycle responsibilities. A component may compose an
+existing structured-output owner without the default executor's extra
+normalization pass. Ordinary agent nodes keep their standard executor.
+
+Checkpoint inputs contain the external node outputs actually referenced by the
+region's feeds. Unused private switch-branch outputs cannot alter the identity
+of a downstream checkpoint after restart. Changed inputs and executable
+revisions still refuse before checkpoint restoration.

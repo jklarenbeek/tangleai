@@ -20,6 +20,18 @@
   "properties": {
     "$masRegistry": { "const": "0.1" },
     "registryId": { "$ref": "#/$defs/registryName" },
+    "agentExecutors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "version"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/$defs/registryName" },
+          "version": { "$ref": "#/$defs/registrySha256" }
+        }
+      }
+    },
     "roles": {
       "type": "array",
       "items": {
@@ -59,7 +71,7 @@
         "required": ["id", "title", "effect", "input", "inputRevision"],
         "additionalProperties": false,
         "properties": {
-          "id": { "$ref": "#/$defs/registryName" },
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" },
           "title": { "type": "string", "minLength": 1 },
           "effect": { "enum": ["pure", "read", "effectful"] },
           "input": { "type": ["object", "boolean"] },

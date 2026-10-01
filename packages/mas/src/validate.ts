@@ -528,6 +528,8 @@ function gateCapabilities(context: Context): void {
     const base = `/nodes/${index}`;
     if (node.kind === 'agent') {
       const agent = node as AgentNode;
+      if (agent.executor !== undefined && !snapshot.document.agentExecutors?.some(row => row.id === agent.executor))
+        at(issues, 'TMAS1009', `${base}/executor`, `'${agent.executor}' names no registered agent executor`);
       const role = roles.get(agent.role);
       if (role === undefined) {
         at(issues, 'TMAS1009', `${base}/role`, `'${agent.role}' names no registry role`);

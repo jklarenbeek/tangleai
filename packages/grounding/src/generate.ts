@@ -18,6 +18,10 @@ export interface GenerateGroundedClaimsOptions extends AnswerModelOptions {
     store: GroundingStore; corpus?: DocumentCorpusStore; expectedRevision?: number;
     /** Host policy can strengthen every claim; model replies cannot weaken this declaration. */
     critical?: boolean;
+    /** A preceding native workflow stage can retain the bounded interpretation. */
+    interpretConflicts?: boolean;
+    /** A durable host distinguishes unavailable dependencies from unsupported claims. */
+    failOnDependencyError?: boolean;
 }
 export async function generateGroundedClaims(options: GenerateGroundedClaimsOptions) {
     options = { ...options, profile: immutableGroundingJson(options.profile), modelIdentity: immutableGroundingJson(options.modelIdentity),
@@ -52,7 +56,7 @@ export async function generateGroundedClaims(options: GenerateGroundedClaimsOpti
         }
         accepted = true;
         const rules = evaluateProfileRules(model.profile, { text: query });
-        if (rules.emergency || rules.outOfScope) {
+        if (rules.emergency || rules.outOfScope || options.interpretConflicts === false) {
             const stored = await store.putConflict([...conflicts]);
             if (!stored.ok) groundingReject(stored.issue.code, stored.issue.path, stored.issue.detail);
         } else {
@@ -110,6 +114,8 @@ export async function generateGroundedClaims(options: GenerateGroundedClaimsOpti
             stopReason = draft.disposition === 'answer' ? 'answered' : draft.disposition === 'refuse' ? 'unsupported-claims' : 'insufficient-evidence';
         }
     } catch (cause) {
+        if (options.failOnDependencyError && !(cause instanceof MasBudgetStop) && (!(cause instanceof GroundingAbort) || cause.issue.code === 'TGRD1009'))
+            return { ok: false as const, issue: cause instanceof GroundingAbort ? cause.issue : groundingIssue('TGRD1009', '/generation', 'The generation dependency failed.', cause) };
         const issue = cause instanceof GroundingAbort ? cause.issue : cause instanceof MasBudgetStop ? groundingIssue('TGRD1007', '/budget', cause.reason, cause) : groundingIssue('TGRD1008', '/generation', 'Grounded generation could not complete.', cause);
         if (!accepted) return { ok: false as const, issue };
         validationIssues.push(issue); draft = refusal('The available evidence could not be validated for a reliable answer.');

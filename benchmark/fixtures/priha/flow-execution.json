@@ -1,0 +1,4038 @@
+{
+  "document": "priha-flow-execution",
+  "version": 1,
+  "baseline": {
+    "reportId": "2b853eafe21b3e7724ad3e0d1499fe25fb8ab03138a764efa01614a146d98872",
+    "registrationId": "d5bc0832093457cb88e9a1a2b8067c6ae5f7bf78caff89d46c513dc99d565478",
+    "sourceSha256": "e6887f5495fec4ef96dbdda1cb79f2d2ab6f5ab64e19a98cdda2621d96914c05",
+    "rows": [
+      {
+        "key": "flat-semantic",
+        "metrics": {
+          "claims": {
+            "tp": 19,
+            "fp": 0,
+            "fn": 5,
+            "microPrecision": 1,
+            "microRecall": 0.7916666666666666,
+            "microF1": 0.8837209302325582,
+            "meanF1": 0.7916666666666666
+          },
+          "citationResolution": 1,
+          "citationSupport": 1,
+          "triageAccuracy": 0,
+          "parentRecovery": 0.59375,
+          "reconciliationAccuracy": 0.84375,
+          "abstentionAccuracy": 1,
+          "refusalAccuracy": 1,
+          "localRecall": 0.59375,
+          "webRecall": 0
+        },
+        "cost": {
+          "turns": 29,
+          "tokens": 290,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "ms": 0,
+          "replayed": 0
+        },
+        "cases": [
+          {
+            "question": "q01",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c01"
+              ],
+              "matches": [
+                {
+                  "claim": "c01",
+                  "predictedId": "c01",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q02",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c02"
+              ],
+              "matches": [
+                {
+                  "claim": "c02",
+                  "predictedId": "c02",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q03",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c03"
+              ],
+              "matches": [
+                {
+                  "claim": "c03",
+                  "predictedId": "c03",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q04",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c04"
+              ],
+              "matches": [
+                {
+                  "claim": "c04",
+                  "predictedId": "c04",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q05",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c05"
+              ],
+              "matches": [
+                {
+                  "claim": "c05",
+                  "predictedId": "c05",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q06",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c06"
+              ],
+              "matches": [
+                {
+                  "claim": "c06",
+                  "predictedId": "c06",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q07",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c07"
+              ],
+              "matches": [
+                {
+                  "claim": "c07",
+                  "predictedId": "c07",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q08",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c08"
+              ],
+              "matches": [
+                {
+                  "claim": "c08",
+                  "predictedId": "c08",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q09",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c09"
+              ],
+              "matches": [
+                {
+                  "claim": "c09",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q10",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c10"
+              ],
+              "matches": [
+                {
+                  "claim": "c10",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q11",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c11"
+              ],
+              "matches": [
+                {
+                  "claim": "c11",
+                  "predictedId": "c11",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q12",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c12"
+              ],
+              "matches": [
+                {
+                  "claim": "c12",
+                  "predictedId": "c12",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q13",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c13"
+              ],
+              "matches": [
+                {
+                  "claim": "c13",
+                  "predictedId": "c13",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q14",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c14"
+              ],
+              "matches": [
+                {
+                  "claim": "c14",
+                  "predictedId": "c14",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q15",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c15"
+              ],
+              "matches": [
+                {
+                  "claim": "c15",
+                  "predictedId": "c15",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q16",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c16"
+              ],
+              "matches": [
+                {
+                  "claim": "c16",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q17",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c17"
+              ],
+              "matches": [
+                {
+                  "claim": "c17",
+                  "predictedId": "c17",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q18",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c18"
+              ],
+              "matches": [
+                {
+                  "claim": "c18",
+                  "predictedId": "c18",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q19",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c19"
+              ],
+              "matches": [
+                {
+                  "claim": "c19",
+                  "predictedId": "c19",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q20",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c20"
+              ],
+              "matches": [
+                {
+                  "claim": "c20",
+                  "predictedId": "c20",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q21",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c21"
+              ],
+              "matches": [
+                {
+                  "claim": "c21",
+                  "predictedId": "c21",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q22",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c22"
+              ],
+              "matches": [
+                {
+                  "claim": "c22",
+                  "predictedId": "c22",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q23",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c23"
+              ],
+              "matches": [
+                {
+                  "claim": "c23",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q24",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c24"
+              ],
+              "matches": [
+                {
+                  "claim": "c24",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-1",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-2",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-3",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-1",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-2",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-3",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-4",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          }
+        ]
+      },
+      {
+        "key": "local-hybrid",
+        "metrics": {
+          "claims": {
+            "tp": 20,
+            "fp": 0,
+            "fn": 4,
+            "microPrecision": 1,
+            "microRecall": 0.8333333333333334,
+            "microF1": 0.9090909090909091,
+            "meanF1": 0.8333333333333334
+          },
+          "citationResolution": 1,
+          "citationSupport": 1,
+          "triageAccuracy": 0,
+          "parentRecovery": 0.6875,
+          "reconciliationAccuracy": 0.875,
+          "abstentionAccuracy": 1,
+          "refusalAccuracy": 1,
+          "localRecall": 0.6875,
+          "webRecall": 0
+        },
+        "cost": {
+          "turns": 31,
+          "tokens": 310,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "ms": 0,
+          "replayed": 0
+        },
+        "cases": [
+          {
+            "question": "q01",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c01"
+              ],
+              "matches": [
+                {
+                  "claim": "c01",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q02",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c02"
+              ],
+              "matches": [
+                {
+                  "claim": "c02",
+                  "predictedId": "c02",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q03",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c03"
+              ],
+              "matches": [
+                {
+                  "claim": "c03",
+                  "predictedId": "c03",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q04",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c04"
+              ],
+              "matches": [
+                {
+                  "claim": "c04",
+                  "predictedId": "c04",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q05",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c05"
+              ],
+              "matches": [
+                {
+                  "claim": "c05",
+                  "predictedId": "c05",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q06",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c06"
+              ],
+              "matches": [
+                {
+                  "claim": "c06",
+                  "predictedId": "c06",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q07",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c07"
+              ],
+              "matches": [
+                {
+                  "claim": "c07",
+                  "predictedId": "c07",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q08",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c08"
+              ],
+              "matches": [
+                {
+                  "claim": "c08",
+                  "predictedId": "c08",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q09",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c09"
+              ],
+              "matches": [
+                {
+                  "claim": "c09",
+                  "predictedId": "c09",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q10",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c10"
+              ],
+              "matches": [
+                {
+                  "claim": "c10",
+                  "predictedId": "c10",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q11",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c11"
+              ],
+              "matches": [
+                {
+                  "claim": "c11",
+                  "predictedId": "c11",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q12",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c12"
+              ],
+              "matches": [
+                {
+                  "claim": "c12",
+                  "predictedId": "c12",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q13",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c13"
+              ],
+              "matches": [
+                {
+                  "claim": "c13",
+                  "predictedId": "c13",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q14",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c14"
+              ],
+              "matches": [
+                {
+                  "claim": "c14",
+                  "predictedId": "c14",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q15",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c15"
+              ],
+              "matches": [
+                {
+                  "claim": "c15",
+                  "predictedId": "c15",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q16",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c16"
+              ],
+              "matches": [
+                {
+                  "claim": "c16",
+                  "predictedId": "c16",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q17",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c17"
+              ],
+              "matches": [
+                {
+                  "claim": "c17",
+                  "predictedId": "c17",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q18",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c18"
+              ],
+              "matches": [
+                {
+                  "claim": "c18",
+                  "predictedId": "c18",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q19",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c19"
+              ],
+              "matches": [
+                {
+                  "claim": "c19",
+                  "predictedId": "c19",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q20",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c20"
+              ],
+              "matches": [
+                {
+                  "claim": "c20",
+                  "predictedId": "c20",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q21",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c21"
+              ],
+              "matches": [
+                {
+                  "claim": "c21",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q22",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c22"
+              ],
+              "matches": [
+                {
+                  "claim": "c22",
+                  "predictedId": "c22",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q23",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c23"
+              ],
+              "matches": [
+                {
+                  "claim": "c23",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q24",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c24"
+              ],
+              "matches": [
+                {
+                  "claim": "c24",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-1",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-2",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-3",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-1",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-2",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-3",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-4",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          }
+        ]
+      },
+      {
+        "key": "web-only",
+        "metrics": {
+          "claims": {
+            "tp": 2,
+            "fp": 0,
+            "fn": 22,
+            "microPrecision": 1,
+            "microRecall": 0.08333333333333333,
+            "microF1": 0.15384615384615385,
+            "meanF1": 0.08333333333333333
+          },
+          "citationResolution": 1,
+          "citationSupport": 1,
+          "triageAccuracy": 0,
+          "parentRecovery": 0,
+          "reconciliationAccuracy": 0.28125,
+          "abstentionAccuracy": 1,
+          "refusalAccuracy": 0.75,
+          "localRecall": 0,
+          "webRecall": 0.0625
+        },
+        "cost": {
+          "turns": 118,
+          "tokens": 890,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "ms": 0,
+          "replayed": 0
+        },
+        "cases": [
+          {
+            "question": "q01",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c01"
+              ],
+              "matches": [
+                {
+                  "claim": "c01",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q02",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c02"
+              ],
+              "matches": [
+                {
+                  "claim": "c02",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q03",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c03"
+              ],
+              "matches": [
+                {
+                  "claim": "c03",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q04",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c04"
+              ],
+              "matches": [
+                {
+                  "claim": "c04",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q05",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c05"
+              ],
+              "matches": [
+                {
+                  "claim": "c05",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q06",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c06"
+              ],
+              "matches": [
+                {
+                  "claim": "c06",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q07",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c07"
+              ],
+              "matches": [
+                {
+                  "claim": "c07",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q08",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c08"
+              ],
+              "matches": [
+                {
+                  "claim": "c08",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q09",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c09"
+              ],
+              "matches": [
+                {
+                  "claim": "c09",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q10",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c10"
+              ],
+              "matches": [
+                {
+                  "claim": "c10",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q11",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c11"
+              ],
+              "matches": [
+                {
+                  "claim": "c11",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q12",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c12"
+              ],
+              "matches": [
+                {
+                  "claim": "c12",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q13",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c13"
+              ],
+              "matches": [
+                {
+                  "claim": "c13",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q14",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c14"
+              ],
+              "matches": [
+                {
+                  "claim": "c14",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q15",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c15"
+              ],
+              "matches": [
+                {
+                  "claim": "c15",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q16",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c16"
+              ],
+              "matches": [
+                {
+                  "claim": "c16",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q17",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c17"
+              ],
+              "matches": [
+                {
+                  "claim": "c17",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q18",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c18"
+              ],
+              "matches": [
+                {
+                  "claim": "c18",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q19",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c19"
+              ],
+              "matches": [
+                {
+                  "claim": "c19",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q20",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c20"
+              ],
+              "matches": [
+                {
+                  "claim": "c20",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q21",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c21"
+              ],
+              "matches": [
+                {
+                  "claim": "c21",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q22",
+            "given": "abstain",
+            "claims": {
+              "expected": [
+                "c22"
+              ],
+              "matches": [
+                {
+                  "claim": "c22",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "q23",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c23"
+              ],
+              "matches": [
+                {
+                  "claim": "c23",
+                  "predictedId": "c23",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "q24",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c24"
+              ],
+              "matches": [
+                {
+                  "claim": "c24",
+                  "predictedId": "c24",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "abstain-1",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-2",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-3",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-1",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-2",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-3",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": false,
+            "decision": "caveat",
+            "decisionCorrect": false,
+            "localRecall": 0,
+            "webRecall": 0
+          }
+        ]
+      },
+      {
+        "key": "drag-no-optimizer",
+        "metrics": {
+          "claims": {
+            "tp": 22,
+            "fp": 0,
+            "fn": 2,
+            "microPrecision": 1,
+            "microRecall": 0.9166666666666666,
+            "microF1": 0.9565217391304348,
+            "meanF1": 0.9166666666666666
+          },
+          "citationResolution": 1,
+          "citationSupport": 1,
+          "triageAccuracy": 0,
+          "parentRecovery": 0.6875,
+          "reconciliationAccuracy": 0.9375,
+          "abstentionAccuracy": 1,
+          "refusalAccuracy": 1,
+          "localRecall": 0.6875,
+          "webRecall": 0.0625
+        },
+        "cost": {
+          "turns": 147,
+          "tokens": 1180,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "ms": 0,
+          "replayed": 0
+        },
+        "cases": [
+          {
+            "question": "q01",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c01"
+              ],
+              "matches": [
+                {
+                  "claim": "c01",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q02",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c02"
+              ],
+              "matches": [
+                {
+                  "claim": "c02",
+                  "predictedId": "c02",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q03",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c03"
+              ],
+              "matches": [
+                {
+                  "claim": "c03",
+                  "predictedId": "c03",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q04",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c04"
+              ],
+              "matches": [
+                {
+                  "claim": "c04",
+                  "predictedId": "c04",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q05",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c05"
+              ],
+              "matches": [
+                {
+                  "claim": "c05",
+                  "predictedId": "c05",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q06",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c06"
+              ],
+              "matches": [
+                {
+                  "claim": "c06",
+                  "predictedId": "c06",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q07",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c07"
+              ],
+              "matches": [
+                {
+                  "claim": "c07",
+                  "predictedId": "c07",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q08",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c08"
+              ],
+              "matches": [
+                {
+                  "claim": "c08",
+                  "predictedId": "c08",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q09",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c09"
+              ],
+              "matches": [
+                {
+                  "claim": "c09",
+                  "predictedId": "c09",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q10",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c10"
+              ],
+              "matches": [
+                {
+                  "claim": "c10",
+                  "predictedId": "c10",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q11",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c11"
+              ],
+              "matches": [
+                {
+                  "claim": "c11",
+                  "predictedId": "c11",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q12",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c12"
+              ],
+              "matches": [
+                {
+                  "claim": "c12",
+                  "predictedId": "c12",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q13",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c13"
+              ],
+              "matches": [
+                {
+                  "claim": "c13",
+                  "predictedId": "c13",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q14",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c14"
+              ],
+              "matches": [
+                {
+                  "claim": "c14",
+                  "predictedId": "c14",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q15",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c15"
+              ],
+              "matches": [
+                {
+                  "claim": "c15",
+                  "predictedId": "c15",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q16",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c16"
+              ],
+              "matches": [
+                {
+                  "claim": "c16",
+                  "predictedId": "c16",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q17",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c17"
+              ],
+              "matches": [
+                {
+                  "claim": "c17",
+                  "predictedId": "c17",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q18",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c18"
+              ],
+              "matches": [
+                {
+                  "claim": "c18",
+                  "predictedId": "c18",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q19",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c19"
+              ],
+              "matches": [
+                {
+                  "claim": "c19",
+                  "predictedId": "c19",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q20",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c20"
+              ],
+              "matches": [
+                {
+                  "claim": "c20",
+                  "predictedId": "c20",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q21",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c21"
+              ],
+              "matches": [
+                {
+                  "claim": "c21",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q22",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c22"
+              ],
+              "matches": [
+                {
+                  "claim": "c22",
+                  "predictedId": "c22",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q23",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c23"
+              ],
+              "matches": [
+                {
+                  "claim": "c23",
+                  "predictedId": "c23",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "q24",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c24"
+              ],
+              "matches": [
+                {
+                  "claim": "c24",
+                  "predictedId": "c24",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "abstain-1",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-2",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-3",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-1",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-2",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-3",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-4",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          }
+        ]
+      },
+      {
+        "key": "priha-full",
+        "metrics": {
+          "claims": {
+            "tp": 22,
+            "fp": 0,
+            "fn": 2,
+            "microPrecision": 1,
+            "microRecall": 0.9166666666666666,
+            "microF1": 0.9565217391304348,
+            "meanF1": 0.9166666666666666
+          },
+          "citationResolution": 1,
+          "citationSupport": 1,
+          "triageAccuracy": 0,
+          "parentRecovery": 0.6875,
+          "reconciliationAccuracy": 0.9375,
+          "abstentionAccuracy": 1,
+          "refusalAccuracy": 1,
+          "localRecall": 0.6875,
+          "webRecall": 0.0625
+        },
+        "cost": {
+          "turns": 205,
+          "tokens": 1760,
+          "promptTokens": 0,
+          "completionTokens": 0,
+          "ms": 0,
+          "replayed": 0
+        },
+        "cases": [
+          {
+            "question": "q01",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c01"
+              ],
+              "matches": [
+                {
+                  "claim": "c01",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q02",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c02"
+              ],
+              "matches": [
+                {
+                  "claim": "c02",
+                  "predictedId": "c02",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q03",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c03"
+              ],
+              "matches": [
+                {
+                  "claim": "c03",
+                  "predictedId": "c03",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q04",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c04"
+              ],
+              "matches": [
+                {
+                  "claim": "c04",
+                  "predictedId": "c04",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q05",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c05"
+              ],
+              "matches": [
+                {
+                  "claim": "c05",
+                  "predictedId": "c05",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q06",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c06"
+              ],
+              "matches": [
+                {
+                  "claim": "c06",
+                  "predictedId": "c06",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q07",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c07"
+              ],
+              "matches": [
+                {
+                  "claim": "c07",
+                  "predictedId": "c07",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q08",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c08"
+              ],
+              "matches": [
+                {
+                  "claim": "c08",
+                  "predictedId": "c08",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q09",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c09"
+              ],
+              "matches": [
+                {
+                  "claim": "c09",
+                  "predictedId": "c09",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q10",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c10"
+              ],
+              "matches": [
+                {
+                  "claim": "c10",
+                  "predictedId": "c10",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q11",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c11"
+              ],
+              "matches": [
+                {
+                  "claim": "c11",
+                  "predictedId": "c11",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q12",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c12"
+              ],
+              "matches": [
+                {
+                  "claim": "c12",
+                  "predictedId": "c12",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q13",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c13"
+              ],
+              "matches": [
+                {
+                  "claim": "c13",
+                  "predictedId": "c13",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q14",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c14"
+              ],
+              "matches": [
+                {
+                  "claim": "c14",
+                  "predictedId": "c14",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q15",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c15"
+              ],
+              "matches": [
+                {
+                  "claim": "c15",
+                  "predictedId": "c15",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q16",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c16"
+              ],
+              "matches": [
+                {
+                  "claim": "c16",
+                  "predictedId": "c16",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q17",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c17"
+              ],
+              "matches": [
+                {
+                  "claim": "c17",
+                  "predictedId": "c17",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q18",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c18"
+              ],
+              "matches": [
+                {
+                  "claim": "c18",
+                  "predictedId": "c18",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q19",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c19"
+              ],
+              "matches": [
+                {
+                  "claim": "c19",
+                  "predictedId": "c19",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q20",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c20"
+              ],
+              "matches": [
+                {
+                  "claim": "c20",
+                  "predictedId": "c20",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q21",
+            "given": "refuse",
+            "claims": {
+              "expected": [
+                "c21"
+              ],
+              "matches": [
+                {
+                  "claim": "c21",
+                  "predictedId": null,
+                  "matched": false,
+                  "supported": false
+                }
+              ],
+              "tp": 0,
+              "fp": 0,
+              "fn": 1,
+              "f1": 0
+            },
+            "correctDisposition": false,
+            "decision": "refuse",
+            "decisionCorrect": false,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q22",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c22"
+              ],
+              "matches": [
+                {
+                  "claim": "c22",
+                  "predictedId": "c22",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-local",
+            "decisionCorrect": true,
+            "localRecall": 1,
+            "webRecall": 0
+          },
+          {
+            "question": "q23",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c23"
+              ],
+              "matches": [
+                {
+                  "claim": "c23",
+                  "predictedId": "c23",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "q24",
+            "given": "answer",
+            "claims": {
+              "expected": [
+                "c24"
+              ],
+              "matches": [
+                {
+                  "claim": "c24",
+                  "predictedId": "c24",
+                  "matched": true,
+                  "supported": true
+                }
+              ],
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "f1": 1
+            },
+            "correctDisposition": true,
+            "decision": "prefer-web",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 1
+          },
+          {
+            "question": "abstain-1",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-2",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-3",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "abstain-4",
+            "given": "abstain",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "caveat",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-1",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-2",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-3",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          },
+          {
+            "question": "refuse-4",
+            "given": "refuse",
+            "claims": {
+              "expected": [],
+              "matches": [],
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "f1": null
+            },
+            "correctDisposition": true,
+            "decision": "refuse",
+            "decisionCorrect": true,
+            "localRecall": 0,
+            "webRecall": 0
+          }
+        ]
+      }
+    ]
+  },
+  "rows": [
+    "flat-semantic",
+    "local-hybrid",
+    "web-only",
+    "drag-no-optimizer",
+    "priha-full"
+  ],
+  "paths": [
+    "simple",
+    "complex",
+    "refusal",
+    "refresh",
+    "failure",
+    "retry"
+  ],
+  "pathQuestion": "q02",
+  "complexRequiredField": "service",
+  "complexAnswer": "The administrative helpline.",
+  "crashes": "each-completed-root-and-clarification-stage",
+  "limitations": "Registered scripts and exact replay test orchestration, cost accounting and evidence visibility. They do not establish live model quality. The frozen earlier component receipt is retained separately from any instrument correction.",
+  "prompts": [
+    {
+      "id": "grounding-triage",
+      "revision": "accf46c01528f456f1cb7b24cc700c2aa81de67ec7cbd7f9c0b52742f33f884e"
+    },
+    {
+      "id": "grounding-question",
+      "revision": "7df42ec877f83c648a5e81a23adc67e34a9517c3d77a002a82d16fa581c8c376"
+    },
+    {
+      "id": "grounding-resolve",
+      "revision": "41e535826b2b5baa4d0a3383868f90495f24af83612e1820b9df439abf92fa70"
+    },
+    {
+      "id": "grounding-plan",
+      "revision": "89c01f3363bafe21d8d6449f25a3831d1cdbff4cf77ab7aad6c438d904773166"
+    },
+    {
+      "id": "grounding-web-agent",
+      "revision": "e3d2115961b7e0a1ba0177f2b641bd669226a0c80def8cfc0f01dc754b5f5471"
+    },
+    {
+      "id": "grounding-web-sufficiency",
+      "revision": "417363a154bf60545133763d54eaafa501c1cc7ba796e80e2f32c921c47bacfe"
+    },
+    {
+      "id": "grounding-web-rerank",
+      "revision": "eaaa7dde4cfd25474282486c6ffa2d0fb0255b67e04f0897401c3b96e880f7a5"
+    },
+    {
+      "id": "grounding-reconcile",
+      "revision": "00647e11604e7b633598b491b5700a0c8ddac20268c0cbe13ea78fa7df1f9000"
+    },
+    {
+      "id": "grounding-generate",
+      "revision": "1b1547438f46a70da19f50d4d7049a831a3a3d0bb0284335cf6db7b082ed381c"
+    },
+    {
+      "id": "grounding-repair",
+      "revision": "a9e1ffd0631b1abfb057a38e73d833ffac42c26e2bb8400ba0ceaece3febe646"
+    }
+  ]
+}

@@ -38,6 +38,7 @@ export interface GroundingStore {
     getManifest(sourceId: string, versionId: string): Promise<CorpusManifest | undefined>;
     createSession(plan: CreateSessionPlan): Promise<StoreOutcome<GroundingSession>>;
     getSession(id: string): Promise<GroundingSession | undefined>;
+    listSessions(limit?: number, offset?: number): Promise<GroundingSession[]>;
     transitionSession(id: string, command: Exclude<SessionCommand, { kind: 'start' }>, expectedRevision: number): Promise<StoreOutcome<GroundingSession>>;
     putIntent(intent: ClarifiedIntent): Promise<StoreOutcome<{ id: string }>>;
     putPlan(plan: QueryPlan): Promise<StoreOutcome<{ id: string }>>;
@@ -309,6 +310,12 @@ export function createGroundingStoreAdapter(persistence: GroundingPersistence): 
             await write('sessions', transition.next); return transition.next;
         }),
         getSession: id => read('sessions', id),
+        listSessions: async (limit = 50, offset = 0) => {
+            if (!Number.isSafeInteger(offset) || offset < 0) throw new TypeError('Session offset must be a nonnegative integer.');
+            if (!Number.isSafeInteger(limit) || limit < 1 || limit > 200) throw new TypeError('Session limit must be 1 through 200.');
+            return persistence.transaction(async tx => immutableGroundingJson((await tx.query('sessions', {})).map(row => row.payload)
+                .sort((a, b) => (b.execution?.at ?? '').localeCompare(a.execution?.at ?? '') || a.id.localeCompare(b.id)).slice(offset, offset + limit)));
+        },
         transitionSession: (id, command, expectedRevision) => mutate(async (tx, _write, replace) => {
             const current = (await tx.get('sessions', id))?.payload;
             if (!current || current.revision !== expectedRevision) groundingReject('TGRD1002', '/revision', 'The session revision changed or is missing.');

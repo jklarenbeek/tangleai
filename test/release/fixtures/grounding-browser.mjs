@@ -1,4 +1,4 @@
-import { createMemoryGroundingStore, loadGroundingProfile, evaluateProfileRules, createQueryOptimizer, createWebLane, createReplayWebTransport, webBytesSha256, reconcileEvidence, generateGroundedClaims, renderPrihaAnswer } from '@tangleai/grounding';
+import { createMemoryGroundingStore, loadGroundingProfile, evaluateProfileRules, createQueryOptimizer, createWebLane, createReplayWebTransport, webBytesSha256, reconcileEvidence, generateGroundedClaims, renderPrihaAnswer, createGroundingWorkflow } from '@tangleai/grounding';
 import { captureKeyOf } from '@tangleai/core/http-capture';
 import profileDocument from '@tangleai/grounding/profiles/priha-hk' with { type: 'json' };
 import schema from '@tangleai/grounding/schemas/grounding' with { type: 'json' };
@@ -55,5 +55,7 @@ export async function qualifyGroundingBrowser(suppliedStore) {
         client: { endpoint: { provider: 'scripted' }, async complete() { answerCalls++; return { message: { content: JSON.stringify({ disposition: 'answer', claims: [{ id: 'location',
             text: 'Reception is in Square Hall.', critical: true, citations: [web.candidates[0].id], caveats: [] }] }) }, usage: { total_tokens: 10 } }; } } });
     if (!answer.ok || answer.answer.disposition !== 'answer' || answerCalls !== 1 || renderPrihaAnswer(answer.answer) !== 'Reception is in Square Hall.') throw Error('Installed grounded generation failed: ' + JSON.stringify(answer));
-    return { answerCalls, answerDisposition: answer.answer.disposition, webCalls, webRequests: requests, webCandidates: web.candidates.length, revision: profile.value.revision, writes: put.changes, replayWrites: replay.changes, status: session.value.status, emergency: evaluateProfileRules(profile.value, { text: 'RED FLAG' }).emergency, schema: schema.$id };
+    const workflow = await createGroundingWorkflow({ profile: profile.value, caseId: 'browser-workflow', factVocabulary: [], currentOptimization: async () => { throw Error('Compilation must not read runtime intent.'); } });
+    if (!workflow.mermaid.regions.some(row => row.mermaid.includes('flowchart')) || !Object.keys(workflow.mermaid.subplans).length) throw Error('Installed browser workflow projection failed.');
+    return { workflowVersionId: workflow.workflow.versionId, answerCalls, answerDisposition: answer.answer.disposition, webCalls, webRequests: requests, webCandidates: web.candidates.length, revision: profile.value.revision, writes: put.changes, replayWrites: replay.changes, status: session.value.status, emergency: evaluateProfileRules(profile.value, { text: 'RED FLAG' }).emergency, schema: schema.$id };
 }

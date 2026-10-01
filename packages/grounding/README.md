@@ -240,3 +240,50 @@ Calls, tokens and elapsed time share a native budget account across interpretati
 generation and repair. Narrower caller caps are allowed. Reported final token or
 time overshoot is charged and refuses the answer. A surrounding MAS host may wrap
 the client in its workflow account to cover earlier planning and retrieval too.
+
+## Composed sessions
+
+`createGroundingWorkflow` builds and validates one native MAS workflow and its
+registry, CONFIG catalog and Mermaid projection. The generated inspection copy
+is `workflows/grounding-session.json`; `npm run grounding:workflow -- --check`
+checks its bytes. Deterministic rules precede model work. A complex request uses
+the materialized GMPL clarification graph and its typed, durable interaction.
+Query tasks join local and bounded web evidence before reconciliation, generation
+and native claim validation. Agent components reuse the existing model/tool
+owners under MAS physical-call accounting; they add no normalization turn.
+
+`createGroundingHost` accepts a grounding store, document corpus, embedder,
+identity-bearing clients, transport and `GroundingSegmentHost`. SQLite hosts
+supply the latter with `createGroundingSegmentHost` from `@tangleai/store`, which
+uses the existing MAS worker, durable jobs and resume reconciler. `start`,
+`respond`, `enqueue` and `refresh` return a closed `GroundingReply`. Infrastructure
+crashes retain committed attempts; semantic dependency failures become named
+failures. Refresh creates a successor run and keeps the earlier answers.
+Resume requires identical profile, model, transport, vocabulary and policy
+identities. A refresh may explicitly bind a changed configuration.
+
+`createGroundingReader({ store, mas })` reads retained replies, session summaries,
+candidates and current conflict decisions without constructing a model client.
+The reply separates `clarification`, `answer`, `refusal`, `failure` and `running`.
+Its optional replay observer counts committed-attempt replays and region or
+checkpoint restorations observed by the current host;
+physical call, token and elapsed-time spend comes from the durable MAS run.
+
+The host can register a revision-pinned experimental policy with raw-query lane
+selection, evidence ordering, reconciliation facts and a local retrieval
+adapter. The flat comparator delegates to the existing document evidence owner.
+Adapters still pass the grounding store's address/provenance checks and the
+remaining context ceiling. Default hosts use the governed hybrid retriever.
+
+The desktop exposes seven commands/reads under `/api/grounding/` and one
+Grounded session panel. It shows typed clarification, claim citations, local/web
+lanes, authority, dated provenance, unresolved gaps, rule decisions, unused
+candidates and spend. Historical reads preserve their original identities after
+settings change. The existing chat/history/search operations and both addressed
+run subscriptions retain their contracts. The shipped jurisdiction profile is
+fixture policy: a real deployment must explicitly curate its own source and
+search-host policy; configuring a search endpoint does not grant it authority.
+
+Desktop startup pages through the entire retained session history before
+recovering unfinished native executions. Terminal sessions and interactions
+waiting for a user response do not dispatch new work.

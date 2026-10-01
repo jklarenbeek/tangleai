@@ -115,7 +115,7 @@ export function createQueryOptimizer(options: QueryOptimizerOptions) {
     async function projected(session: GroundingSession, history: Parameters<typeof projectClarifiedIntent>[0]['history'], outstanding: string[], summary: string) {
         const { profile } = await ready, cp = session.optimization!;
         const ruleIds = outstanding.length ? [...new Set([...cp.ruleIds, 'clarification-cap'])] : cp.ruleIds;
-        const intent = await projectClarifiedIntent({ profile, sessionId: session.id, originalQuery: cp.originalQuery, triage: cp.decision!, history,
+        const intent = await projectClarifiedIntent({ profile, sessionId: session.id, ...(session.execution ? { executionId: session.execution.runId } : {}), originalQuery: cp.originalQuery, triage: cp.decision!, history,
             outstanding, refinedQuery: summary, promptRevision: cp.catalogRevision, modelIdentity: cp.models.triage, ruleIds });
         storeValue(await store.putIntent(intent));
         const exhausted = intent.outstanding.length > 0;
@@ -289,5 +289,18 @@ export function createQueryOptimizer(options: QueryOptimizerOptions) {
             } catch (cause) { return fail(session, 'plan', cause, account); }
         });
     }
-    return Object.freeze({ triage, clarify, resume, plan });
+    async function completeClarification(input: Pick<GroundingSession, 'id'>, native: { store: MasStore; runId: string }): Promise<OptimizerOutcome> {
+        return guarded(input, async session => {
+            if (session.execution?.runId !== native.runId || session.optimization?.route !== 'complex')
+                groundingReject('TGRD1004', '/clarification', 'The native child must belong to the retained grounding execution.');
+            const trace = await native.store.readTrace(native.runId);
+            if (!trace || trace.run.workflowVersionId !== session.execution.workflowVersionId)
+                groundingReject('TGRD1002', '/clarification', 'The retained workflow identity differs.');
+            const state = clarificationState(trace);
+            if (!state || !state.done || state.history.length !== trace.interactions.filter(row => row.status === 'responded').length)
+                groundingReject('TGRD1004', '/clarification', 'The native child has not committed all of its typed responses.');
+            return projected(session, state.history, state.result.outstandingQuestions ?? session.optimization.decision!.requiredFields, state.refinedQuery);
+        });
+    }
+    return Object.freeze({ triage, clarify, resume, plan, completeClarification });
 }

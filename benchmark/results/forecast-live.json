@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "a5423795883b105854b456d51ec78c5147e8bc20",
-      "sha256": "179de47bb09d15657f5a669b868d85f83ac4dd3687b18a1fde6a14a3a0080a4c",
+      "head": "1c79b6a57af2433d7e46f71b1931b403f6fcd9d6",
+      "sha256": "7f8b4f66797de63fbcc3bcaa4722dccda0afbc3f0ad7c5fe79e908aef93811c1",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -494,15 +494,19 @@
         },
         {
           "path": "benchmark/lib/priha-answer.ts",
-          "sha256": "79077f9a23b7cfdcd7dab233750656ce2852c6a1f359534105ec0241dfcb2cff"
+          "sha256": "fe70a5612fababb0311ecf6d0df8a63136050423c705422b2cfd1139eecca4d2"
         },
         {
           "path": "benchmark/lib/priha-contracts.ts",
           "sha256": "c91746aac908133e38cda4c7016902a67daf32681e38741eba5dd17b5b6ff34d"
         },
         {
+          "path": "benchmark/lib/priha-flow.ts",
+          "sha256": "336b14fb16e420e2e231bb02fb0be1f8169f1f6d8b8cb5f42a75fbabb1786f45"
+        },
+        {
           "path": "benchmark/lib/priha-local.ts",
-          "sha256": "4576d2f2990cc8c105262b61b6f07a5dec0762b09651d4a239b719de2a7dd84d"
+          "sha256": "23a02292c212884d18dfb5c7614466c80f553a99b5735ad09849c0a0f053419f"
         },
         {
           "path": "benchmark/lib/priha-optimizer.ts",
@@ -518,11 +522,11 @@
         },
         {
           "path": "benchmark/lib/priha.ts",
-          "sha256": "3b63282877445bc62af7da7aa5fbe9dc025f82d0d0f90e047928abe6eaccc0c9"
+          "sha256": "d0da5c8d9ebc7316ad423f93f4b87412144f7c018350b544be9acea4c0edfa51"
         },
         {
           "path": "benchmark/lib/priha.types.ts",
-          "sha256": "4b987937ee3fb3f159f1644bfde523ef04dea881a0d6f858944214d55b017c29"
+          "sha256": "f5e340fbeb2dbdb70eefc869110faf31cc5b03581470a6e9959b67c16ca99caf"
         },
         {
           "path": "benchmark/lib/question-stream.ts",
@@ -694,11 +698,11 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "68e701fcab5c6bea8b5796f042b3b84948b79cd5a41af261b2ae8f8960a4d203"
+          "sha256": "16e46e04282df8e8a827cb166ee7af002075f0dd3897a9f0d0eb84adfa4f1663"
         },
         {
           "path": "package.json",
-          "sha256": "ec0677b7fccefa8b8aaef74f884af17795aa8776f38598abfc53e6d5ddc1b872"
+          "sha256": "d6f86884bab03bee508f5340197d889c377aef5190c36345961d0aeff3532bbc"
         },
         {
           "path": "packages/agents/package.json",
@@ -1026,7 +1030,7 @@
         },
         {
           "path": "packages/mas/schemas/mas-registry.schema.json",
-          "sha256": "20f04b9084be84e59498a38b5160b5d14ff93c8c96d885543a8f284d20e1bee5"
+          "sha256": "e90409501b634ab11f5f5f2571840ea06db9100b06745debf3827426007deca5"
         },
         {
           "path": "packages/mas/schemas/mas-runtime.schema.json",
@@ -1038,7 +1042,11 @@
         },
         {
           "path": "packages/mas/schemas/mas-workflow.schema.json",
-          "sha256": "0a34bdcfb6d0290142a447e9795f59b1c4dede9031d124c6c9005ce791bea959"
+          "sha256": "fbf75c34b940c8ea8b5e8df1697d35b044fa31f32040f0959a6a368148e15448"
+        },
+        {
+          "path": "packages/mas/src/agent-component.ts",
+          "sha256": "01cc5817196a057d2798b3e716895950c41e5642227eadaba977e847f959ea81"
         },
         {
           "path": "packages/mas/src/agent-context.ts",
@@ -1046,7 +1054,7 @@
         },
         {
           "path": "packages/mas/src/agent-executor.ts",
-          "sha256": "94ceb350e15a06c2b413fcc810f95f5b3ec00466df488e8e28e484161f7df32c"
+          "sha256": "a4d035c9d8255ad65c489436778834d4519c12ffd6f5a6a9f9f58628b968fd65"
         },
         {
           "path": "packages/mas/src/budget.ts",
@@ -1054,7 +1062,7 @@
         },
         {
           "path": "packages/mas/src/builder.ts",
-          "sha256": "eae5b53083c2d0c6f1c89ed2187c85d2a3226ed2c3c507d5c2551e30fa922c7b"
+          "sha256": "17d12d052fcb17e9277609d5e6d791db3b44c040be1a63163dc0c883b9269a28"
         },
         {
           "path": "packages/mas/src/compatibility.ts",
@@ -1066,11 +1074,11 @@
         },
         {
           "path": "packages/mas/src/contracts.gen.ts",
-          "sha256": "83390017a1b143c77f0599de57920d3f1c87433e6dffe454307c3a9c47c4f17e"
+          "sha256": "c7cc0ed9d83f8bf9b02698259cc4654f812c635fca47d37a88fa008fcf740816"
         },
         {
           "path": "packages/mas/src/control-runtime.ts",
-          "sha256": "dc39897b5614b20586b88f04aeb6f4a6a3b975dfd20556bb688a5577f01234ee"
+          "sha256": "c38dd671868277828a74b51590ab76242435bd6d3f9fe37a39134ddc0ee13231"
         },
         {
           "path": "packages/mas/src/dag-runtime.ts",
@@ -1086,7 +1094,7 @@
         },
         {
           "path": "packages/mas/src/index.ts",
-          "sha256": "2d926d238524d1e0ec13828ed3b1202766fb8765eb9f4c2051f523754ce26229"
+          "sha256": "ee9b3ab2c04c488378483448ba7f25fd5970ccc9c9664dacbee842908d0443c3"
         },
         {
           "path": "packages/mas/src/jaren-flow.d.ts",
@@ -1094,7 +1102,7 @@
         },
         {
           "path": "packages/mas/src/lower.ts",
-          "sha256": "4d5efd7b8f5a9f0e48f4e1ab31dca4ad75c88a9d9125335b8e1d413f4fa1f48c"
+          "sha256": "830a80cea04c229e5c357f879b2c3433134f2902ace4100e5462e5ec856887a8"
         },
         {
           "path": "packages/mas/src/mermaid.ts",
@@ -1106,7 +1114,7 @@
         },
         {
           "path": "packages/mas/src/node-lifecycle.ts",
-          "sha256": "4db8a61c8bee09708312337ed47a9c46b9c81dd7add6a25cab95ec0ad187b67b"
+          "sha256": "98dd6e2208986aaa8223783db47a908b0cc84796144e0d4226c54b835f478787"
         },
         {
           "path": "packages/mas/src/partition.ts",
@@ -1114,7 +1122,7 @@
         },
         {
           "path": "packages/mas/src/registry.ts",
-          "sha256": "2c3b282ca46752fd5b7b8c80b14f45f9b7df0706a77989c403ad61dd2d82677d"
+          "sha256": "40bf782772df6527894cb6d0f4c4bb8a7f649e6f2d7b9eb484eb4ea841ac43a1"
         },
         {
           "path": "packages/mas/src/runtime-state.ts",
@@ -1122,7 +1130,7 @@
         },
         {
           "path": "packages/mas/src/runtime.ts",
-          "sha256": "140beaa8abf35779e3529bcc03441e05ad710bc211d6bfe18b7d4e3a63c05deb"
+          "sha256": "af838e23792c7e42e86530b0e8b2764e9acc7b6a28af663a78a913f24aac782b"
         },
         {
           "path": "packages/mas/src/schema.ts",
@@ -1142,11 +1150,11 @@
         },
         {
           "path": "packages/mas/src/tools.ts",
-          "sha256": "35232a0540dbd178d3d548c53eeb150b13835fe9f4d8c4d8e84abd05fbe1a5ce"
+          "sha256": "b9dda5dfd91724a33025dad7fab88825f6687f941b21826b76692b89008c6902"
         },
         {
           "path": "packages/mas/src/validate.ts",
-          "sha256": "896f13f9ca1148ca9684f9ce165af569db6dbe7453010df3998b921fc0aa2a08"
+          "sha256": "2abc5a7cddffc8bee83dd2443075d7e30dfe5f3cde7f663c02747e5323d98b8b"
         },
         {
           "path": "packages/models/package.json",
@@ -1265,6 +1273,10 @@
           "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
         },
         {
+          "path": "packages/store/src/grounding-host.ts",
+          "sha256": "1cd2ba5ebd69bc29f860b1b12123ef055e3d7e6fc89468f6128f310501edf115"
+        },
+        {
           "path": "packages/store/src/grounding-model.ts",
           "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
         },
@@ -1286,7 +1298,7 @@
         },
         {
           "path": "packages/store/src/index.ts",
-          "sha256": "6025464670b88f19c62c2a41671541a8176e4479ce9c0044ce0d509349b34e33"
+          "sha256": "7aa8fee80b4a97f0b5e0b4b519e3e19235cea88d12eadc7f09e0789d8f07cb7c"
         },
         {
           "path": "packages/store/src/ledger-storage.ts",
@@ -1581,7 +1593,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "6b98f285541fe9d078d5cc0da5719243cfd04a53151ce549574137ec142b6392",
+    "planId": "24ee95a371dcac0394f44f48b00f5745d2d60f9128f99dfb468152d248f137e0",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

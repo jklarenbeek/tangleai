@@ -1,0 +1,502 @@
+{
+  "now": "2026-08-01T00:00:00.000Z",
+  "text": "Where is the Harbour reception desk?",
+  "status": 200,
+  "output": {
+    "reply": {
+      "id": "c-2026-08-01T00:00:00.000Z-0002-9zz80j",
+      "role": "assistant",
+      "text": "_No chat model is configured (Settings → Chat provider)._\n\nNo memories matched this question yet — sync a folder first, or ask something the ingested documents cover.",
+      "at": "2026-08-01T00:00:00.000Z",
+      "citations": [],
+      "provider": null,
+      "identityId": "fd8f7a7df75a3719a541709e2abf6ecaed7d53cedfa33a48e446ef96aec49e47",
+      "usage": null,
+      "decisionId": "49b5845b4a6b5b95cb4969a9c0bb711babb69769d2c6ba4ee829b2e9d362d5e6"
+    },
+    "citations": [],
+    "documentCitations": [],
+    "provider": null
+  },
+  "operations": {
+    "chat.send": {
+      "kind": "command",
+      "input": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "reply",
+          "citations",
+          "documentCitations",
+          "provider"
+        ],
+        "properties": {
+          "reply": {
+            "type": "object",
+            "required": [
+              "id",
+              "role",
+              "text",
+              "at"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "role": {
+                "enum": [
+                  "user",
+                  "assistant"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "at": {
+                "type": "string"
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "provider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "text",
+                "evidence",
+                "tags",
+                "at",
+                "kind"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "at": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "confidence": {
+                  "type": "number"
+                },
+                "supersededBy": {
+                  "type": "string"
+                },
+                "supersededReason": {
+                  "type": "string"
+                },
+                "mergedFrom": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "hasEmbedding": {
+                  "type": "boolean"
+                },
+                "embeddedBy": {
+                  "type": "object",
+                  "properties": {
+                    "model": {
+                      "type": "string"
+                    },
+                    "dims": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "documentCitations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "chunk",
+                "source",
+                "score",
+                "citation"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "chunk": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "sourceId",
+                    "versionId",
+                    "elementIds",
+                    "text",
+                    "tokenCount",
+                    "order",
+                    "headingPath",
+                    "embeddedBy"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "versionId": {
+                      "type": "string"
+                    },
+                    "elementIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "tokenCount": {
+                      "type": "number"
+                    },
+                    "order": {
+                      "type": "number"
+                    },
+                    "headingPath": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pageStart": {
+                      "type": "number"
+                    },
+                    "pageEnd": {
+                      "type": "number"
+                    },
+                    "bbox": {
+                      "type": "object",
+                      "required": [
+                        "x",
+                        "y",
+                        "w",
+                        "h"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "x": {
+                          "type": "number"
+                        },
+                        "y": {
+                          "type": "number"
+                        },
+                        "w": {
+                          "type": "number"
+                        },
+                        "h": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "parentId": {
+                      "type": "string"
+                    },
+                    "previousId": {
+                      "type": "string"
+                    },
+                    "nextId": {
+                      "type": "string"
+                    },
+                    "embeddedBy": {
+                      "type": "object",
+                      "required": [
+                        "model",
+                        "dims"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "model": {
+                          "type": "string"
+                        },
+                        "dims": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "source": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "requestedUrl",
+                    "finalUrl",
+                    "canonicalUrl",
+                    "title",
+                    "mimeType",
+                    "fetchMode",
+                    "status",
+                    "fetchedAt"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "requestedUrl": {
+                      "type": "string"
+                    },
+                    "finalUrl": {
+                      "type": "string"
+                    },
+                    "canonicalUrl": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mimeType": {
+                      "type": "string"
+                    },
+                    "fetchMode": {
+                      "enum": [
+                        "static",
+                        "bun-webview",
+                        "remote-playwright"
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "ready",
+                        "failed",
+                        "blocked",
+                        "dynamic-unavailable"
+                      ]
+                    },
+                    "fetchedAt": {
+                      "type": "string"
+                    },
+                    "etag": {
+                      "type": "string"
+                    },
+                    "lastModified": {
+                      "type": "string"
+                    },
+                    "activeVersionId": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "score": {
+                  "type": "number"
+                },
+                "citation": {
+                  "type": "object",
+                  "required": [
+                    "chunkId",
+                    "sourceId",
+                    "url",
+                    "title",
+                    "headingPath",
+                    "elementIds"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "chunkId": {
+                      "type": "string"
+                    },
+                    "sourceId": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "page": {
+                      "type": "number"
+                    },
+                    "headingPath": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "elementIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "errors": {
+        "busy": {
+          "status": 429
+        }
+      },
+      "http": {
+        "method": "POST",
+        "path": "/api/chat"
+      }
+    },
+    "chat.history": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          }
+        }
+      },
+      "output": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "id",
+            "role",
+            "text",
+            "at"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "role": {
+              "enum": [
+                "user",
+                "assistant"
+              ]
+            },
+            "text": {
+              "type": "string"
+            },
+            "at": {
+              "type": "string"
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "provider": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      },
+      "http": {
+        "method": "GET",
+        "path": "/api/chat"
+      }
+    },
+    "documents.search": {
+      "kind": "read",
+      "input": {
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "ranked",
+          "skipped"
+        ],
+        "properties": {
+          "ranked": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "skipped": {
+            "type": "integer"
+          }
+        }
+      },
+      "http": {
+        "method": "GET",
+        "path": "/api/documents/search"
+      }
+    }
+  }
+}

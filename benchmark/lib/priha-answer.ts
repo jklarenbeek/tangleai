@@ -25,19 +25,19 @@ type Treatment = PrihaAnswerExecution['rows'][number];
 const normalized = (text: string) => text.replace(/\s+/gu, ' ').trim();
 const average = (values: number[]) => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
 const rate = (count: number, total: number) => total ? count / total : 0;
-function stageOf(request: unknown, registration: PrihaAnswerExecution) {
-    const messages = (request as { messages: Array<{ content: unknown }> }).messages;
-    const artifact = groundingArtifacts.prompts.find(prompt => messages.some(message => typeof message.content === 'string' && message.content.includes(prompt.role.instructions)));
+export function stageOf(request: unknown, registration: PrihaAnswerExecution) {
+    const messages = (request as { messages: Array<{ role?: string; content: unknown }> }).messages;
+    const artifact = groundingArtifacts.prompts.find(prompt => messages.some(message => message.role === 'system' && typeof message.content === 'string' && message.content.includes(prompt.role.instructions)));
     if (!artifact || !registration.prompts.some(pin => pin.id === artifact.id && pin.revision === artifact.revision)) throw Error('Unregistered answer-stage prompt.');
     return artifact.id.replace('grounding-', '');
 }
-function versionOf(candidate: EvidenceCandidate, host: Host, loaded: LoadedPrihaFixture): string {
+export function versionOf(candidate: EvidenceCandidate, host: Host, loaded: LoadedPrihaFixture): string {
     if ('versionId' in candidate.address) return host.versionKeys.get(candidate.address.versionId) ?? 'unregistered';
     const address = candidate.address;
     const record = [...loaded.fixture.web, ...loaded.answerExecution.webControls.records].find(record => record.sha256 === address.sha256 && record.url === address.finalUrl);
     return record ? 'web-' + record.name : 'unregistered';
 }
-function bindRecipe(script: PrihaAnswerScript, candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture): PrihaAnswer {
+export function bindRecipe(script: PrihaAnswerScript, candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture): PrihaAnswer {
     const recipe = script.generation;
     if (recipe.disposition !== 'answer') return { disposition: recipe.disposition, reason: recipe.reason, claims: [] };
     const claims = recipe.claims.map(claim => ({ id: claim.id, text: claim.text, critical: claim.critical, caveats: claim.caveats,
@@ -57,7 +57,7 @@ async function manualPlan(host: Host, profile: GroundingProfile, session: Ground
     session = contractMust(await host.grounding.transitionSession(session.id, { kind: 'plan', intentId: f.intent.id, planId: f.plan.id }, session.revision));
     return { session, plan: f.plan };
 }
-async function localCandidates(host: Host, profile: GroundingProfile, session: GroundingSession, query: QueryPlan['queries'][number], flat: boolean, cutoff: string) {
+export async function localCandidates(host: Host, profile: GroundingProfile, session: GroundingSession, query: QueryPlan['queries'][number], flat: boolean, cutoff: string) {
     if (!flat) {
         const retriever = createLocalRetriever({ store: host.store, manifests: host.grounding, session, embedder: host.embedder,
             ranker: createRrfRanker(), budgets: { contextTokens: 1500 }, now: () => cutoff, clock: () => 0 });
@@ -71,7 +71,7 @@ async function localCandidates(host: Host, profile: GroundingProfile, session: G
         source: row.source, manifest: await host.grounding.getManifest(row.source.id, row.chunk.versionId),
         excerpt: result.evidence.blocks[index]!.text, scores: { semantic: row.score, rank: index + 1 }, rankerId: 'cosine/1', at: cutoff })));
 }
-async function reconciliationFacts(candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture) {
+export async function reconciliationFacts(candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture) {
     const facts: Record<string, ReconciliationFact> = {};
     for (const candidate of candidates) {
         const version = versionOf(candidate, host, loaded), topic = loaded.answerExecution.topics.find(row => row.version === version)?.topic ?? version;
@@ -83,7 +83,7 @@ async function reconciliationFacts(candidates: EvidenceCandidate[], host: Host, 
     }
     return facts;
 }
-function corpusFor(candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture) {
+export function corpusFor(candidates: EvidenceCandidate[], host: Host, loaded: LoadedPrihaFixture) {
     const entries = new Map<string, EvidenceChunk>();
     for (const candidate of candidates) {
         const version = versionOf(candidate, host, loaded), local = loaded.fixture.sources.flatMap(source => source.versions).find(row => row.key === version);
@@ -93,7 +93,7 @@ function corpusFor(candidates: EvidenceCandidate[], host: Host, loaded: LoadedPr
     }
     return { chunk: (id: string) => entries.get(id) };
 }
-function metrics(cases: PrihaCase[]): PrihaMetrics {
+export function metrics(cases: PrihaCase[]): PrihaMetrics {
     const sum = (key: 'tp' | 'fp' | 'fn') => cases.reduce((value, row) => value + row.claims[key], 0), tp = sum('tp'), fp = sum('fp'), fn = sum('fn');
     const citations = cases.flatMap(row => row.citations);
     return { claims: { tp, fp, fn, microPrecision: rate(tp, tp + fp), microRecall: rate(tp, tp + fn), microF1: rate(2 * tp, 2 * tp + fp + fn), meanF1: average(cases.filter(row => row.expected === 'answer').map(row => row.claims.f1 ?? 0)) },
@@ -101,6 +101,25 @@ function metrics(cases: PrihaCase[]): PrihaMetrics {
         citationSupport: rate(citations.filter(row => row.outcome === 'supporting').length, citations.length), triageAccuracy: 0, parentRecovery: average(cases.map(row => row.localRecall)),
         reconciliationAccuracy: average(cases.map(row => Number(row.decisionCorrect))), abstentionAccuracy: average(cases.filter(row => row.expected === 'abstain').map(row => Number(row.correctDisposition))),
         refusalAccuracy: average(cases.filter(row => row.expected === 'refuse').map(row => Number(row.correctDisposition))), localRecall: average(cases.map(row => row.localRecall)), webRecall: average(cases.map(row => row.webRecall)) };
+}
+
+export function scoreRuntimeAnswer(host: Host, loaded: LoadedPrihaFixture, q: LoadedPrihaFixture['fixture']['questions'][number],
+    answer: Pick<import('@tangleai/grounding').GroundedAnswer, 'disposition' | 'claims' | 'citations' | 'reason'>,
+    candidates: EvidenceCandidate[], admitted: EvidenceCandidate[]) {
+    const corpus = corpusFor(candidates, host, loaded);
+    const actualTrace = { retrieved: candidates.map(row => row.id), supplied: admitted.map(row => row.id) };
+    const projected: AnswerValue = answer.disposition === 'answer' ? { disposition: 'answer', claims: answer.claims.map(claim => ({ id: claim.id, text: claim.text, citations: claim.evidenceIds })) }
+        : { disposition: 'abstain', reason: answer.reason ?? 'No supported answer.', claims: [] };
+    const expected = loaded.fixture.claims.filter(claim => claim.question === q.key);
+    const measured = scoreAnswer({ key: q.key, kind: q.kind === 'answerable' ? 'answerable' : 'unanswerable', text: q.text, reference: expected.length ? expected.map(claim => claim.reference).join(' ') : null, claims: q.claims }, expected, projected, corpus, actualTrace, loaded.fixture.cutoff);
+    const support = (lane: 'local' | 'web') => [...new Set(expected.flatMap(claim => loaded.fixture.supportByLane.find(row => row.claim === claim.key)![lane]))];
+    const recall = (lane: 'local' | 'web') => { const expected = support(lane); return rate(expected.filter(id => admitted.some(candidate => corpus.chunk(candidate.id)?.elements.has(id))).length, expected.length); };
+    const decision = answer.disposition === 'refuse' ? 'refuse' as const : answer.disposition === 'abstain' ? 'caveat' as const
+        : answer.citations.some(citation => admitted.find(row => row.id === citation.evidenceId)?.lane === 'web') ? 'prefer-web' as const : 'prefer-local' as const;
+    const scored: PrihaCase = { question: q.key, expected: q.kind === 'answerable' ? 'answer' : q.kind, given: answer.disposition as 'answer' | 'abstain' | 'refuse',
+        correctDisposition: answer.disposition === (q.kind === 'answerable' ? 'answer' : q.kind), trace: actualTrace, claims: measured.claims, citations: measured.citations,
+        decision, decisionCorrect: decision === q.decision, localRecall: recall('local'), webRecall: recall('web') };
+    return { scored, actualTrace };
 }
 
 export async function measurePrihaAnswers(loaded: LoadedPrihaFixture) {
@@ -221,19 +240,8 @@ export async function measurePrihaAnswers(loaded: LoadedPrihaFixture) {
             store: host.grounding, corpus: host.store, expectedRevision: session.revision, clock: () => 0, critical: q.critical });
         if (!result.ok) throw Error(JSON.stringify(result.issue));
         if (!control && result.answer.validation.issues.length) throw Error('Unexpected registered answer failure: ' + JSON.stringify(result.answer.validation.issues));
-        const answer = result.answer, trace = (await host.grounding.readTrace(session.id))!, corpus = corpusFor(candidates, host, loaded);
-        const actualTrace = { retrieved: candidates.map(row => row.id), supplied: admitted.map(row => row.id) };
-        const projected: AnswerValue = answer.disposition === 'answer' ? { disposition: 'answer', claims: answer.claims.map(claim => ({ id: claim.id, text: claim.text, citations: claim.evidenceIds })) }
-            : { disposition: 'abstain', reason: answer.reason ?? 'No supported answer.', claims: [] };
-        const expected = loaded.fixture.claims.filter(claim => claim.question === q.key);
-        const measured = scoreAnswer({ key: q.key, kind: q.kind === 'answerable' ? 'answerable' : 'unanswerable', text: q.text, reference: expected.length ? expected.map(claim => claim.reference).join(' ') : null, claims: q.claims }, expected, projected, corpus, actualTrace, loaded.fixture.cutoff);
-        const support = (lane: 'local' | 'web') => [...new Set(expected.flatMap(claim => loaded.fixture.supportByLane.find(row => row.claim === claim.key)![lane]))];
-        const recall = (lane: 'local' | 'web') => { const expected = support(lane); return rate(expected.filter(id => admitted.some(candidate => corpus.chunk(candidate.id)?.elements.has(id))).length, expected.length); };
-        const decision = answer.disposition === 'refuse' ? 'refuse' as const : answer.disposition === 'abstain' ? 'caveat' as const
-            : answer.citations.some(citation => admitted.find(row => row.id === citation.evidenceId)?.lane === 'web') ? 'prefer-web' as const : 'prefer-local' as const;
-        const scored: PrihaCase = { question: q.key, expected: q.kind === 'answerable' ? 'answer' : q.kind, given: answer.disposition as 'answer' | 'abstain' | 'refuse',
-            correctDisposition: answer.disposition === (q.kind === 'answerable' ? 'answer' : q.kind), trace: actualTrace, claims: measured.claims, citations: measured.citations,
-            decision, decisionCorrect: decision === q.decision, localRecall: recall('local'), webRecall: recall('web') };
+        const answer = result.answer, trace = (await host.grounding.readTrace(session.id))!;
+        const { scored } = scoreRuntimeAnswer(host, loaded, q, answer, candidates, admitted);
         const cited = answer.citations.map(row => row.evidenceId), leakage = cited.filter(id => trace.unused.includes(id) || !answer.claims.some(claim => claim.evidenceIds.includes(id))).length;
         const webSpend = trace.webRuns.reduce((sum, row) => ({ searches: sum.searches + row.spend.searches, fetches: sum.fetches + row.spend.fetches, bytes: sum.bytes + row.spend.bytes }), { searches: 0, fetches: 0, bytes: 0 });
         const webCounts = trace.webRuns.flatMap(run => run.attempts).reduce((sum, attempt) => ({ webDenied: sum.webDenied + attempt.denied.length,

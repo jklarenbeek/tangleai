@@ -32,3 +32,18 @@ await repairPrihaClaims(draft, view, [{ op: 'remove', path: '/claims/0' }]);
 // @ts-expect-error a confidence field is outside the grounded draft contract
 const guessed: PrihaAnswer = { disposition: 'abstain', claims: [], reason: 'No source.', confidence: 1 };
 void guessed;
+
+import { createGroundingHost, createGroundingReader, createGroundingWorkflow, type GroundingHostOptions, type GroundingReply, type GroundingEvidenceView } from '@tangleai/grounding';
+import { createGroundingSegmentHost } from '@tangleai/store';
+declare const hostOptions: GroundingHostOptions;
+const host = await createGroundingHost(hostOptions);
+const reply: GroundingReply = await host.start({ text: 'Where is reception?', conversationId: 'consumer' });
+const evidence: GroundingEvidenceView = await host.evidence(reply.sessionId);
+await host.respond(reply.sessionId, 'interaction', { answers: { q1: 'Reception' } });
+await host.refresh(reply.sessionId, 'Explicit new run');
+const segments = createGroundingSegmentHost(db, { now: () => '2026-06-01T00:00:00.000Z', jobClock: () => 1000, deadlineFor: () => '2026-06-02T00:00:00.000Z' });
+await createGroundingReader({ store, mas: segments.store }).list();
+await createGroundingWorkflow({ profile: hostOptions.profile, caseId: 'consumer', factVocabulary: [], currentOptimization: async () => { throw Error('No intent during compilation'); } });
+// @ts-expect-error a refresh requires an explicit reason
+await host.refresh(reply.sessionId);
+void evidence;

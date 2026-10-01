@@ -794,6 +794,12 @@
         },
         "optimization": {
           "$ref": "#/$defs/optimizerCheckpoint"
+        },
+        "execution": {
+          "$ref": "#/$defs/groundingExecution"
+        },
+        "failure": {
+          "$ref": "#/$defs/groundingIssue"
         }
       }
     },
@@ -906,6 +912,10 @@
               "type": "null"
             }
           ]
+        },
+        "executionId": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
@@ -2708,6 +2718,387 @@
             }
           }
         ]
+      }
+    },
+    "groundingExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
+        "previousRunId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflowVersionId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "configIdentityId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "originalQuery": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16000
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mode": {
+          "enum": [
+            "optimized",
+            "raw"
+          ]
+        },
+        "cycle": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "runId",
+        "previousRunId",
+        "workflowVersionId",
+        "configIdentityId",
+        "originalQuery",
+        "at",
+        "reason",
+        "mode",
+        "cycle"
+      ]
+    },
+    "groundingReply": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sessionId",
+        "disposition",
+        "ruleIds",
+        "gaps",
+        "trace",
+        "identities"
+      ],
+      "properties": {
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "clarification",
+            "answer",
+            "refusal",
+            "failure",
+            "running"
+          ]
+        },
+        "question": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "interactionId",
+            "revision",
+            "text",
+            "responseSchema",
+            "fields"
+          ],
+          "properties": {
+            "interactionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "responseSchema": {
+              "type": [
+                "object",
+                "boolean"
+              ]
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "text"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "answer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text",
+            "claims",
+            "citations",
+            "caveats",
+            "disposition"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/groundedClaim"
+              }
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/answerCitation"
+              }
+            },
+            "caveats": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "disposition": {
+              "enum": [
+                "answer",
+                "abstain",
+                "refuse",
+                "clarification"
+              ]
+            }
+          }
+        },
+        "failure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "detail"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "ruleIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "trace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "searches",
+            "fetches",
+            "denied",
+            "replayed",
+            "stopReason"
+          ],
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "searches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fetches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "denied": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "replayed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "stopReason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "identities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profileRevision",
+            "runId",
+            "workflowVersionId",
+            "configIdentityId"
+          ],
+          "properties": {
+            "profileRevision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "runId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "workflowVersionId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "configIdentityId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "groundingEvidenceView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidates",
+        "unused"
+      ],
+      "properties": {
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "lane",
+              "authority",
+              "times",
+              "citation",
+              "used"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "lane": {
+                "enum": [
+                  "local",
+                  "web"
+                ]
+              },
+              "authority": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "tier",
+                  "ruleIds"
+                ],
+                "properties": {
+                  "tier": {
+                    "$ref": "#/$defs/authorityTier"
+                  },
+                  "institution": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "ruleIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "uniqueItems": true
+                  }
+                }
+              },
+              "times": {
+                "$ref": "#/$defs/evidenceTimes"
+              },
+              "citation": {
+                "$ref": "#/$defs/evidenceCitation"
+              },
+              "used": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "unused": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
       }
     }
   }

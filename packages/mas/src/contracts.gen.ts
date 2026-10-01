@@ -41,7 +41,10 @@ export interface MasRegistryHandlersItem {
 
 
 export interface MasRegistryToolsItem {
-  id: RegistryName;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+   */
+  id: string;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -98,6 +101,7 @@ export interface MasRegistrySubgraphsItem {
 export interface MasRegistry {
   $masRegistry: "0.1";
   registryId: RegistryName;
+  agentExecutors?: Array<{ id: RegistryName; version: RegistrySha256; }>;
   roles: Array<MasRegistryRolesItem>;
   handlers: Array<MasRegistryHandlersItem>;
   tools: Array<MasRegistryToolsItem>;
@@ -676,6 +680,11 @@ export interface MessageEdge {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9_-]*$"
+ */
+export type AgentNodeToolsItem = string;
+
 export interface AgentNode {
   id: Name;
   kind: "agent";
@@ -687,9 +696,10 @@ export interface AgentNode {
   role: Name;
   profile: Name;
   instructionsRevision: Sha256;
-  tools: Array<Name>;
+  tools: Array<AgentNodeToolsItem>;
   context: Array<Name>;
   messageAdapter: Name;
+  executor?: Name;
 }
 
 

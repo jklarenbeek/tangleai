@@ -20,19 +20,25 @@ export function clarificationState(trace: TraceView): GmplClarificationState | u
             && 'history' in state && 'refinedQuery' in state && 'policy' in state));
     })[0];
 }
-export async function prepareGroundingClarification(profile: GroundingProfile, checkpoint: OptimizerCheckpoint,
-    vocabulary: readonly string[], sessionId: string) {
-    if (!checkpoint.decision || checkpoint.route !== 'complex' || profile.clarification.maxTurns < 1 || profile.clarification.maxTurns > 10)
+export async function prepareGroundingClarification(profile: GroundingProfile, checkpoint: OptimizerCheckpoint | null,
+    vocabulary: readonly string[], sessionId: string, flow?: { current: () => Promise<OptimizerCheckpoint> }) {
+    if ((!checkpoint || !checkpoint.decision || checkpoint.route !== 'complex') && !flow || profile.clarification.maxTurns < 1 || profile.clarification.maxTurns > 10)
         groundingReject('TGRD1007', '/clarification/maxTurns', 'clarification-turns');
-    const required = checkpoint.decision.requiredFields, fields = profile.clarification.requiredFields.filter(field => required.includes(field.id));
+    const contextFor = async () => {
+        const current = flow ? await flow.current() : checkpoint!;
+        if (!current.decision || current.route !== 'complex') groundingReject('TGRD1003', '/clarification', 'The retained triage must authorize clarification.');
+        const required = current.decision.requiredFields;
+        return { checkpoint: current, required, fields: profile.clarification.requiredFields.filter(field => required.includes(field.id)) };
+    };
     const originals = gmplArtifacts.prompts.filter(prompt => GMPL_STAGES.clarification.includes(prompt.id));
     const prompts: GmplPromptArtifact[] = [...originals, ...groundingArtifacts.prompts];
     const rolePrompts = { 'clarification-resolve': 'grounding-resolve', 'clarification-question': 'grounding-question', 'analysis-merge': 'analysis-merge' };
     const capabilities = Object.values(rolePrompts).map(id => { const prompt = prompts.find(p => p.id === id)!; return { id: 'gmpl-' + id, version: prompt.revision }; });
-    const payloadSchema = structuredClone(gmplSchemaOf('gmplInput')) as { properties: Record<string, unknown> };
+    const payloadSchema = JSON.parse(JSON.stringify(gmplSchemaOf('gmplInput'))) as { properties: Record<string, unknown> };
     payloadSchema.properties.caseId = { const: sessionId, type: 'string' };
-    const bindingRevision = await groundingRevisionOf({ profileRevision: profile.revision, decision: checkpoint.decision,
-        vocabularyRevision: checkpoint.vocabularyRevision, budget: checkpoint.budget });
+    const bindingRevision = await groundingRevisionOf(flow ? { profileRevision: profile.revision, binding: 'retained-triage/1',
+        vocabularyRevision: await groundingRevisionOf(vocabulary), budget: profile.budgets } : { profileRevision: profile.revision, decision: checkpoint!.decision,
+        vocabularyRevision: checkpoint!.vocabularyRevision, budget: checkpoint!.budget });
     const domain = must(await createGmplDomainBinding({ id: 'grounding-' + profile.id, title: 'Governed intent clarification',
         payloadSchema, projection: { id: 'grounding-intent', version: bindingRevision, kind: 'text', scale: null },
         rolePrompts, requiredCapabilities: capabilities }));
@@ -42,7 +48,8 @@ export async function prepareGroundingClarification(profile: GroundingProfile, c
     const registry = must(await createMasRegistrySnapshot({ $masRegistry: '0.1', registryId: 'grounding-clarification',
         roles: [], handlers: [], tools: [], contextAdapters: [], messageAdapters: capabilities, templates: [], subgraphs: [] }));
     const config = must(await createMasConfigCatalog({ profiles: [profile.models.triage], tools: [], contexts: [],
-        limits: { calls: checkpoint.budget.calls, tokens: checkpoint.budget.tokens, ms: checkpoint.budget.ms } }));
+        limits: { calls: checkpoint?.budget.calls ?? profile.budgets.calls, tokens: checkpoint?.budget.tokens ?? profile.budgets.tokens,
+            ms: checkpoint?.budget.ms ?? profile.budgets.ms } }));
     const host = { registry, config, profile: profile.models.triage };
     const materialized = must(await materializeGmplTemplate(recipe, domain, host, catalog));
     const prepared = must(await instantiateGmplPattern(materialized, {}, host, catalog));
@@ -51,6 +58,7 @@ export async function prepareGroundingClarification(profile: GroundingProfile, c
     for (const name of ['gmpl-intent-prepare', 'gmpl-question-prepare', 'gmpl-resolve-prepare']) {
         const original = taskHandlers[name]!;
         taskHandlers[name] = async input => {
+            const { fields, required } = await contextFor();
             const output = await original(input) as { variables: { query: string; evidence: unknown[]; context: Record<string, unknown> } };
             const state = input.value.state as unknown as GmplClarificationState;
             return { variables: { ...output.variables, context: { ...output.variables.context, grounding: {
@@ -61,6 +69,7 @@ export async function prepareGroundingClarification(profile: GroundingProfile, c
     }
     const question = taskHandlers['gmpl-question-check']!;
     taskHandlers['gmpl-question-check'] = async input => {
+        const { fields, required } = await contextFor();
         const state = input.value.state as unknown as GmplClarificationState;
         const out = input.value.out as { questions: Array<{ id: string; text: string }> };
         const outstanding = state.result.outstandingQuestions ?? required, expected = fields.find(field => outstanding.includes(field.id));
@@ -71,6 +80,7 @@ export async function prepareGroundingClarification(profile: GroundingProfile, c
     for (const name of ['gmpl-intent-inspect', 'gmpl-intent-resolve']) {
         const original = taskHandlers[name]!;
         taskHandlers[name] = async input => {
+            const { checkpoint, required, fields } = await contextFor();
             const state = input.value.state as unknown as GmplClarificationState, out = input.value.out as unknown as ClarificationResolve;
             const outstanding = out.result.outstandingQuestions;
             if (!outstanding || outstanding.some(id => !required.includes(id)) || out.resolved !== (outstanding.length === 0)

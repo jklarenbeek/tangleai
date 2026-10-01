@@ -185,3 +185,11 @@ Grounding `putWebResult(run, evidence)` validates the run and its evidence
 ownership and commits them on the same existing transaction. No separate web
 database or persistence owner is introduced. Retained web traces replay without
 new network or model work.
+
+`createGroundingSegmentHost` composes the public grounding host with the native
+MAS store, worker and queue. It enqueues a version-bound segment, reconciles
+accepted interaction responses and resumes committed attempts. The native
+worker owns leases, renewal, retries and polling. A bounded wait handles a
+competing process that claims the same job between inspection and worker start;
+it adds no polling loop or event channel. Desktop startup resumes unfinished
+runs, including a saved answer whose final workflow commit was interrupted.

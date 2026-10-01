@@ -33,7 +33,7 @@ const on = (action: string, withValue?: any, event?: string[]): any => {
 };
 
 const PAGES: Array<[string, string]> = [
-  ['chat', 'Chat'], ['loom', 'Loom'], ['memory', 'Memory'], ['skills', 'Skills'], ['documents', 'Documents'],
+  ['chat', 'Chat'], ['grounding', 'Grounded session'], ['loom', 'Loom'], ['memory', 'Memory'], ['skills', 'Skills'], ['documents', 'Documents'],
   ['reports', 'Reports'], ['settings', 'Settings'],
 ];
 
@@ -863,10 +863,62 @@ function settingsPage(state: any): any {
   ];
 }
 
+/** Recorded claims, evidence and costs. This panel makes no quality promise. */
+function groundedPage(state: any): any {
+  const g = state.grounding, reply = g.reply;
+  const evidence = new Map<string, any>(g.evidence.candidates.map((row: any) => [row.id, row]));
+  const provenance = (row: any) => {
+    const times = row?.times;
+    if (!times?.provenance) return 'no dated provenance';
+    return [times.effectiveAt ? `effective ${times.effectiveAt}` : null, times.reviewedAt ? `reviewed ${times.reviewedAt}` : null,
+      times.publishedAt ? `published ${times.publishedAt}` : null, times.expiresAt ? `expires ${times.expiresAt}` : null,
+      `provenance: ${times.provenance}`].filter(Boolean).join(' · ');
+  };
+  return ['section', { class: 'page grounded' },
+    ['h2', {}, 'Grounded session'],
+    ['p', { class: 'hint' }, 'Ask a question within the registered service profile. Review the sources and any unresolved gaps.'],
+    ['label', {}, 'Your question', ['textarea', { class: 'grounding-question', value: g.input, maxLength: 16000, on: { input: on('grounding/input', undefined, ['value']) } }]],
+    ['button', { class: 'grounding-start', disabled: g.busy || !g.input.trim() ? true : null, on: { click: on('grounding/start') } }, g.busy ? 'Working…' : 'Start session'],
+    g.error ? ['p', { class: 'error', role: 'alert' }, g.error] : null,
+    reply ? ['article', { class: 'grounding-result', 'aria-live': 'polite' },
+      ['h3', { class: 'grounding-disposition' }, reply.disposition],
+      reply.failure ? ['p', { class: 'error' }, `${reply.failure.code}: ${reply.failure.detail}`] : null,
+      reply.question ? ['div', { class: 'grounding-clarification' },
+        reply.question.fields.map((field: any) => ['label', { key: field.id }, field.text,
+          ['input', { class: 'grounding-answer', value: g.answers[field.id] ?? '', maxLength: 4000,
+            on: { input: on('grounding/field', field.id.replace(/~/g, '~0').replace(/\//g, '~1'), ['value']) } }]]),
+        ['button', { class: 'grounding-reply', disabled: g.busy || reply.question.fields.some((field: any) => !g.answers[field.id]?.trim()) ? true : null,
+          on: { click: on('grounding/reply') } }, 'Continue session']] : null,
+      reply.answer ? ['div', { class: 'grounding-answer-text' }, md.view(reply.answer.text),
+        ['ol', { class: 'grounding-claims' }, reply.answer.claims.map((claim: any) => ['li', { key: claim.id },
+          ['p', {}, `${claim.text} (${claim.status})`],
+          claim.caveats.map((text: string) => ['p', { key: text, class: 'caveat' }, text]),
+          ['ul', {}, claim.evidenceIds.map((id: string) => { const source = evidence.get(id); return ['li', { key: id },
+            source ? ['a', { href: source.citation.url, target: '_blank', rel: 'noopener noreferrer' }, source.citation.title] : id,
+            source ? ['span', { class: 'grounding-source' }, ` · ${source.lane} · ${source.authority.tier} · ${provenance(source)}`] : null]; })]])]] : null,
+      reply.ruleIds.length ? ['p', { class: 'grounding-rules' }, `Rules: ${reply.ruleIds.join(', ')}`] : null,
+      reply.gaps.length ? ['p', { class: 'grounding-gaps' }, `Unresolved gaps: ${reply.gaps.join('; ')}`] : null,
+      ['p', { class: 'grounding-spend' }, `${reply.trace.calls} calls · ${reply.trace.tokens} tokens · ${reply.trace.ms} ms · ${reply.trace.searches} searches · ${reply.trace.fetches} fetches · ${reply.trace.denied} denied · ${reply.trace.replayed} replayed stages observed here · ${reply.trace.stopReason}`],
+      ['p', { class: 'grounding-unused' }, `${g.evidence.unused.length} unused candidates`],
+      ['div', { class: 'grounding-conflicts' }, g.conflicts.map((row: any) => ['p', { key: row.id }, `${row.issue}: ${row.decision} (${row.severity}); rules: ${row.ruleIds.join(', ')}${row.interpretation ? '; ' + row.interpretation : ''}`])],
+      ['details', {}, ['summary', {}, 'All retrieved candidates'], ['ul', {}, g.evidence.candidates.map((row: any) => ['li', { key: row.id },
+        ['a', { href: row.citation.url, target: '_blank', rel: 'noopener noreferrer' }, row.citation.title],
+        ` · ${row.lane} · ${row.authority.tier} · ${provenance(row)} · ${row.used ? 'cited' : 'unused'}`])]],
+      reply.disposition === 'running' ? ['button', { disabled: g.busy ? true : null, on: { click: on('grounding/open', reply.sessionId) } }, 'Check progress'] : null,
+      ['answer', 'refusal', 'failure'].includes(reply.disposition) ? ['div', { class: 'grounding-refresh' },
+        ['label', {}, 'Reason for refreshing', ['input', { value: g.reason, maxLength: 1000, on: { input: on('grounding/reason', undefined, ['value']) } }]],
+        ['button', { disabled: g.busy || !g.reason.trim() ? true : null, on: { click: on('grounding/refresh') } }, 'Refresh session']] : null,
+    ] : null,
+    ['details', { class: 'grounding-history' }, ['summary', {}, 'Previous sessions'], g.rows.map((row: any) => ['button', { key: row.sessionId, disabled: g.busy ? true : null,
+      on: { click: on('grounding/open', row.sessionId) } }, `${row.at} · ${row.disposition} · turn ${row.turn}`])],
+  ];
+}
+
 // -- root -------------------------------------------------------------------
 
 export function rootView(state: any): any {
   const page = state.page === 'chat' ? chatPage(state)
+    : state.page === 'grounding' ? groundedPage(state)
     : state.page === 'loom' ? loomPage(state)
     : state.page === 'memory' ? memoryPage(state)
     : state.page === 'skills' ? skillsPage(state)

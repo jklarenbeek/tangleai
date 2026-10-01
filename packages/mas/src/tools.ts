@@ -21,7 +21,8 @@ import type { MasRegistry, ToolStep } from './contracts.gen.ts';
 
 export interface MasToolBinding {
   /** The host handler; result must be JSON-shaped. */
-  handler: (input: unknown, context: { signal: AbortSignal, idempotencyKey: string | null }) => unknown | Promise<unknown>;
+  handler: (input: unknown, context: { signal: AbortSignal, idempotencyKey: string | null,
+    invocation?: { runId: string; node: string; path: string } }) => unknown | Promise<unknown>;
   /** Required for an effectful tool: the handler honors the out-of-band key. */
   idempotency?: 'honored';
 }
@@ -56,6 +57,7 @@ export interface BuildToolboxOptions {
   requested: readonly string[];
   bindings: Record<string, MasToolBinding>;
   signal: AbortSignal;
+  invocation?: { runId: string; node: string; path: string };
   /** The node's semantic idempotency key, suffixed per call for effectful tools. */
   idempotencyKeyFor: (tool: string, callIndex: number) => string;
 }
@@ -111,7 +113,8 @@ export function buildEffectiveToolbox(options: BuildToolboxOptions): MasValidate
         }
         const key = tool.effect === 'effectful' ? options.idempotencyKeyFor(tool.id, dispatched) : null;
         try {
-          return await binding.handler(input, { signal: options.signal, idempotencyKey: key });
+          return await binding.handler(input, { signal: options.signal, idempotencyKey: key,
+            ...(options.invocation ? { invocation: options.invocation } : {}) });
         } catch (error) {
           if (error instanceof MasUncertainEffect) {
             uncertainty.value = error;

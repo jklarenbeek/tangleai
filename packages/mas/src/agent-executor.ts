@@ -1,5 +1,5 @@
 /**
- * The agent executor — always `createAgent`, never a private loop.
+ * The default agent executor — always `createAgent`, never a private loop.
  *
  * An agent node's primary result is the suite's own full transcript,
  * tool steps, final message, stop reason and spend. Its inbound

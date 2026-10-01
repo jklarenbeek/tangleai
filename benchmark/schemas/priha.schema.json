@@ -26,6 +26,9 @@
     },
     {
       "$ref": "#/$defs/prihaAnswerExecution"
+    },
+    {
+      "$ref": "#/$defs/prihaFlowExecution"
     }
   ],
   "$defs": {
@@ -970,7 +973,8 @@
         "localQueries",
         "userFacts",
         "webExecution",
-        "answerExecution"
+        "answerExecution",
+        "flowExecution"
       ],
       "properties": {
         "document": {
@@ -1317,6 +1321,24 @@
               "pattern": "^[a-f0-9]{64}$"
             }
           }
+        },
+        "flowExecution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
       },
       "$query": {
@@ -1611,7 +1633,8 @@
         "optimizerVocabularyRevision",
         "webExecutionId",
         "answerExecutionId",
-        "answerProfileRevision"
+        "answerProfileRevision",
+        "flowExecutionId"
       ],
       "properties": {
         "registrationId": {
@@ -1786,6 +1809,10 @@
           "pattern": "^[a-f0-9]{64}$"
         },
         "answerProfileRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "flowExecutionId": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
         }
@@ -2674,7 +2701,8 @@
         "local",
         "optimizer",
         "web",
-        "answers"
+        "answers",
+        "flow"
       ],
       "properties": {
         "document": {
@@ -2868,6 +2896,9 @@
         },
         "answers": {
           "$ref": "#/$defs/prihaAnswerReport"
+        },
+        "flow": {
+          "$ref": "#/$defs/prihaFlowReport"
         }
       },
       "$query": {
@@ -3255,6 +3286,76 @@
                   ]
                 }
               ]
+            }
+          },
+          {
+            "$eq": [
+              "$.flow.executionId",
+              "$.registration.flowExecutionId"
+            ]
+          },
+          {
+            "$every": {
+              "c": "$.capabilities[?(@.id=='flow')]"
+            },
+            "$satisfies": {
+              "$eq": [
+                "$c.passed",
+                {
+                  "$eq": [
+                    "$.flow.failed",
+                    0
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "$every": {
+              "f": "$.flow.rows[*]"
+            },
+            "$satisfies": {
+              "$every": {
+                "r": "$.rows[*]"
+              },
+              "$satisfies": {
+                "$or": [
+                  {
+                    "$ne": [
+                      "$f.key",
+                      "$r.key"
+                    ]
+                  },
+                  {
+                    "$and": [
+                      {
+                        "$eq": [
+                          "$f.metrics",
+                          "$r.metrics"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$f.cases",
+                          "$r.cases"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$f.calls",
+                          "$r.cost.turns"
+                        ]
+                      },
+                      {
+                        "$eq": [
+                          "$f.tokens",
+                          "$r.cost.tokens"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
             }
           }
         ]
@@ -6822,6 +6923,831 @@
               {
                 "$count": {
                   "$distinct": "$.runs[*].answerId"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaFlowExecution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "version",
+        "baseline",
+        "rows",
+        "paths",
+        "pathQuestion",
+        "complexRequiredField",
+        "complexAnswer",
+        "crashes",
+        "limitations",
+        "prompts"
+      ],
+      "properties": {
+        "document": {
+          "const": "priha-flow-execution"
+        },
+        "version": {
+          "const": 1
+        },
+        "baseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reportId",
+            "registrationId",
+            "sourceSha256",
+            "rows"
+          ],
+          "properties": {
+            "reportId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "registrationId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "sourceSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "metrics",
+                  "cost",
+                  "cases"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "metrics": {
+                    "$ref": "#/$defs/prihaMetrics"
+                  },
+                  "cost": {
+                    "$ref": "https://tangleai.dev/schemas/grounding#/$defs/liveCost"
+                  },
+                  "cases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "question",
+                        "given",
+                        "claims",
+                        "correctDisposition",
+                        "decision",
+                        "decisionCorrect",
+                        "localRecall",
+                        "webRecall"
+                      ],
+                      "properties": {
+                        "question": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "given": {
+                          "enum": [
+                            "answer",
+                            "abstain",
+                            "refuse"
+                          ]
+                        },
+                        "claims": {
+                          "$ref": "https://tangleai.dev/schemas/grounding#/$defs/claimScore"
+                        },
+                        "correctDisposition": {
+                          "type": "boolean"
+                        },
+                        "decision": {
+                          "$ref": "#/$defs/conflictDecision"
+                        },
+                        "decisionCorrect": {
+                          "type": "boolean"
+                        },
+                        "localRecall": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "webRecall": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "pathQuestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complexRequiredField": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complexAnswer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crashes": {
+          "const": "each-completed-root-and-clarification-stage"
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "revision"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "prihaFlowRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "sessionId",
+        "runId",
+        "workflowVersionId",
+        "answerId",
+        "intentId",
+        "planId",
+        "disposition",
+        "calls",
+        "tokens",
+        "requests",
+        "reopened",
+        "failure"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflowVersionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "answerId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "intentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "planId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "disposition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reopened": {
+          "type": "boolean"
+        },
+        "failure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "prihaFlowRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "cases",
+        "metrics",
+        "runs",
+        "calls",
+        "tokens",
+        "requests",
+        "componentParity",
+        "frozenQualityParity",
+        "frozenCallsParity",
+        "oldTokens",
+        "tokenCorrection",
+        "passed"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaCase"
+          }
+        },
+        "metrics": {
+          "$ref": "#/$defs/prihaMetrics"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaFlowRun"
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "componentParity": {
+          "type": "boolean"
+        },
+        "frozenQualityParity": {
+          "type": "boolean"
+        },
+        "frozenCallsParity": {
+          "type": "boolean"
+        },
+        "oldTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokenCorrection": {
+          "type": "integer"
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.calls",
+              {
+                "$sum": "$.runs[*].calls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.tokens",
+              {
+                "$sum": "$.runs[*].tokens"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.requests",
+              {
+                "$sum": "$.runs[*].requests"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.tokens",
+              {
+                "$add": [
+                  "$.oldTokens",
+                  "$.tokenCorrection"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.runs[*]"
+              },
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.runs[*].question"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.runs[*].question"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.cases[*].question"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.cases[*].question"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.passed",
+              {
+                "$and": [
+                  "$.componentParity",
+                  "$.frozenQualityParity",
+                  "$.frozenCallsParity",
+                  {
+                    "$eq": [
+                      {
+                        "$count": "$.runs[?(@.reopened==false||@.failure!=null)]"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaFlowPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "dispositions",
+        "calls",
+        "requests",
+        "reopens",
+        "identical",
+        "duplicateCalls",
+        "duplicateRequests",
+        "passed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dispositions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reopens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "identical": {
+          "type": "boolean"
+        },
+        "duplicateCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicateRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              {
+                "$eq": [
+                  {
+                    "$head": {
+                      "$reverse": "$.dispositions[*]"
+                    }
+                  },
+                  {
+                    "$if": [
+                      {
+                        "$eq": [
+                          "$.id",
+                          "failure"
+                        ]
+                      },
+                      "failure",
+                      {
+                        "$if": [
+                          {
+                            "$eq": [
+                              "$.id",
+                              "refusal"
+                            ]
+                          },
+                          "refusal",
+                          "answer"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "$.identical",
+              {
+                "$eq": [
+                  "$.duplicateCalls",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.duplicateRequests",
+                  0
+                ]
+              },
+              {
+                "$or": [
+                  {
+                    "$ne": [
+                      "$.id",
+                      "refusal"
+                    ]
+                  },
+                  {
+                    "$eq": [
+                      "$.calls",
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaFlowCrash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "calls",
+        "requests",
+        "identical",
+        "duplicateCalls",
+        "duplicateRequests",
+        "replayed",
+        "restored",
+        "passed"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "identical": {
+          "type": "boolean"
+        },
+        "duplicateCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicateRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "restored": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$eq": [
+          "$.passed",
+          {
+            "$and": [
+              "$.identical",
+              {
+                "$eq": [
+                  "$.duplicateCalls",
+                  0
+                ]
+              },
+              {
+                "$eq": [
+                  "$.duplicateRequests",
+                  0
+                ]
+              },
+              {
+                "$gt": [
+                  {
+                    "$add": [
+                      "$.replayed",
+                      "$.restored"
+                    ]
+                  },
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prihaFlowReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "tier",
+        "executionId",
+        "baselineReportId",
+        "rows",
+        "paths",
+        "crashes",
+        "failed",
+        "scriptedRequests",
+        "providerRequests",
+        "networkRequests",
+        "correction",
+        "limitations",
+        "baselineCalls"
+      ],
+      "properties": {
+        "status": {
+          "const": "executed"
+        },
+        "tier": {
+          "const": "scripted"
+        },
+        "executionId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "baselineReportId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaFlowRow"
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaFlowPath"
+          }
+        },
+        "crashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/prihaFlowCrash"
+          }
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scriptedRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "providerRequests": {
+          "const": 0
+        },
+        "networkRequests": {
+          "const": 0
+        },
+        "correction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baselineCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.failed",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      {
+                        "$count": "$.rows[?(@.passed==false)]"
+                      },
+                      {
+                        "$count": "$.paths[?(@.passed==false)]"
+                      }
+                    ]
+                  },
+                  {
+                    "$count": "$.crashes[?(@.passed==false)]"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.scriptedRequests",
+              {
+                "$add": [
+                  {
+                    "$add": [
+                      {
+                        "$add": [
+                          "$.baselineCalls",
+                          {
+                            "$sum": "$.rows[*].calls"
+                          }
+                        ]
+                      },
+                      {
+                        "$sum": "$.paths[*].calls"
+                      }
+                    ]
+                  },
+                  {
+                    "$sum": "$.crashes[*].calls"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*]"
+              },
+              5
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.paths[*]"
+              },
+              6
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.crashes[*]"
+              },
+              84
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.rows[*].key"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.rows[*].key"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.paths[*].id"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.paths[*].id"
+                }
+              }
+            ]
+          },
+          {
+            "$eq": [
+              {
+                "$count": "$.crashes[*].path"
+              },
+              {
+                "$count": {
+                  "$distinct": "$.crashes[*].path"
                 }
               }
             ]

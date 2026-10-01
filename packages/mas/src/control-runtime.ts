@@ -43,6 +43,7 @@ import type { MasRegistrySnapshot } from './registry.ts';
 import type { MasRegionDescriptor, MasWorkflowPlan } from './lower.ts';
 import type { ValidatedMasWorkflow } from './validate.ts';
 import type { CommitCompletionPlan, MasStore } from './store.ts';
+import type { MasAgentComponent } from './agent-component.ts';
 
 export interface RunContext {
   runId: string;
@@ -56,6 +57,7 @@ export interface RunContext {
   snapshot: MasRegistrySnapshot;
   observer?: MasRuntimeObserver;
   now: () => string;
+  clock: () => number;
   segmentJobId: string;
   checkpointsFor(namespace: string): {
     load(runId: string): unknown,
@@ -64,6 +66,7 @@ export interface RunContext {
   };
   taskHandlers: Record<string, MasTaskHandlerBinding>;
   clientFor?: (node: AgentNode) => MasChatClient;
+  agentComponents?: ReadonlyMap<string, MasAgentComponent>;
   toolBindings: Record<string, MasToolBinding>;
   contextProviders: Record<string, MasContextProvider>;
   messageAdapters: ReadonlyMap<string, MasMessageAdapter>;
@@ -321,7 +324,14 @@ async function runDagRegion(
 ): Promise<RegionsOutcome> {
   const workflow = target.validated.workflow;
   const alreadyDone = region.invocations.every((invocation) => frame.nodes[invocation] !== undefined);
-  if (alreadyDone) return { kind: 'completed' };
+  if (alreadyDone) {
+    // Whole regions can be restored from committed attempts without entering
+    // the DAG checkpoint loader. Report their reuse through the same observer.
+    ctx.observer?.onRegionRestored?.(region.invocations.map(node => invocationPathOf({
+      prefix: frame.pathPrefix, branch: '', iteration: frame.iteration, node,
+    })));
+    return { kind: 'completed' };
+  }
   const byId = new Map(workflow.nodes.map((node) => [node.id, node]));
   const memberIds = new Set(region.invocations);
   const handlers: Record<string, (props: { with: unknown, input: unknown }, signal: AbortSignal) => Promise<unknown>> = {};
@@ -344,10 +354,12 @@ async function runDagRegion(
       signal: ctx.signal,
       ...(ctx.observer !== undefined ? { observer: ctx.observer } : {}),
       now: ctx.now,
+      clock: ctx.clock,
       stateNamespace: frame.stateNamespace,
       initialState: frame.initialState,
       executeSubgraph: (graphNode, input, meta) => runGraphChild(target, graphNode, input, meta, ctx, frame),
       taskHandlers: ctx.taskHandlers,
+      agentComponents: ctx.agentComponents,
       ...(ctx.clientFor !== undefined ? { clientFor: ctx.clientFor } : {}),
       account: ctx.account,
       contextChars: ctx.contextChars,
@@ -361,14 +373,16 @@ async function runDagRegion(
       : (props, signal) => ctx.admit!(() => lifecycle(props, signal), signal);
   }
   const namespace = `${frame.keyPrefix}${region.id}//${frame.iteration}`;
+  // A switch replay restores its declared output, not the private branch
+  // frame. Only actual external feeds belong to this region's input identity.
+  const externalNodes = new Set(region.invocations.flatMap(id => nodeFeeds(workflow, byId.get(id)!, memberIds)
+    .flatMap(feed => feed.source.kind === 'node' && !feed.sameRegion ? [feed.source.node] : [])));
   const outcome = await executeDagRegion({
     document: target.plan.documents[region.documentKey],
     taskVersion: masTaskVersionOf(target.validated.registryRevision),
     executableRevision: target.plan.executableRevision,
     handlers,
-    // A resumed frame also holds this region's committed results. They are
-    // checkpoint outputs, not input to the region's original computation.
-    scope: { input: frame.input, nodes: Object.fromEntries(Object.entries(frame.nodes).filter(([id]) => !memberIds.has(id))) },
+    scope: { input: frame.input, nodes: Object.fromEntries(Object.entries(frame.nodes).filter(([id]) => externalNodes.has(id))) },
     segmentJobId: ctx.segmentJobId,
     checkpoints: ctx.checkpointsFor(namespace),
     signal: ctx.signal,

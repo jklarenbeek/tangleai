@@ -9,6 +9,8 @@ import { promisify } from 'node:util';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { buildPrihaReport, loadPrihaFixture, loadPrihaControl, createPrihaValidator, requirePrihaCapability, PRIHA_ROWS, PRIHA_BAD_ROWS, PRIHA_CAPABILITY_ROWS, renderPrihaDocument, renderPrihaReport, planPrihaLive, authorizePrihaLive, prihaCorpus, prihaScoreAnswer, scorePrihaConversation, validatePrihaReport, reportIdOf, registrationIdOf, type PrihaAnswer, type PrihaFixture, } from '../../benchmark/lib/priha.ts';
 import { prihaLocalTimingReceipt, type PrihaLocalTiming } from '../../benchmark/lib/priha-local.ts';
+import { stageOf } from '../../benchmark/lib/priha-answer.ts';
+import { groundingArtifacts } from '@tangleai/grounding';
 import { createPrihaReplay } from '../../benchmark/lib/priha-replay.ts';
 import { readAiEnv } from '../../benchmark/lib/ai-env.ts';
 const exec = promisify(execFile), loaded = await loadPrihaFixture(), fixture = loaded.fixture;
@@ -128,9 +130,10 @@ describe('the registered PriHA instrument', () => {
         requirePrihaCapability(report, 'optimizer');
         requirePrihaCapability(report, 'web');
         requirePrihaCapability(report, 'reconcile');
+        requirePrihaCapability(report, 'flow');
         assert.equal(report.contracts.failed, 0);
         assert.equal(report.contracts.passed, 26);
-        for (const c of report.capabilities.slice(6))
+        for (const c of report.capabilities.slice(7))
             assert.throws(() => requirePrihaCapability(report, c.id), /requires/);
         assert.throws(() => requirePrihaCapability(report, 'invented'), /Unknown/);
         assert.equal(report.decision.state, 'not-evaluated');
@@ -305,7 +308,7 @@ describe('the registered PriHA instrument', () => {
             assert.equal(await readFile(a, 'utf8'), await readFile(c, 'utf8'));
             assert.equal(await readFile(b, 'utf8'), await readFile(d, 'utf8'));
             await exec(process.execPath, ['benchmark/priha.ts', '--check', '--json', a, '--md', b]);
-            for (const flags of [['--require', 'flow'], ['--unknown']])
+            for (const flags of [['--require', 'complete'], ['--unknown']])
                 await assert.rejects(exec(process.execPath, ['benchmark/priha.ts', ...flags]), (error: unknown) => { const e = error as Error & {
                     code: number;
                     stdout: string;
@@ -363,4 +366,32 @@ it('scores five real scripted answer treatments with closed conflict and referen
         (value: typeof report) => { value.answers.leakage++; },
         (value: typeof report) => { value.capabilities.find(row => row.id === 'reconcile')!.passed = false; },
     ]) { const changed = structuredClone(report); mutation(changed); assert.equal(validate(changed).valid, false); }
+});
+
+it('classifies the scripted stage by its system prompt while preserving quoted content', () => {
+    const sufficiency = groundingArtifacts.prompts.find(row => row.id === 'grounding-web-sufficiency')!;
+    const agent = groundingArtifacts.prompts.find(row => row.id === 'grounding-web-agent')!;
+    assert.equal(stageOf({ messages: [{ role: 'system', content: sufficiency.role.instructions },
+        { role: 'user', content: agent.role.instructions }] }, loaded.answerExecution), 'web-sufficiency');
+    assert.throws(() => stageOf({ messages: [{ role: 'user', content: agent.role.instructions }] }, loaded.answerExecution), /Unregistered/);
+});
+it('executes every treatment and recovery path through native durable workflow stages', () => {
+    assert.equal(report.flow.failed, 0); assert.equal(report.flow.rows.length, 5); assert.equal(report.flow.paths.length, 6);
+    assert.equal(report.flow.crashes.length, 84); assert.equal(report.flow.providerRequests, 0); assert.equal(report.flow.networkRequests, 0);
+    for (const row of report.flow.rows) {
+        assert.ok(row.passed && row.componentParity && row.frozenQualityParity && row.frozenCallsParity);
+        assert.ok(row.runs.every(run => run.reopened));
+        assert.equal(row.tokenCorrection, ['web-only', 'drag-no-optimizer', 'priha-full'].includes(row.key) ? 290 : 0);
+    }
+    for (const crash of report.flow.crashes) {
+        assert.ok(crash.passed && crash.identical && crash.replayed + crash.restored > 0);
+        assert.equal(crash.duplicateCalls, 0); assert.equal(crash.duplicateRequests, 0);
+    }
+    assert.ok(report.flow.paths.every(row => row.passed));
+    for (const alter of [
+        (value: typeof report) => { value.flow.rows[0].calls++; },
+        (value: typeof report) => { value.flow.crashes[0].duplicateRequests++; },
+        (value: typeof report) => { value.flow.paths[0].passed = false; },
+        (value: typeof report) => { value.capabilities.find(row => row.id === 'flow')!.passed = false; },
+    ]) { const copy = structuredClone(report); alter(copy); assert.equal(validate(copy).valid, false); }
 });

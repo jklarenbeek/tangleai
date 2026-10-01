@@ -8,6 +8,7 @@
 
 export const INITIAL_STATE = {
   page: 'chat',
+  grounding: { input: '', answers: {} as Record<string, string>, reason: '', busy: false, error: null as string | null, reply: null as any, evidence: { candidates: [] as any[], unused: [] as string[] }, conflicts: [] as any[], rows: [] as any[] },
   status: null as any,
   chat: {
     input: '',
@@ -125,6 +126,7 @@ export const ACTIONS: Record<string, any> = {
       invoke('status.get', {}, 'status/done', 'noop'),
       invoke('dag.get', {}, 'dag/done', 'noop'),
       invoke('chat.history', {}, 'chat/history', 'noop'),
+      invoke('grounding.list', {}, 'grounding/listed', 'noop'),
       invoke('runs.list', {}, 'runs/done', 'noop'),
       invoke('memories.list', { limit: 200 }, 'memory/done', 'noop'),
       invoke('documents.list', {}, 'documents/done', 'noop'),
@@ -150,6 +152,37 @@ export const ACTIONS: Record<string, any> = {
       { op: 'replace', path: '/loom/nodes', value: '$payload.nodes' },
     ],
   },
+
+  // -- grounded sessions ----------------------------------------------------
+  'grounding/input': { patch: [{ op: 'replace', path: '/grounding/input', value: '$event.value' }] },
+  'grounding/field': { patch: [{ op: 'add', path: { $concat: ['/grounding/answers/', '$payload'] }, value: '$event.value' }] },
+  'grounding/reason': { patch: [{ op: 'replace', path: '/grounding/reason', value: '$event.value' }] },
+  'grounding/listed': { patch: [{ op: 'replace', path: '/grounding/rows', value: '$payload' }] },
+  'grounding/start': {
+    patch: [{ op: 'replace', path: '/grounding/busy', value: true }, { op: 'replace', path: '/grounding/error', value: null }],
+    effects: [{ run: 'groundingLoad', with: { op: 'grounding.start', input: { text: '$.grounding.input' } } }],
+  },
+  'grounding/reply': {
+    patch: [{ op: 'replace', path: '/grounding/busy', value: true }, { op: 'replace', path: '/grounding/error', value: null }],
+    effects: [{ run: 'groundingLoad', with: { op: 'grounding.reply', input: { sessionId: '$.grounding.reply.sessionId', interactionId: '$.grounding.reply.question.interactionId', response: { answers: '$.grounding.answers' } } } }],
+  },
+  'grounding/refresh': {
+    patch: [{ op: 'replace', path: '/grounding/busy', value: true }, { op: 'replace', path: '/grounding/error', value: null }],
+    effects: [{ run: 'groundingLoad', with: { op: 'grounding.refresh', input: { sessionId: '$.grounding.reply.sessionId', reason: '$.grounding.reason' } } }],
+  },
+  'grounding/open': {
+    patch: [{ op: 'replace', path: '/grounding/busy', value: true }, { op: 'replace', path: '/grounding/error', value: null }],
+    effects: [{ run: 'groundingLoad', with: { op: 'grounding.get', input: { sessionId: '$payload' } } }],
+  },
+  'grounding/loaded': { patch: [
+    { op: 'replace', path: '/grounding/reply', value: '$payload.reply' },
+    { op: 'replace', path: '/grounding/evidence', value: '$payload.evidence' },
+    { op: 'replace', path: '/grounding/conflicts', value: '$payload.conflicts' },
+    { op: 'replace', path: '/grounding/rows', value: '$payload.rows' },
+    { op: 'replace', path: '/grounding/answers', value: {} },
+    { op: 'replace', path: '/grounding/busy', value: false },
+  ] },
+  'grounding/fail': { patch: [{ op: 'replace', path: '/grounding/error', value: '$payload' }, { op: 'replace', path: '/grounding/busy', value: false }] },
 
   // -- chat -----------------------------------------------------------------
   'chat/input': { patch: [{ op: 'replace', path: '/chat/input', value: '$event.value' }] },

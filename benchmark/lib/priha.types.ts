@@ -713,6 +713,18 @@ export interface PrihaFixtureAnswerExecution {
 }
 
 
+export interface PrihaFixtureFlowExecution {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  file: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.census.sources",{"$count":"$.sources[*]"}]},{"$eq":["$.census.questions",{"$count":"$.questions[*]"}]},{"$eq":["$.census.claims",{"$count":"$.claims[*]"}]},{"$eq":["$.census.elements",{"$count":"$.elements[*]"}]},{"$eq":["$.census.chunks",{"$count":"$.chunks[*]"}]},{"$eq":["$.census.parents",{"$count":"$.parents[*]"}]},{"$eq":["$.census.conversations",{"$count":"$.conversations[*]"}]},{"$eq":["$.census.versions",{"$count":"$.sources[*].versions[*]"}]},{"$eq":["$.census.webRecords",{"$count":"$.web[*]"}]},{"$eq":["$.census.answerable",{"$count":"$.questions[?(@.kind=='answerable')]"}]},{"$eq":["$.census.abstain",{"$count":"$.questions[?(@.kind=='abstain')]"}]},{"$eq":["$.census.refuse",{"$count":"$.questions[?(@.kind=='refuse')]"}]},{"$eq":[{"$count":"$.sources[*].key"},{"$count":{"$distinct":"$.sources[*].key"}}]},{"$eq":[{"$count":"$.questions[*].key"},{"$count":{"$distinct":"$.questions[*].key"}}]},{"$eq":[{"$count":"$.claims[*].key"},{"$count":{"$distinct":"$.claims[*].key"}}]},{"$eq":[{"$count":"$.elements[*].key"},{"$count":{"$distinct":"$.elements[*].key"}}]},{"$eq":[{"$count":"$.chunks[*].key"},{"$count":{"$distinct":"$.chunks[*].key"}}]},{"$eq":[{"$count":"$.parents[*].key"},{"$count":{"$distinct":"$.parents[*].key"}}]},{"$eq":[{"$count":"$.conversations[*].key"},{"$count":{"$distinct":"$.conversations[*].key"}}]},{"$eq":[{"$count":"$.scripts[*].key"},{"$count":{"$distinct":"$.scripts[*].key"}}]},{"$eq":[{"$count":"$.web[*].key"},{"$count":{"$distinct":"$.web[*].key"}}]},{"$eq":[{"$count":"$.sources[*].versions[*].key"},{"$count":{"$distinct":"$.sources[*].versions[*].key"}}]},{"$eq":[{"$count":"$.granularities[*].id"},{"$count":{"$distinct":"$.granularities[*].id"}}]}]}
  */
@@ -790,6 +802,7 @@ export interface PrihaFixture {
   userFacts: PrihaFixtureUserFacts;
   webExecution: PrihaFixtureWebExecution;
   answerExecution: PrihaFixtureAnswerExecution;
+  flowExecution: PrihaFixtureFlowExecution;
 }
 
 
@@ -1012,6 +1025,10 @@ export interface PrihaRegistration {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   answerProfileRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  flowExecutionId: string;
 }
 
 
@@ -2584,8 +2601,205 @@ export interface PrihaAnswerReport {
 }
 
 
+export interface PrihaFlowRun {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  question: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  workflowVersionId: string;
+  answerId: string | null;
+  intentId: string | null;
+  planId: string | null;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  disposition: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  reopened: boolean;
+  failure: string | null;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]},{"$eq":["$.contracts.profileRevision","$.registration.profile.revision"]},{"$every":{"c":"$.capabilities[?(@.id=='contracts')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.contracts.failed",0]}]}},{"$eq":["$.local.queryId","$.registration.localQueryId"]},{"$every":{"c":"$.capabilities[?(@.id=='local')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.local.failed",0]}]}},{"$eq":["$.local.corpusAddressId","$.registration.localCorpusAddressId"]},{"$eq":["$.optimizer.catalogRevision","$.registration.optimizerCatalogRevision"]},{"$eq":["$.optimizer.vocabularyRevision","$.registration.optimizerVocabularyRevision"]},{"$every":{"c":"$.capabilities[?(@.id=='optimizer')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.optimizer.failed",0]}]}},{"$eq":["$.web.executionId","$.registration.webExecutionId"]},{"$eq":["$.web.catalogRevision","$.optimizer.catalogRevision"]},{"$every":{"c":"$.capabilities[?(@.id=='web')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.web.failed",0]}]}},{"$eq":["$.registration.answerExecutionId","$.answers.executionId"]},{"$eq":["$.registration.answerProfileRevision","$.answers.profileRevision"]},{"$eq":[{"$count":"$.answers.runs[*]"},{"$sum":"$.rows[?(@.key!='oracle')].answer.cases"}]},{"$every":{"c":"$.capabilities[?(@.id=='reconcile')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.answers.failed",0]}]}}]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.calls",{"$sum":"$.runs[*].calls"}]},{"$eq":["$.tokens",{"$sum":"$.runs[*].tokens"}]},{"$eq":["$.requests",{"$sum":"$.runs[*].requests"}]},{"$eq":["$.tokens",{"$add":["$.oldTokens","$.tokenCorrection"]}]},{"$eq":[{"$count":"$.runs[*]"},{"$count":"$.cases[*]"}]},{"$eq":[{"$count":"$.runs[*].question"},{"$count":{"$distinct":"$.runs[*].question"}}]},{"$eq":[{"$count":"$.cases[*].question"},{"$count":{"$distinct":"$.cases[*].question"}}]},{"$eq":["$.passed",{"$and":["$.componentParity","$.frozenQualityParity","$.frozenCallsParity",{"$eq":[{"$count":"$.runs[?(@.reopened==false||@.failure!=null)]"},0]}]}]}]}
+ */
+export interface PrihaFlowRow {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  key: string;
+  cases: Array<PrihaCase>;
+  metrics: PrihaMetrics;
+  runs: Array<PrihaFlowRun>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  componentParity: boolean;
+  frozenQualityParity: boolean;
+  frozenCallsParity: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  oldTokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  tokenCorrection: number;
+  passed: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaFlowPathDispositionsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.passed",{"$and":[{"$eq":[{"$head":{"$reverse":"$.dispositions[*]"}},{"$if":[{"$eq":["$.id","failure"]},"failure",{"$if":[{"$eq":["$.id","refusal"]},"refusal","answer"]}]}]},"$.identical",{"$eq":["$.duplicateCalls",0]},{"$eq":["$.duplicateRequests",0]},{"$or":[{"$ne":["$.id","refusal"]},{"$eq":["$.calls",0]}]}]}]}
+ */
+export interface PrihaFlowPath {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  dispositions: Array<PrihaFlowPathDispositionsItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reopens: number;
+  identical: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateRequests: number;
+  passed: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":["$.passed",{"$and":["$.identical",{"$eq":["$.duplicateCalls",0]},{"$eq":["$.duplicateRequests",0]},{"$gt":[{"$add":["$.replayed","$.restored"]},0]}]}]}
+ */
+export interface PrihaFlowCrash {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  path: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  requests: number;
+  identical: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  duplicateRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  passed: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restored: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.failed",{"$add":[{"$add":[{"$count":"$.rows[?(@.passed==false)]"},{"$count":"$.paths[?(@.passed==false)]"}]},{"$count":"$.crashes[?(@.passed==false)]"}]}]},{"$eq":["$.scriptedRequests",{"$add":[{"$add":[{"$add":["$.baselineCalls",{"$sum":"$.rows[*].calls"}]},{"$sum":"$.paths[*].calls"}]},{"$sum":"$.crashes[*].calls"}]}]},{"$eq":[{"$count":"$.rows[*]"},5]},{"$eq":[{"$count":"$.paths[*]"},6]},{"$eq":[{"$count":"$.crashes[*]"},84]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.paths[*].id"},{"$count":{"$distinct":"$.paths[*].id"}}]},{"$eq":[{"$count":"$.crashes[*].path"},{"$count":{"$distinct":"$.crashes[*].path"}}]}]}
+ */
+export interface PrihaFlowReport {
+  status: "executed";
+  tier: "scripted";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  executionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  baselineReportId: string;
+  rows: Array<PrihaFlowRow>;
+  paths: Array<PrihaFlowPath>;
+  crashes: Array<PrihaFlowCrash>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  scriptedRequests: number;
+  providerRequests: 0;
+  networkRequests: 0;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  correction: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  limitations: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  baselineCalls: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.summary.rows",{"$count":"$.rows[*]"}]},{"$eq":["$.summary.missing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.summary.cases",{"$count":"$.rows[*].cases[*]"}]},{"$eq":["$.summary.badControls",{"$count":"$.badRows[*]"}]},{"$eq":["$.summary.failedControls",{"$count":"$.badRows[?(@.passed==false)]"}]},{"$eq":["$.summary.providerRequests",0]},{"$eq":[{"$count":"$.rows[*]"},6]},{"$eq":[{"$count":"$.rows[*].key"},{"$count":{"$distinct":"$.rows[*].key"}}]},{"$eq":[{"$count":"$.badRows[*]"},8]},{"$eq":[{"$count":"$.badRows[*].key"},{"$count":{"$distinct":"$.badRows[*].key"}}]},{"$eq":[{"$count":"$.capabilities[*].id"},{"$count":{"$distinct":"$.capabilities[*].id"}}]},{"$eq":[{"$count":"$.registration.questionIds[*]"},{"$count":{"$distinct":"$.registration.questionIds[*]"}}]},{"$every":{"r":"$.rows[*]"},"$satisfies":{"$eq":["$r.counts.planned",{"$count":"$.registration.questionIds[*]"}]}},{"$every":{"c":"$.gate.clauses[*]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$c.expected","$c.actual"]}]}},{"$eq":["$.gate.passed",{"$and":[{"$eq":[{"$count":"$.gate.clauses[?(@.passed==false)]"},0]},{"$eq":["$.summary.failedControls",0]},{"$eq":[{"$count":"$.gate.failures[*]"},0]}]}]},{"$or":[{"$ne":["$.decision.state","adopt"]},{"$and":[{"$eq":["$.summary.missing",0]},{"$eq":["$.pairing.eligible",true]},{"$eq":[{"$count":"$.decision.clauses[?(@.passed==false)]"},0]},{"$some":{"p":"$.pairing.comparisons[*]"},"$satisfies":{"$and":[{"$eq":["$p.metric","supported-claim-f1"]},{"$gt":["$p.interval.low",0]}]}}]}]},{"$or":[{"$ne":["$.summary.missing",5]},{"$eq":["$.decision.state","not-evaluated"]}]},{"$eq":["$.contracts.profileRevision","$.registration.profile.revision"]},{"$every":{"c":"$.capabilities[?(@.id=='contracts')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.contracts.failed",0]}]}},{"$eq":["$.local.queryId","$.registration.localQueryId"]},{"$every":{"c":"$.capabilities[?(@.id=='local')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.local.failed",0]}]}},{"$eq":["$.local.corpusAddressId","$.registration.localCorpusAddressId"]},{"$eq":["$.optimizer.catalogRevision","$.registration.optimizerCatalogRevision"]},{"$eq":["$.optimizer.vocabularyRevision","$.registration.optimizerVocabularyRevision"]},{"$every":{"c":"$.capabilities[?(@.id=='optimizer')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.optimizer.failed",0]}]}},{"$eq":["$.web.executionId","$.registration.webExecutionId"]},{"$eq":["$.web.catalogRevision","$.optimizer.catalogRevision"]},{"$every":{"c":"$.capabilities[?(@.id=='web')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.web.failed",0]}]}},{"$eq":["$.registration.answerExecutionId","$.answers.executionId"]},{"$eq":["$.registration.answerProfileRevision","$.answers.profileRevision"]},{"$eq":[{"$count":"$.answers.runs[*]"},{"$sum":"$.rows[?(@.key!='oracle')].answer.cases"}]},{"$every":{"c":"$.capabilities[?(@.id=='reconcile')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.answers.failed",0]}]}},{"$eq":["$.flow.executionId","$.registration.flowExecutionId"]},{"$every":{"c":"$.capabilities[?(@.id=='flow')]"},"$satisfies":{"$eq":["$c.passed",{"$eq":["$.flow.failed",0]}]}},{"$every":{"f":"$.flow.rows[*]"},"$satisfies":{"$every":{"r":"$.rows[*]"},"$satisfies":{"$or":[{"$ne":["$f.key","$r.key"]},{"$and":[{"$eq":["$f.metrics","$r.metrics"]},{"$eq":["$f.cases","$r.cases"]},{"$eq":["$f.calls","$r.cost.turns"]},{"$eq":["$f.tokens","$r.cost.tokens"]}]}]}}}]}
  */
 export interface PrihaReport {
   document: "priha-report";
@@ -2628,6 +2842,7 @@ export interface PrihaReport {
   optimizer: PrihaOptimizerReport;
   web: PrihaWebReport;
   answers: PrihaAnswerReport;
+  flow: PrihaFlowReport;
 }
 
 
@@ -3088,4 +3303,102 @@ export interface PrihaAnswerExecution {
 }
 
 
-export type Priha = PrihaFixture | PrihaReport | PrihaConversation | PrihaLivePlan | PrihaLocalQueries | PrihaUserFacts | PrihaWebExecution | PrihaAnswerExecution;
+export interface PrihaFlowExecutionBaselineRowsItemCasesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  question: string;
+  given: "answer" | "abstain" | "refuse";
+  claims: unknown;
+  correctDisposition: boolean;
+  decision: ConflictDecision;
+  decisionCorrect: boolean;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  localRecall: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  webRecall: number;
+}
+
+
+export interface PrihaFlowExecutionBaselineRowsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  key: string;
+  metrics: PrihaMetrics;
+  cost: unknown;
+  cases: Array<PrihaFlowExecutionBaselineRowsItemCasesItem>;
+}
+
+
+export interface PrihaFlowExecutionBaseline {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  reportId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  registrationId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sourceSha256: string;
+  rows: Array<PrihaFlowExecutionBaselineRowsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaFlowExecutionRowsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type PrihaFlowExecutionPathsItem = string;
+
+export interface PrihaFlowExecutionPromptsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revision: string;
+}
+
+
+export interface PrihaFlowExecution {
+  document: "priha-flow-execution";
+  version: 1;
+  baseline: PrihaFlowExecutionBaseline;
+  rows: Array<PrihaFlowExecutionRowsItem>;
+  paths: Array<PrihaFlowExecutionPathsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  pathQuestion: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  complexRequiredField: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  complexAnswer: string;
+  crashes: "each-completed-root-and-clarification-stage";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  limitations: string;
+  prompts: Array<PrihaFlowExecutionPromptsItem>;
+}
+
+
+export type Priha = PrihaFixture | PrihaReport | PrihaConversation | PrihaLivePlan | PrihaLocalQueries | PrihaUserFacts | PrihaWebExecution | PrihaAnswerExecution | PrihaFlowExecution;

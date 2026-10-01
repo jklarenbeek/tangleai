@@ -40,6 +40,7 @@ function canonicalizeSections(document: MasRegistry): MasRegistry {
     contextAdapters: byId(document.contextAdapters),
     templates: byId(document.templates),
     subgraphs: byId(document.subgraphs),
+    ...(document.agentExecutors === undefined ? {} : { agentExecutors: byId(document.agentExecutors) }),
   };
 }
 
@@ -48,6 +49,9 @@ export async function createMasRegistrySnapshot(value: unknown): Promise<MasVali
   if (!shape.valid) return shape;
   const document = canonicalizeSections(shape.value);
   const issues = [];
+  const executors = document.agentExecutors ?? [];
+  if (new Set(executors.map(row => row.id)).size !== executors.length)
+    issues.push(masIssue('TMAS1001', '/agentExecutors', 'agent executor ids must be unique'));
 
   for (const [index, role] of document.roles.entries()) {
     const recomputed = await masRevisionOf(role.instructions);

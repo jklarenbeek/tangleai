@@ -15,6 +15,7 @@ import { readFile } from 'node:fs/promises';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { compileContract } from '@jarenjs/contract';
 import { publicProjection } from '@jarenjs/contract/project';
+import { DESKTOP_CONTRACT } from '../../apps/desktop/src/contract.ts';
 import { profileRegistrySchema, runIdentitySchema } from '@tangleai/config';
 
 import { createReportValidator } from '../../benchmark/lib/validate.ts';
@@ -311,7 +312,7 @@ describe('the frozen desktop contract snapshot', () => {
     assert.equal(await compiled.revision(), PRE_CONFIG_CONTRACT_REVISION, 'the frozen snapshot never moves during the campaign');
     assert.deepEqual(publicProjection(compiled), snapshot, 'the projection of the projection is the projection');
     assert.match(committedReport.census.desktopContract.revision, /^[0-9a-f]{64}$/);
-    assert.equal(committedReport.census.desktopContract.operations, 37,
+    assert.equal(committedReport.census.desktopContract.operations, Object.keys(DESKTOP_CONTRACT.operations).length,
       'the census counts the surface the tree compiles today, not the frozen snapshot beside it');
   });
 });

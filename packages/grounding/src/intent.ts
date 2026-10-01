@@ -30,7 +30,7 @@ export function triageDecisionErrors(profile: GroundingProfile, value: TriageDec
     return errors;
 }
 export interface ProjectIntentInput {
-    profile: GroundingProfile; sessionId: string; originalQuery: string; triage: TriageDecision;
+    profile: GroundingProfile; sessionId: string; executionId?: string; originalQuery: string; triage: TriageDecision;
     history: GmplClarificationState['history']; outstanding: string[]; refinedQuery: string;
     promptRevision: string; modelIdentity: ClarifiedIntent['modelIdentity']; ruleIds: string[];
 }
@@ -51,7 +51,7 @@ export async function projectClarifiedIntent(input: ProjectIntentInput): Promise
     }
     const outstanding = triage.requiredFields.filter(id => input.outstanding.includes(id) || !Object.hasOwn(answers, id));
     const values = (kind: 'constraint' | 'priority') => [...new Set(Object.entries(answers).filter(([id]) => fields.get(id)!.kind === kind).map(([, value]) => value))];
-    const payload = { sessionId: input.sessionId, originalQuery: input.originalQuery, triage: triage.triage,
+    const payload = { sessionId: input.sessionId, ...(input.executionId ? { executionId: input.executionId } : {}), originalQuery: input.originalQuery, triage: triage.triage,
         reason: triage.reason, answered: answers, outstanding, constraints: values('constraint'), priorities: values('priority'),
         summary: input.refinedQuery, turnsUsed: history.length, ruleIds: [...new Set(input.ruleIds)],
         promptRevision: input.promptRevision, modelIdentity: input.modelIdentity };

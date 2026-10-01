@@ -36,6 +36,7 @@ import type { MasRegistrySnapshot } from './registry.ts';
 import type { MasWorkflowPlan } from './lower.ts';
 import type { ValidatedMasWorkflow } from './validate.ts';
 import type { MasStore } from './store.ts';
+import type { MasAgentComponent } from './agent-component.ts';
 
 export { MasInfrastructureCrash };
 
@@ -45,6 +46,7 @@ export interface MasHostBindings {
   toolBindings: Record<string, MasToolBinding>;
   contextProviders: Record<string, MasContextProvider>;
   clientFor?: (node: AgentNode) => MasChatClient;
+  agentComponents?: ReadonlyMap<string, MasAgentComponent>;
   messageAdapters?: ReadonlyMap<string, MasMessageAdapter>;
   now: () => string;
   clock: () => number;
@@ -93,6 +95,13 @@ export function compileMasRuntime(
   }
 
   const adapters = new Map<string, MasMessageAdapter>();
+  const components = new Map<string, MasAgentComponent>();
+  for (const [id, component] of bindings.agentComponents ?? []) {
+    const declared = snapshot.document.agentExecutors?.find(row => row.id === id);
+    if (!declared || component.id !== id || component.version !== declared.version || typeof component.execute !== 'function')
+      issues.push(masIssue('TMAS1009', `/agentExecutors/${encodeJSONPointerSegment(id)}`, 'the agent component must match its pinned capability revision'));
+    else components.set(id, Object.freeze({ id, version: component.version, execute: component.execute }));
+  }
   const declaredAdapters = new Map(snapshot.document.messageAdapters.map(a => [a.id, a]));
   for (const [id, adapter] of bindings.messageAdapters ?? BUILTIN_MESSAGE_ADAPTERS) {
     const declared = declaredAdapters.get(id);
@@ -112,6 +121,8 @@ export function compileMasRuntime(
           issues.push(masIssue('TMAS1009', `/nodes/${index}/handler`, `no host binding covers handler '${node.handler}'`));
         }
       } else if (node.kind === 'agent') {
+        if (node.executor !== undefined && !components.has(node.executor))
+          issues.push(masIssue('TMAS1009', `/nodes/${index}/executor`, `no matching component covers '${node.executor}'`));
         if (bindings.clientFor === undefined) {
           issues.push(masIssue('TMAS1009', `/nodes/${index}`, 'the workflow has agent nodes but no client factory is bound'));
         }
@@ -210,9 +221,11 @@ export function compileMasRuntime(
       snapshot,
       ...(bindings.observer !== undefined ? { observer: bindings.observer } : {}),
       now: bindings.now,
+      clock: bindings.clock,
       segmentJobId: host.segmentJobId,
       checkpointsFor: host.checkpointsFor,
       taskHandlers: bindings.taskHandlers,
+      agentComponents: components,
       ...(bindings.clientFor !== undefined ? { clientFor: bindings.clientFor } : {}),
       toolBindings: bindings.toolBindings,
       contextProviders: bindings.contextProviders,

@@ -20,6 +20,7 @@
  */
 
 import { FRAME_KINDS } from '@tangleai/store';
+import { GROUNDING_DEFINITIONS, GROUNDING_OPERATIONS } from './grounding-contract.ts';
 
 import manifest from '../package.json' with { type: 'json' };
 
@@ -392,7 +393,9 @@ export const DESKTOP_CONTRACT = {
   // removed or narrowed since the freeze, so a client built at that
   // release can still speak here and the gate refuses silence about it.
   compat: ['0.28.0'],
+  $defs: GROUNDING_DEFINITIONS,
   operations: {
+    ...GROUNDING_OPERATIONS,
     'status.get': {
       kind: 'read',
       input: { type: 'object', properties: {} },

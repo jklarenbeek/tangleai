@@ -226,3 +226,19 @@ tr.run.selected td { background: var(--panel-2); }
 .stored-reports { margin-top: 1rem; }
 .stored-reports tr { cursor: pointer; }
 .stored-reports tr.selected { background: var(--panel-2); }
+
+/* The grounded session is an addressed read/command surface. */
+.grounded { overflow-y: auto; padding: 1.4rem; max-width: 1040px; width: 100%; margin: 0 auto; }
+.grounded label { display: grid; gap: .5rem; margin: 1rem 0; }
+.grounded textarea { min-height: 6rem; width: 100%; }
+.grounded input, .grounded textarea { padding: .75rem; font: inherit; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+.grounded button { padding: .65rem 1rem; cursor: pointer; font: inherit; background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+.grounded a { color: var(--accent); }
+.grounded button:hover:enabled { border-color: var(--accent); }
+.grounded button:disabled { cursor: default; opacity: .55; }
+.grounding-result { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+.grounding-disposition { text-transform: capitalize; }
+.grounding-spend, .grounding-source, .grounding-unused { font-size: .85rem; line-height: 1.7; }
+.grounding-claims li { margin-bottom: .6rem; }
+.grounding-history { margin-top: 1.5rem; }
+.grounding-history button { display: block; margin-top: .5rem; }

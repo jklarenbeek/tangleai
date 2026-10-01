@@ -80,7 +80,22 @@ function watchRun(
 export function createTangleUi(options: TangleUiOptions): any {
   const client = options.client;
 
+  let groundingRequest = 0;
   const effects = {
+    /** One requested session and its addressed reads; no polling or subscription. */
+    groundingLoad: (props: any, dispatch: Dispatch): void => {
+      const request = ++groundingRequest;
+      const read = async (op: string, input: any) => {
+        const outcome = await client.invoke(op, input);
+        if (!outcome.ok) throw Error(outcome.error?.details?.issues?.map((row: any) => `${row.code}: ${row.detail}`).join("; ") || failText(outcome));
+        return outcome.value;
+      };
+      void (async () => {
+        const reply = await read(props.op, props.input);
+        const [evidence, conflicts, rows] = await Promise.all([read("grounding.evidence", { sessionId: reply.sessionId }), read("grounding.conflicts", { sessionId: reply.sessionId }), read("grounding.list", {})]);
+        if (request === groundingRequest) dispatch("grounding/loaded", { reply, evidence, conflicts, rows });
+      })().catch(cause => { if (request === groundingRequest) dispatch("grounding/fail", cause instanceof Error ? cause.message : "The session could not be loaded."); });
+    },
     /** Generic operation call: { op, input, done, fail }. */
     invoke: (props: any, dispatch: Dispatch): void => {
       void client.invoke(props.op, props.input ?? {}).then((outcome: any) => {

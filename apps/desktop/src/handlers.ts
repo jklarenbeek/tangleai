@@ -34,6 +34,7 @@ import { registryRevisionOf } from '@tangleai/config';
 import type { Settings, SettingsStore } from './settings.ts';
 import { embedderFor, embedWireConfigured } from './settings.ts';
 import type { ChatEngine } from './chat.ts';
+import type { DesktopGrounding } from './grounding-session.ts';
 import { inspectStack, productionRegistry, type HostStack, type StackOptions } from './ai-host.ts';
 import { syncFolder, type DocumentRecord, type SyncCounts, type SyncTrigger } from './ingest.ts';
 import { createFrameSink } from './frames.ts';
@@ -53,6 +54,7 @@ export interface HandlerSeams {
   /** The controller of every chat run this process is executing, keyed by run id. */
   inflight: Map<string, AbortController>;
   chat: ChatEngine;
+  grounding: DesktopGrounding;
   /** The one folder pass a click and the watcher both go through. */
   folderSync: FolderSync;
   /** What the host is watching, and what it has counted; nothing here starts it. */
@@ -273,6 +275,14 @@ export function createFolderSync(seams: FolderSyncSeams): FolderSync {
 export function createHandlers(seams: HandlerSeams): Record<string, any> {
   const { db, memoryStore, runLog, settings, identities, stackFor, inflight, chat, folderSync, watcher, feedback, reports, documentStore, documentFetcher } = seams;
   const now = seams.now ?? ((): string => new Date().toISOString());
+  const groundingCall = async (work: () => Promise<unknown>, ctx: any) => {
+    try { return await work(); } catch (cause: any) {
+      const issue = cause?.issue ?? { code: 'TGRD1009', path: '/host', detail: 'The grounding dependency is unavailable.' };
+      const code = issue.code === 'TGRD1004' && issue.path === '/sessionId' ? 'not-found'
+        : ['TGRD1002', 'TGRD1003'].includes(issue.code) ? 'execution-conflict' : 'grounding-refused';
+      return ctx.fail(code, {}, { issues: [issue] });
+    }
+  };
 
   // The skill-evolution rows are read-only here: this surface shows what a run
   // did, and every write — drafting, evolving, activating — stays a host action.
@@ -740,6 +750,14 @@ export function createHandlers(seams: HandlerSeams): Record<string, any> {
       const unit = await memoryStore.get(input.id);
       return unit === undefined ? ctx.fail('not-found') : memorySummary(unit);
     },
+
+    'grounding.start': (input: Parameters<DesktopGrounding['start']>[0], ctx: any) => groundingCall(() => seams.grounding.start(input), ctx),
+    'grounding.reply': (input: Parameters<DesktopGrounding['reply']>[0], ctx: any) => groundingCall(() => seams.grounding.reply(input), ctx),
+    'grounding.refresh': (input: Parameters<DesktopGrounding['refresh']>[0], ctx: any) => groundingCall(() => seams.grounding.refresh(input), ctx),
+    'grounding.get': (input: { sessionId: string }, ctx: any) => groundingCall(() => seams.grounding.get(input.sessionId), ctx),
+    'grounding.list': (input: { limit?: number }, ctx: any) => groundingCall(() => seams.grounding.list(input.limit), ctx),
+    'grounding.evidence': (input: { sessionId: string }, ctx: any) => groundingCall(() => seams.grounding.evidence(input.sessionId), ctx),
+    'grounding.conflicts': (input: { sessionId: string }, ctx: any) => groundingCall(() => seams.grounding.conflicts(input.sessionId), ctx),
 
     'chat.history': (input: { limit?: number }) => chat.history(input.limit ?? 200),
 

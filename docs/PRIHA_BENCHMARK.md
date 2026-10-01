@@ -9,9 +9,9 @@ This original MIT fictional Harbour District corpus measures software behavior. 
 | oracle | analytic | Fixture ceiling; no product mechanism or provider executes. | 1.000 | 0 / 0 |
 | flat-semantic | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.884 | 29 / 290 |
 | local-hybrid | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.909 | 31 / 310 |
-| web-only | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.154 | 118 / 890 |
-| drag-no-optimizer | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.957 | 147 / 1180 |
-| priha-full | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.957 | 205 / 1760 |
+| web-only | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.154 | 118 / 1180 |
+| drag-no-optimizer | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.957 | 147 / 1470 |
+| priha-full | scripted | Registered scripts execute actual retrieval and validated claim generation; live quality is unmeasured. | 0.957 | 205 / 2050 |
 
 Answer tier: **scripted**; profile revision `b9e80a537458c9099918d9c867df924e3780bf557e9a8b621ae9eef1567046d6`; execution `5bc5787b75da5cae333c7ec4798f39241f892a153393e1ddfb3743c12dc9fdd0`. Registered scripts bind frozen claim text and source/quote selectors only to actually admitted evidence; missing selectors abstain. This measures software and retrieval, not learned generation quality. Five rows use one explicitly fictional Harbour District profile, registered before scoring; the shipped Hong Kong profile and original corpus facts are unchanged. The hypothesis row orders admitted context using the pre-existing 0.6/1.3/0.05 weights, never eligibility. Optimizer plans use the original atomic question. Separate contract/retrieval/web components retain their earlier profile and registration.
 
@@ -22,6 +22,29 @@ Answer tier: **scripted**; profile revision `b9e80a537458c9099918d9c867df924e378
 | web-only | 1.000 / 0.083 / 0.154 | 1.000 / 1.000 | 1.000 / 0.750 | 0 | 0 |
 | drag-no-optimizer | 1.000 / 0.917 / 0.957 | 1.000 / 1.000 | 1.000 / 1.000 | 0 | 0 |
 | priha-full | 1.000 / 0.917 / 0.957 | 1.000 / 1.000 | 1.000 / 1.000 | 0 | 0 |
+
+Composed workflow: 160 treatment/question runs through the native MAS queue; 84 forced stage terminations and SQLite reopenings. 1355 actual scripted requests, zero provider/network requests.
+
+| Flow treatment | Component quality/cost parity | Earlier quality/calls parity | Calls / tokens | Earlier tokens / correction |
+|---|---:|---:|---:|---:|
+| flat-semantic | true | true | 29 / 290 | 290 / +0 |
+| local-hybrid | true | true | 31 / 310 | 310 / +0 |
+| web-only | true | true | 118 / 1180 | 890 / +290 |
+| drag-no-optimizer | true | true | 147 / 1470 | 1180 / +290 |
+| priha-full | true | true | 205 / 2050 | 1760 / +290 |
+
+The earlier component script classified stages using any message, including quoted user content. Matching the system message fixes 29 assessment requests per web-enabled row. Claim scores and physical call counts are unchanged; each corrected row records 290 more tokens. The earlier receipt is frozen in the flow registration. Earlier receipt: `2b853eafe21b3e7724ad3e0d1499fe25fb8ab03138a764efa01614a146d98872`.
+
+| Path | Observed dispositions | Calls / requests | Reopens | Identity check | Duplicate calls / requests | Pass |
+|---|---:|---:|---:|---:|---:|---:|
+| simple | answer | 4 / 0 | 0 | true | 0 / 0 | true |
+| complex | clarification → answer | 10 / 0 | 1 | true | 0 / 0 | true |
+| refusal | refusal | 0 / 0 | 0 | true | 0 / 0 | true |
+| refresh | answer → answer | 8 / 0 | 0 | true | 0 / 0 | true |
+| failure | failure | 1 / 0 | 0 | true | 0 / 0 | true |
+| retry | answer | 4 / 0 | 1 | true | 0 / 0 | true |
+
+Forced-stage recovery: 84/84 identical artifact sets; 0 duplicate calls and 0 duplicate HTTP requests. 677 committed-attempt replay events and 1084 native region/checkpoint restoration events are observed separately. Both a web path and the nested clarification path are exercised.
 
 | Reconciliation issue / control | Expected | Observed | Rules | Pass |
 |---|---:|---:|---:|---:|
@@ -160,7 +183,7 @@ The oracle uses the existing grounding claim matcher and terminal citation class
 
 Fixture replay verification: 9 requests, 9 hits, 0 failures, 2032 bytes and 0 network requests. These verify committed captures; they are not a retrieval treatment.
 
-Provider costs are zero for this keyless instrument. The local corpus records actual child embedding calls and retained parent counts in the report. Corpus counters are shared by variants of one granularity and are not additive across those rows. The workflow and final campaign gates remain pending; instrument, contracts, local retrieval, scripted optimization, web retrieval and reconciliation/claim generation pass their capability gates.
+Provider costs are zero for this keyless instrument. The local corpus records actual child embedding calls and retained parent counts in the report. Corpus counters are shared by variants of one granularity and are not additive across those rows. The final campaign gate remains pending; instrument, contracts, local retrieval, scripted optimization, web retrieval, reconciliation/claim generation and composed workflow execute their capability checks.
 
 | Immutable flat control identity | Value |
 |---|---:|
@@ -172,7 +195,7 @@ Provider costs are zero for this keyless instrument. The local corpus records ac
 
 Handoff wrapper: `586c44d3b91a2d51dc3388a621c4ec59f6dcda5e7efa02bb5a40483c4499cb3e`; file SHA-256 `e35f9fb5070c595e59db7232392bae943fcb86356ef17caa3ab82ea28087d172`. The nested baseline identities above are read verbatim; the flat grounding report, fixture and chat path are unchanged.
 
-Registered questions: 32; fixture `dce8b4a3bae2a6c02c7867de179f314636a3a9b0a4731006567e542f706bd284`; registration `d5bc0832093457cb88e9a1a2b8067c6ae5f7bf78caff89d46c513dc99d565478`.
-Source `e6887f5495fec4ef96dbdda1cb79f2d2ab6f5ab64e19a98cdda2621d96914c05`; report `2b853eafe21b3e7724ad3e0d1499fe25fb8ab03138a764efa01614a146d98872`.
+Registered questions: 32; fixture `2d237648a7a4f0a181385822978d839abd12f226e5b86c8de6be3ad04454bb17`; registration `2318ee7aed896c40d5bcbfc8f8753d75472962889e2d00e14e4a3206008a0281`.
+Source `f74c882a94bada91d5c0c653e7ae6416465a907929502b367d51fc565f622356`; report `72260eae7b6ea2bd7a1679031ed66e0ebf2198c831573d5368ffd5965b93907e`.
 
-Decision: **not-evaluated** — Five registered scripted answer treatments execute through actual retrieval, reconciliation and claim validation. Workflow, ablation and adoption gates remain pending. Live quality and healthcare deployment are unmeasured.
+Decision: **not-evaluated** — Five registered scripted answer treatments execute through actual retrieval, reconciliation and claim validation. Ablation and adoption gates remain pending. Live quality and healthcare deployment are unmeasured.

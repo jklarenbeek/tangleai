@@ -64,3 +64,16 @@ and 6000 excerpt-character cap. It cannot change rule eligibility or preference.
 All five question treatments retain missing answers and refusals in their
 scores. The complete workflow and adoption decision are separate later gates;
 these scripts establish no live answer quality or clinical capability.
+
+
+The flow registration freezes the preceding component receipt before executing
+all five treatments through the native MAS queue. The six session paths and
+every completed root/clarification stage are exercised over SQLite restarts.
+Committed-attempt replay and native region/checkpoint restoration are separate observer
+counts; both must preserve artifact identities and avoid repeated physical work.
+
+A measured script defect matched stage instructions inside quoted user content.
+Stage recognition now reads system messages only. This corrects 29 assessment
+responses per web-enabled treatment, adding 290 reported tokens per treatment.
+The frozen claim scores and physical request counts remain identical. Original
+questions, gold, corpus bytes and the preceding receipt remain unchanged.

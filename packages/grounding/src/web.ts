@@ -32,6 +32,9 @@ export interface WebLaneOptions {
     transport: WebTransport; store: GroundingStore; ranker?: WebLaneRanker;
     budgets?: Partial<WebBudgets>; clock: () => number; now: () => string;
     maxToolResultChars?: number;
+    signal?: AbortSignal;
+    /** Bind these policy-owned tools through an enclosing native workflow toolbox. */
+    bindTools?: (tools: ReturnType<typeof createToolbox>) => Pick<ReturnType<typeof createToolbox>, 'toFunctionTools' | 'execute'>;
     /** Optional host PDF-capable extractor; identity pins the actual extraction implementation. */
     extractor?: { id: string; extract(bytes: Uint8Array, options: ExtractOptions): Promise<ExtractedDocument> };
 }
@@ -43,6 +46,12 @@ const must = <T>(outcome: { ok: true; value: T } | { ok: false; issue: Grounding
 };
 const textSchema = { type: 'string', minLength: 1, maxLength: 4000 };
 const noExtraObject = (properties: Record<string, unknown>, required: string[]) => ({ type: 'object', additionalProperties: false, properties, required });
+export const GROUNDING_WEB_TOOLS = [
+    { name: 'web_search', description: 'Find candidate URLs. Snippets are discovery hints, never evidence.',
+        inputSchema: noExtraObject({ query: textSchema, language: { type: 'string', minLength: 1, maxLength: 32 } }, ['query']) },
+    { name: 'web_fetch', description: 'Fetch and extract an admitted page, returning exact-byte evidence or a named failure.',
+        inputSchema: noExtraObject({ url: { type: 'string', minLength: 1, maxLength: 8192 } }, ['url']) },
+] as const;
 export function createWebLane(options: WebLaneOptions) {
     const profileInput = immutableGroundingJson(options.profile), transport = Object.freeze({ ...options.transport });
     const clock = options.clock, now = options.now, hasCustomRanker = options.ranker !== undefined;
@@ -124,7 +133,8 @@ export function createWebLane(options: WebLaneOptions) {
                     : { admitted: false, reason: 'No admitting profile authority rule.' };
             }, onBytesRead(count) { bytes += count; if (bytes > budgets.bytes) throw new MasBudgetStop('budget-bytes'); },
         });
-        const deadline = AbortSignal.timeout(Math.max(1, budgets.ms - prior.ms));
+        const timeout = AbortSignal.timeout(Math.max(1, budgets.ms - prior.ms));
+        const deadline = options.signal ? AbortSignal.any([timeout, options.signal]) : timeout;
         const searx = createSearxngClient({ baseUrl: transport.searxBase, timeoutMs: Math.max(1, Math.min(5000, budgets.ms)),
             fetch: async (url, init) => {
                 assertTime();
@@ -146,8 +156,7 @@ export function createWebLane(options: WebLaneOptions) {
             return { error: cause instanceof Error ? cause.message : String(cause), code };
         };
         const toolbox = createToolbox();
-        toolbox.add({ name: 'web_search', description: 'Find candidate URLs. Snippets are discovery hints, never evidence.',
-            inputSchema: noExtraObject({ query: textSchema, language: { type: 'string', minLength: 1, maxLength: 32 } }, ['query']),
+        toolbox.add({ ...GROUNDING_WEB_TOOLS[0],
             async execute(args: { query: string; language?: string }) {
                 try {
                     assertTime(); if (searches >= budgets.searches) throw new MasBudgetStop('budget-searches');
@@ -166,8 +175,7 @@ export function createWebLane(options: WebLaneOptions) {
                 } catch (cause) { return failure(transport.searxBase, cause); }
             },
         });
-        toolbox.add({ name: 'web_fetch', description: 'Fetch and extract an admitted page, returning exact-byte evidence or a named failure.',
-            inputSchema: noExtraObject({ url: { type: 'string', minLength: 1, maxLength: 8192 } }, ['url']),
+        toolbox.add({ ...GROUNDING_WEB_TOOLS[1],
             async execute(args: { url: string }) {
                 try {
                     assertTime(); const url = normalizeUrl(args.url), priorEvidence = candidates.get(url);
@@ -200,6 +208,7 @@ export function createWebLane(options: WebLaneOptions) {
                 } catch (cause) { return failure(args.url, cause); }
             },
         });
+        const effectiveToolbox = options.bindTools?.(toolbox) ?? toolbox;
         const render = (stage: string, context: Record<string, unknown>) => {
             const artifact = groundingArtifacts.prompts.find(row => row.id === 'grounding-' + stage)!;
             const rendered = renderGmplPrompt(artifact, { query: query.text, evidence: [], context });
@@ -214,7 +223,7 @@ export function createWebLane(options: WebLaneOptions) {
                 const beforeSearch = searches, prompt = render('web-agent', { queries: pending, missing, policy: profile.authority, budgets,
                     evidence: [...candidates.values()].map(row => ({ id: row.id, excerpt: row.excerpt })) });
                 const remaining = account.remaining();
-                const agent = createAgent({ client: observed, toolbox, system: prompt.rendered.system, maxToolRounds: budgets.searches + budgets.fetches,
+                const agent = createAgent({ client: observed, toolbox: effectiveToolbox, system: prompt.rendered.system, maxToolRounds: budgets.searches + budgets.fetches,
                     maxToolResultChars: maxChars, now: clock, budget: { turns: remaining.turns!, tokens: remaining.tokens!, ms: remaining.ms! } });
                 const result = await agent.send([{ role: 'user', content: prompt.rendered.user }], { signal: deadline });
                 if (result.stopReason.startsWith('budget-')) { stopReason = result.stopReason; break; }

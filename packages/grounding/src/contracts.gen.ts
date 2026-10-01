@@ -582,6 +582,47 @@ export interface OptimizerCheckpoint {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=16000
+ */
+export type GroundingExecutionPreviousRunIdAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1, maxLength=16000
+ */
+export type GroundingExecutionReasonAnyOf1 = string;
+
+export interface GroundingExecution {
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=16000
+   */
+  runId: string;
+  previousRunId: GroundingExecutionPreviousRunIdAnyOf1 | null;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  workflowVersionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  configIdentityId: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1, maxLength=16000
+   */
+  originalQuery: string;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  at: string;
+  reason: GroundingExecutionReasonAnyOf1 | null;
+  mode: "optimized" | "raw";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  cycle: number;
+}
+
+
 export interface GroundingSession {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -625,6 +666,8 @@ export interface GroundingSession {
    */
   revision: number;
   optimization?: OptimizerCheckpoint;
+  execution?: GroundingExecution;
+  failure?: GroundingIssue;
 }
 
 
@@ -704,6 +747,10 @@ export interface ClarifiedIntent {
    */
   promptRevision: string;
   modelIdentity: unknown;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  executionId?: string;
 }
 
 
@@ -1544,5 +1591,176 @@ export interface RepairProposalItemOneOf2 {
  * Schema constraints this type cannot express: maxItems=64
  */
 export type RepairProposal = Array<RepairProposalItemOneOf1 | RepairProposalItemOneOf2>;
+
+export interface GroundingReplyQuestionFieldsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+}
+
+
+export interface GroundingReplyQuestion {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  interactionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  revision: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  responseSchema: { [key: string]: unknown; } | boolean;
+  fields: Array<GroundingReplyQuestionFieldsItem>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingReplyAnswerCaveatsItem = string;
+
+export interface GroundingReplyFailure {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  detail: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingReplyRuleIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingReplyGapsItem = string;
+
+export interface GroundingReplyTrace {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  searches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fetches: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  denied: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayed: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  stopReason: string;
+}
+
+
+export interface GroundingReplyIdentities {
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  profileRevision: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  runId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  workflowVersionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[0-9a-f]{64}$"
+   */
+  configIdentityId: string;
+}
+
+
+export interface GroundingReply {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sessionId: string;
+  disposition: "clarification" | "answer" | "refusal" | "failure" | "running";
+  question?: GroundingReplyQuestion;
+  answer?: { text: string; claims: Array<GroundedClaim>; citations: Array<AnswerCitation>; caveats: Array<GroundingReplyAnswerCaveatsItem>; disposition: "answer" | "abstain" | "refuse" | "clarification"; };
+  failure?: GroundingReplyFailure;
+  ruleIds: Array<GroundingReplyRuleIdsItem>;
+  gaps: Array<GroundingReplyGapsItem>;
+  trace: GroundingReplyTrace;
+  identities: GroundingReplyIdentities;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingEvidenceViewCandidatesItemAuthorityRuleIdsItem = string;
+
+export interface GroundingEvidenceViewCandidatesItemAuthority {
+  tier: AuthorityTier;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  institution?: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  ruleIds: Array<GroundingEvidenceViewCandidatesItemAuthorityRuleIdsItem>;
+}
+
+
+export interface GroundingEvidenceViewCandidatesItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  lane: "local" | "web";
+  authority: GroundingEvidenceViewCandidatesItemAuthority;
+  times: EvidenceTimes;
+  citation: EvidenceCitation;
+  used: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GroundingEvidenceViewUnusedItem = string;
+
+export interface GroundingEvidenceView {
+  candidates: Array<GroundingEvidenceViewCandidatesItem>;
+  unused: Array<GroundingEvidenceViewUnusedItem>;
+}
+
 
 export type Grounding = GroundingProfile | CorpusManifest | GroundingSession | ClarifiedIntent | QueryPlan | EvidenceCandidate | WebRetrievalRun | EvidenceConflict | GroundedClaim | GroundedAnswer | GroundingIssue | GroundingSpend | GroundingTrace;

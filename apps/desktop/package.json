@@ -2,7 +2,7 @@
   "name": "@tangleai/desktop",
   "version": "0.33.0",
   "private": true,
-  "description": "Tangle AI desktop — a single self-hosting binary for chat over curated memory and ingested documents, with live pipeline observability.",
+  "description": "Tangle AI desktop \u2014 a single self-hosting binary for chat over curated memory and ingested documents, with live pipeline observability.",
   "license": "MIT",
   "type": "module",
   "main": "./src/main.ts",
@@ -30,6 +30,7 @@
     "@tangleai/models": "0.33.0",
     "@tangleai/context": "0.33.0",
     "@tangleai/agents": "0.33.0",
-    "@tangleai/trace2skill": "0.33.0"
+    "@tangleai/trace2skill": "0.33.0",
+    "@tangleai/grounding": "0.33.0"
   }
 }

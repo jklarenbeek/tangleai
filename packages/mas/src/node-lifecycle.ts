@@ -26,6 +26,7 @@ import { compileEmbeddedSchema } from './schema.ts';
 import { semanticKeyOf, invocationPathOf } from './runtime-state.ts';
 import { nodeFeeds, selectMasFeed, type Feed } from './lower.ts';
 import { runAgentNode } from './agent-executor.ts';
+import { runAgentComponent, type MasAgentComponent } from './agent-component.ts';
 import { buildEffectiveToolbox, MasUncertainEffect, type MasToolBinding } from './tools.ts';
 import { MasBudgetStop, createSharedBudgetClient, type MasBudgetAccount, type MasChatClient } from './budget.ts';
 import type { AgentNode, ContextRead, Invocation, MasRegistry, MasWorkflow, RuntimeError, TaskNode } from './contracts.gen.ts';
@@ -66,7 +67,10 @@ export interface MasRuntimeObserver {
   onNodeSettle?(path: string, status: 'completed' | 'failed' | 'aborted' | 'uncertain' | 'waiting'): void;
   /** The begin found a committed completion: replayed, not re-executed. */
   onNodeReplay?(path: string): void;
+  /** Output reused from a native DAG checkpoint. */
   onNodeRestored?(path: string): void;
+  /** A whole region reuses committed attempts without entering its DAG. */
+  onRegionRestored?(paths: readonly string[]): void;
   /** An infrastructure crash unwound this node without touching its attempt. */
   onNodeCrash?(path: string): void;
 }
@@ -83,6 +87,7 @@ export interface NodeLifecycleDeps {
   signal: AbortSignal;
   observer?: MasRuntimeObserver;
   now: () => string;
+  clock?: () => number;
   /** The state namespace this node reads and pushes ('' at the root). */
   stateNamespace?: string;
   /** The state value before any committed revision in the namespace. */
@@ -95,6 +100,7 @@ export interface NodeLifecycleDeps {
   // execution capabilities
   taskHandlers: Record<string, MasTaskHandlerBinding>;
   clientFor?: (node: AgentNode) => MasChatClient;
+  agentComponents?: ReadonlyMap<string, MasAgentComponent>;
   account?: MasBudgetAccount;
   contextChars?: number;
   toolBindings: Record<string, MasToolBinding>;
@@ -377,6 +383,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
           bindings: deps.toolBindings,
           signal,
           idempotencyKeyFor: (tool, callIndex) => `${key}/tool/${tool}/${callIndex}`,
+          invocation: { runId: deps.runId, node: node.id, path },
         });
         if (!built.valid) {
           return await fail('failed', { code: 'TMAS2004', detail: built.issues[0]?.detail ?? 'the toolbox does not bind', cause: null });
@@ -394,7 +401,7 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
             outcome: await provider.read({ node: invocation.id, query: value }, { signal, maxUnits: 4, maxChars }),
           });
         }
-        const run = await runAgentNode({
+        const agentOptions = {
           node,
           role,
           client,
@@ -410,7 +417,12 @@ export function createNodeLifecycle(deps: NodeLifecycleDeps): (props: { with: un
           maxToolRounds: node.limits?.toolRounds ?? deps.workflow.limits.toolRounds,
           transcriptChars: deps.transcriptChars ?? 4000,
           callCounter,
-        });
+        };
+        const component = node.executor === undefined ? undefined : deps.agentComponents?.get(node.executor);
+        if (node.executor !== undefined && !component)
+          return await fail('failed', { code: 'TMAS2004', detail: 'The pinned agent component is missing.', cause: null });
+        const run = component ? await runAgentComponent(component, agentOptions,
+          { runId: deps.runId, path, idempotencyKey: key }, deps.clock ?? (() => 0)) : await runAgentNode(agentOptions);
         const retained = run.ok ? run.value : run.partial;
         failureReceipt = { usage: retained.usage, spend: { turns: retained.usage.calls, tokens: chargedTokens, ms: 0 },
           stopReason: retained.stopReason, transcript: retained.transcript, toolSteps: retained.toolSteps, contextReads: retained.contextReads };

@@ -197,6 +197,27 @@ if (registered === 0) {
 }
 await page.screenshot({ path: `${shots}/reports.png`, fullPage: true });
 
+// Optional registered session fixture: no browser-side mock or provider wire.
+if (process.env.TANGLE_GROUNDING === 'scripted') {
+  await page.click('.tabs button:has-text("Grounded session")');
+  await page.fill('.grounding-question', 'Where is the archive desk?');
+  await page.click('.grounding-start');
+  await page.waitForSelector('.grounding-clarification', { timeout: 12000 }).catch(() => fail('no durable clarification'));
+  await page.fill('.grounding-answer', 'Archive');
+  await page.click('.grounding-reply');
+  await page.waitForSelector('.grounding-disposition:has-text("answer")', { timeout: 12000 }).catch(() => fail('no composed answer'));
+  const grounded = await page.locator('.grounding-result').innerText();
+  for (const text of ['Square Hall', 'local', 'official', 'provenance: curator', '9 calls', 'unused candidates']) {
+    if (!grounded.includes(text)) await fail(`grounded session omitted ${text}`);
+  }
+  await page.screenshot({ path: `${shots}/grounding.png`, fullPage: true });
+  await page.fill('.grounding-question', 'urgent fixture signal');
+  await page.click('.grounding-start');
+  await page.waitForSelector('.grounding-disposition:has-text("refusal")', { timeout: 12000 }).catch(() => fail('no zero-call policy refusal'));
+  if (!(await page.locator('.grounding-spend').innerText()).includes('0 calls')) await fail('policy refusal spent model calls');
+  console.log('Grounded session: clarification, cited answer, 9 calls, zero-call refusal');
+}
+
 const counts = await page.locator('.meta').innerText();
 console.log('PASS —', counts, '| reply:', reply.split('\n')[0].slice(0, 80), '| feedback:', recorded.replace(/\n/g, ' ').slice(0, 80),
   '| report:', reportLine.replace(/\n/g, ' ').slice(0, 80));

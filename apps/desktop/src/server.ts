@@ -26,6 +26,7 @@ import { ASSETS } from './assets.gen.ts';
 import { createFolderSync, createHandlers } from './handlers.ts';
 import { createSettingsStore, type Settings } from './settings.ts';
 import { createChatEngine } from './chat.ts';
+import { createDesktopGrounding, type DesktopGroundingOptions } from './grounding-session.ts';
 import { createFeedbackService } from './feedback.ts';
 import { createReportService } from './reports.ts';
 import type { InstrumentRunner } from './instruments.ts';
@@ -74,6 +75,7 @@ export interface DesktopOptions {
   presetSettings?: Partial<Settings>;
   documentFetch?: Omit<StaticFetchOptions, 'fetch' | 'now'>;
   watch?: DesktopWatchOptions;
+  grounding?: DesktopGroundingOptions;
   /**
    * What this host can measure. A host that has no measurement
    * workspace beside it passes nothing, and the surface says so — the
@@ -104,7 +106,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
   // (`session` under Node, `journal` under Bun); the suite's live bounds
   // stand, and a run that crosses them is an answered overflow, not a
   // raised ceiling
-  const db = await openTangleDb({ path: options.dbPath, driver: options.driver, runtime, capture: { mode: 'auto' } });
+  const db = await openTangleDb({ path: options.dbPath, driver: options.driver, runtime, capture: { mode: 'auto' }, jobs: { now: runtime.now } });
   const memoryStore = createDbMemoryStore(db.collection('memories'));
   const runLog = createRunLog(db, { now, configAwareKinds: CONFIG_AWARE_RUN_KINDS });
   const identities = createIdentityRepository(db);
@@ -169,9 +171,11 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
     ...(options.instruments === undefined ? {} : { runner: options.instruments }),
   });
 
+  const grounding = await createDesktopGrounding({ db, corpus: documentStore, settings, identities, now, clock: runtime.now, fetch: options.fetch, grounding: options.grounding });
+  await grounding.recover();
   const contract = compileContract(DESKTOP_CONTRACT);
   const handlers = createHandlers({
-    db, memoryStore, runLog, settings, identities, stackFor: settingsStack, inflight, chat, folderSync, watcher, feedback, reports, documentStore, documentFetcher,
+    db, memoryStore, runLog, settings, identities, stackFor: settingsStack, inflight, chat, folderSync, watcher, feedback, reports, documentStore, documentFetcher, grounding,
     version: DESKTOP_VERSION,
     fetch: options.fetch,
     now,
@@ -196,6 +200,7 @@ export async function createDesktop(options: DesktopOptions = {}): Promise<Deskt
       // workers were writing frames for; closing the store last releases
       // every live registration
       await watcher.close();
+      await grounding.close();
       await folderScheduler.close();
       await chatScheduler.close();
       await reportScheduler.close();

@@ -25,8 +25,8 @@ function metrics(cases: PrihaLocalCase[]): PrihaLocalMetrics {
         parentsOverBudget: census('parentsOverBudget'), issues: census('issues'), rebuilds: census('rebuilds'), rebuildMs: null };
 }
 /** One corpus owner shared by retrieval measurements and scripted answer treatments. */
-export async function createPrihaCorpus(loaded: LoadedPrihaFixture, profile: GroundingProfile, granularity: LoadedPrihaFixture['fixture']['granularities'][number], path?: string) {
-    const db = await openTangleDb(path ? { path } : {}), f = loaded.fixture;
+export async function createPrihaCorpus(loaded: LoadedPrihaFixture, profile: GroundingProfile, granularity: LoadedPrihaFixture['fixture']['granularities'][number], path?: string, jobClock: () => number = () => 1_000_000) {
+    const db = await openTangleDb({ ...(path ? { path } : {}), jobs: { now: jobClock, random: () => 0.5 } }), f = loaded.fixture;
     try {
         const store = createDocumentStore(db), grounding = createGroundingStore(db), embedder = createHashEmbedder({ dims: 128 });
         contractMust(await grounding.putProfile(profile));

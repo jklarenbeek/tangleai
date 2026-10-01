@@ -260,9 +260,10 @@
         "role": { "$ref": "#/$defs/name" },
         "profile": { "$ref": "#/$defs/name" },
         "instructionsRevision": { "$ref": "#/$defs/sha256" },
-        "tools": { "type": "array", "items": { "$ref": "#/$defs/name" } },
+        "tools": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" } },
         "context": { "type": "array", "items": { "$ref": "#/$defs/name" } },
-        "messageAdapter": { "$ref": "#/$defs/name" }
+        "messageAdapter": { "$ref": "#/$defs/name" },
+        "executor": { "$ref": "#/$defs/name" }
       }
     },
     "taskNode": {
