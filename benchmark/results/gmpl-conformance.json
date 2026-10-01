@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
+    "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
     "clean": false,
     "files": [
       {
@@ -203,11 +203,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "d3d01e662614b3f2c23b2cc753089eb0ea26e4b4c059ccc1b88bb622fbc07f1f"
+        "sha256": "ceedc6930856f79421908da2220a2873937eefed9a5a6e8b7b079df3d37766cb"
       },
       {
         "path": "package.json",
-        "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
+        "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
       },
       {
         "path": "packages/agents/package.json",
@@ -538,6 +538,10 @@
         "sha256": "9e53682241766474b568e0d8b9faf2fce7c6da67ce051948312ef4a2100db2d5"
       },
       {
+        "path": "packages/lightrag/package.json",
+        "sha256": "88daffd1d947a0723248e9b231f185efa48ddf035301a376f00869d16a7f21b5"
+      },
+      {
         "path": "packages/linq/package.json",
         "sha256": "c4272ab39c2bd7e8efa5eec4f60f4bdbb6737eeb006e0f1dd39d2668249cd387"
       },
@@ -747,7 +751,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "c39fd017d1a2e9220146628d153137852c300769264e604bf72749b69f5d2d9f"
+        "sha256": "d6a4c17cfa7d9f6ce7df4676c93cc65a83cd54cf1a0d03c708cc29f1101c0334"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -819,11 +823,19 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "7aa8fee80b4a97f0b5e0b4b519e3e19235cea88d12eadc7f09e0789d8f07cb7c"
+        "sha256": "3235309ec248fabf75440b23778d2ad49955b91a4b95882f80e552ae93928064"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
         "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "daacd36382c7bbe2c2b25a4d521e8db687e6372293e0682ec4312396b6210658"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "8c428d9007cee569de48afac171811168f90f17edee70ae871e0bcc64d0efc8f"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -839,7 +851,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
+        "sha256": "44349a9fc5627ae18b6e18a7545b246d0126dce7d217cb4a5476ff65cca92719"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -931,7 +943,7 @@
       },
       {
         "path": "release.config.json",
-        "sha256": "86bebf20bff2ad85ea319395c14e980a45591c1a773b314efce108e7492d0e8e"
+        "sha256": "3334412b3c9c5374b62f2f8704f672582fbe874a0b0785bf8ef28b09fc5036f4"
       },
       {
         "path": "scripts/gmpl-artifacts.ts",
@@ -951,7 +963,7 @@
       },
       {
         "path": "scripts/release/consumers.ts",
-        "sha256": "3959ab1d199feec9aa9086fe665ac132fc156ae97ec7cd74c10146aec71122d3"
+        "sha256": "2327ade99da36eae544229fcc5e37209cf91bc5dda847fd923cd3ebf004fff20"
       },
       {
         "path": "scripts/runtime-fixture.ts",
@@ -1043,7 +1055,7 @@
       },
       {
         "path": "test/release/fixtures/browser.mjs",
-        "sha256": "e10bc84af9f502a4c8d2a607aecf3f1257f19c3a09c6b6316889d7e87d4dda28"
+        "sha256": "6671a9f45b26eb95aca0259b0a6f74bf4ac8c7c9b39d847dc9d127d9e77533ae"
       },
       {
         "path": "test/release/fixtures/gmpl-browser.mjs",
@@ -1058,7 +1070,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "8bc750d49a5cd3eececf4bc75ba8be106fd2ad409b76424c64339f8da383008b"
+    "sha256": "4f5555a143c95851b7110d33bc8c657049574fb76e7eb7ccda03234f1cadbd0a"
   },
   "ablations": [
     {
@@ -76612,5 +76624,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "0a6093469c8fcfcac6835855f7701aec3e12ce51c58c8cac0d47a9d98942e138"
+  "reportId": "ef36bc5d8a7eed63d434b2392b1258d954c87a7994e0b24b6b300f8890ca1a8e"
 }

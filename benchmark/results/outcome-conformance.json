@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
+    "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
     "clean": false,
     "files": [
       {
@@ -107,11 +107,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "d3d01e662614b3f2c23b2cc753089eb0ea26e4b4c059ccc1b88bb622fbc07f1f"
+        "sha256": "ceedc6930856f79421908da2220a2873937eefed9a5a6e8b7b079df3d37766cb"
       },
       {
         "path": "package.json",
-        "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
+        "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
       },
       {
         "path": "packages/agents/package.json",
@@ -1198,6 +1198,70 @@
         "sha256": "b40421cff01439bb8808c6052d514c854c8817bd94849a904e19571b63eedd9f"
       },
       {
+        "path": "packages/lightrag/package.json",
+        "sha256": "88daffd1d947a0723248e9b231f185efa48ddf035301a376f00869d16a7f21b5"
+      },
+      {
+        "path": "packages/lightrag/schemas/lightrag.schema.json",
+        "sha256": "1351e8402b92c4ca753466c0bb7617bc5fd1db34a9ef6ebfe6321a204805f76e"
+      },
+      {
+        "path": "packages/lightrag/src/apply.ts",
+        "sha256": "d60670622639a09d80d96c280088b06d14adaf1f6135402db78be8411c0774e4"
+      },
+      {
+        "path": "packages/lightrag/src/contracts.gen.ts",
+        "sha256": "ef7d7103d6b92bfad43430b522b77563d039c824f96b5194548309c956bd3996"
+      },
+      {
+        "path": "packages/lightrag/src/errors.ts",
+        "sha256": "7f86a93b67411ad36f7ae27a7aa5d489e52d6a96412eeb0374a9a0c8368bc5c8"
+      },
+      {
+        "path": "packages/lightrag/src/identity.ts",
+        "sha256": "618c499c0c20b8690b668b82716ef234d233baefef8c428b989b4e624669d3e1"
+      },
+      {
+        "path": "packages/lightrag/src/index.ts",
+        "sha256": "dc98b411679135f67911c8b5b9b0b3f7ba5294c88c589eac041fd04adb7cdc14"
+      },
+      {
+        "path": "packages/lightrag/src/integrity.ts",
+        "sha256": "633aaf0aef0051f4c4ce4953d43754d5c2806f39efb8cd3fa9c7d78bc702f8ff"
+      },
+      {
+        "path": "packages/lightrag/src/memory-persistence.ts",
+        "sha256": "7f1f440f513388adc9fdd57f7f3cf79591b43415ec7091d613a78c571a6fa773"
+      },
+      {
+        "path": "packages/lightrag/src/normalize.ts",
+        "sha256": "e3976304d4c878f52a7b59ab77191a52abfe902583af1a72b5af0ede1095b29b"
+      },
+      {
+        "path": "packages/lightrag/src/persistence.ts",
+        "sha256": "f1101b6b9553c091be209e1e78f3b930eb9dcaf7f9cc5e046bea605d382caab3"
+      },
+      {
+        "path": "packages/lightrag/src/plan.ts",
+        "sha256": "4636d2f1ec13444035bec68eb2a18922d0e68a45ba10f26ce37fc733d7020a92"
+      },
+      {
+        "path": "packages/lightrag/src/projection.ts",
+        "sha256": "b3bfe9b5013e0ed86e64cbf7c8078d09b9855dde8f9cab98becedb3515fa406a"
+      },
+      {
+        "path": "packages/lightrag/src/schema.ts",
+        "sha256": "4fb5fc15243183855d2f899ba79ee89ce0703e2bcc55d8f223eefcb04d66ebdc"
+      },
+      {
+        "path": "packages/lightrag/src/store.ts",
+        "sha256": "be5185b913a60150c8315e32291b1650b0bfb086bec4ee010d16d7e518cf7c6b"
+      },
+      {
+        "path": "packages/lightrag/src/write-plan.ts",
+        "sha256": "8828f2d705959d31082c0fb3bef06e5c2b1803986eefd249d04feb7d485aede7"
+      },
+      {
         "path": "packages/linq/package.json",
         "sha256": "c4272ab39c2bd7e8efa5eec4f60f4bdbb6737eeb006e0f1dd39d2668249cd387"
       },
@@ -1735,7 +1799,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "c39fd017d1a2e9220146628d153137852c300769264e604bf72749b69f5d2d9f"
+        "sha256": "d6a4c17cfa7d9f6ce7df4676c93cc65a83cd54cf1a0d03c708cc29f1101c0334"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1807,11 +1871,19 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "7aa8fee80b4a97f0b5e0b4b519e3e19235cea88d12eadc7f09e0789d8f07cb7c"
+        "sha256": "3235309ec248fabf75440b23778d2ad49955b91a4b95882f80e552ae93928064"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
         "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "daacd36382c7bbe2c2b25a4d521e8db687e6372293e0682ec4312396b6210658"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "8c428d9007cee569de48afac171811168f90f17edee70ae871e0bcc64d0efc8f"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -1827,7 +1899,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
+        "sha256": "44349a9fc5627ae18b6e18a7545b246d0126dce7d217cb4a5476ff65cca92719"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1994,7 +2066,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "412900ff0797551d6f8eecd170e974b2fff8c4faac2b34773994ece455855bdc"
+    "sha256": "25783c69384219f22b65102ec45fb5e4f930449bce252dd9371043c2e4dde610"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85180,5 +85252,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "49b871df44abda2246cff579bbd0951ca8d04bf7a0618b3af3485df4e923a05f"
+  "reportId": "79543095ef7d8a9791f84eae2dfb8e44ea3ce70417b55db5b360426dfafaa0a2"
 }

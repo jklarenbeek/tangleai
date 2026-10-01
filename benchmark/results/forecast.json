@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
+    "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
     "clean": false,
     "files": [
       {
@@ -723,11 +723,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "d3d01e662614b3f2c23b2cc753089eb0ea26e4b4c059ccc1b88bb622fbc07f1f"
+        "sha256": "ceedc6930856f79421908da2220a2873937eefed9a5a6e8b7b079df3d37766cb"
       },
       {
         "path": "package.json",
-        "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
+        "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
       },
       {
         "path": "packages/agents/package.json",
@@ -1251,7 +1251,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "c39fd017d1a2e9220146628d153137852c300769264e604bf72749b69f5d2d9f"
+        "sha256": "d6a4c17cfa7d9f6ce7df4676c93cc65a83cd54cf1a0d03c708cc29f1101c0334"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1323,11 +1323,19 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "7aa8fee80b4a97f0b5e0b4b519e3e19235cea88d12eadc7f09e0789d8f07cb7c"
+        "sha256": "3235309ec248fabf75440b23778d2ad49955b91a4b95882f80e552ae93928064"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
         "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "daacd36382c7bbe2c2b25a4d521e8db687e6372293e0682ec4312396b6210658"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "8c428d9007cee569de48afac171811168f90f17edee70ae871e0bcc64d0efc8f"
       },
       {
         "path": "packages/store/src/mas-jobs.ts",
@@ -1343,7 +1351,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
+        "sha256": "44349a9fc5627ae18b6e18a7545b246d0126dce7d217cb4a5476ff65cca92719"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -1382,7 +1390,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "538c4e7e4ff4a4d969c79606820633544a969194e4492dba093c3c06b2c5b217"
+    "sha256": "92f8adbeda5247c8081d1c3b2191b2be00a356549eb88d766a0468fb7b6cc217"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44847,5 +44855,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "538b1e9389cbf0adbb84800a6f93847d01b400d31b31ac5b9d1f854154f718f0"
+  "reportId": "8a9373d5d04c0cc8e4d87e372f5b747366afe283efc5ab8b153dac43fd019cbd"
 }

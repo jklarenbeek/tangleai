@@ -24,6 +24,7 @@
       "@tangleai/hera",
       "@tangleai/forecast",
       "@tangleai/grounding",
+      "@tangleai/lightrag",
       "@tangleai/store"
     ]
   ],

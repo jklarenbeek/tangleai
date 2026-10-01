@@ -27,6 +27,7 @@
     "packages/hera",
     "packages/forecast",
     "packages/grounding",
+    "packages/lightrag",
     "packages/store"
   ],
   "privateWorkspaces": [

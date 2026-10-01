@@ -1,3 +1,4 @@
+import { qualifyLightRagBrowser } from './lightrag-browser.mjs';
 import { qualifyGroundingBrowser } from './grounding-browser.mjs';
 import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
@@ -14,6 +15,7 @@ import { createOfflineEmbedder, dagToMermaid, PIPELINE_DAG } from '@tangleai/pip
 import { createModelProposer, selectExperiment, EVOLVE_SELECTION_DEFAULT } from '@tangleai/evolve';
 
 globalThis.tangleConsumer = {
+  lightrag: qualifyLightRagBrowser(),
   evolve: { createModelProposer, selectExperiment, selectionDefault: EVOLVE_SELECTION_DEFAULT },
   gmpl: qualifyGmplBrowser(),
   grounding: qualifyGroundingBrowser(),

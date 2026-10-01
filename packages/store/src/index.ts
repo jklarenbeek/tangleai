@@ -59,3 +59,6 @@ export { createGroundingStore } from './grounding-store.ts';
 export { createGroundingClarificationHost } from './grounding-clarification.ts';
 export { createGroundingSegmentHost } from './grounding-host.ts';
 export type { GroundingStoreOptions } from './grounding-store.ts';
+
+export { createLightRagStore, applyLightRagPlanWithin, type LightRagDbOptions } from './lightrag-store.ts';
+export { LIGHTRAG_COLLECTIONS } from './lightrag-model.ts';

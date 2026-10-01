@@ -22,7 +22,8 @@
     "./evolve-store": "./src/evolve-store.ts",
     "./evolve-effects": "./src/evolve-effects.ts",
     "./forecast-store": "./src/forecast-store.ts",
-    "./grounding-store": "./src/grounding-store.ts"
+    "./grounding-store": "./src/grounding-store.ts",
+    "./lightrag-store": "./src/lightrag-store.ts"
   },
   "engines": {
     "node": ">=24"
@@ -43,7 +44,8 @@
     "@tangleai/evolve": "^0.34.0",
     "@tangleai/hera": "^0.34.0",
     "@tangleai/forecast": "^0.34.0",
-    "@tangleai/grounding": "^0.34.0"
+    "@tangleai/grounding": "^0.34.0",
+    "@tangleai/lightrag": "^0.34.0"
   },
   "private": false,
   "types": "./src/index.ts",

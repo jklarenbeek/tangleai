@@ -1,0 +1,62 @@
+import { it } from 'node:test';
+import assert from 'node:assert/strict';
+import { planContribution } from '../../packages/lightrag/src/plan.ts';
+import { lightragMust } from '../../packages/lightrag/src/errors.ts';
+import { canonicalRelationIdOf, canonicalGraphRevisionOf } from '../../packages/lightrag/src/identity.ts';
+import { graphClaim, graphEntity, graphEdge, graphInput } from '../fixtures/lightrag-records.ts';
+const code = (value: { valid: boolean; issues?: Array<{ code: string }> }) => value.issues?.[0].code;
+it('directed edges and distinct relation themes retain separate content addresses', async () => {
+    const a = await graphClaim('Cedar'), b = await graphClaim('Willow', { ordinal: 1 }), x = await graphEntity(a), y = await graphEntity(b);
+    const edges = [await graphEdge(x,y), await graphEdge(y,x,{ ordinal: 1 }), await graphEdge(x,y,{ ordinal: 2, theme: 'funding' })];
+    const input = graphInput([a,b],[x,y],edges), before = structuredClone(input);
+    const plan = lightragMust(await planContribution(input)), repeat = lightragMust(await planContribution(structuredClone(input)));
+    assert.deepEqual(plan,repeat); assert.deepEqual(input,before);
+    assert.equal(plan.canonicals.entities.length,2); assert.equal(plan.canonicals.relations.length,3); assert.equal(new Set(plan.canonicals.relations.map(row=>row.id)).size,3);
+    assert.equal(plan.touchedEntityIds.length,2); assert.equal(plan.touchedRelationIds.length,3);
+});
+it('duplicate claims union provenance and profile text binds the complete current evidence', async () => {
+    const a = await graphClaim('Cedar'), x = await graphEntity(a), first = lightragMust(await planContribution(graphInput([a],[x])));
+    const b = await graphClaim('CEDAR',{source:'b'}), y = await graphEntity(b), input = graphInput([b],[y],[],first);
+    assert.equal(code(await planContribution(input)),'TLRAG1003');
+    input.profileUpdates.push({ kind:'entity',id:x.id,claimIds:[a.id,b.id],profile:'Cedar has an evidenced civic role.' });
+    const next = lightragMust(await planContribution(input)), row = next.canonicals.entities.find(row=>row.id===x.id)!;
+    assert.deepEqual(row.supportClaimIds,[a.id,b.id].sort()); assert.deepEqual(row.supportChunkIds,[a.chunkId,b.chunkId].sort()); assert.equal(row.status,'active');
+    const retract = graphInput([],[],[],next); retract.retiredClaimIds=[a.id];
+    retract.profileUpdates=[{kind:'entity',id:x.id,claimIds:[b.id],profile:b.description}];
+    const kept = lightragMust(await planContribution(retract)); assert.deepEqual(kept.canonicals.entities[0].supportClaimIds,[b.id]); assert.equal(kept.canonicals.entities[0].profile,b.description);
+    const empty = graphInput([],[],[],kept); empty.retiredClaimIds=[b.id];
+    const retired=lightragMust(await planContribution(empty)).canonicals.entities[0];
+    assert.equal(retired.status,'retracted'); assert.deepEqual(retired.supportClaimIds,[]); assert.deepEqual(retired.supportChunkIds,[]); assert.equal(retired.profile,'');
+});
+it('an alias merge retains the losing row and re-points relations through the lowest canonical id', async () => {
+    const a=await graphClaim('Cedar'), b=await graphClaim('Willow',{ordinal:1}), x=await graphEntity(a), y=await graphEntity(b), edge=await graphEdge(x,y);
+    const first=lightragMust(await planContribution(graphInput([a,b],[x,y],[edge])));
+    const alias=await graphClaim('ＣＥＤＡＲ',{source:'b',description:'Cedar coordinates the equipment register.'}), provisional=await graphEntity(alias,true);
+    const input=graphInput([alias],[provisional],[],first), survivor=[x.id,provisional.id].sort()[0], loser=[x.id,provisional.id].sort()[1];
+    input.merges=[[x.id,provisional.id]];
+    input.profileUpdates=[{kind:'entity',id:survivor,claimIds:[a.id,alias.id],profile:'Cedar has a civic role and coordinates equipment.'}];
+    const edgeId=await canonicalRelationIdOf(survivor,y.id,edge.row.themes);
+    if(edgeId!==edge.row.id)input.profileUpdates.push({kind:'relation',id:edgeId,claimIds:[edge.claim.id],profile:edge.row.profile});
+    assert.equal(code(await planContribution(input)),'TLRAG1006');
+    input.reviews=[{claimIds:[a.id,alias.id],decision:'merge',reason:'The two register spellings identify the same organization.'}];
+    const untouched=structuredClone(input),plan=lightragMust(await planContribution(input));assert.deepEqual(input,untouched);
+    assert.equal(plan.canonicals.entities.find(row=>row.id===loser)!.mergedInto,survivor);
+    assert.deepEqual(plan.canonicals.entities.find(row=>row.id===survivor)!.supportClaimIds,[a.id,alias.id].sort());
+    const activeEdge=plan.canonicals.relations.find(row=>row.status==='active')!;assert.equal(activeEdge.id,edgeId);assert.equal(activeEdge.sourceEntityId,survivor);
+    if(edgeId!==edge.row.id)assert.equal(plan.canonicals.relations.find(row=>row.id===edge.row.id)!.mergedInto,edgeId);
+});
+it('different types stay separate and a same-type homonym requires a keep-apart decision', async () => {
+    const a=await graphClaim('Beacon'), b=await graphClaim('Beacon',{ordinal:1,type:'LOCATION'}), x=await graphEntity(a), y=await graphEntity(b);
+    const first=lightragMust(await planContribution(graphInput([a,b],[x,y])));assert.equal(first.canonicals.entities.filter(row=>row.status==='active').length,2);
+    const c=await graphClaim('Beacon',{source:'b',description:'An unrelated organization with a namesake register.'}), z=await graphEntity(c,true), input=graphInput([c],[z],[],first);
+    assert.equal(code(await planContribution(input)),'TLRAG1006');input.reviews=[{claimIds:[a.id,c.id],decision:'keep-apart',reason:'Different independently evidenced organizations.'}];
+    const next=lightragMust(await planContribution(input));assert.equal(next.canonicals.entities.filter(row=>row.status==='active').length,3);
+    input.merges=[[x.id,y.id]];assert.equal(code(await planContribution(input)),'TLRAG1006');
+});
+it('dangling chunks, incomplete support and incompatible vectors are refused before any write plan', async () => {
+    const claim=await graphClaim('Cedar'), entity=await graphEntity(claim), input=graphInput([claim],[entity]);
+    assert.equal(code(await planContribution({...input,chunks:[]})),'TLRAG1003');
+    const empty=structuredClone(input);empty.candidates.entities[0].supportClaimIds=[];assert.equal(code(await planContribution(empty)),'TLRAG1001');
+    const forged=structuredClone(input);forged.candidates.entities[0].embeddedBy={...forged.candidates.entities[0].embeddedBy,model:'foreign'};forged.candidates.entities[0].revision=await canonicalGraphRevisionOf(forged.candidates.entities[0]);
+    assert.equal(code(await planContribution(forged)),'TLRAG1002');
+});

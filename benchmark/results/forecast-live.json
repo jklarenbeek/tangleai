@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "67e64cf9e10b2a7985696467d1735cfcebbaf5d9",
-      "sha256": "538c4e7e4ff4a4d969c79606820633544a969194e4492dba093c3c06b2c5b217",
+      "head": "a44bd9fc72d80f754b6fe2233131a2530fd038d2",
+      "sha256": "92f8adbeda5247c8081d1c3b2191b2be00a356549eb88d766a0468fb7b6cc217",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -726,11 +726,11 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "d3d01e662614b3f2c23b2cc753089eb0ea26e4b4c059ccc1b88bb622fbc07f1f"
+          "sha256": "ceedc6930856f79421908da2220a2873937eefed9a5a6e8b7b079df3d37766cb"
         },
         {
           "path": "package.json",
-          "sha256": "c522b52a6e7e8b63bc341b1aaf011c6e73f9860363c08e2195c0e38204c2a274"
+          "sha256": "72f7d1ff7b06473511367326d7cb6a40be51b0d1742ff00518c86a8924684442"
         },
         {
           "path": "packages/agents/package.json",
@@ -1254,7 +1254,7 @@
         },
         {
           "path": "packages/store/package.json",
-          "sha256": "c39fd017d1a2e9220146628d153137852c300769264e604bf72749b69f5d2d9f"
+          "sha256": "d6a4c17cfa7d9f6ce7df4676c93cc65a83cd54cf1a0d03c708cc29f1101c0334"
         },
         {
           "path": "packages/store/src/consolidation-model.ts",
@@ -1326,11 +1326,19 @@
         },
         {
           "path": "packages/store/src/index.ts",
-          "sha256": "7aa8fee80b4a97f0b5e0b4b519e3e19235cea88d12eadc7f09e0789d8f07cb7c"
+          "sha256": "3235309ec248fabf75440b23778d2ad49955b91a4b95882f80e552ae93928064"
         },
         {
           "path": "packages/store/src/ledger-storage.ts",
           "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+        },
+        {
+          "path": "packages/store/src/lightrag-model.ts",
+          "sha256": "daacd36382c7bbe2c2b25a4d521e8db687e6372293e0682ec4312396b6210658"
+        },
+        {
+          "path": "packages/store/src/lightrag-store.ts",
+          "sha256": "8c428d9007cee569de48afac171811168f90f17edee70ae871e0bcc64d0efc8f"
         },
         {
           "path": "packages/store/src/mas-jobs.ts",
@@ -1346,7 +1354,7 @@
         },
         {
           "path": "packages/store/src/model.ts",
-          "sha256": "a9c0be6d5e0bbb02095608d8d470f97c8c2158c4fe0f4d84e7226b4fd815af7a"
+          "sha256": "44349a9fc5627ae18b6e18a7545b246d0126dce7d217cb4a5476ff65cca92719"
         },
         {
           "path": "packages/store/src/outcome-store.ts",
@@ -1621,7 +1629,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "4a9a5bea31b1b2451c2eefb7d61ee8e57ef8a8cced8fcb9fff9f571e23b9623c",
+    "planId": "f32f5c1b680dee0dc9ee0a171ebf37661004a47e33992939f4e8e7c7541a3e24",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,
