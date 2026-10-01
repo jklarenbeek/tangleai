@@ -1,5 +1,20 @@
 # @tangleai/outcomes
 
+## 0.33.0
+
+### Minor Changes
+
+- 2d64db7: Score forecast decisions from retained resolution evidence, retain bounded retrospective purchases, and promote reusable harnesses only after independent paired evaluation. Resume both forecasting workflows without duplicating committed work. Support pure asynchronous outcome interpreters for canonical artifact lookup.
+
+### Patch Changes
+
+- Updated dependencies [236b915]
+  - @tangleai/models@0.33.0
+  - @tangleai/agents@0.33.0
+  - @tangleai/memory@0.33.0
+  - @tangleai/config@0.33.0
+  - @tangleai/core@0.33.0
+
 ## 0.32.0
 
 ### Patch Changes

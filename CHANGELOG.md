@@ -1,5 +1,27 @@
 # Tangle releases
 
+## 0.33.0
+
+Add bounded forecasting execution, cutoff-audited evidence tools and six-section
+notes with shared budgets, retained failures and actual producer identities.
+Expose the chat client's effective credential-free request key without I/O.
+
+Add question-scoped internal feedback, deterministic and optional recorded
+semantic gates, and guarded three-component harness refinement. Publish each
+revision, provisional candidate, question head and spend receipt atomically;
+resumed workflow attempts reuse retained revisions without another model call.
+
+Add closed forecasting records, atomic lifecycle commands and SQLite persistence
+with question-local provisional harnesses and cutoff-aware checkpoint identities.
+
+Add manual MAS checkpoint admission, as-of harness selection and durable execution and note receipts that preserve budget charges across committed-stage recovery.
+
+Score forecast decisions from retained resolution evidence, retain bounded retrospective purchases, and promote reusable harnesses only after independent paired evaluation. Resume both forecasting workflows without duplicating committed work. Support pure asynchronous outcome interpreters for canonical artifact lookup.
+
+Qualify four forecasting treatments with paired uncertainty, retained generation and refusal accounting, credential-free live planning and installed Node, Bun and browser consumers. Publish the failed scripted improvement claim and keep harness writeback opt-in.
+
+Publish thirteen authenticated read operations with bounded record projections, local and HTTP validation, and a frozen compatibility baseline. Read active harness heads from the outcome service and preserve question isolation.
+
 ## 0.32.0
 
 Execute cited orchestration through durable MAS jobs, retain unknown usage and apply edge projections consistently to live delivery and persisted messages.

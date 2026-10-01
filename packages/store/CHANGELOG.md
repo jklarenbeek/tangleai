@@ -1,5 +1,32 @@
 # @tangleai/store
 
+## 0.33.0
+
+### Minor Changes
+
+- a693543: Add closed forecasting records, atomic lifecycle commands and SQLite persistence
+  with question-local provisional harnesses and cutoff-aware checkpoint identities.
+
+### Patch Changes
+
+- Updated dependencies [236b915]
+- Updated dependencies [0ce15cb]
+- Updated dependencies [a693543]
+- Updated dependencies [c77869c]
+- Updated dependencies [2d64db7]
+- Updated dependencies [ebf85ec]
+- Updated dependencies [77493ea]
+  - @tangleai/forecast@0.33.0
+  - @tangleai/outcomes@0.33.0
+  - @tangleai/documents@0.33.0
+  - @tangleai/evolve@0.33.0
+  - @tangleai/hera@0.33.0
+  - @tangleai/mas@0.33.0
+  - @tangleai/memory@0.33.0
+  - @tangleai/trace2skill@0.33.0
+  - @tangleai/config@0.33.0
+  - @tangleai/core@0.33.0
+
 ## 0.32.0
 
 ### Minor Changes

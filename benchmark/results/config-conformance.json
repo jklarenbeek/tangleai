@@ -4,7 +4,7 @@
     "entry": "benchmark/config-conformance.ts"
   },
   "source": {
-    "head": "77493ea99ee5e0b15256ef736ff8fc0cdd9fffe0",
+    "head": "ebf85ec29871c8c16c1ed3657537efb294c77a1c",
     "clean": false,
     "files": [
       {
@@ -120,7 +120,7 @@
         "sha256": "78e46ab2c5ef2ec9ebb8bda4eb10e8f2f90246d0f9af238b3399f6fdbec86f81"
       }
     ],
-    "sha256": "ca5b62cdca80a3f2d119844f742eb1132040b3646ac6826bfa0e65cf24e34421"
+    "sha256": "96aa4d154406c2055112a5787f8a470dbb52fbe4d34cc2f05ada20d469e63c9d"
   },
   "suite": {
     "packages": [
@@ -218,15 +218,15 @@
       },
       {
         "name": "@tangleai/agents",
-        "version": "0.32.0"
+        "version": "0.33.0"
       },
       {
         "name": "@tangleai/context",
-        "version": "0.32.0"
+        "version": "0.33.0"
       },
       {
         "name": "@tangleai/models",
-        "version": "0.32.0"
+        "version": "0.33.0"
       }
     ]
   },
@@ -344,7 +344,7 @@
     ],
     "desktopContract": {
       "operations": 37,
-      "revision": "a102b0f80f5790fb94f27c26e4666e98d15988bb5eac6167186dd7f3db932d27"
+      "revision": "491bc428150f3dced9f5c4315aa2cba60cd98d5fa288b34d1fb8a9af16238683"
     },
     "summary": {
       "hostInputs": 2,
@@ -995,5 +995,5 @@
     "probeCalls": 0,
     "modelCalls": 0
   },
-  "reportId": "4c29290de97f636bbeaf15c61fc0ac761dca42244e972512326de51422566a6c"
+  "reportId": "b9a64c7734eb0db3b163f7b46f9a141a7815cdf80d60aa4300ca62222dc1ae42"
 }

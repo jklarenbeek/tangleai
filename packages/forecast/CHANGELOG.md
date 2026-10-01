@@ -1,1 +1,31 @@
 # @tangleai/forecast
+
+## 0.33.0
+
+### Minor Changes
+
+- 236b915: Add bounded forecasting execution, cutoff-audited evidence tools and six-section
+  notes with shared budgets, retained failures and actual producer identities.
+  Expose the chat client's effective credential-free request key without I/O.
+- 0ce15cb: Add question-scoped internal feedback, deterministic and optional recorded
+  semantic gates, and guarded three-component harness refinement. Publish each
+  revision, provisional candidate, question head and spend receipt atomically;
+  resumed workflow attempts reuse retained revisions without another model call.
+- a693543: Add closed forecasting records, atomic lifecycle commands and SQLite persistence
+  with question-local provisional harnesses and cutoff-aware checkpoint identities.
+- c77869c: Add manual MAS checkpoint admission, as-of harness selection and durable execution and note receipts that preserve budget charges across committed-stage recovery.
+- 2d64db7: Score forecast decisions from retained resolution evidence, retain bounded retrospective purchases, and promote reusable harnesses only after independent paired evaluation. Resume both forecasting workflows without duplicating committed work. Support pure asynchronous outcome interpreters for canonical artifact lookup.
+- ebf85ec: Qualify four forecasting treatments with paired uncertainty, retained generation and refusal accounting, credential-free live planning and installed Node, Bun and browser consumers. Publish the failed scripted improvement claim and keep harness writeback opt-in.
+- 77493ea: Publish thirteen authenticated read operations with bounded record projections, local and HTTP validation, and a frozen compatibility baseline. Read active harness heads from the outcome service and preserve question isolation.
+
+### Patch Changes
+
+- Updated dependencies [236b915]
+- Updated dependencies [2d64db7]
+  - @tangleai/models@0.33.0
+  - @tangleai/outcomes@0.33.0
+  - @tangleai/agents@0.33.0
+  - @tangleai/context@0.33.0
+  - @tangleai/documents@0.33.0
+  - @tangleai/mas@0.33.0
+  - @tangleai/search@0.33.0

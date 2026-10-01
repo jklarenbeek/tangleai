@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "77493ea99ee5e0b15256ef736ff8fc0cdd9fffe0",
+    "head": "ebf85ec29871c8c16c1ed3657537efb294c77a1c",
     "clean": false,
     "files": [
       {
@@ -203,15 +203,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "3f77080e0fe35bf80e716f8d34ee313b8a49f7337d6cc9d751d42cf4cbb3c2c3"
+        "sha256": "f87a16f2550379354517714a91283d5cd6c079e6c8629b8a80e3cc5cf21162da"
       },
       {
         "path": "package.json",
-        "sha256": "2eed6ac7a76cab5e3ac6f1b5376c06cf16cede1062f5bd37b0f746e5d24e4c11"
+        "sha256": "87ae4cd682578be538439707debcd531cbcc5ec7b467657279694d6133e5a7de"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "f33e963716a7bb6f6afec56026e42dd46d5febf0b7557ae6f9b84977685e73b7"
+        "sha256": "80d9d0848d90fed468583b7eb9f1cd8cc0c096d5ce9be3f488a16b62aae6f49f"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -255,7 +255,7 @@
       },
       {
         "path": "packages/config/package.json",
-        "sha256": "a28535870fe6e3ff13c92401d100efdb1373f3ceee75c69e29edccc8851611e0"
+        "sha256": "3d3cf9e7a8da6f963a9b28c8ff766f6c180e92c704615c717decaa74a6959673"
       },
       {
         "path": "packages/config/schemas/profile-registry.schema.json",
@@ -291,7 +291,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "4bf30ce33da5310b7e8bf09d01213e7b1c09697dff7a0a1552b1476bd1d5ec22"
+        "sha256": "5ecb6e0813a441251153d2e339e1abc012e5043f8ba207db85f39d4a372806d4"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -347,7 +347,7 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "6910c6884ea407f12a5dcd044b0b1db0c2901ea12c5e521388c9eb4c45949fbb"
+        "sha256": "08b29a9854c70ab53ce769233fce1fc95217f673093c043fada9824d825e4c95"
       },
       {
         "path": "packages/core/src/clustering.ts",
@@ -391,15 +391,15 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "4363971e890cae81e49763168d590988be4568f47f04e3d59a79131d110b6fa1"
+        "sha256": "397a08a984924c3e324fd42ce9735924952a568ead6acdcfb17781df93c8a1ba"
       },
       {
         "path": "packages/evolve/package.json",
-        "sha256": "43f575cee0368d982e3bad07fbca6c0302aba5a8eff6d4fc43bec5e5c87240ec"
+        "sha256": "85bc5bc0cf3ee88f36d14421953f24273876ab3955e0ea50d2c517dbbfbee7e0"
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "1c28fc403f2aa4565415f347f5608d439cba17b13c2c3e222993289dc3824ea3"
+        "sha256": "eddaa95a70d38e4d81b930a7260812ad15ec91ea59a51f9c288e522fd486ba47"
       },
       {
         "path": "packages/gmpl/artifacts/catalog.json",
@@ -407,7 +407,7 @@
       },
       {
         "path": "packages/gmpl/package.json",
-        "sha256": "066970162a8828bda3a2b0691e239369955244b5a279361317c94ca5efe534ca"
+        "sha256": "d9a9004c8024a7303d48906f917e0ef6307b064d236729d9e8682457f7edcc42"
       },
       {
         "path": "packages/gmpl/schemas/gmpl.schema.json",
@@ -519,19 +519,19 @@
       },
       {
         "path": "packages/hera/package.json",
-        "sha256": "30c691183ad54b20da8671553c966359014ee7957934b81d27bb0066f8fa6633"
+        "sha256": "95aa11b2de153607265b358b4801538866f7928b84dee1cb360f027034506f42"
       },
       {
         "path": "packages/jaren/package.json",
-        "sha256": "aaddc34bd489ebc07437bd234ba18337ec673a9ada27f34d198813ea61c60c69"
+        "sha256": "c86f6c0c7b870011ca021534a5b02b79f39764cdefe269687b263c04e2b5cf67"
       },
       {
         "path": "packages/linq/package.json",
-        "sha256": "adecf39ca23a5da8360a2034b5b6e01c91fa3fbcd4e71d68b39c897cd059501e"
+        "sha256": "8da6be3f484a6f4c344bedc575ea296e53cc6ba82030ee176c73a031d34d3f9c"
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "e02cb5fdbc61e0c11bae780eed237bc9d08d0a8d126e2aeebeac4ff431c08ae9"
+        "sha256": "364e5e3870bb3584f1a2e46d6b7189d90f409ef47b653942d9111271c8573835"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -659,11 +659,11 @@
       },
       {
         "path": "packages/memory/package.json",
-        "sha256": "8f6e9767be6332c719306120771f68b0353610a56b6d989db732aede4c7a640f"
+        "sha256": "4fbc995b777aa04f517dba50cef44b961980faeea67c73eaf4e6cc0783d88ba6"
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "3be8874407e36bf2c4ec501885fe59d5069f4ebedc1af006e090f52c3f6514ba"
+        "sha256": "3a23995a77cdc2eaa5b5c0a35bce682ba5ee4fcf966c6667584ed541ae2b12c4"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -719,19 +719,19 @@
       },
       {
         "path": "packages/outcomes/package.json",
-        "sha256": "16100eb7c2b3ecec3f6d8c5967bcf706f64a07464176869d362a68b0b7d593ee"
+        "sha256": "fe2da66b74b5f6225b0ef245c042803e530a96210491f12bc628544003bc9bb0"
       },
       {
         "path": "packages/pipeline/package.json",
-        "sha256": "da379a194abcc5003be7ce2bb35b122d907b617960e6016f070da5d574f2cee7"
+        "sha256": "20d78bae68e660eebd161b339fd51312069b44bd39284e3383d2bf7750cac477"
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "2e171e3cbb1208acfa819c23a40d82b620b19022d84b1e143712743923148faf"
+        "sha256": "6b0a32ff69866e1edc05b0308c107ac349daa7bf54f8c8acde98f51e3cbbf190"
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "f2ce86918d524eeae031d77b0239988d064b842d3a572e931cc96715329d2347"
+        "sha256": "b82b5ff5353b78fb9a3dc0741f7bc6a100333fb0612003b7f188f67dd039439c"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -835,7 +835,7 @@
       },
       {
         "path": "packages/trace2skill/package.json",
-        "sha256": "77cd875452631051814fb360b52a96e520435bb5763db178e7c3247c2393c679"
+        "sha256": "03cc3998106c3c190ba6f4875d18aa12689ce0e847a445eaa14a07ff4fe460dd"
       },
       {
         "path": "prompts/gmpl/analysis/analyst.toml",
@@ -1022,7 +1022,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "6dc1e7ef9f31289c998c8994fac164d850d938fe02f6a8f7e3f14f106839db3d"
+    "sha256": "a89bffee737e77cc98cae4b39d8a48f6a165415a631a4b3e15284580c107df6b"
   },
   "ablations": [
     {
@@ -3504,7 +3504,7 @@
     "catalogRevision": "fcd08dd3306f267d5719d79b3d832aecd42cb0aaa0aa7de66cb257460fb815ef"
   },
   "suite": {
-    "tangle": "0.32.0",
+    "tangle": "0.33.0",
     "jaren": "0.91.4"
   },
   "registrationId": "7eabacf078c23663d796bc6ac2438fce7ec241cf467751deb30707d511306873",
@@ -76576,5 +76576,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "c8ea9aab7196cee210c366a0ae2b462f8017cae795bead5509f7e441abd1b25b"
+  "reportId": "10204410f9dc369de31e814dc821d2c4023e0422e5b02d865ef909d558056e7f"
 }

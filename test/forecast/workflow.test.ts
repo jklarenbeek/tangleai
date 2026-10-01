@@ -5,7 +5,14 @@ import { makeForecastFixture } from './fixtures.ts';
 it('validates and pins the single checkpoint workflow and its task effect policies',async () => {
   const p = await prepareForecastWorkflow('forecast-scripted');
   assert.equal(p.workflow.versionId,'d77bdb098ef45490fe47537fd91fbc3276df6401e59fdb59e0e1a5de0844f259');
-  assert.equal(p.plan.executableRevision,'a57678c857810999f0faab1fb9bc26952f52f5a5a9bfe865db4f277a9a9c245a');
+  // The executable binds current runtime package versions; the workflow pins its semantics.
+  assert.equal(p.plan.workflowVersionId,p.workflow.versionId);
+  assert.equal(p.plan.registryRevision,p.snapshot.revision);
+  assert.equal(p.plan.configCatalogRevision,p.catalog.revision);
+  assert.deepEqual(p.plan,(await prepareForecastWorkflow('forecast-scripted')).plan);
+  assert.deepEqual(p.plan.regions.map(r => ({ kind: r.kind,id: r.id })),[
+    { kind: 'dag',id: 'dag0' },{ kind: 'fsm-switch',id: 'switch:revision-gate' },{ kind: 'dag',id: 'dag1' },
+  ]);
   assert.equal(p.workflow.workflowId,'forecast-checkpoint-v1');
   for (const handler of FORECAST_HANDLER_POLICY) assert.equal(p.snapshot.document.handlers.find(h => h.id === handler.id)!.idempotency,handler.effect === 'effectful' ? 'honored' : 'not-required');
 });
