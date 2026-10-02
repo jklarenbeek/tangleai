@@ -57,7 +57,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       deterministic signal policies over native finance kernels;
                       one shared commit planner for atomic memory and SQLite stores,
                       next-open fills, once-only actions, risk limits and baseline execution;
-                      balanced postings and verified zero-write whole-run replay
+                      balanced postings and verified zero-write whole-run replay;
+                      compiled role prompts and four concurrent MAS analyst lanes
+                      with role-visible citations and cutoff-bound read tools
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

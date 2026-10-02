@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "a9255aa83445546893caface974ff6845a60708d",
+    "head": "f4926cff6148b0c91832a64dda2b281295ccb32b",
     "clean": false,
     "files": [
       {
@@ -279,7 +279,7 @@
       },
       {
         "path": "benchmark/lib/gmpl-runner.ts",
-        "sha256": "96ac1ce13d7d04896a9b941a4f43ffd74742fade47acd8e33dc63ba9c7fa8eab"
+        "sha256": "c9b872e1a793b59d4818b406e5b814cf58a1d0c9e4422e54f47463a03e632028"
       },
       {
         "path": "benchmark/lib/gmpl-scripts.ts",
@@ -734,12 +734,20 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-analyst-runner.ts",
+        "sha256": "37a0f74737da9e58639e67f9b2db48f930602c9d28b10f5b54481f6b2036d4bc"
+      },
+      {
+        "path": "benchmark/lib/trading-analysts.ts",
+        "sha256": "50b41f7950ab693d0168ff66cb63bebc74764638c97c6660d1e113a5eefc750c"
+      },
+      {
         "path": "benchmark/lib/trading-execution.ts",
         "sha256": "778174b23ec3aff13e2f40d374710c75f3274e0f18b703bb6398c75438a02bdd"
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
-        "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
+        "sha256": "d327deb1f143e60f5efc6c610614d010d92d28b0396b41e82a45f09ad183e91d"
       },
       {
         "path": "benchmark/lib/trading-metrics.ts",
@@ -747,7 +755,7 @@
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "fbd5368fb6416f76982e8aeefec1582e5648f3c879d354b4bcb0b6c31abda96e"
+        "sha256": "c0158c44dc9eadc0f9cebba992dc3ca923f7c367720400d4b121a9ff1eb6b7da"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -755,7 +763,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "156869dbcc6f9aa00421ddff2044ccc416d6488eceb8f4e6e20b3e471472f2f2"
+        "sha256": "406521eba2be33c452be30a95fbda1c36dbcdbb1660dfb8a69f519a09d1833a6"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -783,7 +791,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "451c8305eeb25ab3257c457166ea8763fac34b159f9c45f5d8c302c9211021a0"
+        "sha256": "7f6a9597a9441979612b8a99e2dfaf329fd5c53c5224c806c4c2008cd86a1dc0"
       },
       {
         "path": "packages/agents/package.json",
@@ -1466,7 +1474,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "412a2d6442b1ba5114b61bf6e4f67521a1a52ae7b451309e8737b34a91a39026"
+    "sha256": "90727b142c0be63ac4531a0f417806af7d5431efc22c4d3ee2748972418ccc7d"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44931,5 +44939,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "6d8c31209a4c8d810d922f644e5619911418da51acf084ddada7753fc500c2e8"
+  "reportId": "5a6d48afc9920c2f3b9540b3eaabc920b3475a6146684d92a64c642254d1446f"
 }

@@ -13,9 +13,8 @@ export function compileGmplSchema(schema:JsonSchema):Validator{
   return v.compile(schema as Record<string,unknown>) as Validator;
 }
 const schemas=new Map<SchemaName,Record<string,unknown>>();
-/** Bundle only reachable local definitions, so role requests expose no unrelated schemas. */
-export function gmplSchemaOf(name:SchemaName):Record<string,unknown>{
-  const cached=schemas.get(name);if(cached)return cached;
+/** Bundle a domain definition's reachable references for an independent role schema. */
+export function gmplSchemaDefinition(document:Record<string,unknown>,name:string,id:string):Record<string,unknown>{
   const defs:Record<string,unknown>={};
   const visit=(value:unknown):void=>{
     if(!value||typeof value!=='object')return;
@@ -23,12 +22,19 @@ export function gmplSchemaOf(name:SchemaName):Record<string,unknown>{
     const ref=(value as Record<string,unknown>).$ref;
     if(typeof ref==='string'&&ref.startsWith('#/$defs/')){
       const key=ref.slice(8);
-      if(!Object.hasOwn(defs,key)){const found=compileJSONPointer(ref.slice(1))(gmplSchema);defs[key]=found;visit(found);}
+      if(!Object.hasOwn(defs,key)){const found=compileJSONPointer(ref.slice(1))(document);if(found===undefined)throw Error(`Unknown schema reference ${ref}`);defs[key]=found;visit(found);}
     }
     Object.values(value).forEach(visit);
   };
-  const value=gmplSchema.$defs[name];visit(value);
-  const result=immutableJson({$id:`https://tangleai.dev/schemas/gmpl/${name}`,...value,$defs:defs});schemas.set(name,result);return result;
+  const value=(document.$defs as Record<string,Record<string,unknown>>)[name];
+  if(!value)throw Error(`Unknown schema definition ${name}`);
+  visit(value);
+  return immutableJson({$id:id,...value,$defs:defs});
+}
+/** Bundle only reachable local definitions, so role requests expose no unrelated schemas. */
+export function gmplSchemaOf(name:SchemaName):Record<string,unknown>{
+  const cached=schemas.get(name);if(cached)return cached;
+  const result=gmplSchemaDefinition(gmplSchema,name,`https://tangleai.dev/schemas/gmpl/${name}`);schemas.set(name,result);return result;
 }
 const validators=new Map<SchemaName,Validator>();
 export function validateGmplShape<T>(name:SchemaName,value:unknown):GmplOutcome<T>{

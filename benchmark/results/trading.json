@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "a9255aa83445546893caface974ff6845a60708d",
+    "head": "f4926cff6148b0c91832a64dda2b281295ccb32b",
     "clean": false,
     "files": [
       {
@@ -66,6 +66,10 @@
         "sha256": "d243ac26d4beb119ec3254786a79140cf34d30373c3655714c08b96159707ab0"
       },
       {
+        "path": "benchmark/lib/gmpl-runner.ts",
+        "sha256": "c9b872e1a793b59d4818b406e5b814cf58a1d0c9e4422e54f47463a03e632028"
+      },
+      {
         "path": "benchmark/lib/report-envelope.ts",
         "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
       },
@@ -78,12 +82,20 @@
         "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
       },
       {
+        "path": "benchmark/lib/trading-analyst-runner.ts",
+        "sha256": "37a0f74737da9e58639e67f9b2db48f930602c9d28b10f5b54481f6b2036d4bc"
+      },
+      {
+        "path": "benchmark/lib/trading-analysts.ts",
+        "sha256": "50b41f7950ab693d0168ff66cb63bebc74764638c97c6660d1e113a5eefc750c"
+      },
+      {
         "path": "benchmark/lib/trading-execution.ts",
         "sha256": "778174b23ec3aff13e2f40d374710c75f3274e0f18b703bb6398c75438a02bdd"
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
-        "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
+        "sha256": "d327deb1f143e60f5efc6c610614d010d92d28b0396b41e82a45f09ad183e91d"
       },
       {
         "path": "benchmark/lib/trading-metrics.ts",
@@ -91,7 +103,7 @@
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "fbd5368fb6416f76982e8aeefec1582e5648f3c879d354b4bcb0b6c31abda96e"
+        "sha256": "c0158c44dc9eadc0f9cebba992dc3ca923f7c367720400d4b121a9ff1eb6b7da"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -99,7 +111,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "156869dbcc6f9aa00421ddff2044ccc416d6488eceb8f4e6e20b3e471472f2f2"
+        "sha256": "406521eba2be33c452be30a95fbda1c36dbcdbb1660dfb8a69f519a09d1833a6"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -107,7 +119,7 @@
       },
       {
         "path": "benchmark/schemas/trading.schema.json",
-        "sha256": "1c1c6a53f62ad32d710f3b27469c3387e4da67f43a1f9914cc19c34f42fff68c"
+        "sha256": "8ec77336307da8213678af0073348d559909ec8577d112785a38510f704dafad"
       },
       {
         "path": "benchmark/scripts/trading-fixture.ts",
@@ -127,23 +139,679 @@
       },
       {
         "path": "package.json",
-        "sha256": "451c8305eeb25ab3257c457166ea8763fac34b159f9c45f5d8c302c9211021a0"
+        "sha256": "7f6a9597a9441979612b8a99e2dfaf329fd5c53c5224c806c4c2008cd86a1dc0"
+      },
+      {
+        "path": "packages/agents/package.json",
+        "sha256": "2b83d0c7b083a12235c4a24ddfe1dff45893d12732ef512d7f033775adb63ba6"
+      },
+      {
+        "path": "packages/agents/src/agent.ts",
+        "sha256": "a6fcef581d5e7e319e3895f09f1ceef35dfab1bde80b51b2bf07535288e6e57e"
+      },
+      {
+        "path": "packages/agents/src/index.ts",
+        "sha256": "36355e7726b6d9786a3158732d9ddd899804b61226211ea5add60c11238754d9"
+      },
+      {
+        "path": "packages/agents/src/program-result.ts",
+        "sha256": "50ed9252fc6783683e2f5e8bdf1571c3b3cf94e8858f31c4eb4a1dd803196e88"
+      },
+      {
+        "path": "packages/agents/src/program-session.ts",
+        "sha256": "995166b26fb0fe43b1eb8b8b3d0839ea723a0d609ed676a17474d60e65e2d596"
+      },
+      {
+        "path": "packages/agents/src/program-shape.ts",
+        "sha256": "2d27247e01db6682e4187adc528c48aa8bca01bf61930ca52c27bd4d00494eca"
+      },
+      {
+        "path": "packages/agents/src/program.ts",
+        "sha256": "7be2e758ec4cbaeba82b71886ed07619c5be80080f79aa3104b433728e1d3d64"
+      },
+      {
+        "path": "packages/agents/src/recursive.ts",
+        "sha256": "8a7de531f5c831091ea6c5c321f6ac145bf47cbab067b8ebcdcc52b05142d44d"
+      },
+      {
+        "path": "packages/agents/src/refine.ts",
+        "sha256": "7f2a6fb02c6d92716788708917b944402205debaf17cc07e6810ee3117e92a29"
+      },
+      {
+        "path": "packages/agents/src/schemas/program.ts",
+        "sha256": "05814c19ed9ae525d0662fea927f83341eabef86ffc44e026ebe2b01a33206b2"
+      },
+      {
+        "path": "packages/agents/src/toolbox.ts",
+        "sha256": "0622a7ba6479de0a6fcdf9e0689fa36468df3d32dd7d06f098df97adb6fdc9d1"
+      },
+      {
+        "path": "packages/config/package.json",
+        "sha256": "399fbe719aaf6c551a6ec5f0b8fb398e8c9606bc5986ae1e2070479834286ceb"
+      },
+      {
+        "path": "packages/config/schemas/profile-registry.schema.json",
+        "sha256": "abda220642d3bc4395e941719620fbc0fc6b7552d5beef8e4e52059ba7662ab3"
+      },
+      {
+        "path": "packages/config/schemas/run-identity.schema.json",
+        "sha256": "aa4523da61b3f88f03b4c9d204292aae2698f3dbbaf4fe98e1303f20fb2c3f56"
+      },
+      {
+        "path": "packages/config/src/contracts.gen.ts",
+        "sha256": "0cf00ceae56eaf29b007f2c83c52b04132469b73e3ce0328996ceeb8fb95a70e"
+      },
+      {
+        "path": "packages/config/src/identity.ts",
+        "sha256": "a07469d5c408eb45376f734dab17b326592fdca3168733d6102d473d2a4bdff1"
+      },
+      {
+        "path": "packages/config/src/index.ts",
+        "sha256": "2f24a44c653e7877db48d0658feead43096a58d9c6b2abb61b82a66c9c5796bf"
+      },
+      {
+        "path": "packages/config/src/inheritance.ts",
+        "sha256": "e9a5b6f39c3792c2fd2a05b2346bc37687c0c4a13daedd2df5e95ea1f06965aa"
+      },
+      {
+        "path": "packages/config/src/resolve.ts",
+        "sha256": "885887b79e42f2021d380d9baf695993d5fbdaeabca0bb851a3ba421da79221b"
+      },
+      {
+        "path": "packages/config/src/schema.ts",
+        "sha256": "c623f6c202f21801d6d37ee170e4cd5c509ca32813003e5434562d9cf5fc6ba9"
+      },
+      {
+        "path": "packages/context/package.json",
+        "sha256": "89437e96aff185832edfb9dbc94c4d73509b63b00ce925f660d5c1320fe65ae0"
+      },
+      {
+        "path": "packages/context/src/archive.ts",
+        "sha256": "0a92d5b36f08d2ee58b73270b5981a4d0a4158354533f22442e15098b8d09173"
+      },
+      {
+        "path": "packages/context/src/environment.ts",
+        "sha256": "0b8e0942db6b0cecf3df013e741aae6e068f25a83ea60101780f1d0b818a7e0b"
+      },
+      {
+        "path": "packages/context/src/evidence.ts",
+        "sha256": "7112cfab33b523b7578ab821ff44128360df87bc2b41060d7083ea8995cd0aae"
+      },
+      {
+        "path": "packages/context/src/index.ts",
+        "sha256": "ea700a38bf2e4f58553d9914a7e14d25a4ee82fc00e48af1918a66151ce17056"
+      },
+      {
+        "path": "packages/context/src/ledger.ts",
+        "sha256": "e1f70b6e3c6c5e5d77272f42a8019d8e112616070ad8507cefc737e49eaeace9"
+      },
+      {
+        "path": "packages/context/src/recall.ts",
+        "sha256": "97145268dee1db55ca5c94e5c3882cb45ed4ab0751895a2381a9ab33d6caeab1"
+      },
+      {
+        "path": "packages/context/src/retention.ts",
+        "sha256": "3ee9e01daae7c170207b468ac0acd1a2bbb4a7af5bcd7ee4c96c02fa658f9bba"
+      },
+      {
+        "path": "packages/context/src/schemas/evidence.ts",
+        "sha256": "1d2cdd73857a14b1c800e9e0cc6fad6f3772adce1aedfab29ec2dc46ac217a65"
+      },
+      {
+        "path": "packages/context/src/schemas/ledger.ts",
+        "sha256": "0eebad0ce2fe991c33b308753e3f4614a58a62a54aaf51a99b50ad5ac98a16e1"
+      },
+      {
+        "path": "packages/context/src/schemas/patch.ts",
+        "sha256": "f23094574686cf6d7f9ebe7c132e1fac4a71bfab99a0c4dcd5a4bb4ac0320690"
+      },
+      {
+        "path": "packages/context/src/storage/memory.ts",
+        "sha256": "6a80da5238cb8e3f2b45c8c2ab772dea295db38b2a720d4590e243e97af95fe2"
+      },
+      {
+        "path": "packages/context/src/storage/slot.ts",
+        "sha256": "f7fcbc6eaa5bb6e23bde496d8f5def4b5aa2abea0f84dcc40c46b4797beaedb5"
+      },
+      {
+        "path": "packages/context/src/storage/transaction.ts",
+        "sha256": "92b859d4dd5b834f71707493d7221d146ac58441139131683d42e83ecfdddd4b"
+      },
+      {
+        "path": "packages/core/package.json",
+        "sha256": "4e1be75101fc9ae942a8b7b0ada9ab7d0798da106d5d440237c54f8feb086484"
+      },
+      {
+        "path": "packages/core/schemas/consolidation.schema.json",
+        "sha256": "b4bc1fd472f846c38d73ac375ba00255d2a9811bdeaa238d8ce937a1fd093296"
+      },
+      {
+        "path": "packages/core/schemas/temporal.schema.json",
+        "sha256": "e9718b1e84443d5bf38acdd11455dc49a59fb4c489e8ec37adf70a58c601970b"
+      },
+      {
+        "path": "packages/core/src/clustering.ts",
+        "sha256": "81ee576b02a2092790ba447b454bcfbd2c3985308ac581580d5564eac689534e"
+      },
+      {
+        "path": "packages/core/src/errors.ts",
+        "sha256": "3da1bad0dec4172170e80cc3543758bcf195ed3c4817e92c635194c472ec8979"
+      },
+      {
+        "path": "packages/core/src/http-capture.ts",
+        "sha256": "9f2a0b9bbd8762483f71e2e5d209da1f0fc6bd6aa8e364a40f8fc624ab41ae2c"
+      },
+      {
+        "path": "packages/core/src/index.ts",
+        "sha256": "198c9ab461507bfaae110e000bd4182ac501940e0ae8d8f88096cfe4b91d027c"
+      },
+      {
+        "path": "packages/core/src/lexical.ts",
+        "sha256": "4f10e2230c09f8e07a73176833e63c3b6c43931fd0b3d6138ba5d3327cd4b4f8"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation-definition.ts",
+        "sha256": "8f733fba2344927440ee97fc424809b0b3de8ec030a65c770a7567b79f81c63b"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation.gen.ts",
+        "sha256": "1f898c4e52d631deb5292717e89ad8c75091ecf5537a5d508a29561e5886c3df"
+      },
+      {
+        "path": "packages/core/src/schemas/consolidation.ts",
+        "sha256": "83520df75b1cd0aea4180406128db0abc2a700f2386418587b339cca3523c594"
+      },
+      {
+        "path": "packages/core/src/schemas/memory.ts",
+        "sha256": "0d38bcbf2ee4d4c18dc0980a4f827d96d5767cb056fababea4940f2e0c6a38d4"
+      },
+      {
+        "path": "packages/core/src/schemas/temporal.gen.ts",
+        "sha256": "1c7e78e64191c0176d76a2b6ab5b5b5e80d551b32ff842763430d144056abe4c"
+      },
+      {
+        "path": "packages/core/src/schemas/temporal.ts",
+        "sha256": "9ff3de1a96c633d8356f86dd7b605c712134819a635eb7da6513cfb36dfced4e"
+      },
+      {
+        "path": "packages/core/src/tokens.ts",
+        "sha256": "3ed5be7b4a494a31eeb603467084fe2c3660dd9f745ccf93d029f76c93c9d6f5"
+      },
+      {
+        "path": "packages/gmpl/artifacts/catalog.json",
+        "sha256": "d9ed36f9e3f08b4d7c46382f5c84ce4b979da64665fdcc6554d2e6b6eecf8efb"
+      },
+      {
+        "path": "packages/gmpl/package.json",
+        "sha256": "f3a4438bef9dcfe843df7f21b20cf4f409f8f30cb40ed0e9b887c51b582b7821"
+      },
+      {
+        "path": "packages/gmpl/schemas/gmpl.schema.json",
+        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
+      },
+      {
+        "path": "packages/gmpl/src/catalog.ts",
+        "sha256": "ad6a29b646dd6be5022e5288596a394ffa03ddd35167b84450c368ae3c8508c5"
+      },
+      {
+        "path": "packages/gmpl/src/clarification-tasks.ts",
+        "sha256": "17879e6c723f13fe4e94618dd48a9e0e4bbec605a06a28f85f5015e06219d20a"
+      },
+      {
+        "path": "packages/gmpl/src/contracts.gen.ts",
+        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
+      },
+      {
+        "path": "packages/gmpl/src/debate-tasks.ts",
+        "sha256": "1274e87db97043d9b39ea62156e0d3411249840e45b962c36e1ead183d2e1497"
+      },
+      {
+        "path": "packages/gmpl/src/defaults.ts",
+        "sha256": "e33e274dd82fffb0bfc4b6b03fa8da850e5eb9d22441343ae67ee3b50a913b4d"
+      },
+      {
+        "path": "packages/gmpl/src/delphi-tasks.ts",
+        "sha256": "23682c1e261ad91a93140000489f1a5d069b43c17d23fb2ae324799e33421f56"
+      },
+      {
+        "path": "packages/gmpl/src/errors.ts",
+        "sha256": "5b3aedc6d1e80975c5ed7ee72184999d56ddba0ca4200df4cbbf4678a9bfea3a"
+      },
+      {
+        "path": "packages/gmpl/src/evidence.ts",
+        "sha256": "3b2d0f03f8bf5d8cee08b837c523a8aa5bb8f46c94c002a8f8be4b9a6e720ce9"
+      },
+      {
+        "path": "packages/gmpl/src/host-bindings.ts",
+        "sha256": "0f17cfb88ab0db0ac2f8c6bac20b29ed501acbe43c40620c393b4d4416f1efda"
+      },
+      {
+        "path": "packages/gmpl/src/identity.ts",
+        "sha256": "1c0218118d8407927bbb07d68924af6a671ce9c1346022618a961224bba80848"
+      },
+      {
+        "path": "packages/gmpl/src/index.ts",
+        "sha256": "48969d8380cb6264f3ceac1855cb81869f5138b110dfbe1ecf9d1a7d80ae99dd"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/clarification.ts",
+        "sha256": "b4e783917874f68a0bebd42b095097248b6ce058e2bbb266803950b3c22dca1d"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/controller.ts",
+        "sha256": "d3e4758165567f74a68f256fd7bc554ab529701c3ace48351647813f5c0a7f6a"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/delphi-panel.ts",
+        "sha256": "fc0243e43de1064bbb6343724b640036f7dc09872d8e9a792c17c619bda4df4e"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/parallel-analysis.ts",
+        "sha256": "03bbf2daefbcc562db2702e92220fbf65b08abfa0a7dd63146611497a7e2561f"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/peer-review.ts",
+        "sha256": "a6f5c2b2fb1b4883145b5946cfe5b0c9df8ce6510ae3a29d0aaf7a98ee2e29d3"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/red-team.ts",
+        "sha256": "d12d0f348b32622f246ec6a0db22de1d6deec9fedc22ee600285442246021c78"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/round.ts",
+        "sha256": "16ee96814fcf43bd8bd56b7eeec77ba7069922de2bb3b69267fa3f5282a66942"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/shared.ts",
+        "sha256": "b295cbbf853ae600148d9ddca5b0ca5f4fe8b18e0802609f234fbb6653d44771"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/structured-debate.ts",
+        "sha256": "3606fc971bd903ed510b45e85e793d5bb1436daea93e5c6679b942196e3e2b1b"
+      },
+      {
+        "path": "packages/gmpl/src/projection.ts",
+        "sha256": "9120cb1b195bfa022a989d9cccda98703030144974bc4b80fc9992f9e3781a44"
+      },
+      {
+        "path": "packages/gmpl/src/prompts.ts",
+        "sha256": "c7b785b1ee8f0de187514c801deb4758ead955bf832408c10668b3a52b9fb975"
+      },
+      {
+        "path": "packages/gmpl/src/round-tasks.ts",
+        "sha256": "bf7ba5d1c22d2327f1b71bb51b43fd446b25da6dec2343ef08c2a55f3282d69a"
+      },
+      {
+        "path": "packages/gmpl/src/schema.ts",
+        "sha256": "0f5e4027ef6181ac4809f99062a02a65db103e5a119a5b74aa6f78bfd08b39e4"
+      },
+      {
+        "path": "packages/gmpl/src/specialize.ts",
+        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
+      },
+      {
+        "path": "packages/gmpl/src/tasks.ts",
+        "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+      },
+      {
+        "path": "packages/mas/package.json",
+        "sha256": "a5a71a573cb095e9d2ce02ec5f7748f4090a83f3da952b23eb2125ff7a645b5c"
+      },
+      {
+        "path": "packages/mas/schemas/mas-registry.schema.json",
+        "sha256": "e90409501b634ab11f5f5f2571840ea06db9100b06745debf3827426007deca5"
+      },
+      {
+        "path": "packages/mas/schemas/mas-runtime.schema.json",
+        "sha256": "1f779e40a2455f316000de567bf5652fc4ec977f5f1c7e9ded86ee3b822384c2"
+      },
+      {
+        "path": "packages/mas/schemas/mas-template.schema.json",
+        "sha256": "103bb578c5096f6e889a87a6a793e26af6c83843007fe5758928df9581270b30"
+      },
+      {
+        "path": "packages/mas/schemas/mas-workflow.schema.json",
+        "sha256": "fbf75c34b940c8ea8b5e8df1697d35b044fa31f32040f0959a6a368148e15448"
+      },
+      {
+        "path": "packages/mas/src/agent-component.ts",
+        "sha256": "01cc5817196a057d2798b3e716895950c41e5642227eadaba977e847f959ea81"
+      },
+      {
+        "path": "packages/mas/src/agent-context.ts",
+        "sha256": "1fc46a958ebc63c8069fc25424dc24b664b15893c1054b727565e44d2be6e8e2"
+      },
+      {
+        "path": "packages/mas/src/agent-executor.ts",
+        "sha256": "a4d035c9d8255ad65c489436778834d4519c12ffd6f5a6a9f9f58628b968fd65"
+      },
+      {
+        "path": "packages/mas/src/budget.ts",
+        "sha256": "2fe697d662c3b7f243c0fbcbc923bc8874f83ead103ba4dda6753374740f29c5"
+      },
+      {
+        "path": "packages/mas/src/builder.ts",
+        "sha256": "17d12d052fcb17e9277609d5e6d791db3b44c040be1a63163dc0c883b9269a28"
+      },
+      {
+        "path": "packages/mas/src/compatibility.ts",
+        "sha256": "b7d56a0c341a8cd1e496835c6ddd4cbfe16eb0dc3671de04ccfeb4a43a53dcd2"
+      },
+      {
+        "path": "packages/mas/src/context.ts",
+        "sha256": "61040780544af9559891277a1e4cb3dcc5439d615e7165e6b2c6ccda57774f32"
+      },
+      {
+        "path": "packages/mas/src/contracts.gen.ts",
+        "sha256": "c7cc0ed9d83f8bf9b02698259cc4654f812c635fca47d37a88fa008fcf740816"
+      },
+      {
+        "path": "packages/mas/src/control-runtime.ts",
+        "sha256": "c38dd671868277828a74b51590ab76242435bd6d3f9fe37a39134ddc0ee13231"
+      },
+      {
+        "path": "packages/mas/src/dag-runtime.ts",
+        "sha256": "421f5ae25dbc77747ed9f02fc69c6d115a6c4a558364bef998413008b1992472"
+      },
+      {
+        "path": "packages/mas/src/errors.ts",
+        "sha256": "19ab5eb92d605e540eca05dcd52f00ace64bd85643575869be1b3460aea6f886"
+      },
+      {
+        "path": "packages/mas/src/identity.ts",
+        "sha256": "66551d7d2b6c5278229f1f8d83d62eae67daa9cd926bb746414d053e1c8ffd62"
+      },
+      {
+        "path": "packages/mas/src/index.ts",
+        "sha256": "ee9b3ab2c04c488378483448ba7f25fd5970ccc9c9664dacbee842908d0443c3"
+      },
+      {
+        "path": "packages/mas/src/jaren-flow.d.ts",
+        "sha256": "a1759b25d2f9fb46cb779b0ecd5a3c8e86819d541d89f930673c9e74840ab7bf"
+      },
+      {
+        "path": "packages/mas/src/lower.ts",
+        "sha256": "830a80cea04c229e5c357f879b2c3433134f2902ace4100e5462e5ec856887a8"
+      },
+      {
+        "path": "packages/mas/src/mermaid.ts",
+        "sha256": "f7d1ae4339fa81ae8d58dd6f15f89a7524ee857b02ca90701f8034bffe7ab8a3"
+      },
+      {
+        "path": "packages/mas/src/messages.ts",
+        "sha256": "a288dffd60102cde4e697ebaaf58baa1aa19330afb2f36f04284e20b3a29a372"
+      },
+      {
+        "path": "packages/mas/src/node-lifecycle.ts",
+        "sha256": "98dd6e2208986aaa8223783db47a908b0cc84796144e0d4226c54b835f478787"
+      },
+      {
+        "path": "packages/mas/src/partition.ts",
+        "sha256": "3d2336fbb36141c8cee3367af11025a583ee3a547b52596bbb3b9287d67ce3e6"
+      },
+      {
+        "path": "packages/mas/src/registry.ts",
+        "sha256": "40bf782772df6527894cb6d0f4c4bb8a7f649e6f2d7b9eb484eb4ea841ac43a1"
+      },
+      {
+        "path": "packages/mas/src/runtime-state.ts",
+        "sha256": "9b58127283df56cb1ac2fb565e4197335d8b22cd59a94d316c36f2d94e9a9d11"
+      },
+      {
+        "path": "packages/mas/src/runtime.ts",
+        "sha256": "af838e23792c7e42e86530b0e8b2764e9acc7b6a28af663a78a913f24aac782b"
+      },
+      {
+        "path": "packages/mas/src/schema.ts",
+        "sha256": "daaaf72f49446e94486784eb9f476e118d21ca24974c8a7fdd1529daaa60009b"
+      },
+      {
+        "path": "packages/mas/src/store.ts",
+        "sha256": "7771e3a4a4a00dff9666e940ec4f83c488d57da12426591344e70f4cb1f5ab20"
+      },
+      {
+        "path": "packages/mas/src/template-bindings.ts",
+        "sha256": "84e1a93249bc56f6b6a2f50111eabd30ce8e15f90b99d28f8d536e7aca01f6ae"
+      },
+      {
+        "path": "packages/mas/src/templates.ts",
+        "sha256": "fd53daa16dc9b60cf2e228a8cc2ed18b5120cbe48cc6e3147c02fdc57f462341"
+      },
+      {
+        "path": "packages/mas/src/tools.ts",
+        "sha256": "b9dda5dfd91724a33025dad7fab88825f6687f941b21826b76692b89008c6902"
+      },
+      {
+        "path": "packages/mas/src/validate.ts",
+        "sha256": "2abc5a7cddffc8bee83dd2443075d7e30dfe5f3cde7f663c02747e5323d98b8b"
+      },
+      {
+        "path": "packages/models/package.json",
+        "sha256": "540ed5015148c1f604c642611b96734aae55a4287a58f16635e18a5ae617d116"
+      },
+      {
+        "path": "packages/models/src/check.ts",
+        "sha256": "a50c8df8e3183e8d98f530a0ded9b1be39fea64e18c2e3b00ae018ed58a07309"
+      },
+      {
+        "path": "packages/models/src/client.ts",
+        "sha256": "16c5fe1ef149df3fd08c88170b17f5d1a4b852bc0db867c0af25e215536b7c09"
+      },
+      {
+        "path": "packages/models/src/embed.ts",
+        "sha256": "1c1b8fb32687ecb9c73c566d99b4d1aa327e685eb68dd626111d8f3bbfa365d1"
+      },
+      {
+        "path": "packages/models/src/embedding-vector.ts",
+        "sha256": "e0677f51dc94fa3b924a59d511c078e96a82cd2b968de37de8819d04a7200633"
+      },
+      {
+        "path": "packages/models/src/errors.ts",
+        "sha256": "ebfc7a3500b902f508f239b5317a653ad4de6202767877997117e062054d8d25"
+      },
+      {
+        "path": "packages/models/src/grammar.ts",
+        "sha256": "6a10ca484cc722afe3504011d0bb31f2095a42134e84742ee47b3f1d6cb1ae9d"
+      },
+      {
+        "path": "packages/models/src/index.ts",
+        "sha256": "6b18665bc0523d9880441f67dd93202b4a119d194627bbf7ba2172f83930d2e0"
+      },
+      {
+        "path": "packages/models/src/providers.ts",
+        "sha256": "fee58bf041fa7b64054c7fa406d8bb489c01a96b5637e318667e2fda2d177862"
+      },
+      {
+        "path": "packages/models/src/replay.ts",
+        "sha256": "39eec52df317797cd92c078adfab54a2eef407be943bcac1f0cb62f9ddefa4c3"
+      },
+      {
+        "path": "packages/models/src/retry.ts",
+        "sha256": "d2f6f39f57313e66fe7a59d3674ad31ad681c4f3d92a2317f07cff5c88f4b1b1"
+      },
+      {
+        "path": "packages/models/src/routing.ts",
+        "sha256": "489fe50ce52b2b4efa458423670c5c254e4a21bf1c0b42a6ad308567404981b1"
+      },
+      {
+        "path": "packages/models/src/sse.ts",
+        "sha256": "200e59454e826c2905f3609a40c03a169dbeab53c622f01541e248cd8874ae62"
+      },
+      {
+        "path": "packages/models/src/structured.ts",
+        "sha256": "43dafdff66bfe4d6933fb8bbfcef9a8ded801b366ed5eebf02402e84d91bd1e5"
+      },
+      {
+        "path": "packages/store/package.json",
+        "sha256": "b28e0e071fb0f8bc8ba1cfcec2902f15bdbfec244f93c021c4ed52ac18abfbe1"
+      },
+      {
+        "path": "packages/store/src/consolidation-model.ts",
+        "sha256": "935f7d2f9ee2b1d3e5d53a1acee9ca4f63217fd7cb25e0c2beed7327febfdfd4"
+      },
+      {
+        "path": "packages/store/src/consolidation-store.ts",
+        "sha256": "3ee37a6ada77d46849f3eae2c7d37a65213f5de5ad83aadbf5fe164bd23c20bc"
+      },
+      {
+        "path": "packages/store/src/corpus-promotion.ts",
+        "sha256": "379ade18c66a21bbe19f916c05cda3a1a575a4e37983e5b2b61fedf1b66a9230"
+      },
+      {
+        "path": "packages/store/src/db.ts",
+        "sha256": "a27aca0b1113eeec06864f171c5c1b34d796d3fb59e2dbd6f4f78bdb0c5beca1"
+      },
+      {
+        "path": "packages/store/src/document-state.ts",
+        "sha256": "500148e4ee398f6c1657eaef823d2f1947def18cfbc4c1c0f01ab9b32ebad33c"
+      },
+      {
+        "path": "packages/store/src/document-store.ts",
+        "sha256": "b958ece6dd2b668358d1fa328315be800320c1ac36f09bec17c59167395e43ba"
+      },
+      {
+        "path": "packages/store/src/evolve-effects.ts",
+        "sha256": "1d005532058e5b0ca3985cb9231f4c1b9c4d7e1a6d051283a9ff6290f885c326"
+      },
+      {
+        "path": "packages/store/src/evolve-model.ts",
+        "sha256": "1cf2677b5f6556c96a68eae7bcf7dcf506f6c663ed056386150f74841209da68"
+      },
+      {
+        "path": "packages/store/src/evolve-store.ts",
+        "sha256": "aff25170af3b8b23bdd54ed7a4bda1892b0e861f3cb04133fc1cbc4bfe8aeeb7"
+      },
+      {
+        "path": "packages/store/src/forecast-model.ts",
+        "sha256": "b78417c857b252e7294abd4604b3520694639c1bb9efd556c0170b2943996d52"
+      },
+      {
+        "path": "packages/store/src/forecast-store.ts",
+        "sha256": "49138f0ae9c12e3a1f669e789ee31f7300946630108f8ad6edee271d954fde01"
+      },
+      {
+        "path": "packages/store/src/gc.ts",
+        "sha256": "e95f99cb4e02e58f04f360710422ffe6ad00c167a35e6607b5a64289ba32eaf7"
+      },
+      {
+        "path": "packages/store/src/grounding-clarification.ts",
+        "sha256": "c3668f62dc37d07d8eb1c71f0007f193eeab08d4381dbb31e7743c52789e30a0"
+      },
+      {
+        "path": "packages/store/src/grounding-host.ts",
+        "sha256": "1cd2ba5ebd69bc29f860b1b12123ef055e3d7e6fc89468f6128f310501edf115"
+      },
+      {
+        "path": "packages/store/src/grounding-model.ts",
+        "sha256": "638f90f0b10a30c91702d822c1a14358ed1eb193584ab3a950ee7358c22a6651"
+      },
+      {
+        "path": "packages/store/src/grounding-store.ts",
+        "sha256": "2966eccd4e5711c98388fb29f79cdac90f405029087e75a5b8a689d9f0828648"
+      },
+      {
+        "path": "packages/store/src/hera-model.ts",
+        "sha256": "888217856fb746f709e223651d872dd37392eaf02ff23dcad40558e23361bdd0"
+      },
+      {
+        "path": "packages/store/src/hera-store.ts",
+        "sha256": "c775eb635822bec772cd39addff5b6632ce3fa047387d41124cffbd57f106387"
+      },
+      {
+        "path": "packages/store/src/identities.ts",
+        "sha256": "ccaa309d775cbfbc94168f32e616353cec3743c7f5b3f7919e4f7af218da3fef"
+      },
+      {
+        "path": "packages/store/src/index.ts",
+        "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+      },
+      {
+        "path": "packages/store/src/ledger-storage.ts",
+        "sha256": "d6f56bf244b22429934e8bbc8efe43d97cf04f2d490232a07edf70fac80303b0"
+      },
+      {
+        "path": "packages/store/src/lightrag-model.ts",
+        "sha256": "de7e29cb7ef692aa86f423d33699a4c48521daf42f0578562ae367a57aa3ae0f"
+      },
+      {
+        "path": "packages/store/src/lightrag-store.ts",
+        "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
+      },
+      {
+        "path": "packages/store/src/mas-jobs.ts",
+        "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+      },
+      {
+        "path": "packages/store/src/mas-store.ts",
+        "sha256": "ee88242e82b22d003956a76cb65b529b9490757148e7bc6ca0d12611411721c7"
+      },
+      {
+        "path": "packages/store/src/memory-store.ts",
+        "sha256": "91bcf7e3d313f3b4508f41392014507bc105a6087e6e8df75e9409ff8a5441c7"
+      },
+      {
+        "path": "packages/store/src/model.ts",
+        "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+      },
+      {
+        "path": "packages/store/src/outcome-store.ts",
+        "sha256": "4f0c579060c928a57b8002687dc8224321d8264f91b61afd40d4bacbab6faea4"
+      },
+      {
+        "path": "packages/store/src/runs.ts",
+        "sha256": "8423f75d14c39bf5f1e302140de01d51dbc2afb59d3427fcf87cb10e376baaf4"
+      },
+      {
+        "path": "packages/store/src/temporal-backfill.ts",
+        "sha256": "e6d8e58af583b61e7f522bcf5dea9281af7e3307ef7f690f8e4685ec1fe849a6"
+      },
+      {
+        "path": "packages/store/src/temporal-model.ts",
+        "sha256": "8e6766505ab4a150c04ebdc70573db75d85c860ad5ba88f9a3ac0c29e6394654"
+      },
+      {
+        "path": "packages/store/src/temporal-store.ts",
+        "sha256": "60250f282a68c61511e78b55f29b79e0d956bee493107b660d9d2e702a685bcc"
+      },
+      {
+        "path": "packages/store/src/trace2skill-model.ts",
+        "sha256": "be8ae8f55b6bfe3bc01beddc3c7355a1cece87325e21847c5e6bde0be8c71029"
+      },
+      {
+        "path": "packages/store/src/trace2skill-store.ts",
+        "sha256": "654063b4bd7fa36042a1b67a44b04a2210f77ed72ef132bfc61cb9fe9d19caf9"
+      },
+      {
+        "path": "packages/store/src/trading-model.ts",
+        "sha256": "d278a7c0d438f8f45e7cd77b9c497639ff4572616ccfaba433cdf1fb2454bf06"
+      },
+      {
+        "path": "packages/store/src/trading-store.ts",
+        "sha256": "18a4d4b871a813d91db94ecfc7db308ab5588ae89af5a3786f36469d778da94a"
+      },
+      {
+        "path": "packages/trading/artifacts/catalog.json",
+        "sha256": "e23fa74853512b96774e41106786c8d39251f1414afc461b180e89a21630949f"
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "4d0469623e35f336167fdbebdfdc73302331d874d58752a88ecb6911fb35445e"
+        "sha256": "debc89ecfbfac9ffb7081cf66176affea0f6c4d49bee2bb2ad4c72b44a78a3b2"
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "736b72e5d18d6ed685e3ae6f49fc05cc820e3bf6b5390af00fa9b0409bfcbbc1"
+        "sha256": "4eb62a1e9263a94f34e023eb536738457185368cfb420c5ce92d29cc4799e2ae"
       },
       {
         "path": "packages/trading/src/accounting.ts",
         "sha256": "3286e20b052e7189db1d7640697c5f2148881af0a36b80ff062ed1f8706ca838"
       },
       {
+        "path": "packages/trading/src/analysts.ts",
+        "sha256": "0b989287470ffa55dfd2eeb492f22aa45371dc25ef589acb704916d1726861d5"
+      },
+      {
         "path": "packages/trading/src/baselines.ts",
-        "sha256": "c6326a0b90e0771a1ba6c6684187ca43c5f107df558ce9304f6fe1ae4da9ef9d"
+        "sha256": "34b098638b7be667f0543f1ef53a0cdeb37fc13231010fd55766a5642432994c"
       },
       {
         "path": "packages/trading/src/broker.ts",
@@ -151,11 +819,15 @@
       },
       {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "02330ee0ace27944caf762ae8a4b50785a48f4f0f480a1a0f27922e18a33b2c7"
+        "sha256": "4759f942380d20461b7ab831b58b7c3feca1f824f8cec4774de2078dabe7fbe8"
       },
       {
         "path": "packages/trading/src/errors.ts",
         "sha256": "268feea9d3bf1d6287b5067c81d5b21618f58400fcb9e4a2183fc75b4b5ac837"
+      },
+      {
+        "path": "packages/trading/src/host-bindings.ts",
+        "sha256": "efa5f52815057ddfa3dca0157d577e916f90d8f4ce820e04d83f7675a08651e6"
       },
       {
         "path": "packages/trading/src/identity.ts",
@@ -163,7 +835,7 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "71442d7045c646af6d05e600b084982d0eaf42503c410263ed2a6103a2526983"
+        "sha256": "313d73569ed11a2d331cf91afa7191a7bf4796696f0946fe21b7891b84c48386"
       },
       {
         "path": "packages/trading/src/indicators.ts",
@@ -187,7 +859,7 @@
       },
       {
         "path": "packages/trading/src/schema.ts",
-        "sha256": "fa90ca8ce922cda41040cdd7233d90949d5aa87d36caa407e883c97ff6056111"
+        "sha256": "060aaa17fb04021ef129afdca1b386f77b068cdd479034d0c21b48fa4258d259"
       },
       {
         "path": "packages/trading/src/snapshot.ts",
@@ -206,12 +878,36 @@
         "sha256": "5d5e42403738b669b7f44ce0f255cde4346aa5bf5b451a288419650212b2e63c"
       },
       {
+        "path": "packages/trading/src/tools.ts",
+        "sha256": "d9ceba36640d8f5fc90db5a6f5733dbd8ee5b8f25b55ba964995776e03ad4e1c"
+      },
+      {
+        "path": "scripts/trading-artifacts.ts",
+        "sha256": "86fedd6e79a9d7f78fa8f2b7ade0f75b88143a508c63b7a535b166419348df6a"
+      },
+      {
+        "path": "scripts/trading-sources.ts",
+        "sha256": "62100ffbfb0711cdb1b186508b61d9b6f7ac681bd427c0e9001736a300793ec1"
+      },
+      {
         "path": "test/benchmark/trading.test.ts",
-        "sha256": "0344184997f5c41b985de2e5bcf03fc30fcd7d165064a7386283f38e7e2b7af4"
+        "sha256": "01e4c515acc54edda00b2ae95fea51e3a19599c9ac42bab140263fe12e7a2025"
       },
       {
         "path": "test/fixtures/trading-indicators.json",
         "sha256": "867c52221e9c383c0689b36bb22ccf96b38b1344a6748edf434d063fce257d93"
+      },
+      {
+        "path": "test/fixtures/trading-prompts.json",
+        "sha256": "e572934b4c732766690332e0233772247bfbb30fe3addfe43c1c913463e35897"
+      },
+      {
+        "path": "test/trading/analyst-fixture.ts",
+        "sha256": "cbd04f26d92b02691cb35dd7d918a3b794d69e8b5bb30fc1bbda56b74262f027"
+      },
+      {
+        "path": "test/trading/analysts.test.ts",
+        "sha256": "2e4777e11a01fd3d78df54c70c7bb9b45ac7d7294a3457191bbf86c47a9d7c04"
       },
       {
         "path": "test/trading/baselines.test.ts",
@@ -246,6 +942,10 @@
         "sha256": "70a00a625433182d748eb9c8bc3306db92c84fb5ce4e6b261763a26d4c523990"
       },
       {
+        "path": "test/trading/packs.test.ts",
+        "sha256": "65d354794b79ece984d1a4dcd520fec705aadfaba7ff2fb4ea0e0b37be4ff16f"
+      },
+      {
         "path": "test/trading/portfolio.test.ts",
         "sha256": "073a778e14aeb16918563c9abdf27094eac5c7752dd70c317f95e606b3056c81"
       },
@@ -263,7 +963,7 @@
       },
       {
         "path": "test/trading/schema.test.ts",
-        "sha256": "fdf78a361ad63f325bca8b6b86f2826dde819d9a7060c06203d22a37ce5cf61f"
+        "sha256": "f3dc9987678b6cd90ca984d0985fc5724b59cf14e1a4e799a8465d6c20e854ba"
       },
       {
         "path": "test/trading/settlement.test.ts",
@@ -292,9 +992,13 @@
       {
         "path": "test/trading/time.test.ts",
         "sha256": "14985a4bf2c21ed515b38d817ca20f204bc1062d17450fd3107346af685b8079"
+      },
+      {
+        "path": "test/trading/tools.test.ts",
+        "sha256": "ce387ec0d261cd9b367e4e8cea349d77d8dd5accd294ce47a96343df9641bab8"
       }
     ],
-    "sha256": "d871dd47f27617d2e337d34884cd081f6eb2200ada40b852a854b8690169f393"
+    "sha256": "6f62844c151602b6d662ba888cd8aabcb2ecc0f76cba44a1e2a573b4fceeeef0"
   },
   "suite": {
     "tangle": "0.35.0",
@@ -2732,6 +3436,3786 @@
             "reproduced": true
           }
         ]
+      },
+      {
+        "id": "analysts-scripted",
+        "status": "measured",
+        "reason": null,
+        "total": 248,
+        "reproduced": 248,
+        "reports": 992,
+        "citations": 990,
+        "resolved": 990,
+        "manifestId": "manifest-f7fcc5782517e819a1653d78f1ce1d5f9ecba661076f2caf7045d748690bc699",
+        "catalogRevision": "8ecef563ca3ad10ede998f75b5d022c415abd0478fd2662d647a8de892f718a7",
+        "limits": {
+          "calls": 128,
+          "concurrency": 4,
+          "contextChars": 65536,
+          "fanOut": 8,
+          "iterations": 10,
+          "ms": 600000,
+          "tokens": 262144,
+          "toolRounds": 4,
+          "traceBytes": 2097152
+        },
+        "physicalCalls": 2480,
+        "normalizations": 992,
+        "repairs": 248,
+        "toolRequests": 248,
+        "refusedToolRequests": 248,
+        "cases": [
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-02",
+            "reports": 4,
+            "citations": 3,
+            "resolved": 3,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "aefc28b8b655fcb41e3bf131da888ae2334f3876ec8f9cb7b6f8f3edc2f1ee31",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-02",
+            "reports": 4,
+            "citations": 3,
+            "resolved": 3,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0f1d1dadc4dd685f26111a714a9076385d9be98431ade358b0e7cfe3f3b22b3f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "44d34d0f2eaa591be77bb8a5c76c171e241d4691e90520600023a328f57d997b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "2b29ddc643c6bb636ebfbca07f529f1b1a1978ba9ef3608995bd00912b4e3339",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "020cc3c2e6a8e152ccf34fd8d1a647926f52fef08652bd926813dd4fc0b74035",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "823e6d8f86c91dbcae5e3d38a7ae9a80f7dd5313766e1cf9dd31d4fb74eb9c14",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d18ca3281ab43945f6008b7696c6854b550b01383745d3e2f76420860e9b9b46",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c36440db88efdc3a0596cb16c80cc5ea9ceef9dcf9de8a490b9e0080f8891263",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "21b8125aafb5959199f36eb751b19b17d8ddb96bcb0e3d9c49bd6f6eb3a5f79f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "10d48913d2e74950dd6d6276dae180ed6ea23efe7b52052d32ac5c0650781d09",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0391823abbe0204e4213375f2dbd45f32937de018057e2e371b2c8859dd2751b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "511b4a31bf0b69d6f3c48c960437d9566172fe0441831d82914c82c30f98e519",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bef70fad097549d29fc5def8c33665b76e9c123adcbc8bdb24a6716a798e9cf2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a67539a4240327160ea3ed6ada13d03a07e0d691d04dfcbef3ba74ef13de7da6",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "eac3c249d68479516851f53fc204443e86bc32c3a9b68eae555db49e02ec4373",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0e6d8151828e598072927b9fb39bf44c3c17ad461f2f1c36e065de9783745fe7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "fea7348be00c7a18aa91bdc2c626d9051ebdd0236d63f56728fb2655fecceaac",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "cfcb2def1e0a0a4c74fb0c3da4e0d528af2bee2b9b34ecd7d78c763b65c68ff0",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3fb03e795740490ec73a3b697a02c06864ea30713eb5a72a68cc5780e07ca821",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9ef88e97936ddbe384d4356cbd2fa800399638aac47a37eef75aa9eadd82a330",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7b32d5dee650de4a5cb84df4513bb338c3d124c66f2f422de54fdedaf0de7511",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d0ae67d14a47fa1f126164ea31b1f841ad646f8b92d5b60013d80d78aea4600a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f5a31966bf46cf4379ef3d3e6dd587b22c5e40b50cc8025d8fc2c9d2e8c06503",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ddbd72720429b3a0e6521b82e046b8712b8c31345015b01847a9dc5cfcbfd754",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "efd20b662b2899365d5fd404160a1bbe5e869ed86a2d02eb4b86bf5130dfedde",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5edf22185f8cacb93e2c9c0831f3fc8db0191c0eb3c96f5ef6eaea8fc64c1f23",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "388a8304efaf1a70dba7bd159d1cfee4d0a5030eea267f2134d0939a3a66520f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e8956549592ab540501feae77ede92ecdc03f3f50d6a8b9215fe93e7b6391cdf",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7cca678459ad9aff9cb2ae9c6c071bb99fc711d694c896282be3efa6ec6064f3",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "379ae80b2294dfc61ae433053f0b5762e271f67b84df925763c070e592975949",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "57319ce31d1b774d1091a070f4451bce0feb32f0b996ee38c0956fa514b8c760",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "cfa53d09cb9c943087674f98286c1f26f3262e74e399c44512611686a96e550b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d9e5dc7ea4313c6ba5cd8bff25108117ccbffee8e0c0543432bf343b92171440",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "60fbe1a6e8a3b0aa7087c76cc6a017ca430b1ff3742a6b70820b3eaafeca6747",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "fe5bd7a1c0dfcf5d928afc91f272afcb0af76e8fbf43a5f40612cd6481ff9348",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a4ce8e60e776259bad5fd62b1bff161802692cc3405b4c5dfa50a50273cec54b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b3f2325e3d4c73f8466cc07692d057e98d508d5afff28ff4ca34bad4aa0bb206",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c116b5ccc1d0b4fc2c75a1db4153dd6e91f9cc1d5ed229f872122755b603f564",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3194f5d13230b8f231f12e133fc27b6b60c5145a9178aa211b1761d290f30ea6",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a241b7008a0ad520455d5700d508d0965b0a30d786281b1204c72b5614d8d331",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-01-31",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1f32ad3d87e574d06adf663eb09b7b284da1bd1fa2040c6a5c5a683b20641cfc",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-01-31",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3294311364f5a050ab88495433e754c193f3df248c48a7bb7a40a69f16b04e30",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "43dd07e54ce7013fd6eaee26bcc274780b429568e27a2c2593398e34299355a5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "fc78cbaccb4fdc682a74c6e6572c8f6ff19bf8054c67e130eb497eac05e06f47",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0e5b732a32f0d835b09a6686d388437c4383b5022e148bedcab553d085e52e2e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6a8b7a30d9c106f4a6c78528231067dd91f3460a346c64c11a40aba6d0507edf",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1719506273b7fdfeaaa8ba16dd919541c681be3af11aee771bf105bf1726b4d7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6ca410d29f34830654f2aaeadf1f276cd60f77783f753ce252167c789f9b5cc9",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6550670006f290aba38f4481bacca2fc85f4fc85f1d4c627372acb29c25b3a83",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d65d54b1556fe4c48c2218e0389f877eabf01c42b381a5063d6aa5438fd66904",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d603695017b476e479fe77b4a11ae71d945cbf02d5150cb2ddf45bfa8600f0bc",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ae7a61e4301309947d7ab46e735e4bae17bcbf44b6ec23ce8d6cfb5f8376f33d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "53effb6a4b48b703f01bf84ab2b5a02ca7db22612390d48074b1f9add70dcd00",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9aafbefe2dc7741bc76aa98eb472b0457f0ed232135249e28b145ae266a95800",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5301490f8e0825fa7432e7bb1fd85b8f4ea40e7d8fc4bbe26df62544af026b23",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1b85a801cc27a6b70e074e76c34a18229938b7c510d3b6f504fa5f3d22619e24",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a07195b0a705c1e78f0c2618b758f3b7d947d8ff44d7f139c99121170dbdcbee",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "003e5693eba77aa5ee583360cccf62ec03aeef1987288903a842934d6e6482b7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9588d48cf0bc3145e38c4663be7e1968908a59adc2a770cb66344eec84161a05",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f689bfe2657bf8d37dbde49b8bdfe6be90ec2817cde61e3f0b70add1e4b12c4c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5cfd326a1a9c959819773f506d0134dedb9858e425631d59e1ce0027ede8a78c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6eb833e9c7108d4e8bd1d71d8554cbbaff4f57ae0381c8c52a3408c15f91fef0",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ce9bf9665a71ffda2796f6a080c49417105ac49906a14088aca3d6e748a0f32a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "415738457897a3da2986a7875e91f37430d7f5edf054d6b1977f0658a27e2a0f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "19933332e09c3dd00ae89235c9dabb91a8ea5fe031e8aef1b34646555ccf2842",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "4a868225be453ada655bbd928ae740f092f4acceeb973afb597f7b7fb30461e5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e957597a7064c336b1aa418503f8ced77998c71b911fefbf0a9eacf8dcdbeab7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0bedf2bf335bf740c705169fa34f49ce13b9f6d874d08ca1047d41b7ce155dd7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "2660f9e1eb5c789b31219cafba246e15507c197d417cae15e5f169a3185f658a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "255d8159e71b351f996911e65103fdb54b93feae1276eded110fd661237a9df3",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "57876bfce7a6428a134604ecfaae18bd0694796a6dd10f8ccf173b03c116340a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0553d71e82fa71b0a5d41bdb67b92a77d56275641ffa0a42b8cef1dc00dc69f7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "2cbc5a834f17f13ddcb2f4bb6bdadcd9650370881d6221e5047654430fd27f8c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ece61b3bd3e0927c2479e7bad7d689e7d6824c7868f762d1d568e6fb58767d5f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a6c78271ab6b3ec2077a5fd056e2f3ce1e8823a0b6f5ef4780116764daed6cd5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0d26a6421082e002261ee2933b0d25e2bfcade7edf92e180631779555817f8e1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bfdc19cc8ad9ed21f872836745c30e635409c2a9e9b3611d10c038d5577b2d3e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7fe70c8a3dc84f7d16c0725db67b7890208958fc2470fa74c8075bb15601454c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-02-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9ca2651c10c0e325384445107027474684b917726a041c490a85595a5c3bfa08",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-02-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a6c50d57838584da5b902e8483a636fcf731d7a98bf278ea336af9f8e5b8150d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "672056428b8c7853f3bd4c68e3047a2b64d06bc2a2bc115e5e93f4057e98345b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5e57b21520f1dc080a7164e72c87c8c0063487fba595f0a36e2fed67410ce3f8",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f13cdc804a38e7cb7319fd00129a9c9df9f66fa9c1dbf29a530cd48efa9d9528",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "cecf810761bb97c95c204e58b8d75aac3fedd48dea7c743a0ac1ea38498a2d5e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "40a6287fe598dfe5eb317b613aa4718e97daa321ad6169fc00a01badf38152f1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d7b125ea614830a698dd0ee7d7dfff762b7fb772714f1b34de404b0d71fd8807",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ac430d23ca351b4b6b24cd7d9efdb8ddb430bd76e205db3eeac05f0d9565151a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d9d0425aca889765f8e6770badee6eac046061e48e1471e31b71c4faf42a511f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "490a3b08db492f7d7f1f456d32396a38340f1149b480487cda672f72bd20fa6a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "df8f4fcc20eb7369c061e6b25105934c0da7a29d7ea5cf12eaf3d65387bf1fa5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1b85d04d3348856a0f6eeb001ff4d7a1ed78d5b8de97e86496c7c74d0473b11d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "612efe86d7fe463f95b2f5dd5eefd50b1761a0e20cec8f64d8e9457e39f62272",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "855d2b9c53e9bca23cfb7f805db8f4f5a7d2be087a8b386b19bbefd487bdeced",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d0825b088bf37ccef1ca851ea5bfb4f90c5ec53d134f3fabd32975b429fdb2a4",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ff93613f3733be936a6a07d06a93c4dc043ef95f248ab1024dd8b65641d5ddf1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b961d136891a8e724cdc3cde9689664ba811999733deb92cfc57bfa0a816d617",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "69c703b00b49b8db670916efb36aa96b1bb888d4a0281c196f10f819becfa472",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b9b4cb959618419ec0540366f1168846a40aa6493015d4fedb34606a3938d404",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e4b559de7feadd39eb97c56a0a45e236c52abc0ccd8efba4d016163d4cb4e88c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c6e5cd090cbb1bb4530735910b75776646014e79bce3c96bbb080333958410a2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b45efe66b543c36b1313a0de7a2abb4e4b0c89e1859028fff460d7ae61f42b20",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "04ebeeff69420b66b5f25ed284b1003e6fab5ee3c130010748f8af96a7647b6c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d7eed006c9de5ffc18be19a7fd47e620be0fd9ba55852934b5befa8d9261fdbb",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "64a45d33709181ad4e14ca94e2f41cf7e2728c52d47e43d4984c2f8b315dda1a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7c7945a9351db0d7529c6451430c3cd45dfd22444d41579ff12f83ee4e647865",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f129231bfa349cd29b8f75fd379d46f06be0f0046121a31feed020c888ae62ca",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6125ebed7babdfbfb9779bf46e7c1f49ae3a50633095d20cc23dbc67965ab7fe",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7f09d26c41ff92fc3ad2c6a0420ddeb2642b3ba9be6415fec194128881b204eb",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b5331249e35afc3b25c3e4ced43d44672f62837a2ded421ecbe005970edb51c2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8e521727ee90721c01e47e684db018fcdb0c3ed1874a54765e274f7ab20b1e8a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1e30e9cea4b49ebed383b959ecdc1d203e8568ff5be303374e135fdb55700ac5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8ecf650058939203bd86360b7f211f9ecca26bfd2df4c831e516328a5cb727aa",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "86fd6f8e500f50115c53ade080b581e1e06d02b12df0ede7ea04bb075d935427",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "39d7627d15895ab1511b2f7933c96464a526f5ea1a88edee2dca58c2a499664d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ffa2ec00d98db4d34ab7e3afadb7110627a518dd7481b48e56b808efe6c213c3",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e13140352c41c314816bd50da4805789950bda53842b70c45cda58c9154ad941",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6be449402c215ed2c68fd328fea03cc2f46e77bc630f46e7f2139cbbc7143b43",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5e8fa432e6390bbf66290ef74f1bbca462ab4df07a9beeef357cb1f3b7930067",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "2ae2b7c531dacb1a2a17851edfda08315a8921111624b9de2e1397f1b57ca5ea",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "00dbe1997098985d1bfe7c4762d852d13f576807ff1aa699f28cf87e7326a9b2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-03-31",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0c680997e8c8caf320a5a30ea3cc60faa7678d4b9b32bd666df0f0cb5030e574",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-03-31",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bc807ac999d679d6fdfad0a181b34a4f8b41d49174209e00a52306165185a4fb",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-01",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "18396209f356e59bdfad71356c882d802bc72ce16f3d064c1e770903aa32d1cc",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-01",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "92921f636bb15aaa7c1bc49b11b3e20763efa38a6c9cb02a4699bf4b4dd9c527",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f68af6aca80a004c3293f157ebfda8b5238bcfc7421b03813dcf56675d7c1a77",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "51694eface6587245c174d8612383da34e7ba51370a76c6fa1377b3e04e9ab3e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0c6bfe49d036803dbf587a0605de9b18470b426bdf3bb7f2f33d67b909101e75",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ee0131d54936ec2fd92bfe5ec9e9ed84e42533d3d3b4ca1df6e6ffed20bce63f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "297c4b4b68c2594bd7a13a1ed79fb5304ba86d5b051d105c7571a846dd6a2315",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7309f66d4717fab07db4aec4d97dc2c2b2d04ff38237e46ce160085db8d2e6a5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7f7fff738004d57830b992292f16342b3d6ad3d9aadd99eadad64ce37aac3cc0",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9d1f8c51af01965d465868f785932ca5df9f2f0cb7f7418f01b00ad8a4c8c58b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "491f33b4be33cb7a88a85b26eda3d346bda7f550ab94b7c2e404f22b58f9e107",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c6e29efcdc71745a0eaaa610ef5acb8124e794a3928a5c5ba456e1917c971204",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "4fb411458a38952ce06a64879d35195396915cc7cda0d8afa7e2825f2f7d64b7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9288e3cd24c2c91749fc9e2a5c73ffc80c16d61e4a239873fbe3110c8c4eecf4",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d5747bf1e3930d39b0d8156f48da1c6a6993b429e4278c567af2d29f0a4c4490",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "955f437b9b29dc93028ad47f7379db330aaf77e196ee7fb06ff8253801dcb476",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6c04a7d2df7117294b6a0984dd2d87db815a89f0288fb14e321e24bec9ab2819",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a4cd61dd1aef100e91eab0e359fba227dfa7451afd0b3f61923fb7bd06cfffac",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7d7a535c1c798be8c0d4c9f696057906083f03435cbd9d9194b32f2205480260",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "12ae81dd022d610bbb77a3a03bdbe7e7d54747343363b8ed3f438fddc25e7e81",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6610bce7d8cdf4a02335a013befa15cd881950f33008b2fd729a6f46e332de30",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0724d86c35d6f6ed4025f65e0a782150fd089b8219241292035cfabfd6132622",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "74c16010f6340c600ad1b05718accc163dc126b58dffec5e61e169cb6313216c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "74e12a72ab89e1c1fb7b3065d0616e1d1f7fb572ee8bad591778de55115915ec",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3fcd96caf508f002ffbd3953d7325ad33d2df5420c52c69dd08eff8cd916b0cb",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f071e112fed8459b19c8a4bfb22203c7d8a3333f667de869055e0bb5194f7522",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "90be5864938ad58fe73525b8190dc5fa8b2b5c65598600196246af17200c058d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8d50deda6a9cfb4c7e645cd0f23a2a721f52819f440f95147bcf7687e6b7fd92",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8ffbc5e67faa7cfc7956d9467b68ad0c4f14a8b117fc5eacf8b21db8cd76fbbf",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "be5f281ea8318cc656446e212bd85f61a2eb6ccf4e5a9abba26da3cf3df75c10",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "96c7c6474a22d7347394b134ae7448b003d36680a565ccafa4e5f49297f1a874",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7864fd90c05daed43c86e545a0727d54c460e11254c199fbe1113443c705ba51",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "47030c774593c34feb092d6a005363b56f7bb98bd6b913fe503f7206b18da82a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e6d295a01871e80c125233ded6beaa97b9534129eda55e22b22c2166e8e8cc8f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9e9a87f3c26e8c93a8dc0e4eec1a7ca7366bac0e0dc826a1fd024c99a499b180",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "848ef723a8da1e0c5bd1e966f210536d28e9f6967ca8beaf18d2e2ad78cd59df",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6aef0a160899aed0ba0f840aba335d8110d29a282016259c2855ef982aeabed4",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "728e419e230fba788eb82000e95f8d34dac70af0079e4587742dd2037b036405",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bc98fdb5bf2924d6c445ce87b3765d00663b3e927000dc3b91a7da66dca46185",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ad0832b02f72960aa1dc3685904287b229b842db4f8d366493863f6ad423bb5e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-04-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0aa23bb9e918d3b05d6e39a5627c256f70aac8c6aa4c380e91607a7665b3f6b0",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-04-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b56ea580b346c753d9ec2e514136cb7b6a10ffc8dc3c7ff440fce1d24ca75132",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-01",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "162dd358baa9244e255e37f06fa011008e30774238e66f78cbd857c3d28ecabf",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-01",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "670d5892a65639986c4174559a2e951715812e54783ea5fa038327a9f11c7bf4",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ffa61e3e16be9008cc864009f1cc26227bc17ecc4b35c702724d0dcedd378d4e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a2a19e162e1735ccd8591e093887c660a0370134cd58f16cc79054622b285e28",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "86483da99775971945f42072151aae249bcab639e0ee726b37a292dbb02fd55e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9e905171233e7b60acad0b5801e3657445e031bb05fef1395a9bc2c7bdcbbba5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "2e9f66c01bfb99e997aa9fd5da54fda08b94fe1b5ad8a887fc075d71fb85f6f7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f109de16f202a16b3fbc3fa712a78ccf0e6ad00bdcfa7e9d608dc335f744016a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "793c6cb803f46698dfa1c38fef9a1ebfe91499388926e858825ed115d82a6e4b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-07",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5fe9123ec91d0a0c4a34e808bb6c3b1ef6e45196dad14daec6ef591ff8eb3125",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "6ff041e4a755e7195e1fcad02a08f1730b35a0dedf580f0d0b567151f572770f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-08",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "faf88030ee3179ad57d87d4f91eeddfc2fb595108b6ec00dd0bca243a3dd6fd2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d6b22f01e6d38c4e0a3e26edd2ef9642c7eaf4aa36f34985110caf6681470bb8",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "07354c9d49daa589b419ca4b61c2c4434ea80f8b0e9be414f8f4a04e592d906d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "413f5eb6e109b63831426caa6c46bab06b0a90a03ca4dc98fd428c0132f1a29e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "72a2745f311273da62c20092307479e1f9c804bb9bd12a6cb647ff5456d7c53f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "7b6bbd24837589d5579694e360f53baa795de3c66916b774a098c67956958a75",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "31bb4a87a548223c1b804732206ccff5cbb3a4f9b68396f44bbd83f01f457652",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "fca84984bf0479f89804fdd1ab7bac8bfceb0dfb8ec30279fc10484d3467a478",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-14",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a4433683aa03a092e6f82a14f2ca830d8780977f06952272dc6f7f08a93dfe97",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "935387fd99061a712d878cdeef0726bd3677c4ec8fa4df1608f68803fb085900",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-15",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "92f4532cbe76f2d81af02544bae141041b75175a4874dc1e8c3271293ebf37b6",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "772b4cf486d41f29946f86d285114c01c3370e12642db363338d7251c969131d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c9462e8c811a014ad8ec8ee3550c8161ddade28946dd5d96ac081a28d07a99f7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "a20a0dce29598f5bf2c84bd77fa538ead1b0e6f40b759bd562712959fca03a79",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9bb63154c6c1750a0495a57d2d341f87457bec553abf069703ff19e672928632",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "541ad20bf3c1bc28ba80acaa4a3d16807feb26603ccae1c5bee8565872e28aa4",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bc90dc3e8b2f71736ee2f6fc88ab3e8b16493be9c98688ac617725cfc02b42bc",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8e445abf49c39bfcb187bfe764fbd6f88bc239d809baa39457812544a3d9b048",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-21",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c7afe2e0c26c8515dcdb6edec015dc72f7d14891e4b0e9cc06813cb859203288",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e698524191a5e33dd289eb9f32759590f16e0a2478072142441a14070734a77a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-22",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9780f275a4bce83b464eebf87607d56634c3f81fa34cbf359daa627959e5582a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "4285092c97db6ad80f428253cd1ac014e7bee388c70427b6462ed1c369f49393",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "b566c66fdffe289910227196bf9282dda57ea4b0abfd1c10ed5bedcfb369e31f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8c1b7e5afe2e08e43c8961c4d6d434b1df4f217bb455a68f1ab13ae5bc4194e8",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9ecb809b8cd638c44249111ddffbc85e50a11b35a3035a255a718e1ecdf5948a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "75c03f00a9b563cfd94722d52f73efea02b783b4a5cd7c91a40645920414b244",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-28",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "94b6d5febc6ab2b9d41c0054c1edbef3901cc0623e1264ff4da2a29b65e4fd02",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "75944d3ca1ff9a8f08c669efaa5c3f7e7c209a8393c0ccd07f8eac8a8b20eda7",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-29",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "874c44e1f8c7ebdaa650f87bf372331ccb1826fdb56fe9bdb169b5167986e5f5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-05-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "16837ff24e9a62f9ab4359703a9a4a5af0f91a29822034192584609a68413255",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-05-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5a4d03efb41bf161d153f0a670af910296d6873514b69d5d161d8e5bc13ee2b2",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bbd9d50d82fd78bcbf415d8ab6a404e6f0cd8771649deda8cd0ebe8c0ff2f65f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-02",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "fc400b834e1a4050770471286dbd9ef3bdc79e7e4102799a69df9b316e031d96",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "90d2d5eba5b5c4c8442857235e10cba179e9c759828b32c13b20fdca96d96e6a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-03",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3e59f711f378a9b82ae3972d77fbe9b05484bc1e8224721ba300aeed46a29707",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ae6b0cfa6e58d23feb7e2e135eef6c421977b855de75f0c4b9a563d318173fe0",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-04",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e121097d37dd558439115d520af7277fdb92e42135fcdb9b6960c5258a8bc44e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5712dd1cf896ad98987fb0349f979d20b360724eb6b53c7f9c1f8f334eac08e5",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-05",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e9b4b3c2dd8a39764b9add639d4218b6461c8a97d5996e798593fbff1a8bbc1e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "515488fb5d8c73c653918631deed9f37d07fa7601da4effbfa9143fabae59901",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-06",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1fc64b4615487eefd5367f31bb76edae94aec989ab8b9bcc8b65fd730acd3f85",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "370f2dac2741d27dbcb32a60fe7d201e0ff5f1548bd05aa5f8efec24c24e302f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-09",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "3987e44d4ea5ca2d44640b563a4f09e9e458018ee6911a79330929a2722666f8",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "0476c25e54f22752b3e61a44a47cdac9280b4e533decab39b3f061fd3d170880",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-10",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "4477f830bd121809dcbc4daeb79809daacee0d22282a9e2ec1d8443fcf7202ce",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "97a464ca308af1cb7dbddc99fa77eb6150ca9a59dd3ad3bb7c78a5165f7fd50e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-11",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d2ffa6b2fb75552abe0aefd26b57faa5a200d315fec0c340c4121587f46cade8",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "89dc754b474302b87b4d47fe0fae0dc9f11fa2d3c5c283c5a0b497f1bb261f0a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-12",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c93d4a41398b4392c670928447b7ad0ed55d6bc64f3092ca9ffc9a839c528d5c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "d2e56bb38d7ec943a7a942fc85fe4cc64852c322e9882f442352bc5947c17c51",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-13",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "26f7171c402edbe0afe56df354593f3e99623fd9f28892e90cf816f39b9666ea",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "277bc32b29d7e25ad27b26006ecec8c3276b327ded7c24967dd123df92e974f1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-16",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "5eae0ecc5f76c0a76890a41df677b864b8ea33f86f97c5749429a78810defe05",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8ab22390ca764549e0fba55a4521b8c84d35daf1bfee9d14304896de1174fd8a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-17",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8cb5074be56511189cd8f9e272187862f74f16d85473be5cf9280cd3af8ff69e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f535dfcaf111f37020e347ce28a7940cfd8d6fab8b2d44912e21ffdb0332bd54",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-18",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "cd90c1271449fbac9edbdc1ef2c1ef0dc638a2432d0485c53cf9be57082c3cad",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "f446e2e708659d901d1c19b2a5508a2151182ef643a771b89770e0132301358c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-19",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c6c406fdb4d4bde413c71e3e1d59ef1617f80e8eb429a83dd698c9358604296e",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "400cb88439dc491426a25dddabad1b5336321664ddfb1246b9c126a6feb6782c",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-20",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "1be5d46cff4481f301b5d3b97234fde2c15b33943b9dec1ede7946a71a8f258a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "e4a75387edba6439a5eef389813468182c8d3feeb06fe86973a87bed30ba733a",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-23",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "bc30b3b193bc4babab96a9cb9abe635220e584228ab80fb6789f85aef4654ef1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "63a4bd9861644cf8955842ddb3cdaee4c3edb55b52c4c4d54b76bf4a42167c56",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-24",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c5985ed19baaa834ba369cbb467d862b2df385d38d991c59e62d609e39b50340",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "8e05256d8680fb5b9e494fa2a34d66bc382e7767b1227204e2d85536de3c7733",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-25",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "ab030eac2a6b44d7be7edde8bddfd227b3f30498077a39dc4bae94400fdb5f14",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "133f744a152fe880b05b674911515e8a690a15945fd5fe371980268471555ecd",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-26",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "26ffe6e9ffb4bcda63430deb53dc66086ab92ca7bf8e9e6be047164ff5363456",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c83c4c09a7d8231b94f8a4bbb980a5d7386d36c387ee2ee07a291df17ec40ea9",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-27",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "9bb92e54e5d3bb9ade06d55a06ba4bb687f3cf6e1d79d461dffdc91d24027193",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "sessionId": "synx-2025-06-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "c923e7e7deb0a8c480d2025b5a62ea092cfec98ffc686701f1c0c367e9cc312d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "sessionId": "synx-2025-06-30",
+            "reports": 4,
+            "citations": 4,
+            "resolved": 4,
+            "physicalCalls": 10,
+            "normalizations": 4,
+            "repairs": 1,
+            "toolRequests": 1,
+            "refusedToolRequests": 1,
+            "concurrent": true,
+            "outputSha256": "08a103ccc5eff6b7ee08e7dd4cdbdf3197cd4c7cd0625362544b1511d27189b0",
+            "reproduced": true
+          }
+        ],
+        "probes": [
+          {
+            "id": "invented-citation",
+            "passed": true,
+            "physicalCalls": 8,
+            "repairs": 0,
+            "refusals": 1
+          },
+          {
+            "id": "invalid-after-repair",
+            "passed": true,
+            "physicalCalls": 9,
+            "repairs": 1,
+            "refusals": 1
+          },
+          {
+            "id": "shared-budget",
+            "passed": true,
+            "physicalCalls": 3,
+            "repairs": 0,
+            "refusals": 3
+          },
+          {
+            "id": "context-budget",
+            "passed": true,
+            "physicalCalls": 0,
+            "repairs": 0,
+            "refusals": 4
+          }
+        ]
       }
     ]
   },
@@ -2752,6 +7236,7 @@
     "indicators": true,
     "signals": true,
     "baselines": true,
+    "analysts": true,
     "agent": false,
     "complete": false
   },
@@ -2807,7 +7292,8 @@
     "All controls and five baselines use one next-open simulator. Oracle and cash reproduce independent golden ledgers; the excluded leaky request is refused and has zero fills.",
     "SYN-B buy-and-hold loses while SYN-A gains; both per-asset returns are shown. Each asset starts with an equal share of capital for attribution.",
     "Bars arrive 15 minutes after close. Signals use the latest admitted revision per historical session; all assets decide before any next-open fill. Cash, holdings and cited observations are visible to signal callbacks; ex-post marks are not.",
+    "Analyst mechanism cases use a fixed cash-only portfolio and scripted responses. Citation resolution and deliberate repair/tool-refusal probes test boundaries, not investment quality or entailment.",
     "Live model quality, external historical replay and operational parity are not measured. No network request is made."
   ],
-  "reportId": "a685374fcefc0d20ce107693a3488eabbbc5ea1a2ac656bda1367dc6456df1f4"
+  "reportId": "5f54be2a33f19cf4e4898bfc540b2d9e4e130288c2dc41593c6c8db05371d04e"
 }

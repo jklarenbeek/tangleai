@@ -27,6 +27,7 @@ const LIMITATIONS = [
   'All controls and five baselines use one next-open simulator. Oracle and cash reproduce independent golden ledgers; the excluded leaky request is refused and has zero fills.',
   'SYN-B buy-and-hold loses while SYN-A gains; both per-asset returns are shown. Each asset starts with an equal share of capital for attribution.',
   'Bars arrive 15 minutes after close. Signals use the latest admitted revision per historical session; all assets decide before any next-open fill. Cash, holdings and cited observations are visible to signal callbacks; ex-post marks are not.',
+  'Analyst mechanism cases use a fixed cash-only portfolio and scripted responses. Citation resolution and deliberate repair/tool-refusal probes test boundaries, not investment quality or entailment.',
   'Live model quality, external historical replay and operational parity are not measured. No network request is made.',
 ];
 
@@ -47,14 +48,18 @@ export function tradingCapabilities(rows: Row[], poison: Trading['poison'], mech
   const agent = instrument && rows.some(r => r.id === 'tradingagents-scripted' && r.status === 'measured' && r.eligibility.eligible);
   const measured = (id: string) => mechanisms.rows.some(r => r.id === id && r.status === 'measured' && r.total > 0 && r.total === r.reproduced);
   const indicators = measured('indicators'), signals = measured('signals');
-  return { instrument, controls, indicators, signals, baselines, agent, complete: instrument && controls && indicators && signals && baselines && agent };
+  const analysts = measured('analysts-scripted') && mechanisms.rows.some(r => r.id === 'analysts-scripted' && r.citations > 0 && r.citations === r.resolved && r.probes.length === 4 && r.probes.every(p => p.passed));
+  return { instrument, controls, indicators, signals, baselines, analysts, agent, complete: instrument && controls && indicators && signals && baselines && analysts && agent };
 }
 export async function tradingSource(): Promise<Source> {
   return sourceManifest(TRADING_ROOT, ['package.json', 'package-lock.json', 'benchmark/trading.ts', 'benchmark/scripts/trading-fixture.ts',
     'benchmark/schemas/trading.schema.json', 'benchmark/lib/trading.types.ts', 'benchmark/lib/trading.ts', 'benchmark/lib/trading-metrics.ts',
     'benchmark/lib/trading-report.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
     'benchmark/lib/args.ts', 'benchmark/lib/table.ts', 'test/benchmark/trading.test.ts', 'benchmark/lib/trading-mechanisms.ts',
-    'benchmark/scripts/trading-indicator-fixtures.py', 'test/fixtures/trading-indicators.json', 'benchmark/lib/trading-execution.ts'], ['benchmark/fixtures/trading', 'packages/trading', 'test/trading']);
+    'benchmark/scripts/trading-indicator-fixtures.py', 'test/fixtures/trading-indicators.json', 'benchmark/lib/trading-execution.ts',
+    'benchmark/lib/trading-analyst-runner.ts', 'benchmark/lib/trading-analysts.ts', 'benchmark/lib/gmpl-runner.ts',
+    'scripts/trading-artifacts.ts', 'scripts/trading-sources.ts', 'test/fixtures/trading-prompts.json'],
+  ['benchmark/fixtures/trading', 'packages/trading', 'test/trading', 'prompts/trading', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents', 'packages/models', 'packages/context', 'packages/config', 'packages/core']);
 }
 export async function buildTradingReport(options: { source?: Source } = {}): Promise<Trading> {
   const fixture = await loadTradingFixture(), rows = await tradingControlRows(fixture), poison = await auditTradingPoison(fixture), mechanisms = await measureTradingMechanisms(fixture);
@@ -81,7 +86,7 @@ export async function validateTradingReport(value: unknown, fixture?: TradingFix
   same(report.conventions, tradingConventions(loaded.manifest), 'metric conventions');
   same(report.rows, await tradingControlRows(loaded), 'row metrics, controls, costs or eligibility');
   same(report.poison, await auditTradingPoison(loaded), 'point-in-time poison audit');
-  same(report.mechanisms, await measureTradingMechanisms(loaded), 'independent indicator and signal measurements');
+  same(report.mechanisms, await measureTradingMechanisms(loaded), 'independent indicators, signals and scripted analyst measurements');
   same(report.counts, tradingCounts(report.rows), 'count reconciliation');
   same(report.capabilities, tradingCapabilities(report.rows, report.poison, report.mechanisms), 'capability reconciliation');
   same(report.identity, analyticEnvelope(report.rows.map(r => r.id)), 'analytic identity');
@@ -109,6 +114,7 @@ export function renderDocument(report: Trading): string {
     + `Targets enter with at most 100 whole shares and exit the held quantity; policy can only reduce a proposed quantity. Hard ceilings: gross/net exposure 1, single-name 0.6, participation 0.01, loss 0.2, cash floor USD 0. Only market orders in the declared two assets are allowed. Corporate actions settle once at the open; missing close bars retain prior marks and are counted. No terminal liquidation is forced.\n\n`
     + `Calculation rows are counted separately from the ten execution strategies.\n\n`
     + table({ head: ['Mechanism', 'Status', 'Reproduced', 'Total'], rows: report.mechanisms.rows.map(r => [r.id, r.status, r.reproduced, r.total]), numeric: [2, 3] }) + '\n\n'
+    + report.mechanisms.rows.filter(r => r.id === 'analysts-scripted').map(r => `Analyst mechanism: ${r.reports} reports across ${r.total} asset/session cases; ${r.resolved}/${r.citations} citations resolve inside the role projection. Native MAS execution observed ${r.physicalCalls} physical calls, ${r.normalizations} normalizations, ${r.repairs} repairs, and ${r.refusedToolRequests}/${r.toolRequests} refused after-cutoff tool requests. All cases freeze the same cash-only portfolio and execute the four lanes concurrently. This is a scripted mechanism test, not a profitability or entailment claim.\n\n` + table({ head: ['Analyst safety probe', 'Passed', 'Physical calls', 'Repairs', 'Failed attempts'], rows: r.probes.map(p => [p.id, p.passed ? 'yes' : 'no', p.physicalCalls, p.repairs, p.refusals]), numeric: [2, 3, 4] }) + '\n\n').join('')
     + (report.mechanisms.reference ? `Reference: Python ${report.mechanisms.reference.python}; ${Object.entries(report.mechanisms.reference.packages).map(([name, version]) => `${name} ${version}`).join(', ')}. Generator SHA-256 \`${report.mechanisms.reference.generatorSha256}\`.\n\n` : 'Independent reference fixture is absent.\n\n')
     + `Indicators use the native suite kernels, ordinary arrays and Float64Array; absolute error must be below 1e-10 with identical null warm-up. ADX uses TA-Lib seeding; VWAP resets follow explicit flags; volume ratio uses preceding samples; KDJ is fast stochastic K/D and J = 3K − 2D.\n\n`
     + table({ head: ['Asset', 'Policy', 'Sessions', 'Warm-up', 'Entries', 'Exits', 'Reproduced'], rows: report.mechanisms.rows.flatMap(r => r.id === 'signals' ? r.cases.map(c => [c.asset, c.policy, c.sessions, c.warmup, c.entries, c.exits, c.reproduced ? 'yes' : 'no']) : []), numeric: [2, 3, 4, 5] }) + '\n\n'

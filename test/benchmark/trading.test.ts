@@ -45,7 +45,7 @@ describe('registered trading measurement', () => {
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
     assert.equal(report.counts.implementationMissing, 1); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts']) assert.doesNotThrow(() => requireCapability(report, capability));
     for (const capability of ['agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
     assert.equal(leaky.transactions, 0); assert.equal(leaky.rejectedOrders, 1);
     const hold = report.rows.find(r => r.id === 'buy-and-hold')!;
@@ -58,15 +58,20 @@ describe('registered trading measurement', () => {
   it('keeps thirty independent vectors and ten signal series separate from execution returns', async () => {
     const [indicators, signals] = report.mechanisms.rows;
     assert.equal(indicators.id, 'indicators'); assert.equal(signals.id, 'signals');
-    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10]]);
+    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10], ['measured', 248, 248]]);
     assert.equal(indicators.cases.reduce((n, c) => n + c.positions, 0), 2880);
     assert.ok(indicators.cases.every(c => c.arraySha256 === c.float64Sha256 && c.maximumAbsoluteError < 1e-10));
     assert.ok(signals.cases.every(c => c.referenceSha256 === c.actualSha256 && c.entries === c.expectedEntries && c.exits === c.expectedExits));
+    const analysts = report.mechanisms.rows[2]; assert.equal(analysts.id, 'analysts-scripted');
+    assert.equal(analysts.reports, 992); assert.equal(analysts.citations, analysts.resolved); assert.ok(analysts.citations > 0);
+    assert.equal(analysts.physicalCalls, 2480); assert.equal(analysts.repairs, 248); assert.equal(analysts.refusedToolRequests, 248);
+    assert.ok(analysts.cases.every(c => c.concurrent && c.reports === 4 && c.reproduced)); assert.ok(analysts.probes.every(p => p.passed));
     for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.ok(row.metrics); assert.equal(row.reason, null); }
     const dir = await mkdtemp(join(tmpdir(), 'trading-reference-'));
     try {
       const missing = await measureTradingMechanisms(fixture, join(dir, 'absent.json'));
-      assert.equal(missing.reference, null); assert.ok(missing.rows.every(r => r.status === 'not-run' && r.total === 0 && r.reason));
+      assert.equal(missing.reference, null); assert.ok(missing.rows.filter(r => r.id !== 'analysts-scripted').every(r => r.status === 'not-run' && r.total === 0 && r.reason));
+      assert.equal(missing.rows.find(r => r.id === 'analysts-scripted')!.status, 'measured');
       const file = join(dir, 'reference.json'), parsed = JSON.parse(await readFile('test/fixtures/trading-indicators.json', 'utf8'));
       parsed.reference.generatorSha256 = '0'.repeat(64); await writeFile(file, JSON.stringify(parsed));
       await assert.rejects(measureTradingMechanisms(fixture, file), /source identity/);
@@ -113,6 +118,9 @@ describe('registered trading measurement', () => {
       r => { r.poison.refused--; }, r => { r.poison.cases[0].withSha256 = '0'.repeat(64); },
       r => { r.capabilities.complete = true; }, r => { r.fixture.sha256 = '0'.repeat(64); }, r => { r.source.sha256 = '0'.repeat(64); },
       r => { r.mechanisms.rows[0].reproduced--; }, r => { const row = r.mechanisms.rows[1]; if (row.id === 'signals') row.cases[0].entries++; },
+      r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.resolved++; },
+      r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.cases[0].concurrent = false; },
+      r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.probes[0].passed = false; },
       r => { r.mechanisms.reference!.packages.ta = 'forged' as '0.11.0'; },
       r => { r.rows[3].execution!.equitySha256 = '0'.repeat(64); }, r => { r.rows[3].execution!.decisionCount++; },
     ];

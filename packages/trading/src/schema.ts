@@ -1,5 +1,6 @@
 import { JarenValidator } from '@jarenjs/validate';
 import { toEpoch } from '@jarenjs/core/series';
+import { gmplSchemaDefinition } from '@tangleai/gmpl';
 import schema from '../schemas/trading.schema.json' with { type: 'json' };
 import { immutableTradingJson } from './identity.ts';
 import { tradingRefuse } from './errors.ts';
@@ -11,10 +12,17 @@ export type TradingSchemaName = keyof typeof schema.$defs;
 type Validator = (value: unknown) => { valid: boolean; errors?: Array<{ instancePath?: string; message?: string; params?: { missingProperty?: string } }> };
 const schemas = new Map<TradingSchemaName, Record<string, unknown>>(), validators = new Map<TradingSchemaName, Validator>();
 const recordSchemas = new Map<string, TradingSchemaName>();
-for (const [name, definition] of Object.entries(schema.$defs)) {
-  const kind = (definition as { properties?: { kind?: { const?: string; enum?: string[] } } }).properties?.kind;
-  for (const value of kind?.const ? [kind.const] : kind?.enum ?? []) recordSchemas.set(value, name as TradingSchemaName);
+function registerRecord(name: TradingSchemaName): void {
+  const definition = schema.$defs[name] as { oneOf?: Array<{ $ref: string }>; properties?: { kind?: { const?: string; enum?: string[] } } };
+  // Only union members own persisted kinds. Prompt views may share a discriminator.
+  for (const member of definition.oneOf ?? []) registerRecord(member.$ref.slice('#/$defs/'.length) as TradingSchemaName);
+  const kind = definition.properties?.kind;
+  for (const value of kind?.const ? [kind.const] : kind?.enum ?? []) {
+    if (recordSchemas.has(value)) throw new Error(`Duplicate trading record kind ${value}`);
+    recordSchemas.set(value, name);
+  }
 }
+registerRecord('tradingRecord');
 export function validateTradingRecordShape(input: unknown): TradingOutcome<TradingRecord> {
   const kind = input && typeof input === 'object' && 'kind' in input ? input.kind : undefined;
   const name = typeof kind === 'string' ? recordSchemas.get(kind) : undefined;
@@ -22,7 +30,7 @@ export function validateTradingRecordShape(input: unknown): TradingOutcome<Tradi
 }
 export function tradingSchemaOf(name: TradingSchemaName): Record<string, unknown> {
   let found = schemas.get(name);
-  if (!found) { found = immutableTradingJson({ $id: `https://tangleai.dev/schemas/trading/${name}`, ...schema.$defs[name], $defs: schema.$defs }); schemas.set(name, found); }
+  if (!found) { found = gmplSchemaDefinition(schema, name, `https://tangleai.dev/schemas/trading/${name}`); schemas.set(name, found); }
   return found;
 }
 export function validateTradingShape<T>(name: TradingSchemaName, input: unknown): TradingOutcome<T> {

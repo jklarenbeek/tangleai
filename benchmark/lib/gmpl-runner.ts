@@ -60,10 +60,10 @@ export async function driveGmplWorkflow(prepared: PreparedDrive, options: Script
       // has no prior assistant turn. This also resets cursors across loop rounds.
       const fresh=!messages.some(m=>m.role==='assistant');
       if(fresh){cursor.invocation++;cursor.phase='completion';}
-      const current=fresh?'completion':phase;
+      const current=fresh||messages.at(-1)?.role==='tool'?'completion':phase;
       const evidenceIds=[...new Set(messages.flatMap(m=>[...m.content.matchAll(/"id"\s*:\s*"([^"]+-e\d+)"/g)].map(x=>x[1])))];
       visibility.push({node:node.id,phase:current,messages,evidenceIds});
-      usage.physical++;usage[current]++;if(current==='completion')usage.roles++;
+      usage.physical++;usage[current]++;if(current==='completion'&&fresh)usage.roles++;
       await options.beforeCall?.(node.id,cursor.invocation,current);
       if(options.complete){
         try{const completion=await options.complete(node.id,cursor.invocation,current,request);

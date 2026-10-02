@@ -2,7 +2,7 @@
   "instrument": "gmpl-conformance",
   "version": 1,
   "source": {
-    "head": "a9255aa83445546893caface974ff6845a60708d",
+    "head": "f4926cff6148b0c91832a64dda2b281295ccb32b",
     "clean": false,
     "files": [
       {
@@ -167,7 +167,7 @@
       },
       {
         "path": "benchmark/lib/gmpl-runner.ts",
-        "sha256": "96ac1ce13d7d04896a9b941a4f43ffd74742fade47acd8e33dc63ba9c7fa8eab"
+        "sha256": "c9b872e1a793b59d4818b406e5b814cf58a1d0c9e4422e54f47463a03e632028"
       },
       {
         "path": "benchmark/lib/gmpl-scripts.ts",
@@ -207,7 +207,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "451c8305eeb25ab3257c457166ea8763fac34b159f9c45f5d8c302c9211021a0"
+        "sha256": "7f6a9597a9441979612b8a99e2dfaf329fd5c53c5224c806c4c2008cd86a1dc0"
       },
       {
         "path": "packages/agents/package.json",
@@ -463,7 +463,7 @@
       },
       {
         "path": "packages/gmpl/src/index.ts",
-        "sha256": "3a3ba040c82008521ee3f2480b68b2c468882d80e2fc257f12087afcc3572515"
+        "sha256": "48969d8380cb6264f3ceac1855cb81869f5138b110dfbe1ecf9d1a7d80ae99dd"
       },
       {
         "path": "packages/gmpl/src/patterns/clarification.ts",
@@ -515,7 +515,7 @@
       },
       {
         "path": "packages/gmpl/src/schema.ts",
-        "sha256": "a9c6e1c3261e09f4a4db260443a076e197c517779322dceeb3a0a86c568975eb"
+        "sha256": "0f5e4027ef6181ac4809f99062a02a65db103e5a119a5b74aa6f78bfd08b39e4"
       },
       {
         "path": "packages/gmpl/src/specialize.ts",
@@ -903,7 +903,7 @@
       },
       {
         "path": "packages/trading/package.json",
-        "sha256": "4d0469623e35f336167fdbebdfdc73302331d874d58752a88ecb6911fb35445e"
+        "sha256": "debc89ecfbfac9ffb7081cf66176affea0f6c4d49bee2bb2ad4c72b44a78a3b2"
       },
       {
         "path": "prompts/gmpl/analysis/analyst.toml",
@@ -1043,7 +1043,7 @@
       },
       {
         "path": "test/gmpl/prompts.test.ts",
-        "sha256": "644523c75030b85f797bbda4d52ec9336d3ff061d0b7ef6cc71748bae9b08737"
+        "sha256": "950a231ab2a978c74cb017577cf4ff7400d15cfaa9ca870e0191cb0f5a0328b1"
       },
       {
         "path": "test/gmpl/recovery.test.ts",
@@ -1090,7 +1090,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "573d68f83bc251d2200b301ced6a735286337a200a2557e8d8b13d18b4e3ed06"
+    "sha256": "87b8b489c29a623f4b39344c9552ea026b856ec97e5c53b2fb9808fa5a58737e"
   },
   "ablations": [
     {
@@ -76644,5 +76644,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "1cd0b3e5e99d06cff1c23148d7a424b0eccb5006a97723d67ae75756588ccf4f"
+  "reportId": "5d75063566225e5acb2ccc9ac8493ec4dd1a0f26322c029787abe8c0aa47faf0"
 }

@@ -69,8 +69,14 @@ compares admitted observations and derived return windows at every session close
 Separate calculation rows reproduce 30 reference indicator vectors and ten
 baseline signal series. They retain pinned reference versions, vector identities
 and per-asset crossings without presenting signal calculations as equity returns.
+The separate `analysts-scripted` mechanism runs four MAS lanes for every registered
+asset/session. It checks role-scoped citations and concurrent starts and meters
+native tool refusals, normalizations and repairs. Its portfolio remains cash-only;
+it does not supply a return for the incomplete agent strategy. Declared per-case
+limits and failed citation, repair and budget probes are retained in the report.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
-`--out-dir` redirects both outputs, and `--require baselines` requires all five executed baselines.
+`--out-dir` redirects both outputs, `--require baselines` requires all five executed baselines,
+and `--require analysts` requires the analyst mechanism and its safety probes.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.
 
 The frozen learning schedule has seven training events over five distinct tasks

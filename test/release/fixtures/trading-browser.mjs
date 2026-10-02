@@ -1,6 +1,9 @@
 import { createTradingRecord, createMemoryTradingStore, admit, latestBarsAsOf,
   createFixtureProviders, createReplayProviders, buildSnapshot, buyAndHold, kdj, TRADING_SIGNAL_DEFAULTS,
-  planFill, markPortfolio, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve } from '@tangleai/trading';
+  planFill, markPortfolio, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve,
+  tradingArtifacts, buildAnalystRegion, createTradingHostBindings } from '@tangleai/trading';
+import artifacts from '@tangleai/trading/artifacts' with { type: 'json' };
+import { createGmplCatalog, renderGmplPrompt } from '@tangleai/gmpl';
 const value = result => { if (!result.valid) throw Error(JSON.stringify(result.issues)); return result.value; };
 
 export async function tradingConsumerFixture() {
@@ -9,8 +12,8 @@ export async function tradingConsumerFixture() {
     initialCapital: 1000, decisionCutoff: 'session-close', fill: 'next-open', shares: 'whole', shorting: false, leverage: false,
     commissionBps: 5, slippageBps: 5, sessionsPerYear: 252, riskFree: { kind: 'zero-series' },
     providerSnapshots: [{ provider: 'toy', revision: '0'.repeat(64), licence: 'MIT' }], rolesByProfile: { analyst: 'scripted' },
-    promptCatalogRevision: '0'.repeat(64), toolManifest: [], rounds: { research: 3, risk: 2 },
-    limits: { calls: 10, tokens: 10000, ms: 10000, toolRounds: 2, fanOut: 4, concurrency: 2, iterations: 4, contextChars: 10000, traceBytes: 10000 },
+    promptCatalogRevision: tradingArtifacts.revision, toolManifest: [], rounds: { research: 3, risk: 2 },
+    limits: { calls: 10, tokens: 10000, ms: 10000, toolRounds: 2, fanOut: 4, concurrency: 4, iterations: 4, contextChars: 10000, traceBytes: 10000 },
     seed: 1, sourceRevision: '0'.repeat(40), riskPolicy: { grossExposure: 1, netExposure: 1, singleName: 1, cashFloor: 0, maxParticipation: 0.01,
       lossLimit: 0.2, instruments: ['TOY'], orderKinds: ['market'] },
   }));
@@ -44,6 +47,18 @@ export async function exerciseTradingConsumer(store, fixture) {
   const providers = value(await createReplayProviders({ manifestId: manifest.id, snapshots: captured.snapshots, bindings: captured.bindings }));
   const built = value(await buildSnapshot({ manifest, asset: 'TOY', session: sessions[1], portfolio: initial, providers }));
   if (built.snapshot.staleness !== 1 || built.snapshot.observationIds[0] !== bar.id || built.snapshot.providerErrors.length) throw Error('Packed snapshot differs');
+  const catalog = value(await createGmplCatalog(artifacts));
+  if (catalog.document.revision !== tradingArtifacts.revision || catalog.document.prompts.length !== 12) throw Error('Packed prompt catalog differs');
+  const region = value(await buildAnalystRegion({ catalog, profile: 'scripted', limits: manifest.limits }));
+  if (region.nodes.filter(n => n.kind === 'agent').length !== 4) throw Error('Packed analyst region differs');
+  const host = value(await createTradingHostBindings({ catalog, manifest, snapshot: built, portfolio: initial, providers,
+    provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) }));
+  const task = { state: {}, node: 'prepare-analyst-technical', path: 'prepare-analyst-technical', idempotencyKey: 'consumer', signal: new AbortController().signal };
+  const prepared = await host.taskHandlers['prepare-analyst-technical']({ ...task, value: { snapshot: built.snapshot } });
+  if (!value(renderGmplPrompt(catalog.prompt('trading-analyst-technical'), prepared.variables)).user.includes(bar.id)) throw Error('Packed prompt does not expose its admitted evidence');
+  const checked = await host.taskHandlers['check-analyst-technical']({ ...task, node: 'check-analyst-technical', value: { ...prepared, out: {
+    findings: [{ text: 'Synthetic consumer finding', citations: [{ id: bar.id, digest: bar.revision }] }], signal: 'neutral', confidence: 0.5, horizon: 'Next session', limitations: ['Synthetic consumer'] } } });
+  if (checked.report.kind !== 'analyst-report' || checked.report.citations[0] !== bar.id) throw Error('Packed analyst check differs');
   value(await store.put('snapshots', built.snapshot));
   if (value(buyAndHold([bar], TRADING_SIGNAL_DEFAULTS))[0]?.target !== 'long' || kdj([1], [1], [1]).j[0] !== null) throw Error('Packed signal differs');
   const first = value(await store.commitDecision(plan)), replay = value(await store.commitDecision(plan));

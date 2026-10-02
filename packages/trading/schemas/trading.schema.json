@@ -121,6 +121,9 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "analysis": {
+          "$ref": "#/$defs/analystReportOutput"
         }
       },
       "required": [
@@ -139,6 +142,48 @@
         "signals",
         "gaps",
         "key"
+      ],
+      "additionalProperties": false
+    },
+    "analystReportOutput": {
+      "type": "object",
+      "properties": {
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingFindingOutput"
+          }
+        },
+        "signal": {
+          "enum": [
+            "bullish",
+            "bearish",
+            "neutral"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "horizon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "findings",
+        "signal",
+        "confidence",
+        "horizon",
+        "limitations"
       ],
       "additionalProperties": false
     },
@@ -754,6 +799,74 @@
         "key"
       ],
       "additionalProperties": false
+    },
+    "fundManagerOutput": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "enum": [
+            "approved",
+            "modified",
+            "rejected"
+          ]
+        },
+        "finalIntent": {
+          "$ref": "#/$defs/tradingProposedIntent"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingCitation"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "inputProposalId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "inputRiskVerdictId": {
+          "$ref": "#/$defs/tradingId"
+        }
+      },
+      "required": [
+        "decision",
+        "finalIntent",
+        "reasons",
+        "citations",
+        "inputProposalId",
+        "inputRiskVerdictId"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "decision": {
+                "const": "rejected"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "finalIntent": {
+                "properties": {
+                  "action": {
+                    "const": "hold"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "ledgerEntry": {
       "type": "object",
@@ -1649,6 +1762,59 @@
       ],
       "additionalProperties": false
     },
+    "riskTurnOutput": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/tradingCitation"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "id",
+              "text",
+              "citations"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "position",
+        "claims",
+        "recommendations"
+      ],
+      "additionalProperties": false
+    },
     "riskVerdict": {
       "type": "object",
       "properties": {
@@ -1763,6 +1929,91 @@
         "proposalId",
         "maxQuantity",
         "key"
+      ],
+      "additionalProperties": false
+    },
+    "riskVerdictOutput": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "adjust",
+            "hold",
+            "reject",
+            "continue"
+          ]
+        },
+        "adjustedIntent": {
+          "$ref": "#/$defs/tradingProposedIntent"
+        },
+        "acceptedClaims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rejectedClaims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingFindingOutput"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action",
+        "adjustedIntent",
+        "acceptedClaims",
+        "rejectedClaims",
+        "findings",
+        "recommendations",
+        "summary"
       ],
       "additionalProperties": false
     },
@@ -1883,6 +2134,113 @@
       ],
       "additionalProperties": false
     },
+    "tradeProposalOutput": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "buy",
+            "sell",
+            "hold"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "targetWeight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "timing": {
+          "const": "next-open"
+        },
+        "horizon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingCitation"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "assumedPortfolioId": {
+          "$ref": "#/$defs/tradingId"
+        }
+      },
+      "required": [
+        "action",
+        "timing",
+        "horizon",
+        "rationale",
+        "citations",
+        "assumedPortfolioId"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "action": {
+              "const": "hold"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "quantity"
+                ]
+              },
+              {
+                "required": [
+                  "targetWeight"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "action": {
+              "enum": [
+                "buy",
+                "sell"
+              ]
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "quantity"
+              ],
+              "not": {
+                "required": [
+                  "targetWeight"
+                ]
+              }
+            },
+            {
+              "required": [
+                "targetWeight"
+              ],
+              "not": {
+                "required": [
+                  "quantity"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     "tradingActionsInput": {
       "type": "object",
       "properties": {
@@ -1934,6 +2292,238 @@
         "portfolio",
         "ledgerEntries",
         "actionIds"
+      ],
+      "additionalProperties": false
+    },
+    "tradingAnalystProjection": {
+      "type": "object",
+      "properties": {
+        "snapshotId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoffAt": {
+          "$ref": "#/$defs/tradingInstant"
+        },
+        "role": {
+          "$ref": "#/$defs/tradingAnalystRole"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/tradingId"
+              },
+              "digest": {
+                "$ref": "#/$defs/tradingRevision"
+              },
+              "observation": {
+                "$ref": "#/$defs/observation"
+              }
+            },
+            "required": [
+              "id",
+              "digest",
+              "observation"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "policy": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/tradingTargetSignal"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "policy",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "staleness": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "providerErrors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "indicators": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingTechnicalIndicators"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "snapshotId",
+        "asset",
+        "cutoffAt",
+        "role",
+        "evidence",
+        "signals",
+        "staleness",
+        "providerErrors",
+        "indicators"
+      ],
+      "additionalProperties": false
+    },
+    "tradingAnalystRole": {
+      "enum": [
+        "fundamentals",
+        "sentiment",
+        "news",
+        "technical"
+      ]
+    },
+    "tradingAnalystView": {
+      "type": "object",
+      "properties": {
+        "snapshotId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoffAt": {
+          "$ref": "#/$defs/tradingInstant"
+        },
+        "role": {
+          "$ref": "#/$defs/tradingAnalystRole"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/tradingId"
+              },
+              "digest": {
+                "$ref": "#/$defs/tradingRevision"
+              },
+              "data": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/tradingVisibleBar"
+                  },
+                  {
+                    "$ref": "#/$defs/tradingVisibleAction"
+                  },
+                  {
+                    "$ref": "#/$defs/tradingVisibleRelease"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "digest",
+              "data"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "policy": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/tradingTargetSignal"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "policy",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "staleness": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "providerErrors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "indicators": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingTechnicalIndicators"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "snapshotId",
+        "asset",
+        "cutoffAt",
+        "role",
+        "evidence",
+        "signals",
+        "staleness",
+        "providerErrors",
+        "indicators"
       ],
       "additionalProperties": false
     },
@@ -1990,6 +2580,23 @@
       "required": [
         "first",
         "last"
+      ],
+      "additionalProperties": false
+    },
+    "tradingCitation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/tradingRevision"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
       ],
       "additionalProperties": false
     },
@@ -2459,6 +3066,28 @@
       ],
       "additionalProperties": false
     },
+    "tradingFindingOutput": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingCitation"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
     "tradingFixtureProviderInput": {
       "type": "object",
       "properties": {
@@ -2700,6 +3329,86 @@
         }
       ]
     },
+    "tradingProposedIntent": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "buy",
+            "sell",
+            "hold"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "targetWeight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "action": {
+              "const": "hold"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "quantity"
+                ]
+              },
+              {
+                "required": [
+                  "targetWeight"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "action": {
+              "enum": [
+                "buy",
+                "sell"
+              ]
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "quantity"
+              ],
+              "not": {
+                "required": [
+                  "targetWeight"
+                ]
+              }
+            },
+            {
+              "required": [
+                "targetWeight"
+              ],
+              "not": {
+                "required": [
+                  "quantity"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     "tradingProviderBindings": {
       "type": "object",
       "properties": {
@@ -2900,6 +3609,28 @@
         "sessions",
         "observations"
       ],
+      "additionalProperties": false
+    },
+    "tradingReadToolInput": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoffAt": {
+          "$ref": "#/$defs/tradingInstant"
+        },
+        "since": {
+          "$ref": "#/$defs/tradingInstant"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      },
+      "required": [],
       "additionalProperties": false
     },
     "tradingRecord": {
@@ -3745,6 +4476,198 @@
       ],
       "additionalProperties": false
     },
+    "tradingTechnicalIndicators": {
+      "type": "object",
+      "properties": {
+        "priceBasis": {
+          "const": "causal-adjusted-ohlc"
+        },
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "adxPeriod": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "cciPeriod": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "volumePeriod": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "kPeriod": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "dPeriod": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "adxPeriod",
+            "cciPeriod",
+            "volumePeriod",
+            "kPeriod",
+            "dPeriod"
+          ],
+          "additionalProperties": false
+        },
+        "observations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "windowStartId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "windowEndId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "availableAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingInstant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "type": "object",
+          "properties": {
+            "adx": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "plusDI": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "minusDI": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cci": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "vwap": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "volumeRatio": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "k": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "d": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "j": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "adx",
+            "plusDI",
+            "minusDI",
+            "cci",
+            "vwap",
+            "volumeRatio",
+            "k",
+            "d",
+            "j"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "priceBasis",
+        "parameters",
+        "observations",
+        "windowStartId",
+        "windowEndId",
+        "availableAt",
+        "values"
+      ],
+      "additionalProperties": false
+    },
     "tradingTimeRange": {
       "type": "object",
       "properties": {
@@ -3760,6 +4683,210 @@
       "required": [
         "from",
         "to"
+      ],
+      "additionalProperties": false
+    },
+    "tradingVisibleAction": {
+      "type": "object",
+      "properties": {
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "kind": {
+          "const": "corporate-action"
+        },
+        "action": {
+          "enum": [
+            "split",
+            "dividend"
+          ]
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "ratio": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cashPerShare": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "eventAt",
+        "availableAt",
+        "kind",
+        "action",
+        "sessionId",
+        "ratio",
+        "cashPerShare"
+      ],
+      "additionalProperties": false
+    },
+    "tradingVisibleBar": {
+      "type": "object",
+      "properties": {
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "kind": {
+          "const": "bar"
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "open": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "high": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "low": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "close": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "adjustedClose": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "eventAt",
+        "availableAt",
+        "kind",
+        "sessionId",
+        "open",
+        "high",
+        "low",
+        "close",
+        "adjustedClose",
+        "volume"
+      ],
+      "additionalProperties": false
+    },
+    "tradingVisiblePortfolio": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "manifestId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "cash": {
+          "type": "number",
+          "minimum": 0
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/portfolioPosition"
+          }
+        },
+        "asOfSessionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "manifestId",
+        "cash",
+        "positions",
+        "asOfSessionId"
+      ],
+      "additionalProperties": false
+    },
+    "tradingVisibleRelease": {
+      "type": "object",
+      "properties": {
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "kind": {
+          "enum": [
+            "fundamental",
+            "news",
+            "social",
+            "insider",
+            "profile"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerSentiment": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modelInterpretation": {
+          "const": null
+        }
+      },
+      "required": [
+        "eventAt",
+        "availableAt",
+        "kind",
+        "text",
+        "providerSentiment",
+        "modelInterpretation"
       ],
       "additionalProperties": false
     }

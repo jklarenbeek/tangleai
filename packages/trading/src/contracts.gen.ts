@@ -107,6 +107,52 @@ export interface TradingDecisionKey {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type TradingRevision = string;
+
+export interface TradingCitation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  digest: TradingRevision;
+}
+
+
+export interface TradingFindingOutput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  citations: Array<TradingCitation>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type AnalystReportOutputLimitationsItem = string;
+
+export interface AnalystReportOutput {
+  findings: Array<TradingFindingOutput>;
+  signal: "bullish" | "bearish" | "neutral";
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=1
+   */
+  confidence: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  horizon: string;
+  limitations: Array<AnalystReportOutputLimitationsItem>;
+}
+
+
 export interface AnalystReport {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -147,6 +193,7 @@ export interface AnalystReport {
   signals: Array<AnalystReportSignalsItem>;
   gaps: Array<AnalystReportGapsItem>;
   key: TradingDecisionKey;
+  analysis?: AnalystReportOutput;
 }
 
 
@@ -859,6 +906,35 @@ export interface Fill {
 
 
 /**
+ * Schema constraints this type cannot express: if={"properties":{"decision":{"const":"rejected"}}}, then={"properties":{"finalIntent":{"properties":{"action":{"const":"hold"}}}}}
+ */
+export type FundManagerOutputPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
+ */
+export type TradingProposedIntentOneOf1 = { action?: "hold"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"required":["targetWeight"]}
+ */
+export type TradingProposedIntentOneOf2OneOf1 = { quantity: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"required":["quantity"]}
+ */
+export type TradingProposedIntentOneOf2OneOf2 = { targetWeight: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type TradingProposedIntent = (TradingProposedIntentOneOf1 | (TradingProposedIntentOneOf2OneOf1 | TradingProposedIntentOneOf2OneOf2) & ({ action?: "buy" | "sell"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null)) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; };
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type FundManagerOutputReasonsItem = string;
+
+export type FundManagerOutput = FundManagerOutputPart1 & { decision: "approved" | "modified" | "rejected"; finalIntent: TradingProposedIntent; reasons: Array<FundManagerOutputReasonsItem>; citations: Array<TradingCitation>; inputProposalId: TradingId; inputRiskVerdictId: TradingId; };
+
+/**
  * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
  */
 export type LedgerEntryFillIdAnyOf1 = string;
@@ -1256,6 +1332,100 @@ export interface RiskPolicy {
 }
 
 
+export interface RiskTurnOutputClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  citations: Array<TradingCitation>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskTurnOutputRecommendationsItem = string;
+
+export interface RiskTurnOutput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  position: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  claims: Array<RiskTurnOutputClaimsItem>;
+  recommendations: Array<RiskTurnOutputRecommendationsItem>;
+}
+
+
+export interface RiskVerdictOutputAcceptedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface RiskVerdictOutputRejectedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskVerdictOutputRecommendationsItem = string;
+
+export interface RiskVerdictOutput {
+  action: "adjust" | "hold" | "reject" | "continue";
+  adjustedIntent: TradingProposedIntent;
+  acceptedClaims: Array<RiskVerdictOutputAcceptedClaimsItem>;
+  rejectedClaims: Array<RiskVerdictOutputRejectedClaimsItem>;
+  findings: Array<TradingFindingOutput>;
+  recommendations: Array<RiskVerdictOutputRecommendationsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  summary: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
+ */
+export type TradeProposalOutputOneOf1 = { action?: "hold"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"required":["targetWeight"]}
+ */
+export type TradeProposalOutputOneOf2OneOf1 = { quantity: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+/**
+ * Schema constraints this type cannot express: not={"required":["quantity"]}
+ */
+export type TradeProposalOutputOneOf2OneOf2 = { targetWeight: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+
+export type TradeProposalOutput = (TradeProposalOutputOneOf1 | (TradeProposalOutputOneOf2OneOf1 | TradeProposalOutputOneOf2OneOf2) & ({ action?: "buy" | "sell"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null)) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; timing: "next-open"; horizon: string; rationale: string; citations: Array<TradingCitation>; assumedPortfolioId: TradingId; };
+
 /**
  * Schema constraints this type cannot express: minLength=1
  */
@@ -1544,6 +1714,227 @@ export interface TradingActionsResult {
 }
 
 
+/**
+ * Schema constraints this type cannot express: format="date-time"
+ */
+export type TradingInstant = string;
+
+export type TradingAnalystRole = "fundamentals" | "sentiment" | "news" | "technical";
+
+export interface TradingTargetSignal {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  observationId: string;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  availableAt: string;
+  target: "long" | "flat";
+}
+
+
+export interface TradingAnalystProjectionSignalsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  policy: string;
+  value: TradingTargetSignal | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type TradingAnalystProjectionStalenessAnyOf1 = number;
+
+export interface TradingTechnicalIndicatorsParameters {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  adxPeriod: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  cciPeriod: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  volumePeriod: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  kPeriod: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dPeriod: number;
+}
+
+
+export interface TradingTechnicalIndicators {
+  priceBasis: "causal-adjusted-ohlc";
+  parameters: TradingTechnicalIndicatorsParameters;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  observations: number;
+  windowStartId: TradingId | null;
+  windowEndId: TradingId | null;
+  availableAt: TradingInstant | null;
+  values: { adx: number | null; plusDI: number | null; minusDI: number | null; cci: number | null; vwap: number | null; volumeRatio: number | null; k: number | null; d: number | null; j: number | null; };
+}
+
+
+export interface TradingAnalystProjection {
+  snapshotId: TradingId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  cutoffAt: TradingInstant;
+  role: TradingAnalystRole;
+  evidence: Array<{ id: TradingId; digest: TradingRevision; observation: Observation; }>;
+  signals: Array<TradingAnalystProjectionSignalsItem>;
+  staleness: TradingAnalystProjectionStalenessAnyOf1 | null;
+  providerErrors: Array<TradingIssue>;
+  indicators: TradingTechnicalIndicators | null;
+}
+
+
+export interface TradingVisibleBar {
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  eventAt: string;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  availableAt: string;
+  kind: "bar";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  open: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  high: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  low: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  close: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  adjustedClose: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  volume: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: exclusiveMinimum=0
+ */
+export type TradingVisibleActionRatioAnyOf1 = number;
+
+/**
+ * Schema constraints this type cannot express: minimum=0
+ */
+export type TradingVisibleActionCashPerShareAnyOf1 = number;
+
+export interface TradingVisibleAction {
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  eventAt: string;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  availableAt: string;
+  kind: "corporate-action";
+  action: "split" | "dividend";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  sessionId: string;
+  ratio: TradingVisibleActionRatioAnyOf1 | null;
+  cashPerShare: TradingVisibleActionCashPerShareAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minimum=-1, maximum=1
+ */
+export type TradingVisibleReleaseProviderSentimentAnyOf1 = number;
+
+export interface TradingVisibleRelease {
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  eventAt: string;
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  availableAt: string;
+  kind: "fundamental" | "news" | "social" | "insider" | "profile";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  providerSentiment: TradingVisibleReleaseProviderSentimentAnyOf1 | null;
+  modelInterpretation: null;
+}
+
+
+export interface TradingAnalystViewSignalsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  policy: string;
+  value: TradingTargetSignal | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: type="integer", minimum=0
+ */
+export type TradingAnalystViewStalenessAnyOf1 = number;
+
+export interface TradingAnalystView {
+  snapshotId: TradingId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  cutoffAt: TradingInstant;
+  role: TradingAnalystRole;
+  evidence: Array<{ id: TradingId; digest: TradingRevision; data: TradingVisibleBar | TradingVisibleAction | TradingVisibleRelease; }>;
+  signals: Array<TradingAnalystViewSignalsItem>;
+  staleness: TradingAnalystViewStalenessAnyOf1 | null;
+  providerErrors: Array<TradingIssue>;
+  indicators: TradingTechnicalIndicators | null;
+}
+
+
 export interface TradingProviderFailure {
   outcome: "unavailable" | "failed";
   code: "TTRD1007";
@@ -1650,11 +2041,6 @@ export interface TradingCommit {
   actionIds: Array<TradingId>;
 }
 
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
- */
-export type TradingRevision = string;
 
 export interface TradingCommitMarker {
   id: TradingId;
@@ -1781,11 +2167,6 @@ export interface TradingFixtureProviderInput {
 }
 
 
-/**
- * Schema constraints this type cannot express: format="date-time"
- */
-export type TradingInstant = string;
-
 export interface TradingMarkInput {
   manifest: TradingRunManifest;
   portfolio: PortfolioSnapshot;
@@ -1892,6 +2273,20 @@ export interface TradingProviderSnapshot {
   availableAt: string;
   sessions: Array<MarketSession>;
   observations: Array<Observation>;
+}
+
+
+export interface TradingReadToolInput {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset?: string;
+  cutoffAt?: TradingInstant;
+  since?: TradingInstant;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  limit?: number;
 }
 
 
@@ -2016,27 +2411,6 @@ export interface TradingStrategySignalOutcomeOneOf2 {
 
 export type TradingStrategySignalOutcome = { valid: true; value: TradingStrategySignal | null; } | TradingStrategySignalOutcomeOneOf2;
 
-export interface TradingTargetSignal {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  asset: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  sessionId: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  observationId: string;
-  /**
-   * Schema constraints this type cannot express: format="date-time"
-   */
-  availableAt: string;
-  target: "long" | "flat";
-}
-
-
 export interface TradingTimeRange {
   /**
    * Schema constraints this type cannot express: format="date-time"
@@ -2046,6 +2420,18 @@ export interface TradingTimeRange {
    * Schema constraints this type cannot express: format="date-time"
    */
   to: string;
+}
+
+
+export interface TradingVisiblePortfolio {
+  id: TradingId;
+  manifestId: TradingId;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  cash: number;
+  positions: Array<PortfolioPosition>;
+  asOfSessionId: TradingId | null;
 }
 
 

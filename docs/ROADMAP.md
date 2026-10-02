@@ -217,14 +217,13 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* a registered live comparison publishing paired uncertainty,
   costs, failures and losses; official scorer parity on the named slices; and
   an evidenced, idempotent correction/revocation protocol with recovery tests.
-- [ ] **A trading domain (TradingAgents), if it earns its fixture.** *Wanted:*
-  analyst team → debate → trader → risk → fund manager as a flow document over
-  point-in-time market data, a portfolio, a broker simulator and a replay
-  boundary, with every report, turn and decision citing artifacts visible to its
-  role at its time. *Constraint:* nothing of it exists — the five prompt files
-  under `prompts/trading/` and the attic topology are design salvage with no
-  loader, tests, budgets or cutoff enforcement, and the attic workflow assigns
-  the risk prompt to its news analyst. A crash, an invalid model output, a
+- [ ] **A complete trading decision workflow (TradingAgents).** *Wanted:*
+  analyst reports → debate → trader → risk → fund manager as an immutable flow
+  over the point-in-time providers and atomic simulator, with every turn and
+  decision citing artifacts visible to its role at its time. *Constraint:*
+  independent analyst lanes must compose into one bounded decision without
+  exposing future prices or bypassing the deterministic policy checker.
+  A crash, an invalid model output, a
   missing provider or an exhausted budget must be unable to create or duplicate
   a fill. Real-money execution, claims of profitability and autonomous strategy
   evolution stay out. *Closes on:* a frozen-input fixture benchmark whose report

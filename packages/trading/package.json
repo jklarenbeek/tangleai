@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./contracts": "./src/contracts.gen.ts",
     "./schemas/trading": "./schemas/trading.schema.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./artifacts": "./artifacts/catalog.json"
   },
   "engines": {
     "node": ">=24"
@@ -31,7 +32,8 @@
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
-    "docs/**/*.md"
+    "docs/**/*.md",
+    "artifacts/**/*.json"
   ],
   "publishConfig": {
     "access": "public",

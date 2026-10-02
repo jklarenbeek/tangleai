@@ -1573,6 +1573,9 @@
         },
         "signals": {
           "type": "boolean"
+        },
+        "analysts": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1582,7 +1585,8 @@
         "agent",
         "complete",
         "indicators",
-        "signals"
+        "signals",
+        "analysts"
       ],
       "additionalProperties": false
     },
@@ -2413,11 +2417,14 @@
               },
               {
                 "$ref": "#/$defs/signalMeasurement"
+              },
+              {
+                "$ref": "#/$defs/analystMeasurement"
               }
             ]
           },
-          "minItems": 2,
-          "maxItems": 2
+          "minItems": 3,
+          "maxItems": 3
         }
       },
       "required": [
@@ -2432,7 +2439,8 @@
           ],
           [
             "indicators",
-            "signals"
+            "signals",
+            "analysts-scripted"
           ]
         ]
       }
@@ -2476,6 +2484,284 @@
         "replayWrites",
         "staleMarks",
         "decisionCount"
+      ],
+      "additionalProperties": false
+    },
+    "analystCaseMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reports": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedToolRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concurrent": {
+          "type": "boolean"
+        },
+        "outputSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reproduced": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "asset",
+        "sessionId",
+        "reports",
+        "citations",
+        "resolved",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "toolRequests",
+        "refusedToolRequests",
+        "concurrent",
+        "outputSha256",
+        "reproduced"
+      ],
+      "additionalProperties": false
+    },
+    "analystMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "analysts-scripted"
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reports": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "citations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedToolRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/analystCaseMeasurement"
+          }
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/analystProbeMeasurement"
+          }
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "reports",
+        "citations",
+        "resolved",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "toolRequests",
+        "refusedToolRequests",
+        "cases",
+        "probes",
+        "manifestId",
+        "catalogRevision",
+        "limits"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "analystProbeMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusals": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "passed",
+        "physicalCalls",
+        "repairs",
+        "refusals"
       ],
       "additionalProperties": false
     }

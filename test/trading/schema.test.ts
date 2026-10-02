@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { validateTradingRecord, createTradingRecord } from '@tangleai/trading';
 import { tradingFixture } from './fixtures.ts';
 const fixture = await tradingFixture();
+it('persisted record owners remain distinct from compact prompt views with the same kind', async () => {
+  for (const record of [fixture.manifest, fixture.sessions[0], fixture.initial, fixture.observations[0], ...fixture.poison])
+    assert.ok((await validateTradingRecord(record)).valid, record.kind);
+});
 it('trading schemas refuse unknown fields, missing availability, invalid times and unsupported leverage', async () => {
   const missing = { ...fixture.observations[0] } as Record<string, unknown>; delete missing.availableAt;
   for (const [input, path] of [[{ ...fixture.manifest, extra: true }, '/extra'], [{ ...fixture.manifest, shorting: true }, '/shorting'],

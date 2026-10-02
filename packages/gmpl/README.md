@@ -35,6 +35,12 @@ is never parsed again; JSON values render in stable property order. System
 instructions are static. Source-byte, parsed-pack, role, schema, compilation
 policy and compiled-template changes move identity.
 
+`gmplSchemaDefinition(document, name, id)` projects a domain's named `$defs`
+member into an immutable standalone schema with only its reachable local
+definitions. Domain prompt builds use this shared projection to keep unrelated
+record schemas out of model requests. `gmplSchemaOf` uses the same projection
+for GMPL's own contracts; unknown definitions or references are caller errors.
+
 `createGmplDomainBinding` and `createGmplRecipe` create revisioned data.
 `gmplCatalogDocument` seals a document containing prompts, domains and recipes;
 `createGmplCatalog` checks those identities, references and schemas and returns

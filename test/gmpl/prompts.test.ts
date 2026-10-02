@@ -7,6 +7,13 @@ const artifacts=gmplArtifacts.prompts as GmplPromptArtifact[];
 const compiled=async(source:string)=>compileGmplPromptPack(source,{variables:{value:{schema:{type:'string'},render:'text'}},outputSchema:{type:'object'}});
 const source=(text:string)=>`[meta]\nid="analysis-analyst"\nversion="1"\npattern="parallel-analysis"\nrole="analyst"\n[system]\ncontent="Static instructions"\n[user]\ncontent=${JSON.stringify(text)}\n`;
 describe('GMPL TOML to JTLT',()=>{
+  it('a domain pack compiles and an unknown recipe still refuses',async()=>{
+    const artifact=await compiled(source('{{value}}').replace('pattern="parallel-analysis"','pattern="domain-trading"'));
+    assert.ok(artifact.valid);assert.equal(artifact.value.pack.meta.pattern,'domain-trading');
+    assert.equal(resolveGmplParameters({pattern:'domain-trading'}).valid,false);
+    const malformed=await compiled(source('{{value}}').replace('pattern="parallel-analysis"','pattern="domain Trading"'));
+    assert.equal(malformed.valid,false);if(!malformed.valid)assert.equal(malformed.issues[0].code,'TGMPL1004');
+  });
   it('a pack may declare a non-family pattern',async()=>{
     const artifact=await compiled(source('{{value}}').replace('pattern="parallel-analysis"','pattern="hera"'));
     assert.ok(artifact.valid);assert.equal(artifact.value.pack.meta.pattern,'hera');

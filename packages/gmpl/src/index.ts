@@ -1,7 +1,7 @@
 /** GMPL content and pure host bindings. Execution belongs to @tangleai/mas. */
 export type * from './contracts.gen.ts';
 export type * from './errors.ts';
-export {gmplSchema,gmplSchemaOf,validateGmplShape} from './schema.ts';
+export {gmplSchema,gmplSchemaOf,gmplSchemaDefinition,validateGmplShape} from './schema.ts';
 export {gmplRevisionOf,gmplVersionOf,gmplTextDigest} from './identity.ts';
 export {compileGmplPromptPack,renderGmplPrompt,validateGmplPromptArtifact} from './prompts.ts';
 export type {CompileGmplPromptOptions} from './prompts.ts';

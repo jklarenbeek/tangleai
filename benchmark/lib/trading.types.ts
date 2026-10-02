@@ -649,6 +649,7 @@ export interface Capabilities {
   complete: boolean;
   indicators: boolean;
   signals: boolean;
+  analysts: boolean;
 }
 
 
@@ -918,15 +919,190 @@ export interface SignalMeasurement {
 }
 
 
+export interface AnalystCaseMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reports: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  citations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedToolRequests: number;
+  concurrent: boolean;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  outputSha256: string;
+  reproduced: boolean;
+}
+
+
+export interface AnalystProbeMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  passed: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusals: number;
+}
+
+
+export interface AnalystMeasurementLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBytes: number;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$eq":[["$.rows[*].id"],["indicators","signals"]]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.total",{"$count":"$.cases[*]"}]},{"$eq":["$.reproduced",{"$count":"$.cases[?(@.reproduced==true)]"}]}]}
+ */
+export interface AnalystMeasurement {
+  id: "analysts-scripted";
+  status: "measured" | "not-run";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reproduced: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reports: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  citations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  resolved: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRequests: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedToolRequests: number;
+  cases: Array<AnalystCaseMeasurement>;
+  probes: Array<AnalystProbeMeasurement>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  manifestId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  catalogRevision: string;
+  limits: AnalystMeasurementLimits;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":[["$.rows[*].id"],["indicators","signals","analysts-scripted"]]}
  */
 export interface MechanismMeasurements {
   reference: IndicatorReferenceMetadata | null;
   /**
-   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
    */
-  rows: Array<IndicatorMeasurement | SignalMeasurement>;
+  rows: Array<IndicatorMeasurement | SignalMeasurement | AnalystMeasurement>;
 }
 
 

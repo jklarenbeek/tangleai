@@ -22,7 +22,7 @@ export function validateTradingSignalParameters(input: unknown): TradingOutcome<
   return validateTradingShape<TradingSignalParameters>('tradingSignalParameters', input);
 }
 
-function signalWindow(input: readonly BarObservation[]): TradingOutcome<Window> {
+export function tradingSignalWindow(input: readonly BarObservation[]): TradingOutcome<Window> {
   const bars: BarObservation[] = [], high: number[] = [], low: number[] = [], close: number[] = [], availableAt: string[] = [];
   let latest = -Infinity, latestAt = '', previous = -Infinity;
   const seen = new Set<string>();
@@ -49,7 +49,7 @@ function evaluate(bars: readonly BarObservation[], parameters: TradingSignalPara
   targets: (window: Window, parameters: TradingSignalParameters) => Targets): TradingOutcome<TradingSignalSeries> {
   const settings = validateTradingSignalParameters(parameters); if (!settings.valid) return settings;
   try {
-    const prepared = signalWindow(bars); if (!prepared.valid) return prepared;
+    const prepared = tradingSignalWindow(bars); if (!prepared.valid) return prepared;
     const window = prepared.value, values = targets(window, settings.value);
     return { valid: true, value: immutableTradingJson(values.map((target, i) => target === null ? null : {
       asset: window.bars[i].asset, sessionId: window.bars[i].sessionId, observationId: window.bars[i].id, availableAt: window.availableAt[i], target,

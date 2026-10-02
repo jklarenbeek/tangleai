@@ -1,7 +1,8 @@
 # @tangleai/trading
 
 Closed trading records, point-in-time providers, deterministic signals and
-atomic simulated execution with corporate settlement and hard risk limits. Importing the package performs no
+atomic simulated execution with corporate settlement and hard risk limits, plus
+compiled prompts and concurrent evidence-bound analyst lanes. Importing the package performs no
 filesystem, network or database work. Hosts supply market observations and a
 store; the package has no live broker connection.
 
@@ -72,6 +73,49 @@ daily bar, or null when none is available. Daily bars must use their session's
 close event. The store recomputes staleness from retained evidence; missing
 calendar links and forged ages are refused. Snapshot construction does not
 mark a portfolio or execute trades.
+
+`tradingArtifacts` and `@tangleai/trading/artifacts` expose twelve immutable
+GMPL-compiled prompts. `npm run trading:artifacts -- --check` verifies the build.
+The four research prompts use GMPL's structured-debate contract; the other roles
+use the domain-trading namespace. Output schemas are closed and model text is
+normalized through MAS once, with at most one repair on the shared budget.
+
+`buildAnalystRegion({ catalog, profile, limits })` returns canonical MAS nodes,
+messages, entry/exit bindings and schemas. Each fundamentals, sentiment, news
+and technical lane has a prepare task, agent and report checker. The region
+requires concurrency and fan-out capacity for all four lanes. Hosts compose it
+into an immutable workflow and execute it with their MAS store and clients.
+
+`createTradingHostBindings({ catalog, manifest, snapshot, providers, portfolio,
+provenance })` returns the registry document, task handlers, read tool bindings,
+message adapters, immutable projections and a tool audit. `snapshot` is the
+complete `buildSnapshot` bundle. The manifest pins the catalog revision; the
+host's `provenance(role)` supplies the actual model identity and observed spend
+of the settled agent attempt. Scripted fixtures use explicitly recorded zero
+monetary cost. Runtime bindings do not resolve providers or model credentials.
+
+Fundamentals sees facts and profiles, sentiment sees social and insider records,
+news sees news records, and technical sees admitted bars, corporate actions,
+deterministic signals and numeric ADX, CCI, cumulative VWAP, volume ratio and KDJ.
+The numeric view declares its parameters, window endpoints, publication time and
+null warm-up values. ADX uses fourteen sessions, CCI and volume ratio twenty,
+and KDJ nine/three. Historical bar revisions are selected before computing
+indicators and signals, using the same causal OHLC normalization. The prompt view carries each evidence id and digest once, with its
+observation data and publication times; the checker retains the complete source
+records. Portfolio context contains cash and positions, excluding raw close
+marks and equity that might not yet have been published.
+
+The read tools `bars-window`, `fundamentals-facts`, `news-items`, `social-items`
+and `insider-events` are restricted by the invoking role. Their closures bind
+asset, cutoff and retained evidence. Arguments may narrow `limit`, `since` and
+`cutoffAt`; another asset or a wider range returns a counted `TTRD1003` error.
+Provider output is revalidated against the exact role projection. Invented,
+hidden or changed citations fail with `TTRD1004`. An evidence-free report must
+abstain explicitly. Citation resolution establishes provenance, not entailment.
+
+Completed reports retain the normalized analysis, claims, limitations, horizon,
+confidence, prompt revision, model identity and spend in their content address.
+Analyst tasks cannot create orders or change a portfolio.
 
 The five signal policies `buyAndHold`, `macdCross`, `kdjRsi`,
 `zeroMeanReversion` and `smaCross` take identity-verified bars and explicit
