@@ -52,6 +52,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
 @tangleai/lightrag    immutable document-bound graph claims and canonical profiles;
                       atomic incremental projections, bounded dual-level retrieval,
                       evidence sections and a separately metered grounded answer engine
+@tangleai/trading     closed simulated trading records and publication-time admission;
+                      one shared commit planner for atomic memory and SQLite stores,
+                      balanced postings and verified zero-write decision replay
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

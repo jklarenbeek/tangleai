@@ -1,0 +1,2624 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/trading",
+  "title": "Trading contracts",
+  "$ref": "#/$defs/tradingRecord",
+  "$defs": {
+    "tradingId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "tradingRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "tradingInstant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tradingIssue": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "TTRD1001",
+            "TTRD1002",
+            "TTRD1003",
+            "TTRD1004",
+            "TTRD1005",
+            "TTRD1006",
+            "TTRD1007",
+            "TTRD1008",
+            "TTRD1009"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "path": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "code",
+            "path",
+            "detail"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "code",
+        "path",
+        "detail"
+      ],
+      "additionalProperties": false
+    },
+    "tradingSpend": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "toolCalls",
+        "tokens",
+        "usd",
+        "retries",
+        "repairs",
+        "ms"
+      ],
+      "additionalProperties": false
+    },
+    "tradingLimits": {
+      "type": "object",
+      "properties": {
+        "calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toolRounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fanOut": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contextChars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traceBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "calls",
+        "tokens",
+        "ms",
+        "toolRounds",
+        "fanOut",
+        "concurrency",
+        "iterations",
+        "contextChars",
+        "traceBytes"
+      ],
+      "additionalProperties": false
+    },
+    "riskPolicy": {
+      "type": "object",
+      "properties": {
+        "grossExposure": {
+          "type": "number",
+          "minimum": 0
+        },
+        "netExposure": {
+          "type": "number",
+          "minimum": 0
+        },
+        "singleName": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cashFloor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxParticipation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "lossLimit": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "orderKinds": {
+          "const": [
+            "market"
+          ]
+        }
+      },
+      "required": [
+        "grossExposure",
+        "netExposure",
+        "singleName",
+        "cashFloor",
+        "maxParticipation",
+        "lossLimit",
+        "instruments",
+        "orderKinds"
+      ],
+      "additionalProperties": false
+    },
+    "tradingRunManifest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "const": "manifest"
+        },
+        "mode": {
+          "enum": [
+            "fixture",
+            "replay",
+            "shadow"
+          ]
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "calendar": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionRange": {
+          "type": "object",
+          "properties": {
+            "first": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            "last": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            }
+          },
+          "required": [
+            "first",
+            "last"
+          ],
+          "additionalProperties": false
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "initialCapital": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "decisionCutoff": {
+          "enum": [
+            "session-close"
+          ]
+        },
+        "fill": {
+          "const": "next-open"
+        },
+        "shares": {
+          "enum": [
+            "whole",
+            "fractional"
+          ]
+        },
+        "shorting": {
+          "const": false
+        },
+        "leverage": {
+          "const": false
+        },
+        "commissionBps": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "slippageBps": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 10000
+        },
+        "sessionsPerYear": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "riskFree": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "zero-series"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        "providerSnapshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "provider": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "licence": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "provider",
+              "revision",
+              "licence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rolesByProfile": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "promptCatalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "toolManifest": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "id",
+              "revision"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rounds": {
+          "type": "object",
+          "properties": {
+            "research": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            },
+            "risk": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          },
+          "required": [
+            "research",
+            "risk"
+          ],
+          "additionalProperties": false
+        },
+        "limits": {
+          "$ref": "#/$defs/tradingLimits"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "riskPolicy": {
+          "$ref": "#/$defs/riskPolicy"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "mode",
+        "assets",
+        "calendar",
+        "sessionRange",
+        "timezone",
+        "currency",
+        "initialCapital",
+        "decisionCutoff",
+        "fill",
+        "shares",
+        "shorting",
+        "leverage",
+        "commissionBps",
+        "slippageBps",
+        "sessionsPerYear",
+        "riskFree",
+        "providerSnapshots",
+        "rolesByProfile",
+        "promptCatalogRevision",
+        "toolManifest",
+        "rounds",
+        "limits",
+        "seed",
+        "sourceRevision",
+        "riskPolicy"
+      ],
+      "additionalProperties": false
+    },
+    "marketSession": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "session"
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "calendar": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "openAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "closeAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "key",
+        "calendar",
+        "date",
+        "openAt",
+        "closeAt",
+        "prev",
+        "next"
+      ],
+      "additionalProperties": false
+    },
+    "barObservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "const": "bar"
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "open": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "high": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "low": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "close": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "adjustedClose": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "asset",
+        "eventAt",
+        "availableAt",
+        "sourceId",
+        "sourceKey",
+        "revisionId",
+        "contentHash",
+        "kind",
+        "sessionId",
+        "open",
+        "high",
+        "low",
+        "close",
+        "adjustedClose",
+        "volume"
+      ],
+      "additionalProperties": false
+    },
+    "releaseObservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "enum": [
+            "fundamental",
+            "news",
+            "social",
+            "insider",
+            "profile"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerSentiment": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modelInterpretation": {
+          "const": null
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "asset",
+        "eventAt",
+        "availableAt",
+        "sourceId",
+        "sourceKey",
+        "revisionId",
+        "contentHash",
+        "kind",
+        "text",
+        "providerSentiment",
+        "modelInterpretation"
+      ],
+      "additionalProperties": false
+    },
+    "corporateActionObservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eventAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revisionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "const": "corporate-action"
+        },
+        "action": {
+          "enum": [
+            "split",
+            "dividend"
+          ]
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "ratio": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cashPerShare": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "asset",
+        "eventAt",
+        "availableAt",
+        "sourceId",
+        "sourceKey",
+        "revisionId",
+        "contentHash",
+        "kind",
+        "action",
+        "sessionId",
+        "ratio",
+        "cashPerShare"
+      ],
+      "additionalProperties": false
+    },
+    "observation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/barObservation"
+        },
+        {
+          "$ref": "#/$defs/releaseObservation"
+        },
+        {
+          "$ref": "#/$defs/corporateActionObservation"
+        }
+      ]
+    },
+    "marketSnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "snapshot"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "cutoffAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "refused": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "reason": {
+                "const": "TTRD1003"
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "providerErrors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "portfolioId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "asset",
+        "sessionId",
+        "cutoffAt",
+        "observationIds",
+        "refused",
+        "providerErrors",
+        "portfolioId"
+      ],
+      "additionalProperties": false
+    },
+    "tradingClaim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "analystReport": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "analyst-report"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "value",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "summary",
+        "signals",
+        "gaps",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "debateTurn": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "debate-turn"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "persona": {
+          "enum": [
+            "bull",
+            "bear"
+          ]
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "previousTurnIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "round",
+        "persona",
+        "position",
+        "previousTurnIds",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "researchVerdict": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "research-verdict"
+        },
+        "disposition": {
+          "enum": [
+            "accept",
+            "reject",
+            "no-consensus"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "historyIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "disposition",
+        "summary",
+        "historyIds",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "tradeProposal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "trade-proposal"
+        },
+        "action": {
+          "enum": [
+            "buy",
+            "sell",
+            "hold"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timing": {
+          "const": "next-open"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "researchVerdictId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "action",
+        "quantity",
+        "asset",
+        "timing",
+        "rationale",
+        "researchVerdictId",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "riskTurn": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "risk-turn"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "persona": {
+          "enum": [
+            "risky",
+            "neutral",
+            "conservative"
+          ]
+        },
+        "position": {
+          "type": "string",
+          "minLength": 1
+        },
+        "previousTurnIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "proposalId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "round",
+        "persona",
+        "position",
+        "previousTurnIds",
+        "proposalId",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "riskVerdict": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "risk-verdict"
+        },
+        "disposition": {
+          "enum": [
+            "accept",
+            "reject",
+            "no-consensus"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "historyIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "proposalId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "maxQuantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "disposition",
+        "summary",
+        "historyIds",
+        "proposalId",
+        "maxQuantity",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "fundManagerDecision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "snapshotId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "promptRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingClaim"
+          }
+        },
+        "kind": {
+          "const": "fund-manager-decision"
+        },
+        "action": {
+          "enum": [
+            "approve",
+            "modify",
+            "reject",
+            "hold"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "proposalId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "riskVerdictId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "role",
+        "snapshotId",
+        "citations",
+        "model",
+        "spend",
+        "promptRevision",
+        "claims",
+        "kind",
+        "action",
+        "quantity",
+        "proposalId",
+        "riskVerdictId",
+        "violations",
+        "rationale",
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "artifact": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/analystReport"
+        },
+        {
+          "$ref": "#/$defs/debateTurn"
+        },
+        {
+          "$ref": "#/$defs/researchVerdict"
+        },
+        {
+          "$ref": "#/$defs/tradeProposal"
+        },
+        {
+          "$ref": "#/$defs/riskTurn"
+        },
+        {
+          "$ref": "#/$defs/riskVerdict"
+        },
+        {
+          "$ref": "#/$defs/fundManagerDecision"
+        }
+      ]
+    },
+    "portfolioPosition": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "costBasis": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "asset",
+        "quantity",
+        "costBasis"
+      ],
+      "additionalProperties": false
+    },
+    "portfolioSnapshot": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "portfolio"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cash": {
+          "type": "number",
+          "minimum": 0
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/portfolioPosition"
+          }
+        },
+        "marks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset": {
+                "type": "string",
+                "minLength": 1
+              },
+              "price": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "asset",
+              "price"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "equity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "grossExposure": {
+          "type": "number",
+          "minimum": 0
+        },
+        "netExposure": {
+          "type": "number"
+        },
+        "concentration": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fraction": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "asset",
+              "fraction"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "realizedPnl": {
+          "type": "number"
+        },
+        "unrealizedPnl": {
+          "type": "number"
+        },
+        "asOfSessionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "parentId",
+        "sequence",
+        "cash",
+        "positions",
+        "marks",
+        "equity",
+        "grossExposure",
+        "netExposure",
+        "concentration",
+        "realizedPnl",
+        "unrealizedPnl",
+        "asOfSessionId"
+      ],
+      "additionalProperties": false
+    },
+    "tradingDecisionKey": {
+      "type": "object",
+      "properties": {
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "stage": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      },
+      "required": [
+        "manifestId",
+        "asset",
+        "sessionId",
+        "stage"
+      ],
+      "additionalProperties": false
+    },
+    "tradingDecision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "decision"
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "inputRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "disposition": {
+          "enum": [
+            "approved",
+            "hold",
+            "rejected"
+          ]
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "key",
+        "inputRevision",
+        "disposition",
+        "artifactIds",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "orderIntent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "order"
+        },
+        "decisionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisionSessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "fillSessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "orderKind": {
+          "enum": [
+            "market",
+            "limit",
+            "stop"
+          ]
+        },
+        "side": {
+          "enum": [
+            "buy",
+            "sell"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "limitPrice": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stopPrice": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "decisionId",
+        "asset",
+        "decisionSessionId",
+        "fillSessionId",
+        "orderKind",
+        "side",
+        "quantity",
+        "limitPrice",
+        "stopPrice"
+      ],
+      "additionalProperties": false
+    },
+    "fill": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "fill"
+        },
+        "intentId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "decisionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "side": {
+          "enum": [
+            "buy",
+            "sell"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "price": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "commission": {
+          "type": "number",
+          "minimum": 0
+        },
+        "slippage": {
+          "type": "number",
+          "minimum": 0
+        },
+        "notional": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "intentId",
+        "decisionId",
+        "asset",
+        "sessionId",
+        "side",
+        "quantity",
+        "price",
+        "commission",
+        "slippage",
+        "notional"
+      ],
+      "additionalProperties": false
+    },
+    "ledgerEntry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "ledger"
+        },
+        "fillId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "account": {
+          "type": "string",
+          "minLength": 1
+        },
+        "debit": {
+          "type": "number",
+          "minimum": 0
+        },
+        "credit": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "fillId",
+        "actionId",
+        "sessionId",
+        "asset",
+        "account",
+        "debit",
+        "credit"
+      ],
+      "additionalProperties": false
+    },
+    "tradingDayResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "day-result"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "incomplete",
+            "refused"
+          ]
+        },
+        "stopReason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "fillIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "portfolioId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "asset",
+        "sessionId",
+        "status",
+        "stopReason",
+        "artifactIds",
+        "fillIds",
+        "portfolioId",
+        "spend",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "backtestResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "backtest-result"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed",
+            "incomplete"
+          ]
+        },
+        "dayResultIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "portfolioIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "fillIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "uniqueItems": true
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "incompleteDecisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "status",
+        "dayResultIds",
+        "portfolioIds",
+        "fillIds",
+        "spend",
+        "incompleteDecisions",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "tradingCommit": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "expectedPortfolioId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "decision": {
+          "$ref": "#/$defs/tradingDecision"
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/orderIntent"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fill"
+          }
+        },
+        "ledgerEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ledgerEntry"
+          }
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        }
+      },
+      "required": [
+        "key",
+        "expectedPortfolioId",
+        "decision",
+        "intent",
+        "fills",
+        "ledgerEntries",
+        "portfolio"
+      ],
+      "additionalProperties": false
+    },
+    "tradingRecord": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        {
+          "$ref": "#/$defs/marketSession"
+        },
+        {
+          "$ref": "#/$defs/observation"
+        },
+        {
+          "$ref": "#/$defs/marketSnapshot"
+        },
+        {
+          "$ref": "#/$defs/artifact"
+        },
+        {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        {
+          "$ref": "#/$defs/tradingDecision"
+        },
+        {
+          "$ref": "#/$defs/orderIntent"
+        },
+        {
+          "$ref": "#/$defs/fill"
+        },
+        {
+          "$ref": "#/$defs/ledgerEntry"
+        },
+        {
+          "$ref": "#/$defs/tradingDayResult"
+        },
+        {
+          "$ref": "#/$defs/backtestResult"
+        },
+        {
+          "$ref": "#/$defs/tradingCommitMarker"
+        }
+      ]
+    },
+    "tradingCommitMarker": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "revision": {
+          "$ref": "#/$defs/tradingRevision"
+        },
+        "kind": {
+          "const": "decision-commit"
+        },
+        "manifestId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "commitRevision": {
+          "$ref": "#/$defs/tradingRevision"
+        },
+        "expectedPortfolioId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "decisionId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "intentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fillIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "ledgerEntryIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "portfolioId": {
+          "$ref": "#/$defs/tradingId"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "kind",
+        "manifestId",
+        "key",
+        "commitRevision",
+        "expectedPortfolioId",
+        "decisionId",
+        "intentId",
+        "fillIds",
+        "ledgerEntryIds",
+        "portfolioId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { qualifyConsolidation } from './consolidation-browser.mjs';
 import { qualifyGmplBrowser } from './gmpl-browser.mjs';
 import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyForecastBrowser } from './forecast-browser.mjs';
+import { qualifyTradingBrowser } from './trading-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
 import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
 import { createMemoryOutcomeStore, createOutcomeContract } from '@tangleai/outcomes';
@@ -23,6 +24,7 @@ globalThis.tangleConsumer = {
   grounding: qualifyGroundingBrowser(),
   hera: qualifyHeraBrowser(),
   forecast: qualifyForecastBrowser(),
+  trading: qualifyTradingBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
   trace2skill: qualifyTrace2SkillBrowser(),

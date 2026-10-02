@@ -1,5 +1,11 @@
 # @tangleai/store
 
+`createTradingStore(db)` persists the eleven `trading_*` collections through
+the [trading contract](../trading/README.md). One immediate transaction retains
+each decision, its replay marker, intent, fills, balanced postings and portfolio;
+exact replay checks every retained reference and writes nothing. It uses the
+same commit planner as the in-memory trading store.
+
 Tangle AI persistence — the MemoryStore contract over SQLite via @jarenjs/db, plus the run/event log the DAG surface reads
 
 Install with `npm install @tangleai/store`. The npm distribution provides ESM JavaScript, TypeScript declarations, and the documented package subpaths for Node 24 and Bun 1.4 or newer.

@@ -28,6 +28,7 @@
     "packages/forecast",
     "packages/grounding",
     "packages/lightrag",
+    "packages/trading",
     "packages/store"
   ],
   "privateWorkspaces": [
