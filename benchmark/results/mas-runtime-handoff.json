@@ -2,7 +2,7 @@
   "benchmark": "mas-runtime-handoff",
   "query": "queries/mas/runtime-handoff.json",
   "queryRevision": "7221519bef5fb34f99e2bdaa375c0233455701f4e99f6283fa9dc41d36ca0e62",
-  "reportId": "6cf181ff8787572f3ab69b0343cafa992ffbb0355ab9eba46d8fc17f519e030c",
+  "reportId": "0c6c3e2eedac21acfb753fca64b70e3f64a709abef255c8a79c811fe7bf6dc7c",
   "handoff": {
     "decision": "runtime-conformant",
     "clauses": {
@@ -14,7 +14,7 @@
       "persistenceIdentity": true,
       "hygiene": true
     },
-    "reportId": "6cf181ff8787572f3ab69b0343cafa992ffbb0355ab9eba46d8fc17f519e030c",
+    "reportId": "0c6c3e2eedac21acfb753fca64b70e3f64a709abef255c8a79c811fe7bf6dc7c",
     "registration": {
       "manifestRevision": "ceee5f7eefd6dc1ad74a8c776a0a62d5e38325f1a34ad2f6aaa9b185694d5702",
       "registryRevision": "197bf5f77c4df4319a0810b153ef262ecd66a7ffc8f9aa20792998360576d735",
@@ -112,5 +112,5 @@
       "nested graph, switch and loop interactions require host-supplied typed responses and resumed segments; waiting holds no worker and does not consume active time"
     ]
   },
-  "artifactId": "95033b8b5b58ac21b22c33fe9bc129173761c3f798607b8b64fbe1a02f3da2ee"
+  "artifactId": "0b92892b36282781262dcaa2224a7e8105be933e9a741286f452c1942ca563d1"
 }

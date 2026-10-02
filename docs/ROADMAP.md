@@ -217,15 +217,17 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* a registered live comparison publishing paired uncertainty,
   costs, failures and losses; official scorer parity on the named slices; and
   an evidenced, idempotent correction/revocation protocol with recovery tests.
-- [ ] **Trading comparisons and licensed replay (TradingAgents).** *Wanted:*
-  registered full-flow ablations and a licensed historical replay profile over
-  the shipped causal simulator and resumable MAS workflow. *Constraint:* scripted
-  fixture results establish execution behavior; they do not establish live model
-  quality. All comparisons must preserve evidence, calendars, execution rules,
-  resources and counted failures. *Closes on:* paired ablations with costs and
-  signed deltas, an explicit corpus licence and identity or a named unavailable
-  state, and independently qualified live measurements before any quality claim.
-  Operational surfaces and shadow execution remain separate work.
+- [ ] **Trading quality and operations on licensed evidence (TradingAgents).**
+  *Wanted:* live model evaluation on a named, licensed historical replay corpus,
+  followed by an operator surface and guarded shadow execution. *Constraint:*
+  the shipped synthetic workflow and ablations establish execution behavior only.
+  The paper profile records no decided corpus; its live plan has zero eligible
+  requests. Selecting a corpus must pin publication-time snapshots, redistribution
+  terms and the exact runtime manifest before implementing a paid replay plan.
+  *Closes on:* matched historical baselines and ablations, explicitly authorized
+  cache-aware model execution with per-role usage, costs, failures and losses,
+  independently reproduced quality results, and restart-safe shadow operations.
+  ADX, CCI, VWAP, volume ratio and KDJ already use the shipped Jaren kernels.
 
 ## Multi-agent patterns
 

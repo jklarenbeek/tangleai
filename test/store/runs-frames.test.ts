@@ -5,14 +5,16 @@
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { copyFile, mkdtemp, rm } from 'node:fs/promises';
+import { copyFile, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { nodeDriver } from '@jarenjs/db/node';
+import { openStore, planMigration, migrate } from '@jarenjs/db';
 import { isSubscriptionLike } from '@jarenjs/contract/stream';
 
-import { openTangleDb, createRunLog, frameIdOf, MAX_FRAME_BODY_BYTES, type TangleDb } from '@tangleai/store';
+import { openTangleDb, createRunLog, frameIdOf, MAX_FRAME_BODY_BYTES, TANGLE_DB_MODEL, type TangleDb } from '@tangleai/store';
+import legacyModel from '../fixtures/desktop-0.27.3-model.json' with { type: 'json' };
 
 const clock = (): (() => string) => {
   let tick = 0;
@@ -354,37 +356,66 @@ describe('run frames: subscriptions', () => {
 });
 
 describe('run frames: a database written before frames existed', () => {
-  it('reopens under the widened model and reads its legacy rows', async () => {
-    // the committed fixture is a released-shape database: `runs` with the
-    // three-state enum, `events` rows, and no frame collection at all.
-    // Opening it creates the frame table, so the test opens a copy — the
-    // fixture stays the bytes it was written with.
+  it('preserves every legacy row through an explicit native migration and then appends frames', async () => {
+    // Frozen legacy data has the three-state run enum, events, empty skill
+    // tables and no frame collection or MAS run indexes. Its independent
+    // model includes those empty tables; it is not derived from today's model.
     const scratch = await mkdtemp(join(tmpdir(), 'tangle-reopen-'));
     const path = join(scratch, 'tangle.db');
-    await copyFile('test/fixtures/desktop-0.27.3.db', path);
-    const db = await open({ path });
-    const log = createRunLog(db);
-    const runs = await log.listRuns();
-    assert.equal(runs.length, 1);
-    assert.equal(runs[0].kind, 'sync');
-    assert.equal(runs[0].status, 'ok');
+    const fixture = 'test/fixtures/desktop-0.27.3.db', original = await readFile(fixture);
+    const driver = nodeDriver(), query = { $for: { r: '$[*]' }, $orderby: '$r.id', $return: '$r' };
+    const retained: Record<string, unknown> = {};
+    let db: TangleDb | undefined;
+    try {
+      await copyFile(fixture, path);
+      const legacy = await openStore(legacyModel, { driver, path });
+      try {
+        for (const name of Object.keys(legacyModel.collections)) retained[name] = await legacy.collection(name).execute(query);
+      } finally { await legacy.close(); }
+      await assert.rejects(open({ path }), (error: unknown) => (error as { code?: string }).code === 'JD0002');
+      const planned = planMigration(legacyModel, TANGLE_DB_MODEL, { dialect: driver.dialect, id: 'legacy-desktop-trace-indexes' }) as {
+        migration: { steps: Array<{ draft?: boolean }> };
+        report: { destructive: boolean; schemaChanged: string[]; drafts: string[] };
+      };
+      assert.equal(planned.report.destructive, false);
+      assert.deepEqual(planned.report.schemaChanged, ['runs', 'chats', 'document_chunks']);
+      assert.deepEqual(planned.report.drafts, ['runs', 'chats', 'document_chunks']);
+      // The fixture's retained documents need no transform for these reviewed
+      // schema changes. Native migration still validates every stored document
+      // against the target and refuses an incompatible value before committing.
+      const migration = { ...planned.migration, steps: planned.migration.steps.filter(step => !step.draft) };
+      const options = { baseline: legacyModel, model: TANGLE_DB_MODEL, shadowDriver: driver };
+      const preview = await migrate({ driver, path }, [migration], { ...options, dryRun: true });
+      assert.ok('dryRun' in preview && preview.shadowValidated);
+      const applied = await migrate({ driver, path }, [migration], options);
+      assert.ok('applied' in applied); assert.deepEqual(applied.applied, ['legacy-desktop-trace-indexes']);
+      const replay = await migrate({ driver, path }, [migration], options);
+      assert.ok('applied' in replay); assert.deepEqual(replay.applied, []);
+      db = await open({ path });
+      for (const name of Object.keys(legacyModel.collections)) assert.deepEqual(await db.collection(name).execute(query), retained[name], name);
+      assert.equal((await db.integrityCheck()).ok, true);
+      const log = createRunLog(db);
+      const runs = await log.listRuns();
+      assert.equal(runs.length, 1);
+      assert.equal(runs[0].kind, 'sync');
+      assert.equal(runs[0].status, 'ok');
 
-    const detail = await log.getRun(runs[0].id);
-    assert.ok(detail);
-    assert.deepEqual(detail.events.map((event) => event.node),
-      ['observations', 'embed', 'novelty', 'contradiction', 'crystallize', 'report']);
-    assert.deepEqual(detail.events.map((event) => event.seq), [1, 2, 3, 4, 5, 6]);
-    assert.match(detail.events[0].id, /:0001$/, 'the legacy rows keep the addresses they were written with');
-    assert.equal(detail.frames, 0, 'a run written before frames has none');
+      const detail = await log.getRun(runs[0].id);
+      assert.ok(detail);
+      assert.deepEqual(detail.events.map((event) => event.node),
+        ['observations', 'embed', 'novelty', 'contradiction', 'crystallize', 'report']);
+      assert.deepEqual(detail.events.map((event) => event.seq), [1, 2, 3, 4, 5, 6]);
+      assert.match(detail.events[0].id, /:0001$/, 'the legacy rows keep the addresses they were written with');
+      assert.equal(detail.frames, 0, 'a run written before frames has none');
 
-    // and the widened model works on the reopened file: the run can be
-    // reopened, framed and finished under a state the old enum had no word for
-    const fresh = await log.startRun('chat');
-    assert.equal((await log.appendFrame(fresh.id, { kind: 'delta', body: { text: 'hi', chars: 2 } })).ok, true);
-    assert.equal((await log.finishRun(fresh.id, 'cancelled')).ok, true);
-    assert.equal((await log.getRun(fresh.id))?.run.status, 'cancelled');
-
-    await db.close();
-    await rm(scratch, { recursive: true, force: true });
+      const fresh = await log.startRun('chat');
+      assert.equal((await log.appendFrame(fresh.id, { kind: 'delta', body: { text: 'hi', chars: 2 } })).ok, true);
+      assert.equal((await log.finishRun(fresh.id, 'cancelled')).ok, true);
+      assert.equal((await log.getRun(fresh.id))?.run.status, 'cancelled');
+    } finally {
+      await db?.close();
+      await rm(scratch, { recursive: true, force: true });
+      assert.deepEqual(await readFile(fixture), original, 'the historical database fixture remains unchanged');
+    }
   });
 });

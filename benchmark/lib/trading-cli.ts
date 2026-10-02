@@ -6,13 +6,24 @@ import { parseArgs } from './args.ts';
 import { buildTradingReport, validateTradingReport, tradingSource, requireCapability, renderReport, renderDocument, REPORT_PATH, DOCUMENT_PATH } from './trading-report.ts';
 import type { Trading } from './trading.types.ts';
 import schema from '../schemas/trading.schema.json' with { type: 'json' };
+import { runTradingLive } from './trading-live.ts';
 
 /** Run the registered command, retaining independent measurement and read-only checks. */
 export async function runTradingCli(argv: string[], log: (message: string) => void = console.log): Promise<void> {
   if (argv.some(a => a.startsWith('--') && a.includes('='))) throw new Error('Inline trading options are not supported');
-  const args = parseArgs(argv, { flags: ['check'], values: ['out-dir', 'json', 'md', 'require'] });
+  const args = parseArgs(argv, { flags: ['check', 'live', 'fresh'], values: ['out-dir', 'json', 'md', 'require', 'profile', 'authorize', 'cache', 'live-json'] });
   if (args.rest.length || [...args.values.values()].some(v => v.startsWith('--'))) throw new Error('Malformed trading arguments');
   if (args.values.has('out-dir') && (args.values.has('json') || args.values.has('md'))) throw new Error('Choose out-dir or explicit output paths');
+  const profile = args.values.get('profile') ?? (args.flags.has('live') ? 'paper' : 'fixture');
+  if (!['fixture', 'paper'].includes(profile)) throw Error('Unknown trading profile');
+  if (!args.flags.has('live') && (args.flags.has('fresh') || ['authorize', 'cache', 'live-json'].some(k => args.values.has(k)))) throw Error('Live options require --live');
+  if (args.flags.has('live')) {
+    if (profile !== 'paper' || args.flags.has('check') || ['out-dir', 'json', 'md', 'require'].some(k => args.values.has(k))) throw Error('Live planning requires the paper profile and separate live output options');
+    const result = await runTradingLive({ cache: args.values.get('cache'), fresh: args.flags.has('fresh'), authorize: args.values.get('authorize') });
+    log(JSON.stringify(result, null, 2));
+    // There is no live report to persist when the frozen profile has no licensed corpus.
+    return;
+  }
   const out = args.values.get('out-dir');
   const json = args.values.get('json') ?? (out ? join(out, 'trading.json') : REPORT_PATH);
   const md = args.values.get('md') ?? (out ? join(out, 'TRADING_BENCHMARK.md') : DOCUMENT_PATH);

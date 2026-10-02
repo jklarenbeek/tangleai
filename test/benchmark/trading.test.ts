@@ -210,9 +210,10 @@ describe('registered trading measurement', () => {
       await run('--out-dir', dir, '--require', 'complete'); assert.deepEqual((await readdir(dir)).sort(), ['TRADING_BENCHMARK.md', 'trading.json']);
       const file = join(dir, 'trading.json'), bytes = await readFile(file, 'utf8'), before = await stat(file);
       // Independently reproduce the result once through the actual process entry point.
-      await exec(process.execPath, ['benchmark/trading.ts', '--out-dir', dir, '--check'], { maxBuffer: 1024 * 1024 });
+      await exec(process.execPath, ['benchmark/trading.ts', '--out-dir', dir, '--profile', 'paper', '--check'], { maxBuffer: 1024 * 1024 });
       assert.equal((await stat(file)).mtimeMs, before.mtimeMs);
-      await run('--out-dir', dir, '--check'); assert.equal((await stat(file)).mtimeMs, before.mtimeMs);
+      await run('--out-dir', dir, '--profile', 'paper', '--check');
+      assert.equal((await stat(file)).mtimeMs, before.mtimeMs);
       const retained = JSON.parse(bytes) as Trading;
       retained.source.head = 'b'.repeat(40); retained.source.clean = false;
       retained.source.sha256 = await canonicalSha256({ head: retained.source.head, files: retained.source.files });

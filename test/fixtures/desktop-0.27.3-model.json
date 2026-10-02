@@ -1,0 +1,1551 @@
+{
+  "$model": "0.1",
+  "collections": {
+    "temporal_occurrences": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "recordType",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recordType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "series": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observedAtEpochMs": {
+            "type": "integer"
+          },
+          "knownAtEpochMs": {
+            "type": "integer"
+          },
+          "validFromEpochMs": {
+            "type": "integer"
+          },
+          "validUntilEpochMs": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_observed",
+          "path": [
+            "$.scope",
+            "$.observedAtEpochMs"
+          ]
+        },
+        {
+          "name": "by_scope_known",
+          "path": [
+            "$.scope",
+            "$.knownAtEpochMs"
+          ]
+        },
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "temporal_claims": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "recordType",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recordType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "series": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observedAtEpochMs": {
+            "type": "integer"
+          },
+          "knownAtEpochMs": {
+            "type": "integer"
+          },
+          "validFromEpochMs": {
+            "type": "integer"
+          },
+          "validUntilEpochMs": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_version_series_at",
+          "path": [
+            "$.scope",
+            "$.versionId",
+            "$.subject",
+            "$.series",
+            "$.validFromEpochMs"
+          ]
+        },
+        {
+          "name": "by_scope_version",
+          "path": [
+            "$.scope",
+            "$.versionId"
+          ]
+        }
+      ]
+    },
+    "temporal_heads": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "recordType",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recordType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "series": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observedAtEpochMs": {
+            "type": "integer"
+          },
+          "knownAtEpochMs": {
+            "type": "integer"
+          },
+          "validFromEpochMs": {
+            "type": "integer"
+          },
+          "validUntilEpochMs": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope",
+          "path": "$.scope"
+        }
+      ]
+    },
+    "temporal_operations": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "recordType",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recordType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "series": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observedAtEpochMs": {
+            "type": "integer"
+          },
+          "knownAtEpochMs": {
+            "type": "integer"
+          },
+          "validFromEpochMs": {
+            "type": "integer"
+          },
+          "validUntilEpochMs": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope",
+          "path": "$.scope"
+        }
+      ]
+    },
+    "consolidation_sources": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "consolidation_artifacts": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "consolidation_buffers": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "consolidation_operations": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "outcome_records": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scopeId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scopeId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_sequence",
+          "path": [
+            "$.scopeId",
+            "$.seq"
+          ]
+        },
+        {
+          "name": "by_artifact_kind",
+          "path": [
+            "$.scopeId",
+            "$.artifactKey",
+            "$.kind"
+          ]
+        }
+      ]
+    },
+    "outcome_keys": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scopeId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scopeId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope",
+          "path": "$.scopeId"
+        }
+      ]
+    },
+    "outcome_heads": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scopeId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scopeId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope",
+          "path": "$.scopeId"
+        }
+      ]
+    },
+    "outcome_operations": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scopeId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scopeId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "seq": {
+            "type": "integer"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_artifact",
+          "path": [
+            "$.scopeId",
+            "$.artifactKey"
+          ]
+        }
+      ]
+    },
+    "memories": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "runs": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "startedAt",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string"
+          },
+          "finishedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "running",
+              "ok",
+              "error"
+            ]
+          },
+          "summary": {},
+          "identityId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "events": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId",
+          "seq",
+          "node",
+          "status",
+          "at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string"
+          },
+          "seq": {
+            "type": "integer"
+          },
+          "node": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "ms": {
+            "type": "number"
+          },
+          "at": {
+            "type": "string"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "chats": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "text",
+          "at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "identityId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "usage": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "documents": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "path",
+          "hash",
+          "chunks",
+          "ingestedAt"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hash": {
+            "type": "string"
+          },
+          "chunks": {
+            "type": "integer"
+          },
+          "ingestedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "key": "/path"
+    },
+    "sources": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "requestedUrl",
+          "finalUrl",
+          "canonicalUrl",
+          "title",
+          "mimeType",
+          "fetchMode",
+          "status",
+          "fetchedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requestedUrl": {
+            "type": "string"
+          },
+          "finalUrl": {
+            "type": "string"
+          },
+          "canonicalUrl": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "fetchMode": {
+            "enum": [
+              "static",
+              "bun-webview",
+              "remote-playwright"
+            ]
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "failed",
+              "blocked",
+              "dynamic-unavailable"
+            ]
+          },
+          "fetchedAt": {
+            "type": "string"
+          },
+          "activeVersionId": {
+            "type": "string"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "document_versions": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "sourceId",
+          "contentHash",
+          "extractionVersion",
+          "chunkerVersion",
+          "chunkerConfig",
+          "embeddedBy",
+          "status",
+          "fetchedAt",
+          "metrics"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "extractionVersion": {
+            "type": "string"
+          },
+          "chunkerVersion": {
+            "type": "string"
+          },
+          "chunkerConfig": {
+            "type": "object"
+          },
+          "embeddedBy": {
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "staging",
+              "active",
+              "failed",
+              "superseded"
+            ]
+          },
+          "fetchedAt": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "document_elements": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "sourceId",
+          "versionId",
+          "text",
+          "role",
+          "order",
+          "headingPath"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "text": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "headingPath": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "document_chunks": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "sourceId",
+          "versionId",
+          "elementIds",
+          "text",
+          "tokenCount",
+          "order",
+          "headingPath",
+          "embedding",
+          "embeddedBy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "elementIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "text": {
+            "type": "string"
+          },
+          "tokenCount": {
+            "type": "integer"
+          },
+          "order": {
+            "type": "integer"
+          },
+          "headingPath": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "embedding": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "embeddedBy": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "settings": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {}
+        }
+      },
+      "key": "/key"
+    },
+    "config_identities": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "value"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "value": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_workflows": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_workflow_versions": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "versionId"
+        ],
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "key": "/versionId"
+    },
+    "mas_templates": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_template_versions": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "versionId"
+        ],
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "key": "/versionId"
+    },
+    "mas_registry_snapshots": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "revision"
+        ],
+        "properties": {
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "key": "/revision"
+    },
+    "mas_runs": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_node_attempts": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_messages": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_state_revisions": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_interactions": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "mas_trace_artifacts": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "runId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "key": "/id"
+    },
+    "skill_bundles": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "skill_files": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "skill_heads": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope",
+          "path": "$.scope"
+        }
+      ]
+    },
+    "trace2skill_runs": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_tasks": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_rollouts": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_analyses": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_patches": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_merges": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_candidates": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    },
+    "trace2skill_evaluations": {
+      "schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "payload"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "key": "/id",
+      "indexes": [
+        {
+          "name": "by_scope_id",
+          "path": [
+            "$.scope",
+            "$.id"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -64,7 +64,11 @@ salvaged under [`docs/attic/memflow-modules/`](attic/memflow-modules/) (full man
     `@tangleai/memory/outcome` (evidence-mandatory, via `OUTCOME_REPORT_SCHEMA`).
     The generic pending-decision → resolution → scoring/proposal lifecycle is
     `@tangleai/outcomes`, with atomic storage and explicit promotion/rollback.
-    Domain quality remains unqualified; the trading system is its own roadmap entry.
+    `@tangleai/trading` establishes mechanism parity on an original synthetic
+    fixture, with a resumable native workflow, a shared causal simulator and
+    registered ablations. Experimental replay parity is unavailable until a
+    licensed corpus runs; live quality and investment performance remain unmeasured.
+    See the [measurement and explicit paper-profile state](TRADING_BENCHMARK.md).
   - 📄 [`refs/2412.20138v7.pdf`](refs/2412.20138v7.pdf)
 
 - **Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills**

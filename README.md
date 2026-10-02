@@ -33,7 +33,9 @@ live pattern-versus-single-agent quality remains unmeasured.
 and measured topology mutations over the same runtime. Its
 [scripted ablation](docs/HERA_BENCHMARK.md) publishes a held-out loss and an
 explicit `not-measured-live` decision. Fourteen read operations expose the
-retained evidence. Trading and research applications remain roadmap work.
+retained evidence. `@tangleai/trading` adds a causal simulated broker, resumable
+decision workflows and registered synthetic ablations. Licensed historical replay
+and live trading quality remain unmeasured; research applications remain roadmap work.
 
 ## What runs today
 

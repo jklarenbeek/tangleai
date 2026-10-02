@@ -343,22 +343,27 @@ export const TANGLE_DB_MODEL = {
     mas_node_attempts: {
       schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
+      indexes: [{ name: 'by_run', path: '$.runId' }],
     },
     mas_messages: {
       schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
+      indexes: [{ name: 'by_run', path: '$.runId' }],
     },
     mas_state_revisions: {
       schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
+      indexes: [{ name: 'by_run', path: '$.runId' }],
     },
     mas_interactions: {
       schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
+      indexes: [{ name: 'by_run', path: '$.runId' }],
     },
     mas_trace_artifacts: {
       schema: { type: 'object', required: ['id', 'runId'], properties: { id: ID, runId: ID } },
       key: '/id',
+      indexes: [{ name: 'by_run', path: '$.runId' }],
     },
   },
 } as const;

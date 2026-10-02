@@ -2,9 +2,13 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "78b00ba3c6fe176a1126b7deba73a9048599f65d",
+    "head": "f0780316f5048f9dc8369f5721215d43385030b0",
     "clean": false,
     "files": [
+      {
+        "path": "benchmark/fixtures/trading/ablations.json",
+        "sha256": "103e748d9d15c81fdcfd592f8b77f348fa8f9c4da8268d1487571bca50555ff2"
+      },
       {
         "path": "benchmark/fixtures/trading/bars.json",
         "sha256": "54f519eda1280984d10da797025241954e1edb1faf3a6c10b0493f353ea9ed6a"
@@ -42,6 +46,10 @@
         "sha256": "6bf93b1c0af966c387ae544c9eebb42e1bf5555e0d104ef1fd54d082fb5a18e5"
       },
       {
+        "path": "benchmark/fixtures/trading/paper-profile.json",
+        "sha256": "e39a71fe57db77c0e2ce4d3b91494020fcf740c35db7a29bf90cc965ed2b0c5a"
+      },
+      {
         "path": "benchmark/fixtures/trading/poison.json",
         "sha256": "f1bf07de057b73dd54513752ad3c745f9ad11fb6da398bf6d9bf1b7043b81de2"
       },
@@ -60,6 +68,10 @@
       {
         "path": "benchmark/fixtures/trading/strategies.json",
         "sha256": "c5567e5edf9bdd0ec4983c69b1f422886a9c573204299ee01e19ca2f08ca65e0"
+      },
+      {
+        "path": "benchmark/lib/ai-env.ts",
+        "sha256": "5b584540fdfe9b0a879d2b0476eb46ab0a9babc8d2a187a2811ba6cf1f332a2a"
       },
       {
         "path": "benchmark/lib/args.ts",
@@ -82,12 +94,20 @@
         "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
       },
       {
+        "path": "benchmark/lib/trading-ablation-workflow.ts",
+        "sha256": "48739665d0efddaa8e1872c4749da41b0de0c29d8ec4d377d5f7d29bc31ded9e"
+      },
+      {
+        "path": "benchmark/lib/trading-ablations.ts",
+        "sha256": "e7ba7fe6838f35b4eb76dce1793abe110a32a9413eb6025f31e46a4a7eec4d29"
+      },
+      {
         "path": "benchmark/lib/trading-agent-runner.ts",
-        "sha256": "0a403fd978b0c313f6f51cea4d939349d77727de5bbd0ba0e7e2ddbf897c1c67"
+        "sha256": "9e9de4084cc6628533d12f5f70375d30bdae4a1ece0fba0b3f9cce4d898a363f"
       },
       {
         "path": "benchmark/lib/trading-agent.ts",
-        "sha256": "78583c514ae43b9c60e1c7279e1b61eed01a7ba0081884c4e6021bd6c4bc2db4"
+        "sha256": "196ff32f288ca8ca3fdbfff627867109adf459247886517c6880fb0d7576d728"
       },
       {
         "path": "benchmark/lib/trading-analyst-runner.ts",
@@ -99,11 +119,19 @@
       },
       {
         "path": "benchmark/lib/trading-cli.ts",
-        "sha256": "4a9e0992c8557501d0a0de39c5a0eaf916bbb7cda3c34dc7a87df6064a7832e3"
+        "sha256": "c12a585b90052e516d4ce5da9c06c7f882f4d8649c23aa9377cc93aa7f10773b"
+      },
+      {
+        "path": "benchmark/lib/trading-diagnostics.ts",
+        "sha256": "f1de21bfec150ceb98f15d852324aa2b4aa4c494074aaf91c528af555d36d03b"
       },
       {
         "path": "benchmark/lib/trading-execution.ts",
-        "sha256": "fb8a7d3fcdb54dc11dc0fd6fe89dbaa24f0f3ff8cc0dd7bd6cfcf4d09b0e109b"
+        "sha256": "cad0664a93877143d6d38e210aac44e1fe14438b5b8bf86b23b0f9d488a9f6e3"
+      },
+      {
+        "path": "benchmark/lib/trading-live.ts",
+        "sha256": "4141b8a6f958ba64d1a95765cbf6dc059205fb51f986f108b333817d31858b01"
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
@@ -114,12 +142,16 @@
         "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
       },
       {
+        "path": "benchmark/lib/trading-paper.ts",
+        "sha256": "a7cfef7a3597c8c2333bf46a4a111339980b663dd845bc93f6034b32b5770449"
+      },
+      {
         "path": "benchmark/lib/trading-policy-probes.ts",
         "sha256": "88edb80e861c615ee6bfd721307831a2cabfba50f80626f54811b70c6febb685"
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "8bac1fc07943f502bc119543e116ab1dc5932bef06fdb9a406ec053ff2071d46"
+        "sha256": "deecf87ecc5f5045e87896adafb354cc1a45f03e4a027966042bb14c4573c81c"
       },
       {
         "path": "benchmark/lib/trading-research-runner.ts",
@@ -142,20 +174,28 @@
         "sha256": "4b239ee009c4c95c1b736b70436551e645e8a030c2e4ef32398ed3cc6f3f9e3a"
       },
       {
+        "path": "benchmark/lib/trading-single-agent.ts",
+        "sha256": "d49bc9249034c7347152e12db93f4993ec3d7fd2b94b6b50f6244912430d57d0"
+      },
+      {
         "path": "benchmark/lib/trading.ts",
-        "sha256": "6ab1ec25d2b812e2b4b9e0b7c50309034ea8e33a11b6067cb17deff983b517f7"
+        "sha256": "c5c3bb7ae074494f75b11e82531cb89949b5d5e02592710f3344107799c53bfe"
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "8482cb57dd8675cb4d3972925611ad8d8b54e92fb6c3b0fe9a322db09363b26d"
+        "sha256": "fc5eb4d56cb62139905e243d318ca5040b64fee1cdeb57db04a3e9017d317e5a"
       },
       {
         "path": "benchmark/lib/validate.ts",
         "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
       },
       {
+        "path": "benchmark/lib/wire-cache.ts",
+        "sha256": "7f266b9e108f36bdaed7ad52988cb04cda018360766379ee23335e7d8172d0de"
+      },
+      {
         "path": "benchmark/schemas/trading.schema.json",
-        "sha256": "c2cfe9dd7a17dc28e6c567fa8242cf8398e3d06ff57d9dba677f6e37912df180"
+        "sha256": "fc9d8f870db5d0c81b34cf30628485a9c6b28e1dd45cf8a372c2718083fba688"
       },
       {
         "path": "benchmark/scripts/trading-fixture.ts",
@@ -791,7 +831,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+        "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -955,7 +995,7 @@
       },
       {
         "path": "packages/trading/src/tools.ts",
-        "sha256": "d9ceba36640d8f5fc90db5a6f5733dbd8ee5b8f25b55ba964995776e03ad4e1c"
+        "sha256": "0faee47da7a5c47b37d751821739776a5e948c642b219322939cf3840218695a"
       },
       {
         "path": "packages/trading/src/trader.ts",
@@ -974,12 +1014,28 @@
         "sha256": "62100ffbfb0711cdb1b186508b61d9b6f7ac681bd427c0e9001736a300793ec1"
       },
       {
+        "path": "test/benchmark/trading-ablations.test.ts",
+        "sha256": "dfd2c8e0235b05d0f2eabc338aae93071d81124b4657b77566551e3e79932897"
+      },
+      {
         "path": "test/benchmark/trading-cli.test.ts",
         "sha256": "36551f5681468e9fed1b0f6918681c05de80386699a2066aab658f3079fdbf61"
       },
       {
+        "path": "test/benchmark/trading-diagnostics.test.ts",
+        "sha256": "d0838f09c7d0e3d91ec3c1ea41ba8204f057133c643606fed7587fb3080ecfcd"
+      },
+      {
+        "path": "test/benchmark/trading-health.test.ts",
+        "sha256": "81e3d3cc4540fbb3d29be6ed2ca3e0ec4e58cb407599b355c96c493d16d1829d"
+      },
+      {
+        "path": "test/benchmark/trading-live.test.ts",
+        "sha256": "47033541521730528ce981412738525b834bc924b0ac7e4225be7147a1923de5"
+      },
+      {
         "path": "test/benchmark/trading.test.ts",
-        "sha256": "21d98b9b28e3b01c6fb6d7cd9dce11da4a20201336bd2a10804a7fbaf2690c5c"
+        "sha256": "335e0b42eb4f1191b457da63357978e858b800d86d66c3cbca47663a3597ac44"
       },
       {
         "path": "test/fixtures/trading-indicators.json",
@@ -1135,7 +1191,7 @@
       },
       {
         "path": "test/trading/tools.test.ts",
-        "sha256": "ce387ec0d261cd9b367e4e8cea349d77d8dd5accd294ce47a96343df9641bab8"
+        "sha256": "c30015fc3999cac7d292543b3a5181e8342d632f7540a558d79c9fdd428b81e8"
       },
       {
         "path": "test/trading/trader.test.ts",
@@ -1150,7 +1206,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "8a7fc43e48d1cd6f820877b869b7c3f3942912a2a14f9d17bbf05d65c3b46b3a"
+    "sha256": "0320658f639c5d368ee0bde6a34677e858c15c4da43015f43469e604a4f7f831"
   },
   "suite": {
     "tangle": "0.35.0",
@@ -25381,7 +25437,575 @@
     "Bars arrive 15 minutes after close. Signals use the latest admitted revision per historical session; all assets decide before any next-open fill. Cash, holdings and cited observations are visible to signal callbacks; ex-post marks are not.",
     "Analyst mechanism cases use a fixed cash-only portfolio and scripted responses. Citation resolution and deliberate repair/tool-refusal probes test boundaries, not investment quality or entailment.",
     "The scripted end-to-end strategy buys two shares when unheld and otherwise holds. It follows every model stage, with first-round research agreement and risk adjustment; this measures mechanism, not strategy improvement.",
-    "Live model quality, external historical replay and operational parity are not measured. No network request is made."
+    "Live model quality, external historical replay and operational parity are not measured. No network request is made.",
+    "The paper reports a January-March 2024 backtest using heterogeneous public and proprietary sources. No licensed historical replay corpus has been decided here, so every paper-profile row remains not-run.",
+    "The paper notes about eleven model requests and more than twenty tool calls per prediction and a three-month evaluation constrained by cost. Those figures and its reported returns are context, never fixture goldens.",
+    "Registered ablations share one execution manifest and fixed calendar subset, source observations, scripted model and declared ceilings. Subsequent snapshot identities may differ because each workflow retains its own causal portfolio and decision artifacts."
   ],
-  "reportId": "04fb816707221f54886e8859b6369ebd316bcdbf8a0c1c315929a3d572b758fb"
+  "paper": {
+    "registration": {
+      "id": "trading-paper-replay-v1",
+      "profile": "paper",
+      "mode": "replay",
+      "status": "not-run",
+      "reason": "no licensed replay corpus decided",
+      "manifest": null,
+      "corpus": null,
+      "licenceDecision": null,
+      "redistributable": null,
+      "providerSnapshots": []
+    },
+    "sha256": "5959049d902b61b15a3194edaf479b205c9fe916062666452b265c046a65da08",
+    "rows": [
+      {
+        "id": "buy-and-hold",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "macd",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "kdj-rsi",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "zero-mean-reversion",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "sma",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "tradingagents-scripted",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      },
+      {
+        "id": "tradingagents-live",
+        "parityTier": "unmeasured",
+        "status": "not-run",
+        "reason": "no licensed replay corpus decided",
+        "metrics": null,
+        "costs": {
+          "commission": 0,
+          "slippage": 0,
+          "total": 0
+        },
+        "modelCalls": 0,
+        "sessions": 0,
+        "eligible": false
+      }
+    ]
+  },
+  "live": {
+    "status": "not-run",
+    "reason": "no spend approval",
+    "fresh": 0,
+    "replayed": 0
+  },
+  "ablations": {
+    "registrationSha256": "66fd9f06cc8eb82c45e6dfaaf588608c3a449d7031f10de14c2aacac84dbe2c4",
+    "sessions": [
+      "synx-2025-01-02",
+      "synx-2025-01-03",
+      "synx-2025-01-06",
+      "synx-2025-01-07"
+    ],
+    "assets": [
+      "SYN-A",
+      "SYN-B"
+    ],
+    "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
+    "runs": [
+      {
+        "id": "full",
+        "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
+        "workflowVersionId": "60647bbb8dc46a3482b789f878eea46f42dc263c4d801e1c7b7f44792c0fa7d4",
+        "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
+        "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
+        "status": "completed",
+        "metrics": {
+          "cr": -0.000006217294096422848,
+          "ar": -0.00039161404490006824,
+          "sharpe": -12.792151176400626,
+          "mdd": 0.000006217294096422848,
+          "sessions": 4,
+          "returns": 4
+        },
+        "undefined": [],
+        "costs": {
+          "commission": 0.18171010964999998,
+          "slippage": 0.18161929999996573,
+          "total": 0.36332940964996574
+        },
+        "transactions": 2,
+        "perAsset": [
+          {
+            "asset": "SYN-A",
+            "cr": 0.000039721659669012294,
+            "mdd": 0,
+            "fills": 1
+          },
+          {
+            "asset": "SYN-B",
+            "cr": -0.00005215624786200351,
+            "mdd": 0.00005215624786200351,
+            "fills": 1
+          }
+        ],
+        "rejectedOrders": 2,
+        "refusedObservations": 108,
+        "spend": {
+          "calls": 256,
+          "ms": 0,
+          "repairs": 0,
+          "retries": 0,
+          "tokens": 2560,
+          "toolCalls": 0,
+          "usd": 0
+        },
+        "decisionCount": 8,
+        "incompleteDecisions": 0,
+        "physicalCalls": 256,
+        "normalizations": 128,
+        "repairs": 0,
+        "replayPhysicalCalls": 0,
+        "replayWrites": 0,
+        "issuesByCode": [
+          {
+            "code": "TTRD1007",
+            "count": 2
+          }
+        ],
+        "resultSha256": "0841a3a5a8fca4920e3e155f1da5d9e97c47fa7f8b73c44cee4d0fc1fa530ece",
+        "receiptsSha256": "b3dedd7a0cb8d954807316105d34531ee3906342064c57e01be6cae54b38e373"
+      },
+      {
+        "id": "single-agent",
+        "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
+        "workflowVersionId": "5389ee6eb11276c5e1351c8912eaf80d59394f850de738f0b09abef4d27d4d9f",
+        "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
+        "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
+        "status": "completed",
+        "metrics": {
+          "cr": -0.000006217294096422848,
+          "ar": -0.00039161404490006824,
+          "sharpe": -12.792151176400626,
+          "mdd": 0.000006217294096422848,
+          "sessions": 4,
+          "returns": 4
+        },
+        "undefined": [],
+        "costs": {
+          "commission": 0.18171010964999998,
+          "slippage": 0.18161929999996573,
+          "total": 0.36332940964996574
+        },
+        "transactions": 2,
+        "perAsset": [
+          {
+            "asset": "SYN-A",
+            "cr": 0.000039721659669012294,
+            "mdd": 0,
+            "fills": 1
+          },
+          {
+            "asset": "SYN-B",
+            "cr": -0.00005215624786200351,
+            "mdd": 0.00005215624786200351,
+            "fills": 1
+          }
+        ],
+        "rejectedOrders": 2,
+        "refusedObservations": 108,
+        "spend": {
+          "calls": 16,
+          "ms": 0,
+          "repairs": 0,
+          "retries": 0,
+          "tokens": 160,
+          "toolCalls": 0,
+          "usd": 0
+        },
+        "decisionCount": 8,
+        "incompleteDecisions": 0,
+        "physicalCalls": 16,
+        "normalizations": 8,
+        "repairs": 0,
+        "replayPhysicalCalls": 0,
+        "replayWrites": 0,
+        "issuesByCode": [
+          {
+            "code": "TTRD1007",
+            "count": 2
+          }
+        ],
+        "resultSha256": "f5c54a8a2bd75b54f98a0bea8995a0de71f05c160bbc1bb2ac1e7922518d6638",
+        "receiptsSha256": "7ea7ae5787b429c34016c2c0080595330c25ca161a1b0b4b0762117301c87485"
+      },
+      {
+        "id": "no-research-debate",
+        "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
+        "workflowVersionId": "a1f88e64ba3b8eabbbe164bd34120d086b3da08d61479612627783df7c4cadac",
+        "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
+        "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
+        "status": "completed",
+        "metrics": {
+          "cr": -0.000006217294096422848,
+          "ar": -0.00039161404490006824,
+          "sharpe": -12.792151176400626,
+          "mdd": 0.000006217294096422848,
+          "sessions": 4,
+          "returns": 4
+        },
+        "undefined": [],
+        "costs": {
+          "commission": 0.18171010964999998,
+          "slippage": 0.18161929999996573,
+          "total": 0.36332940964996574
+        },
+        "transactions": 2,
+        "perAsset": [
+          {
+            "asset": "SYN-A",
+            "cr": 0.000039721659669012294,
+            "mdd": 0,
+            "fills": 1
+          },
+          {
+            "asset": "SYN-B",
+            "cr": -0.00005215624786200351,
+            "mdd": 0.00005215624786200351,
+            "fills": 1
+          }
+        ],
+        "rejectedOrders": 2,
+        "refusedObservations": 108,
+        "spend": {
+          "calls": 160,
+          "ms": 0,
+          "repairs": 0,
+          "retries": 0,
+          "tokens": 1600,
+          "toolCalls": 0,
+          "usd": 0
+        },
+        "decisionCount": 8,
+        "incompleteDecisions": 0,
+        "physicalCalls": 160,
+        "normalizations": 80,
+        "repairs": 0,
+        "replayPhysicalCalls": 0,
+        "replayWrites": 0,
+        "issuesByCode": [
+          {
+            "code": "TTRD1007",
+            "count": 2
+          }
+        ],
+        "resultSha256": "39969b95454989da0abd3961ea9214e197d4c2d9f85238ee23057750fa1de058",
+        "receiptsSha256": "58198e5f54894e038cd9d2a71d1f1109596abf7476c904c2dca65a66ff48d6f0"
+      },
+      {
+        "id": "no-risk-team",
+        "manifestId": "manifest-068ecfb50ad12f60fd3365a3a7e3e28ed0586c06119110ac9c4f74d8593e6835",
+        "workflowVersionId": "a87f427b887c9b84bda1bcf9b36942aef69bc5644f9d7b68c57800cde5c875ff",
+        "comparisonId": "a669900c50e09374a2247f21ecd390eda618e73a18166aac9b8de6e494b89df7",
+        "resourcesSha256": "c114926e53852df23cc39415da5ac068609c6f9deab911ae7f9153e64092395a",
+        "status": "completed",
+        "metrics": {
+          "cr": -0.000006217294096422848,
+          "ar": -0.00039161404490006824,
+          "sharpe": -12.792151176400626,
+          "mdd": 0.000006217294096422848,
+          "sessions": 4,
+          "returns": 4
+        },
+        "undefined": [],
+        "costs": {
+          "commission": 0.18171010964999998,
+          "slippage": 0.18161929999996573,
+          "total": 0.36332940964996574
+        },
+        "transactions": 2,
+        "perAsset": [
+          {
+            "asset": "SYN-A",
+            "cr": 0.000039721659669012294,
+            "mdd": 0,
+            "fills": 1
+          },
+          {
+            "asset": "SYN-B",
+            "cr": -0.00005215624786200351,
+            "mdd": 0.00005215624786200351,
+            "fills": 1
+          }
+        ],
+        "rejectedOrders": 2,
+        "refusedObservations": 108,
+        "spend": {
+          "calls": 192,
+          "ms": 0,
+          "repairs": 0,
+          "retries": 0,
+          "tokens": 1920,
+          "toolCalls": 0,
+          "usd": 0
+        },
+        "decisionCount": 8,
+        "incompleteDecisions": 0,
+        "physicalCalls": 192,
+        "normalizations": 96,
+        "repairs": 0,
+        "replayPhysicalCalls": 0,
+        "replayWrites": 0,
+        "issuesByCode": [
+          {
+            "code": "TTRD1007",
+            "count": 2
+          }
+        ],
+        "resultSha256": "95021aa1bbe13afae53edda0c52d49167305ae45546621b627cad5e8c8491aad",
+        "receiptsSha256": "1b9cdd803144a03a1d85f88a4c9835de551198224df5e6626a1b3fea76ab3e4b"
+      }
+    ],
+    "comparisons": [
+      {
+        "id": "single-agent",
+        "baseline": "full",
+        "eligible": true,
+        "reason": null,
+        "delta": {
+          "cr": 0,
+          "ar": 0,
+          "sharpe": 0,
+          "mdd": 0,
+          "calls": -240,
+          "tokens": -2400,
+          "modelUsd": 0,
+          "executionCosts": 0
+        }
+      },
+      {
+        "id": "no-research-debate",
+        "baseline": "full",
+        "eligible": true,
+        "reason": null,
+        "delta": {
+          "cr": 0,
+          "ar": 0,
+          "sharpe": 0,
+          "mdd": 0,
+          "calls": -96,
+          "tokens": -960,
+          "modelUsd": 0,
+          "executionCosts": 0
+        }
+      },
+      {
+        "id": "no-risk-team",
+        "baseline": "full",
+        "eligible": true,
+        "reason": null,
+        "delta": {
+          "cr": 0,
+          "ar": 0,
+          "sharpe": 0,
+          "mdd": 0,
+          "calls": -64,
+          "tokens": -640,
+          "modelUsd": 0,
+          "executionCosts": 0
+        }
+      }
+    ]
+  },
+  "executionDiagnostics": [
+    {
+      "id": "oracle",
+      "manifestId": "manifest-7cffeed701c92aaab43301a1c00fd23c0af3fbb658e75526ebf4c1811391c410",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 10.8481968684,
+      "meanGrossExposure": 0.08110686903371314,
+      "peakGrossExposure": 0.19274146652816854
+    },
+    {
+      "id": "do-nothing",
+      "manifestId": "manifest-04add0e3af5d6110c72e2aa359bafb92dea5ab787ce4fed0a66bfa0f93fdd8c7",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0,
+      "meanGrossExposure": 0,
+      "peakGrossExposure": 0
+    },
+    {
+      "id": "leaky",
+      "manifestId": "manifest-602698eac46b9c797e73974be469cfdf6ac96c58a279a71d9933e36b579fb1da",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 1,
+      "staleMarks": 0,
+      "turnover": 0,
+      "meanGrossExposure": 0,
+      "peakGrossExposure": 0
+    },
+    {
+      "id": "buy-and-hold",
+      "manifestId": "manifest-59681f53ff994c66885f2c25c3507d1bb789501639f4cd49561fd26aa2bd1418",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0.18171010964999998,
+      "meanGrossExposure": 0.18838878944617635,
+      "peakGrossExposure": 0.19799935868437446
+    },
+    {
+      "id": "macd",
+      "manifestId": "manifest-a5428a8032d0d0f7a959ddf240df48accc3c843e755a89b4154d20e680e6c782",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0.9863737817,
+      "meanGrossExposure": 0.039188716917900546,
+      "peakGrossExposure": 0.13591223142115486
+    },
+    {
+      "id": "kdj-rsi",
+      "manifestId": "manifest-97402eab44481cc5996877c92387ed7b1397a8e015fd281265f4609629f64df7",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0.07417877084999999,
+      "meanGrossExposure": 0.040338457583997026,
+      "peakGrossExposure": 0.07358973637655233
+    },
+    {
+      "id": "zero-mean-reversion",
+      "manifestId": "manifest-ba2f4ea39c793eee2a5c483ed8b83028a2b842f77649c464c5d312761b6655a9",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0.7815207954,
+      "meanGrossExposure": 0.04811135679064767,
+      "peakGrossExposure": 0.13320417490745234
+    },
+    {
+      "id": "sma",
+      "manifestId": "manifest-01952275db1c9c2016f7daac6cf57f286961afef19d7fc12ccf316b57b8a59a7",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 0,
+      "staleMarks": 0,
+      "turnover": 0.8908442044500002,
+      "meanGrossExposure": 0.043138513975297436,
+      "peakGrossExposure": 0.1348477606493996
+    },
+    {
+      "id": "tradingagents-scripted",
+      "manifestId": "manifest-2ed3ef0405b3009538e04225cbadad37971410197977c188714958276e77be30",
+      "expectedSessions": 124,
+      "retainedSessions": 124,
+      "missingSessions": 0,
+      "failedAssetSessions": 0,
+      "refusedAssetSessions": 2,
+      "staleMarks": 0,
+      "turnover": 0.0036342021929999997,
+      "meanGrossExposure": 0.003813026182178674,
+      "peakGrossExposure": 0.004040271631753056
+    }
+  ],
+  "reportId": "4a5c408669630708a1da74d891bf12997245aef417a83a60a936ad30166e95ce"
 }

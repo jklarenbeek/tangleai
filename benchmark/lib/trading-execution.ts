@@ -4,7 +4,8 @@ import { cloneJson, equalsJson } from '@jarenjs/core/object';
 import { createTradingRecord, createMemoryTradingStore, runStrategy, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, TRADING_SIGNAL_DEFAULTS, tradingArtifacts } from '@tangleai/trading';
 import type { TradingOutcome, TradingRecordKind, TradingRecordBody, TradingStrategyData, TradingStrategySignals, TradingSignalPolicy, TradingStrategyResult, Observation } from '@tangleai/trading';
 import type { TradingFixture } from './trading.ts';
-import type { Row } from './trading.types.ts';
+import type { Row, ExecutionDiagnostic } from './trading.types.ts';
+import { tradingExecutionDiagnostic } from './trading-diagnostics.ts';
 import { measureScriptedTradingAgent } from './trading-agent.ts';
 import { measureTradingEquity } from './trading-metrics.ts';
 
@@ -44,10 +45,10 @@ function assertGolden(run: TradingStrategyResult, fixture: TradingFixture, id: s
   for (const [i, fill] of run.fills.entries()) for (const field of ['quantity', 'price', 'commission', 'slippage', 'notional'] as const) same(fill[field], golden.fills[i][field], `${i}/${field}`);
 }
 
-async function executeRows(fixture: TradingFixture): Promise<Row[]> {
-  const rows: Row[] = [];
+async function executeRows(fixture: TradingFixture): Promise<{ rows: Row[]; diagnostics: ExecutionDiagnostic[] }> {
+  const rows: Row[] = [], diagnostics: ExecutionDiagnostic[] = [];
   for (const strategy of fixture.strategies) {
-    if (strategy.id === 'tradingagents-scripted') { rows.push(await measureScriptedTradingAgent(fixture, await tradingExecutionInput(fixture, strategy.id))); continue; }
+    if (strategy.id === 'tradingagents-scripted') { rows.push(await measureScriptedTradingAgent(fixture, await tradingExecutionInput(fixture, strategy.id), value => diagnostics.push(value))); continue; }
     const live = strategy.id === 'tradingagents-live', missing = strategy.kind === 'agent', excluded = strategy.id === 'leaky';
     const reason = excluded ? 'reads observations after cutoff' : live ? 'no spend approval' : missing ? 'full decision workflow not implemented' : null;
     if (missing) {
@@ -65,6 +66,7 @@ async function executeRows(fixture: TradingFixture): Promise<Row[]> {
       return { valid: true, value: poisoned && context.session.key === data.sessions[10].key ? { target: 'long', availableAt: poisoned.availableAt, observationIds: [poisoned.id] } : null };
     } : undefined;
     const run = required(await runStrategy({ ...data, store, ...(signals ? { signals } : {}) }));
+    diagnostics.push(tradingExecutionDiagnostic(strategy.id, data, run));
     const replay = required(await runStrategy({ ...data, store, ...(signals ? { signals } : {}) }));
     if (!equalsJson(replay, { ...run, writes: 0 })) throw Error(`Engine replay differs: ${strategy.id}`);
     if (strategy.id === 'oracle' || strategy.id === 'do-nothing') assertGolden(run, fixture, strategy.id);
@@ -80,14 +82,20 @@ async function executeRows(fixture: TradingFixture): Promise<Row[]> {
       execution: { manifestId: data.manifest.id, resultId: run.result.id, equitySha256: await canonicalSha256(run.portfolios), ledgerSha256: await canonicalSha256(await store.list('ledger')),
         replayWrites: 0, staleMarks: run.staleMarks, decisionCount: (await store.list('decisions', { kind: 'decision' })).length } });
   }
-  return rows;
+  return { rows, diagnostics };
 }
 
 // Validation may recheck many altered reports. Cache only one complete input identity;
 // each measurement includes an actual second execution and a new process executes afresh.
-let cached: { identity: string; rows: Promise<Row[]> } | undefined;
-export async function measureTradingExecutions(fixture: TradingFixture): Promise<Row[]> {
+let cached: { identity: string; result: ReturnType<typeof executeRows> } | undefined;
+async function measurement(fixture: TradingFixture) {
   const identity = await canonicalSha256(fixture);
-  if (cached?.identity !== identity) cached = { identity, rows: executeRows(cloneJson(fixture)) };
-  return cloneJson(await cached.rows);
+  if (cached?.identity !== identity) cached = { identity, result: executeRows(cloneJson(fixture)) };
+  return cached.result;
+}
+export async function measureTradingExecutions(fixture: TradingFixture): Promise<Row[]> {
+  return cloneJson((await measurement(fixture)).rows);
+}
+export async function measureTradingExecutionDiagnostics(fixture: TradingFixture): Promise<ExecutionDiagnostic[]> {
+  return cloneJson((await measurement(fixture)).diagnostics);
 }

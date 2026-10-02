@@ -10818,7 +10818,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+            "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -10861,7 +10861,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "061b0de719cc4f480f47045b28f0951f695f103e020269d462a2a9c1bb91b859"
+        "sha256": "a4d528385a2b30ba38400276d1a63f8a16ab319a815a5cc173807a1d86faad0c"
       },
       "questionIds": [
         "q-relay-port",
@@ -10972,7 +10972,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "3f5df5509bdc510822149fe79de8be4a85be5e7cc742e5c00b81536c30a6d8b0"
+      "planId": "b0e16758721aff43ec54f21f50573bc4fbd14b4074b03eedea1ec4fb6060523d"
     },
     "rows": [],
     "indexing": {
@@ -11004,7 +11004,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "0661e9d63c94d5466766b213accb55ec9159c0e4e1265781715dacdc877b5c3b"
+    "reportId": "5a1a5ae22d0544f6b98698d8db1ed644e2d2ca158d23cf35f5c33dcae7407eda"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11458,7 +11458,7 @@
           },
           {
             "path": "packages/store/src/model.ts",
-            "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+            "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
           },
           {
             "path": "packages/store/src/outcome-store.ts",
@@ -11501,7 +11501,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "061b0de719cc4f480f47045b28f0951f695f103e020269d462a2a9c1bb91b859"
+        "sha256": "a4d528385a2b30ba38400276d1a63f8a16ab319a815a5cc173807a1d86faad0c"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11552,7 +11552,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "02a914414137440997ecd4e92537cf8c73df5cf9c37e65efd0f7dfe9fcb67434"
+      "planId": "852fce529a8df67b3c2dd82e5a4362c7be26f80b209b69e6a882db6673781a32"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11567,7 +11567,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "aa64e064c9ca0c816bebfc6cac8e3421607d08c6da62341a859fefc5bf701ed9"
+    "reportId": "6756e4917e68439a0085a8b0733003d57ca38e8afea511e3850ab4a1f473f70a"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12801,5 +12801,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "3944f8b5361899b3e2b75e683118c2f76f585b3b9abd2e20cd4bed6abc15fd4f"
+  "reportId": "efb36f621d94eabaa5a33a430e8b7f127229036fcc4886a2cc09932ffbe7b6a9"
 }

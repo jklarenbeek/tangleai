@@ -20,16 +20,19 @@ export interface ScriptedTradingAgentOptions {
   census?: { physical: number; completion: number; normalization: number; repair: number; restores: number; replays: number };
   observer?: (runId: string) => MasRuntimeObserver;
   segments?: TradingDecisionSegments;
+  materialize?: typeof materializeScriptedTradingDecision;
+  bindings?: typeof createTradingDecisionHostBindings;
+  response?: ReturnType<typeof tradingDecisionScript>;
 }
 export function createScriptedTradingAgent(db: TangleDb, catalog: GmplCatalog, options: ScriptedTradingAgentOptions = {}) {
   const now = () => 'scripted-tick', store = options.store ?? createMasStore(db, { now });
   const prepared = new Map<string, ReturnType<typeof materializeScriptedTradingDecision>>(), contexts = new Map<string, TradingBacktestDecisionInput>();
   const census = options.census ?? { physical: 0, completion: 0, normalization: 0, repair: 0, restores: 0, replays: 0 };
-  const events: Array<{ runId: string; path: string; event: string }> = [], response = tradingDecisionScript({ fullRounds: options.fullRounds });
+  const events: Array<{ runId: string; path: string; event: string }> = [], response = options.response ?? tradingDecisionScript({ fullRounds: options.fullRounds });
   const phases = new Map<string, { invocation: number; phase: 'completion' | 'normalization' | 'repair' }>();
   const signal = options.signal ?? new AbortController().signal;
   const decide = async (context: TradingBacktestDecisionInput) => {
-    if (!prepared.has(context.manifest.id)) prepared.set(context.manifest.id, materializeScriptedTradingDecision(context.manifest, catalog));
+    if (!prepared.has(context.manifest.id)) prepared.set(context.manifest.id, (options.materialize ?? materializeScriptedTradingDecision)(context.manifest, catalog));
     const materialized = await prepared.get(context.manifest.id)!;
     const snapshot = context.snapshot.snapshot;
     const request = { manifestId: context.manifest.id, asset: snapshot.asset, sessionId: snapshot.sessionId, snapshotId: snapshot.id, portfolioId: context.portfolio.id };
@@ -41,7 +44,7 @@ export function createScriptedTradingAgent(db: TangleDb, catalog: GmplCatalog, o
         usd: 0, retries: 0, repairs: trace.attempts.filter(a => a.kind === 'agent' && a.usage.calls === 3).length, ms: trace.run.budget.spent.ms } satisfies TradingSpend }),
       hostFor: async (input, activeRunId) => {
         const bound = contexts.get(activeRunId); if (!bound) throw Error('The scripted host has no context for this queued decision');
-        const bindings = checked(await createTradingDecisionHostBindings({ ...bound, materialized, catalog,
+        const bindings = checked(await (options.bindings ?? createTradingDecisionHostBindings)({ ...bound, materialized, catalog,
           trace: async () => { const trace = await store.readTrace(activeRunId); if (!trace) throw Error('Missing native decision trace'); return trace; }, provenance: attemptProvenance }));
         if (bindings.request.snapshotId !== input.snapshotId) throw Error('The scripted host request differs from its snapshot');
         const clientFor = (node: { id: string }): MasChatClient => ({ endpoint: { provider: 'scripted' }, complete: async raw => {

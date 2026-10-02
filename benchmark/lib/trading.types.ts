@@ -1949,6 +1949,261 @@ export interface MechanismMeasurements {
 }
 
 
+export interface PaperProfileRegistration {
+  id: "trading-paper-replay-v1";
+  profile: "paper";
+  mode: "replay";
+  status: "not-run";
+  reason: "no licensed replay corpus decided";
+  manifest: null;
+  corpus: null;
+  licenceDecision: null;
+  redistributable: null;
+  /**
+   * Schema constraints this type cannot express: maxItems=0
+   */
+  providerSnapshots: Array<unknown>;
+}
+
+
+export interface PaperProfileReportRowsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  parityTier: "unmeasured";
+  status: "not-run";
+  reason: "no licensed replay corpus decided";
+  metrics: null;
+  costs: Costs;
+  modelCalls: 0;
+  sessions: 0;
+  eligible: false;
+}
+
+
+export interface PaperProfileReport {
+  registration: PaperProfileRegistration;
+  sha256: Sha256;
+  rows: Array<PaperProfileReportRowsItem>;
+}
+
+
+export interface TradingLiveRegistration {
+  status: "not-run";
+  reason: "no spend approval";
+  fresh: 0;
+  replayed: 0;
+}
+
+
+export interface AblationRunPerAssetItem {
+  asset: Asset;
+  cr: number | null;
+  mdd: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fills: number;
+}
+
+
+export interface AblationRunSpend {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  usd: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+}
+
+
+export interface AblationRunIssuesByCodeItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^TTRD[0-9]{4}$"
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  count: number;
+}
+
+
+export interface AblationRun {
+  id: "full" | "single-agent" | "no-research-debate" | "no-risk-team";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  manifestId: string;
+  workflowVersionId: Sha256;
+  comparisonId: Sha256;
+  resourcesSha256: Sha256;
+  status: "completed" | "incomplete" | "failed";
+  metrics: Metrics;
+  undefined: Array<UndefinedMetric>;
+  costs: Costs;
+  perAsset: Array<AblationRunPerAssetItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  transactions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejectedOrders: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedObservations: number;
+  spend: AblationRunSpend;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  decisionCount: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  incompleteDecisions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  replayPhysicalCalls: 0;
+  replayWrites: 0;
+  issuesByCode: Array<AblationRunIssuesByCodeItem>;
+  resultSha256: Sha256;
+  receiptsSha256: Sha256;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type AblationComparisonReasonAnyOf1 = string;
+
+export interface AblationComparisonDelta {
+  cr: number | null;
+  ar: number | null;
+  sharpe: number | null;
+  mdd: number | null;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer"
+   */
+  tokens: number;
+  modelUsd: number;
+  executionCosts: number;
+}
+
+
+export interface AblationComparison {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  baseline: "full";
+  eligible: boolean;
+  reason: AblationComparisonReasonAnyOf1 | null;
+  delta: AblationComparisonDelta;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TradingAblationsSessionsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TradingAblationsAssetsItem = string;
+
+export interface TradingAblations {
+  registrationSha256: Sha256;
+  sessions: Array<TradingAblationsSessionsItem>;
+  assets: Array<TradingAblationsAssetsItem>;
+  comparisonId: Sha256;
+  runs: Array<AblationRun>;
+  comparisons: Array<AblationComparison>;
+}
+
+
+export interface ExecutionDiagnostic {
+  id: string;
+  manifestId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expectedSessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retainedSessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  missingSessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failedAssetSessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedAssetSessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  staleMarks: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  turnover: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  meanGrossExposure: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  peakGrossExposure: number;
+}
+
+
 export interface TradingSuite {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -2022,4 +2277,8 @@ export interface Trading {
    */
   reportId: string;
   mechanisms: MechanismMeasurements;
+  paper: PaperProfileReport;
+  live: TradingLiveRegistration;
+  ablations: TradingAblations;
+  executionDiagnostics: Array<ExecutionDiagnostic>;
 }

@@ -8,9 +8,10 @@ import { createScriptedTradingAgent } from './trading-agent-runner.ts';
 import { checked } from './trading-research-runner.ts';
 import { measureTradingEquity } from './trading-metrics.ts';
 import type { TradingFixture } from './trading.ts';
-import type { Row } from './trading.types.ts';
+import type { Row, ExecutionDiagnostic } from './trading.types.ts';
+import { tradingExecutionDiagnostic } from './trading-diagnostics.ts';
 
-export async function measureScriptedTradingAgent(fixture: TradingFixture, data: TradingStrategyData): Promise<Row> {
+export async function measureScriptedTradingAgent(fixture: TradingFixture, data: TradingStrategyData, diagnostic?: (value: ExecutionDiagnostic) => void): Promise<Row> {
   const catalog = checked(await createGmplCatalog(tradingArtifacts));
   const captured = checked(await createFixtureProviders({ manifestId: data.manifest.id, sessions: data.sessions,
     observations: [...data.bars, ...data.actions, ...data.observations], eventAt: '2024-12-31T00:00:00Z', availableAt: '2024-12-31T12:00:00Z' }));
@@ -32,6 +33,7 @@ export async function measureScriptedTradingAgent(fixture: TradingFixture, data:
       if (!trace || trace.interactions.length || trace.run.status !== receipt.status) throw Error('Scripted decision lost its terminal native trace');
     }
     const completed = receipts.filter(r => r.status === 'completed').length;
+    diagnostic?.(tradingExecutionDiagnostic('tradingagents-scripted', data, run));
     return { id: 'tradingagents-scripted', kind: 'agent', parityTier: 'mechanism', status: 'measured', reason: null,
       ...measureTradingEquity(run.portfolios.map(p => p.equity), fixture.manifest), transactions: run.fills.length, rejectedOrders: run.rejectedOrders,
       refusedObservations: run.refusedObservations, costs: run.costs, perAsset: fixture.manifest.assets.map((asset, i) => {

@@ -40,7 +40,12 @@ export async function loadTradingFixture(root = TRADING_FIXTURE_PATH): Promise<T
   const manifest = shaped<FixtureManifest>('fixtureManifest', JSON.parse(await readFile(join(root, 'manifest.json'), 'utf8')));
   if (!equalsJson(manifest.sha256.map(f => f.path), MEMBERS)) throw new Error('Trading fixture member registration differs');
   const disk = (await readdir(root)).filter(p => p !== 'golden').concat((await readdir(join(root, 'golden'))).map(p => `golden/${p}`)).sort();
-  if (!equalsJson(disk, [...MEMBERS, 'manifest.json'].sort())) throw new Error('Unregistered trading fixture files');
+  const auxiliary = ['ablations.json', 'paper-profile.json'];
+  if (!equalsJson(disk, [...MEMBERS, 'manifest.json', ...auxiliary].sort())) throw new Error('Unregistered trading fixture files');
+  for (const file of auxiliary) {
+    const stat = await lstat(join(root, file));
+    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`Trading registration must be a regular file: ${file}`);
+  }
   if (manifest.generatorSha256 !== bytesSha(await readFile(join(TRADING_ROOT, 'benchmark/scripts/trading-fixture.ts'), 'utf8')))
     throw new Error('Trading generator source drift');
   const documents = new Map<string, unknown>();

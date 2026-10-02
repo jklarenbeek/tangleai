@@ -102,6 +102,18 @@ stale or noncanonical retained JSON are refused before expensive reproduction;
 accepted reports still undergo the full independent comparison.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.
 
+Three registered workflow ablations run against the full native workflow over
+the same four fixture sessions, two assets, execution manifest, scripted model
+and declared resource ceilings. Signed return and cost deltas retain per-asset
+losses, refusals, failures and exact replay counts. A separate diagnostics table
+publishes missing sessions, turnover and mean/peak exposure from actual results.
+`--profile paper` reproduces the combined report with seven explicit not-run
+rows: no licensed replay corpus has been decided. `--live` alone prints a frozen
+credential-free plan, and `--authorize <planId>` must match exactly. With no
+corpus there are no eligible request keys, cache hits or fresh calls; missing
+credentials are an explicit skip. `--cache`, `--fresh` and `--live-json` belong
+to this live interface, and no result file is written for an unexecuted run.
+
 The frozen learning schedule has seven training events over five distinct tasks
 and five held-out questions. All repeats, rejected proposals and whole-run
 replays count toward phase costs. The report retains per-question F1, identical
@@ -161,6 +173,7 @@ verifies and preserves those dated results without buying another execution.
 
 | Instrument | What it answers | Command |
 |---|---|---|
+| [`trading.ts`](./trading.ts) | Causal fixture controls, five baselines, complete scripted native workflow, registered ablations, durable recovery and explicit licensed-replay availability. [Report](../docs/TRADING_BENCHMARK.md). | `npm run benchmark:trading -- --require complete` (`--check`, `--profile paper`, `--live` dry plan) |
 | [`lightrag.ts`](./lightrag.ts) | Oracle/random/dense controls and all four bounded graph modes; coverage, indexing, incremental replacement, citation resolution and losses. Paired answer and order-swapped judge tiers print separate exact-authorized plans. [Report](../docs/LIGHTRAG_BENCHMARK.md). | `npm run benchmark:lightrag` (`--check`, `--live`, `--rows`, `--judge`) |
 | [`lightrag-ladder.ts`](./lightrag-ladder.ts) | Native SQLite at 100 / 1,000 / 10,000 chunks: admission, p50/p95, process peak RSS, logical rows read and the registered 250 ms target. Timings are a source-bound operational receipt. The command grants Node 8 GiB of old-space heap for admission; this is not an RSS cap. | `npm run benchmark:lightrag:ladder` (`--check`) |
 | [`lightrag-ultradomain.ts`](./lightrag-ultradomain.ts) | Separately licensed, plan-only parity protocol: four subsets, 125 questions each, pinned mechanism prompts and explicit unrun status. | `npm run benchmark:lightrag:parity` |

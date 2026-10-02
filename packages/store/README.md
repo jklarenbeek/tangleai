@@ -74,6 +74,40 @@ Do not replace guarded table steps with their printed SQL or grant raw migration
 access through outcome/MAS service contracts. Shadow fixtures are separately
 owned synthetic inputs, not user-row snapshots embedded in a shared plan.
 
+### MAS trace indexes
+
+The five MAS trace collections index `runId` through the native Jaren model.
+Trace reads select one exact run and retain deterministic record order, so
+historical runs do not require a full collection scan at each workflow commit.
+The index changes physical storage without changing trace records or the
+semantic trace-byte budget.
+
+New databases create these indexes when opened. A database created with the
+earlier unindexed MAS model needs an explicit model migration before
+`openTangleDb` can open it; an incompatible open refuses with `JD0002` and does
+not silently alter the existing tables. Use Jaren's `planMigration`, `migrate`
+and `migrationStatus` exports from `@jarenjs/db`:
+
+1. Stop every Store and worker using the database, retain a verified backup,
+   and load the exact prior model saved by the application.
+2. Plan from that model to the current `TANGLE_DB_MODEL` with the selected
+   driver's dialect and a stable application migration ID. Review and save the
+   complete plan. The trace-index change adds generated `runId` columns and
+   indexes, with no record-schema change or destructive draft.
+3. Append the reviewed migration to the application's immutable migration
+   chain. Keep the chain's original baseline and all previously applied steps;
+   supplying only the new step cannot replace existing migration history.
+4. Call `migrate({ driver, path }, chain, { baseline, model: TANGLE_DB_MODEL,
+   shadowDriver: driver, dryRun: true })` and inspect its shadow validation.
+   Apply that same saved chain with `dryRun` omitted, then verify
+   `migrationStatus` and reopen through `openTangleDb`.
+
+Node and Bun regression tests qualify exact trace records, unrelated settings,
+queued jobs and database integrity across this migration. Applying the retained
+chain again performs zero migrations. The application still owns migration
+approval, backups and worker coordination; this package does not run DDL during
+normal trace operations.
+
 ## Temporal projections
 
 `createTemporalDbStore(db)` implements `@tangleai/memory/temporal`'s transactional

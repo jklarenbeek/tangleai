@@ -8,12 +8,19 @@ import { tradingIssue } from './errors.ts';
 import { TRADING_ANALYST_ROLES, TRADING_ANALYST_TOOLS } from './analysts.ts';
 import type { TradingAnalystContext } from './analysts.ts';
 import type { TradingProviders, TradingProviderOutcome } from './providers.ts';
-import type { Observation, TradingIssue, TradingReadToolInput } from './contracts.gen.ts';
+import type { Observation, TradingIssue, TradingReadToolInput, TradingAnalystRole } from './contracts.gen.ts';
 
 export const TRADING_READ_TOOLS = Object.freeze(['bars-window', 'fundamentals-facts', 'news-items', 'social-items', 'insider-events'] as const);
 export interface TradingToolAudit { calls: number; returned: number; refusals: TradingIssue[]; }
-export function createTradingReadTools(input: { context: TradingAnalystContext; providers: TradingProviders }): { toolBindings: Record<string, MasToolBinding>; audit: TradingToolAudit } {
+export function createTradingReadTools(input: { context: TradingAnalystContext; providers: TradingProviders;
+  /** Trusted host declaration for combined roles; model arguments cannot grant a scope. */
+  rolesByInvocation?: Readonly<Record<string, readonly TradingAnalystRole[]>>;
+}): { toolBindings: Record<string, MasToolBinding>; audit: TradingToolAudit } {
   const context = immutableTradingJson(input.context), providers = input.providers;
+  const scopes = immutableTradingJson(input.rolesByInvocation ?? {});
+  for (const [node, roles] of Object.entries(scopes)) if (!/^[a-z][a-z0-9-]*$/.test(node) || !roles.length
+    || new Set(roles).size !== roles.length || roles.some(role => !TRADING_ANALYST_ROLES.includes(role)))
+    throw new TypeError('Read tool scopes require a native invocation and distinct declared analyst roles');
   const audit: TradingToolAudit = { calls: 0, returned: 0, refusals: [] };
   const refuse = (issue: TradingIssue) => { audit.refusals.push(immutableTradingJson(issue)); return { error: issue }; };
   const toolBindings: Record<string, MasToolBinding> = {};
@@ -21,8 +28,10 @@ export function createTradingReadTools(input: { context: TradingAnalystContext; 
     audit.calls++;
     if (invocation.signal.aborted) return refuse(tradingIssue('TTRD1008', '', 'Read was cancelled'));
     const shape = validateTradingShape<TradingReadToolInput>('tradingReadToolInput', raw); if (!shape.valid) return refuse(shape.issues[0]);
-    const args = shape.value, role = TRADING_ANALYST_ROLES.find(r => invocation.invocation?.node === `analyst-${r}`);
-    if (!role || !TRADING_ANALYST_TOOLS[role].includes(tool)) return refuse(tradingIssue('TTRD1003', '/role', 'Tool is outside the invoking role allowlist'));
+    const args = shape.value, node = invocation.invocation?.node ?? '';
+    const declared = Object.hasOwn(scopes, node) ? scopes[node] : TRADING_ANALYST_ROLES.filter(r => node === `analyst-${r}`);
+    const roles = declared.filter(role => TRADING_ANALYST_TOOLS[role].includes(tool));
+    if (!roles.length) return refuse(tradingIssue('TTRD1003', '/role', 'Tool is outside the invoking role allowlist'));
     const snapshot = context.snapshot, cutoffAt = args.cutoffAt ?? snapshot.cutoffAt, since = args.since ?? context.from;
     try {
       if (args.asset !== undefined && args.asset !== snapshot.asset || toEpoch(cutoffAt) > toEpoch(snapshot.cutoffAt) || toEpoch(since) < toEpoch(context.from) || toEpoch(since) > toEpoch(cutoffAt))
@@ -43,7 +52,7 @@ export function createTradingReadTools(input: { context: TradingAnalystContext; 
     if (response.outcome !== 'ok') return refuse(tradingIssue('TTRD1007', '/provider', response.reason, response.cause));
     // Providers may report ordinary future observations as withheld; retain those refusals.
     for (const withheld of response.refused) audit.refusals.push(immutableTradingJson(withheld.issue));
-    const visible = context.projections[role].evidence, result: Observation[] = [];
+    const visible = roles.flatMap(role => context.projections[role].evidence), result: Observation[] = [];
     for (const observation of response.value) {
       const valid = await validateTradingRecord(observation); if (!valid.valid) return refuse(valid.issues[0]);
       const evidence = visible.find(e => e.id === observation.id && e.digest === observation.revision);

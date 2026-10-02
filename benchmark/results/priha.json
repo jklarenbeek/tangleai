@@ -986,12 +986,20 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-ablation-workflow.ts",
+        "sha256": "48739665d0efddaa8e1872c4749da41b0de0c29d8ec4d377d5f7d29bc31ded9e"
+      },
+      {
+        "path": "benchmark/lib/trading-ablations.ts",
+        "sha256": "e7ba7fe6838f35b4eb76dce1793abe110a32a9413eb6025f31e46a4a7eec4d29"
+      },
+      {
         "path": "benchmark/lib/trading-agent-runner.ts",
-        "sha256": "0a403fd978b0c313f6f51cea4d939349d77727de5bbd0ba0e7e2ddbf897c1c67"
+        "sha256": "9e9de4084cc6628533d12f5f70375d30bdae4a1ece0fba0b3f9cce4d898a363f"
       },
       {
         "path": "benchmark/lib/trading-agent.ts",
-        "sha256": "78583c514ae43b9c60e1c7279e1b61eed01a7ba0081884c4e6021bd6c4bc2db4"
+        "sha256": "196ff32f288ca8ca3fdbfff627867109adf459247886517c6880fb0d7576d728"
       },
       {
         "path": "benchmark/lib/trading-analyst-runner.ts",
@@ -1003,11 +1011,19 @@
       },
       {
         "path": "benchmark/lib/trading-cli.ts",
-        "sha256": "4a9e0992c8557501d0a0de39c5a0eaf916bbb7cda3c34dc7a87df6064a7832e3"
+        "sha256": "c12a585b90052e516d4ce5da9c06c7f882f4d8649c23aa9377cc93aa7f10773b"
+      },
+      {
+        "path": "benchmark/lib/trading-diagnostics.ts",
+        "sha256": "f1de21bfec150ceb98f15d852324aa2b4aa4c494074aaf91c528af555d36d03b"
       },
       {
         "path": "benchmark/lib/trading-execution.ts",
-        "sha256": "fb8a7d3fcdb54dc11dc0fd6fe89dbaa24f0f3ff8cc0dd7bd6cfcf4d09b0e109b"
+        "sha256": "cad0664a93877143d6d38e210aac44e1fe14438b5b8bf86b23b0f9d488a9f6e3"
+      },
+      {
+        "path": "benchmark/lib/trading-live.ts",
+        "sha256": "4141b8a6f958ba64d1a95765cbf6dc059205fb51f986f108b333817d31858b01"
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
@@ -1018,12 +1034,16 @@
         "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
       },
       {
+        "path": "benchmark/lib/trading-paper.ts",
+        "sha256": "a7cfef7a3597c8c2333bf46a4a111339980b663dd845bc93f6034b32b5770449"
+      },
+      {
         "path": "benchmark/lib/trading-policy-probes.ts",
         "sha256": "88edb80e861c615ee6bfd721307831a2cabfba50f80626f54811b70c6febb685"
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "8bac1fc07943f502bc119543e116ab1dc5932bef06fdb9a406ec053ff2071d46"
+        "sha256": "deecf87ecc5f5045e87896adafb354cc1a45f03e4a027966042bb14c4573c81c"
       },
       {
         "path": "benchmark/lib/trading-research-runner.ts",
@@ -1046,12 +1066,16 @@
         "sha256": "4b239ee009c4c95c1b736b70436551e645e8a030c2e4ef32398ed3cc6f3f9e3a"
       },
       {
+        "path": "benchmark/lib/trading-single-agent.ts",
+        "sha256": "d49bc9249034c7347152e12db93f4993ec3d7fd2b94b6b50f6244912430d57d0"
+      },
+      {
         "path": "benchmark/lib/trading.ts",
-        "sha256": "6ab1ec25d2b812e2b4b9e0b7c50309034ea8e33a11b6067cb17deff983b517f7"
+        "sha256": "c5c3bb7ae074494f75b11e82531cb89949b5d5e02592710f3344107799c53bfe"
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "8482cb57dd8675cb4d3972925611ad8d8b54e92fb6c3b0fe9a322db09363b26d"
+        "sha256": "fc5eb4d56cb62139905e243d318ca5040b64fee1cdeb57db04a3e9017d317e5a"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -2951,7 +2975,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+        "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -3247,7 +3271,7 @@
       },
       {
         "path": "packages/trading/src/tools.ts",
-        "sha256": "d9ceba36640d8f5fc90db5a6f5733dbd8ee5b8f25b55ba964995776e03ad4e1c"
+        "sha256": "0faee47da7a5c47b37d751821739776a5e948c642b219322939cf3840218695a"
       },
       {
         "path": "packages/trading/src/trader.ts",
@@ -3258,7 +3282,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "d76040a7aa56a331e11cecf61c03b2065a2f7c216e3ba4d51d5744fb81a1be96"
+    "sha256": "d1c914d238980683d0e3afaad14c962cd727f3404acd158dd9f21318acf7634c"
   },
   "fixtureSource": {
     "files": [
@@ -68448,7 +68472,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "d76040a7aa56a331e11cecf61c03b2065a2f7c216e3ba4d51d5744fb81a1be96",
+      "sourceSha256": "d1c914d238980683d0e3afaad14c962cd727f3404acd158dd9f21318acf7634c",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68532,7 +68556,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "aba6386149b89a7a2d4cf0ab0c298dcb5b5b2448c4dca938c417518b1b3b1243"
+      "planId": "b514a170e09eafdce964dc1d276472d4a4a7c8389276a1d64f1c2ab3864e2614"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68779,5 +68803,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "c1b7ae5673e15c2290bda89454dcd9ef349b19b5b1294a2c4659e0bb4b1f8f9c"
+  "reportId": "073e5869568011500fc284e6fe10f030fdebf358b0d7fe8c0d20a801a7ae7759"
 }

@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "78b00ba3c6fe176a1126b7deba73a9048599f65d",
+    "head": "f0780316f5048f9dc8369f5721215d43385030b0",
     "clean": false,
     "files": [
       {
@@ -1983,7 +1983,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "42d8b8945ea7f645ac355a6a4fd5c9aa638553a3d10f34c585eacdca51b7e4a5"
+        "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -2279,7 +2279,7 @@
       },
       {
         "path": "packages/trading/src/tools.ts",
-        "sha256": "d9ceba36640d8f5fc90db5a6f5733dbd8ee5b8f25b55ba964995776e03ad4e1c"
+        "sha256": "0faee47da7a5c47b37d751821739776a5e948c642b219322939cf3840218695a"
       },
       {
         "path": "packages/trading/src/trader.ts",
@@ -2294,7 +2294,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "95f685e1c0e72a0c961506067abf8727ee9402e4d4d7206320c231019f6166c0"
+    "sha256": "59f7092cdcc8bcd44c956e580e896df3e8d78d22da417ae9716a4c598d4830a4"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85480,5 +85480,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "9ca566e429afe08e04fbbd3b887e9617451b410731080a1fa49c91f353da62d9"
+  "reportId": "7ad1575ecd654785e7b88e7aaf0e6e5884c84d3f8efe84d8a10c7f9e735aab10"
 }

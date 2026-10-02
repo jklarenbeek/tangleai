@@ -113,6 +113,12 @@ Provider output is revalidated against the exact role projection. Invented,
 hidden or changed citations fail with `TTRD1004`. An evidence-free report must
 abstain explicitly. Citation resolution establishes provenance, not entailment.
 
+`createTradingReadTools` also accepts host-owned `rolesByInvocation` capabilities
+for an explicitly combined role. Each declared native invocation receives only
+the union of its named analyst projections and tool permissions. Model arguments
+cannot grant capabilities or change the invocation identity. Undeclared callers,
+unknown roles and duplicate declarations are refused.
+
 Completed reports retain the normalized analysis, claims, limitations, horizon,
 confidence, prompt revision, model identity and spend in their content address.
 Analyst tasks cannot create orders or change a portfolio.
@@ -280,8 +286,9 @@ The registered [trading instrument](../../docs/TRADING_BENCHMARK.md) derives
 controls from an original synthetic fixture. Its privileged oracle is an
 accounting control, not a feasible trading result. The instrument measures
 indicator vectors and baseline signal crossings separately from simulated execution
-returns. All five baselines execute through the public engine. Model-driven
-strategy execution remains outside this surface.
+returns. All five baselines and the complete scripted model workflow execute
+through the public engine. Their financial results retain separate manifests
+and the same execution conventions.
 
 `planFill({ manifest, portfolio, intent, session, bar })` plans one complete
 market fill at the next linked session's raw open, including adverse slippage,
@@ -370,6 +377,24 @@ and no extra interval in the equity curve. Recovery qualification checks durable
 node completions, loop state, segment completion and the financial boundary.
 The scripted benchmark demonstrates this mechanism on fictional data. It does
 not measure live model quality or investment performance.
+
+The registered comparison instrument executes the full workflow, a single
+combined model role, a workflow without research debate, and a workflow without
+the risk team on four fixed fixture sessions. They share one execution manifest,
+starting portfolio, observations, scripted model, tools and ceilings. Omitted
+stages have explicit zero-spend analytical provenance; every variant still uses
+the same fund-manager authority and financial policy checker. Signed call, token,
+cost and return differences are eligible only with equal resources and completed
+decision coverage. Later snapshot identities can differ with the retained causal
+portfolio and artifacts.
+
+The paper replay registration has no licensed corpus. `--profile paper` retains
+seven unavailable rows with null metrics; it never relabels fictional data as
+historical evidence. `--live` prints a frozen credential-free plan with zero
+eligible requests, and exact authorization is checked even for this skipped
+state. The delivered tier is mechanism parity for the scripted agent and
+experimental fixture measurements for baselines. Historical experimental and
+operational parity remain unmeasured.
 
 <details>
 <summary>Decision topology projected from the native plan</summary>

@@ -68,6 +68,17 @@ the existing vector kernels and structured output; its fixed-root expansion,
 claim provenance, active projections and answer policy remain Tangle-owned.
 
 Current Jaren 0.91.4 adoption: [integration audit](JARENJS_INTEGRATION.md).
+Trading uses native indicators and returns from `@jarenjs/core/finance` and
+publication-time as-of operations from `@jarenjs/core/series`. ADX, CCI, VWAP,
+volume ratio and KDJ are native re-exports. `@tangleai/trading` owns point-in-time
+provider admission, explicit signal parameters, metric conventions, risk policy,
+corporate settlement, accounting, domain artifacts and the backtest composition.
+It introduces neither a second financial kernel nor a scheduler.
+
+| Current trading need | Suite owner | Tangle owner |
+|---|---|---|
+| Indicators, returns and publication-time series | `@jarenjs/core/finance` and `@jarenjs/core/series`, including ADX, CCI, VWAP, volume ratio and KDJ | Provider admission, explicit parameters and conventions, evidence, hard risk limits, settlement and workflow composition |
+
 Current ownership: [migration handoff](JAREN_AI_MIGRATION.md).
 The [0.83.3 integration audit](jaren-integration-0.83.3.md) retains its historical measurements.
 The following historical baseline retains its original `@jarenjs/ai` names

@@ -1,0 +1,12 @@
+{
+  "id": "trading-paper-replay-v1",
+  "profile": "paper",
+  "mode": "replay",
+  "status": "not-run",
+  "reason": "no licensed replay corpus decided",
+  "manifest": null,
+  "corpus": null,
+  "licenceDecision": null,
+  "redistributable": null,
+  "providerSnapshots": []
+}

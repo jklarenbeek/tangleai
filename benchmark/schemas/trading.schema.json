@@ -128,6 +128,21 @@
     },
     "mechanisms": {
       "$ref": "#/$defs/mechanismMeasurements"
+    },
+    "paper": {
+      "$ref": "#/$defs/paperProfileReport"
+    },
+    "live": {
+      "$ref": "#/$defs/tradingLiveRegistration"
+    },
+    "ablations": {
+      "$ref": "#/$defs/tradingAblations"
+    },
+    "executionDiagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/executionDiagnostic"
+      }
     }
   },
   "required": [
@@ -145,7 +160,11 @@
     "identity",
     "limitations",
     "reportId",
-    "mechanisms"
+    "mechanisms",
+    "paper",
+    "live",
+    "ablations",
+    "executionDiagnostics"
   ],
   "additionalProperties": false,
   "$query": {
@@ -4554,6 +4573,575 @@
           }
         ]
       }
+    },
+    "paperProfileRegistration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "trading-paper-replay-v1"
+        },
+        "profile": {
+          "const": "paper"
+        },
+        "mode": {
+          "const": "replay"
+        },
+        "status": {
+          "const": "not-run"
+        },
+        "reason": {
+          "const": "no licensed replay corpus decided"
+        },
+        "manifest": {
+          "type": "null"
+        },
+        "corpus": {
+          "type": "null"
+        },
+        "licenceDecision": {
+          "type": "null"
+        },
+        "redistributable": {
+          "type": "null"
+        },
+        "providerSnapshots": {
+          "type": "array",
+          "maxItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "profile",
+        "mode",
+        "status",
+        "reason",
+        "manifest",
+        "corpus",
+        "licenceDecision",
+        "redistributable",
+        "providerSnapshots"
+      ],
+      "additionalProperties": false
+    },
+    "paperProfileReport": {
+      "type": "object",
+      "properties": {
+        "registration": {
+          "$ref": "#/$defs/paperProfileRegistration"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "parityTier": {
+                "const": "unmeasured"
+              },
+              "status": {
+                "const": "not-run"
+              },
+              "reason": {
+                "const": "no licensed replay corpus decided"
+              },
+              "metrics": {
+                "type": "null"
+              },
+              "costs": {
+                "$ref": "#/$defs/costs"
+              },
+              "modelCalls": {
+                "const": 0
+              },
+              "sessions": {
+                "const": 0
+              },
+              "eligible": {
+                "const": false
+              }
+            },
+            "required": [
+              "id",
+              "parityTier",
+              "status",
+              "reason",
+              "metrics",
+              "costs",
+              "modelCalls",
+              "sessions",
+              "eligible"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "registration",
+        "sha256",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "tradingLiveRegistration": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "not-run"
+        },
+        "reason": {
+          "const": "no spend approval"
+        },
+        "fresh": {
+          "const": 0
+        },
+        "replayed": {
+          "const": 0
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "fresh",
+        "replayed"
+      ],
+      "additionalProperties": false
+    },
+    "ablationRun": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "enum": [
+            "full",
+            "single-agent",
+            "no-research-debate",
+            "no-risk-team"
+          ]
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflowVersionId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "comparisonId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "resourcesSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "incomplete",
+            "failed"
+          ]
+        },
+        "metrics": {
+          "$ref": "#/$defs/metrics"
+        },
+        "undefined": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/undefinedMetric"
+          }
+        },
+        "costs": {
+          "$ref": "#/$defs/costs"
+        },
+        "perAsset": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset": {
+                "$ref": "#/$defs/asset"
+              },
+              "cr": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "mdd": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fills": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "asset",
+              "cr",
+              "mdd",
+              "fills"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "transactions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejectedOrders": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedObservations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "usd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "retries": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "repairs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "toolCalls",
+            "tokens",
+            "usd",
+            "retries",
+            "repairs",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "decisionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incompleteDecisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayPhysicalCalls": {
+          "const": 0
+        },
+        "replayWrites": {
+          "const": 0
+        },
+        "issuesByCode": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^TTRD[0-9]{4}$"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "code",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "resultSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "receiptsSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "id",
+        "manifestId",
+        "workflowVersionId",
+        "comparisonId",
+        "resourcesSha256",
+        "status",
+        "metrics",
+        "undefined",
+        "costs",
+        "perAsset",
+        "transactions",
+        "rejectedOrders",
+        "refusedObservations",
+        "spend",
+        "decisionCount",
+        "incompleteDecisions",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replayPhysicalCalls",
+        "replayWrites",
+        "issuesByCode",
+        "resultSha256",
+        "receiptsSha256"
+      ],
+      "additionalProperties": false
+    },
+    "ablationComparison": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline": {
+          "const": "full"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delta": {
+          "type": "object",
+          "properties": {
+            "cr": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ar": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sharpe": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "mdd": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "calls": {
+              "type": "integer"
+            },
+            "tokens": {
+              "type": "integer"
+            },
+            "modelUsd": {
+              "type": "number"
+            },
+            "executionCosts": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "cr",
+            "ar",
+            "sharpe",
+            "mdd",
+            "calls",
+            "tokens",
+            "modelUsd",
+            "executionCosts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "baseline",
+        "eligible",
+        "reason",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "tradingAblations": {
+      "type": "object",
+      "properties": {
+        "registrationSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "comparisonId": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ablationRun"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ablationComparison"
+          }
+        }
+      },
+      "required": [
+        "registrationSha256",
+        "sessions",
+        "assets",
+        "comparisonId",
+        "runs",
+        "comparisons"
+      ],
+      "additionalProperties": false
+    },
+    "executionDiagnostic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "manifestId": {
+          "type": "string"
+        },
+        "expectedSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missingSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failedAssetSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedAssetSessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "staleMarks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turnover": {
+          "type": "number",
+          "minimum": 0
+        },
+        "meanGrossExposure": {
+          "type": "number",
+          "minimum": 0
+        },
+        "peakGrossExposure": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "manifestId",
+        "expectedSessions",
+        "retainedSessions",
+        "missingSessions",
+        "failedAssetSessions",
+        "refusedAssetSessions",
+        "staleMarks",
+        "turnover",
+        "meanGrossExposure",
+        "peakGrossExposure"
+      ],
+      "additionalProperties": false
     }
   }
 }

@@ -36,4 +36,23 @@ describe('cutoff-bound analyst tools', () => {
     const f = await analystFixture(), tools = createTradingReadTools({ context: f.host.context, providers: { ...f.fixture.providers, news: { items: async () => { throw Error('offline'); } } } });
     assert.match(JSON.stringify(await tools.toolBindings['news-items'].handler({}, invocation('news'))), /TTRD1007/); assert.equal(tools.audit.refusals.length, 1);
   });
+  it('an explicitly combined native invocation retains the same tool-specific cutoff and evidence restrictions', async () => {
+    const f = await analystFixture(), tools = createTradingReadTools({ context: f.host.context, providers: f.fixture.providers,
+      rolesByInvocation: { 'combined-decision': ['technical', 'fundamentals', 'news', 'sentiment'] } });
+    const caller = { ...invocation('news'), invocation: { runId: 'test', node: 'combined-decision', path: 'combined-decision' } };
+    for (const id of TRADING_READ_TOOLS) assert.ok('observations' in (await tools.toolBindings[id].handler({}, caller) as object));
+    assert.match(JSON.stringify(await tools.toolBindings['news-items'].handler({ cutoffAt: '2026-01-01T00:00:00Z' }, caller)), /TTRD1003/);
+    assert.match(JSON.stringify(await tools.toolBindings['news-items'].handler({ role: 'news' }, caller)), /TTRD1001/);
+    assert.match(JSON.stringify(await f.host.toolBindings['news-items'].handler({}, caller)), /TTRD1003/);
+    assert.throws(() => createTradingReadTools({ context: f.host.context, providers: f.fixture.providers, rolesByInvocation: { bad: ['news', 'news'] } }), TypeError);
+  });
+  it('prototype property names grant no undeclared invocation scope', async () => {
+    const f = await analystFixture();
+    for (const node of ['constructor', 'toString', '__proto__']) {
+      const caller = { ...invocation('news'), invocation: { runId: 'test', node, path: node } };
+      const result = await f.host.toolBindings['news-items'].handler({}, caller);
+      assert.match(JSON.stringify(result), /TTRD1003/);
+    }
+    assert.equal(f.host.audit.refusals.length, 3); assert.equal(f.host.audit.returned, 0);
+  });
 });

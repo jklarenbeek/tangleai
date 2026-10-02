@@ -229,6 +229,30 @@ and numeric domain data and resumes a two-turn clarification after SQLite reopen
 matched comparison costs; [GMPL_LOCOMO.md](GMPL_LOCOMO.md) describes the seeded
 plan and exact-request replay seam. Neither establishes live model improvement.
 
+## The trading domain
+
+`@tangleai/trading` owns immutable market, evidence, decision and simulated
+financial records. Providers expose publication times and return frozen captures;
+the snapshot boundary independently rejects future or altered observations.
+Indicators and return kernels come from Jaren finance, and causal as-of lookup
+comes from Jaren series. Signal parameters, risk ceilings, fill timing and all
+accounting conventions are explicit manifest fields.
+
+One native MAS document composes four analysts, bounded research, a trader,
+three risk personas and a fund manager. The public decision runner uses the
+existing store segment queue; durable decision receipts separate completed
+model work from the atomic financial commit. All assets decide against the same
+close portfolio before next-open fills. The final close is money-neutral, and
+recovery cannot repeat model spend or financial effects. Baselines and agents
+share `runStrategy` as their financial owner.
+
+The [registered measurement](TRADING_BENCHMARK.md) publishes full-flow results,
+single-agent and team-omission ablations, signed costs, losses and counted
+refusals. Ablation adapters are benchmark policy, with explicit deterministic
+omissions; they do not change the production topology guards. The paper profile
+retains an unavailable state with no corpus or invented runtime manifest.
+No licensed historical quality, live brokerage or operational parity is claimed.
+
 ## Evaluated orchestration learning
 
 `@tangleai/hera` composes eight GMPL role artifacts and five control artifacts

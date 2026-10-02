@@ -1,0 +1,14 @@
+{
+  "id": "trading-ablations-v1",
+  "sessions": ["synx-2025-01-02", "synx-2025-01-03", "synx-2025-01-06", "synx-2025-01-07"],
+  "assets": ["SYN-A", "SYN-B"],
+  "baseline": "full",
+  "variants": [
+    {"id": "single-agent", "callsPerDecision": 2, "semantics": "One model role supplies analysis, proposal and final decision in one structured result; deterministic projections charge that attempt once. No independent research or risk review."},
+    {"id": "no-research-debate", "callsPerDecision": 20, "semantics": "Four analysts feed the trader through an explicitly unreviewed evidence projection. The native risk team and fund manager remain."},
+    {"id": "no-risk-team", "callsPerDecision": 24, "semantics": "The trader reaches the fund manager through an explicit deterministic pass-through; final financial hard policy remains."}
+  ],
+  "fullCallsPerDecision": 32,
+  "script": "Two shares when unheld, otherwise hold; identical point-in-time evidence and declared ceilings in every variant.",
+  "pairing": "Identical execution manifest, calendar subset, assets, provider snapshots, scripted model identity, financial conventions and resource ceilings. Only topology and its attributed decision artifacts differ."
+}
