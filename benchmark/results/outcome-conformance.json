@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "2a1f1d0a1c35d299de0bce99ca169aae9e4e806a",
+    "head": "a9255aa83445546893caface974ff6845a60708d",
     "clean": false,
     "files": [
       {
@@ -2155,19 +2155,23 @@
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "cd4d516930a50a5867e569d544724d15ffd158678fd3b321c9b0b7a0b2c96565"
+        "sha256": "736b72e5d18d6ed685e3ae6f49fc05cc820e3bf6b5390af00fa9b0409bfcbbc1"
       },
       {
         "path": "packages/trading/src/accounting.ts",
-        "sha256": "1d0dd73b5b9817262b1cb7dcd81ac3cde8b2d5de2c5770b30c1a54918893a78a"
+        "sha256": "3286e20b052e7189db1d7640697c5f2148881af0a36b80ff062ed1f8706ca838"
       },
       {
         "path": "packages/trading/src/baselines.ts",
         "sha256": "c6326a0b90e0771a1ba6c6684187ca43c5f107df558ce9304f6fe1ae4da9ef9d"
       },
       {
+        "path": "packages/trading/src/broker.ts",
+        "sha256": "640c57f732d729608d12c1d7c05b4ab85d0120667a050661d1578089a7a3b4e0"
+      },
+      {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "289b1d55ad8eedd396b66a1f80548d28166f101d43295a24f2373bc3631af05e"
+        "sha256": "02330ee0ace27944caf762ae8a4b50785a48f4f0f480a1a0f27922e18a33b2c7"
       },
       {
         "path": "packages/trading/src/errors.ts",
@@ -2179,11 +2183,15 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "24b69a39665a6edfffb0ea106aa4010c3c4b507fcf703e180833c3a64b455b5f"
+        "sha256": "71442d7045c646af6d05e600b084982d0eaf42503c410263ed2a6103a2526983"
       },
       {
         "path": "packages/trading/src/indicators.ts",
         "sha256": "2714b2f0062d7ae88cb70cb678717652c526ee77fc75e515ca52e92e08c3e42c"
+      },
+      {
+        "path": "packages/trading/src/portfolio.ts",
+        "sha256": "1af0111eb6899deb4f7d29a673177e319aef271ea80307f607006a49bdc11b07"
       },
       {
         "path": "packages/trading/src/providers.ts",
@@ -2192,6 +2200,10 @@
       {
         "path": "packages/trading/src/records.ts",
         "sha256": "154ece29ad0d0739a863f8aeccec46feb6871fd5e737f7327f7c6a15b6fead94"
+      },
+      {
+        "path": "packages/trading/src/risk.ts",
+        "sha256": "514581f0bedf8541a33a31c032c743cc85e8ddc802c9816e7a075e65f1f5de6d"
       },
       {
         "path": "packages/trading/src/schema.ts",
@@ -2203,18 +2215,22 @@
       },
       {
         "path": "packages/trading/src/store.ts",
-        "sha256": "4c7b921f807b1f909f628b7b175e99fa005b87f55b526c9e43e9e49b5b58ad3e"
+        "sha256": "d061e9d3f787b8bd3d5b0829bda894b5c9daead7e3f0e2993f7a4de726ccdc76"
+      },
+      {
+        "path": "packages/trading/src/strategy.ts",
+        "sha256": "c3e3a6a41c9378ae114c2c56ad597296c45adabebd3d96038433bbf9475ed498"
       },
       {
         "path": "packages/trading/src/time.ts",
-        "sha256": "61464d14ab6506fb18b7434d2db8865a4b1cbead7cfcf89ec672a05cdcb027b0"
+        "sha256": "5d5e42403738b669b7f44ce0f255cde4346aa5bf5b451a288419650212b2e63c"
       },
       {
         "path": "scripts/outcomes-contract.ts",
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "76812a76cbb03407d4df6de2194be10a3f816e9ebb13aeace88be644def9485a"
+    "sha256": "c0388acb273978fbe51da9512b1e12a25a467bf14070799a6f2078c5d351e459"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85400,5 +85416,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "a5087e0dbc09d9d5353f51e6531fe805b14d7f0143d018576c9966ced0003a27"
+  "reportId": "4efcc52c4d41a4a2731e2e96f55fcb8c73d847a43d4d243f88b9f80f70316da4"
 }

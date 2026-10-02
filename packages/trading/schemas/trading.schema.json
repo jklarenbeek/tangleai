@@ -610,6 +610,9 @@
         "notional": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "sourceBarId": {
+          "$ref": "#/$defs/tradingId"
         }
       },
       "required": [
@@ -626,7 +629,8 @@
         "price",
         "commission",
         "slippage",
-        "notional"
+        "notional",
+        "sourceBarId"
       ],
       "additionalProperties": false
     },
@@ -810,6 +814,13 @@
         "credit": {
           "type": "number",
           "minimum": 0
+        },
+        "purpose": {
+          "enum": [
+            "principal",
+            "commission",
+            "dividend"
+          ]
         }
       },
       "required": [
@@ -1117,12 +1128,20 @@
         "costBasis": {
           "type": "number",
           "minimum": 0
+        },
+        "cashFlow": {
+          "type": "number"
+        },
+        "realizedPnl": {
+          "type": "number"
         }
       },
       "required": [
         "asset",
         "quantity",
-        "costBasis"
+        "costBasis",
+        "cashFlow",
+        "realizedPnl"
       ],
       "additionalProperties": false
     },
@@ -1864,6 +1883,60 @@
       ],
       "additionalProperties": false
     },
+    "tradingActionsInput": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "session": {
+          "$ref": "#/$defs/marketSession"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/corporateActionObservation"
+          }
+        }
+      },
+      "required": [
+        "manifest",
+        "portfolio",
+        "session",
+        "actions"
+      ],
+      "additionalProperties": false
+    },
+    "tradingActionsResult": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "ledgerEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ledgerEntry"
+          }
+        },
+        "actionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "portfolio",
+        "ledgerEntries",
+        "actionIds"
+      ],
+      "additionalProperties": false
+    },
     "tradingCalendarProviderResult": {
       "oneOf": [
         {
@@ -1980,6 +2053,27 @@
         },
         "portfolio": {
           "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "mode": {
+          "enum": [
+            "trade",
+            "settlement",
+            "valuation"
+          ]
+        },
+        "markBarIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "actionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -1989,7 +2083,10 @@
         "intent",
         "fills",
         "ledgerEntries",
-        "portfolio"
+        "portfolio",
+        "mode",
+        "markBarIds",
+        "actionIds"
       ],
       "additionalProperties": false
     },
@@ -2046,6 +2143,31 @@
         },
         "portfolioId": {
           "$ref": "#/$defs/tradingId"
+        },
+        "mode": {
+          "enum": [
+            "trade",
+            "settlement",
+            "valuation"
+          ]
+        },
+        "markBarIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "actionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "portfolioSequence": {
+          "type": "integer",
+          "minimum": 1
         }
       },
       "required": [
@@ -2060,7 +2182,11 @@
         "intentId",
         "fillIds",
         "ledgerEntryIds",
-        "portfolioId"
+        "portfolioId",
+        "mode",
+        "markBarIds",
+        "actionIds",
+        "portfolioSequence"
       ],
       "additionalProperties": false
     },
@@ -2249,6 +2375,90 @@
       ],
       "additionalProperties": false
     },
+    "tradingExecutionPolicy": {
+      "type": "object",
+      "properties": {
+        "strategyId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "kind": {
+          "enum": [
+            "signals",
+            "oracle",
+            "do-nothing",
+            "leaky"
+          ]
+        },
+        "entryQuantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "strategyId",
+        "kind",
+        "entryQuantity"
+      ],
+      "additionalProperties": false
+    },
+    "tradingFillInput": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "intent": {
+          "$ref": "#/$defs/orderIntent"
+        },
+        "session": {
+          "$ref": "#/$defs/marketSession"
+        },
+        "bar": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/barObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "manifest",
+        "portfolio",
+        "intent",
+        "session",
+        "bar"
+      ],
+      "additionalProperties": false
+    },
+    "tradingFillPlan": {
+      "type": "object",
+      "properties": {
+        "fill": {
+          "$ref": "#/$defs/fill"
+        },
+        "ledgerEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ledgerEntry"
+          }
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        }
+      },
+      "required": [
+        "fill",
+        "ledgerEntries",
+        "portfolio"
+      ],
+      "additionalProperties": false
+    },
     "tradingFixtureProviderInput": {
       "type": "object",
       "properties": {
@@ -2397,6 +2607,58 @@
         "iterations",
         "contextChars",
         "traceBytes"
+      ],
+      "additionalProperties": false
+    },
+    "tradingMarkInput": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "session": {
+          "$ref": "#/$defs/marketSession"
+        },
+        "bars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/barObservation"
+          }
+        }
+      },
+      "required": [
+        "manifest",
+        "portfolio",
+        "session",
+        "bars"
+      ],
+      "additionalProperties": false
+    },
+    "tradingMarkResult": {
+      "type": "object",
+      "properties": {
+        "portfolio": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "staleMarks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missingAssets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "portfolio",
+        "staleMarks",
+        "missingAssets"
       ],
       "additionalProperties": false
     },
@@ -2711,6 +2973,30 @@
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
     },
+    "tradingRiskInput": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        "portfolioAfter": {
+          "$ref": "#/$defs/portfolioSnapshot"
+        },
+        "intent": {
+          "$ref": "#/$defs/orderIntent"
+        },
+        "sessionBar": {
+          "$ref": "#/$defs/barObservation"
+        }
+      },
+      "required": [
+        "manifest",
+        "portfolioAfter",
+        "intent",
+        "sessionBar"
+      ],
+      "additionalProperties": false
+    },
     "tradingRunManifest": {
       "type": "object",
       "properties": {
@@ -2915,6 +3201,9 @@
         },
         "signalParameters": {
           "$ref": "#/$defs/tradingSignalParameters"
+        },
+        "executionPolicy": {
+          "$ref": "#/$defs/tradingExecutionPolicy"
         }
       },
       "required": [
@@ -3112,6 +3401,33 @@
         ]
       }
     },
+    "tradingSizingResult": {
+      "type": "object",
+      "properties": {
+        "disposition": {
+          "enum": [
+            "sized",
+            "hold"
+          ]
+        },
+        "quantity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        }
+      },
+      "required": [
+        "disposition",
+        "quantity",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
     "tradingSpend": {
       "type": "object",
       "properties": {
@@ -3154,6 +3470,245 @@
         "ms"
       ],
       "additionalProperties": false
+    },
+    "tradingStrategyContext": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session": {
+          "$ref": "#/$defs/marketSession"
+        },
+        "bars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/barObservation"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "portfolioId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "cash": {
+          "type": "number",
+          "minimum": 0
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/portfolioPosition"
+          }
+        }
+      },
+      "required": [
+        "asset",
+        "session",
+        "bars",
+        "observations",
+        "portfolioId",
+        "cash",
+        "positions"
+      ],
+      "additionalProperties": false
+    },
+    "tradingStrategyData": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "$ref": "#/$defs/tradingRunManifest"
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/marketSession"
+          }
+        },
+        "bars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/barObservation"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/corporateActionObservation"
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        }
+      },
+      "required": [
+        "manifest",
+        "sessions",
+        "bars",
+        "actions",
+        "observations"
+      ],
+      "additionalProperties": false
+    },
+    "tradingStrategyResult": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/backtestResult"
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingDayResult"
+          }
+        },
+        "portfolios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/portfolioSnapshot"
+          }
+        },
+        "fills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fill"
+          }
+        },
+        "rejectedOrders": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedObservations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "staleMarks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "writes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "costs": {
+          "type": "object",
+          "properties": {
+            "commission": {
+              "type": "number",
+              "minimum": 0
+            },
+            "slippage": {
+              "type": "number",
+              "minimum": 0
+            },
+            "total": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "commission",
+            "slippage",
+            "total"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "result",
+        "days",
+        "portfolios",
+        "fills",
+        "rejectedOrders",
+        "refusedObservations",
+        "staleMarks",
+        "writes",
+        "costs"
+      ],
+      "additionalProperties": false
+    },
+    "tradingStrategySignal": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "enum": [
+            "long",
+            "flat"
+          ]
+        },
+        "availableAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "observationIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "target",
+        "availableAt",
+        "observationIds"
+      ],
+      "additionalProperties": false
+    },
+    "tradingStrategySignalOutcome": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "const": true
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/tradingStrategySignal"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "valid",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "const": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/tradingIssue"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "valid",
+            "issues"
+          ],
+          "additionalProperties": false
+        }
+      ]
     },
     "tradingTargetSignal": {
       "type": "object",

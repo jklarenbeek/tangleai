@@ -7,7 +7,7 @@ it('trading schemas refuse unknown fields, missing availability, invalid times a
   const missing = { ...fixture.observations[0] } as Record<string, unknown>; delete missing.availableAt;
   for (const [input, path] of [[{ ...fixture.manifest, extra: true }, '/extra'], [{ ...fixture.manifest, shorting: true }, '/shorting'],
     [missing, '/availableAt'], [{ ...fixture.observations[0], availableAt: '2020-01-01T00:00:00Z' }, '/availableAt'],
-    [{ ...fixture.initial, positions: [{ asset: 'SYN-A', quantity: -1, costBasis: 10 }] }, '/positions/0/quantity']] as const) {
+    [{ ...fixture.initial, positions: [{ ...fixture.initial.positions[0], quantity: -1 }] }, '/positions/0/quantity']] as const) {
     const result = await validateTradingRecord(input); assert.equal(result.valid, false);
     if (!result.valid) { assert.equal(result.issues[0].code, 'TTRD1001'); assert.equal(result.issues[0].path, path); }
   }

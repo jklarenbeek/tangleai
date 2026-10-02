@@ -1,6 +1,6 @@
 {
   "instrument": "hera-qa",
-  "sourceId": "d3f36b658f95d4483fc3e2b108333c0477ad7f95eb67ae4650be98f825420ef0",
+  "sourceId": "2d9313351c3c1e1ff7ec6d31557d64a23ea13dab1b91027fb9f61a8848c043d9",
   "fixture": {
     "revision": "0771f7eeab247868ee093a64d9e94910d589fe3c0e5f01824f0da53915227203",
     "licence": "MIT",
@@ -12542,5 +12542,5 @@
     "All runtime rows share the registered budget-policy identity and resolved CONFIG budget. Actual allocations remain explicit: fixed runs have six-invocation caps; generated groups have separate structural caps; learning additionally receives one bounded refinement allowance. The budget census checks each observed event, including failed and rejected purchases, against its registered allocation.",
     "Evaluated operational failures receive zero score and success false before answer scoring; an empty failure placeholder cannot earn correct-abstention credit. Completed answers remain under the declared host scorer. Unlabelled inference remains unscored."
   ],
-  "reportId": "322606ac75f5ef7852d23ca9c6fd9ed81b8770121d0169d49ad8b6ef6f6c820e"
+  "reportId": "abb123bf68c5423386f5c406b954ced445b31e6fc7ea625505a124fc54a644bf"
 }

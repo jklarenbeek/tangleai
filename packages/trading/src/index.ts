@@ -18,3 +18,8 @@ export { TRADING_PROVIDERS, createTradingProviderSnapshot, createFixtureProvider
 export type { TradingProviders, TradingProviderOutcome, TradingFixtureProviders } from './providers.ts';
 export { buildSnapshot } from './snapshot.ts';
 export type { TradingSnapshotInput, TradingSnapshotBundle } from './snapshot.ts';
+export { planFill } from './broker.ts';
+export { markPortfolio, applyCorporateActions } from './portfolio.ts';
+export { checkRiskPolicy, sizeToPolicy } from './risk.ts';
+export { runStrategy, equityCurve } from './strategy.ts';
+export type { TradingStrategySignals, TradingStrategyInput } from './strategy.ts';

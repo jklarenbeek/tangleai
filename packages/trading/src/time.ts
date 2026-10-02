@@ -79,7 +79,7 @@ export async function admit(input: readonly Observation[], cutoffAt: string): Pr
   catch (cause) { return tradingRefuse('TTRD1001', '', 'Observations must be finite JSON', cause); }
   let cutoff: number;
   try { cutoff = toEpoch(cutoffAt); } catch (cause) { return tradingRefuse('TTRD1001', '/cutoffAt', 'Invalid cutoff instant', cause); }
-  const admitted: Observation[] = [], refused: TradingAdmission['refused'] = [];
+  const observations: Observation[] = [];
   const seen = new Set<string>();
   for (const [i, value] of input.entries()) {
     const valid = await validateTradingRecord(value);
@@ -88,10 +88,18 @@ export async function admit(input: readonly Observation[], cutoffAt: string): Pr
     const observation = valid.value;
     if (seen.has(observation.id)) return tradingRefuse('TTRD1001', `/${i}/id`, 'Duplicate observation identity');
     seen.add(observation.id);
+    observations.push(observation);
+  }
+  return { valid: true, value: admitValidatedTradingObservations(observations, cutoff) };
+}
+/** Internal partition for a detached corpus whose shapes, identities and times are already verified. */
+export function admitValidatedTradingObservations(observations: readonly Observation[], cutoff: number): TradingAdmission {
+  const admitted: Observation[] = [], refused: TradingAdmission['refused'] = [];
+  for (const [i, observation] of observations.entries()) {
     if (toEpoch(observation.availableAt) <= cutoff) admitted.push(observation);
     else refused.push({ id: observation.id, reason: 'TTRD1003', issue: tradingIssue('TTRD1003', `/${i}/availableAt`, 'Observation was not available at the cutoff') });
   }
-  return { valid: true, value: { admitted, refused } };
+  return { admitted, refused };
 }
 export async function latestBarsAsOf(bars: readonly BarObservation[], cutoffAt: string, assets: readonly string[]): Promise<TradingOutcome<{
   rows: Array<{ asset: string; bar: BarObservation | null }>; missing: number; refused: TradingAdmission['refused'];

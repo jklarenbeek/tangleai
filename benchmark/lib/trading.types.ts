@@ -581,6 +581,35 @@ export type RowEligibilityReasonsItem = string;
  */
 export type RowControlSha256AnyOf1 = string;
 
+export interface ExecutionReceipt {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  manifestId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  resultId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  equitySha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  ledgerSha256: string;
+  replayWrites: 0;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  staleMarks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  decisionCount: number;
+}
+
+
 export interface Row {
   /**
    * Schema constraints this type cannot express: minLength=1
@@ -608,6 +637,7 @@ export interface Row {
   perAsset: Array<RowPerAssetItem>;
   eligibility: { eligible: boolean; reasons: Array<RowEligibilityReasonsItem>; };
   controlSha256: RowControlSha256AnyOf1 | null;
+  execution: ExecutionReceipt | null;
 }
 
 

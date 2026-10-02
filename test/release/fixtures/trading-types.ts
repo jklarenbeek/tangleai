@@ -1,12 +1,13 @@
 import { createMemoryTradingStore, createTradingRecord, admit, latestBarsAsOf, sessionIndex, planTradingCommit,
-  createFixtureProviders, createReplayProviders, buildSnapshot, TRADING_SIGNAL_DEFAULTS, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, adx, cci, vwap, volumeRatio, kdj } from '@tangleai/trading';
+  createFixtureProviders, createReplayProviders, buildSnapshot, TRADING_SIGNAL_DEFAULTS, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, adx, cci, vwap, volumeRatio, kdj,
+  planFill, markPortfolio, applyCorporateActions, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve } from '@tangleai/trading';
 import type { TradingRunManifest, TradingCommit, MarketSession, Observation, PortfolioSnapshot, BarObservation } from '@tangleai/trading/contracts';
 import schema from '@tangleai/trading/schemas/trading' with { type: 'json' };
 declare const manifest: TradingRunManifest, plan: TradingCommit, previous: PortfolioSnapshot, session: MarketSession, observations: Observation[], bars: BarObservation[];
 const store = createMemoryTradingStore();
 await store.put('manifests', manifest); await store.commitDecision(plan); await store.readDecision(plan.key);
 await admit(observations, session.closeAt); await latestBarsAsOf(bars, session.closeAt, manifest.assets); await sessionIndex([session]);
-planTradingCommit(plan, manifest, previous, session);
+planTradingCommit(plan, manifest, previous, session, { execution: session, bars, actions: [] });
 const captured = await createFixtureProviders({ manifestId: manifest.id, eventAt: '2025-01-01T00:00:00Z', availableAt: '2025-01-01T00:00:00Z', sessions: [session], observations });
 if (captured.valid) {
   const replay = await createReplayProviders({ manifestId: manifest.id, snapshots: captured.value.snapshots, bindings: captured.value.bindings });
@@ -14,6 +15,15 @@ if (captured.valid) {
 }
 for (const policy of [buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross]) policy(bars, TRADING_SIGNAL_DEFAULTS);
 const prices = Float64Array.from([10, 11, 12]);
+if (plan.intent) {
+  const input = { manifest, portfolio: previous, intent: plan.intent, session, bar: bars[0] };
+  await planFill(input); await sizeToPolicy(input);
+  checkRiskPolicy({ manifest, portfolioAfter: plan.portfolio, intent: plan.intent, sessionBar: bars[0] });
+}
+await markPortfolio({ manifest, portfolio: previous, session, bars });
+await applyCorporateActions({ manifest, portfolio: previous, session, actions: [] });
+await runStrategy({ manifest, sessions: [session], bars, actions: [], observations, store, signals: () => ({ valid: true, value: null }) });
+await equityCurve(store, manifest.id);
 adx(prices, prices, prices); cci(prices, prices, prices); vwap(prices, prices, prices, prices); volumeRatio(prices); kdj(prices, prices, prices);
 // @ts-expect-error Strategy parameters must be explicit.
 buyAndHold(bars);

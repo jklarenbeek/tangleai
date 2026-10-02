@@ -1,4 +1,4 @@
-/** Fixed trading controls and explicit unavailable rows; no model or broker runs. */
+/** Deterministic simulated execution and explicit unavailable model rows. */
 import { join } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
@@ -9,9 +9,10 @@ import { analyticEnvelope } from './report-envelope.ts';
 import { sourceManifest } from './source-manifest.ts';
 import { createReportValidator } from './validate.ts';
 import { table, pct, count } from './table.ts';
-import { tradingConventions, measureTradingEquity } from './trading-metrics.ts';
+import { tradingConventions } from './trading-metrics.ts';
 import { TRADING_ROOT, loadTradingFixture, auditTradingPoison } from './trading.ts';
 import { measureTradingMechanisms } from './trading-mechanisms.ts';
+import { measureTradingExecutions } from './trading-execution.ts';
 import { TRADING_SIGNAL_DEFAULTS } from '@tangleai/trading';
 import type { TradingFixture } from './trading.ts';
 import type { Trading, Row, Capabilities, Counts, Source } from './trading.types.ts';
@@ -23,28 +24,14 @@ const LIMITATIONS = [
   'Original MIT fictional data qualifies mechanism and accounting only; it measures no real-market or live-model performance.',
   'Oracle uses privileged future closes and fixed 100-share entries. It is an eligible analytic control, not a feasible strategy or a maximum-return guarantee.',
   'The leaky control reads observations after cutoff and is excluded from every comparison.',
-  'Golden ledgers are independently generated data; baseline execution waits for the shared simulator. Measured indicators and signals are calculation checks, not executed strategies.',
-  'SYN-B is registered as the losing buy-and-hold asset; its execution row remains visible when measured.',
-  'Bars arrive 15 minutes after close. The close-time decision cannot observe that session bar.',
+  'All controls and five baselines use one next-open simulator. Oracle and cash reproduce independent golden ledgers; the excluded leaky request is refused and has zero fills.',
+  'SYN-B buy-and-hold loses while SYN-A gains; both per-asset returns are shown. Each asset starts with an equal share of capital for attribution.',
+  'Bars arrive 15 minutes after close. Signals use the latest admitted revision per historical session; all assets decide before any next-open fill. Cash, holdings and cited observations are visible to signal callbacks; ex-post marks are not.',
   'Live model quality, external historical replay and operational parity are not measured. No network request is made.',
 ];
 
 export async function tradingControlRows(fixture: TradingFixture): Promise<Row[]> {
-  return Promise.all(fixture.strategies.map(async strategy => {
-    const golden = fixture.goldens.find(g => g.id === strategy.id);
-    const excluded = strategy.id === 'leaky';
-    const reason = excluded ? 'reads observations after cutoff' : golden ? null : strategy.id === 'tradingagents-live'
-      ? 'no authorized live model plan' : strategy.kind === 'baseline' ? 'shared simulator not implemented' : 'full decision workflow not implemented';
-    return { id: strategy.id, kind: strategy.kind, parityTier: strategy.parityTier,
-      status: excluded ? 'excluded' : golden ? 'measured' : strategy.id === 'tradingagents-live' ? 'not-run' : 'implementation-missing', reason,
-      ...(golden ? measureTradingEquity(golden.equity, fixture.manifest) : { metrics: null, undefined: [] }),
-      transactions: golden?.fills.length ?? 0, rejectedOrders: 0, refusedObservations: excluded ? fixture.poison.length : 0,
-      costs: golden?.costs ?? { commission: 0, slippage: 0, total: 0 },
-      perAsset: golden?.perAsset.map(a => ({ asset: a.asset, cr: a.metrics.cr, mdd: a.metrics.mdd, fills: a.fills })) ?? [],
-      eligibility: { eligible: Boolean(golden && !excluded), reasons: reason ? [reason] : [] },
-      controlSha256: golden ? await canonicalSha256(golden) : null,
-    };
-  }));
+  return measureTradingExecutions(fixture);
 }
 export function tradingCounts(rows: Row[]): Counts {
   const number = (status: Row['status']) => rows.filter(r => r.status === status).length;
@@ -67,7 +54,7 @@ export async function tradingSource(): Promise<Source> {
     'benchmark/schemas/trading.schema.json', 'benchmark/lib/trading.types.ts', 'benchmark/lib/trading.ts', 'benchmark/lib/trading-metrics.ts',
     'benchmark/lib/trading-report.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
     'benchmark/lib/args.ts', 'benchmark/lib/table.ts', 'test/benchmark/trading.test.ts', 'benchmark/lib/trading-mechanisms.ts',
-    'benchmark/scripts/trading-indicator-fixtures.py', 'test/fixtures/trading-indicators.json'], ['benchmark/fixtures/trading', 'packages/trading', 'test/trading']);
+    'benchmark/scripts/trading-indicator-fixtures.py', 'test/fixtures/trading-indicators.json', 'benchmark/lib/trading-execution.ts'], ['benchmark/fixtures/trading', 'packages/trading', 'test/trading']);
 }
 export async function buildTradingReport(options: { source?: Source } = {}): Promise<Trading> {
   const fixture = await loadTradingFixture(), rows = await tradingControlRows(fixture), poison = await auditTradingPoison(fixture), mechanisms = await measureTradingMechanisms(fixture);
@@ -115,9 +102,11 @@ export function renderDocument(report: Trading): string {
       rows: report.rows.map(r => [r.id, r.parityTier, r.status, r.eligibility.eligible ? 'yes' : 'no', pct(r.metrics?.cr ?? null, 4), pct(r.metrics?.ar ?? null, 4),
         r.metrics?.sharpe?.toFixed(6) ?? null, pct(r.metrics?.mdd ?? null, 4), r.transactions, r.rejectedOrders, r.refusedObservations, r.metrics ? r.costs.total.toFixed(6) : null]), numeric: [4, 5, 6, 7, 8, 9, 10, 11] })
     + '\n\n' + table({ head: ['Row', 'Asset', 'CR', 'MDD', 'Fills'], rows: report.rows.flatMap(r => r.perAsset.map(a => [r.id, a.asset, pct(a.cr, 4), pct(a.mdd, 4), a.fills])), numeric: [2, 3, 4] })
+    + '\n\n' + table({ head: ['Execution row', 'Decisions', 'Stale close marks', 'Replay writes'], rows: report.rows.filter(r => r.execution).map(r => [r.id, r.execution!.decisionCount, r.execution!.staleMarks, r.execution!.replayWrites]), numeric: [1, 2, 3] })
     + '\n\n' + report.rows.filter(r => r.reason || r.undefined.length).map(r => `- ${r.id}: ${[r.reason, ...r.undefined.map(u => `${u.metric}: ${u.reason}`)].filter(Boolean).join('; ')}.`).join('\n')
     + `\n\nPoison audit: ${count(report.poison.cutoffs)} decision cutoffs, ${count(report.poison.refused)} refused observation/cutoff pairs, ${report.poison.influenced} changed pre-cutoff slices. Full admitted values, latest bars, price windows and returns are compared, with all paired hashes retained.\n\n`
     + `${report.counts.measured}/${report.counts.registered} registered rows measured; ${report.counts.excluded} excluded, ${report.counts.implementationMissing} implementation-missing, ${report.counts.notRun} not-run. No aggregate combines the excluded control with eligible rows.\n\n`
+    + `Targets enter with at most 100 whole shares and exit the held quantity; policy can only reduce a proposed quantity. Hard ceilings: gross/net exposure 1, single-name 0.6, participation 0.01, loss 0.2, cash floor USD 0. Only market orders in the declared two assets are allowed. Corporate actions settle once at the open; missing close bars retain prior marks and are counted. No terminal liquidation is forced.\n\n`
     + `Calculation rows are counted separately from the ten execution strategies.\n\n`
     + table({ head: ['Mechanism', 'Status', 'Reproduced', 'Total'], rows: report.mechanisms.rows.map(r => [r.id, r.status, r.reproduced, r.total]), numeric: [2, 3] }) + '\n\n'
     + (report.mechanisms.reference ? `Reference: Python ${report.mechanisms.reference.python}; ${Object.entries(report.mechanisms.reference.packages).map(([name, version]) => `${name} ${version}`).join(', ')}. Generator SHA-256 \`${report.mechanisms.reference.generatorSha256}\`.\n\n` : 'Independent reference fixture is absent.\n\n')

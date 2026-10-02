@@ -798,6 +798,11 @@ export interface CorporateActionObservation {
 }
 
 
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type TradingId = string;
+
 export interface Fill {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -849,6 +854,7 @@ export interface Fill {
    * Schema constraints this type cannot express: exclusiveMinimum=0
    */
   notional: number;
+  sourceBarId: TradingId;
 }
 
 
@@ -898,6 +904,7 @@ export interface LedgerEntry {
    * Schema constraints this type cannot express: minimum=0
    */
   credit: number;
+  purpose?: "principal" | "commission" | "dividend";
 }
 
 
@@ -1131,6 +1138,8 @@ export interface PortfolioPosition {
    * Schema constraints this type cannot express: minimum=0
    */
   costBasis: number;
+  cashFlow: number;
+  realizedPnl: number;
 }
 
 
@@ -1247,6 +1256,294 @@ export interface RiskPolicy {
 }
 
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TradingRunManifestAssetsItem = string;
+
+export interface TradingRunManifestSessionRange {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  first: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  last: string;
+}
+
+
+export interface TradingRunManifestProviderSnapshotsItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  provider: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revision: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  licence: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type TradingRunManifestRolesByProfileAdditional = string;
+
+export interface TradingRunManifestToolManifestItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revision: string;
+}
+
+
+export interface TradingRunManifestRounds {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  research: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  risk: number;
+}
+
+
+export interface TradingLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBytes: number;
+}
+
+
+export interface TradingSignalParametersMacd {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  fast: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  slow: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  signal: number;
+}
+
+
+export interface TradingSignalParametersKdjRsi {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  k: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  d: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  rsi: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=100
+   */
+  entryJ: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=100
+   */
+  exitJ: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=100
+   */
+  entryRsi: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=100
+   */
+  exitRsi: number;
+}
+
+
+export interface TradingSignalParametersMeanReversion {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=2, maximum=10000
+   */
+  window: number;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  deviations: number;
+  deviation: "sample";
+}
+
+
+export interface TradingSignalParametersSma {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  fast: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
+   */
+  slow: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$lt":["$.macd.fast","$.macd.slow"]},{"$lt":["$.sma.fast","$.sma.slow"]},{"$lt":["$.kdjRsi.entryJ","$.kdjRsi.exitJ"]},{"$lt":["$.kdjRsi.entryRsi","$.kdjRsi.exitRsi"]}]}
+ */
+export interface TradingSignalParameters {
+  price: "causal-adjusted-ohlc";
+  macd: TradingSignalParametersMacd;
+  kdjRsi: TradingSignalParametersKdjRsi;
+  meanReversion: TradingSignalParametersMeanReversion;
+  sma: TradingSignalParametersSma;
+}
+
+
+export interface TradingExecutionPolicy {
+  strategyId: TradingId;
+  kind: "signals" | "oracle" | "do-nothing" | "leaky";
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  entryQuantity: number;
+}
+
+
+export interface TradingRunManifest {
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  revision: string;
+  kind: "manifest";
+  mode: "fixture" | "replay" | "shadow";
+  /**
+   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
+   */
+  assets: Array<TradingRunManifestAssetsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  calendar: string;
+  sessionRange: TradingRunManifestSessionRange;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  timezone: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  currency: string;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  initialCapital: number;
+  decisionCutoff: "session-close";
+  fill: "next-open";
+  shares: "whole" | "fractional";
+  shorting: false;
+  leverage: false;
+  /**
+   * Schema constraints this type cannot express: minimum=0, maximum=10000
+   */
+  commissionBps: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0, exclusiveMaximum=10000
+   */
+  slippageBps: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  sessionsPerYear: number;
+  riskFree: { kind: "zero-series"; };
+  providerSnapshots: Array<TradingRunManifestProviderSnapshotsItem>;
+  rolesByProfile: { [key: string]: TradingRunManifestRolesByProfileAdditional; };
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  promptCatalogRevision: string;
+  toolManifest: Array<TradingRunManifestToolManifestItem>;
+  rounds: TradingRunManifestRounds;
+  limits: TradingLimits;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  seed: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{40,64}$"
+   */
+  sourceRevision: string;
+  riskPolicy: RiskPolicy;
+  signalParameters?: TradingSignalParameters;
+  executionPolicy?: TradingExecutionPolicy;
+}
+
+
+export interface TradingActionsInput {
+  manifest: TradingRunManifest;
+  portfolio: PortfolioSnapshot;
+  session: MarketSession;
+  actions: Array<CorporateActionObservation>;
+}
+
+
+export interface TradingActionsResult {
+  portfolio: PortfolioSnapshot;
+  ledgerEntries: Array<LedgerEntry>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  actionIds: Array<TradingId>;
+}
+
+
 export interface TradingProviderFailure {
   outcome: "unavailable" | "failed";
   code: "TTRD1007";
@@ -1342,13 +1639,17 @@ export interface TradingCommit {
   fills: Array<Fill>;
   ledgerEntries: Array<LedgerEntry>;
   portfolio: PortfolioSnapshot;
+  mode: "trade" | "settlement" | "valuation";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  markBarIds: Array<TradingId>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  actionIds: Array<TradingId>;
 }
 
-
-/**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
- */
-export type TradingId = string;
 
 /**
  * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
@@ -1374,6 +1675,19 @@ export interface TradingCommitMarker {
    */
   ledgerEntryIds: Array<TradingId>;
   portfolioId: TradingId;
+  mode: "trade" | "settlement" | "valuation";
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  markBarIds: Array<TradingId>;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  actionIds: Array<TradingId>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  portfolioSequence: number;
 }
 
 
@@ -1433,6 +1747,22 @@ export interface TradingDayResult {
 }
 
 
+export interface TradingFillInput {
+  manifest: TradingRunManifest;
+  portfolio: PortfolioSnapshot;
+  intent: OrderIntent;
+  session: MarketSession;
+  bar: BarObservation | null;
+}
+
+
+export interface TradingFillPlan {
+  fill: Fill;
+  ledgerEntries: Array<LedgerEntry>;
+  portfolio: PortfolioSnapshot;
+}
+
+
 export interface TradingFixtureProviderInput {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -1456,43 +1786,24 @@ export interface TradingFixtureProviderInput {
  */
 export type TradingInstant = string;
 
-export interface TradingLimits {
+export interface TradingMarkInput {
+  manifest: TradingRunManifest;
+  portfolio: PortfolioSnapshot;
+  session: MarketSession;
+  bars: Array<BarObservation>;
+}
+
+
+export interface TradingMarkResult {
+  portfolio: PortfolioSnapshot;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  calls: number;
+  staleMarks: number;
   /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
+   * Schema constraints this type cannot express: uniqueItems=true
    */
-  tokens: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  ms: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  toolRounds: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  fanOut: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  concurrency: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  iterations: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  contextChars: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  traceBytes: number;
+  missingAssets: Array<string>;
 }
 
 
@@ -1584,225 +1895,6 @@ export interface TradingProviderSnapshot {
 }
 
 
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type TradingRunManifestAssetsItem = string;
-
-export interface TradingRunManifestSessionRange {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  first: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  last: string;
-}
-
-
-export interface TradingRunManifestProviderSnapshotsItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  provider: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  revision: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  licence: string;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type TradingRunManifestRolesByProfileAdditional = string;
-
-export interface TradingRunManifestToolManifestItem {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  revision: string;
-}
-
-
-export interface TradingRunManifestRounds {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
-   */
-  research: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
-   */
-  risk: number;
-}
-
-
-export interface TradingSignalParametersMacd {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  fast: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  slow: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  signal: number;
-}
-
-
-export interface TradingSignalParametersKdjRsi {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  k: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  d: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  rsi: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=100
-   */
-  entryJ: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=100
-   */
-  exitJ: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=100
-   */
-  entryRsi: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=100
-   */
-  exitRsi: number;
-}
-
-
-export interface TradingSignalParametersMeanReversion {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=2, maximum=10000
-   */
-  window: number;
-  /**
-   * Schema constraints this type cannot express: exclusiveMinimum=0
-   */
-  deviations: number;
-  deviation: "sample";
-}
-
-
-export interface TradingSignalParametersSma {
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  fast: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10000
-   */
-  slow: number;
-}
-
-
-/**
- * Schema constraints this type cannot express: $query={"$and":[{"$lt":["$.macd.fast","$.macd.slow"]},{"$lt":["$.sma.fast","$.sma.slow"]},{"$lt":["$.kdjRsi.entryJ","$.kdjRsi.exitJ"]},{"$lt":["$.kdjRsi.entryRsi","$.kdjRsi.exitRsi"]}]}
- */
-export interface TradingSignalParameters {
-  price: "causal-adjusted-ohlc";
-  macd: TradingSignalParametersMacd;
-  kdjRsi: TradingSignalParametersKdjRsi;
-  meanReversion: TradingSignalParametersMeanReversion;
-  sma: TradingSignalParametersSma;
-}
-
-
-export interface TradingRunManifest {
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  revision: string;
-  kind: "manifest";
-  mode: "fixture" | "replay" | "shadow";
-  /**
-   * Schema constraints this type cannot express: minItems=1, uniqueItems=true
-   */
-  assets: Array<TradingRunManifestAssetsItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  calendar: string;
-  sessionRange: TradingRunManifestSessionRange;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  timezone: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  currency: string;
-  /**
-   * Schema constraints this type cannot express: exclusiveMinimum=0
-   */
-  initialCapital: number;
-  decisionCutoff: "session-close";
-  fill: "next-open";
-  shares: "whole" | "fractional";
-  shorting: false;
-  leverage: false;
-  /**
-   * Schema constraints this type cannot express: minimum=0, maximum=10000
-   */
-  commissionBps: number;
-  /**
-   * Schema constraints this type cannot express: minimum=0, exclusiveMaximum=10000
-   */
-  slippageBps: number;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=1
-   */
-  sessionsPerYear: number;
-  riskFree: { kind: "zero-series"; };
-  providerSnapshots: Array<TradingRunManifestProviderSnapshotsItem>;
-  rolesByProfile: { [key: string]: TradingRunManifestRolesByProfileAdditional; };
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
-   */
-  promptCatalogRevision: string;
-  toolManifest: Array<TradingRunManifestToolManifestItem>;
-  rounds: TradingRunManifestRounds;
-  limits: TradingLimits;
-  /**
-   * Schema constraints this type cannot express: type="integer", minimum=0
-   */
-  seed: number;
-  /**
-   * Schema constraints this type cannot express: pattern="^[a-f0-9]{40,64}$"
-   */
-  sourceRevision: string;
-  riskPolicy: RiskPolicy;
-  signalParameters?: TradingSignalParameters;
-}
-
-
 export type TradingRecord = TradingRunManifest | MarketSession | Observation | MarketSnapshot | Artifact | PortfolioSnapshot | TradingDecision | OrderIntent | Fill | LedgerEntry | TradingDayResult | BacktestResult | TradingCommitMarker;
 
 export interface TradingReplayProviderInput {
@@ -1814,6 +1906,115 @@ export interface TradingReplayProviderInput {
   bindings: TradingProviderBindings;
 }
 
+
+export interface TradingRiskInput {
+  manifest: TradingRunManifest;
+  portfolioAfter: PortfolioSnapshot;
+  intent: OrderIntent;
+  sessionBar: BarObservation;
+}
+
+
+export interface TradingSizingResult {
+  disposition: "sized" | "hold";
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  quantity: number;
+  issues: Array<TradingIssue>;
+}
+
+
+export interface TradingStrategyContext {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  session: MarketSession;
+  bars: Array<BarObservation>;
+  observations: Array<Observation>;
+  portfolioId: TradingId;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  cash: number;
+  positions: Array<PortfolioPosition>;
+}
+
+
+export interface TradingStrategyData {
+  manifest: TradingRunManifest;
+  sessions: Array<MarketSession>;
+  bars: Array<BarObservation>;
+  actions: Array<CorporateActionObservation>;
+  observations: Array<Observation>;
+}
+
+
+export interface TradingStrategyResultCosts {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  commission: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  slippage: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  total: number;
+}
+
+
+export interface TradingStrategyResult {
+  result: BacktestResult;
+  days: Array<TradingDayResult>;
+  portfolios: Array<PortfolioSnapshot>;
+  fills: Array<Fill>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejectedOrders: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedObservations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  staleMarks: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  writes: number;
+  costs: TradingStrategyResultCosts;
+}
+
+
+export interface TradingStrategySignal {
+  target: "long" | "flat";
+  /**
+   * Schema constraints this type cannot express: format="date-time"
+   */
+  availableAt: string;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  observationIds: Array<TradingId>;
+}
+
+
+export interface TradingStrategySignalOutcomeOneOf2 {
+  valid: false;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  issues: Array<TradingIssue>;
+}
+
+
+export type TradingStrategySignalOutcome = { valid: true; value: TradingStrategySignal | null; } | TradingStrategySignalOutcomeOneOf2;
 
 export interface TradingTargetSignal {
   /**

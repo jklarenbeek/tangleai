@@ -10,6 +10,7 @@ const fixture = await tradingFixture(), plan = await decisionFixture(fixture);
 const seed = async (store: TradingStore) => {
   value(await store.put('manifests', fixture.manifest));
   for (const session of fixture.sessions.slice(0, 2)) value(await store.put('sessions', session));
+  for (const bar of fixture.observations.filter(o => o.kind === 'bar' && o.sessionId === fixture.sessions[1].key)) value(await store.put('observations', bar));
   value(await store.initializePortfolio(fixture.initial));
 };
 const contents = async (store: TradingStore) => Object.fromEntries(await Promise.all(TRADING_TABLES.map(async table => [table, await store.list(table)])));
@@ -77,6 +78,29 @@ export function qualifyTradingStore(name: string, open: OpenTradingHarness): voi
           assert.equal(refused.valid, false); if (!refused.valid) assert.equal(refused.issues[0].code, 'TTRD1006');
           assert.deepEqual(await contents(h.store), before);
         }
+      } finally { await h.close(); }
+    });
+    it('execution evidence, prices, fees, marks and immutable risk cannot be bypassed at commit', async () => {
+      const h = await open();
+      try {
+        await seed(h.store);
+        const source = await reidentify(plan.fills[0], { sourceBarId: 'missing-execution-bar' });
+        const cases = [
+          { ...plan, fills: [source], markBarIds: [source.sourceBarId] },
+          { ...plan, fills: [await reidentify(plan.fills[0], { price: plan.fills[0].price + 1 })] },
+          { ...plan, fills: [await reidentify(plan.fills[0], { commission: 0 })] },
+          { ...plan, portfolio: await reidentify(plan.portfolio, { marks: plan.portfolio.marks.map(m => ({ ...m, price: 1 })) }) },
+        ];
+        for (const input of cases) {
+          const before = await contents(h.store), result = await h.store.commitDecision(input);
+          assert.equal(result.valid, false); assert.deepEqual(await contents(h.store), before);
+        }
+        const restricted = await tradingFixture({ riskPolicy: { ...fixture.manifest.riskPolicy, singleName: 0 } });
+        await loadFixture(h.store, restricted);
+        const before = await contents(h.store), result = await h.store.commitDecision(await decisionFixture(restricted));
+        assert.equal(result.valid, false);
+        if (!result.valid) assert.ok(result.issues.some(i => i.code === 'TTRD1005' && i.path === '/riskPolicy/singleName'));
+        assert.deepEqual(await contents(h.store), before);
       } finally { await h.close(); }
     });
     it('artifact staging is immutable by stage key and bounded to the retained snapshot', async () => {

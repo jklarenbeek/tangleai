@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "2a1f1d0a1c35d299de0bce99ca169aae9e4e806a",
+    "head": "a9255aa83445546893caface974ff6845a60708d",
     "clean": false,
     "files": [
       {
@@ -734,6 +734,10 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-execution.ts",
+        "sha256": "778174b23ec3aff13e2f40d374710c75f3274e0f18b703bb6398c75438a02bdd"
+      },
+      {
         "path": "benchmark/lib/trading-mechanisms.ts",
         "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
       },
@@ -743,7 +747,7 @@
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "1ce0638e08c2ec6a581950762e20333297310c2bdb5b898cac55ab9b57c89c07"
+        "sha256": "fbd5368fb6416f76982e8aeefec1582e5648f3c879d354b4bcb0b6c31abda96e"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -751,7 +755,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "a3e33e783f00c6c92214ca9526428fc073114ab5953d740457585476f02020b4"
+        "sha256": "156869dbcc6f9aa00421ddff2044ccc416d6488eceb8f4e6e20b3e471472f2f2"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -1462,7 +1466,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "b3a06a300e965f540b500cd8a43f833f745d313583f96928e78623a80ec3bdf5"
+    "sha256": "412a2d6442b1ba5114b61bf6e4f67521a1a52ae7b451309e8737b34a91a39026"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44927,5 +44931,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "ab27f4ac8b119b5eeb320cbcb95df1da9d24f5c6399fe7858656dd83e0537ace"
+  "reportId": "6d8c31209a4c8d810d922f644e5619911418da51acf084ddada7753fc500c2e8"
 }

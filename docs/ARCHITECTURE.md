@@ -56,7 +56,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       immutable fixture/replay providers, cited market snapshots,
                       deterministic signal policies over native finance kernels;
                       one shared commit planner for atomic memory and SQLite stores,
-                      balanced postings and verified zero-write decision replay
+                      next-open fills, once-only actions, risk limits and baseline execution;
+                      balanced postings and verified zero-write whole-run replay
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

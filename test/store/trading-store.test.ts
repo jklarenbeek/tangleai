@@ -32,13 +32,14 @@ it('a replay detects a missing retained fill instead of reporting a successful n
 
 it('replay also verifies the manifest, predecessor and decision-session context', async () => {
   const fixture = await tradingFixture(), plan = await decisionFixture(fixture);
-  for (const fault of ['manifest', 'predecessor', 'session'] as const) {
+  for (const fault of ['manifest', 'predecessor', 'session', 'execution-bar'] as const) {
     const db = await openTangleDb();
     try {
       const store = createTradingStore(db); await loadFixture(store, fixture); value(await store.commitDecision(plan));
       if (fault === 'manifest') await db.collection('trading_manifests').delete(fixture.manifest.id);
       if (fault === 'predecessor') await db.collection('trading_portfolios').put({ ...fixture.initial, cash: 1 });
       if (fault === 'session') await db.collection('trading_sessions').delete(fixture.sessions[0].id);
+      if (fault === 'execution-bar') await db.collection('trading_observations').delete(plan.fills[0].sourceBarId);
       assert.equal((await store.commitDecision(plan)).valid, false, fault);
     } finally { await db.close(); }
   }

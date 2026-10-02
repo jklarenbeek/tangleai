@@ -44,18 +44,25 @@ describe('registered trading measurement', () => {
     assert.equal(leaky.status, 'excluded'); assert.equal(leaky.eligibility.eligible, false); assert.equal(leaky.reason, 'reads observations after cutoff');
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
-    assert.equal(report.counts.implementationMissing, 6); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls', 'indicators', 'signals']) assert.doesNotThrow(() => requireCapability(report, capability));
-    for (const capability of ['baselines', 'agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
+    assert.equal(report.counts.implementationMissing, 1); assert.equal(report.counts.notRun, 1);
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
+    assert.equal(leaky.transactions, 0); assert.equal(leaky.rejectedOrders, 1);
+    const hold = report.rows.find(r => r.id === 'buy-and-hold')!;
+    assert.ok(hold.perAsset.find(a => a.asset === 'SYN-A')!.cr! > 0);
+    assert.ok(hold.perAsset.find(a => a.asset === 'SYN-B')!.cr! < 0);
+    for (const row of report.rows.filter(r => r.execution)) {
+      assert.equal(row.execution!.replayWrites, 0); assert.equal(row.execution!.staleMarks, 0); assert.ok(row.execution!.decisionCount > 0);
+    }
   });
-  it('measures thirty independent vectors and ten signal series without creating execution returns', async () => {
+  it('keeps thirty independent vectors and ten signal series separate from execution returns', async () => {
     const [indicators, signals] = report.mechanisms.rows;
     assert.equal(indicators.id, 'indicators'); assert.equal(signals.id, 'signals');
     assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10]]);
     assert.equal(indicators.cases.reduce((n, c) => n + c.positions, 0), 2880);
     assert.ok(indicators.cases.every(c => c.arraySha256 === c.float64Sha256 && c.maximumAbsoluteError < 1e-10));
     assert.ok(signals.cases.every(c => c.referenceSha256 === c.actualSha256 && c.entries === c.expectedEntries && c.exits === c.expectedExits));
-    for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.equal(row.metrics, null); assert.match(row.reason!, /simulator/); }
+    for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.ok(row.metrics); assert.equal(row.reason, null); }
     const dir = await mkdtemp(join(tmpdir(), 'trading-reference-'));
     try {
       const missing = await measureTradingMechanisms(fixture, join(dir, 'absent.json'));
@@ -100,13 +107,14 @@ describe('registered trading measurement', () => {
   it('report refuses a typed annualization and rehashed fabricated measurements', async () => {
     const mutations: Array<(r: Trading) => void> = [
       r => { r.conventions.annualization = 252; }, r => { r.rows[0].metrics!.cr = 4; }, r => { r.rows[0].costs.total = 0; },
-      r => { r.rows[2].eligibility.eligible = true; }, r => { r.rows[3].status = 'measured'; }, r => { r.rows[0].transactions++; },
+      r => { r.rows[2].eligibility.eligible = true; }, r => { r.rows[3].status = 'implementation-missing'; }, r => { r.rows[0].transactions++; },
       r => { r.rows[0].perAsset[1].cr = 1; }, r => { r.rows[1].undefined = []; }, r => { r.counts.measured++; },
       r => { r.rows.pop(); }, r => { r.rows[1].id = r.rows[0].id; }, r => { r.registration[0].description = 'forged'; },
       r => { r.poison.refused--; }, r => { r.poison.cases[0].withSha256 = '0'.repeat(64); },
       r => { r.capabilities.complete = true; }, r => { r.fixture.sha256 = '0'.repeat(64); }, r => { r.source.sha256 = '0'.repeat(64); },
       r => { r.mechanisms.rows[0].reproduced--; }, r => { const row = r.mechanisms.rows[1]; if (row.id === 'signals') row.cases[0].entries++; },
       r => { r.mechanisms.reference!.packages.ta = 'forged' as '0.11.0'; },
+      r => { r.rows[3].execution!.equitySha256 = '0'.repeat(64); }, r => { r.rows[3].execution!.decisionCount++; },
     ];
     for (const mutate of mutations) { const copy = structuredClone(report); mutate(copy); assert.equal((await validateTradingReport(await rehash(copy))).valid, false); }
     const badHash = structuredClone(report); badHash.reportId = '0'.repeat(64); assert.equal((await validateTradingReport(badHash)).valid, false);

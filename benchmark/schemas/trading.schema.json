@@ -1519,6 +1519,16 @@
               "type": "null"
             }
           ]
+        },
+        "execution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/executionReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1535,7 +1545,8 @@
         "costs",
         "perAsset",
         "eligibility",
-        "controlSha256"
+        "controlSha256",
+        "execution"
       ],
       "additionalProperties": false
     },
@@ -2425,6 +2436,48 @@
           ]
         ]
       }
+    },
+    "executionReceipt": {
+      "type": "object",
+      "properties": {
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "resultId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "equitySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "ledgerSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "replayWrites": {
+          "const": 0
+        },
+        "staleMarks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decisionCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "manifestId",
+        "resultId",
+        "equitySha256",
+        "ledgerSha256",
+        "replayWrites",
+        "staleMarks",
+        "decisionCount"
+      ],
+      "additionalProperties": false
     }
   }
 }

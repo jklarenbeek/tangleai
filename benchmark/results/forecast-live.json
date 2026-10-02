@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "2a1f1d0a1c35d299de0bce99ca169aae9e4e806a",
-      "sha256": "b3a06a300e965f540b500cd8a43f833f745d313583f96928e78623a80ec3bdf5",
+      "head": "a9255aa83445546893caface974ff6845a60708d",
+      "sha256": "412a2d6442b1ba5114b61bf6e4f67521a1a52ae7b451309e8737b34a91a39026",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -737,6 +737,10 @@
           "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
         },
         {
+          "path": "benchmark/lib/trading-execution.ts",
+          "sha256": "778174b23ec3aff13e2f40d374710c75f3274e0f18b703bb6398c75438a02bdd"
+        },
+        {
           "path": "benchmark/lib/trading-mechanisms.ts",
           "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
         },
@@ -746,7 +750,7 @@
         },
         {
           "path": "benchmark/lib/trading-report.ts",
-          "sha256": "1ce0638e08c2ec6a581950762e20333297310c2bdb5b898cac55ab9b57c89c07"
+          "sha256": "fbd5368fb6416f76982e8aeefec1582e5648f3c879d354b4bcb0b6c31abda96e"
         },
         {
           "path": "benchmark/lib/trading.ts",
@@ -754,7 +758,7 @@
         },
         {
           "path": "benchmark/lib/trading.types.ts",
-          "sha256": "a3e33e783f00c6c92214ca9526428fc073114ab5953d740457585476f02020b4"
+          "sha256": "156869dbcc6f9aa00421ddff2044ccc416d6488eceb8f4e6e20b3e471472f2f2"
         },
         {
           "path": "benchmark/lib/validate.ts",
@@ -1701,7 +1705,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "5d9992df46506c32b13982991fcf4a98f75c22a3991997d622e465aec7a5bf4a",
+    "planId": "d6a213ef8d3247337485442422d9dca27276349fc99ec0a9fc36a5857c598695",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

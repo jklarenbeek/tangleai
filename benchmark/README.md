@@ -61,14 +61,16 @@ calls. `npm run benchmark:hera -- --require complete` generates the report;
 
 The [trading instrument](../docs/TRADING_BENCHMARK.md) registers ten strategies
 over an original MIT two-asset fixture. Its privileged oracle and cash-only
-control are measured; the look-ahead control is excluded. Broker-dependent
-baselines and agent execution remain explicit missing rows. The poison audit
+control and five baselines execute through one policy-limited simulator; the
+look-ahead request is refused and excluded. Agent execution remains explicit
+missing/not-run rows. Every executed row retains ledger/equity identities and a
+zero-write replay receipt; SYN-B buy-and-hold loses beside SYN-A's positive return. The poison audit
 compares admitted observations and derived return windows at every session close.
 Separate calculation rows reproduce 30 reference indicator vectors and ten
 baseline signal series. They retain pinned reference versions, vector identities
 and per-asset crossings without presenting signal calculations as equity returns.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
-`--out-dir` redirects both outputs, and `--require controls` requires the controls.
+`--out-dir` redirects both outputs, and `--require baselines` requires all five executed baselines.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.
 
 The frozen learning schedule has seven training events over five distinct tasks
