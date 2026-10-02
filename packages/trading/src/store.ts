@@ -6,6 +6,7 @@ import { createTradingRecord, validateTradingRecord } from './records.ts';
 import { validateTradingShape } from './schema.ts';
 import { accountTradingFills, validateInitialTradingPortfolio, validateTradingLedger } from './accounting.ts';
 import { tradingRefuse } from './errors.ts';
+import { snapshotBarStaleness } from './time.ts';
 import type { TradingOutcome } from './errors.ts';
 import type { TradingRunManifest, MarketSession, Observation, MarketSnapshot, Artifact, TradingDecision, OrderIntent, Fill,
   LedgerEntry, PortfolioSnapshot, TradingDayResult, BacktestResult, TradingCommit, TradingCommitMarker, TradingDecisionKey, TradingRecord } from './contracts.gen.ts';
@@ -77,13 +78,16 @@ async function inputReferences(tx: TradingTransaction, record: TradingRecord, ma
       const marked = sessions.find(s => s.key === portfolio.asOfSessionId);
       if (!marked || toEpoch(marked.closeAt) > toEpoch(session.closeAt)) return tradingRefuse('TTRD1003', '/portfolioId', 'Snapshot cannot use a future portfolio');
     }
-    const refused = new Set(record.refused.map(r => r.id));
+    const refused = new Set(record.refused.map(r => r.id)), observations: Observation[] = [];
     for (const id of record.observationIds) {
       const observation = await tx.get('observations', id);
       if (!observation || observation.manifestId !== manifest.id || observation.asset !== record.asset || refused.has(id))
         return tradingRefuse('TTRD1004', '/observationIds', 'Snapshot evidence must be retained, admitted and scoped to this asset');
       if (toEpoch(observation.availableAt) > toEpoch(record.cutoffAt)) return tradingRefuse('TTRD1003', '/observationIds', 'Snapshot evidence was published after its cutoff');
+      observations.push(observation);
     }
+    const staleness = snapshotBarStaleness(sessions, record.sessionId, observations); if (!staleness.valid) return staleness;
+    if (record.staleness !== staleness.value) return tradingRefuse('TTRD1003', '/staleness', 'Snapshot bar staleness differs from its retained observations and calendar');
   }
   return { valid: true, value: true };
 }

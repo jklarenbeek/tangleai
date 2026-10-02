@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "24369f126b0aecb1c9a4d0a62694a4a2af440abb",
+    "head": "2a1f1d0a1c35d299de0bce99ca169aae9e4e806a",
     "clean": false,
     "files": [
       {
@@ -78,12 +78,16 @@
         "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
       },
       {
+        "path": "benchmark/lib/trading-mechanisms.ts",
+        "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
+      },
+      {
         "path": "benchmark/lib/trading-metrics.ts",
         "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "2d69df9c082d620cd5f37061941ac4364aa1650794e66b702f0d4a92ef5a5913"
+        "sha256": "1ce0638e08c2ec6a581950762e20333297310c2bdb5b898cac55ab9b57c89c07"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -91,7 +95,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "6901e6f89e65abadd7e26f3bbb3fe90d216c8b7f6cecb232bcb9f3b09a932604"
+        "sha256": "a3e33e783f00c6c92214ca9526428fc073114ab5953d740457585476f02020b4"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -99,11 +103,15 @@
       },
       {
         "path": "benchmark/schemas/trading.schema.json",
-        "sha256": "1fbed314b10ceda49e80fde528f03d236e45ec6ac447e77fdf2dc9a48da7761b"
+        "sha256": "220ed8fade8c8112f0f0fdc38550c115fa2a2739501655fcccd847b1a42b8449"
       },
       {
         "path": "benchmark/scripts/trading-fixture.ts",
         "sha256": "71fcd7043a7a0bbeb9ea035fcc0f292767759a35557cf5517de3d0cc15cd84ad"
+      },
+      {
+        "path": "benchmark/scripts/trading-indicator-fixtures.py",
+        "sha256": "1a23ea087b9447cd7b1be0de1c55a8ade7e9e4102f8adf6de7fd569f48475883"
       },
       {
         "path": "benchmark/trading.ts",
@@ -115,14 +123,126 @@
       },
       {
         "path": "package.json",
-        "sha256": "0901a6f0596eaa14f9b1c5192070998176d94f419d8b3a1dfe252b29ae932f5f"
+        "sha256": "451c8305eeb25ab3257c457166ea8763fac34b159f9c45f5d8c302c9211021a0"
+      },
+      {
+        "path": "packages/trading/package.json",
+        "sha256": "4d0469623e35f336167fdbebdfdc73302331d874d58752a88ecb6911fb35445e"
+      },
+      {
+        "path": "packages/trading/schemas/trading.schema.json",
+        "sha256": "cd4d516930a50a5867e569d544724d15ffd158678fd3b321c9b0b7a0b2c96565"
+      },
+      {
+        "path": "packages/trading/src/accounting.ts",
+        "sha256": "1d0dd73b5b9817262b1cb7dcd81ac3cde8b2d5de2c5770b30c1a54918893a78a"
+      },
+      {
+        "path": "packages/trading/src/baselines.ts",
+        "sha256": "c6326a0b90e0771a1ba6c6684187ca43c5f107df558ce9304f6fe1ae4da9ef9d"
+      },
+      {
+        "path": "packages/trading/src/contracts.gen.ts",
+        "sha256": "289b1d55ad8eedd396b66a1f80548d28166f101d43295a24f2373bc3631af05e"
+      },
+      {
+        "path": "packages/trading/src/errors.ts",
+        "sha256": "268feea9d3bf1d6287b5067c81d5b21618f58400fcb9e4a2183fc75b4b5ac837"
+      },
+      {
+        "path": "packages/trading/src/identity.ts",
+        "sha256": "465e612724bfd433732bff2a22a4f739149d425384e39ebd62110d0105cff78c"
+      },
+      {
+        "path": "packages/trading/src/index.ts",
+        "sha256": "24b69a39665a6edfffb0ea106aa4010c3c4b507fcf703e180833c3a64b455b5f"
+      },
+      {
+        "path": "packages/trading/src/indicators.ts",
+        "sha256": "2714b2f0062d7ae88cb70cb678717652c526ee77fc75e515ca52e92e08c3e42c"
+      },
+      {
+        "path": "packages/trading/src/providers.ts",
+        "sha256": "85f01b8bdd97c514228fe79f2c92a7d11e7bd594db8a95f0523fa935901ba726"
+      },
+      {
+        "path": "packages/trading/src/records.ts",
+        "sha256": "154ece29ad0d0739a863f8aeccec46feb6871fd5e737f7327f7c6a15b6fead94"
+      },
+      {
+        "path": "packages/trading/src/schema.ts",
+        "sha256": "fa90ca8ce922cda41040cdd7233d90949d5aa87d36caa407e883c97ff6056111"
+      },
+      {
+        "path": "packages/trading/src/snapshot.ts",
+        "sha256": "ccab8c9dc7ca3158a912ad38d3cf70526404c2b474a5442445a179b1bb75d996"
+      },
+      {
+        "path": "packages/trading/src/store.ts",
+        "sha256": "4c7b921f807b1f909f628b7b175e99fa005b87f55b526c9e43e9e49b5b58ad3e"
+      },
+      {
+        "path": "packages/trading/src/time.ts",
+        "sha256": "61464d14ab6506fb18b7434d2db8865a4b1cbead7cfcf89ec672a05cdcb027b0"
       },
       {
         "path": "test/benchmark/trading.test.ts",
-        "sha256": "14536322c1602996c88f8debc212eef07aec6d44d4070cc98b0ee959f0e49361"
+        "sha256": "42aa4c525028e9b7676dd388fd29a026fe0a1ab549d0286a032f3e3a37b5dd87"
+      },
+      {
+        "path": "test/fixtures/trading-indicators.json",
+        "sha256": "867c52221e9c383c0689b36bb22ccf96b38b1344a6748edf434d063fce257d93"
+      },
+      {
+        "path": "test/trading/baselines.test.ts",
+        "sha256": "6b1dd6084b6aae303db98aab89fcfe8548a30e0db12240f7c08be1ff8c1aa7f3"
+      },
+      {
+        "path": "test/trading/fixtures.ts",
+        "sha256": "eb1e01763a51dd47f59484e0cc5e6ee777d5897be16c79548bc56f696a83f23f"
+      },
+      {
+        "path": "test/trading/identity.test.ts",
+        "sha256": "45070ddb81a582295cd1047aa94ed4e4437643f7b88823bb1655c744812eef03"
+      },
+      {
+        "path": "test/trading/index.test.ts",
+        "sha256": "d898cf09189bd6c552bdcd99b4768675b100e641add50fac06fc6589f5b61e28"
+      },
+      {
+        "path": "test/trading/indicators.test.ts",
+        "sha256": "db9feda543cfc26d33732917e603287705b7ad4589d1c6f24f6c44941df0ae56"
+      },
+      {
+        "path": "test/trading/provider-fixture.ts",
+        "sha256": "52e8d686077ce30c9d97e26be6243d9f99b216d50aa89db8cbc7a360904769f7"
+      },
+      {
+        "path": "test/trading/providers.test.ts",
+        "sha256": "338b850a3b1ca50e05895e36d632f2f0981fe0cdf509c4a07a9feab84c87c33f"
+      },
+      {
+        "path": "test/trading/schema.test.ts",
+        "sha256": "91300fea87585f81d41fa50b88229c1e1cb790cce3d7affb14654a316168e343"
+      },
+      {
+        "path": "test/trading/snapshot.test.ts",
+        "sha256": "93c0919c1ee8cfee6a162d07bd8066a0045b19bc432507e8e03b4c0e875e729e"
+      },
+      {
+        "path": "test/trading/store-harness.ts",
+        "sha256": "ce872d73fd5fe0f80bec180dcf016c8ce3a094d0d218a7a9493afbb78bbb72ab"
+      },
+      {
+        "path": "test/trading/store.test.ts",
+        "sha256": "4a966ca69ce9c5dffa8cb73bb807569b35d95b5fe2c5204a5250edb94dfe0535"
+      },
+      {
+        "path": "test/trading/time.test.ts",
+        "sha256": "14985a4bf2c21ed515b38d817ca20f204bc1062d17450fd3107346af685b8079"
       }
     ],
-    "sha256": "e2dfa92e834827f2e915d4c295e3db5682423758a527341b52cbaa911dcb34e7"
+    "sha256": "9470fbf429bdecdda21253d6afa33603f18a1df59833b34bd3ed91786922723b"
   },
   "suite": {
     "tangle": "0.35.0",
@@ -353,7 +473,7 @@
       "kind": "baseline",
       "parityTier": "mechanism",
       "status": "implementation-missing",
-      "reason": "shared broker and signal policies not implemented",
+      "reason": "shared simulator not implemented",
       "metrics": null,
       "undefined": [],
       "transactions": 0,
@@ -368,7 +488,7 @@
       "eligibility": {
         "eligible": false,
         "reasons": [
-          "shared broker and signal policies not implemented"
+          "shared simulator not implemented"
         ]
       },
       "controlSha256": null
@@ -378,7 +498,7 @@
       "kind": "baseline",
       "parityTier": "mechanism",
       "status": "implementation-missing",
-      "reason": "shared broker and signal policies not implemented",
+      "reason": "shared simulator not implemented",
       "metrics": null,
       "undefined": [],
       "transactions": 0,
@@ -393,7 +513,7 @@
       "eligibility": {
         "eligible": false,
         "reasons": [
-          "shared broker and signal policies not implemented"
+          "shared simulator not implemented"
         ]
       },
       "controlSha256": null
@@ -403,7 +523,7 @@
       "kind": "baseline",
       "parityTier": "mechanism",
       "status": "implementation-missing",
-      "reason": "shared broker and signal policies not implemented",
+      "reason": "shared simulator not implemented",
       "metrics": null,
       "undefined": [],
       "transactions": 0,
@@ -418,7 +538,7 @@
       "eligibility": {
         "eligible": false,
         "reasons": [
-          "shared broker and signal policies not implemented"
+          "shared simulator not implemented"
         ]
       },
       "controlSha256": null
@@ -428,7 +548,7 @@
       "kind": "baseline",
       "parityTier": "mechanism",
       "status": "implementation-missing",
-      "reason": "shared broker and signal policies not implemented",
+      "reason": "shared simulator not implemented",
       "metrics": null,
       "undefined": [],
       "transactions": 0,
@@ -443,7 +563,7 @@
       "eligibility": {
         "eligible": false,
         "reasons": [
-          "shared broker and signal policies not implemented"
+          "shared simulator not implemented"
         ]
       },
       "controlSha256": null
@@ -453,7 +573,7 @@
       "kind": "baseline",
       "parityTier": "mechanism",
       "status": "implementation-missing",
-      "reason": "shared broker and signal policies not implemented",
+      "reason": "shared simulator not implemented",
       "metrics": null,
       "undefined": [],
       "transactions": 0,
@@ -468,7 +588,7 @@
       "eligibility": {
         "eligible": false,
         "reasons": [
-          "shared broker and signal policies not implemented"
+          "shared simulator not implemented"
         ]
       },
       "controlSha256": null
@@ -1895,6 +2015,505 @@
       }
     ]
   },
+  "mechanisms": {
+    "reference": {
+      "python": "3.14.7",
+      "packages": {
+        "ta": "0.11.0",
+        "TA-Lib": "0.8.1",
+        "numpy": "2.5.3",
+        "pandas": "3.0.6"
+      },
+      "taLibrary": "0.8.1 (Sep 21 2026 16:39:22)",
+      "generatorSha256": "1a23ea087b9447cd7b1be0de1c55a8ade7e9e4102f8adf6de7fd569f48475883"
+    },
+    "rows": [
+      {
+        "id": "indicators",
+        "status": "measured",
+        "reason": null,
+        "total": 30,
+        "reproduced": 30,
+        "inputKinds": [
+          "array",
+          "Float64Array"
+        ],
+        "tolerance": 1e-10,
+        "cases": [
+          {
+            "fixture": "SYN-A",
+            "vector": "adx",
+            "positions": 124,
+            "warmup": 27,
+            "maximumAbsoluteError": 4.263256414560601e-14,
+            "referenceSha256": "a3405fea7ff3294d817c4fc0f6c069f3b86702cdbe48ec385d9fb7bd8c01ea37",
+            "arraySha256": "dba469a09c5e6eba6a1d90884576a65b764c1f578fd0e09c8ea834bca10fca1c",
+            "float64Sha256": "dba469a09c5e6eba6a1d90884576a65b764c1f578fd0e09c8ea834bca10fca1c",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "plusDI",
+            "positions": 124,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "7a73a49f2603bba34721d2ece28663cdcdd37f108a62dbaec85a9eb4bd75b13a",
+            "arraySha256": "7a73a49f2603bba34721d2ece28663cdcdd37f108a62dbaec85a9eb4bd75b13a",
+            "float64Sha256": "7a73a49f2603bba34721d2ece28663cdcdd37f108a62dbaec85a9eb4bd75b13a",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "minusDI",
+            "positions": 124,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "fe3b8dcc8c76b10688e886a33b6a1ee2ed0dbfdfbb2e90d28ccb3a4246a3a028",
+            "arraySha256": "fe3b8dcc8c76b10688e886a33b6a1ee2ed0dbfdfbb2e90d28ccb3a4246a3a028",
+            "float64Sha256": "fe3b8dcc8c76b10688e886a33b6a1ee2ed0dbfdfbb2e90d28ccb3a4246a3a028",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "cci",
+            "positions": 124,
+            "warmup": 19,
+            "maximumAbsoluteError": 6.650680006714538e-12,
+            "referenceSha256": "994b249999dd5cc8e8dd930b75f636691d76478bf726627551f392951ceec875",
+            "arraySha256": "b1b5287fef8b547757eddb2362424042def436e98ad8016bb3f9d80ba663783f",
+            "float64Sha256": "b1b5287fef8b547757eddb2362424042def436e98ad8016bb3f9d80ba663783f",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "vwap",
+            "positions": 124,
+            "warmup": 0,
+            "maximumAbsoluteError": 7.105427357601002e-14,
+            "referenceSha256": "0ce42416f876e3d3d21c7e5bb5081088cdc908c2607b77465141cb4ef9632e9d",
+            "arraySha256": "a4cd3691943b8011f43639b39460e58c98d6333bd83e1ec3c582b6f5285f7131",
+            "float64Sha256": "a4cd3691943b8011f43639b39460e58c98d6333bd83e1ec3c582b6f5285f7131",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "sessionVwap",
+            "positions": 124,
+            "warmup": 0,
+            "maximumAbsoluteError": 2.842170943040401e-14,
+            "referenceSha256": "b226f5048dfefd87946875e49e54a95775c540abdc6b2f2513845901c8fa8760",
+            "arraySha256": "1f4cf33ecd3aa4bf24619ed2b1652742a1cc968a90efb7c9f9d7bd6521563744",
+            "float64Sha256": "1f4cf33ecd3aa4bf24619ed2b1652742a1cc968a90efb7c9f9d7bd6521563744",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "volumeRatio",
+            "positions": 124,
+            "warmup": 20,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "ec392db169c2f8b1b67522745d58b416eddf558cd931b6409f8fbdaff0ce36e9",
+            "arraySha256": "ec392db169c2f8b1b67522745d58b416eddf558cd931b6409f8fbdaff0ce36e9",
+            "float64Sha256": "ec392db169c2f8b1b67522745d58b416eddf558cd931b6409f8fbdaff0ce36e9",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "k",
+            "positions": 124,
+            "warmup": 8,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "e0519ae596f216c4bbed0bb80c76ca92341426263fc3c2e3c938fd8d9556cc37",
+            "arraySha256": "e0519ae596f216c4bbed0bb80c76ca92341426263fc3c2e3c938fd8d9556cc37",
+            "float64Sha256": "e0519ae596f216c4bbed0bb80c76ca92341426263fc3c2e3c938fd8d9556cc37",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "d",
+            "positions": 124,
+            "warmup": 10,
+            "maximumAbsoluteError": 7.105427357601002e-14,
+            "referenceSha256": "3dee9f62eda716b9862084c5f7bc8964d061bd081b8129fa02bd3ca154aeb547",
+            "arraySha256": "27d3662bafb1922cce5ebf206acd7e893b323ea1cf6e3d03b5259ed8c5138015",
+            "float64Sha256": "27d3662bafb1922cce5ebf206acd7e893b323ea1cf6e3d03b5259ed8c5138015",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-A",
+            "vector": "j",
+            "positions": 124,
+            "warmup": 10,
+            "maximumAbsoluteError": 1.4210854715202004e-13,
+            "referenceSha256": "c259584ed5758087dce05d71426407491133b7f19b275bb46d494a5cb1ea9c0c",
+            "arraySha256": "c1fb3c16b6f956f67fe9dc7750457eb382ee2b70c380e20971b1b8f484273885",
+            "float64Sha256": "c1fb3c16b6f956f67fe9dc7750457eb382ee2b70c380e20971b1b8f484273885",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "adx",
+            "positions": 124,
+            "warmup": 27,
+            "maximumAbsoluteError": 7.105427357601002e-15,
+            "referenceSha256": "79283e9095cd1c44a5551947f4af10abc3670980a2f74bad2abb931ad7f80dda",
+            "arraySha256": "7b95fc12ae4676b50a0f603a697af8248a30ddae01a0343642d36a41ef7617e3",
+            "float64Sha256": "7b95fc12ae4676b50a0f603a697af8248a30ddae01a0343642d36a41ef7617e3",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "plusDI",
+            "positions": 124,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "7d372078431bccdf65a5ea1367fd81deca25cdddc63852f85b0148496e2f6a9a",
+            "arraySha256": "7d372078431bccdf65a5ea1367fd81deca25cdddc63852f85b0148496e2f6a9a",
+            "float64Sha256": "7d372078431bccdf65a5ea1367fd81deca25cdddc63852f85b0148496e2f6a9a",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "minusDI",
+            "positions": 124,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "f6c403e433f1f9186cfd8496e197e5bde85f55e187f51c547991ec91f92e47e0",
+            "arraySha256": "f6c403e433f1f9186cfd8496e197e5bde85f55e187f51c547991ec91f92e47e0",
+            "float64Sha256": "f6c403e433f1f9186cfd8496e197e5bde85f55e187f51c547991ec91f92e47e0",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "cci",
+            "positions": 124,
+            "warmup": 19,
+            "maximumAbsoluteError": 1.2079226507921703e-11,
+            "referenceSha256": "00337ebefcc0a3bd7dc3bb31a885041b9f8adbec77e66dd74b1b13d336571f64",
+            "arraySha256": "f0bb2746d23b92cff9fc80efdccca5efaa01b3d253f2cc9e156e14922674b0f5",
+            "float64Sha256": "f0bb2746d23b92cff9fc80efdccca5efaa01b3d253f2cc9e156e14922674b0f5",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "vwap",
+            "positions": 124,
+            "warmup": 0,
+            "maximumAbsoluteError": 2.842170943040401e-14,
+            "referenceSha256": "1d55505d822d3ca5ec556c9ef5e3693b1093fec949c28b4fc95edbd550205ac2",
+            "arraySha256": "003021f9a262c46b4dff6873cdf7b941837831f0cf3067563c9429a8a44cc00e",
+            "float64Sha256": "003021f9a262c46b4dff6873cdf7b941837831f0cf3067563c9429a8a44cc00e",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "sessionVwap",
+            "positions": 124,
+            "warmup": 0,
+            "maximumAbsoluteError": 2.842170943040401e-14,
+            "referenceSha256": "f689c0b58f3fc5788e68ce0f2ff4c9c0d3b43c70e9b09829dc02e01fcf2de5aa",
+            "arraySha256": "8f3dd13c3b06d395b7d9f9a07de7c9a9a4eb8ea39b3ab49200d133bf43ba6492",
+            "float64Sha256": "8f3dd13c3b06d395b7d9f9a07de7c9a9a4eb8ea39b3ab49200d133bf43ba6492",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "volumeRatio",
+            "positions": 124,
+            "warmup": 20,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "2a31bf43b6ba89baa625e52ec25672c642986c49798299f93b6dab43b993cef9",
+            "arraySha256": "2a31bf43b6ba89baa625e52ec25672c642986c49798299f93b6dab43b993cef9",
+            "float64Sha256": "2a31bf43b6ba89baa625e52ec25672c642986c49798299f93b6dab43b993cef9",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "k",
+            "positions": 124,
+            "warmup": 8,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "29185da5afd5e2357bd2ce7176040feb72f7b868b8af363bbe1e7fcd750348f3",
+            "arraySha256": "29185da5afd5e2357bd2ce7176040feb72f7b868b8af363bbe1e7fcd750348f3",
+            "float64Sha256": "29185da5afd5e2357bd2ce7176040feb72f7b868b8af363bbe1e7fcd750348f3",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "d",
+            "positions": 124,
+            "warmup": 10,
+            "maximumAbsoluteError": 2.842170943040401e-14,
+            "referenceSha256": "a7484f0c6d8d970a566a86c2e62eb59d72b44f3429de271c0d2e2c1880574d99",
+            "arraySha256": "cf0c7d9465be9a2a3541f5bbd1e0ce41ad5f5f10d63b8bac1bc8a688080a1074",
+            "float64Sha256": "cf0c7d9465be9a2a3541f5bbd1e0ce41ad5f5f10d63b8bac1bc8a688080a1074",
+            "reproduced": true
+          },
+          {
+            "fixture": "SYN-B",
+            "vector": "j",
+            "positions": 124,
+            "warmup": 10,
+            "maximumAbsoluteError": 5.684341886080802e-14,
+            "referenceSha256": "f7aa6ed846491b2839910b898392fff4a9ac43ddfa30a2e88933ccee58ed0d1a",
+            "arraySha256": "93fc51b10b28f2cc6f1ef675d1a8828dbd845fdb9a1abb2df4782b87d6a0b7d8",
+            "float64Sha256": "93fc51b10b28f2cc6f1ef675d1a8828dbd845fdb9a1abb2df4782b87d6a0b7d8",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "adx",
+            "positions": 40,
+            "warmup": 27,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "b93898b206cd1d8aa35e3e5f1aec48a4520b9c41ed64f0ee7462f803ab409b2b",
+            "arraySha256": "b93898b206cd1d8aa35e3e5f1aec48a4520b9c41ed64f0ee7462f803ab409b2b",
+            "float64Sha256": "b93898b206cd1d8aa35e3e5f1aec48a4520b9c41ed64f0ee7462f803ab409b2b",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "plusDI",
+            "positions": 40,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "arraySha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "float64Sha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "minusDI",
+            "positions": 40,
+            "warmup": 14,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "arraySha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "float64Sha256": "a539b0092c1e5357bc02b78f8cd442bc6a567e7f87e91beac6215fd9dde2d07d",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "cci",
+            "positions": 40,
+            "warmup": 19,
+            "maximumAbsoluteError": 1.2015277661703294e-11,
+            "referenceSha256": "882d91c141fb7e58e2828058e4bdf0cf976d5abb12e5590191e9d45c491fb3d7",
+            "arraySha256": "471fae670250555fbc0e8e878c6da1e4ea47048e8453748e6c049f91aa6f885c",
+            "float64Sha256": "471fae670250555fbc0e8e878c6da1e4ea47048e8453748e6c049f91aa6f885c",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "vwap",
+            "positions": 40,
+            "warmup": 40,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "arraySha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "float64Sha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "sessionVwap",
+            "positions": 40,
+            "warmup": 40,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "arraySha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "float64Sha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "volumeRatio",
+            "positions": 40,
+            "warmup": 40,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "arraySha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "float64Sha256": "33c629622f61da85534492d72e4ec8c493c681bd92e01bd4ef387dc298e68284",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "k",
+            "positions": 40,
+            "warmup": 8,
+            "maximumAbsoluteError": 0,
+            "referenceSha256": "a47dcdb340192e9c7da7c78b2a481dfb2e47533fe5c9457491a5193d280b3224",
+            "arraySha256": "a47dcdb340192e9c7da7c78b2a481dfb2e47533fe5c9457491a5193d280b3224",
+            "float64Sha256": "a47dcdb340192e9c7da7c78b2a481dfb2e47533fe5c9457491a5193d280b3224",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "d",
+            "positions": 40,
+            "warmup": 10,
+            "maximumAbsoluteError": 2.1316282072803006e-14,
+            "referenceSha256": "cb794f166615d100fa6d9b3737ded215c04e6dcd088ff5250eaa93f74c5aa7f5",
+            "arraySha256": "d9e0de77766f75d79772cc5b2913a08de7d373c90c3762469671e26a414c996a",
+            "float64Sha256": "d9e0de77766f75d79772cc5b2913a08de7d373c90c3762469671e26a414c996a",
+            "reproduced": true
+          },
+          {
+            "fixture": "zero-volume",
+            "vector": "j",
+            "positions": 40,
+            "warmup": 10,
+            "maximumAbsoluteError": 4.263256414560601e-14,
+            "referenceSha256": "6c5e219eb3efae5f857aad3994aaf6153fa27db9174da0a9c2134df35d2a0a4b",
+            "arraySha256": "7127f94872978134324b97b58b27489d06e159960ad012c0b5abe7bb2d73f199",
+            "float64Sha256": "7127f94872978134324b97b58b27489d06e159960ad012c0b5abe7bb2d73f199",
+            "reproduced": true
+          }
+        ]
+      },
+      {
+        "id": "signals",
+        "status": "measured",
+        "reason": null,
+        "total": 10,
+        "reproduced": 10,
+        "parametersSha256": "6f921f3a867502ba4ad0938078e8d803078c0379bfd421506cf02a2587e08967",
+        "cases": [
+          {
+            "asset": "SYN-A",
+            "policy": "buyAndHold",
+            "sessions": 124,
+            "warmup": 0,
+            "entries": 1,
+            "exits": 0,
+            "expectedEntries": 1,
+            "expectedExits": 0,
+            "referenceSha256": "cd532c1cbcb6204dbbf010e374dbfc33fdbf5d10e7c9bb9bff9dea0b9ef4a78b",
+            "actualSha256": "cd532c1cbcb6204dbbf010e374dbfc33fdbf5d10e7c9bb9bff9dea0b9ef4a78b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "policy": "macdCross",
+            "sessions": 124,
+            "warmup": 33,
+            "entries": 1,
+            "exits": 1,
+            "expectedEntries": 1,
+            "expectedExits": 1,
+            "referenceSha256": "9bb31ed8e89170985ee94676b94e6568e9c00570eaad4adac1d56258c929cbfc",
+            "actualSha256": "9bb31ed8e89170985ee94676b94e6568e9c00570eaad4adac1d56258c929cbfc",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "policy": "kdjRsi",
+            "sessions": 124,
+            "warmup": 14,
+            "entries": 0,
+            "exits": 0,
+            "expectedEntries": 0,
+            "expectedExits": 0,
+            "referenceSha256": "bc2f48da1f1e1e924cbf7c148fd247d6b0726ecc6596b77aa14f17b06a8e27a1",
+            "actualSha256": "bc2f48da1f1e1e924cbf7c148fd247d6b0726ecc6596b77aa14f17b06a8e27a1",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "policy": "zeroMeanReversion",
+            "sessions": 124,
+            "warmup": 19,
+            "entries": 1,
+            "exits": 1,
+            "expectedEntries": 1,
+            "expectedExits": 1,
+            "referenceSha256": "c2b217baa3923cab5a8bee299774d7669d2926f151a76cd6340cd6d375e128cf",
+            "actualSha256": "c2b217baa3923cab5a8bee299774d7669d2926f151a76cd6340cd6d375e128cf",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-A",
+            "policy": "smaCross",
+            "sessions": 124,
+            "warmup": 19,
+            "entries": 2,
+            "exits": 1,
+            "expectedEntries": 2,
+            "expectedExits": 1,
+            "referenceSha256": "e9f2e220a7fc51bcd97dc1ae6da164046925c714bb2c92bd4b523d7f3af61d6f",
+            "actualSha256": "e9f2e220a7fc51bcd97dc1ae6da164046925c714bb2c92bd4b523d7f3af61d6f",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "policy": "buyAndHold",
+            "sessions": 124,
+            "warmup": 0,
+            "entries": 1,
+            "exits": 0,
+            "expectedEntries": 1,
+            "expectedExits": 0,
+            "referenceSha256": "cd532c1cbcb6204dbbf010e374dbfc33fdbf5d10e7c9bb9bff9dea0b9ef4a78b",
+            "actualSha256": "cd532c1cbcb6204dbbf010e374dbfc33fdbf5d10e7c9bb9bff9dea0b9ef4a78b",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "policy": "macdCross",
+            "sessions": 124,
+            "warmup": 33,
+            "entries": 6,
+            "exits": 6,
+            "expectedEntries": 6,
+            "expectedExits": 6,
+            "referenceSha256": "bdb17d56126747e58ef914b00c6872228450856ef20802c51c6bfcfc1c74c858",
+            "actualSha256": "bdb17d56126747e58ef914b00c6872228450856ef20802c51c6bfcfc1c74c858",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "policy": "kdjRsi",
+            "sessions": 124,
+            "warmup": 14,
+            "entries": 1,
+            "exits": 0,
+            "expectedEntries": 1,
+            "expectedExits": 0,
+            "referenceSha256": "b0ebc00cbb90521417cde4af23c517d64a6430f9b7d1c997ead154602285861d",
+            "actualSha256": "b0ebc00cbb90521417cde4af23c517d64a6430f9b7d1c997ead154602285861d",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "policy": "zeroMeanReversion",
+            "sessions": 124,
+            "warmup": 19,
+            "entries": 5,
+            "exits": 4,
+            "expectedEntries": 5,
+            "expectedExits": 4,
+            "referenceSha256": "093dd247fa5d11c18e71b0e40e54613a9afd159e69ae389d4c705a45502df558",
+            "actualSha256": "093dd247fa5d11c18e71b0e40e54613a9afd159e69ae389d4c705a45502df558",
+            "reproduced": true
+          },
+          {
+            "asset": "SYN-B",
+            "policy": "smaCross",
+            "sessions": 124,
+            "warmup": 19,
+            "entries": 4,
+            "exits": 4,
+            "expectedEntries": 4,
+            "expectedExits": 4,
+            "referenceSha256": "abba0f91e4b0b6ac0ee4dc2a1d5585fe631abc633b87608272d97ed3d180b82d",
+            "actualSha256": "abba0f91e4b0b6ac0ee4dc2a1d5585fe631abc633b87608272d97ed3d180b82d",
+            "reproduced": true
+          }
+        ]
+      }
+    ]
+  },
   "counts": {
     "registered": 10,
     "measured": 2,
@@ -1909,6 +2528,8 @@
   "capabilities": {
     "instrument": true,
     "controls": true,
+    "indicators": true,
+    "signals": true,
     "baselines": false,
     "agent": false,
     "complete": false
@@ -1962,10 +2583,10 @@
     "Original MIT fictional data qualifies mechanism and accounting only; it measures no real-market or live-model performance.",
     "Oracle uses privileged future closes and fixed 100-share entries. It is an eligible analytic control, not a feasible strategy or a maximum-return guarantee.",
     "The leaky control reads observations after cutoff and is excluded from every comparison.",
-    "Golden ledgers are independently generated data; baseline execution waits for the shared broker and signal policies.",
+    "Golden ledgers are independently generated data; baseline execution waits for the shared simulator. Measured indicators and signals are calculation checks, not executed strategies.",
     "SYN-B is registered as the losing buy-and-hold asset; its execution row remains visible when measured.",
     "Bars arrive 15 minutes after close. The close-time decision cannot observe that session bar.",
     "Live model quality, external historical replay and operational parity are not measured. No network request is made."
   ],
-  "reportId": "d096fc7358c345a36a12148543b59d0ffd17c7f87137e83599bff6a45a9dafe5"
+  "reportId": "68fc4f63d4259a1bb5b6f46883924fde61aec5dc5e8f856f484291f301aee326"
 }

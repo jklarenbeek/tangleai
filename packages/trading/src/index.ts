@@ -11,3 +11,10 @@ export { createTradingStoreAdapter, createMemoryTradingStore, planTradingCommit,
 export type * from './store.ts';
 export { accountTradingFills, validateTradingLedger, validateInitialTradingPortfolio } from './accounting.ts';
 export type { PortfolioState } from './accounting.ts';
+export { adx, cci, vwap, volumeRatio, kdj } from './indicators.ts';
+export { TRADING_SIGNAL_DEFAULTS, validateTradingSignalParameters, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross } from './baselines.ts';
+export type { TradingSignalSeries, TradingSignalPolicy } from './baselines.ts';
+export { TRADING_PROVIDERS, createTradingProviderSnapshot, createFixtureProviders, createReplayProviders } from './providers.ts';
+export type { TradingProviders, TradingProviderOutcome, TradingFixtureProviders } from './providers.ts';
+export { buildSnapshot } from './snapshot.ts';
+export type { TradingSnapshotInput, TradingSnapshotBundle } from './snapshot.ts';

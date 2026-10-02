@@ -49,6 +49,27 @@ export function cutoffFor(session: MarketSession, manifest: TradingRunManifest):
   if (manifest.decisionCutoff !== 'session-close') return tradingRefuse('TTRD1003', '/decisionCutoff', 'Unsupported cutoff');
   return { valid: true, value: session.closeAt };
 }
+/** Derive the citation's daily-bar age from calendar links, including holidays. */
+export function snapshotBarStaleness(sessions: readonly MarketSession[], sessionId: string, observations: readonly Observation[]): TradingOutcome<number | null> {
+  const byKey = new Map(sessions.map(s => [s.key, s])), target = byKey.get(sessionId);
+  if (!target || byKey.size !== sessions.length) return tradingRefuse('TTRD1003', '/sessionId', 'Snapshot requires a distinct retained calendar session');
+  let latest: MarketSession | undefined;
+  for (const bar of observations.filter(o => o.kind === 'bar')) {
+    const session = byKey.get(bar.sessionId);
+    if (!session || toEpoch(session.closeAt) > toEpoch(target.closeAt) || toEpoch(bar.eventAt) !== toEpoch(session.closeAt))
+      return tradingRefuse('TTRD1003', '/observations', 'Daily bar must name an elapsed session and that session close event');
+    if (!latest || toEpoch(session.closeAt) > toEpoch(latest.closeAt)) latest = session;
+  }
+  if (!latest) return { valid: true, value: null };
+  let age = 0, current: MarketSession = latest;
+  while (current.key !== target.key) {
+    const next = current.next === null ? undefined : byKey.get(current.next);
+    if (!next || next.prev !== current.key || toEpoch(next.openAt) <= toEpoch(current.closeAt) || ++age > sessions.length)
+      return tradingRefuse('TTRD1003', '/sessions', 'Bar staleness requires an unbroken calendar path to the cutoff session');
+    current = next;
+  }
+  return { valid: true, value: age };
+}
 export interface TradingAdmission {
   admitted: Observation[];
   refused: Array<{ id: string; reason: 'TTRD1003'; issue: TradingIssue }>;

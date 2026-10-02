@@ -1,4 +1,5 @@
-import { createTradingRecord, createMemoryTradingStore, accountTradingFills, admit, latestBarsAsOf } from '@tangleai/trading';
+import { createTradingRecord, createMemoryTradingStore, accountTradingFills, admit, latestBarsAsOf,
+  createFixtureProviders, createReplayProviders, buildSnapshot, buyAndHold, kdj, TRADING_SIGNAL_DEFAULTS } from '@tangleai/trading';
 const value = result => { if (!result.valid) throw Error(JSON.stringify(result.issues)); return result.value; };
 
 export async function tradingConsumerFixture() {
@@ -39,6 +40,13 @@ export async function exerciseTradingConsumer(store, fixture) {
   value(await store.put('manifests', manifest));
   for (const session of sessions) value(await store.put('sessions', session));
   value(await store.put('observations', bar)); value(await store.initializePortfolio(initial));
+  const captured = value(await createFixtureProviders({ manifestId: manifest.id, sessions, observations: [bar],
+    eventAt: '2025-01-01T00:00:00Z', availableAt: '2025-01-01T12:00:00Z' }));
+  const providers = value(await createReplayProviders({ manifestId: manifest.id, snapshots: captured.snapshots, bindings: captured.bindings }));
+  const built = value(await buildSnapshot({ manifest, asset: 'TOY', session: sessions[1], portfolio: initial, providers }));
+  if (built.snapshot.staleness !== 1 || built.snapshot.observationIds[0] !== bar.id || built.snapshot.providerErrors.length) throw Error('Packed snapshot differs');
+  value(await store.put('snapshots', built.snapshot));
+  if (value(buyAndHold([bar], TRADING_SIGNAL_DEFAULTS))[0]?.target !== 'long' || kdj([1], [1], [1]).j[0] !== null) throw Error('Packed signal differs');
   const first = value(await store.commitDecision(plan)), replay = value(await store.commitDecision(plan));
   return { writes: first.writes, replayWrites: replay.writes, quantity: (await store.latestPortfolio(manifest.id)).positions[0].quantity,
     refused: value(await admit([bar], sessions[0].closeAt)).refused.length,

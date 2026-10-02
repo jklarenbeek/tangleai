@@ -125,6 +125,9 @@
     "reportId": {
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
+    },
+    "mechanisms": {
+      "$ref": "#/$defs/mechanismMeasurements"
     }
   },
   "required": [
@@ -141,7 +144,8 @@
     "capabilities",
     "identity",
     "limitations",
-    "reportId"
+    "reportId",
+    "mechanisms"
   ],
   "additionalProperties": false,
   "$query": {
@@ -1552,6 +1556,12 @@
         },
         "complete": {
           "type": "boolean"
+        },
+        "indicators": {
+          "type": "boolean"
+        },
+        "signals": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1559,7 +1569,9 @@
         "controls",
         "baselines",
         "agent",
-        "complete"
+        "complete",
+        "indicators",
+        "signals"
       ],
       "additionalProperties": false
     },
@@ -1615,6 +1627,804 @@
         "refusedObservations"
       ],
       "additionalProperties": false
+    },
+    "indicatorReferenceMetadata": {
+      "type": "object",
+      "properties": {
+        "python": {
+          "type": "string",
+          "minLength": 1
+        },
+        "packages": {
+          "type": "object",
+          "properties": {
+            "ta": {
+              "const": "0.11.0"
+            },
+            "TA-Lib": {
+              "const": "0.8.1"
+            },
+            "numpy": {
+              "const": "2.5.3"
+            },
+            "pandas": {
+              "const": "3.0.6"
+            }
+          },
+          "required": [
+            "ta",
+            "TA-Lib",
+            "numpy",
+            "pandas"
+          ],
+          "additionalProperties": false
+        },
+        "taLibrary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generatorSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "python",
+        "packages",
+        "taLibrary",
+        "generatorSha256"
+      ],
+      "additionalProperties": false
+    },
+    "indicatorReference": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "trading-indicators-reference/1"
+        },
+        "reference": {
+          "$ref": "#/$defs/indicatorReferenceMetadata"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "const": "benchmark/fixtures/trading/bars.json"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "adxPeriod": {
+              "const": 14
+            },
+            "cciPeriod": {
+              "const": 20
+            },
+            "volumePeriod": {
+              "const": 20
+            },
+            "kPeriod": {
+              "const": 9
+            },
+            "dPeriod": {
+              "const": 3
+            },
+            "jFactor": {
+              "const": 3
+            }
+          },
+          "required": [
+            "adxPeriod",
+            "cciPeriod",
+            "volumePeriod",
+            "kPeriod",
+            "dPeriod",
+            "jFactor"
+          ],
+          "additionalProperties": false
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "enum": [
+                  "SYN-A",
+                  "SYN-B",
+                  "zero-volume"
+                ]
+              },
+              "input": {
+                "type": "object",
+                "properties": {
+                  "high": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "low": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "close": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "volume": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "resets": {
+                    "type": "array",
+                    "items": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "required": [
+                  "high",
+                  "low",
+                  "close",
+                  "volume",
+                  "resets"
+                ],
+                "additionalProperties": false
+              },
+              "expected": {
+                "type": "object",
+                "properties": {
+                  "plusDI": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "minusDI": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "adx": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "cci": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "vwap": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "sessionVwap": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "volumeRatio": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "k": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "d": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "j": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "plusDI",
+                  "minusDI",
+                  "adx",
+                  "cci",
+                  "vwap",
+                  "sessionVwap",
+                  "volumeRatio",
+                  "k",
+                  "d",
+                  "j"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "input",
+              "expected"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "signalParameters": {
+          "type": "object"
+        },
+        "signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset": {
+                "$ref": "#/$defs/asset"
+              },
+              "targets": {
+                "type": "object",
+                "properties": {
+                  "buyAndHold": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "long",
+                        "flat",
+                        null
+                      ]
+                    }
+                  },
+                  "macdCross": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "long",
+                        "flat",
+                        null
+                      ]
+                    }
+                  },
+                  "kdjRsi": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "long",
+                        "flat",
+                        null
+                      ]
+                    }
+                  },
+                  "zeroMeanReversion": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "long",
+                        "flat",
+                        null
+                      ]
+                    }
+                  },
+                  "smaCross": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "long",
+                        "flat",
+                        null
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "buyAndHold",
+                  "macdCross",
+                  "kdjRsi",
+                  "zeroMeanReversion",
+                  "smaCross"
+                ],
+                "additionalProperties": false
+              },
+              "crossings": {
+                "type": "object",
+                "properties": {
+                  "buyAndHold": {
+                    "type": "object",
+                    "properties": {
+                      "entries": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "exits": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "entries",
+                      "exits"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "macdCross": {
+                    "type": "object",
+                    "properties": {
+                      "entries": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "exits": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "entries",
+                      "exits"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "kdjRsi": {
+                    "type": "object",
+                    "properties": {
+                      "entries": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "exits": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "entries",
+                      "exits"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "zeroMeanReversion": {
+                    "type": "object",
+                    "properties": {
+                      "entries": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "exits": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "entries",
+                      "exits"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "smaCross": {
+                    "type": "object",
+                    "properties": {
+                      "entries": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "exits": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "entries",
+                      "exits"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "buyAndHold",
+                  "macdCross",
+                  "kdjRsi",
+                  "zeroMeanReversion",
+                  "smaCross"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "asset",
+              "targets",
+              "crossings"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "format",
+        "reference",
+        "source",
+        "parameters",
+        "cases",
+        "signalParameters",
+        "signals"
+      ],
+      "additionalProperties": false
+    },
+    "indicatorVectorMeasurement": {
+      "type": "object",
+      "properties": {
+        "fixture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "vector": {
+          "enum": [
+            "plusDI",
+            "minusDI",
+            "adx",
+            "cci",
+            "vwap",
+            "sessionVwap",
+            "volumeRatio",
+            "k",
+            "d",
+            "j"
+          ]
+        },
+        "positions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warmup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maximumAbsoluteError": {
+          "type": "number",
+          "minimum": 0
+        },
+        "referenceSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "arraySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "float64Sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reproduced": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fixture",
+        "vector",
+        "positions",
+        "warmup",
+        "maximumAbsoluteError",
+        "referenceSha256",
+        "arraySha256",
+        "float64Sha256",
+        "reproduced"
+      ],
+      "additionalProperties": false
+    },
+    "signalPolicyMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "$ref": "#/$defs/asset"
+        },
+        "policy": {
+          "enum": [
+            "buyAndHold",
+            "macdCross",
+            "kdjRsi",
+            "zeroMeanReversion",
+            "smaCross"
+          ]
+        },
+        "sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warmup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expectedExits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "referenceSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "actualSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reproduced": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "asset",
+        "policy",
+        "sessions",
+        "warmup",
+        "entries",
+        "exits",
+        "expectedEntries",
+        "expectedExits",
+        "referenceSha256",
+        "actualSha256",
+        "reproduced"
+      ],
+      "additionalProperties": false
+    },
+    "indicatorMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "indicators"
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inputKinds": {
+          "const": [
+            "array",
+            "Float64Array"
+          ]
+        },
+        "tolerance": {
+          "const": 1e-10
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/indicatorVectorMeasurement"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "inputKinds",
+        "tolerance",
+        "cases"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "signalMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "signals"
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "not-run"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parametersSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/signalPolicyMeasurement"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "parametersSha256",
+        "cases"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "mechanismMeasurements": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/indicatorReferenceMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/indicatorMeasurement"
+              },
+              {
+                "$ref": "#/$defs/signalMeasurement"
+              }
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "reference",
+        "rows"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$eq": [
+          [
+            "$.rows[*].id"
+          ],
+          [
+            "indicators",
+            "signals"
+          ]
+        ]
+      }
     }
   }
 }

@@ -85,8 +85,9 @@ export function qualifyTradingStore(name: string, open: OpenTradingHarness): voi
         await seed(h.store); value(await h.store.put('observations', fixture.observations[0]));
         const key = { ...plan.key, sessionId: fixture.sessions[1].key, stage: 'analyst' };
         const snapshot = value(await createTradingRecord('snapshot', { manifestId: fixture.manifest.id, asset: key.asset, sessionId: key.sessionId,
-          cutoffAt: fixture.sessions[1].closeAt, observationIds: [fixture.observations[0].id], refused: [], providerErrors: [], portfolioId: fixture.initial.id }));
+          cutoffAt: fixture.sessions[1].closeAt, observationIds: [fixture.observations[0].id], refused: [], providerErrors: [], portfolioId: fixture.initial.id, staleness: 1 }));
         value(await h.store.put('snapshots', snapshot));
+        assert.equal((await h.store.put('snapshots', await reidentify(snapshot, { staleness: 0 }))).valid, false);
         const artifact = value(await createTradingRecord('analyst-report', { manifestId: fixture.manifest.id, key, role: 'market-analyst', snapshotId: snapshot.id,
           citations: snapshot.observationIds, model: { profile: 'scripted', identityId: '0'.repeat(64) }, promptRevision: '0'.repeat(64),
           spend: { calls: 1, toolCalls: 0, tokens: 10, usd: 0, retries: 0, repairs: 0, ms: 0 }, claims: [], summary: 'One available bar', signals: [], gaps: [] }));
@@ -103,7 +104,7 @@ export function qualifyTradingStore(name: string, open: OpenTradingHarness): voi
         await seed(h.store);
         const bar = fixture.observations[0]; value(await h.store.put('observations', bar));
         const body = { manifestId: fixture.manifest.id, asset: bar.asset, sessionId: fixture.sessions[0].key, cutoffAt: fixture.sessions[0].closeAt,
-          observationIds: [bar.id], refused: [], providerErrors: [], portfolioId: fixture.initial.id };
+          observationIds: [bar.id], refused: [], providerErrors: [], portfolioId: fixture.initial.id, staleness: 0 };
         for (const altered of [body, { ...body, observationIds: ['absent-observation'] }, { ...body, asset: 'SYN-B' },
           { ...body, portfolioId: 'absent-portfolio' }, { ...body, sessionId: 'absent-session' }]) {
           const snapshot = value(await createTradingRecord('snapshot', altered));

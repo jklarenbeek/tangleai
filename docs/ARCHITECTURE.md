@@ -53,6 +53,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       atomic incremental projections, bounded dual-level retrieval,
                       evidence sections and a separately metered grounded answer engine
 @tangleai/trading     closed simulated trading records and publication-time admission;
+                      immutable fixture/replay providers, cited market snapshots,
+                      deterministic signal policies over native finance kernels;
                       one shared commit planner for atomic memory and SQLite stores,
                       balanced postings and verified zero-write decision replay
 ```

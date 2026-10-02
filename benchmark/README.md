@@ -64,6 +64,9 @@ over an original MIT two-asset fixture. Its privileged oracle and cash-only
 control are measured; the look-ahead control is excluded. Broker-dependent
 baselines and agent execution remain explicit missing rows. The poison audit
 compares admitted observations and derived return windows at every session close.
+Separate calculation rows reproduce 30 reference indicator vectors and ten
+baseline signal series. They retain pinned reference versions, vector identities
+and per-asset crossings without presenting signal calculations as equity returns.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
 `--out-dir` redirects both outputs, and `--require controls` requires the controls.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.

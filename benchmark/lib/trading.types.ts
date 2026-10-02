@@ -617,6 +617,8 @@ export interface Capabilities {
   baselines: boolean;
   agent: boolean;
   complete: boolean;
+  indicators: boolean;
+  signals: boolean;
 }
 
 
@@ -657,6 +659,244 @@ export interface Counts {
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
   refusedObservations: number;
+}
+
+
+export interface IndicatorReferenceMetadata {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  python: string;
+  packages: { ta: "0.11.0"; "TA-Lib": "0.8.1"; numpy: "2.5.3"; pandas: "3.0.6"; };
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  taLibrary: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  generatorSha256: string;
+}
+
+
+export interface IndicatorReferenceSource {
+  path: "benchmark/fixtures/trading/bars.json";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+}
+
+
+export interface IndicatorReferenceSignalsItemCrossingsBuyAndHold {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+}
+
+
+export interface IndicatorReferenceSignalsItemCrossingsMacdCross {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+}
+
+
+export interface IndicatorReferenceSignalsItemCrossingsKdjRsi {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+}
+
+
+export interface IndicatorReferenceSignalsItemCrossingsZeroMeanReversion {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+}
+
+
+export interface IndicatorReferenceSignalsItemCrossingsSmaCross {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+}
+
+
+export interface IndicatorReference {
+  format: "trading-indicators-reference/1";
+  reference: IndicatorReferenceMetadata;
+  source: IndicatorReferenceSource;
+  parameters: { adxPeriod: 14; cciPeriod: 20; volumePeriod: 20; kPeriod: 9; dPeriod: 3; jFactor: 3; };
+  /**
+   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   */
+  cases: Array<{ id: "SYN-A" | "SYN-B" | "zero-volume"; input: { high: Array<number>; low: Array<number>; close: Array<number>; volume: Array<number>; resets: Array<boolean>; }; expected: { plusDI: Array<number | null>; minusDI: Array<number | null>; adx: Array<number | null>; cci: Array<number | null>; vwap: Array<number | null>; sessionVwap: Array<number | null>; volumeRatio: Array<number | null>; k: Array<number | null>; d: Array<number | null>; j: Array<number | null>; }; }>;
+  signalParameters: { [key: string]: unknown; };
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  signals: Array<{ asset: Asset; targets: { buyAndHold: Array<"long" | "flat" | null>; macdCross: Array<"long" | "flat" | null>; kdjRsi: Array<"long" | "flat" | null>; zeroMeanReversion: Array<"long" | "flat" | null>; smaCross: Array<"long" | "flat" | null>; }; crossings: { buyAndHold: IndicatorReferenceSignalsItemCrossingsBuyAndHold; macdCross: IndicatorReferenceSignalsItemCrossingsMacdCross; kdjRsi: IndicatorReferenceSignalsItemCrossingsKdjRsi; zeroMeanReversion: IndicatorReferenceSignalsItemCrossingsZeroMeanReversion; smaCross: IndicatorReferenceSignalsItemCrossingsSmaCross; }; }>;
+}
+
+
+export interface IndicatorVectorMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  fixture: string;
+  vector: "plusDI" | "minusDI" | "adx" | "cci" | "vwap" | "sessionVwap" | "volumeRatio" | "k" | "d" | "j";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  positions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  warmup: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  maximumAbsoluteError: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  referenceSha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  arraySha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  float64Sha256: string;
+  reproduced: boolean;
+}
+
+
+export interface SignalPolicyMeasurement {
+  asset: Asset;
+  policy: "buyAndHold" | "macdCross" | "kdjRsi" | "zeroMeanReversion" | "smaCross";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  sessions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  warmup: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  entries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exits: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expectedEntries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  expectedExits: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  referenceSha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  actualSha256: string;
+  reproduced: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.total",{"$count":"$.cases[*]"}]},{"$eq":["$.reproduced",{"$count":"$.cases[?(@.reproduced==true)]"}]}]}
+ */
+export interface IndicatorMeasurement {
+  id: "indicators";
+  status: "measured" | "not-run";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reproduced: number;
+  inputKinds: ["array","Float64Array"];
+  tolerance: 1e-10;
+  cases: Array<IndicatorVectorMeasurement>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.total",{"$count":"$.cases[*]"}]},{"$eq":["$.reproduced",{"$count":"$.cases[?(@.reproduced==true)]"}]}]}
+ */
+export interface SignalMeasurement {
+  id: "signals";
+  status: "measured" | "not-run";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string | null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reproduced: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  parametersSha256: string;
+  cases: Array<SignalPolicyMeasurement>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":[["$.rows[*].id"],["indicators","signals"]]}
+ */
+export interface MechanismMeasurements {
+  reference: IndicatorReferenceMetadata | null;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  rows: Array<IndicatorMeasurement | SignalMeasurement>;
 }
 
 
@@ -732,4 +972,5 @@ export interface Trading {
    * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
    */
   reportId: string;
+  mechanisms: MechanismMeasurements;
 }

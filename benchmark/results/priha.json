@@ -986,12 +986,16 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-mechanisms.ts",
+        "sha256": "282c510e4c75102c85872d03bea82a30ef60ca9af3745da32a239d7f0189a065"
+      },
+      {
         "path": "benchmark/lib/trading-metrics.ts",
         "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "2d69df9c082d620cd5f37061941ac4364aa1650794e66b702f0d4a92ef5a5913"
+        "sha256": "1ce0638e08c2ec6a581950762e20333297310c2bdb5b898cac55ab9b57c89c07"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -999,7 +1003,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "6901e6f89e65abadd7e26f3bbb3fe90d216c8b7f6cecb232bcb9f3b09a932604"
+        "sha256": "a3e33e783f00c6c92214ca9526428fc073114ab5953d740457585476f02020b4"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -1027,7 +1031,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "0901a6f0596eaa14f9b1c5192070998176d94f419d8b3a1dfe252b29ae932f5f"
+        "sha256": "451c8305eeb25ab3257c457166ea8763fac34b159f9c45f5d8c302c9211021a0"
       },
       {
         "path": "packages/agents/package.json",
@@ -3071,15 +3075,19 @@
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "eee3b4d614c5f03699d8bff1631e2e35f897a5071276cc110a4f80b5a52998d7"
+        "sha256": "cd4d516930a50a5867e569d544724d15ffd158678fd3b321c9b0b7a0b2c96565"
       },
       {
         "path": "packages/trading/src/accounting.ts",
         "sha256": "1d0dd73b5b9817262b1cb7dcd81ac3cde8b2d5de2c5770b30c1a54918893a78a"
       },
       {
+        "path": "packages/trading/src/baselines.ts",
+        "sha256": "c6326a0b90e0771a1ba6c6684187ca43c5f107df558ce9304f6fe1ae4da9ef9d"
+      },
+      {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "00ad1712e52bf07905e32d4fbd578247f1b6c4fd4e0132d8f137b409f9a58fcf"
+        "sha256": "289b1d55ad8eedd396b66a1f80548d28166f101d43295a24f2373bc3631af05e"
       },
       {
         "path": "packages/trading/src/errors.ts",
@@ -3091,7 +3099,15 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "7ebf3482f9e9e99dbf7c9b81db0666ea492e8fb002d9e5a364684e1e2a0ffe86"
+        "sha256": "24b69a39665a6edfffb0ea106aa4010c3c4b507fcf703e180833c3a64b455b5f"
+      },
+      {
+        "path": "packages/trading/src/indicators.ts",
+        "sha256": "2714b2f0062d7ae88cb70cb678717652c526ee77fc75e515ca52e92e08c3e42c"
+      },
+      {
+        "path": "packages/trading/src/providers.ts",
+        "sha256": "85f01b8bdd97c514228fe79f2c92a7d11e7bd594db8a95f0523fa935901ba726"
       },
       {
         "path": "packages/trading/src/records.ts",
@@ -3102,15 +3118,19 @@
         "sha256": "fa90ca8ce922cda41040cdd7233d90949d5aa87d36caa407e883c97ff6056111"
       },
       {
+        "path": "packages/trading/src/snapshot.ts",
+        "sha256": "ccab8c9dc7ca3158a912ad38d3cf70526404c2b474a5442445a179b1bb75d996"
+      },
+      {
         "path": "packages/trading/src/store.ts",
-        "sha256": "8a0679201b0c68cfc22c1aa4e81c9a54b245ee4007f15c846d638273856bf0b2"
+        "sha256": "4c7b921f807b1f909f628b7b175e99fa005b87f55b526c9e43e9e49b5b58ad3e"
       },
       {
         "path": "packages/trading/src/time.ts",
-        "sha256": "50b6d4ec60e6cf604fcc410731141d1389d49a9be370259c22bd12e12c3b1fbf"
+        "sha256": "61464d14ab6506fb18b7434d2db8865a4b1cbead7cfcf89ec672a05cdcb027b0"
       }
     ],
-    "sha256": "87d633bb6fade07f2f3c61278faf53493505f08065409111dfd806f01403456e"
+    "sha256": "7b14ed005562cf044d216361a56bc747ee547686c03e4098b0f03e44bd33dfab"
   },
   "fixtureSource": {
     "files": [
@@ -68300,7 +68320,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "87d633bb6fade07f2f3c61278faf53493505f08065409111dfd806f01403456e",
+      "sourceSha256": "7b14ed005562cf044d216361a56bc747ee547686c03e4098b0f03e44bd33dfab",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68384,7 +68404,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "b7a19e3661f89457864fae92d571f7d1852facb6ebdea616a9b525296a245ff5"
+      "planId": "fe6dbfad7e6fddb040c525591d89955740c037990c29779385b950fc50c89328"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68631,5 +68651,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "809bca405219ebfe7fdc43847bd591ca0ce5ea384a9f68b5f55b18b3f012f4fe"
+  "reportId": "4e90224efae2dbd05ea867810e035d6dd70469d4e76fec775ed91b1e8a5cdab2"
 }

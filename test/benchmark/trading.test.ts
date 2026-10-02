@@ -13,6 +13,7 @@ import { generateTradingFixture } from '../../benchmark/scripts/trading-fixture.
 import { loadTradingFixture, preCutoffTradingSlice, auditTradingPoison, TRADING_FIXTURE_PATH } from '../../benchmark/lib/trading.ts';
 import { buildTradingReport, validateTradingReport, tradingSource, renderReport, renderDocument, requireCapability } from '../../benchmark/lib/trading-report.ts';
 import { measureTradingEquity } from '../../benchmark/lib/trading-metrics.ts';
+import { measureTradingMechanisms } from '../../benchmark/lib/trading-mechanisms.ts';
 import type { FixtureManifest, Golden, Trading } from '../../benchmark/lib/trading.types.ts';
 
 const exec = promisify(execFile), fixture = await loadTradingFixture();
@@ -44,8 +45,25 @@ describe('registered trading measurement', () => {
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
     assert.equal(report.counts.implementationMissing, 6); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals']) assert.doesNotThrow(() => requireCapability(report, capability));
     for (const capability of ['baselines', 'agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
+  });
+  it('measures thirty independent vectors and ten signal series without creating execution returns', async () => {
+    const [indicators, signals] = report.mechanisms.rows;
+    assert.equal(indicators.id, 'indicators'); assert.equal(signals.id, 'signals');
+    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10]]);
+    assert.equal(indicators.cases.reduce((n, c) => n + c.positions, 0), 2880);
+    assert.ok(indicators.cases.every(c => c.arraySha256 === c.float64Sha256 && c.maximumAbsoluteError < 1e-10));
+    assert.ok(signals.cases.every(c => c.referenceSha256 === c.actualSha256 && c.entries === c.expectedEntries && c.exits === c.expectedExits));
+    for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.equal(row.metrics, null); assert.match(row.reason!, /simulator/); }
+    const dir = await mkdtemp(join(tmpdir(), 'trading-reference-'));
+    try {
+      const missing = await measureTradingMechanisms(fixture, join(dir, 'absent.json'));
+      assert.equal(missing.reference, null); assert.ok(missing.rows.every(r => r.status === 'not-run' && r.total === 0 && r.reason));
+      const file = join(dir, 'reference.json'), parsed = JSON.parse(await readFile('test/fixtures/trading-indicators.json', 'utf8'));
+      parsed.reference.generatorSha256 = '0'.repeat(64); await writeFile(file, JSON.stringify(parsed));
+      await assert.rejects(measureTradingMechanisms(fixture, file), /source identity/);
+    } finally { await rm(dir, { recursive: true, force: true }); }
   });
   it('poison values and derived returns have zero influence at every decision cutoff', async () => {
     assert.equal(report.poison.cutoffs, 124); assert.equal(report.poison.refused, 372); assert.equal(report.poison.influenced, 0);
@@ -87,6 +105,8 @@ describe('registered trading measurement', () => {
       r => { r.rows.pop(); }, r => { r.rows[1].id = r.rows[0].id; }, r => { r.registration[0].description = 'forged'; },
       r => { r.poison.refused--; }, r => { r.poison.cases[0].withSha256 = '0'.repeat(64); },
       r => { r.capabilities.complete = true; }, r => { r.fixture.sha256 = '0'.repeat(64); }, r => { r.source.sha256 = '0'.repeat(64); },
+      r => { r.mechanisms.rows[0].reproduced--; }, r => { const row = r.mechanisms.rows[1]; if (row.id === 'signals') row.cases[0].entries++; },
+      r => { r.mechanisms.reference!.packages.ta = 'forged' as '0.11.0'; },
     ];
     for (const mutate of mutations) { const copy = structuredClone(report); mutate(copy); assert.equal((await validateTradingReport(await rehash(copy))).valid, false); }
     const badHash = structuredClone(report); badHash.reportId = '0'.repeat(64); assert.equal((await validateTradingReport(badHash)).valid, false);
@@ -95,7 +115,8 @@ describe('registered trading measurement', () => {
   it('native schema assertions reconcile row identity, exclusions and counts', () => {
     const validate = createReportValidator(schema); assert.equal(validate(report).valid, true);
     for (const mutate of [(r: Trading) => { r.rows[1].id = r.rows[0].id; }, (r: Trading) => { r.rows[2].reason = null; },
-      (r: Trading) => { r.counts.measured++; }, (r: Trading) => { r.counts.transactions++; }]) {
+      (r: Trading) => { r.counts.measured++; }, (r: Trading) => { r.counts.transactions++; },
+      (r: Trading) => { r.mechanisms.rows[0].reproduced--; }, (r: Trading) => { r.mechanisms.rows.reverse(); }]) {
       const copy = structuredClone(report); mutate(copy); assert.equal(validate(copy).valid, false);
     }
   });
