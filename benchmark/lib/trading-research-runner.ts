@@ -30,7 +30,18 @@ export async function prepareTradingResearchDrive(input: Pick<TradingHostInput, 
     ...fragment, registryRevision: snapshot.revision, configRegistryRevision: config.revision, profile: 'scripted', limits: input.manifest.limits });
   const validated = checked(await validateMasWorkflow(workflow, snapshot, config)), plan = checked(await planMasWorkflow(validated));
   const prepared = { validated, plan, snapshot, catalog: config };
-  const response = (options: { action?: 'accept' | 'continue' | 'reject' | 'escalate'; contradiction?: boolean } = {}): ScriptedDriveOptions['response'] => (node, _round, _phase, messages) => {
+  const response = tradingResearchScript;
+  const run = async (options: Partial<ScriptedDriveOptions> = {}) => {
+    let store: Pick<MasStore, 'readTrace'>;
+    const bindings = checked(await createTradingResearchHostBindings({ manifest: input.manifest, snapshot: input.snapshot, portfolio: input.portfolio, catalog: input.catalog, materialized: research,
+      trace: async () => { const trace = await store.readTrace('gmpl-measurement'); if (!trace) throw Error('Missing active trace'); return trace; }, provenance: attemptProvenance }));
+    return driveGmplWorkflow(prepared, { ...options, input: { reports }, response: options.response ?? response(), onStore: value => { store = value; options.onStore?.(value); },
+      bindings: { taskHandlers: bindings.taskHandlers, messageAdapters: bindings.messageAdapters, ...options.bindings } });
+  };
+  return { reports, research, region, prepared, response, run };
+}
+
+export const tradingResearchScript = (options: { action?: 'accept' | 'continue' | 'reject' | 'escalate'; contradiction?: boolean } = {}): ScriptedDriveOptions['response'] => (node, _round, _phase, messages) => {
     if (node === 'trader') {
       const verdict = promptJson(messages, 'verdict', 'portfolio') as { id: string; revision: string };
       const portfolio = promptJson(messages, 'portfolio') as { id: string };
@@ -49,12 +60,3 @@ export async function prepareTradingResearchDrive(input: Pick<TradingHostInput, 
     return node.startsWith('position') ? { result, stance: side } : node.startsWith('rebuttal') ? { result, addresses: context.positions!.flatMap(p => p.claimIds).slice(0, 1) }
       : node === 'judge' ? { result, action: options.action ?? 'continue' } : { result };
   };
-  const run = async (options: Partial<ScriptedDriveOptions> = {}) => {
-    let store: Pick<MasStore, 'readTrace'>;
-    const bindings = checked(await createTradingResearchHostBindings({ manifest: input.manifest, snapshot: input.snapshot, portfolio: input.portfolio, catalog: input.catalog, materialized: research,
-      trace: async () => { const trace = await store.readTrace('gmpl-measurement'); if (!trace) throw Error('Missing active trace'); return trace; }, provenance: attemptProvenance }));
-    return driveGmplWorkflow(prepared, { ...options, input: { reports }, response: options.response ?? response(), onStore: value => { store = value; options.onStore?.(value); },
-      bindings: { taskHandlers: bindings.taskHandlers, messageAdapters: bindings.messageAdapters, ...options.bindings } });
-  };
-  return { reports, research, region, prepared, response, run };
-}

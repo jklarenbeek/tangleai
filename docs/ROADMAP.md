@@ -217,18 +217,15 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   *Closes on:* a registered live comparison publishing paired uncertainty,
   costs, failures and losses; official scorer parity on the named slices; and
   an evidenced, idempotent correction/revocation protocol with recovery tests.
-- [ ] **A complete trading decision workflow (TradingAgents).** *Wanted:*
-  the implemented analyst, research, trader, risk and fund-manager regions as one immutable flow
-  over the point-in-time providers, order admission and atomic simulator, with every turn and
-  decision citing artifacts visible to its role at its time. *Constraint:*
-  independent analyst lanes must compose into one bounded decision without
-  exposing future prices or bypassing the deterministic policy checker.
-  A crash, an invalid model output, a
-  missing provider or an exhausted budget must be unable to create or duplicate
-  a fill. Real-money execution, claims of profitability and autonomous strategy
-  evolution stay out. *Closes on:* a frozen-input fixture benchmark whose report
-  publishes costs, failures, losing assets and eligibility beside returns, and
-  states the parity tier honestly.
+- [ ] **Trading comparisons and licensed replay (TradingAgents).** *Wanted:*
+  registered full-flow ablations and a licensed historical replay profile over
+  the shipped causal simulator and resumable MAS workflow. *Constraint:* scripted
+  fixture results establish execution behavior; they do not establish live model
+  quality. All comparisons must preserve evidence, calendars, execution rules,
+  resources and counted failures. *Closes on:* paired ablations with costs and
+  signed deltas, an explicit corpus licence and identity or a named unavailable
+  state, and independently qualified live measurements before any quality claim.
+  Operational surfaces and shadow execution remain separate work.
 
 ## Multi-agent patterns
 

@@ -10786,7 +10786,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+            "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -10803,6 +10803,10 @@
           {
             "path": "packages/store/src/mas-jobs.ts",
             "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+          },
+          {
+            "path": "packages/store/src/mas-segment-driver.ts",
+            "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
           },
           {
             "path": "packages/store/src/mas-store.ts",
@@ -10857,7 +10861,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "22518732894d9fa020f490932e92af9f8a683dda74187f5b76c10d85030213f0"
+        "sha256": "061b0de719cc4f480f47045b28f0951f695f103e020269d462a2a9c1bb91b859"
       },
       "questionIds": [
         "q-relay-port",
@@ -10968,7 +10972,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "297165e00e7747e39dd7e16ca8dffbf6df496d32017037f71d867fec8db29eb0"
+      "planId": "3f5df5509bdc510822149fe79de8be4a85be5e7cc742e5c00b81536c30a6d8b0"
     },
     "rows": [],
     "indexing": {
@@ -11000,7 +11004,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "bf62bd7932213216723fdef88c519d416a522f8016243e670abb03798bb3c751"
+    "reportId": "0661e9d63c94d5466766b213accb55ec9159c0e4e1265781715dacdc877b5c3b"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11422,7 +11426,7 @@
           },
           {
             "path": "packages/store/src/index.ts",
-            "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+            "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
           },
           {
             "path": "packages/store/src/ledger-storage.ts",
@@ -11439,6 +11443,10 @@
           {
             "path": "packages/store/src/mas-jobs.ts",
             "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+          },
+          {
+            "path": "packages/store/src/mas-segment-driver.ts",
+            "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
           },
           {
             "path": "packages/store/src/mas-store.ts",
@@ -11493,7 +11501,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "22518732894d9fa020f490932e92af9f8a683dda74187f5b76c10d85030213f0"
+        "sha256": "061b0de719cc4f480f47045b28f0951f695f103e020269d462a2a9c1bb91b859"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11544,7 +11552,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "bc5d8ed955686e4f9a15d3730d5c385a469c0cd3c25ed2e067e0bb6242f3a31c"
+      "planId": "02a914414137440997ecd4e92537cf8c73df5cf9c37e65efd0f7dfe9fcb67434"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11559,7 +11567,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "030af324edfe5eb3a17b5dedf04aad4093ce2caf71f1e361a08abf017e8e14c0"
+    "reportId": "aa64e064c9ca0c816bebfc6cac8e3421607d08c6da62341a859fefc5bf701ed9"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -12793,5 +12801,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "5096a19d62a390bbb97b248e57fcd0f254adc1becd1529f23a0f7e9f8b2dade7"
+  "reportId": "3944f8b5361899b3e2b75e683118c2f76f585b3b9abd2e20cd4bed6abc15fd4f"
 }

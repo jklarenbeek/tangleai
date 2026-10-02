@@ -1,4 +1,4 @@
-/** Deterministic simulated execution and explicit unavailable model rows. */
+/** Deterministic financial and model-mechanism execution with explicit live exclusions. */
 import { join } from 'node:path';
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { equalsJson } from '@jarenjs/core/object';
@@ -28,6 +28,7 @@ const LIMITATIONS = [
   'SYN-B buy-and-hold loses while SYN-A gains; both per-asset returns are shown. Each asset starts with an equal share of capital for attribution.',
   'Bars arrive 15 minutes after close. Signals use the latest admitted revision per historical session; all assets decide before any next-open fill. Cash, holdings and cited observations are visible to signal callbacks; ex-post marks are not.',
   'Analyst mechanism cases use a fixed cash-only portfolio and scripted responses. Citation resolution and deliberate repair/tool-refusal probes test boundaries, not investment quality or entailment.',
+  'The scripted end-to-end strategy buys two shares when unheld and otherwise holds. It follows every model stage, with first-round research agreement and risk adjustment; this measures mechanism, not strategy improvement.',
   'Live model quality, external historical replay and operational parity are not measured. No network request is made.',
 ];
 
@@ -57,12 +58,13 @@ export function tradingCapabilities(rows: Row[], poison: Trading['poison'], mech
     complete: instrument && controls && indicators && signals && baselines && analysts && research && trader && risk && fundManager && agent };
 }
 export async function tradingSource(): Promise<Source> {
-  return sourceManifest(TRADING_ROOT, ['package.json', 'package-lock.json', 'benchmark/trading.ts', 'benchmark/scripts/trading-fixture.ts',
+  return sourceManifest(TRADING_ROOT, ['package.json', 'package-lock.json', 'benchmark/trading.ts', 'benchmark/lib/trading-cli.ts', 'benchmark/scripts/trading-fixture.ts',
     'benchmark/schemas/trading.schema.json', 'benchmark/lib/trading.types.ts', 'benchmark/lib/trading.ts', 'benchmark/lib/trading-metrics.ts',
     'benchmark/lib/trading-report.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
     'benchmark/lib/args.ts', 'benchmark/lib/table.ts', 'test/benchmark/trading.test.ts', 'test/benchmark/trading-cli.test.ts', 'benchmark/lib/trading-mechanisms.ts',
     'benchmark/scripts/trading-indicator-fixtures.py', 'test/fixtures/trading-indicators.json', 'benchmark/lib/trading-execution.ts',
     'benchmark/lib/trading-analyst-runner.ts', 'benchmark/lib/trading-analysts.ts', 'benchmark/lib/trading-research-runner.ts', 'benchmark/lib/trading-research.ts', 'benchmark/lib/gmpl-runner.ts',
+    'benchmark/lib/trading-agent.ts', 'benchmark/lib/trading-agent-runner.ts', 'benchmark/lib/trading-scripts.ts',
     'benchmark/lib/trading-risk-runner.ts', 'benchmark/lib/trading-risk.ts', 'benchmark/lib/trading-policy-probes.ts',
     'scripts/trading-artifacts.ts', 'scripts/trading-sources.ts', 'test/fixtures/trading-prompts.json'],
   ['benchmark/fixtures/trading', 'packages/trading', 'test/trading', 'prompts/trading', 'packages/gmpl', 'packages/mas', 'packages/store', 'packages/agents', 'packages/models', 'packages/context', 'packages/config', 'packages/core']);
@@ -114,10 +116,12 @@ export function renderDocument(report: Trading): string {
         r.metrics?.sharpe?.toFixed(6) ?? null, pct(r.metrics?.mdd ?? null, 4), r.transactions, r.rejectedOrders, r.refusedObservations, r.metrics ? r.costs.total.toFixed(6) : null]), numeric: [4, 5, 6, 7, 8, 9, 10, 11] })
     + '\n\n' + table({ head: ['Row', 'Asset', 'CR', 'MDD', 'Fills'], rows: report.rows.flatMap(r => r.perAsset.map(a => [r.id, a.asset, pct(a.cr, 4), pct(a.mdd, 4), a.fills])), numeric: [2, 3, 4] })
     + '\n\n' + table({ head: ['Execution row', 'Decisions', 'Stale close marks', 'Replay writes'], rows: report.rows.filter(r => r.execution).map(r => [r.id, r.execution!.decisionCount, r.execution!.staleMarks, r.execution!.replayWrites]), numeric: [1, 2, 3] })
+    + '\n\n' + table({ head: ['Agent row', 'Decisions', 'Completed', 'Failed', 'Calls', 'Normalizations', 'Repairs', 'Replays', 'Restores', 'Replay calls'], rows: report.rows.filter(r => r.agent).map(r => [r.id, r.agent!.decisionCount, r.agent!.completed, r.agent!.failed, r.agent!.physicalCalls, r.agent!.normalizations, r.agent!.repairs, r.agent!.replays, r.agent!.restores, r.agent!.replayPhysicalCalls]), numeric: [1, 2, 3, 4, 5, 6, 7, 8, 9] })
+    + '\n\n' + report.rows.filter(r => r.agent).map(r => `Agent spend: ${r.agent!.spend.tokens} tokens, ${r.agent!.spend.toolCalls} tool calls, ${r.agent!.spend.retries} retries, USD ${r.agent!.spend.usd}; failures by code: ${r.agent!.failuresByCode.length ? r.agent!.failuresByCode.map(f => `${f.code}=${f.count}`).join(', ') : 'none'}; all decision and admission issues: ${r.agent!.issuesByCode.length ? r.agent!.issuesByCode.map(f => `${f.code}=${f.count}`).join(', ') : 'none'}. The actual second backtest changes zero rows and makes zero additional physical requests.\n\n`).join('')
     + '\n\n' + report.rows.filter(r => r.reason || r.undefined.length).map(r => `- ${r.id}: ${[r.reason, ...r.undefined.map(u => `${u.metric}: ${u.reason}`)].filter(Boolean).join('; ')}.`).join('\n')
     + `\n\nPoison audit: ${count(report.poison.cutoffs)} decision cutoffs, ${count(report.poison.refused)} refused observation/cutoff pairs, ${report.poison.influenced} changed pre-cutoff slices. Full admitted values, latest bars, price windows and returns are compared, with all paired hashes retained.\n\n`
     + `${report.counts.measured}/${report.counts.registered} registered rows measured; ${report.counts.excluded} excluded, ${report.counts.implementationMissing} implementation-missing, ${report.counts.notRun} not-run. No aggregate combines the excluded control with eligible rows.\n\n`
-    + `Targets enter with at most 100 whole shares and exit the held quantity; policy can only reduce a proposed quantity. Hard ceilings: gross/net exposure 1, single-name 0.6, participation 0.01, loss 0.2, cash floor USD 0. Only market orders in the declared two assets are allowed. Corporate actions settle once at the open; missing close bars retain prior marks and are counted. No terminal liquidation is forced.\n\n`
+    + `Baseline and control targets enter with at most 100 whole shares; the scripted agent requests two shares when unheld. They exit the held quantity; policy can only reduce a proposed quantity. Hard ceilings: gross/net exposure 1, single-name 0.6, participation 0.01, loss 0.2, cash floor USD 0. Only market orders in the declared two assets are allowed. Corporate actions settle once at the open; missing close bars retain prior marks and are counted. No terminal liquidation is forced.\n\n`
     + `Calculation rows are counted separately from the ten execution strategies.\n\n`
     + table({ head: ['Mechanism', 'Status', 'Reproduced', 'Total'], rows: report.mechanisms.rows.map(r => [r.id, r.status, r.reproduced, r.total]), numeric: [2, 3] }) + '\n\n'
     + report.mechanisms.rows.filter(r => r.id === 'analysts-scripted').map(r => `Analyst mechanism: ${r.reports} reports across ${r.total} asset/session cases; ${r.resolved}/${r.citations} citations resolve inside the role projection. Native MAS execution observed ${r.physicalCalls} physical calls, ${r.normalizations} normalizations, ${r.repairs} repairs, and ${r.refusedToolRequests}/${r.toolRequests} refused after-cutoff tool requests. All cases freeze the same cash-only portfolio and execute the four lanes concurrently. This is a scripted mechanism test, not a profitability or entailment claim.\n\n` + table({ head: ['Analyst safety probe', 'Passed', 'Physical calls', 'Repairs', 'Failed attempts'], rows: r.probes.map(p => [p.id, p.passed ? 'yes' : 'no', p.physicalCalls, p.repairs, p.refusals]), numeric: [2, 3, 4] }) + '\n\n').join('')

@@ -1,4 +1,5 @@
 /** One chronological execution loop for target policies and explicit analytic controls. */
+import { equalsJson } from '@jarenjs/core/object';
 import { toEpoch } from '@jarenjs/core/series';
 import { immutableTradingJson, tradingRevisionOf } from './identity.ts';
 import { createTradingRecord, validateTradingRecord } from './records.ts';
@@ -12,12 +13,16 @@ import { tradingIssue, tradingRefuse } from './errors.ts';
 import type { TradingOutcome } from './errors.ts';
 import type { TradingStore, TradingWriteReceipt } from './store.ts';
 import type { TradingStrategyData, TradingStrategyContext, TradingStrategySignal, TradingStrategySignalOutcome, TradingStrategyResult, TradingIssue,
-  BarObservation, PortfolioSnapshot, TradingDayResult, Fill, TradingCommit, TradingSpend } from './contracts.gen.ts';
+  BarObservation, PortfolioSnapshot, TradingDayResult, Fill, TradingCommit, TradingSpend, TradingDecisionResult, TradingDecision } from './contracts.gen.ts';
 
 export type TradingStrategySignals = (context: Readonly<TradingStrategyContext>) => TradingOutcome<TradingStrategySignal | null> | Promise<TradingOutcome<TradingStrategySignal | null>>;
-export interface TradingStrategyInput extends TradingStrategyData { store: TradingStore; signals?: TradingStrategySignals; }
-const ZERO_SPEND: TradingSpend = Object.freeze({ calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 });
-interface PendingSignal { signal: TradingStrategySignal | null; inputRevision: string; issues: TradingIssue[]; }
+export type TradingStrategyDecisions = (context: Readonly<TradingStrategyContext>) => Promise<TradingOutcome<TradingDecisionResult>>;
+export interface TradingStrategyInput extends TradingStrategyData { store: TradingStore; signals?: TradingStrategySignals; decisions?: TradingStrategyDecisions; }
+export const ZERO_TRADING_SPEND: TradingSpend = Object.freeze({ calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 });
+export function sumTradingSpend(values: readonly TradingSpend[]): TradingSpend {
+  return Object.fromEntries(Object.keys(ZERO_TRADING_SPEND).map(key => [key, values.reduce((n, value) => n + value[key as keyof TradingSpend], 0)])) as unknown as TradingSpend;
+}
+interface PendingSignal { signal: TradingStrategySignal | null; inputRevision: string; issues: TradingIssue[]; decision?: TradingDecisionResult; }
 const barOrder = (a: BarObservation, b: BarObservation) => toEpoch(a.eventAt) - toEpoch(b.eventAt)
   || toEpoch(a.availableAt) - toEpoch(b.availableAt) || a.id.localeCompare(b.id);
 
@@ -30,12 +35,13 @@ export function tradingSignalBars(bars: readonly BarObservation[]): BarObservati
 
 export async function runStrategy(input: TradingStrategyInput): Promise<TradingOutcome<TradingStrategyResult>> {
   if (!input || typeof input !== 'object' || !input.store?.atomic) return tradingRefuse('TTRD1001', '/store', 'An atomic trading store is required');
-  const { store, signals, ...data } = input;
+  const { store, signals, decisions, ...data } = input;
   const shape = validateTradingShape<TradingStrategyData>('tradingStrategyData', data); if (!shape.valid) return shape;
   const { manifest, sessions, bars, actions, observations } = shape.value, policy = manifest.executionPolicy;
   if (!policy) return tradingRefuse('TTRD1001', '/manifest/executionPolicy', 'A strategy must be bound in its immutable manifest');
   if ((policy.kind === 'oracle' || policy.kind === 'leaky') && manifest.mode !== 'fixture') return tradingRefuse('TTRD1009', '/manifest/mode', 'Privileged and excluded controls require fixture mode');
   if ((policy.kind === 'signals' || policy.kind === 'leaky') && typeof signals !== 'function') return tradingRefuse('TTRD1001', '/signals', 'The declared target policy requires an injected signal function');
+  if (policy.kind === 'agent' && typeof decisions !== 'function') return tradingRefuse('TTRD1001', '/decisions', 'The agent policy requires an injected durable decision runner');
   const calendar = await sessionIndex(sessions); if (!calendar.valid) return calendar;
   if (!sessions.length || sessions[0].key !== manifest.sessionRange.first || sessions.at(-1)!.key !== manifest.sessionRange.last
     || sessions.some((s, i) => s.id !== calendar.value.sessions[i].id || s.manifestId !== manifest.id || s.calendar !== manifest.calendar))
@@ -73,9 +79,10 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
   if (!initial.valid) return initial;
   const initialized = retained(await store.initializePortfolio(initial.value)); if (!initialized.valid) return initialized;
   let portfolio: PortfolioSnapshot = initial.value;
-  const portfolios = [portfolio], fills: Fill[] = [], days: TradingDayResult[] = [];
+  const portfolios = [portfolio], fills: Fill[] = [], days: TradingDayResult[] = [], decisionResults: TradingDecisionResult[] = [];
   let pending = new Map<string, PendingSignal>();
   for (const [index, session] of sessions.entries()) {
+    const executed = pending;
     const dayFills: Fill[] = [], dayErrors = new Map<string, TradingIssue[]>(), currentBars = executionBars(session.key);
     for (const asset of manifest.assets) {
       const due = actions.filter(a => a.asset === asset && a.sessionId === session.key && toEpoch(a.availableAt) <= toEpoch(session.openAt)).sort((a, b) => a.id.localeCompare(b.id));
@@ -91,11 +98,15 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
       const target = pending.get(asset);
       if (!target || !index) continue;
       const position = portfolio.positions.find(p => p.asset === asset)!;
-      const quantity = target.signal?.target === 'flat' ? position.quantity : target.signal?.target === 'long' && !position.quantity ? policy.entryQuantity : 0;
+      const proposed = target.decision?.admission?.intent;
+      const quantity = target.decision ? proposed?.quantity ?? 0 : target.signal?.target === 'flat' ? position.quantity : target.signal?.target === 'long' && !position.quantity ? policy.entryQuantity : 0;
       const key = { manifestId: manifest.id, asset, sessionId: sessions[index - 1].key, stage: 'broker' };
       let errors = [...target.issues];
-      let decision = await createTradingRecord('decision', { manifestId: manifest.id, key, inputRevision: target.inputRevision,
-        disposition: errors.length ? 'rejected' : quantity ? 'approved' : 'hold', artifactIds: [], reason: policy.kind === 'oracle' ? 'Privileged oracle target' : 'Declared target policy' });
+      const financial = (disposition: TradingDecision['disposition'], reason: string | null) => createTradingRecord('decision', { manifestId: manifest.id, key,
+        inputRevision: target.decision ? portfolio.revision : target.inputRevision, disposition, artifactIds: target.decision?.artifactIds ?? [], reason,
+        ...(target.decision ? { status: target.decision.status, errors, runId: target.decision.runId } : {}) });
+      let decision = await financial(errors.length ? target.decision?.admission?.decision.disposition === 'hold' ? 'hold' : 'rejected' : quantity ? 'approved' : 'hold',
+        target.decision ? target.decision.admission?.decision.reason ?? errors.map(e => e.detail).join('; ') : policy.kind === 'oracle' ? 'Privileged oracle target' : 'Declared target policy');
       if (!decision.valid) return decision;
       const accounted = accountTradingMovements(manifest, portfolio, [], portfolio.marks, session.key); if (!accounted.valid) return accounted;
       const carry = await createTradingRecord('portfolio', accounted.value.portfolio); if (!carry.valid) return carry;
@@ -103,7 +114,8 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
         portfolio: carry.value, markBarIds: [], actionIds: [] };
       if (quantity && !errors.length) {
         const order = await createTradingRecord('order', { manifestId: manifest.id, decisionId: decision.value.id, asset, decisionSessionId: key.sessionId,
-          fillSessionId: session.key, orderKind: 'market', side: target.signal!.target === 'long' ? 'buy' : 'sell', quantity, limitPrice: null, stopPrice: null });
+          fillSessionId: session.key, orderKind: 'market', side: proposed?.side ?? (target.signal!.target === 'long' ? 'buy' : 'sell'), quantity, limitPrice: null, stopPrice: null,
+          ...(proposed ? { provenance: proposed.provenance, priceEvidenceIds: proposed.priceEvidenceIds } : {}) });
         if (!order.valid) return order;
         const bar = currentBars.find(b => b.asset === asset) ?? null;
         const sizing = await sizeToPolicy({ manifest, portfolio, intent: order.value, session, bar });
@@ -119,7 +131,7 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
       }
       if (errors.length) {
         rejectedOrders++;
-        decision = await createTradingRecord('decision', { manifestId: manifest.id, key, inputRevision: target.inputRevision, disposition: 'rejected', artifactIds: [], reason: errors.map(e => `${e.code} ${e.path}: ${e.detail}`).join('; ') });
+        decision = await financial(target.decision?.admission?.decision.disposition === 'hold' && !quantity ? 'hold' : 'rejected', errors.map(e => `${e.code} ${e.path}: ${e.detail}`).join('; '));
         if (!decision.valid) return decision; plan.decision = decision.value;
       }
       const committed = retained(await store.commitDecision(plan)); if (!committed.valid) return committed;
@@ -132,27 +144,36 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
     const committed = retained(await store.commitDecision({ mode: 'valuation', key, expectedPortfolioId: portfolio.id, decision: decision.value,
       intent: null, fills: [], ledgerEntries: [], portfolio: marked.value.portfolio, markBarIds: currentBars.map(b => b.id), actionIds: [] }));
     if (!committed.valid) return committed;
-    portfolio = marked.value.portfolio; portfolios.push(portfolio); staleMarks += marked.value.staleMarks;
-    for (const asset of manifest.assets) {
-      const errors = dayErrors.get(asset) ?? [];
-      const day = await createTradingRecord('day-result', { manifestId: manifest.id, asset, sessionId: session.key, status: errors.length ? 'refused' : 'completed', stopReason: errors[0]?.detail ?? null,
-        artifactIds: [], fillIds: dayFills.filter(f => f.asset === asset).map(f => f.id), portfolioId: portfolio.id, spend: ZERO_SPEND, errors });
-      if (!day.valid) return day;
-      const saved = retained(await store.put('results', day.value)); if (!saved.valid) return saved; days.push(day.value);
-    }
+    portfolio = marked.value.portfolio; const closePortfolio = portfolio;
+    portfolios.push(portfolio); staleMarks += marked.value.staleMarks;
     pending = new Map();
-    if (!session.next) continue;
     // All contexts capture the same close-time financial state before any next-open fill.
-    for (const asset of manifest.assets) {
+    for (const asset of session.next || policy.kind === 'agent' ? manifest.assets : []) {
       const admitted = admitValidatedTradingObservations(corpus.filter(o => o.asset === asset), toEpoch(session.closeAt));
-      refusedObservations += admitted.refused.length;
+      if (policy.kind !== 'agent') refusedObservations += admitted.refused.length;
       const eligible = admitted.admitted;
       const context: TradingStrategyContext = immutableTradingJson({ asset, session, bars: tradingSignalBars(eligible.filter((o): o is BarObservation => o.kind === 'bar')),
         observations: eligible, portfolioId: portfolio.id, cash: portfolio.cash, positions: portfolio.positions });
+      if (policy.kind === 'agent') {
+        const outcome = await decisions!(context); if (!outcome.valid) return outcome;
+        const valid = await validateTradingRecord(outcome.value); if (!valid.valid) return valid;
+        const record = outcome.value;
+        if (record.kind !== 'decision-result' || record.manifestId !== manifest.id || record.key.asset !== asset || record.key.sessionId !== session.key
+          || record.portfolioId !== portfolio.id || record.key.stage !== 'model-decision') return tradingRefuse('TTRD1002', '/decisions', 'Agent decision receipt differs from its frozen close context');
+        if (!equalsJson(await store.get('results', record.id), record)) return tradingRefuse('TTRD1006', '/decisions', 'Agent execution requires its retained immutable decision receipt');
+        if (record.snapshotId) {
+          const snapshot = await store.get('snapshots', record.snapshotId);
+          if (!snapshot) return tradingRefuse('TTRD1006', '/snapshotId', 'A retained decision lost its provider snapshot');
+          refusedObservations += snapshot.refused.length;
+        }
+        const issues = [...record.errors, ...record.admission?.violations ?? []];
+        pending.set(asset, { signal: null, inputRevision: portfolio.revision, issues, decision: record }); decisionResults.push(record);
+        continue;
+      }
       let outcome: TradingOutcome<TradingStrategySignal | null>;
       if (policy.kind === 'do-nothing') outcome = { valid: true, value: null };
       else if (policy.kind === 'oracle') {
-        const next = executionBars(session.next).find(b => b.asset === asset);
+        const next = executionBars(session.next!).find(b => b.asset === asset);
         outcome = { valid: true, value: next ? { target: next.close > next.open ? 'long' : 'flat', availableAt: session.closeAt, observationIds: [next.id] } : null };
       } else {
         try { outcome = await signals!(context); }
@@ -173,9 +194,35 @@ export async function runStrategy(input: TradingStrategyInput): Promise<TradingO
       }
       pending.set(asset, { signal, issues, inputRevision: await tradingRevisionOf({ context, signal, issues, strategy: policy }) });
     }
+    if (!session.next && policy.kind === 'agent') for (const asset of manifest.assets) {
+      const target = pending.get(asset)!, receipt = target.decision!, errors = target.issues;
+      if (receipt.admission?.intent) return tradingRefuse('TTRD1003', '/intent', 'A final-close decision cannot name a future execution');
+      const key = { manifestId: manifest.id, asset, sessionId: session.key, stage: 'broker' };
+      const decision = await createTradingRecord('decision', { manifestId: manifest.id, key, inputRevision: portfolio.revision,
+        disposition: receipt.admission?.decision.disposition ?? 'rejected', artifactIds: receipt.artifactIds,
+        reason: receipt.admission?.decision.reason ?? errors.map(e => e.detail).join('; '), status: receipt.status, errors, runId: receipt.runId });
+      if (!decision.valid) return decision;
+      const carry = accountTradingMovements(manifest, portfolio, [], portfolio.marks, session.key); if (!carry.valid) return carry;
+      const next = await createTradingRecord('portfolio', carry.value.portfolio); if (!next.valid) return next;
+      const committed = retained(await store.commitDecision({ mode: 'terminal', key, expectedPortfolioId: portfolio.id, decision: decision.value,
+        intent: null, fills: [], ledgerEntries: [], portfolio: next.value, markBarIds: [], actionIds: [] }));
+      if (!committed.valid) return committed; portfolio = next.value; if (errors.length) rejectedOrders++;
+    }
+    for (const asset of manifest.assets) {
+      const receipts = [executed.get(asset)?.decision, ...!session.next ? [pending.get(asset)?.decision] : []].filter((r): r is TradingDecisionResult => !!r);
+      const errors = [...dayErrors.get(asset) ?? [], ...!session.next ? pending.get(asset)?.issues ?? [] : []];
+      const day = await createTradingRecord('day-result', { manifestId: manifest.id, asset, sessionId: session.key,
+        status: receipts.some(r => r.status === 'failed') ? 'failed' : errors.length ? 'refused' : 'completed', stopReason: errors[0]?.detail ?? null,
+        artifactIds: [...new Set(receipts.flatMap(r => r.artifactIds))], fillIds: dayFills.filter(f => f.asset === asset).map(f => f.id),
+        portfolioId: closePortfolio.id, spend: sumTradingSpend(receipts.map(r => r.spend)), errors });
+      if (!day.valid) return day;
+      const saved = retained(await store.put('results', day.value)); if (!saved.valid) return saved; days.push(day.value);
+    }
   }
-  const result = await createTradingRecord('backtest-result', { manifestId: manifest.id, status: 'completed', dayResultIds: days.map(d => d.id),
-    portfolioIds: portfolios.map(p => p.id), fillIds: fills.map(f => f.id), spend: ZERO_SPEND, incompleteDecisions: 0, errors: [] });
+  const incompleteDecisions = decisionResults.filter(r => r.status === 'failed').length;
+  const result = await createTradingRecord('backtest-result', { manifestId: manifest.id, status: incompleteDecisions ? 'incomplete' : 'completed', dayResultIds: days.map(d => d.id),
+    portfolioIds: portfolios.map(p => p.id), fillIds: fills.map(f => f.id), spend: sumTradingSpend(decisionResults.map(r => r.spend)), incompleteDecisions,
+    errors: policy.kind === 'agent' ? days.flatMap(d => d.errors) : [] });
   if (!result.valid) return result;
   const saved = retained(await store.put('results', result.value)); if (!saved.valid) return saved;
   const commission = fills.reduce((n, f) => n + f.commission, 0), slippage = fills.reduce((n, f) => n + f.slippage, 0);

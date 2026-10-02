@@ -1852,7 +1852,7 @@ export interface TradingSignalParameters {
 
 export interface TradingExecutionPolicy {
   strategyId: TradingId;
-  kind: "signals" | "oracle" | "do-nothing" | "leaky";
+  kind: "signals" | "oracle" | "do-nothing" | "leaky" | "agent";
   /**
    * Schema constraints this type cannot express: exclusiveMinimum=0
    */
@@ -2253,6 +2253,9 @@ export interface TradingDecision {
    */
   artifactIds: Array<TradingDecisionArtifactIdsItem>;
   reason: TradingDecisionReasonAnyOf1 | null;
+  status?: "completed" | "failed";
+  errors?: Array<TradingIssue>;
+  runId?: TradingId | null;
 }
 
 
@@ -2267,7 +2270,7 @@ export interface TradingCommit {
   fills: Array<Fill>;
   ledgerEntries: Array<LedgerEntry>;
   portfolio: PortfolioSnapshot;
-  mode: "trade" | "settlement" | "valuation";
+  mode: "trade" | "settlement" | "valuation" | "terminal";
   /**
    * Schema constraints this type cannot express: uniqueItems=true
    */
@@ -2298,7 +2301,7 @@ export interface TradingCommitMarker {
    */
   ledgerEntryIds: Array<TradingId>;
   portfolioId: TradingId;
-  mode: "trade" | "settlement" | "valuation";
+  mode: "trade" | "settlement" | "valuation" | "terminal";
   /**
    * Schema constraints this type cannot express: uniqueItems=true
    */
@@ -2527,7 +2530,28 @@ export interface TradingReadToolInput {
 }
 
 
-export type TradingRecord = TradingRunManifest | MarketSession | Observation | MarketSnapshot | Artifact | PortfolioSnapshot | TradingDecision | OrderIntent | Fill | LedgerEntry | TradingDayResult | BacktestResult | TradingCommitMarker;
+/**
+ * Schema constraints this type cannot express: if={"properties":{"status":{"const":"completed"}}}, then={"properties":{"admission":{"$ref":"#/$defs/tradingOrderAdmission"},"snapshotId":{"$ref":"#/$defs/tradingId"},"runId":{"$ref":"#/$defs/tradingId"},"errors":{"maxItems":0}}}
+ */
+export type TradingDecisionResultPart1 = unknown;
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"status":{"const":"failed"}}}, then={"properties":{"admission":{"type":"null"},"errors":{"minItems":1}}}
+ */
+export type TradingDecisionResultPart2 = unknown;
+
+export interface TradingOrderAdmission {
+  intent: OrderIntent | null;
+  decision: TradingDecision;
+  decisionArtifactId: TradingId;
+  violations: Array<TradingIssue>;
+  adjustments: Array<TradingIssue>;
+}
+
+
+export type TradingDecisionResult = TradingDecisionResultPart1 & TradingDecisionResultPart2 & { id: string; revision: string; manifestId: string; kind: "decision-result"; key: TradingDecisionKey; portfolioId: TradingId; snapshotId: TradingId | null; runId: TradingId | null; status: "completed" | "failed"; admission: TradingOrderAdmission | null; artifactIds: Array<TradingId>; spend: TradingSpend; errors: Array<TradingIssue>; valuationObservationIds: Array<TradingId>; };
+
+export type TradingRecord = TradingRunManifest | MarketSession | Observation | MarketSnapshot | Artifact | PortfolioSnapshot | TradingDecision | OrderIntent | Fill | LedgerEntry | TradingDayResult | BacktestResult | TradingCommitMarker | TradingDecisionResult;
 
 export interface TradingReplayProviderInput {
   /**
@@ -2706,12 +2730,21 @@ export interface TradingRiskState {
 }
 
 
-export interface TradingOrderAdmission {
-  intent: OrderIntent | null;
-  decision: TradingDecision;
-  decisionArtifactId: TradingId;
-  violations: Array<TradingIssue>;
-  adjustments: Array<TradingIssue>;
+export interface TradingDecisionRequest {
+  manifestId: TradingId;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  sessionId: TradingId;
+  snapshotId: TradingId;
+  portfolioId: TradingId;
+}
+
+
+export interface TradingDecisionOutput {
+  admission: TradingOrderAdmission;
+  artifacts: Array<Artifact>;
 }
 
 

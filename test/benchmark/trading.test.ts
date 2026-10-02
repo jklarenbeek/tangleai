@@ -14,6 +14,7 @@ import { loadTradingFixture, preCutoffTradingSlice, auditTradingPoison, TRADING_
 import { buildTradingReport, validateTradingReport, tradingSource, renderReport, renderDocument, requireCapability } from '../../benchmark/lib/trading-report.ts';
 import { measureTradingEquity } from '../../benchmark/lib/trading-metrics.ts';
 import { measureTradingMechanisms } from '../../benchmark/lib/trading-mechanisms.ts';
+import { runTradingCli } from '../../benchmark/lib/trading-cli.ts';
 import type { FixtureManifest, Golden, Trading } from '../../benchmark/lib/trading.types.ts';
 
 const exec = promisify(execFile), fixture = await loadTradingFixture();
@@ -44,9 +45,18 @@ describe('registered trading measurement', () => {
     assert.equal(leaky.status, 'excluded'); assert.equal(leaky.eligibility.eligible, false); assert.equal(leaky.reason, 'reads observations after cutoff');
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
-    assert.equal(report.counts.implementationMissing, 1); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts', 'research', 'trader', 'risk', 'fundManager']) assert.doesNotThrow(() => requireCapability(report, capability));
-    for (const capability of ['agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
+    assert.equal(report.counts.implementationMissing, 0); assert.equal(report.counts.notRun, 1);
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts', 'research', 'trader', 'risk', 'fundManager', 'agent', 'complete']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['unknown']) assert.throws(() => requireCapability(report, capability));
+    const agent = report.rows.find(r => r.id === 'tradingagents-scripted')!;
+    assert.equal(agent.status, 'measured'); assert.equal(agent.parityTier, 'mechanism'); assert.ok(agent.agent);
+    assert.equal(agent.agent.decisionCount, 248); assert.equal(agent.agent.completed, 248); assert.equal(agent.agent.failed, 0);
+    assert.equal(agent.agent.physicalCalls, 7936); assert.equal(agent.agent.normalizations, 3968);
+    assert.equal(agent.agent.spend.calls, agent.agent.physicalCalls); assert.equal(agent.agent.replayPhysicalCalls, 0);
+    assert.deepEqual(agent.agent.failuresByCode, []);
+    assert.deepEqual(agent.agent.issuesByCode, [{ code: 'TTRD1007', count: 2 }]);
+    assert.ok(agent.perAsset.find(a => a.asset === 'SYN-B')!.cr! < 0);
+    assert.equal(report.rows.find(r => r.id === 'tradingagents-live')!.reason, 'no spend approval');
     assert.equal(leaky.transactions, 0); assert.equal(leaky.rejectedOrders, 1);
     const hold = report.rows.find(r => r.id === 'buy-and-hold')!;
     assert.ok(hold.perAsset.find(a => a.asset === 'SYN-A')!.cr! > 0);
@@ -128,7 +138,7 @@ describe('registered trading measurement', () => {
       r => { r.rows[0].perAsset[1].cr = 1; }, r => { r.rows[1].undefined = []; }, r => { r.counts.measured++; },
       r => { r.rows.pop(); }, r => { r.rows[1].id = r.rows[0].id; }, r => { r.registration[0].description = 'forged'; },
       r => { r.poison.refused--; }, r => { r.poison.cases[0].withSha256 = '0'.repeat(64); },
-      r => { r.capabilities.complete = true; }, r => { r.fixture.sha256 = '0'.repeat(64); }, r => { r.source.sha256 = '0'.repeat(64); },
+      r => { r.capabilities.complete = false; }, r => { r.fixture.sha256 = '0'.repeat(64); }, r => { r.source.sha256 = '0'.repeat(64); },
       r => { r.mechanisms.rows[0].reproduced--; }, r => { const row = r.mechanisms.rows[1]; if (row.id === 'signals') row.cases[0].entries++; },
       r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.resolved++; },
       r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.cases[0].concurrent = false; },
@@ -152,6 +162,7 @@ describe('registered trading measurement', () => {
   it('native schema assertions reconcile row identity, exclusions and counts', () => {
     const validate = createReportValidator(schema); assert.equal(validate(report).valid, true);
     for (const mutate of [(r: Trading) => { r.rows[1].id = r.rows[0].id; }, (r: Trading) => { r.rows[2].reason = null; },
+      (r: Trading) => { r.rows.find(row => row.agent)!.agent!.physicalCalls++; },
       (r: Trading) => { r.counts.measured++; }, (r: Trading) => { r.counts.transactions++; },
       (r: Trading) => { r.mechanisms.rows[0].reproduced--; }, (r: Trading) => { r.mechanisms.rows.reverse(); }]) {
       const copy = structuredClone(report); mutate(copy); assert.equal(validate(copy).valid, false);
@@ -190,9 +201,17 @@ describe('registered trading measurement', () => {
   it('CLI detects drift without writing and refuses malformed or unavailable requests before output', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'trading-cli-'));
     try {
-      const run = (...args: string[]) => exec(process.execPath, ['benchmark/trading.ts', ...args], { maxBuffer: 1024 * 1024 });
-      await run('--out-dir', dir, '--require', 'controls'); assert.deepEqual((await readdir(dir)).sort(), ['TRADING_BENCHMARK.md', 'trading.json']);
+      // Each invocation uses the real instrument; shared measurements are immutable copies.
+      const fetch = globalThis.fetch;
+      const run = async (...args: string[]) => {
+        try { await runTradingCli(args, () => {}); }
+        finally { assert.equal(globalThis.fetch, fetch); }
+      };
+      await run('--out-dir', dir, '--require', 'complete'); assert.deepEqual((await readdir(dir)).sort(), ['TRADING_BENCHMARK.md', 'trading.json']);
       const file = join(dir, 'trading.json'), bytes = await readFile(file, 'utf8'), before = await stat(file);
+      // Independently reproduce the result once through the actual process entry point.
+      await exec(process.execPath, ['benchmark/trading.ts', '--out-dir', dir, '--check'], { maxBuffer: 1024 * 1024 });
+      assert.equal((await stat(file)).mtimeMs, before.mtimeMs);
       await run('--out-dir', dir, '--check'); assert.equal((await stat(file)).mtimeMs, before.mtimeMs);
       const retained = JSON.parse(bytes) as Trading;
       retained.source.head = 'b'.repeat(40); retained.source.clean = false;
@@ -207,7 +226,7 @@ describe('registered trading measurement', () => {
       await assert.rejects(run('--out-dir', dir, '--check'), /source drift/);
       await writeFile(file, bytes + ' '); const drifted = await stat(file);
       await assert.rejects(run('--out-dir', dir, '--check'), /drift/); assert.equal((await stat(file)).mtimeMs, drifted.mtimeMs);
-      for (const capability of ['complete', 'unknown']) { await assert.rejects(run('--require', capability, '--out-dir', join(dir, 'absent'))); await assert.rejects(stat(join(dir, 'absent'))); }
+      for (const capability of ['unknown']) { await assert.rejects(run('--require', capability, '--out-dir', join(dir, 'absent'))); await assert.rejects(stat(join(dir, 'absent'))); }
       for (const args of [['--check=yes'], ['--json'], ['--json', '--check'], ['--unknown'], ['positional'], ['--out-dir=x'], ['--json', file, '--md', file]]) await assert.rejects(run(...args));
       const alt = join(dir, 'explicit'); await run('--json', join(alt, 'report.json'), '--md', join(alt, 'report.md'));
       assert.deepEqual((await readdir(alt)).sort(), ['report.json', 'report.md']);

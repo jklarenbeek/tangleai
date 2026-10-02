@@ -160,7 +160,9 @@ root ids retain their existing form. A wait ends the segment after already start
 sibling work settles; it holds no worker while awaiting the host. Reconciliation
 selects the response reserved for the next segment. Reusing a response key with
 different bytes refuses with `TMAS2007`. These semantics use checkpoint ABI
-`tangle-mas/7`; earlier executable identities cannot resume under this runtime.
+`tangle-mas/8`; earlier executable identities cannot resume under this runtime.
+Fresh and replayed loops expose exactly their committed output ports, keeping
+the provenance of downstream region checkpoints identical after a restart.
 Edge projections apply before live input validation and aggregation, including
 control boundaries, and persisted messages carry those same selected values.
 Agent attempt usage records unknown-token requests and estimated charges

@@ -110,7 +110,7 @@ const member = (root: string, ...names: string[]): string =>
 /** Bump the host ABI when lifecycle semantics change. Suite and registry
  * upgrades also change the declared handler identity and executable revision. */
 export function masTaskVersionOf(registryRevision: string): string {
-  return `tangle-mas/7:flow/${flowPackage.version}:models/${modelsPackage.version}:context/${contextPackage.version}:agents/${agentsPackage.version}:${registryRevision}`;
+  return `tangle-mas/8:flow/${flowPackage.version}:models/${modelsPackage.version}:context/${contextPackage.version}:agents/${agentsPackage.version}:${registryRevision}`;
 }
 
 export interface Feed {

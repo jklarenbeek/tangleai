@@ -14,7 +14,10 @@ import { readFile } from 'node:fs/promises';
 import {
   createMasConfigCatalog,
   createMasRegistrySnapshot,
+  masMessage,
+  masWorkflowVersionIdOf,
   planMasWorkflow,
+  taskInvocation,
   validateMasWorkflow,
 } from '@tangleai/mas';
 import { driveAcyclicFixture } from '../../benchmark/lib/mas-runner.ts';
@@ -55,6 +58,36 @@ describe('reflection, critique, revision', () => {
     assert.deepEqual(crashed.output, clean.output, 'identical output after the mid-loop reclaim');
     assert.deepEqual(crashed.spend, clean.spend, 'identical committed spend');
     assert.equal(crashed.events.filter((event) => event.includes('/revise:completed')).length, 3, 'still exactly three committed revisions');
+  });
+
+  it('restores a partially committed downstream region with the same loop output provenance', async () => {
+    const { fixture: original, validated: originalValidated } = await prepared('benchmark/fixtures/mas/control/reflection-revision.json');
+    const fixture = structuredClone(original);
+    const workflow = structuredClone(originalValidated.workflow);
+    fixture.workflow = workflow as unknown as Record<string, unknown>;
+    const result = workflow.nodes[0].output.ports.result.schema;
+    for (const id of ['review', 'publish']) {
+      workflow.nodes.push(taskInvocation({ id, handler: 'scripted', input: { result }, output: { result } }));
+      fixture.script.handlers[id] = { query: { result: '$.result' } };
+    }
+    workflow.messages.push(
+      masMessage(['polish', 'result'], ['review', 'result']),
+      masMessage(['review', 'result'], ['publish', 'result']),
+    );
+    workflow.exit = [{ port: 'result', from: { node: 'publish', port: 'result' } }];
+    workflow.versionId = await masWorkflowVersionIdOf(fixture.workflow);
+    const validated = await validateMasWorkflow(fixture.workflow, registry, catalog);
+    assert.ok(validated.valid);
+    const plan = await planMasWorkflow(validated.value);
+    assert.ok(plan.valid);
+    const clean = await driveAcyclicFixture(fixture, validated.value, plan.value, registry, catalog, { relaxEventOracle: true });
+    const crashed = await driveAcyclicFixture(fixture, validated.value, plan.value, registry, catalog, { crashBefore: 'publish', relaxEventOracle: true });
+    assert.deepEqual(crashed.output, clean.output);
+    assert.deepEqual(crashed.spend, clean.spend);
+    assert.equal(crashed.events.filter(event => event.endsWith('/revise:completed')).length, 3);
+    assert.equal(crashed.events.filter(event => event === 'review:completed').length, 1);
+    assert.ok(crashed.events.includes('review:restored'));
+    assert.equal(crashed.events.filter(event => event === 'publish:completed').length, 1);
   });
 });
 

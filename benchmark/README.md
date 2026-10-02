@@ -62,8 +62,8 @@ calls. `npm run benchmark:hera -- --require complete` generates the report;
 The [trading instrument](../docs/TRADING_BENCHMARK.md) registers ten strategies
 over an original MIT two-asset fixture. Its privileged oracle and cash-only
 control and five baselines execute through one policy-limited simulator; the
-look-ahead request is refused and excluded. Agent execution remains explicit
-missing/not-run rows. Every executed row retains ledger/equity identities and a
+look-ahead request is refused and excluded. The scripted agent runs the full native MAS flow and the same financial engine;
+the live row remains not-run without spend approval. Every executed row retains ledger/equity identities and a
 zero-write replay receipt; SYN-B buy-and-hold loses beside SYN-A's positive return. The poison audit
 compares admitted observations and derived return windows at every session close.
 Separate calculation rows reproduce 30 reference indicator vectors and ten
@@ -72,7 +72,7 @@ and per-asset crossings without presenting signal calculations as equity returns
 The separate `analysts-scripted` mechanism runs four MAS lanes for every registered
 asset/session. It checks role-scoped citations and concurrent starts and meters
 native tool refusals, normalizations and repairs. Its portfolio remains cash-only;
-it does not supply a return for the incomplete agent strategy. Declared per-case
+its stage results remain separate from the end-to-end agent returns. Declared per-case
 limits and failed citation, repair and budget probes are retained in the report.
 The research and trader mechanisms reuse the artifacts from that measured analyst
 run. They execute the native bounded debate and a read-only proposal through MAS,
@@ -88,6 +88,11 @@ Thirteen policy probes meter their fresh analyst/research setup separately and
 exercise holds, rejection, quantity reductions and hard financial refusals with
 all model roles advocating the tested decision. No financial row changes during
 these mechanism runs. Actual next-open execution remains separately measured.
+The full scripted strategy retains every decision receipt, counted failures and
+actual model-stage usage, with a second backtest proving zero added calls and
+writes. Its two-share entry script measures execution behavior; the losing asset
+remains visible beside gains. `--require agent` requires this measured row, and
+`--require complete` requires every keyless mechanism.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
 `--out-dir` redirects both outputs, `--require baselines` requires all five executed baselines,
 `--require analysts` requires the analyst mechanism and its safety probes, and

@@ -2,7 +2,7 @@ import { createTradingRecord, createMemoryTradingStore, admit, latestBarsAsOf,
   createFixtureProviders, createReplayProviders, buildSnapshot, buyAndHold, kdj, TRADING_SIGNAL_DEFAULTS,
   planFill, markPortfolio, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve,
   tradingArtifacts, buildAnalystRegion, createTradingHostBindings, reportsToEvidence, researchInput, materializeResearch, buildResearchAndTraderRegion, createTradingResearchHostBindings,
-  materializeTradingRisk, buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings } from '@tangleai/trading';
+  materializeTradingRisk, buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings, buildTradingDecisionWorkflow, createTradingDecisionHostBindings, TRADING_READ_TOOLS } from '@tangleai/trading';
 import artifacts from '@tangleai/trading/artifacts' with { type: 'json' };
 import { createGmplCatalog, renderGmplPrompt } from '@tangleai/gmpl';
 import { createMasRegistrySnapshot, createMasConfigCatalog } from '@tangleai/mas';
@@ -68,7 +68,7 @@ export async function exerciseTradingConsumer(store, fixture) {
   if (researchEvidence.length !== 1 || !researchEvidence[0].id.startsWith(reports[3].id + ':f')) throw Error('Packed research projection differs');
   value(await researchInput({ manifest, asset: 'TOY', session: sessions[1], reports }));
   const researchRegistry = value(await createMasRegistrySnapshot({ $masRegistry: '0.1', registryId: 'packed-research', roles: [], handlers: [], tools: [], messageAdapters: [], contextAdapters: [], templates: [], subgraphs: [] }));
-  const config = value(await createMasConfigCatalog({ profiles: ['scripted'], tools: [], contexts: [], limits: manifest.limits }));
+  const config = value(await createMasConfigCatalog({ profiles: ['scripted'], tools: [...TRADING_READ_TOOLS], contexts: [], limits: manifest.limits }));
   const materialized = value(await materializeResearch({ host: { registry: researchRegistry, config, profile: 'scripted' }, manifest, catalog }));
   const composed = value(await buildResearchAndTraderRegion({ materialized, catalog, profile: 'scripted' }));
   value(await createMasRegistrySnapshot(composed.registry));
@@ -81,6 +81,11 @@ export async function exerciseTradingConsumer(store, fixture) {
   if (risk.body.nodes.filter(n => n.kind === 'agent').length !== 4 || !decisionRegion.nodes.some(n => n.id === 'order-validate')) throw Error('Packed risk/fund-manager topology differs');
   value(await createTradingRiskDecisionHostBindings({ manifest, snapshot: built, portfolio: initial, catalog, materialized: risk,
     trace: async () => { throw Error('Pure packed risk materialization cannot read a runtime trace'); },
+    provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) }));
+  const whole = value(await buildTradingDecisionWorkflow({ manifest, catalog, researchMaterialized: materialized, riskMaterialized: risk, profile: 'scripted' }));
+  if (!whole.workflow.nodes.some(n => n.id === 'decision-output')) throw Error('Packed full decision topology differs');
+  value(await createTradingDecisionHostBindings({ manifest, snapshot: built, portfolio: initial, providers, catalog, materialized: whole,
+    trace: async () => { throw Error('Pure packed composition cannot read a runtime trace'); },
     provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) }));
   const task = { state: {}, node: 'prepare-analyst-technical', path: 'prepare-analyst-technical', idempotencyKey: 'consumer', signal: new AbortController().signal };
   const prepared = await host.taskHandlers['prepare-analyst-technical']({ ...task, value: { snapshot: built.snapshot } });

@@ -556,6 +556,11 @@ export interface PoisonAudit {
 
 
 /**
+ * Schema constraints this type cannot express: if={"properties":{"id":{"const":"tradingagents-scripted"}}}, then={"required":["agent"],"properties":{"status":{"const":"measured"},"parityTier":{"const":"mechanism"}}}
+ */
+export type RowPart1 = unknown;
+
+/**
  * Schema constraints this type cannot express: minLength=1
  */
 export type RowReasonAnyOf1 = string;
@@ -610,36 +615,121 @@ export interface ExecutionReceipt {
 }
 
 
-export interface Row {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  kind: "control" | "baseline" | "agent";
-  parityTier: "control" | "mechanism" | "experimental";
-  status: "measured" | "excluded" | "implementation-missing" | "not-run";
-  reason: RowReasonAnyOf1 | null;
-  metrics: Metrics | null;
-  undefined: Array<UndefinedMetric>;
+export interface AgentExecutionSpend {
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  transactions: number;
+  calls: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  rejectedOrders: number;
+  toolCalls: number;
   /**
    * Schema constraints this type cannot express: type="integer", minimum=0
    */
-  refusedObservations: number;
-  costs: Costs;
-  perAsset: Array<RowPerAssetItem>;
-  eligibility: { eligible: boolean; reasons: Array<RowEligibilityReasonsItem>; };
-  controlSha256: RowControlSha256AnyOf1 | null;
-  execution: ExecutionReceipt | null;
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  usd: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retries: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
 }
 
+
+export interface AgentExecutionFailuresByCodeItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^TTRD[0-9]{4}$"
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  count: number;
+}
+
+
+export interface AgentExecutionIssuesByCodeItem {
+  /**
+   * Schema constraints this type cannot express: pattern="^TTRD[0-9]{4}$"
+   */
+  code: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  count: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.decisionCount",{"$add":["$.completed","$.failed"]}]},{"$eq":["$.physicalCalls","$.spend.calls"]},{"$eq":["$.physicalCalls",{"$add":["$.completions",{"$add":["$.normalizations","$.repairs"]}]}]},{"$eq":["$.replayPhysicalCalls",0]}]}
+ */
+export interface AgentExecution {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  decisionCount: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  failed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayPhysicalCalls: number;
+  spend: AgentExecutionSpend;
+  failuresByCode: Array<AgentExecutionFailuresByCodeItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  receiptsSha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  resultSha256: string;
+  issuesByCode: Array<AgentExecutionIssuesByCodeItem>;
+}
+
+
+export type Row = RowPart1 & { id: string; kind: "control" | "baseline" | "agent"; parityTier: "control" | "mechanism" | "experimental"; status: "measured" | "excluded" | "implementation-missing" | "not-run"; reason: RowReasonAnyOf1 | null; metrics: Metrics | null; undefined: Array<UndefinedMetric>; transactions: number; rejectedOrders: number; refusedObservations: number; costs: Costs; perAsset: Array<RowPerAssetItem>; eligibility: { eligible: boolean; reasons: Array<RowEligibilityReasonsItem>; }; controlSha256: RowControlSha256AnyOf1 | null; execution: ExecutionReceipt | null; agent?: AgentExecution; };
 
 export interface Capabilities {
   instrument: boolean;

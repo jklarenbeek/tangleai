@@ -89,6 +89,19 @@ export async function materializeTradingRisk(input: { host: GmplHostSnapshot; ma
     profile: input.host.profile, rounds: input.manifest.rounds.risk, promptCatalogRevision: catalog.value.document.revision } };
 }
 export type MaterializedTradingRisk = Extract<Awaited<ReturnType<typeof materializeTradingRisk>>, { valid: true }>['value'];
+/** Rebuild the bounded native topology before exposing its host bindings. */
+export async function checkMaterializedTradingRisk(materialized: MaterializedTradingRisk, catalog: GmplCatalog, manifest: TradingRunManifest) {
+  if (materialized.promptCatalogRevision !== catalog.document.revision || manifest.promptCatalogRevision !== catalog.document.revision
+    || materialized.rounds !== manifest.rounds.risk || ['trading-risk-position', 'trading-risk-facilitator'].some(role =>
+      (manifest.rolesByProfile[role] ?? manifest.rolesByProfile.risk) !== materialized.profile))
+    return tradingRefuse('TTRD1002', '/materialized', 'Risk host differs from the materialized catalog, rounds or profiles');
+  const expected = await materializeTradingRisk({ manifest: manifest, catalog: catalog,
+    host: { registry: materialized.snapshot, config: materialized.catalog, profile: materialized.profile } });
+  if (!expected.valid || !equalsJson(materialized.workflow, expected.value.workflow) || !equalsJson(materialized.body, expected.value.body)
+    || !equalsJson(materialized.validated.workflow, expected.value.validated.workflow) || !equalsJson(materialized.plan, expected.value.plan))
+    return tradingRefuse('TTRD1002', '/materialized', 'Risk bindings require the declared bounded topology and execution plan');
+  return expected;
+}
 export async function createTradingRiskHostBindings(input: { manifest: TradingRunManifest; snapshot: TradingSnapshotBundle; portfolio: PortfolioSnapshot;
   catalog: GmplCatalog; materialized: MaterializedTradingRisk; trace: () => Promise<TraceView>; provenance: TradingAttemptProvenance }) {
   let content: Pick<typeof input, 'manifest' | 'snapshot' | 'portfolio'>;
@@ -97,15 +110,7 @@ export async function createTradingRiskHostBindings(input: { manifest: TradingRu
   const prepared = await prepareTradingAnalystContext(content); if (!prepared.valid) return prepared;
   const catalog = await createGmplCatalog(input.catalog.document); if (!catalog.valid) return catalog;
   const { materialized, trace, provenance } = input;
-  if (materialized.promptCatalogRevision !== catalog.value.document.revision || content.manifest.promptCatalogRevision !== catalog.value.document.revision
-    || materialized.rounds !== content.manifest.rounds.risk || ['trading-risk-position', 'trading-risk-facilitator'].some(role =>
-      (content.manifest.rolesByProfile[role] ?? content.manifest.rolesByProfile.risk) !== materialized.profile))
-    return tradingRefuse('TTRD1002', '/materialized', 'Risk host differs from the materialized catalog, rounds or profiles');
-  const expected = await materializeTradingRisk({ manifest: content.manifest, catalog: catalog.value,
-    host: { registry: materialized.snapshot, config: materialized.catalog, profile: materialized.profile } });
-  if (!expected.valid || !equalsJson(materialized.workflow, expected.value.workflow) || !equalsJson(materialized.body, expected.value.body)
-    || !equalsJson(materialized.validated.workflow, expected.value.validated.workflow) || !equalsJson(materialized.plan, expected.value.plan))
-    return tradingRefuse('TTRD1002', '/materialized', 'Risk bindings require the declared bounded topology and execution plan');
+  const expected = await checkMaterializedTradingRisk(materialized, catalog.value, content.manifest); if (!expected.valid) return expected;
   const profile = expected.value.profile;
   const context: TradingRiskContext = { manifest: content.manifest, snapshot: content.snapshot.snapshot, catalog: catalog.value };
   const variables = (state: TradingRiskState, persona: string) => ({ asset: context.snapshot.asset, persona, proposal: state.proposal,

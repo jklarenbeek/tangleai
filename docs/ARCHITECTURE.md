@@ -62,7 +62,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       with role-visible citations and cutoff-bound read tools;
                       native bounded research, attributed turns and read-only proposals;
                       three-persona risk review, cited fund-manager decisions and
-                      deterministic order admission from published valuation quotes
+                      deterministic order admission from published valuation quotes;
+                      one complete resumable MAS decision and a chronological backtest
+                      over immutable model receipts and the shared financial commit path
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

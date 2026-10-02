@@ -1403,11 +1403,11 @@
       },
       {
         "path": "packages/mas/src/control-runtime.ts",
-        "sha256": "c38dd671868277828a74b51590ab76242435bd6d3f9fe37a39134ddc0ee13231"
+        "sha256": "e2ea5106605a8ca1e1883e308623322062ec444803cf4edb6cccfb4f98dcf701"
       },
       {
         "path": "packages/mas/src/dag-runtime.ts",
-        "sha256": "421f5ae25dbc77747ed9f02fc69c6d115a6c4a558364bef998413008b1992472"
+        "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
       },
       {
         "path": "packages/mas/src/errors.ts",
@@ -1427,7 +1427,7 @@
       },
       {
         "path": "packages/mas/src/lower.ts",
-        "sha256": "830a80cea04c229e5c357f879b2c3433134f2902ace4100e5462e5ec856887a8"
+        "sha256": "f0dc9797a802abde2fe5a0ae8f5201a4a53a30d2376a544641aef532ea4641c5"
       },
       {
         "path": "packages/mas/src/mermaid.ts",
@@ -1951,7 +1951,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+        "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1968,6 +1968,10 @@
       {
         "path": "packages/store/src/mas-jobs.ts",
         "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+      },
+      {
+        "path": "packages/store/src/mas-segment-driver.ts",
+        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -2159,7 +2163,7 @@
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "e55823d60033696b21f1c5ae4d41f646aa1ed49fab48bd35937478718d1f9591"
+        "sha256": "ca37385f5d9d56e8ce3350f26f058e85f4baa1f46b5971b301e070cfba36446c"
       },
       {
         "path": "packages/trading/src/accounting.ts",
@@ -2168,6 +2172,10 @@
       {
         "path": "packages/trading/src/analysts.ts",
         "sha256": "0b989287470ffa55dfd2eeb492f22aa45371dc25ef589acb704916d1726861d5"
+      },
+      {
+        "path": "packages/trading/src/backtest.ts",
+        "sha256": "e489db5a8d9716d96cc83618b451616ced4abb13e79fbbca0aef61614df1c70b"
       },
       {
         "path": "packages/trading/src/baselines.ts",
@@ -2179,7 +2187,11 @@
       },
       {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "ab4320b18a78f205f6632ebfef4216ffd65513043df90d6db960fd1b321925a6"
+        "sha256": "8ecfbc3dd10cd3468abd96cbb3268abff95c59f5806b6c289fa46e6cc6617405"
+      },
+      {
+        "path": "packages/trading/src/decision-runner.ts",
+        "sha256": "9768bae9ef71939a9262e7275c5013e2960b8fcc7ecaa63ecc85f5314b86a1c5"
       },
       {
         "path": "packages/trading/src/errors.ts",
@@ -2203,7 +2215,7 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "490befb898a245155465c92d9834b6be1dec96b8d611f1ca9ba5886c384b1887"
+        "sha256": "ec39ea830603bd6424676d9134dda75b191fa9265fa33c79166e93052ee6ab86"
       },
       {
         "path": "packages/trading/src/indicators.ts",
@@ -2235,7 +2247,7 @@
       },
       {
         "path": "packages/trading/src/risk-round.ts",
-        "sha256": "b8a20c7a63813f766b5117f1a3ad156536525830e164fab33e19d9e2d750a6ac"
+        "sha256": "3de6c97c9f513c51bc2206985ef5e000fd61bb5337006d56d5ebf02b3ee90629"
       },
       {
         "path": "packages/trading/src/risk-tasks.ts",
@@ -2255,11 +2267,11 @@
       },
       {
         "path": "packages/trading/src/store.ts",
-        "sha256": "bb667e3a252a7043fffd82052e6910e5c91bd570622648f3eeb63249559d39c6"
+        "sha256": "5f48d82098ff4adf93ae98b065d0194196570396b1b1fc11ed4296fbafe85b29"
       },
       {
         "path": "packages/trading/src/strategy.ts",
-        "sha256": "c3e3a6a41c9378ae114c2c56ad597296c45adabebd3d96038433bbf9475ed498"
+        "sha256": "de34e2b1280f875b41c32a4d2a8f6439b5f3713cdf16c4c4c4bdd1b182f99727"
       },
       {
         "path": "packages/trading/src/time.ts",
@@ -2274,11 +2286,15 @@
         "sha256": "58d4290006a1f1174e0d0ba42ec477bcac33101c6e75cdfdd16840ddd9902832"
       },
       {
+        "path": "packages/trading/src/workflow.ts",
+        "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
+      },
+      {
         "path": "scripts/outcomes-contract.ts",
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "2c436651dfc69b15349a7765bbba0e0ca4c4c21cab418c4a36e1211a972d4692"
+    "sha256": "95f685e1c0e72a0c961506067abf8727ee9402e4d4d7206320c231019f6166c0"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85464,5 +85480,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "6ddb9f4021ed8c2e9bf5ed2b60434e2844238076eaf79b6c77addf6a3ee225d8"
+  "reportId": "9ca566e429afe08e04fbbd3b887e9617451b410731080a1fa49c91f353da62d9"
 }

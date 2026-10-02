@@ -1,10 +1,11 @@
 /** Registered strategies run through the public simulator; this module only assembles inputs and measures output. */
 import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { cloneJson, equalsJson } from '@jarenjs/core/object';
-import { createTradingRecord, createMemoryTradingStore, runStrategy, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, TRADING_SIGNAL_DEFAULTS } from '@tangleai/trading';
+import { createTradingRecord, createMemoryTradingStore, runStrategy, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, TRADING_SIGNAL_DEFAULTS, tradingArtifacts } from '@tangleai/trading';
 import type { TradingOutcome, TradingRecordKind, TradingRecordBody, TradingStrategyData, TradingStrategySignals, TradingSignalPolicy, TradingStrategyResult, Observation } from '@tangleai/trading';
 import type { TradingFixture } from './trading.ts';
 import type { Row } from './trading.types.ts';
+import { measureScriptedTradingAgent } from './trading-agent.ts';
 import { measureTradingEquity } from './trading-metrics.ts';
 
 const policies: Record<string, TradingSignalPolicy> = { 'buy-and-hold': buyAndHold, macd: macdCross, 'kdj-rsi': kdjRsi, 'zero-mean-reversion': zeroMeanReversion, sma: smaCross };
@@ -12,15 +13,15 @@ function required<T>(outcome: TradingOutcome<T>): T { if (!outcome.valid) throw 
 async function record<K extends TradingRecordKind>(kind: K, body: TradingRecordBody<K>) { return required(await createTradingRecord(kind, body)); }
 
 export async function tradingExecutionInput(fixture: TradingFixture, strategyId: string): Promise<TradingStrategyData> {
-  const source = fixture.manifest, kind = strategyId === 'oracle' || strategyId === 'do-nothing' || strategyId === 'leaky' ? strategyId : 'signals';
+  const source = fixture.manifest, agent = strategyId === 'tradingagents-scripted', kind = agent ? 'agent' : strategyId === 'oracle' || strategyId === 'do-nothing' || strategyId === 'leaky' ? strategyId : 'signals';
   const manifest = await record('manifest', { mode: 'fixture', assets: source.assets, calendar: source.calendar,
     sessionRange: { first: fixture.sessions[0].id, last: fixture.sessions.at(-1)!.id }, timezone: 'UTC', currency: source.currency,
     initialCapital: source.initialCapital, decisionCutoff: 'session-close', fill: 'next-open', shares: source.shares, shorting: false, leverage: false,
     commissionBps: source.commissionBps, slippageBps: source.slippageBps, sessionsPerYear: source.sessionsPerYear, riskFree: source.riskFree,
-    providerSnapshots: [{ provider: 'synthetic-corpus', revision: fixture.sha256, licence: source.licence }], rolesByProfile: {}, promptCatalogRevision: '0'.repeat(64), toolManifest: [],
-    rounds: { research: 3, risk: 2 }, limits: { calls: 0, tokens: 0, ms: 600000, toolRounds: 0, fanOut: 1, concurrency: 1, iterations: 1, contextChars: 65536, traceBytes: 2097152 },
+    providerSnapshots: [{ provider: 'synthetic-corpus', revision: fixture.sha256, licence: source.licence }], rolesByProfile: agent ? { analyst: 'scripted', research: 'scripted', trader: 'scripted', risk: 'scripted', 'fund-manager': 'scripted' } : {}, promptCatalogRevision: agent ? tradingArtifacts.revision : '0'.repeat(64), toolManifest: [],
+    rounds: { research: 3, risk: 2 }, limits: { calls: agent ? 128 : 0, tokens: agent ? 262144 : 0, ms: 600000, toolRounds: agent ? 4 : 0, fanOut: agent ? 8 : 1, concurrency: agent ? 4 : 1, iterations: agent ? 10 : 1, contextChars: 65536, traceBytes: 2097152 },
     seed: source.seed, sourceRevision: source.generatorSha256, riskPolicy: { grossExposure: 1, netExposure: 1, singleName: 0.6, cashFloor: 0, maxParticipation: 0.01, lossLimit: 0.2, instruments: source.assets, orderKinds: ['market'] },
-    executionPolicy: { strategyId, kind, entryQuantity: 100 }, signalParameters: TRADING_SIGNAL_DEFAULTS });
+    executionPolicy: { strategyId, kind, entryQuantity: agent ? 2 : 100 }, signalParameters: TRADING_SIGNAL_DEFAULTS });
   const manifestId = manifest.id;
   const sessions = await Promise.all(fixture.sessions.map(({ id: key, ...body }) => record('session', { ...body, manifestId, key, calendar: manifest.calendar })));
   const bars = await Promise.all(fixture.bars.map(({ id: sourceKey, kind: _kind, ...body }) => record('bar', { ...body, sourceKey, manifestId })));
@@ -46,8 +47,9 @@ function assertGolden(run: TradingStrategyResult, fixture: TradingFixture, id: s
 async function executeRows(fixture: TradingFixture): Promise<Row[]> {
   const rows: Row[] = [];
   for (const strategy of fixture.strategies) {
+    if (strategy.id === 'tradingagents-scripted') { rows.push(await measureScriptedTradingAgent(fixture, await tradingExecutionInput(fixture, strategy.id))); continue; }
     const live = strategy.id === 'tradingagents-live', missing = strategy.kind === 'agent', excluded = strategy.id === 'leaky';
-    const reason = excluded ? 'reads observations after cutoff' : live ? 'no authorized live model plan' : missing ? 'full decision workflow not implemented' : null;
+    const reason = excluded ? 'reads observations after cutoff' : live ? 'no spend approval' : missing ? 'full decision workflow not implemented' : null;
     if (missing) {
       rows.push({ id: strategy.id, kind: strategy.kind, parityTier: strategy.parityTier, status: live ? 'not-run' : 'implementation-missing', reason,
         metrics: null, undefined: [], transactions: 0, rejectedOrders: 0, refusedObservations: 0, costs: { commission: 0, slippage: 0, total: 0 }, perAsset: [],

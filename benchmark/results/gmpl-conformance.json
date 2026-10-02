@@ -599,11 +599,11 @@
       },
       {
         "path": "packages/mas/src/control-runtime.ts",
-        "sha256": "c38dd671868277828a74b51590ab76242435bd6d3f9fe37a39134ddc0ee13231"
+        "sha256": "e2ea5106605a8ca1e1883e308623322062ec444803cf4edb6cccfb4f98dcf701"
       },
       {
         "path": "packages/mas/src/dag-runtime.ts",
-        "sha256": "421f5ae25dbc77747ed9f02fc69c6d115a6c4a558364bef998413008b1992472"
+        "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
       },
       {
         "path": "packages/mas/src/errors.ts",
@@ -623,7 +623,7 @@
       },
       {
         "path": "packages/mas/src/lower.ts",
-        "sha256": "830a80cea04c229e5c357f879b2c3433134f2902ace4100e5462e5ec856887a8"
+        "sha256": "f0dc9797a802abde2fe5a0ae8f5201a4a53a30d2376a544641aef532ea4641c5"
       },
       {
         "path": "packages/mas/src/mermaid.ts",
@@ -831,7 +831,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+        "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -848,6 +848,10 @@
       {
         "path": "packages/store/src/mas-jobs.ts",
         "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+      },
+      {
+        "path": "packages/store/src/mas-segment-driver.ts",
+        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -1090,7 +1094,7 @@
         "sha256": "582ab70e9caed02429a75871cf48584ddb56d1f7be48b6f88e907b3b6864275c"
       }
     ],
-    "sha256": "5ddfeac84b2e6b23d73c3083df829481e1c0e48c92cb6f72ad47aa55e8496198"
+    "sha256": "3fca6cc8df588c6a5cc3f3b2ba920c02b78b86cbc5152a4563bc58a7a8fe0bb9"
   },
   "ablations": [
     {
@@ -76644,5 +76648,5 @@
     "Active latency uses a fixed injected clock; live latency and monetary cost are unmeasured.",
     "Citation scope is checked separately from answer utility; valid citations do not prove entailment."
   ],
-  "reportId": "50bca146e9712ca0b176aa8a573e4b965c5df4fe6a6eb5a2c77dafedc291f616"
+  "reportId": "920364be397e9e3155c4475cc402b72decc0ed82bdaf432edad81ab23ae3d678"
 }

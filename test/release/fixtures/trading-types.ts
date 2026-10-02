@@ -2,12 +2,13 @@ import { createMemoryTradingStore, createTradingRecord, admit, latestBarsAsOf, s
   createFixtureProviders, createReplayProviders, buildSnapshot, TRADING_SIGNAL_DEFAULTS, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, adx, cci, vwap, volumeRatio, kdj,
   planFill, markPortfolio, applyCorporateActions, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve,
   tradingArtifacts, buildAnalystRegion, createTradingHostBindings, prepareTradingAnalystContext, reportsToEvidence, researchInput, materializeResearch, buildResearchAndTraderRegion, createTradingResearchHostBindings, researchVerdict, checkTradeProposal, tradingWorkflowIssue,
-  materializeTradingRisk, buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings, checkFundManagerDecision, toOrderIntent } from '@tangleai/trading';
+  materializeTradingRisk, buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings, checkFundManagerDecision, toOrderIntent, buildTradingDecisionWorkflow, createTradingDecisionHostBindings, createDecisionRunner, tradingDecisionRunId, runBacktest } from '@tangleai/trading';
 import artifacts from '@tangleai/trading/artifacts' with { type: 'json' };
 import { createGmplCatalog, gmplSchemaDefinition, type GmplHostSnapshot } from '@tangleai/gmpl';
-import type { AnalystReport, ResearchVerdict, TradingAttemptProvenance, TradeProposalOutput, TradeProposal, RiskVerdict, FundManagerDecision, FundManagerOutput } from '@tangleai/trading';
-import type { TraceView } from '@tangleai/mas';
+import type { AnalystReport, ResearchVerdict, TradingAttemptProvenance, TradeProposalOutput, TradeProposal, RiskVerdict, FundManagerDecision, FundManagerOutput, TradingDecisionSegments, TradingDecisionRun } from '@tangleai/trading';
+import type { TraceView, MasStore } from '@tangleai/mas';
 declare const reports: AnalystReport[], verdict: ResearchVerdict, host: GmplHostSnapshot, trace: TraceView, provenance: TradingAttemptProvenance, proposal: TradeProposalOutput;
+declare const masStore: MasStore, segments: TradingDecisionSegments, nativeDecision: TradingDecisionRun;
 declare const tradeProposal: TradeProposal, riskVerdict: RiskVerdict, managerDecision: FundManagerDecision, managerOutput: FundManagerOutput;
 import type { TradingRunManifest, TradingCommit, MarketSession, Observation, PortfolioSnapshot, BarObservation } from '@tangleai/trading/contracts';
 import schema from '@tangleai/trading/schemas/trading' with { type: 'json' };
@@ -37,6 +38,21 @@ if (captured.valid) {
       tradingWorkflowIssue(trace.run);
       const risk = await materializeTradingRisk({ host, manifest, catalog: catalog.value });
       if (risk.valid) {
+        if (research.valid) {
+          const whole = await buildTradingDecisionWorkflow({ catalog: catalog.value, manifest, researchMaterialized: research.value, riskMaterialized: risk.value, profile: host.profile });
+          if (whole.valid) {
+            const bindings = await createTradingDecisionHostBindings({ catalog: catalog.value, manifest, snapshot: snapshot.value, portfolio: previous, providers: replay.value,
+              materialized: whole.value, trace: async () => trace, provenance });
+            if (bindings.valid) {
+              await tradingDecisionRunId(bindings.value.request, whole.value.workflow.versionId);
+              const runner = createDecisionRunner({ materialized: whole.value, masStore, segments, spendFor: () => ({ valid: true, value: nativeDecision.spend }),
+                hostFor: async () => ({ valid: true, value: { ...bindings.value, contextProviders: {}, now: () => 'tick', clock: () => 0, clientFor: () => ({ complete: async () => ({ message: { role: 'assistant' as const, content: '{}' } }) }) } }) });
+              await runner.run(bindings.value.request, new AbortController().signal);
+              await runBacktest({ manifest, sessions: [session], bars, actions: [], observations, providers: replay.value, store,
+                decide: async () => ({ valid: true, value: nativeDecision }) });
+            }
+          }
+        }
         await buildRiskAndDecisionRegion({ riskMaterialized: risk.value, catalog: catalog.value, profile: host.profile });
         await createTradingRiskDecisionHostBindings({ manifest, snapshot: snapshot.value, portfolio: previous, catalog: catalog.value, materialized: risk.value, trace: async () => trace, provenance });
       }

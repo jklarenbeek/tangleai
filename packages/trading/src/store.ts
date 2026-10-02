@@ -8,15 +8,16 @@ import { accountTradingMovements, validateInitialTradingPortfolio, validateTradi
 import { tradingFillEconomics } from './broker.ts';
 import { checkRiskPolicy } from './risk.ts';
 import { tradingRefuse } from './errors.ts';
+import { toOrderIntent } from './order.ts';
 import { snapshotBarStaleness } from './time.ts';
 import type { TradingOutcome } from './errors.ts';
 import type { TradingRunManifest, MarketSession, Observation, MarketSnapshot, Artifact, TradingDecision, OrderIntent, Fill,
-  LedgerEntry, PortfolioSnapshot, TradingDayResult, BacktestResult, TradingCommit, TradingCommitMarker, TradingDecisionKey, TradingRecord, BarObservation, CorporateActionObservation } from './contracts.gen.ts';
+  LedgerEntry, PortfolioSnapshot, TradingDayResult, BacktestResult, TradingDecisionResult, TradingCommit, TradingCommitMarker, TradingDecisionKey, TradingRecord, BarObservation, CorporateActionObservation } from './contracts.gen.ts';
 
 export interface TradingTables {
   manifests: TradingRunManifest; sessions: MarketSession; observations: Observation; snapshots: MarketSnapshot; artifacts: Artifact;
   decisions: TradingDecision | TradingCommitMarker; orders: OrderIntent; fills: Fill; ledger: LedgerEntry; portfolios: PortfolioSnapshot;
-  results: TradingDayResult | BacktestResult;
+  results: TradingDayResult | BacktestResult | TradingDecisionResult;
 }
 export const TRADING_TABLES = ['manifests', 'sessions', 'observations', 'snapshots', 'artifacts', 'decisions', 'orders', 'fills', 'ledger', 'portfolios', 'results'] as const;
 export interface TradingQuery { manifestId?: string; kind?: string; key?: TradingDecisionKey; }
@@ -45,7 +46,7 @@ export interface TradingStoreOptions { applyProbe?: (step: string) => void; }
 const TABLE_FOR: Record<TradingRecord['kind'], keyof TradingTables> = {
   manifest: 'manifests', session: 'sessions', bar: 'observations', fundamental: 'observations', news: 'observations', social: 'observations', insider: 'observations', profile: 'observations', 'corporate-action': 'observations',
   snapshot: 'snapshots', 'analyst-report': 'artifacts', 'debate-turn': 'artifacts', 'research-verdict': 'artifacts', 'trade-proposal': 'artifacts', 'risk-turn': 'artifacts', 'risk-verdict': 'artifacts', 'fund-manager-decision': 'artifacts',
-  decision: 'decisions', 'decision-commit': 'decisions', order: 'orders', fill: 'fills', ledger: 'ledger', portfolio: 'portfolios', 'day-result': 'results', 'backtest-result': 'results',
+  decision: 'decisions', 'decision-commit': 'decisions', order: 'orders', fill: 'fills', ledger: 'ledger', portfolio: 'portfolios', 'day-result': 'results', 'backtest-result': 'results', 'decision-result': 'results',
 };
 
 export function tradingMatches(record: TradingRecord, query: TradingQuery): boolean {
@@ -70,6 +71,37 @@ async function inputReferences(tx: TradingTransaction, record: TradingRecord, ma
     if (record.calendar !== manifest.calendar) return tradingRefuse('TTRD1003', '/calendar', 'Session belongs to a different calendar');
     const sameKey = (await tx.query('sessions', { manifestId: manifest.id })).find(s => s.key === record.key);
     if (sameKey && !equalsJson(sameKey, record)) return tradingRefuse('TTRD1006', '/key', 'A calendar key already identifies different session bytes');
+  }
+  if (record.kind === 'decision-result') {
+    const snapshot = record.snapshotId ? await tx.get('snapshots', record.snapshotId) : undefined;
+    const portfolio = await tx.get('portfolios', record.portfolioId), sessions = await tx.query('sessions', { manifestId: manifest.id });
+    if (record.key.manifestId !== manifest.id || !manifest.assets.includes(record.key.asset) || record.key.stage !== 'model-decision'
+      || !sessions.some(s => s.key === record.key.sessionId)
+      || !portfolio || portfolio.manifestId !== manifest.id || record.snapshotId && (!snapshot || snapshot.manifestId !== manifest.id || snapshot.portfolioId !== record.portfolioId
+        || snapshot.asset !== record.key.asset || snapshot.sessionId !== record.key.sessionId))
+      return tradingRefuse('TTRD1004', '/decision-result', 'Decision receipt must bind its retained portfolio, snapshot and session');
+    const artifacts: Artifact[] = [];
+    for (const id of record.artifactIds) {
+      const artifact = await tx.get('artifacts', id);
+      if (!artifact || artifact.manifestId !== manifest.id || artifact.snapshotId !== record.snapshotId)
+        return tradingRefuse('TTRD1004', '/artifactIds', 'Decision receipt references an unretained or foreign artifact');
+      artifacts.push(artifact);
+    }
+    if (record.status === 'completed') {
+      const proposal = artifacts.find(a => a.kind === 'trade-proposal'), riskVerdict = artifacts.find(a => a.kind === 'risk-verdict'), decision = artifacts.find(a => a.kind === 'fund-manager-decision');
+      if (!snapshot || !proposal || !riskVerdict || !decision) return tradingRefuse('TTRD1004', '/artifactIds', 'Completed receipts require their retained proposal, risk verdict and manager');
+      const observations: Observation[] = [], valuationObservations: Observation[] = [];
+      for (const [ids, rows] of [[snapshot.observationIds, observations], [record.valuationObservationIds, valuationObservations]] as const) for (const id of ids) {
+        const observation = await tx.get('observations', id);
+        if (!observation || observation.manifestId !== manifest.id) return tradingRefuse('TTRD1004', '/valuationObservationIds', 'Decision price evidence must be retained in this manifest');
+        rows.push(observation);
+      }
+      const admitted = await toOrderIntent({ manifest, snapshot: { snapshot, observations, sessions }, portfolio, valuationObservations, proposal, riskVerdict, decision });
+      if (!admitted.valid || !equalsJson(admitted.value, record.admission))
+        return tradingRefuse('TTRD1005', '/admission', 'Decision receipt must preserve its deterministic admission and complete artifact chain');
+    }
+    const previous = await tx.query('results', { kind: 'decision-result', key: record.key });
+    if (previous.some(r => !equalsJson(r, record))) return tradingRefuse('TTRD1006', '/key', 'An immutable model decision already occupies this session key');
   }
   if (record.kind === 'snapshot') {
     const sessions = await tx.query('sessions', { manifestId: manifest.id }), session = sessions.find(s => s.key === record.sessionId);
@@ -174,7 +206,7 @@ export function planTradingCommit(plan: TradingCommit, manifest: TradingRunManif
   if (manifest.mode === 'shadow') return tradingRefuse('TTRD1009', '/mode', 'Shadow execution is not enabled');
   if (plan.expectedPortfolioId !== previous.id || plan.portfolio.parentId !== previous.id)
     return tradingRefuse('TTRD1006', '/expectedPortfolioId', 'Portfolio advanced before this decision committed');
-  const stage = plan.mode === 'trade' ? 'broker' : plan.mode === 'settlement' ? 'corporate-action' : 'valuation';
+  const stage = plan.mode === 'trade' || plan.mode === 'terminal' ? 'broker' : plan.mode === 'settlement' ? 'corporate-action' : 'valuation';
   if (plan.key.stage !== stage) return tradingRefuse('TTRD1006', '/key/stage', 'Commit mode has a different reserved execution stage');
   const target = plan.mode === 'trade' ? session.next ?? session.key : session.key;
   if (plan.portfolio.asOfSessionId !== target || evidence.execution.key !== target || evidence.execution.manifestId !== manifest.id
@@ -182,7 +214,11 @@ export function planTradingCommit(plan: TradingCommit, manifest: TradingRunManif
     return tradingRefuse('TTRD1006', '/portfolio/asOfSessionId', 'The portfolio must mark the declared execution session');
   if (plan.intent && (plan.intent.manifestId !== manifest.id || plan.intent.decisionId !== plan.decision.id || plan.intent.asset !== plan.key.asset
     || plan.intent.decisionSessionId !== session.key || plan.intent.fillSessionId !== session.next)) return tradingRefuse('TTRD1006', '/intent', 'Intent does not follow the decision session');
-  if (plan.mode !== 'trade') {
+  if (plan.mode === 'terminal') {
+    if (session.next !== null || session.key !== manifest.sessionRange.last || previous.asOfSessionId !== session.key || manifest.executionPolicy?.kind !== 'agent'
+      || plan.intent || plan.fills.length || plan.ledgerEntries.length || plan.markBarIds.length || plan.actionIds.length || plan.decision.disposition === 'approved')
+      return tradingRefuse('TTRD1006', '/mode', 'Terminal decisions follow the final close and cannot execute or move money');
+  } else if (plan.mode !== 'trade') {
     if (plan.intent || plan.fills.length || plan.decision.disposition !== 'hold' || plan.decision.artifactIds.length)
       return tradingRefuse('TTRD1006', '/mode', 'Corporate settlement and valuation cannot carry role approval or orders');
     if (plan.mode === 'valuation' && (plan.key.asset !== manifest.assets[0] || plan.actionIds.length))
@@ -273,7 +309,8 @@ async function commitTradingDecision(persistence: TradingPersistence, input: Tra
       return tradingRefuse('TTRD1003', '/portfolio/asOfSessionId', 'Execution cannot skip an unvalued session');
     const markers = (await tx.query('decisions', { manifestId: manifest.id, kind: 'decision-commit' })) as TradingCommitMarker[];
     const preceding = markers.filter(m => m.portfolioSequence <= previous.sequence);
-    if (preceding.some(m => m.mode === 'valuation' && m.key.sessionId === target))
+    const closed = preceding.some(m => m.mode === 'valuation' && m.key.sessionId === target);
+    if (plan.mode === 'terminal' ? !closed : closed)
       return tradingRefuse('TTRD1006', '/key/sessionId', 'A closed session cannot accept another execution');
     if (plan.mode === 'settlement' && preceding.some(m => m.mode === 'trade' && m.key.asset === plan.key.asset && sessions.find(s => s.key === m.key.sessionId)?.next === target))
       return tradingRefuse('TTRD1006', '/actionIds', 'Opening entitlements must precede same-asset execution');

@@ -2939,7 +2939,8 @@
           "enum": [
             "trade",
             "settlement",
-            "valuation"
+            "valuation",
+            "terminal"
           ]
         },
         "markBarIds": {
@@ -3029,7 +3030,8 @@
           "enum": [
             "trade",
             "settlement",
-            "valuation"
+            "valuation",
+            "terminal"
           ]
         },
         "markBarIds": {
@@ -3213,6 +3215,28 @@
               "type": "null"
             }
           ]
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -3267,7 +3291,8 @@
             "signals",
             "oracle",
             "do-nothing",
-            "leaky"
+            "leaky",
+            "agent"
           ]
         },
         "entryQuantity": {
@@ -3951,6 +3976,9 @@
         },
         {
           "$ref": "#/$defs/tradingCommitMarker"
+        },
+        {
+          "$ref": "#/$defs/tradingDecisionResult"
         }
       ]
     },
@@ -5535,6 +5563,202 @@
         "adjustments"
       ],
       "additionalProperties": false
+    },
+    "tradingDecisionRequest": {
+      "type": "object",
+      "properties": {
+        "manifestId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "snapshotId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "portfolioId": {
+          "$ref": "#/$defs/tradingId"
+        }
+      },
+      "required": [
+        "manifestId",
+        "asset",
+        "sessionId",
+        "snapshotId",
+        "portfolioId"
+      ],
+      "additionalProperties": false
+    },
+    "tradingDecisionOutput": {
+      "type": "object",
+      "properties": {
+        "admission": {
+          "$ref": "#/$defs/tradingOrderAdmission"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        }
+      },
+      "required": [
+        "admission",
+        "artifacts"
+      ],
+      "additionalProperties": false
+    },
+    "tradingDecisionResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "manifestId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "kind": {
+          "const": "decision-result"
+        },
+        "key": {
+          "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "portfolioId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "snapshotId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "failed"
+          ]
+        },
+        "admission": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tradingOrderAdmission"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "valuationObservationIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "manifestId",
+        "kind",
+        "key",
+        "portfolioId",
+        "snapshotId",
+        "runId",
+        "status",
+        "admission",
+        "artifactIds",
+        "spend",
+        "errors",
+        "valuationObservationIds"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "completed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "admission": {
+                "$ref": "#/$defs/tradingOrderAdmission"
+              },
+              "snapshotId": {
+                "$ref": "#/$defs/tradingId"
+              },
+              "runId": {
+                "$ref": "#/$defs/tradingId"
+              },
+              "errors": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "admission": {
+                "type": "null"
+              },
+              "errors": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

@@ -136,7 +136,13 @@ export async function executeDagRegion(run: DagRegionRun): Promise<DagRegionOutc
         },
       };
     }
-    if (flowError.code === 'JF2007') throw error;
+    if (flowError.code === 'JF2007') {
+      if (!run.signal.aborted) throw error;
+      // Cancellation before dispatch has no node attempt to settle the run.
+      return { ok: false, failure: { node: run.region.pathPrefix || 'root', error: { code: 'TMAS2003',
+        detail: 'the shared abort signal ended this region before completion',
+        cause: { code: 'JF2007', docPath: '', message: (error as Error).message } } } };
+    }
     const node = typeof flowError.nodeId === 'string' && flowError.nodeId.startsWith('t:')
       ? flowError.nodeId.slice(2)
       : flowError.nodeId ?? 'unknown';

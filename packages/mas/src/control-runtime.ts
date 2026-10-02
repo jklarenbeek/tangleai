@@ -774,7 +774,9 @@ async function runLoopRegion(
     if (!committed.ok) {
       return { kind: 'failed', failure: { node: invocation.id, error: committed.error } };
     }
-    frame.nodes[invocation.id] = { ...input, ...output };
+    // Downstream checkpoint provenance must see the exact committed output,
+    // including when this loop is replayed after a process restart.
+    frame.nodes[invocation.id] = output;
     return { kind: 'completed' };
   } catch (error) {
     if (error instanceof MasControlFailure) {

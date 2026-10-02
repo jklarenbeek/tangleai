@@ -2,7 +2,7 @@
 
 Closed trading records, point-in-time providers, deterministic signals and
 atomic simulated execution with corporate settlement and hard risk limits, plus
-compiled prompts, concurrent analyst lanes, bounded research and read-only trade proposals. Importing the package performs no
+compiled prompts and a resumable analyst, research, trader, risk and fund-manager workflow. Importing the package performs no
 filesystem, network or database work. Hosts supply market observations and a
 store; the package has no live broker connection.
 
@@ -326,3 +326,165 @@ fills, costs, rejected orders, refused observation/cutoff pairs and stale marks.
 An identical full run writes zero rows. `equityCurve(store, manifestId)` reads
 initial cash and committed close valuations. Annualized performance belongs to
 the benchmark's native-finance convention layer, not this package.
+
+## Resumable decisions and backtests
+
+`buildTradingDecisionWorkflow({ catalog, manifest, researchMaterialized,
+riskMaterialized, profile })` composes the existing regions into one native MAS
+workflow. The constructor validates the manifest's role profiles, round counts,
+catalog and limits against its child materializations. Host bindings reconstruct
+the declared topology before exposing read-only tools. Each decision names its
+manifest, asset, session, snapshot and frozen close portfolio.
+
+`createTradingDecisionHostBindings` binds the provider snapshot, portfolio,
+compiled catalog and durable attempt provenance. A completed output contains
+the checked order admission and the ordered immutable artifact chain. Model
+nodes cannot write a fill or change the financial policy. The full plan, including
+its nested research and risk regions, is available through `projectMasPlan`.
+
+`createDecisionRunner({ materialized, masStore, segments, hostFor, spendFor })`
+derives the run identity from the immutable workflow and decision key. The store
+package supplies `createMasSegmentDriver(db, masStore, { owner, leaseMs })`, a
+bounded adapter over existing native job claims and segment handlers. A host
+supplies its own clients, clock, usage attribution and abort signal; there is no
+scheduler or timer in trading. The runner verifies durable spend and the original
+input before using a retained result. A terminal run's queue job must also be
+complete before its output can enter accounting. Narrower budgets, including a
+zero-call ceiling, retain native budget failures; ceilings cannot be widened.
+
+`runBacktest({ manifest, sessions, bars, actions, observations, providers, store,
+decide })` requires the manifest's `agent` execution policy and reuses the
+existing strategy loop. Every asset decides against the same close portfolio.
+The next open rechecks policy against actual prices and current cash through the
+shared fill and atomic commit path. A stored decision receipt binds its native
+run, snapshot, valuation evidence, artifact chain and independently reconstructed
+order admission. A second backtest reuses those receipts without model calls or
+financial writes. Hosts can use the optional `afterDecision` hook to test the
+boundary between native completion and receipt persistence.
+
+Provider gaps, invalid output, cancellation and budget exhaustion remain counted
+failed decisions with retained spend. Marking and corporate settlement continue;
+a failed model cannot create an order. The final calendar close is recorded by a
+money-neutral terminal commit after its valuation, with no invented future fill
+and no extra interval in the equity curve. Recovery qualification checks durable
+node completions, loop state, segment completion and the financial boundary.
+The scripted benchmark demonstrates this mechanism on fictional data. It does
+not measure live model quality or investment performance.
+
+<details>
+<summary>Decision topology projected from the native plan</summary>
+
+```mermaid
+flowchart TD
+scope([scope])
+t:snapshot-project[[t:snapshot-project]]
+t:prepare-analyst-fundamentals[[t:prepare-analyst-fundamentals]]
+t:analyst-fundamentals[[t:analyst-fundamentals]]
+t:check-analyst-fundamentals[[t:check-analyst-fundamentals]]
+t:prepare-analyst-sentiment[[t:prepare-analyst-sentiment]]
+t:analyst-sentiment[[t:analyst-sentiment]]
+t:check-analyst-sentiment[[t:check-analyst-sentiment]]
+t:prepare-analyst-news[[t:prepare-analyst-news]]
+t:analyst-news[[t:analyst-news]]
+t:check-analyst-news[[t:check-analyst-news]]
+t:prepare-analyst-technical[[t:prepare-analyst-technical]]
+t:analyst-technical[[t:analyst-technical]]
+t:check-analyst-technical[[t:check-analyst-technical]]
+t:evidence-project[[t:evidence-project]]
+t:prepare-research[[t:prepare-research]]
+t:research[[t:research]]
+t:check-research[[t:check-research]]
+t:prepare-trader[[t:prepare-trader]]
+t:trader[[t:trader]]
+t:check-trader[[t:check-trader]]
+t:assemble-risk[[t:assemble-risk]]
+t:prepare-risk[[t:prepare-risk]]
+t:risk[[t:risk]]
+t:prepare-fund-manager[[t:prepare-fund-manager]]
+t:fund-manager[[t:fund-manager]]
+t:check-fund-manager[[t:check-fund-manager]]
+t:order-validate[[t:order-validate]]
+t:decision-output[[t:decision-output]]
+expose(((expose)))
+scope -->|request · $.input['request']| t:snapshot-project
+t:snapshot-project -->|snapshot-project| expose
+t:snapshot-project -->|snapshot · $['snapshot']| t:prepare-analyst-fundamentals
+t:prepare-analyst-fundamentals -->|prepare-analyst-fundamentals| expose
+t:prepare-analyst-fundamentals -->|variables · $['variables']| t:analyst-fundamentals
+t:analyst-fundamentals -->|analyst-fundamentals| expose
+t:prepare-analyst-fundamentals -->|variables · $['variables']| t:check-analyst-fundamentals
+t:analyst-fundamentals -->|out · $['out']| t:check-analyst-fundamentals
+t:check-analyst-fundamentals -->|check-analyst-fundamentals| expose
+t:snapshot-project -->|snapshot · $['snapshot']| t:prepare-analyst-sentiment
+t:prepare-analyst-sentiment -->|prepare-analyst-sentiment| expose
+t:prepare-analyst-sentiment -->|variables · $['variables']| t:analyst-sentiment
+t:analyst-sentiment -->|analyst-sentiment| expose
+t:prepare-analyst-sentiment -->|variables · $['variables']| t:check-analyst-sentiment
+t:analyst-sentiment -->|out · $['out']| t:check-analyst-sentiment
+t:check-analyst-sentiment -->|check-analyst-sentiment| expose
+t:snapshot-project -->|snapshot · $['snapshot']| t:prepare-analyst-news
+t:prepare-analyst-news -->|prepare-analyst-news| expose
+t:prepare-analyst-news -->|variables · $['variables']| t:analyst-news
+t:analyst-news -->|analyst-news| expose
+t:prepare-analyst-news -->|variables · $['variables']| t:check-analyst-news
+t:analyst-news -->|out · $['out']| t:check-analyst-news
+t:check-analyst-news -->|check-analyst-news| expose
+t:snapshot-project -->|snapshot · $['snapshot']| t:prepare-analyst-technical
+t:prepare-analyst-technical -->|prepare-analyst-technical| expose
+t:prepare-analyst-technical -->|variables · $['variables']| t:analyst-technical
+t:analyst-technical -->|analyst-technical| expose
+t:prepare-analyst-technical -->|variables · $['variables']| t:check-analyst-technical
+t:analyst-technical -->|out · $['out']| t:check-analyst-technical
+t:check-analyst-technical -->|check-analyst-technical| expose
+t:check-analyst-fundamentals -->|fundamentals · $['report']| t:evidence-project
+t:check-analyst-sentiment -->|sentiment · $['report']| t:evidence-project
+t:check-analyst-news -->|news · $['report']| t:evidence-project
+t:check-analyst-technical -->|technical · $['report']| t:evidence-project
+t:evidence-project -->|evidence-project| expose
+t:evidence-project -->|reports · $['reports']| t:prepare-research
+t:prepare-research -->|prepare-research| expose
+t:prepare-research -->|input · $['input']| t:research
+t:research -->|research| expose
+t:prepare-research -->|reports · $['reports']| t:check-research
+t:research -->|result · $['result']| t:check-research
+t:check-research -->|check-research| expose
+t:prepare-research -->|reports · $['reports']| t:prepare-trader
+t:check-research -->|verdict · $['verdict']| t:prepare-trader
+t:prepare-trader -->|prepare-trader| expose
+t:prepare-trader -->|variables · $['variables']| t:trader
+t:trader -->|trader| expose
+t:prepare-trader -->|variables · $['variables']| t:check-trader
+t:trader -->|out · $['out']| t:check-trader
+t:check-trader -->|check-trader| expose
+t:evidence-project -->|reports · $['reports']| t:assemble-risk
+t:check-research -->|verdict · $['verdict']| t:assemble-risk
+t:check-trader -->|proposal · $['proposal']| t:assemble-risk
+t:assemble-risk -->|assemble-risk| expose
+t:assemble-risk -->|input · $['input']| t:prepare-risk
+t:prepare-risk -->|prepare-risk| expose
+t:prepare-risk -->|input · $['input']| t:risk
+t:risk -->|risk| expose
+t:prepare-risk -->|proposal · $['proposal']| t:prepare-fund-manager
+t:risk -->|verdict · $['verdict']| t:prepare-fund-manager
+t:prepare-fund-manager -->|prepare-fund-manager| expose
+t:prepare-fund-manager -->|variables · $['variables']| t:fund-manager
+t:fund-manager -->|fund-manager| expose
+t:prepare-fund-manager -->|variables · $['variables']| t:check-fund-manager
+t:fund-manager -->|out · $['out']| t:check-fund-manager
+t:check-fund-manager -->|check-fund-manager| expose
+t:prepare-risk -->|proposal · $['proposal']| t:order-validate
+t:risk -->|verdict · $['verdict']| t:order-validate
+t:check-fund-manager -->|decision · $['decision']| t:order-validate
+t:order-validate -->|order-validate| expose
+t:evidence-project -->|reports · $['reports']| t:decision-output
+t:check-research -->|research-verdict · $['verdict']| t:decision-output
+t:check-research -->|debate-turns · $['turns']| t:decision-output
+t:check-trader -->|proposal · $['proposal']| t:decision-output
+t:risk -->|risk-verdict · $['verdict']| t:decision-output
+t:risk -->|risk-turns · $['turns']| t:decision-output
+t:check-fund-manager -->|decision · $['decision']| t:decision-output
+t:order-validate -->|admission · $['admission']| t:decision-output
+t:decision-output -->|decision-output| expose
+```
+
+</details>

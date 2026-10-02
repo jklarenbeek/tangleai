@@ -734,6 +734,14 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-agent-runner.ts",
+        "sha256": "0a403fd978b0c313f6f51cea4d939349d77727de5bbd0ba0e7e2ddbf897c1c67"
+      },
+      {
+        "path": "benchmark/lib/trading-agent.ts",
+        "sha256": "78583c514ae43b9c60e1c7279e1b61eed01a7ba0081884c4e6021bd6c4bc2db4"
+      },
+      {
         "path": "benchmark/lib/trading-analyst-runner.ts",
         "sha256": "37a0f74737da9e58639e67f9b2db48f930602c9d28b10f5b54481f6b2036d4bc"
       },
@@ -742,8 +750,12 @@
         "sha256": "aa1628a94e943641101c00b46f9d29e4ae34358724081f7e1444bfbd890f3df5"
       },
       {
+        "path": "benchmark/lib/trading-cli.ts",
+        "sha256": "4a9e0992c8557501d0a0de39c5a0eaf916bbb7cda3c34dc7a87df6064a7832e3"
+      },
+      {
         "path": "benchmark/lib/trading-execution.ts",
-        "sha256": "778174b23ec3aff13e2f40d374710c75f3274e0f18b703bb6398c75438a02bdd"
+        "sha256": "fb8a7d3fcdb54dc11dc0fd6fe89dbaa24f0f3ff8cc0dd7bd6cfcf4d09b0e109b"
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
@@ -759,11 +771,11 @@
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "339008f155c631ee6209160da1b38f99426df916c998c6a42dd7ecbaa1ad7699"
+        "sha256": "8bac1fc07943f502bc119543e116ab1dc5932bef06fdb9a406ec053ff2071d46"
       },
       {
         "path": "benchmark/lib/trading-research-runner.ts",
-        "sha256": "cd2234da9dbbbe9024634a4eccd15e851495e36b426af004792240cfd5fbb6ec"
+        "sha256": "aa1a9f96271a23d9ad8d13c0d9c21a2d11880b9e2d793fc416a1448a8e633e4a"
       },
       {
         "path": "benchmark/lib/trading-research.ts",
@@ -771,11 +783,15 @@
       },
       {
         "path": "benchmark/lib/trading-risk-runner.ts",
-        "sha256": "ec34b7c11ee75e5d244c04c66571cd71d919f171a1dcee34fc4ec4922bdd76c7"
+        "sha256": "51492f224ce47b6596d3e5d89159eb938a03886b5afe9c7814312a5233ab332a"
       },
       {
         "path": "benchmark/lib/trading-risk.ts",
         "sha256": "6f8c68d4a58a37e8852e7d50630d8d4d5202ff3e865f6dd94fef5ea0d1e4b7c2"
+      },
+      {
+        "path": "benchmark/lib/trading-scripts.ts",
+        "sha256": "4b239ee009c4c95c1b736b70436551e645e8a030c2e4ef32398ed3cc6f3f9e3a"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -783,7 +799,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "bbb30d9f1d8f36a911be65fa1426bb6f268d088208bd2a917be876290ab42086"
+        "sha256": "8482cb57dd8675cb4d3972925611ad8d8b54e92fb6c3b0fe9a322db09363b26d"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -1191,11 +1207,11 @@
       },
       {
         "path": "packages/mas/src/control-runtime.ts",
-        "sha256": "c38dd671868277828a74b51590ab76242435bd6d3f9fe37a39134ddc0ee13231"
+        "sha256": "e2ea5106605a8ca1e1883e308623322062ec444803cf4edb6cccfb4f98dcf701"
       },
       {
         "path": "packages/mas/src/dag-runtime.ts",
-        "sha256": "421f5ae25dbc77747ed9f02fc69c6d115a6c4a558364bef998413008b1992472"
+        "sha256": "ec7ce484493fd6d9807f82beb12c577a4ace8bf7471198f2056d846846a6f9eb"
       },
       {
         "path": "packages/mas/src/errors.ts",
@@ -1215,7 +1231,7 @@
       },
       {
         "path": "packages/mas/src/lower.ts",
-        "sha256": "830a80cea04c229e5c357f879b2c3433134f2902ace4100e5462e5ec856887a8"
+        "sha256": "f0dc9797a802abde2fe5a0ae8f5201a4a53a30d2376a544641aef532ea4641c5"
       },
       {
         "path": "packages/mas/src/mermaid.ts",
@@ -1419,7 +1435,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "3dd3a0abbc8f22da7f06e8ab5c29c147f851b021fc2bf43f648c15838d18ed17"
+        "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -1436,6 +1452,10 @@
       {
         "path": "packages/store/src/mas-jobs.ts",
         "sha256": "b17140038b71082ca9896ed09bedd48f23464fe72267c65a2301f779c1ef299c"
+      },
+      {
+        "path": "packages/store/src/mas-segment-driver.ts",
+        "sha256": "a78b777c6f1df7bbe6ed28bb693a4660eede67ea884da3e915488c114c998f30"
       },
       {
         "path": "packages/store/src/mas-store.ts",
@@ -1494,7 +1514,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "033fbd1cd7556e51b53d353c3616631af34a73e3cf917155aa8d929bc596ba5e"
+    "sha256": "eedfcba97ba9d59daeb37864cd2ba83b44199a2d567baf391cb044cf01295fa8"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -43825,7 +43845,7 @@
         {
           "id": "revision-resume-identity",
           "holds": true,
-          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 97298d495fe334a9629c98ce338ebdc0a08994aca0b7e96626ceea240d8bdb90."
+          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f."
         },
         {
           "id": "adapter-score-parity",
@@ -44821,7 +44841,7 @@
     {
       "id": "resume-identity",
       "holds": true,
-      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 97298d495fe334a9629c98ce338ebdc0a08994aca0b7e96626ceea240d8bdb90. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
+      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
     },
     {
       "id": "duplicate-delivery",
@@ -44866,7 +44886,7 @@
     {
       "id": "revision-resume-identity",
       "holds": true,
-      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 97298d495fe334a9629c98ce338ebdc0a08994aca0b7e96626ceea240d8bdb90."
+      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f."
     },
     {
       "id": "adapter-score-parity",
@@ -44959,5 +44979,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "ff583d2a882c58f9bd3ac77d7cd52468682f2a5ab9a85340fb50de6634c4b86c"
+  "reportId": "520f00541d18e35ec6f6e7f19ec2959469b71023014c6e23df26d7005fa4c03d"
 }

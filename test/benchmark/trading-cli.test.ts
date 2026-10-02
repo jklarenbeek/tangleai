@@ -6,6 +6,23 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { runTradingCli } from '../../benchmark/lib/trading-cli.ts';
+
+it('the callable command restores its network guard after a refused check', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'trading-cli-guard-'));
+  const previousFetch = globalThis.fetch;
+  const trap: typeof fetch = async () => { throw Error('Unexpected network request'); };
+  globalThis.fetch = trap;
+  try {
+    const file = join(dir, 'report.json');
+    await writeFile(file, '{} ');
+    await assert.rejects(runTradingCli(['--check', '--json', file, '--md', join(dir, 'report.md')]), /artifact drift/);
+    assert.equal(globalThis.fetch, trap);
+  } finally {
+    globalThis.fetch = previousFetch;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
 
 const execute = promisify(execFile), cli = fileURLToPath(new URL('../../benchmark/trading.ts', import.meta.url));
 for (const kind of ['unknown-capability', 'source-drift', 'byte-drift']) it(`trading CLI refuses ${kind} before executing the measurement`, async () => {
@@ -26,7 +43,8 @@ registerHooks({ load(url, context, next) {
 } });`);
     await writeFile(file, JSON.stringify({ source: { files: [] } }, null, 2) + '\n' + (kind === 'byte-drift' ? ' ' : ''));
     const args = kind === 'unknown-capability' ? ['--require', 'unknown'] : ['--check', '--json', file, '--md', join(dir, 'report.md')];
-    await assert.rejects(execute(process.execPath, ['--import', hook, cli, ...args], { maxBuffer: 65536 }), error => {
+    // The registered benchmark command uses Node; its loader probe needs Node's module hooks.
+    await assert.rejects(execute('node', ['--import', hook, cli, ...args], { maxBuffer: 65536 }), error => {
       const message = String(error); assert.doesNotMatch(message, /MEASUREMENT_REACHED/);
       assert.match(message, kind === 'unknown-capability' ? /Unknown trading capability/ : kind === 'source-drift' ? /source drift/ : /artifact drift/); return true;
     });

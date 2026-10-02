@@ -1529,6 +1529,9 @@
               "type": "null"
             }
           ]
+        },
+        "agent": {
+          "$ref": "#/$defs/agentExecution"
         }
       },
       "required": [
@@ -1548,7 +1551,31 @@
         "controlSha256",
         "execution"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "tradingagents-scripted"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "agent"
+            ],
+            "properties": {
+              "status": {
+                "const": "measured"
+              },
+              "parityTier": {
+                "const": "mechanism"
+              }
+            }
+          }
+        }
+      ]
     },
     "capabilities": {
       "type": "object",
@@ -4324,6 +4351,205 @@
               {
                 "$count": "$.cases[*].adjustments[*]"
               }
+            ]
+          }
+        ]
+      }
+    },
+    "agentExecution": {
+      "type": "object",
+      "properties": {
+        "decisionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayPhysicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "spend": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolCalls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "usd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "retries": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "repairs": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "toolCalls",
+            "tokens",
+            "usd",
+            "retries",
+            "repairs",
+            "ms"
+          ],
+          "additionalProperties": false
+        },
+        "failuresByCode": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^TTRD[0-9]{4}$"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "code",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "receiptsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resultSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "issuesByCode": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^TTRD[0-9]{4}$"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "code",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "decisionCount",
+        "completed",
+        "failed",
+        "physicalCalls",
+        "completions",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "replayPhysicalCalls",
+        "spend",
+        "failuresByCode",
+        "receiptsSha256",
+        "resultSha256",
+        "issuesByCode"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.decisionCount",
+              {
+                "$add": [
+                  "$.completed",
+                  "$.failed"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              "$.spend.calls"
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              {
+                "$add": [
+                  "$.completions",
+                  {
+                    "$add": [
+                      "$.normalizations",
+                      "$.repairs"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replayPhysicalCalls",
+              0
             ]
           }
         ]
