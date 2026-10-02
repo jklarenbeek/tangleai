@@ -1,0 +1,3594 @@
+{
+  "id": "leaky",
+  "privileged": true,
+  "reason": "reads observations after cutoff",
+  "equity": [
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100000,
+    100101.38930798249,
+    100072.6893079825,
+    100216.27930798249,
+    100190.72930798249,
+    100324.1593079825,
+    100415.00930798249,
+    100342.55930798249,
+    100312.5193079825,
+    100295.8793079825,
+    100295.6593079825,
+    100287.7993079825,
+    100431.1893079825,
+    100550.2193079825,
+    100518.77930798249,
+    100616.9593079825,
+    100584.80930798249,
+    100596.4593079825,
+    100694.77930798249,
+    100763.41930798249,
+    100867.63930798249,
+    100941.2093079825,
+    101089.5393079825,
+    101192.4893079825,
+    101181.1293079825,
+    101305.0393079825,
+    101443.1193079825,
+    101396.2693079825,
+    101426.2093079825,
+    101346.7093079825,
+    101331.3593079825,
+    101433.58930798249,
+    101373.55930798249,
+    101346.1893079825,
+    101299.3793079825,
+    101212.0693079825,
+    101197.1293079825,
+    101152.91930798249,
+    101072.3593079825,
+    101097.4393079825,
+    101210.5793079825,
+    101261.4393079825,
+    101338.75930798249,
+    101432.49930798249,
+    101366.44930798249,
+    101257.69930798249,
+    101386.63930798249,
+    101324.0493079825,
+    101379.5493079825,
+    101283.6193079825,
+    101289.8493079825,
+    101339.3593079825,
+    101216.9893079825,
+    101230.99930798249,
+    101131.0493079825,
+    101237.63930798249,
+    101335.19930798249,
+    101415.1593079825,
+    101470.25930798249,
+    101571.8793079825,
+    101479.9393079825,
+    101364.3593079825,
+    101498.77930798249,
+    101520.0993079825,
+    101600.3593079825,
+    101728.4393079825,
+    101873.75930798249,
+    101799.3593079825,
+    101791.5993079825,
+    101915.6793079825,
+    101883.3993079825,
+    101922.3793079825,
+    101816.0993079825,
+    101963.13930798249,
+    102089.5993079825,
+    101996.91930798249,
+    102104.3793079825,
+    102135.0993079825,
+    102271.1193079825,
+    102180.69930798249,
+    102304.63930798249,
+    102200.1793079825,
+    102286.1193079825,
+    102238.4593079825,
+    102387.3593079825,
+    102377.8793079825,
+    102360.33930798249,
+    102340.3393079825,
+    102241.63930798249,
+    102391.77930798249,
+    102465.2993079825,
+    102569.69930798249,
+    102521.8593079825,
+    102501.6793079825,
+    102478.1793079825,
+    102407.8193079825,
+    102373.1193079825,
+    102394.7393079825,
+    102559.61930798249,
+    102653.0793079825,
+    102638.55930798249,
+    102685.3793079825,
+    102584.5193079825,
+    102575.3593079825,
+    102591.33930798249,
+    102592.6593079825,
+    102647.5793079825,
+    102570.6193079825,
+    102707.2993079825,
+    102604.41930798249,
+    102692.1193079825,
+    102773.4393079825,
+    102730.7993079825,
+    102684.69930798249
+  ],
+  "points": [
+    {
+      "sessionId": null,
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 100.2842,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 80.0018,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-02",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 100.8924,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.6296,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-03",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 101.8748,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 80.0482,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-06",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 102.1386,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.5502,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-07",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 102.7278,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.7623,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-08",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 104.235,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2347,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-09",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 103.8947,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.9103,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-10",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 103.892,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.9162,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-13",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 103.0841,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2668,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-14",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 103.9698,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.7732,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-15",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 104.0648,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.3228,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-16",
+      "cash": 100000,
+      "equity": 100000,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 104.5715,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.8366,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-17",
+      "cash": 89501.4393079825,
+      "equity": 100101.38930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 105.9995,
+          "realizedPnl": 0,
+          "unrealizedPnl": 106.63596499999954,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.9606,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-21",
+      "cash": 89501.4393079825,
+      "equity": 100072.6893079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 105.7125,
+          "realizedPnl": 0,
+          "unrealizedPnl": 77.93596500000035,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.8739,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-22",
+      "cash": 89501.4393079825,
+      "equity": 100216.27930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 107.1484,
+          "realizedPnl": 0,
+          "unrealizedPnl": 221.5259649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.8183,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-23",
+      "cash": 89501.4393079825,
+      "equity": 100190.72930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 106.8929,
+          "realizedPnl": 0,
+          "unrealizedPnl": 195.97596499999952,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.6162,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-24",
+      "cash": 89501.4393079825,
+      "equity": 100324.1593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 108.2272,
+          "realizedPnl": 0,
+          "unrealizedPnl": 329.4059649999994,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.4049,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-27",
+      "cash": 89501.4393079825,
+      "equity": 100415.00930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 109.1357,
+          "realizedPnl": 0,
+          "unrealizedPnl": 420.2559649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 80.0625,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-28",
+      "cash": 89501.4393079825,
+      "equity": 100342.55930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 108.4112,
+          "realizedPnl": 0,
+          "unrealizedPnl": 347.80596499999916,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 80.0176,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-29",
+      "cash": 89501.4393079825,
+      "equity": 100312.5193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 108.1108,
+          "realizedPnl": 0,
+          "unrealizedPnl": 317.76596499999954,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.9519,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-30",
+      "cash": 89501.4393079825,
+      "equity": 100295.8793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 107.9444,
+          "realizedPnl": 0,
+          "unrealizedPnl": 301.12596499999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 80.5613,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-01-31",
+      "cash": 89501.4393079825,
+      "equity": 100295.6593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 107.9422,
+          "realizedPnl": 0,
+          "unrealizedPnl": 300.90596499999975,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.5873,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-03",
+      "cash": 89501.4393079825,
+      "equity": 100287.7993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 107.8636,
+          "realizedPnl": 0,
+          "unrealizedPnl": 293.0459650000003,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.1557,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-04",
+      "cash": 89501.4393079825,
+      "equity": 100431.1893079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 109.2975,
+          "realizedPnl": 0,
+          "unrealizedPnl": 436.4359649999997,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.4389,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-05",
+      "cash": 89501.4393079825,
+      "equity": 100550.2193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 110.4878,
+          "realizedPnl": 0,
+          "unrealizedPnl": 555.4659649999991,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 79.084,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-06",
+      "cash": 89501.4393079825,
+      "equity": 100518.77930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 110.1734,
+          "realizedPnl": 0,
+          "unrealizedPnl": 524.0259649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2672,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-07",
+      "cash": 89501.4393079825,
+      "equity": 100616.9593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 111.1552,
+          "realizedPnl": 0,
+          "unrealizedPnl": 622.2059649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.3461,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-10",
+      "cash": 89501.4393079825,
+      "equity": 100584.80930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 110.8337,
+          "realizedPnl": 0,
+          "unrealizedPnl": 590.0559649999991,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2249,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-11",
+      "cash": 89501.4393079825,
+      "equity": 100596.4593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 110.9502,
+          "realizedPnl": 0,
+          "unrealizedPnl": 601.7059649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.1375,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-12",
+      "cash": 89501.4393079825,
+      "equity": 100694.77930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 111.9334,
+          "realizedPnl": 0,
+          "unrealizedPnl": 700.0259650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2174,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-13",
+      "cash": 89501.4393079825,
+      "equity": 100763.41930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 112.6198,
+          "realizedPnl": 0,
+          "unrealizedPnl": 768.6659649999996,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.4996,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-14",
+      "cash": 89501.4393079825,
+      "equity": 100867.63930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 113.662,
+          "realizedPnl": 0,
+          "unrealizedPnl": 872.8859650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.0829,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-18",
+      "cash": 89501.4393079825,
+      "equity": 100941.2093079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 114.3977,
+          "realizedPnl": 0,
+          "unrealizedPnl": 946.4559649999999,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.2834,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-19",
+      "cash": 89501.4393079825,
+      "equity": 101089.5393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 115.881,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1094.7859649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.6252,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-20",
+      "cash": 89501.4393079825,
+      "equity": 101192.4893079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 116.9105,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1197.7359649999996,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.9542,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-21",
+      "cash": 89501.4393079825,
+      "equity": 101181.1293079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 116.7969,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1186.3759649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.5969,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-24",
+      "cash": 89501.4393079825,
+      "equity": 101305.0393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.036,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1310.285965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.8856,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-25",
+      "cash": 89501.4393079825,
+      "equity": 101443.1193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 119.4168,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1448.3659649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.0915,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-26",
+      "cash": 89501.4393079825,
+      "equity": 101396.2693079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.9483,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1401.515965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.8716,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-27",
+      "cash": 89501.4393079825,
+      "equity": 101426.2093079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 119.2477,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1431.4559649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.191,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-02-28",
+      "cash": 89501.4393079825,
+      "equity": 101346.7093079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.4527,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1351.9559649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 78.2132,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-03",
+      "cash": 89501.4393079825,
+      "equity": 101331.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.2992,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1336.6059649999997,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.8883,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-04",
+      "cash": 89501.4393079825,
+      "equity": 101433.58930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 119.3215,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1438.8359649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.3313,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-05",
+      "cash": 89501.4393079825,
+      "equity": 101373.55930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.7212,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1378.8059649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 77.9726,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-06",
+      "cash": 89501.4393079825,
+      "equity": 101346.1893079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.4475,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1351.4359650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.9308,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-07",
+      "cash": 89501.4393079825,
+      "equity": 101299.3793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.9794,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1304.6259649999997,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.5448,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-10",
+      "cash": 89501.4393079825,
+      "equity": 101212.0693079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.1063,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1217.3159650000002,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.1091,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-11",
+      "cash": 89501.4393079825,
+      "equity": 101197.1293079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 116.9569,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1202.3759650000002,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.092,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-12",
+      "cash": 89501.4393079825,
+      "equity": 101152.91930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 116.5148,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1158.1659649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.3912,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-13",
+      "cash": 89501.4393079825,
+      "equity": 101072.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 115.7092,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1077.6059649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.3465,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-14",
+      "cash": 89501.4393079825,
+      "equity": 101097.4393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 115.96,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1102.6859649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 76.7444,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-17",
+      "cash": 89501.4393079825,
+      "equity": 101210.5793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.0914,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1215.825964999999,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 75.6958,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-18",
+      "cash": 89501.4393079825,
+      "equity": 101261.4393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.6,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1266.6859649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 75.2694,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-19",
+      "cash": 89501.4393079825,
+      "equity": 101338.75930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.3732,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1344.0059649999994,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 74.625,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-20",
+      "cash": 89501.4393079825,
+      "equity": 101432.49930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 119.3106,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1437.7459649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 74.2487,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-21",
+      "cash": 89501.4393079825,
+      "equity": 101366.44930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.6501,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1371.6959649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.54,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-24",
+      "cash": 89501.4393079825,
+      "equity": 101257.69930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.5626,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1262.9459650000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.7846,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-25",
+      "cash": 89501.4393079825,
+      "equity": 101386.63930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.852,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1391.8859650000002,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.5511,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-26",
+      "cash": 89501.4393079825,
+      "equity": 101324.0493079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.2261,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1329.295965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.7993,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-27",
+      "cash": 89501.4393079825,
+      "equity": 101379.5493079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.7811,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1384.7959649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.0778,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-28",
+      "cash": 89501.4393079825,
+      "equity": 101283.6193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.8218,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1288.8659649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.5917,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-03-31",
+      "cash": 89501.4393079825,
+      "equity": 101289.8493079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.8841,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1295.0959650000002,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.1002,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-01",
+      "cash": 89501.4393079825,
+      "equity": 101339.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 118.3792,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1344.6059649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.2955,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-02",
+      "cash": 89501.4393079825,
+      "equity": 101216.9893079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.1555,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1222.235965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.7602,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-03",
+      "cash": 89501.4393079825,
+      "equity": 101230.99930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 117.2956,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1236.2459649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.5589,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-04",
+      "cash": 89501.4393079825,
+      "equity": 101131.0493079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 100,
+          "costBasis": 104.93314035,
+          "mark": 116.2961,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1136.2959649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.4017,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-07",
+      "cash": 89501.4393079825,
+      "equity": 101237.63930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 58.681,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1242.8859649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.8183,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-08",
+      "cash": 89501.4393079825,
+      "equity": 101335.19930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.1688,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1340.4459649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.4451,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-09",
+      "cash": 89501.4393079825,
+      "equity": 101415.1593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.5686,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1420.4059650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.2527,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-10",
+      "cash": 89501.4393079825,
+      "equity": 101470.25930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.8441,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1475.5059649999994,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.5856,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-11",
+      "cash": 89501.4393079825,
+      "equity": 101571.8793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 60.3522,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1577.1259650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.4791,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-14",
+      "cash": 89501.4393079825,
+      "equity": 101479.9393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.8925,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1485.1859649999994,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 73.4507,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-15",
+      "cash": 89501.4393079825,
+      "equity": 101364.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.3146,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1369.6059649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.872,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-16",
+      "cash": 89501.4393079825,
+      "equity": 101498.77930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 59.9867,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1504.0259649999996,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.3666,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-17",
+      "cash": 89501.4393079825,
+      "equity": 101520.0993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 60.0933,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1525.3459649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.7571,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-21",
+      "cash": 89501.4393079825,
+      "equity": 101600.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 60.4946,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1605.6059649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.578,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-22",
+      "cash": 89501.4393079825,
+      "equity": 101728.4393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.135,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1733.6859649999994,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.2977,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-23",
+      "cash": 89501.4393079825,
+      "equity": 101873.75930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.8616,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1879.0059650000003,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.6391,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-24",
+      "cash": 89501.4393079825,
+      "equity": 101799.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.4896,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1804.6059650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.2719,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-25",
+      "cash": 89501.4393079825,
+      "equity": 101791.5993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.4508,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1796.845965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.0207,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-28",
+      "cash": 89501.4393079825,
+      "equity": 101915.6793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 62.0712,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1920.9259649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.584,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-29",
+      "cash": 89501.4393079825,
+      "equity": 101883.3993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.9098,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1888.6459649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.7766,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-04-30",
+      "cash": 89501.4393079825,
+      "equity": 101922.3793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 62.1047,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1927.625965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.4182,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-01",
+      "cash": 89501.4393079825,
+      "equity": 101816.0993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 61.5733,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1821.3459650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.099,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-02",
+      "cash": 89501.4393079825,
+      "equity": 101963.13930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 62.3085,
+          "realizedPnl": 0,
+          "unrealizedPnl": 1968.3859650000002,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.4662,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-05",
+      "cash": 89501.4393079825,
+      "equity": 102089.5993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 62.9408,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2094.8459650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.8878,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-06",
+      "cash": 89501.4393079825,
+      "equity": 101996.91930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 62.4774,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2002.1659650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.3748,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-07",
+      "cash": 89501.4393079825,
+      "equity": 102104.3793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.0147,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2109.6259649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.6887,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-08",
+      "cash": 89501.4393079825,
+      "equity": 102135.0993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.1683,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2140.3459650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.0512,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-09",
+      "cash": 89501.4393079825,
+      "equity": 102271.1193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.8484,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2276.3659649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 72.0172,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-12",
+      "cash": 89501.4393079825,
+      "equity": 102180.69930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.3963,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2185.945964999999,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.2261,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-13",
+      "cash": 89501.4393079825,
+      "equity": 102304.63930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.016,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2309.885965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.7498,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-14",
+      "cash": 89501.4393079825,
+      "equity": 102200.1793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.4937,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2205.425964999999,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.6941,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-15",
+      "cash": 89501.4393079825,
+      "equity": 102286.1193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.9234,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2291.365965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.7807,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-16",
+      "cash": 89501.4393079825,
+      "equity": 102238.4593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.6851,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2243.7059649999997,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.2344,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-19",
+      "cash": 89501.4393079825,
+      "equity": 102387.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.4296,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2392.6059649999984,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.47,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-20",
+      "cash": 89501.4393079825,
+      "equity": 102377.8793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.3822,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2383.1259649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.5841,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-21",
+      "cash": 89501.4393079825,
+      "equity": 102360.33930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.2945,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2365.5859649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.2378,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-22",
+      "cash": 89501.4393079825,
+      "equity": 102340.3393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.1945,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2345.5859650000007,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.7166,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-23",
+      "cash": 89501.4393079825,
+      "equity": 102241.63930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 63.701,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2246.885965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.4644,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-27",
+      "cash": 89501.4393079825,
+      "equity": 102391.77930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.4517,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2397.0259650000003,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.6414,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-28",
+      "cash": 89501.4393079825,
+      "equity": 102465.2993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.8193,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2470.5459649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.3753,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-29",
+      "cash": 89501.4393079825,
+      "equity": 102569.69930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.3413,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2574.945965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.7801,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-05-30",
+      "cash": 89501.4393079825,
+      "equity": 102521.8593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.1021,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2527.1059649999984,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.9851,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-02",
+      "cash": 89501.4393079825,
+      "equity": 102501.6793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.0012,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2506.9259649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 71.1139,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-03",
+      "cash": 89501.4393079825,
+      "equity": 102478.1793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.8837,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2483.425965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.2366,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-04",
+      "cash": 89501.4393079825,
+      "equity": 102407.8193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.5319,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2413.0659649999984,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.5951,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-05",
+      "cash": 89501.4393079825,
+      "equity": 102373.1193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.3584,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2378.3659650000004,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.8998,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-06",
+      "cash": 89501.4393079825,
+      "equity": 102394.7393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 64.4665,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2399.985964999999,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.5161,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-09",
+      "cash": 89501.4393079825,
+      "equity": 102559.61930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.2909,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2564.8659649999986,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.0553,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-10",
+      "cash": 89501.4393079825,
+      "equity": 102653.0793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.7582,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2658.325965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.9646,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-11",
+      "cash": 89501.4393079825,
+      "equity": 102638.55930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.6856,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2643.8059649999987,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.7126,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-12",
+      "cash": 89501.4393079825,
+      "equity": 102685.3793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.9197,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2690.625965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.1337,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-13",
+      "cash": 89501.4393079825,
+      "equity": 102584.5193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.4154,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2589.765965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.9302,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-16",
+      "cash": 89501.4393079825,
+      "equity": 102575.3593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.3696,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2580.6059650000007,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.9892,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-17",
+      "cash": 89501.4393079825,
+      "equity": 102591.33930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.4495,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2596.5859649999998,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 70.5387,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-18",
+      "cash": 89501.4393079825,
+      "equity": 102592.6593079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.4561,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2597.905965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.4814,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-19",
+      "cash": 89501.4393079825,
+      "equity": 102647.5793079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.7307,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2652.8259649999995,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.1162,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-20",
+      "cash": 89501.4393079825,
+      "equity": 102570.6193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.3459,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2575.865965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.3414,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-23",
+      "cash": 89501.4393079825,
+      "equity": 102707.2993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 66.0293,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2712.545965000001,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 68.5651,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-24",
+      "cash": 89501.4393079825,
+      "equity": 102604.41930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.5149,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2609.6659649999992,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 68.9224,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-25",
+      "cash": 89501.4393079825,
+      "equity": 102692.1193079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.9534,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2697.365965,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 68.9105,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-26",
+      "cash": 89501.4393079825,
+      "equity": 102773.4393079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 66.36,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2778.6859649999997,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 69.3772,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-27",
+      "cash": 89501.4393079825,
+      "equity": 102730.7993079825,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 66.1468,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2736.0459649999993,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 68.4248,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    },
+    {
+      "sessionId": "synx-2025-06-30",
+      "cash": 89501.4393079825,
+      "equity": 102684.69930798249,
+      "positions": [
+        {
+          "asset": "SYN-A",
+          "quantity": 200,
+          "costBasis": 52.466570175,
+          "mark": 65.9163,
+          "realizedPnl": 0,
+          "unrealizedPnl": 2689.9459650000013,
+          "cashFlow": -10498.5606920175
+        },
+        {
+          "asset": "SYN-B",
+          "quantity": 0,
+          "costBasis": 0,
+          "mark": 68.7715,
+          "realizedPnl": 0,
+          "unrealizedPnl": 0,
+          "cashFlow": 0
+        }
+      ]
+    }
+  ],
+  "fills": [
+    {
+      "id": "leaky:synx-2025-01-17:SYN-A",
+      "asset": "SYN-A",
+      "decisionSessionId": "synx-2025-01-16",
+      "sessionId": "synx-2025-01-17",
+      "side": "buy",
+      "quantity": 100,
+      "price": 104.93314035,
+      "commission": 5.2466570175000005,
+      "slippage": 5.244034999999769,
+      "notional": 10493.314035
+    }
+  ],
+  "ledger": [
+    {
+      "id": "leaky:synx-2025-01-17:SYN-A:principal",
+      "fillId": "leaky:synx-2025-01-17:SYN-A",
+      "sessionId": "synx-2025-01-17",
+      "asset": "SYN-A",
+      "debit": "position:SYN-A",
+      "credit": "cash",
+      "amount": 10493.314035
+    },
+    {
+      "id": "leaky:synx-2025-01-17:SYN-A:fee",
+      "fillId": "leaky:synx-2025-01-17:SYN-A",
+      "sessionId": "synx-2025-01-17",
+      "asset": "SYN-A",
+      "debit": "fees",
+      "credit": "cash",
+      "amount": 5.2466570175000005
+    }
+  ],
+  "metrics": {
+    "cr": 0.026846993079824896,
+    "ar": 0.055316246612375775,
+    "sharpe": 4.362407528264128,
+    "mdd": 0.003654856066426522,
+    "sessions": 124,
+    "returns": 124
+  },
+  "undefined": [],
+  "costs": {
+    "commission": 5.2466570175000005,
+    "slippage": 5.244034999999769,
+    "total": 10.49069201749977
+  },
+  "perAsset": [
+    {
+      "asset": "SYN-A",
+      "equity": [
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50101.3893079825,
+        50072.6893079825,
+        50216.279307982506,
+        50190.7293079825,
+        50324.1593079825,
+        50415.0093079825,
+        50342.559307982505,
+        50312.519307982504,
+        50295.879307982505,
+        50295.6593079825,
+        50287.7993079825,
+        50431.1893079825,
+        50550.2193079825,
+        50518.779307982506,
+        50616.9593079825,
+        50584.809307982505,
+        50596.4593079825,
+        50694.779307982506,
+        50763.419307982505,
+        50867.63930798251,
+        50941.2093079825,
+        51089.5393079825,
+        51192.4893079825,
+        51181.1293079825,
+        51305.0393079825,
+        51443.1193079825,
+        51396.269307982504,
+        51426.2093079825,
+        51346.7093079825,
+        51331.3593079825,
+        51433.589307982504,
+        51373.559307982505,
+        51346.1893079825,
+        51299.379307982505,
+        51212.0693079825,
+        51197.129307982505,
+        51152.919307982505,
+        51072.3593079825,
+        51097.4393079825,
+        51210.5793079825,
+        51261.4393079825,
+        51338.7593079825,
+        51432.4993079825,
+        51366.449307982504,
+        51257.699307982504,
+        51386.63930798251,
+        51324.0493079825,
+        51379.5493079825,
+        51283.6193079825,
+        51289.8493079825,
+        51339.3593079825,
+        51216.989307982505,
+        51230.9993079825,
+        51131.0493079825,
+        51237.6393079825,
+        51335.199307982504,
+        51415.1593079825,
+        51470.2593079825,
+        51571.879307982505,
+        51479.9393079825,
+        51364.3593079825,
+        51498.779307982506,
+        51520.0993079825,
+        51600.3593079825,
+        51728.4393079825,
+        51873.7593079825,
+        51799.3593079825,
+        51791.5993079825,
+        51915.6793079825,
+        51883.3993079825,
+        51922.379307982505,
+        51816.0993079825,
+        51963.13930798251,
+        52089.5993079825,
+        51996.919307982505,
+        52104.3793079825,
+        52135.0993079825,
+        52271.1193079825,
+        52180.699307982504,
+        52304.63930798251,
+        52200.1793079825,
+        52286.1193079825,
+        52238.4593079825,
+        52387.3593079825,
+        52377.8793079825,
+        52360.339307982504,
+        52340.339307982504,
+        52241.63930798251,
+        52391.779307982506,
+        52465.2993079825,
+        52569.699307982504,
+        52521.8593079825,
+        52501.6793079825,
+        52478.1793079825,
+        52407.8193079825,
+        52373.1193079825,
+        52394.7393079825,
+        52559.6193079825,
+        52653.0793079825,
+        52638.559307982505,
+        52685.379307982505,
+        52584.519307982504,
+        52575.35930798251,
+        52591.339307982504,
+        52592.6593079825,
+        52647.5793079825,
+        52570.6193079825,
+        52707.2993079825,
+        52604.419307982505,
+        52692.1193079825,
+        52773.4393079825,
+        52730.7993079825,
+        52684.699307982504
+      ],
+      "metrics": {
+        "cr": 0.053693986159650084,
+        "ar": 0.11214580643146665,
+        "sharpe": 4.378313683823746,
+        "mdd": 0.007207183487072695,
+        "sessions": 124,
+        "returns": 124
+      },
+      "undefined": [],
+      "fills": 1
+    },
+    {
+      "asset": "SYN-B",
+      "equity": [
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000,
+        50000
+      ],
+      "metrics": {
+        "cr": 0,
+        "ar": 0,
+        "sharpe": null,
+        "mdd": 0,
+        "sessions": 124,
+        "returns": 124
+      },
+      "undefined": [
+        {
+          "metric": "sharpe",
+          "reason": "zero volatility"
+        }
+      ],
+      "fills": 0
+    }
+  ]
+}

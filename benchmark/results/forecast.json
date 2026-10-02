@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "8df35fd9aad36b7978dda4fd286dd4ae33158617",
+    "head": "a0e386b62623840ce9e7f82b50b8bff848e6afe1",
     "clean": false,
     "files": [
       {
@@ -734,6 +734,22 @@
         "sha256": "9ab99e3be2bdcae1ba54d3259e642a8f9cb2a7f2189577f26134e62110c60ae4"
       },
       {
+        "path": "benchmark/lib/trading-metrics.ts",
+        "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
+      },
+      {
+        "path": "benchmark/lib/trading-report.ts",
+        "sha256": "2d69df9c082d620cd5f37061941ac4364aa1650794e66b702f0d4a92ef5a5913"
+      },
+      {
+        "path": "benchmark/lib/trading.ts",
+        "sha256": "6ab1ec25d2b812e2b4b9e0b7c50309034ea8e33a11b6067cb17deff983b517f7"
+      },
+      {
+        "path": "benchmark/lib/trading.types.ts",
+        "sha256": "6901e6f89e65abadd7e26f3bbb3fe90d216c8b7f6cecb232bcb9f3b09a932604"
+      },
+      {
         "path": "benchmark/lib/validate.ts",
         "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
       },
@@ -759,7 +775,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "46db30fc546a8fd25f420f36c1fa0d5ecba8b701cfa2ac9e379aad932c980faf"
+        "sha256": "083a0908566f413fdfab24211b6d30892a830a4663eb5f448b62e5bf313e0adc"
       },
       {
         "path": "packages/agents/package.json",
@@ -1434,7 +1450,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "11288746e5e216d7c904fc82b67b3fbdaea9052cc2b9e892304a662946541d6b"
+    "sha256": "e16bb6d073bf1f1075f60f3e40b06a3f014ced1b1b99a1d741487f72859a25f7"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -44899,5 +44915,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "667384c875f0ff03306b9ca59fd6ccf43da7b235a3d1832198473886ea2e0245"
+  "reportId": "377580c7e6137c14dba2504827b5c078601e828284bcb31e9a2bd94138daa923"
 }

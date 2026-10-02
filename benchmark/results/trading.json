@@ -1,0 +1,1971 @@
+{
+  "instrument": "trading",
+  "version": 1,
+  "source": {
+    "head": "a0e386b62623840ce9e7f82b50b8bff848e6afe1",
+    "clean": false,
+    "files": [
+      {
+        "path": "benchmark/fixtures/trading/bars.json",
+        "sha256": "54f519eda1280984d10da797025241954e1edb1faf3a6c10b0493f353ea9ed6a"
+      },
+      {
+        "path": "benchmark/fixtures/trading/corporate-actions.json",
+        "sha256": "43647896ab0985b1f74d80e41a05e632d6af535db1861bde22eccda6b37519bc"
+      },
+      {
+        "path": "benchmark/fixtures/trading/fundamentals.json",
+        "sha256": "98467149b3ae3b644b8ab9e87ceb752a9aac4410ab4714d8710847706fb43e41"
+      },
+      {
+        "path": "benchmark/fixtures/trading/golden/do-nothing.json",
+        "sha256": "2b4b7813d717e330cef81a2d69be8c2b8282b10e689e0a85245aadf59838fd4e"
+      },
+      {
+        "path": "benchmark/fixtures/trading/golden/leaky.json",
+        "sha256": "25f448732f1fdbce4fe7eac48afaad273c952c78a237f31a7de730d62918389d"
+      },
+      {
+        "path": "benchmark/fixtures/trading/golden/oracle.json",
+        "sha256": "876b036d2b238e74edfc97f13fe951461154eb6b28aa317b88f16b0b67a9a119"
+      },
+      {
+        "path": "benchmark/fixtures/trading/insiders.json",
+        "sha256": "0923d2ac27bf21f1979c69b91103b0d7e07fd840967580272ea9109827c217f6"
+      },
+      {
+        "path": "benchmark/fixtures/trading/manifest.json",
+        "sha256": "0134df05e6a28b72b0df3a855700984b0841f8747abec8ad250886c71bc80e58"
+      },
+      {
+        "path": "benchmark/fixtures/trading/news.json",
+        "sha256": "6bf93b1c0af966c387ae544c9eebb42e1bf5555e0d104ef1fd54d082fb5a18e5"
+      },
+      {
+        "path": "benchmark/fixtures/trading/poison.json",
+        "sha256": "f1bf07de057b73dd54513752ad3c745f9ad11fb6da398bf6d9bf1b7043b81de2"
+      },
+      {
+        "path": "benchmark/fixtures/trading/profiles.json",
+        "sha256": "d632b3e1e48954ee3657a9a4507a3c41e249d423a2be8e6ce8c1abbba02bec67"
+      },
+      {
+        "path": "benchmark/fixtures/trading/sessions.json",
+        "sha256": "0f3c9945dfa16627bcd80ea5472f97d4a3d750405998ff8d4c4dff2c43d403e9"
+      },
+      {
+        "path": "benchmark/fixtures/trading/social.json",
+        "sha256": "e7ad306d424a127fa63f3ef6339f0e6e1047dd2fe03f70ecdbf519fb496f9e76"
+      },
+      {
+        "path": "benchmark/fixtures/trading/strategies.json",
+        "sha256": "c5567e5edf9bdd0ec4983c69b1f422886a9c573204299ee01e19ca2f08ca65e0"
+      },
+      {
+        "path": "benchmark/lib/args.ts",
+        "sha256": "d243ac26d4beb119ec3254786a79140cf34d30373c3655714c08b96159707ab0"
+      },
+      {
+        "path": "benchmark/lib/report-envelope.ts",
+        "sha256": "04f388fd1129775bff497163047e5dfd0743103f2086760a268006f73abec8c4"
+      },
+      {
+        "path": "benchmark/lib/source-manifest.ts",
+        "sha256": "1ef15c822791160d23f1b97e80f4dc7d91558b65575aedd8c96e45aaac118367"
+      },
+      {
+        "path": "benchmark/lib/table.ts",
+        "sha256": "ed21be6085f16679000857453d96278bc3c0996f7c6a8e5a735ac247932c8992"
+      },
+      {
+        "path": "benchmark/lib/trading-metrics.ts",
+        "sha256": "7057309242afff928dc4eaa846def250f6cede8d346a0df27421792fdad038cb"
+      },
+      {
+        "path": "benchmark/lib/trading-report.ts",
+        "sha256": "2d69df9c082d620cd5f37061941ac4364aa1650794e66b702f0d4a92ef5a5913"
+      },
+      {
+        "path": "benchmark/lib/trading.ts",
+        "sha256": "6ab1ec25d2b812e2b4b9e0b7c50309034ea8e33a11b6067cb17deff983b517f7"
+      },
+      {
+        "path": "benchmark/lib/trading.types.ts",
+        "sha256": "6901e6f89e65abadd7e26f3bbb3fe90d216c8b7f6cecb232bcb9f3b09a932604"
+      },
+      {
+        "path": "benchmark/lib/validate.ts",
+        "sha256": "723fa886906a741575324552b92f7abd2e65c36c8d7680c64147a38065832999"
+      },
+      {
+        "path": "benchmark/schemas/trading.schema.json",
+        "sha256": "1fbed314b10ceda49e80fde528f03d236e45ec6ac447e77fdf2dc9a48da7761b"
+      },
+      {
+        "path": "benchmark/scripts/trading-fixture.ts",
+        "sha256": "71fcd7043a7a0bbeb9ea035fcc0f292767759a35557cf5517de3d0cc15cd84ad"
+      },
+      {
+        "path": "benchmark/trading.ts",
+        "sha256": "ad9be9c952746ed6e2524dc8721d4c91cc7468cc0d9dcc52aeb0b80d1a6f1943"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "33517cf624e6ba012076dc8a50f18b07770a438a14077d4d88f0a905d57db4ce"
+      },
+      {
+        "path": "package.json",
+        "sha256": "083a0908566f413fdfab24211b6d30892a830a4663eb5f448b62e5bf313e0adc"
+      },
+      {
+        "path": "test/benchmark/trading.test.ts",
+        "sha256": "14536322c1602996c88f8debc212eef07aec6d44d4070cc98b0ee959f0e49361"
+      }
+    ],
+    "sha256": "133b1f2fb7cf21dabc712ecccf3cdeb5576e14fc29076fb3d71f43c64a2f6d89"
+  },
+  "suite": {
+    "tangle": "0.35.0",
+    "jaren": "0.91.4"
+  },
+  "fixture": {
+    "id": "trading-synthetic-v1",
+    "sha256": "76edaa408ad8f4b227d8cfaa8cc29c3a89d1cd7a166a49bc3cee2dd9ec585793",
+    "licence": "MIT"
+  },
+  "registration": [
+    {
+      "id": "oracle",
+      "kind": "control",
+      "parityTier": "control",
+      "description": "Privileged next-session close; fixed 100-share entries and exit on a non-up session."
+    },
+    {
+      "id": "do-nothing",
+      "kind": "control",
+      "parityTier": "control",
+      "description": "Hold all initial cash."
+    },
+    {
+      "id": "leaky",
+      "kind": "control",
+      "parityTier": "control",
+      "description": "Buy SYN-A from a restatement before it was available; excluded from comparisons."
+    },
+    {
+      "id": "buy-and-hold",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "description": "Registered rule-based signal through the shared broker."
+    },
+    {
+      "id": "macd",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "description": "Registered rule-based signal through the shared broker."
+    },
+    {
+      "id": "kdj-rsi",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "description": "Registered rule-based signal through the shared broker."
+    },
+    {
+      "id": "zero-mean-reversion",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "description": "Registered rule-based signal through the shared broker."
+    },
+    {
+      "id": "sma",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "description": "Registered rule-based signal through the shared broker."
+    },
+    {
+      "id": "tradingagents-scripted",
+      "kind": "agent",
+      "parityTier": "mechanism",
+      "description": "Full workflow with injected scripted replies."
+    },
+    {
+      "id": "tradingagents-live",
+      "kind": "agent",
+      "parityTier": "experimental",
+      "description": "Requires a separately authorized live model plan."
+    }
+  ],
+  "conventions": {
+    "periodicity": "session-close-to-close",
+    "sessionsPerYear": 252,
+    "riskFree": {
+      "kind": "zero-series",
+      "perSession": 0
+    },
+    "annualization": 15.874507866387544,
+    "annualizationText": "sqrt(sessionsPerYear)",
+    "formulas": {
+      "cr": "holdingPeriodReturn(begin, end)",
+      "ar": "cagr(begin, end, sessions / sessionsPerYear)",
+      "sharpe": "sharpe(returnsOf(equity), riskFreePerSession) * sqrt(sessionsPerYear); sample standard deviation",
+      "mdd": "maxDrawdown(equity); positive peak-to-trough fraction"
+    }
+  },
+  "rows": [
+    {
+      "id": "oracle",
+      "kind": "control",
+      "parityTier": "control",
+      "status": "measured",
+      "reason": null,
+      "metrics": {
+        "cr": 0.05018650516580092,
+        "ar": 0.10463520615391486,
+        "sharpe": 11.760932824608945,
+        "mdd": 0.0005209476879960148,
+        "sessions": 124,
+        "returns": 124
+      },
+      "undefined": [],
+      "transactions": 133,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 542.4098434200002,
+        "slippage": 542.4096399999404,
+        "total": 1084.8194834199408
+      },
+      "perAsset": [
+        {
+          "asset": "SYN-A",
+          "cr": 0.0736858383649509,
+          "mdd": 0.0013250694276344265,
+          "fills": 66
+        },
+        {
+          "asset": "SYN-B",
+          "cr": 0.026687171966650495,
+          "mdd": 0.0011408925727594162,
+          "fills": 67
+        }
+      ],
+      "eligibility": {
+        "eligible": true,
+        "reasons": []
+      },
+      "controlSha256": "27e0ff28d2170974727a8b00dfab11530997e9cea7167a80281107c72abedd7a"
+    },
+    {
+      "id": "do-nothing",
+      "kind": "control",
+      "parityTier": "control",
+      "status": "measured",
+      "reason": null,
+      "metrics": {
+        "cr": 0,
+        "ar": 0,
+        "sharpe": null,
+        "mdd": 0,
+        "sessions": 124,
+        "returns": 124
+      },
+      "undefined": [
+        {
+          "metric": "sharpe",
+          "reason": "zero volatility"
+        }
+      ],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [
+        {
+          "asset": "SYN-A",
+          "cr": 0,
+          "mdd": 0,
+          "fills": 0
+        },
+        {
+          "asset": "SYN-B",
+          "cr": 0,
+          "mdd": 0,
+          "fills": 0
+        }
+      ],
+      "eligibility": {
+        "eligible": true,
+        "reasons": []
+      },
+      "controlSha256": "b35c85324c6f4a8e63955f13170b2437212dfc6e4c7dd14e9ab94354402822ad"
+    },
+    {
+      "id": "leaky",
+      "kind": "control",
+      "parityTier": "control",
+      "status": "excluded",
+      "reason": "reads observations after cutoff",
+      "metrics": {
+        "cr": 0.026846993079824896,
+        "ar": 0.055316246612375775,
+        "sharpe": 4.362407528264128,
+        "mdd": 0.003654856066426522,
+        "sessions": 124,
+        "returns": 124
+      },
+      "undefined": [],
+      "transactions": 1,
+      "rejectedOrders": 0,
+      "refusedObservations": 3,
+      "costs": {
+        "commission": 5.2466570175000005,
+        "slippage": 5.244034999999769,
+        "total": 10.49069201749977
+      },
+      "perAsset": [
+        {
+          "asset": "SYN-A",
+          "cr": 0.053693986159650084,
+          "mdd": 0.007207183487072695,
+          "fills": 1
+        },
+        {
+          "asset": "SYN-B",
+          "cr": 0,
+          "mdd": 0,
+          "fills": 0
+        }
+      ],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "reads observations after cutoff"
+        ]
+      },
+      "controlSha256": "566f292beaaf09cb4b279028880556957a85ed044d4a6dfbf6bf4c0acb90a6e2"
+    },
+    {
+      "id": "buy-and-hold",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "shared broker and signal policies not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "shared broker and signal policies not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "macd",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "shared broker and signal policies not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "shared broker and signal policies not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "kdj-rsi",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "shared broker and signal policies not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "shared broker and signal policies not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "zero-mean-reversion",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "shared broker and signal policies not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "shared broker and signal policies not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "sma",
+      "kind": "baseline",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "shared broker and signal policies not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "shared broker and signal policies not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "tradingagents-scripted",
+      "kind": "agent",
+      "parityTier": "mechanism",
+      "status": "implementation-missing",
+      "reason": "full decision workflow not implemented",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "full decision workflow not implemented"
+        ]
+      },
+      "controlSha256": null
+    },
+    {
+      "id": "tradingagents-live",
+      "kind": "agent",
+      "parityTier": "experimental",
+      "status": "not-run",
+      "reason": "no authorized live model plan",
+      "metrics": null,
+      "undefined": [],
+      "transactions": 0,
+      "rejectedOrders": 0,
+      "refusedObservations": 0,
+      "costs": {
+        "commission": 0,
+        "slippage": 0,
+        "total": 0
+      },
+      "perAsset": [],
+      "eligibility": {
+        "eligible": false,
+        "reasons": [
+          "no authorized live model plan"
+        ]
+      },
+      "controlSha256": null
+    }
+  ],
+  "poison": {
+    "cutoffs": 124,
+    "refused": 372,
+    "influenced": 0,
+    "cases": [
+      {
+        "cutoffAt": "2025-01-02T21:00:00Z",
+        "withoutSha256": "c3962c00de61a88f93418fcc1b8f0fda6102af31dfddffef29e2248e8b22adb4",
+        "withSha256": "c3962c00de61a88f93418fcc1b8f0fda6102af31dfddffef29e2248e8b22adb4",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-03T21:00:00Z",
+        "withoutSha256": "58eadb9582d067e4254663cae93171b7a65bec750de564db23e25cd2b51d6fcb",
+        "withSha256": "58eadb9582d067e4254663cae93171b7a65bec750de564db23e25cd2b51d6fcb",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-06T21:00:00Z",
+        "withoutSha256": "e480c11ff3092b2fa2eb9b9420c5f9dc915a8f2655d3f356a235cb585685d09b",
+        "withSha256": "e480c11ff3092b2fa2eb9b9420c5f9dc915a8f2655d3f356a235cb585685d09b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-07T21:00:00Z",
+        "withoutSha256": "355ea92102dbb41dfc0577bb4206b11b03cd63b02c19185c58a8bbc0a41d971b",
+        "withSha256": "355ea92102dbb41dfc0577bb4206b11b03cd63b02c19185c58a8bbc0a41d971b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-08T21:00:00Z",
+        "withoutSha256": "f1e2c1439141be2e43e3da1d0be0e3ae592b8a1a44820e8c053819259a1de906",
+        "withSha256": "f1e2c1439141be2e43e3da1d0be0e3ae592b8a1a44820e8c053819259a1de906",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-09T21:00:00Z",
+        "withoutSha256": "8f13c2921df695bcc567fd6289d8ef8e7212253a567250bb8185b0681f8c71af",
+        "withSha256": "8f13c2921df695bcc567fd6289d8ef8e7212253a567250bb8185b0681f8c71af",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-10T21:00:00Z",
+        "withoutSha256": "c1ff1446ef4e19e68697785f8070631304942fa2b67da341a6245182ead1c1e5",
+        "withSha256": "c1ff1446ef4e19e68697785f8070631304942fa2b67da341a6245182ead1c1e5",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-13T21:00:00Z",
+        "withoutSha256": "c838177ea8aa26a452cc69370c0b8b0dacd2f856513753a64044fd85441821da",
+        "withSha256": "c838177ea8aa26a452cc69370c0b8b0dacd2f856513753a64044fd85441821da",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-14T21:00:00Z",
+        "withoutSha256": "d19dbe739ebb1a2870b16b75f52599bb0334e65fc818f2cbdf37db6049f3f515",
+        "withSha256": "d19dbe739ebb1a2870b16b75f52599bb0334e65fc818f2cbdf37db6049f3f515",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-15T21:00:00Z",
+        "withoutSha256": "faa32170d953dd732b39f663c45c96db8b09aa779fd8ba474a4eb9666369ff66",
+        "withSha256": "faa32170d953dd732b39f663c45c96db8b09aa779fd8ba474a4eb9666369ff66",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-16T21:00:00Z",
+        "withoutSha256": "b38732d9707d65f2dee85934fb1aa64a4b05fb5b0423326b8dc06d9c9890ace8",
+        "withSha256": "b38732d9707d65f2dee85934fb1aa64a4b05fb5b0423326b8dc06d9c9890ace8",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-17T21:00:00Z",
+        "withoutSha256": "e4e6fb221920835c017f009085f075fd31f8d4686d3e8c283d1d0a40b55a6244",
+        "withSha256": "e4e6fb221920835c017f009085f075fd31f8d4686d3e8c283d1d0a40b55a6244",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-21T21:00:00Z",
+        "withoutSha256": "12acf825009d41b5e3ba05b0854caa79fc1d2b7e9a3901837d0947145e61c847",
+        "withSha256": "12acf825009d41b5e3ba05b0854caa79fc1d2b7e9a3901837d0947145e61c847",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-22T21:00:00Z",
+        "withoutSha256": "3a53ec1b04220b5285b00ebf3f448e077d3953dd5f7797c09d5905fd9f14e035",
+        "withSha256": "3a53ec1b04220b5285b00ebf3f448e077d3953dd5f7797c09d5905fd9f14e035",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-23T21:00:00Z",
+        "withoutSha256": "ad41adbdb49f9d1f9bebd99305194196cecf20315889839043bbb7cb20ed94b2",
+        "withSha256": "ad41adbdb49f9d1f9bebd99305194196cecf20315889839043bbb7cb20ed94b2",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-24T21:00:00Z",
+        "withoutSha256": "5659c807e0196d0443cd042779884579776cc67185a12e05b6aff1b0ebdf1b0e",
+        "withSha256": "5659c807e0196d0443cd042779884579776cc67185a12e05b6aff1b0ebdf1b0e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-27T21:00:00Z",
+        "withoutSha256": "5a2dfe5b451d0474fba25d3a063645fcb8c6243e4b966a3cd2487e765b36a150",
+        "withSha256": "5a2dfe5b451d0474fba25d3a063645fcb8c6243e4b966a3cd2487e765b36a150",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-28T21:00:00Z",
+        "withoutSha256": "6373d33dbdde64b9b952f4c3772b7d14f3999d1cf8927612b44f7a79e4cf479d",
+        "withSha256": "6373d33dbdde64b9b952f4c3772b7d14f3999d1cf8927612b44f7a79e4cf479d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-29T21:00:00Z",
+        "withoutSha256": "33739bd2ffd3b531309b71fd536c880ce846c331258460d1d054719ffb003cd2",
+        "withSha256": "33739bd2ffd3b531309b71fd536c880ce846c331258460d1d054719ffb003cd2",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-30T21:00:00Z",
+        "withoutSha256": "df011cc9a17c4395b1eb8ec97c4b9b667ad6c00d614e4cd3c99cc9ec68c16cce",
+        "withSha256": "df011cc9a17c4395b1eb8ec97c4b9b667ad6c00d614e4cd3c99cc9ec68c16cce",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-01-31T21:00:00Z",
+        "withoutSha256": "9e854e601e010833301e8fc8fd3c1fe79893f97b7202bbd9c97d55f3eba84f0c",
+        "withSha256": "9e854e601e010833301e8fc8fd3c1fe79893f97b7202bbd9c97d55f3eba84f0c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-03T21:00:00Z",
+        "withoutSha256": "46c997e67ef63f9f04f82ae9e8fa11aff86d0df64a138289ac91c5e86dffa7d3",
+        "withSha256": "46c997e67ef63f9f04f82ae9e8fa11aff86d0df64a138289ac91c5e86dffa7d3",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-04T21:00:00Z",
+        "withoutSha256": "26b5a6bdc3ff594dbdbb4e8bf07cd9148a0e60b4087930bbaac58a76c458f3f1",
+        "withSha256": "26b5a6bdc3ff594dbdbb4e8bf07cd9148a0e60b4087930bbaac58a76c458f3f1",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-05T21:00:00Z",
+        "withoutSha256": "188ac49f56727d2d8cb0f5fca416b043620df16f80b373b62328ce6d3b36c02b",
+        "withSha256": "188ac49f56727d2d8cb0f5fca416b043620df16f80b373b62328ce6d3b36c02b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-06T21:00:00Z",
+        "withoutSha256": "584310e86af472e8e0e516e9719b4ec32cc66ed3ff8a0bb4dfee6bb6c80f11ad",
+        "withSha256": "584310e86af472e8e0e516e9719b4ec32cc66ed3ff8a0bb4dfee6bb6c80f11ad",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-07T21:00:00Z",
+        "withoutSha256": "fbb33195db98064ac45899a4a670d8b60d01dff1e0e38f5a893995699574863d",
+        "withSha256": "fbb33195db98064ac45899a4a670d8b60d01dff1e0e38f5a893995699574863d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-10T21:00:00Z",
+        "withoutSha256": "6bb38764a2ff3ff85c9254131344edc16d0a62332b819611a59a0478f0d313f4",
+        "withSha256": "6bb38764a2ff3ff85c9254131344edc16d0a62332b819611a59a0478f0d313f4",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-11T21:00:00Z",
+        "withoutSha256": "d64bcb17b915ebe3e236e4bb98f461b891a2a0053ede55ad2f408c842357558d",
+        "withSha256": "d64bcb17b915ebe3e236e4bb98f461b891a2a0053ede55ad2f408c842357558d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-12T21:00:00Z",
+        "withoutSha256": "742b767c777ecea955255a1ef3d5e32170e87a3df4486eb47d30f3a701e3825d",
+        "withSha256": "742b767c777ecea955255a1ef3d5e32170e87a3df4486eb47d30f3a701e3825d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-13T21:00:00Z",
+        "withoutSha256": "0f817d3ed217eee136eb2dbb0f2b163c009c5589127ab1c8e3461ffa6cabc535",
+        "withSha256": "0f817d3ed217eee136eb2dbb0f2b163c009c5589127ab1c8e3461ffa6cabc535",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-14T21:00:00Z",
+        "withoutSha256": "bcb8bc320c9e440cdc02f3c3103de3512094a8725664c952c4a008d1c2add31a",
+        "withSha256": "bcb8bc320c9e440cdc02f3c3103de3512094a8725664c952c4a008d1c2add31a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-18T21:00:00Z",
+        "withoutSha256": "128d0f12dd42f6de9a6d49082efabfd5b94f2c5643614213f2305604c65fb9c3",
+        "withSha256": "128d0f12dd42f6de9a6d49082efabfd5b94f2c5643614213f2305604c65fb9c3",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-19T21:00:00Z",
+        "withoutSha256": "d3eef49a6a61a293c02d1aed802b7e32b3e88107af75d6b35e6dbe772929e7bf",
+        "withSha256": "d3eef49a6a61a293c02d1aed802b7e32b3e88107af75d6b35e6dbe772929e7bf",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-20T21:00:00Z",
+        "withoutSha256": "51a2f959c266f2f60d9455df6ec1dbbb83076f3f8ae3d7ed6d9aaf6097df1a3d",
+        "withSha256": "51a2f959c266f2f60d9455df6ec1dbbb83076f3f8ae3d7ed6d9aaf6097df1a3d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-21T21:00:00Z",
+        "withoutSha256": "f7722744a5c4cc45a1e2585d74cf2a530b7ae0710397cf4c2f6e0be9529f0ed9",
+        "withSha256": "f7722744a5c4cc45a1e2585d74cf2a530b7ae0710397cf4c2f6e0be9529f0ed9",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-24T21:00:00Z",
+        "withoutSha256": "5615728a8b4c53b2d7059a56300aa68f0a5b816fe6305001150e63fa4c55cd50",
+        "withSha256": "5615728a8b4c53b2d7059a56300aa68f0a5b816fe6305001150e63fa4c55cd50",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-25T21:00:00Z",
+        "withoutSha256": "4aacfb611dbe7ee51cd735b3f3997645e79257decbbfbff66c524213261a385c",
+        "withSha256": "4aacfb611dbe7ee51cd735b3f3997645e79257decbbfbff66c524213261a385c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-26T21:00:00Z",
+        "withoutSha256": "c977ed07d0cc83b8edb1671af6563da09d84389173edfe89d19bae2a3973377c",
+        "withSha256": "c977ed07d0cc83b8edb1671af6563da09d84389173edfe89d19bae2a3973377c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-27T21:00:00Z",
+        "withoutSha256": "8f2981c44ebbf11d6c6bba85d04a0096fc0078da5868fc4cfafde3eec3cfc82e",
+        "withSha256": "8f2981c44ebbf11d6c6bba85d04a0096fc0078da5868fc4cfafde3eec3cfc82e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-02-28T21:00:00Z",
+        "withoutSha256": "98040735d10f4d9e01f22c9933795721fac17be0e760956e9fa7c181b9eb022d",
+        "withSha256": "98040735d10f4d9e01f22c9933795721fac17be0e760956e9fa7c181b9eb022d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-03T21:00:00Z",
+        "withoutSha256": "c378cf506c4b99b203bf6472f242a117c0a727268c00bc5118535795ffaeb321",
+        "withSha256": "c378cf506c4b99b203bf6472f242a117c0a727268c00bc5118535795ffaeb321",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-04T21:00:00Z",
+        "withoutSha256": "135a1c5b1d624ff9c45f3cedbea4f3d9974fdfe8c79d5eb34bc4829abc91c542",
+        "withSha256": "135a1c5b1d624ff9c45f3cedbea4f3d9974fdfe8c79d5eb34bc4829abc91c542",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-05T21:00:00Z",
+        "withoutSha256": "8f54cf73fedc183f1591f6f2fbdbaf8b955b5d8c2f6751afda2e1f51fefab315",
+        "withSha256": "8f54cf73fedc183f1591f6f2fbdbaf8b955b5d8c2f6751afda2e1f51fefab315",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-06T21:00:00Z",
+        "withoutSha256": "b78ef9a62729110197172750245c6694fc33ca75949dc42cde49be401bc92bc9",
+        "withSha256": "b78ef9a62729110197172750245c6694fc33ca75949dc42cde49be401bc92bc9",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-07T21:00:00Z",
+        "withoutSha256": "f3bff62df06f0893eb7d6116dbd2e2deb54a6aab80bc0649da5ce675e459c6ef",
+        "withSha256": "f3bff62df06f0893eb7d6116dbd2e2deb54a6aab80bc0649da5ce675e459c6ef",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-10T21:00:00Z",
+        "withoutSha256": "4f2948c653312441096c69c5cb0accbfaaf51f86e7e33c25ef29e91dc07e4f33",
+        "withSha256": "4f2948c653312441096c69c5cb0accbfaaf51f86e7e33c25ef29e91dc07e4f33",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-11T21:00:00Z",
+        "withoutSha256": "fcbb13a43c77083be0dbea3d81009a50ec47d05ad60f89d530cc4c3d847f9ec5",
+        "withSha256": "fcbb13a43c77083be0dbea3d81009a50ec47d05ad60f89d530cc4c3d847f9ec5",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-12T21:00:00Z",
+        "withoutSha256": "215c2061ee5b08425e3d6c56d497c7f1fd1581e974b8b91e9d16d12162093e36",
+        "withSha256": "215c2061ee5b08425e3d6c56d497c7f1fd1581e974b8b91e9d16d12162093e36",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-13T21:00:00Z",
+        "withoutSha256": "0730a9dec2dcae2b11ba628fa115d35dec4ab45b052c5bdf5d7f61a29bba495a",
+        "withSha256": "0730a9dec2dcae2b11ba628fa115d35dec4ab45b052c5bdf5d7f61a29bba495a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-14T21:00:00Z",
+        "withoutSha256": "0389c8f193c7b3600b45229be9aecac42849a1585ba64fb7a51b43ca822c3b92",
+        "withSha256": "0389c8f193c7b3600b45229be9aecac42849a1585ba64fb7a51b43ca822c3b92",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-17T21:00:00Z",
+        "withoutSha256": "6fcb2a031b37f8e8d256f47c29e53dadc7df28a4400ad6cd262c05fe0dadbac3",
+        "withSha256": "6fcb2a031b37f8e8d256f47c29e53dadc7df28a4400ad6cd262c05fe0dadbac3",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-18T21:00:00Z",
+        "withoutSha256": "2203fb1217bddeedb90fdf8b698238e82a84f0508d94d0f4e6bfc47809919279",
+        "withSha256": "2203fb1217bddeedb90fdf8b698238e82a84f0508d94d0f4e6bfc47809919279",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-19T21:00:00Z",
+        "withoutSha256": "1723b4083a3105416f02666fe9704262f493a9f95489397a906fd188a55fa158",
+        "withSha256": "1723b4083a3105416f02666fe9704262f493a9f95489397a906fd188a55fa158",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-20T21:00:00Z",
+        "withoutSha256": "3ed2396411b3a44c0aaf5060cdeaa496cd539b6b6a92669494f8fdec96a42fbc",
+        "withSha256": "3ed2396411b3a44c0aaf5060cdeaa496cd539b6b6a92669494f8fdec96a42fbc",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-21T21:00:00Z",
+        "withoutSha256": "6836e32813b4293c603c7fa690d7ff1a7a65b5ac903f170b82eddaf9aacc1f40",
+        "withSha256": "6836e32813b4293c603c7fa690d7ff1a7a65b5ac903f170b82eddaf9aacc1f40",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-24T21:00:00Z",
+        "withoutSha256": "777fdb366604fb10a389eba0c13593ec8276f5247aa32bac1ded11ceaae72ec1",
+        "withSha256": "777fdb366604fb10a389eba0c13593ec8276f5247aa32bac1ded11ceaae72ec1",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-25T21:00:00Z",
+        "withoutSha256": "87797e027db505e2c32d029ec9c339e6874406d358f9d3496d24a39828b4dc1a",
+        "withSha256": "87797e027db505e2c32d029ec9c339e6874406d358f9d3496d24a39828b4dc1a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-26T21:00:00Z",
+        "withoutSha256": "3f61dca2bd49d545a5a7314c8c0827f74238dad101e173ac82f5e102a696b00e",
+        "withSha256": "3f61dca2bd49d545a5a7314c8c0827f74238dad101e173ac82f5e102a696b00e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-27T21:00:00Z",
+        "withoutSha256": "8d6b26ac4a5ac8d43027aa67eac93f60583376c4132bc4a4986c90b2fdcfe1d1",
+        "withSha256": "8d6b26ac4a5ac8d43027aa67eac93f60583376c4132bc4a4986c90b2fdcfe1d1",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-28T21:00:00Z",
+        "withoutSha256": "e2116ccca4fcc11ffcb057f8a8ac30a1a4191ae393fd9c4bc42c768db12e2feb",
+        "withSha256": "e2116ccca4fcc11ffcb057f8a8ac30a1a4191ae393fd9c4bc42c768db12e2feb",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-03-31T21:00:00Z",
+        "withoutSha256": "d2de66c6346316c23f7de9c678252d488c4d0b6c4d4c9b1ee1a4769a3bbfe923",
+        "withSha256": "d2de66c6346316c23f7de9c678252d488c4d0b6c4d4c9b1ee1a4769a3bbfe923",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-01T21:00:00Z",
+        "withoutSha256": "274e4423c8ac70b8a1c975b1c0fbed04f01cce423cca036f4d8022b2a7bb99b4",
+        "withSha256": "274e4423c8ac70b8a1c975b1c0fbed04f01cce423cca036f4d8022b2a7bb99b4",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-02T21:00:00Z",
+        "withoutSha256": "9867950e20443d5bc1d1269d3cabcf10be19f4adb5f8706d167b82e5d3a53a2c",
+        "withSha256": "9867950e20443d5bc1d1269d3cabcf10be19f4adb5f8706d167b82e5d3a53a2c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-03T21:00:00Z",
+        "withoutSha256": "bdcd83f4e040b4cbe0b281dc0d4ac266ed618e9156ca1d8474f3a23487b5f94b",
+        "withSha256": "bdcd83f4e040b4cbe0b281dc0d4ac266ed618e9156ca1d8474f3a23487b5f94b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-04T21:00:00Z",
+        "withoutSha256": "37a9cac2657c016a12341e27038fbd8c3837b185b1d2197b4ccf9bf2fdae0f26",
+        "withSha256": "37a9cac2657c016a12341e27038fbd8c3837b185b1d2197b4ccf9bf2fdae0f26",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-07T21:00:00Z",
+        "withoutSha256": "f3ffec89e14de85bb8c0b3e9d1350a1db592fc57374bcea86d1ebcbeb9e35b06",
+        "withSha256": "f3ffec89e14de85bb8c0b3e9d1350a1db592fc57374bcea86d1ebcbeb9e35b06",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-08T21:00:00Z",
+        "withoutSha256": "c753b9e062725a9825d160859ed6e145f62f3b16b4ba21f555133429d39db89a",
+        "withSha256": "c753b9e062725a9825d160859ed6e145f62f3b16b4ba21f555133429d39db89a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-09T21:00:00Z",
+        "withoutSha256": "b47d9be5e6aa781617f26c8aefa98b90d039e36830ca7ade1620209f4a354bd9",
+        "withSha256": "b47d9be5e6aa781617f26c8aefa98b90d039e36830ca7ade1620209f4a354bd9",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-10T21:00:00Z",
+        "withoutSha256": "fd922ca3dfc64bb4c712684bd99bfbebaefdbf2fc685d1bd8c5754a9afaee34d",
+        "withSha256": "fd922ca3dfc64bb4c712684bd99bfbebaefdbf2fc685d1bd8c5754a9afaee34d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-11T21:00:00Z",
+        "withoutSha256": "95d4197d2e73a3a6060fecb8beaf056fd967291c770915b194c7d4e3cb1e74a1",
+        "withSha256": "95d4197d2e73a3a6060fecb8beaf056fd967291c770915b194c7d4e3cb1e74a1",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-14T21:00:00Z",
+        "withoutSha256": "0df81ddf38c05751da6b2bbb991c5c6da6c5df0a7c85e9da8aebb5613e23c934",
+        "withSha256": "0df81ddf38c05751da6b2bbb991c5c6da6c5df0a7c85e9da8aebb5613e23c934",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-15T21:00:00Z",
+        "withoutSha256": "d53aa5d0e2b85b636a4f577e3d3e0cd3ba789c7e9dd35530cc92243b3c7ff536",
+        "withSha256": "d53aa5d0e2b85b636a4f577e3d3e0cd3ba789c7e9dd35530cc92243b3c7ff536",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-16T21:00:00Z",
+        "withoutSha256": "c5333071e6845d232990d9583702070669b608c059764009a5a422066489f19d",
+        "withSha256": "c5333071e6845d232990d9583702070669b608c059764009a5a422066489f19d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-17T21:00:00Z",
+        "withoutSha256": "280c626fe4245b751fc500cd0210b443843cf9df5b82dd9cd96dc182dfc97941",
+        "withSha256": "280c626fe4245b751fc500cd0210b443843cf9df5b82dd9cd96dc182dfc97941",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-21T21:00:00Z",
+        "withoutSha256": "bf0799b5a9ecae73f3b86ad272f112fbd181922e6c22ceccf61799605cc11cae",
+        "withSha256": "bf0799b5a9ecae73f3b86ad272f112fbd181922e6c22ceccf61799605cc11cae",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-22T21:00:00Z",
+        "withoutSha256": "870eb9a3d03e6bb117c3a27255b7a4002d1c4f0ba527c430cd41a56493a05eb5",
+        "withSha256": "870eb9a3d03e6bb117c3a27255b7a4002d1c4f0ba527c430cd41a56493a05eb5",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-23T21:00:00Z",
+        "withoutSha256": "feedad8252dbcbe92ede38e08368790f41883a6e2b89f8dd0972984aceaa1ca1",
+        "withSha256": "feedad8252dbcbe92ede38e08368790f41883a6e2b89f8dd0972984aceaa1ca1",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-24T21:00:00Z",
+        "withoutSha256": "1f1646a3e8ab3979df9225e5aea1ca38b1dbde79ee610f89a2517b4a15e140be",
+        "withSha256": "1f1646a3e8ab3979df9225e5aea1ca38b1dbde79ee610f89a2517b4a15e140be",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-25T21:00:00Z",
+        "withoutSha256": "6dae98493f51df0c7c2142ca46020e806a6bf82e273693cadbb1e2a489b9a28c",
+        "withSha256": "6dae98493f51df0c7c2142ca46020e806a6bf82e273693cadbb1e2a489b9a28c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-28T21:00:00Z",
+        "withoutSha256": "1ffb021b6a9a37f604e936ff1c05b464bdc2eb1168f608ea480eb4bd9fe6d349",
+        "withSha256": "1ffb021b6a9a37f604e936ff1c05b464bdc2eb1168f608ea480eb4bd9fe6d349",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-29T21:00:00Z",
+        "withoutSha256": "6e6f6e4d753210752a51e58caaa4a11e14074c0aa6940a028399749cb1f73d0a",
+        "withSha256": "6e6f6e4d753210752a51e58caaa4a11e14074c0aa6940a028399749cb1f73d0a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-04-30T21:00:00Z",
+        "withoutSha256": "445214d19b2f65608e4e4d74a6b4cb61dda24f90cf261204dcc5f9e4930a0252",
+        "withSha256": "445214d19b2f65608e4e4d74a6b4cb61dda24f90cf261204dcc5f9e4930a0252",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-01T21:00:00Z",
+        "withoutSha256": "255b236b0841ea51b691c910ea9355b10bc4c98adaef9377d785c1c8667af063",
+        "withSha256": "255b236b0841ea51b691c910ea9355b10bc4c98adaef9377d785c1c8667af063",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-02T21:00:00Z",
+        "withoutSha256": "3ffa3e0c0f809ab1226854e73a0c4c7a656b5bafb8d5179e96e9c201cabad78d",
+        "withSha256": "3ffa3e0c0f809ab1226854e73a0c4c7a656b5bafb8d5179e96e9c201cabad78d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-05T21:00:00Z",
+        "withoutSha256": "cdb92bf3452e6c932c6622a1dce8db62d3b58a7e3e7214efd9a069a60925e01d",
+        "withSha256": "cdb92bf3452e6c932c6622a1dce8db62d3b58a7e3e7214efd9a069a60925e01d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-06T21:00:00Z",
+        "withoutSha256": "eb92f626485657eea24d6c8beb3f4ef5d100d1209ab6edfb8eb0a01100796a1e",
+        "withSha256": "eb92f626485657eea24d6c8beb3f4ef5d100d1209ab6edfb8eb0a01100796a1e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-07T21:00:00Z",
+        "withoutSha256": "880990553fa22b315e6a2c57c0ee81d5ec1e1d2be6f5b88c336744c42ea4f26b",
+        "withSha256": "880990553fa22b315e6a2c57c0ee81d5ec1e1d2be6f5b88c336744c42ea4f26b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-08T21:00:00Z",
+        "withoutSha256": "d220f58cf8f46385fadee231e7139b027b50e16973146ffa7c829c3ec3b0d17b",
+        "withSha256": "d220f58cf8f46385fadee231e7139b027b50e16973146ffa7c829c3ec3b0d17b",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-09T21:00:00Z",
+        "withoutSha256": "d4cc3ffb346ffdf8d3739486315b4c2565155a75815d091e0a5e8677bfd8da97",
+        "withSha256": "d4cc3ffb346ffdf8d3739486315b4c2565155a75815d091e0a5e8677bfd8da97",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-12T21:00:00Z",
+        "withoutSha256": "5e5dedd0b621764489e92c2921f754ac35090779b3e6c856f6bce1830432f881",
+        "withSha256": "5e5dedd0b621764489e92c2921f754ac35090779b3e6c856f6bce1830432f881",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-13T21:00:00Z",
+        "withoutSha256": "a9f554fac22ad01ffadcf78a2f1223c2e6156f7e0082e7cdad53721d455179ed",
+        "withSha256": "a9f554fac22ad01ffadcf78a2f1223c2e6156f7e0082e7cdad53721d455179ed",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-14T21:00:00Z",
+        "withoutSha256": "6fbbc84abf1d678939ac816c157bbf126256edc4fa16561b78a572ecbb52e69a",
+        "withSha256": "6fbbc84abf1d678939ac816c157bbf126256edc4fa16561b78a572ecbb52e69a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-15T21:00:00Z",
+        "withoutSha256": "f6518fd075878144a64bb749e802140f5f2bb0b1fa9367d2963c4f822d66c37a",
+        "withSha256": "f6518fd075878144a64bb749e802140f5f2bb0b1fa9367d2963c4f822d66c37a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-16T21:00:00Z",
+        "withoutSha256": "3da5b032dcce815bb39282577bb3aa4b5517586e694be4255eae926cef2f68b0",
+        "withSha256": "3da5b032dcce815bb39282577bb3aa4b5517586e694be4255eae926cef2f68b0",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-19T21:00:00Z",
+        "withoutSha256": "ff7ffe052787d3c4e42838aa04f3903268af9e359b658db20c58bfa1467cfefc",
+        "withSha256": "ff7ffe052787d3c4e42838aa04f3903268af9e359b658db20c58bfa1467cfefc",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-20T21:00:00Z",
+        "withoutSha256": "ca2b86b75577d815eb3d212675ee9bbc0b688bcd39191528591ff4b6da4b294c",
+        "withSha256": "ca2b86b75577d815eb3d212675ee9bbc0b688bcd39191528591ff4b6da4b294c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-21T21:00:00Z",
+        "withoutSha256": "5e632033cfa5da6c6c98e830861c32751ab771b28be66bef7b73b7c1c8672fcb",
+        "withSha256": "5e632033cfa5da6c6c98e830861c32751ab771b28be66bef7b73b7c1c8672fcb",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-22T21:00:00Z",
+        "withoutSha256": "1b6f9736fb5787c9b7762bc2407d0bf9a446e78dd12031cbbd8821cc5366783e",
+        "withSha256": "1b6f9736fb5787c9b7762bc2407d0bf9a446e78dd12031cbbd8821cc5366783e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-23T21:00:00Z",
+        "withoutSha256": "8e022fbae7a6b648a4f90f5277516496180cf641194ed3900421012eefddeaf2",
+        "withSha256": "8e022fbae7a6b648a4f90f5277516496180cf641194ed3900421012eefddeaf2",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-27T21:00:00Z",
+        "withoutSha256": "ecbfc1499828971990ccdf00c9dd9b7972954ccd1f7e48f846c26719a3a4992e",
+        "withSha256": "ecbfc1499828971990ccdf00c9dd9b7972954ccd1f7e48f846c26719a3a4992e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-28T21:00:00Z",
+        "withoutSha256": "c756eed68a3a89dde60b8e4272072e77dd93dea69d23aab373854f606864fca7",
+        "withSha256": "c756eed68a3a89dde60b8e4272072e77dd93dea69d23aab373854f606864fca7",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-29T21:00:00Z",
+        "withoutSha256": "55b258e61b3c8bb3be43d9a156c382d45a49059b1e9421a6c2a928744692b172",
+        "withSha256": "55b258e61b3c8bb3be43d9a156c382d45a49059b1e9421a6c2a928744692b172",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-05-30T21:00:00Z",
+        "withoutSha256": "98cfead27f08406ea1f8a097f3b636e4d160a39bec733a4ff994ca4e38cfcbb9",
+        "withSha256": "98cfead27f08406ea1f8a097f3b636e4d160a39bec733a4ff994ca4e38cfcbb9",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-02T21:00:00Z",
+        "withoutSha256": "1f31c3329ad732d16e2850de5b51f98ebe26f6dc927237ed9ae755eaf2b45922",
+        "withSha256": "1f31c3329ad732d16e2850de5b51f98ebe26f6dc927237ed9ae755eaf2b45922",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-03T21:00:00Z",
+        "withoutSha256": "3fa718a896960d67d2bbc890ba7c21d734d2e87b26f3fae01ffc034a2b4ad7f2",
+        "withSha256": "3fa718a896960d67d2bbc890ba7c21d734d2e87b26f3fae01ffc034a2b4ad7f2",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-04T21:00:00Z",
+        "withoutSha256": "7f4cb2b7b15dce145214835999597b103241354722998e88ddc3770e03694ec4",
+        "withSha256": "7f4cb2b7b15dce145214835999597b103241354722998e88ddc3770e03694ec4",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-05T21:00:00Z",
+        "withoutSha256": "bccccd68be0ba5fd0d01130cc7f776ea0d578a68ef47e6559fb76ef680be55b8",
+        "withSha256": "bccccd68be0ba5fd0d01130cc7f776ea0d578a68ef47e6559fb76ef680be55b8",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-06T21:00:00Z",
+        "withoutSha256": "5a3da4e6b92064e39dc10336040cb1856a75ca8bf3acec64a795ba4bfe635abb",
+        "withSha256": "5a3da4e6b92064e39dc10336040cb1856a75ca8bf3acec64a795ba4bfe635abb",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-09T21:00:00Z",
+        "withoutSha256": "878da77b753be4c12ba261e451a809fd14c17afca01e2401be814bfd84b393b9",
+        "withSha256": "878da77b753be4c12ba261e451a809fd14c17afca01e2401be814bfd84b393b9",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-10T21:00:00Z",
+        "withoutSha256": "75d54d21c124e5aacec52ecee7cb4fc3138bd91859905e3baab92a145711e2bc",
+        "withSha256": "75d54d21c124e5aacec52ecee7cb4fc3138bd91859905e3baab92a145711e2bc",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-11T21:00:00Z",
+        "withoutSha256": "6a2e9cedcf5e3670c874121dc1fd4728c1ab3de691854b10d224116f644f29fb",
+        "withSha256": "6a2e9cedcf5e3670c874121dc1fd4728c1ab3de691854b10d224116f644f29fb",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-12T21:00:00Z",
+        "withoutSha256": "de6338ffc4b7f45d13821f601e63fb92108046f6a865ca13d0c72440a62f1a47",
+        "withSha256": "de6338ffc4b7f45d13821f601e63fb92108046f6a865ca13d0c72440a62f1a47",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-13T21:00:00Z",
+        "withoutSha256": "775d6e3ebfb20fe94408b7990ee06625d5678775e61e12253755b9b7cb588acc",
+        "withSha256": "775d6e3ebfb20fe94408b7990ee06625d5678775e61e12253755b9b7cb588acc",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-16T21:00:00Z",
+        "withoutSha256": "8dc752dd2577cc364e76cee883fdf62dd10be41694add5e91105de79184dc349",
+        "withSha256": "8dc752dd2577cc364e76cee883fdf62dd10be41694add5e91105de79184dc349",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-17T21:00:00Z",
+        "withoutSha256": "ecb551e329d3185bd8c5a8abd8099e08f9fa846c2b932e43fe69d63695ead38d",
+        "withSha256": "ecb551e329d3185bd8c5a8abd8099e08f9fa846c2b932e43fe69d63695ead38d",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-18T21:00:00Z",
+        "withoutSha256": "caa6ebe3faf500151be728ee8353c62503c6e944c8dca50ed94615f2a3b12fa0",
+        "withSha256": "caa6ebe3faf500151be728ee8353c62503c6e944c8dca50ed94615f2a3b12fa0",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-19T21:00:00Z",
+        "withoutSha256": "952578bc3ca3e5790087cbb1949ccc1dfe999c463a0572c6a33f468fc7edaf71",
+        "withSha256": "952578bc3ca3e5790087cbb1949ccc1dfe999c463a0572c6a33f468fc7edaf71",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-20T21:00:00Z",
+        "withoutSha256": "fdae0866e54022ef8f9d0f6d9a5ed10846797d9a8d747da3ed7fbbacb78c274c",
+        "withSha256": "fdae0866e54022ef8f9d0f6d9a5ed10846797d9a8d747da3ed7fbbacb78c274c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-23T21:00:00Z",
+        "withoutSha256": "d104a99bc0f4b2148eb45e825801012f31cf6404bae82f20cb17fabea49de910",
+        "withSha256": "d104a99bc0f4b2148eb45e825801012f31cf6404bae82f20cb17fabea49de910",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-24T21:00:00Z",
+        "withoutSha256": "5b3459ec8cf8046b2f9a8288fe8d7d8ab27be8a315bb814a873799619ff577f2",
+        "withSha256": "5b3459ec8cf8046b2f9a8288fe8d7d8ab27be8a315bb814a873799619ff577f2",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-25T21:00:00Z",
+        "withoutSha256": "102c509fecfb57ba4d0c59f9d22a7702f490c00460d733febecee0a7716b2d7a",
+        "withSha256": "102c509fecfb57ba4d0c59f9d22a7702f490c00460d733febecee0a7716b2d7a",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-26T21:00:00Z",
+        "withoutSha256": "d165eed73df1073aee6188634fcea9243b11a4d8188768bf0d7d1998bd0ffe8e",
+        "withSha256": "d165eed73df1073aee6188634fcea9243b11a4d8188768bf0d7d1998bd0ffe8e",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-27T21:00:00Z",
+        "withoutSha256": "da8307565dbadc4b3a5cbb10486fe4cccfbcda9c2ff9d1755aecae526101b7b5",
+        "withSha256": "da8307565dbadc4b3a5cbb10486fe4cccfbcda9c2ff9d1755aecae526101b7b5",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      },
+      {
+        "cutoffAt": "2025-06-30T21:00:00Z",
+        "withoutSha256": "4434d8e7d6eae10d87e2955d45a7a7762bf4dff49d4c6fef4a47774281815e2c",
+        "withSha256": "4434d8e7d6eae10d87e2955d45a7a7762bf4dff49d4c6fef4a47774281815e2c",
+        "refused": [
+          "poison-restated-bar",
+          "poison-fundamental",
+          "poison-news"
+        ],
+        "influenced": 0
+      }
+    ]
+  },
+  "counts": {
+    "registered": 10,
+    "measured": 2,
+    "excluded": 1,
+    "implementationMissing": 6,
+    "notRun": 1,
+    "eligible": 2,
+    "transactions": 134,
+    "rejectedOrders": 0,
+    "refusedObservations": 3
+  },
+  "capabilities": {
+    "instrument": true,
+    "controls": true,
+    "baselines": false,
+    "agent": false,
+    "complete": false
+  },
+  "identity": {
+    "identities": [],
+    "rows": [
+      {
+        "rowId": "oracle",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "do-nothing",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "leaky",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "buy-and-hold",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "macd",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "kdj-rsi",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "zero-mean-reversion",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "sma",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "tradingagents-scripted",
+        "identityStatus": "not-run"
+      },
+      {
+        "rowId": "tradingagents-live",
+        "identityStatus": "not-run"
+      }
+    ]
+  },
+  "limitations": [
+    "Original MIT fictional data qualifies mechanism and accounting only; it measures no real-market or live-model performance.",
+    "Oracle uses privileged future closes and fixed 100-share entries. It is an eligible analytic control, not a feasible strategy or a maximum-return guarantee.",
+    "The leaky control reads observations after cutoff and is excluded from every comparison.",
+    "Golden ledgers are independently generated data; baseline execution waits for the shared broker and signal policies.",
+    "SYN-B is registered as the losing buy-and-hold asset; its execution row remains visible when measured.",
+    "Bars arrive 15 minutes after close. The close-time decision cannot observe that session bar.",
+    "Live model quality, external historical replay and operational parity are not measured. No network request is made."
+  ],
+  "reportId": "3b3ecae54e45519da3a1543afc1830896d54cfcc97073f67d0886b75b1de358f"
+}

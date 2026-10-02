@@ -1,0 +1,30 @@
+[
+  {
+    "id": "syn-a:split",
+    "kind": "corporate-action",
+    "asset": "SYN-A",
+    "sessionId": "synx-2025-04-07",
+    "action": "split",
+    "ratio": 2,
+    "cashPerShare": null,
+    "eventAt": "2025-04-07T14:30:00Z",
+    "availableAt": "2025-04-07T14:30:00Z",
+    "sourceId": "synthetic-actions",
+    "revisionId": "syn-a:split:r1",
+    "contentHash": "d682a471b1eb191c7f8246cc06ab4f516b2cb1eb68bc5588ca71a97bd47c70a3"
+  },
+  {
+    "id": "syn-b:dividend",
+    "kind": "corporate-action",
+    "asset": "SYN-B",
+    "sessionId": "synx-2025-05-15",
+    "action": "dividend",
+    "ratio": null,
+    "cashPerShare": 0.4,
+    "eventAt": "2025-05-15T14:30:00Z",
+    "availableAt": "2025-05-15T14:30:00Z",
+    "sourceId": "synthetic-actions",
+    "revisionId": "syn-b:dividend:r1",
+    "contentHash": "ffea3dab2a0a4fc0366a648f27125b7beb0dc96849f1e879df5eece63a07ffd1"
+  }
+]

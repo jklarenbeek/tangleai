@@ -1,0 +1,45 @@
+[
+  {
+    "id": "poison-restated-bar",
+    "kind": "bar",
+    "asset": "SYN-A",
+    "sessionId": "synx-2025-01-16",
+    "open": 10000,
+    "high": 10001,
+    "low": 9999,
+    "close": 10000,
+    "adjustedClose": 10000,
+    "volume": 112830,
+    "eventAt": "2025-01-16T21:00:00Z",
+    "availableAt": "2025-07-01T12:00:00Z",
+    "sourceId": "synthetic-market",
+    "revisionId": "poison-restated-bar:r2",
+    "contentHash": "a52ec02c3a17933f2125828ba9515407913b5efc90d2d94649307f3fabc04906"
+  },
+  {
+    "id": "poison-fundamental",
+    "kind": "fundamental",
+    "asset": "SYN-B",
+    "eventAt": "2025-02-07T14:30:00Z",
+    "availableAt": "2025-07-01T12:00:00Z",
+    "sourceId": "synthetic-fundamental",
+    "revisionId": "poison-fundamental:r2",
+    "text": "Backdated fictional release: guaranteed impossible future outcome.",
+    "providerSentiment": 1,
+    "modelInterpretation": null,
+    "contentHash": "150af5801d7754a83b5600fb0cb43e9dad38b7d54ed1e27471f3067487bf8c91"
+  },
+  {
+    "id": "poison-news",
+    "kind": "news",
+    "asset": "SYN-B",
+    "eventAt": "2025-03-03T14:30:00Z",
+    "availableAt": "2025-07-01T12:00:00Z",
+    "sourceId": "synthetic-news",
+    "revisionId": "poison-news:r2",
+    "text": "Backdated fictional release: guaranteed impossible future outcome.",
+    "providerSentiment": 1,
+    "modelInterpretation": null,
+    "contentHash": "f059880364ba108c44ff6c3bd59ef28578fb962abd13ba333015faf37827b2c2"
+  }
+]

@@ -1,0 +1,90 @@
+{
+  "id": "trading-synthetic-v1",
+  "licence": "MIT",
+  "provenance": "Original fictional Tangle-authored data; no market data, company facts or paper result values are redistributed.",
+  "seed": 7331,
+  "generatorVersion": 1,
+  "generatorSha256": "71fcd7043a7a0bbeb9ea035fcc0f292767759a35557cf5517de3d0cc15cd84ad",
+  "assets": [
+    "SYN-A",
+    "SYN-B"
+  ],
+  "calendar": "SYNX",
+  "currency": "USD",
+  "initialCapital": 100000,
+  "sessionsPerYear": 252,
+  "riskFree": {
+    "kind": "zero-series"
+  },
+  "decisionCutoff": "session-close",
+  "fill": "next-open",
+  "commissionBps": 5,
+  "slippageBps": 5,
+  "shares": "whole",
+  "shorting": false,
+  "leverage": false,
+  "holidays": [
+    "2025-01-20",
+    "2025-02-17",
+    "2025-04-18",
+    "2025-05-26"
+  ],
+  "adjustmentConvention": "Causal forward split normalization: adjustedClose equals close times the product of splits effective on or before this bar; no historic values are rewritten. Dividends remain cash actions.",
+  "oracleConvention": "No first-session fill. At each preceding close, privileged future open/close selects a 100-share entry when flat, holds an existing long on an up-session, otherwise sells all at the next open. Last holdings remain marked, not liquidated. Leaky control enters SYN-A from the future restatement at session index 11.",
+  "accountingConvention": "Initial equity plus one close mark per session; IEEE-754 arithmetic, no monetary rounding. Split quantity and average cost basis first; opening-holder dividend before fills. Buy price=open*(1+slippageBps/10000), sell=open*(1-slippageBps/10000); commission=quantity*price*commissionBps/10000. Each fill has paired debit/credit principal and fee entries. Per-asset curves allocate half initial cash and attribute that asset cash flows; fees excluded from position cost basis and realizedPnl, included in cash.",
+  "loserAsset": "SYN-B",
+  "sha256": [
+    {
+      "path": "bars.json",
+      "sha256": "54f519eda1280984d10da797025241954e1edb1faf3a6c10b0493f353ea9ed6a"
+    },
+    {
+      "path": "corporate-actions.json",
+      "sha256": "43647896ab0985b1f74d80e41a05e632d6af535db1861bde22eccda6b37519bc"
+    },
+    {
+      "path": "fundamentals.json",
+      "sha256": "98467149b3ae3b644b8ab9e87ceb752a9aac4410ab4714d8710847706fb43e41"
+    },
+    {
+      "path": "golden/do-nothing.json",
+      "sha256": "2b4b7813d717e330cef81a2d69be8c2b8282b10e689e0a85245aadf59838fd4e"
+    },
+    {
+      "path": "golden/leaky.json",
+      "sha256": "25f448732f1fdbce4fe7eac48afaad273c952c78a237f31a7de730d62918389d"
+    },
+    {
+      "path": "golden/oracle.json",
+      "sha256": "876b036d2b238e74edfc97f13fe951461154eb6b28aa317b88f16b0b67a9a119"
+    },
+    {
+      "path": "insiders.json",
+      "sha256": "0923d2ac27bf21f1979c69b91103b0d7e07fd840967580272ea9109827c217f6"
+    },
+    {
+      "path": "news.json",
+      "sha256": "6bf93b1c0af966c387ae544c9eebb42e1bf5555e0d104ef1fd54d082fb5a18e5"
+    },
+    {
+      "path": "poison.json",
+      "sha256": "f1bf07de057b73dd54513752ad3c745f9ad11fb6da398bf6d9bf1b7043b81de2"
+    },
+    {
+      "path": "profiles.json",
+      "sha256": "d632b3e1e48954ee3657a9a4507a3c41e249d423a2be8e6ce8c1abbba02bec67"
+    },
+    {
+      "path": "sessions.json",
+      "sha256": "0f3c9945dfa16627bcd80ea5472f97d4a3d750405998ff8d4c4dff2c43d403e9"
+    },
+    {
+      "path": "social.json",
+      "sha256": "e7ad306d424a127fa63f3ef6339f0e6e1047dd2fe03f70ecdbf519fb496f9e76"
+    },
+    {
+      "path": "strategies.json",
+      "sha256": "c5567e5edf9bdd0ec4983c69b1f422886a9c573204299ee01e19ca2f08ca65e0"
+    }
+  ]
+}

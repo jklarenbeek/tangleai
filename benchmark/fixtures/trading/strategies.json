@@ -1,0 +1,62 @@
+[
+  {
+    "id": "oracle",
+    "kind": "control",
+    "parityTier": "control",
+    "description": "Privileged next-session close; fixed 100-share entries and exit on a non-up session."
+  },
+  {
+    "id": "do-nothing",
+    "kind": "control",
+    "parityTier": "control",
+    "description": "Hold all initial cash."
+  },
+  {
+    "id": "leaky",
+    "kind": "control",
+    "parityTier": "control",
+    "description": "Buy SYN-A from a restatement before it was available; excluded from comparisons."
+  },
+  {
+    "id": "buy-and-hold",
+    "kind": "baseline",
+    "parityTier": "mechanism",
+    "description": "Registered rule-based signal through the shared broker."
+  },
+  {
+    "id": "macd",
+    "kind": "baseline",
+    "parityTier": "mechanism",
+    "description": "Registered rule-based signal through the shared broker."
+  },
+  {
+    "id": "kdj-rsi",
+    "kind": "baseline",
+    "parityTier": "mechanism",
+    "description": "Registered rule-based signal through the shared broker."
+  },
+  {
+    "id": "zero-mean-reversion",
+    "kind": "baseline",
+    "parityTier": "mechanism",
+    "description": "Registered rule-based signal through the shared broker."
+  },
+  {
+    "id": "sma",
+    "kind": "baseline",
+    "parityTier": "mechanism",
+    "description": "Registered rule-based signal through the shared broker."
+  },
+  {
+    "id": "tradingagents-scripted",
+    "kind": "agent",
+    "parityTier": "mechanism",
+    "description": "Full workflow with injected scripted replies."
+  },
+  {
+    "id": "tradingagents-live",
+    "kind": "agent",
+    "parityTier": "experimental",
+    "description": "Requires a separately authorized live model plan."
+  }
+]
