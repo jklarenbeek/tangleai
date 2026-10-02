@@ -1,5 +1,34 @@
 # Tangle releases
 
+## 0.36.0
+
+Index MAS trace collections by run so durable workflow commits do not scan
+unrelated historical traces. Existing databases require an explicitly reviewed
+native model migration; trace records, queued jobs and replay semantics are
+preserved.
+
+Ship compiled trading prompts and concurrent evidence-bound analyst lanes with read-only cutoff-scoped tools. Reuse GMPL's reachable-schema projection for domain prompt contracts.
+
+Compose resumable native trading decisions and causal backtests through one
+financial path, retain immutable decision receipts, and settle pre-aborted runs
+and recovered terminal segment jobs before exposing financial output.
+Preserve identical loop output provenance across restarts under the next native
+checkpoint identity, and count refusals from the retained provider snapshots.
+
+Allow explicitly scoped combined analyst invocations, qualify native workflow
+ablations through the shared financial engine, and publish measured usage,
+execution coverage and the unavailable licensed replay state.
+
+Add immutable point-in-time trading contracts and atomic simulated portfolio persistence with repeatable decision commits. No external order transport is provided.
+
+Add immutable fixture and replay providers, independently validated market snapshots, and deterministic baseline signals over native finance indicators. Verify snapshot bar staleness against retained calendar evidence.
+
+Compose native bounded research and read-only trader proposals with attributed attempts, retained judgments and immutable artifact citation chains.
+
+Compose bounded risk review and fund-manager decisions with retained claim dispositions, causal order admission, and counted hard-policy reductions.
+
+Add next-open broker simulation, corporate settlement, valuation, hard risk sizing, and a shared chronological strategy loop with retained execution evidence and zero-write replay. Measure all five baselines and independently reproduce the cash and oracle control ledgers.
+
 ## 0.35.0
 
 Prepare document and graph evidence outside storage, then activate both under one checked source fence and atomic transaction. Preserve identity across incremental replacement, retract obsolete support, reuse retained contributions without new model or embedding calls, and collect only explicitly unreferenced historical document evidence. Ordinary document updates to indexed sources now require joint promotion; use createCorpusPromotion to preserve document and graph consistency.

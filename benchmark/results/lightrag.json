@@ -302,7 +302,7 @@
       },
       {
         "path": "packages/lightrag/package.json",
-        "sha256": "4cf04f0122dccbdef0890eeb998de93b1571b7d47ff61ed8ae7f9fccd777f2fa"
+        "sha256": "71299da01016815c2ba7d7cf1c5865a57df5fc344118bf0e87194af7b039c63f"
       },
       {
         "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -481,7 +481,7 @@
         "sha256": "63a768ca799206589866bdd61c0c225cdde67239bf038ec3014ffaf0ce7e35d1"
       }
     ],
-    "sha256": "9988eb26e4792212fa4dce5fb5d0223b462a0e8a88186410b6371b9aa4057999"
+    "sha256": "5e06196a47fa3e5243bad4cac078c162e6424fcb1ad93468d5352bdd1d600145"
   },
   "configIdentities": {
     "identities": [],
@@ -10466,7 +10466,7 @@
           },
           {
             "path": "packages/documents/package.json",
-            "sha256": "3d9eab5d36def1338f3b25c07f034c7216651ece39c2bec84e2a6425dad1a092"
+            "sha256": "efeea1d6fdcec079a7f21202d2a4f9cb0a72f951e9220f3186f506cac2e8b6c3"
           },
           {
             "path": "packages/documents/src/browser.ts",
@@ -10522,7 +10522,7 @@
           },
           {
             "path": "packages/lightrag/package.json",
-            "sha256": "4cf04f0122dccbdef0890eeb998de93b1571b7d47ff61ed8ae7f9fccd777f2fa"
+            "sha256": "71299da01016815c2ba7d7cf1c5865a57df5fc344118bf0e87194af7b039c63f"
           },
           {
             "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -10650,7 +10650,7 @@
           },
           {
             "path": "packages/models/package.json",
-            "sha256": "540ed5015148c1f604c642611b96734aae55a4287a58f16635e18a5ae617d116"
+            "sha256": "8260e19457ae34a29effda2903db39b8d5984768b05bebf48a182ca9430542c8"
           },
           {
             "path": "packages/models/src/check.ts",
@@ -10706,7 +10706,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "b28e0e071fb0f8bc8ba1cfcec2902f15bdbfec244f93c021c4ed52ac18abfbe1"
+            "sha256": "ed0e58335a854d81c5333ba72415c6255a88846c37070e9dd127844d13c4b112"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -10861,7 +10861,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "a4d528385a2b30ba38400276d1a63f8a16ab319a815a5cc173807a1d86faad0c"
+        "sha256": "ebca0438a105adbe7318bb28948a4fb7db499cc53cac1eb7d7f00b667ae6bde6"
       },
       "questionIds": [
         "q-relay-port",
@@ -10972,7 +10972,7 @@
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)",
         "The conservative 56953-request bound exceeds TANGLE_AI_MAX_CALLS=200; model-dependent profiling and review allowances cannot be silently discarded."
       ],
-      "planId": "b0e16758721aff43ec54f21f50573bc4fbd14b4074b03eedea1ec4fb6060523d"
+      "planId": "cd51db21b349f32d3b06df2856a7e3f51481851afb5644a66251545918af0fed"
     },
     "rows": [],
     "indexing": {
@@ -11004,7 +11004,7 @@
       "defaultChanged": false,
       "clauses": []
     },
-    "reportId": "5a1a5ae22d0544f6b98698d8db1ed644e2d2ca158d23cf35f5c33dcae7407eda"
+    "reportId": "68527e4595ff158b8c5528638205e0b06a48ff7d367f4fae0c5f4d498df94fe0"
   },
   "judge": {
     "document": "lightrag-judge",
@@ -11106,7 +11106,7 @@
           },
           {
             "path": "packages/documents/package.json",
-            "sha256": "3d9eab5d36def1338f3b25c07f034c7216651ece39c2bec84e2a6425dad1a092"
+            "sha256": "efeea1d6fdcec079a7f21202d2a4f9cb0a72f951e9220f3186f506cac2e8b6c3"
           },
           {
             "path": "packages/documents/src/browser.ts",
@@ -11162,7 +11162,7 @@
           },
           {
             "path": "packages/lightrag/package.json",
-            "sha256": "4cf04f0122dccbdef0890eeb998de93b1571b7d47ff61ed8ae7f9fccd777f2fa"
+            "sha256": "71299da01016815c2ba7d7cf1c5865a57df5fc344118bf0e87194af7b039c63f"
           },
           {
             "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -11290,7 +11290,7 @@
           },
           {
             "path": "packages/models/package.json",
-            "sha256": "540ed5015148c1f604c642611b96734aae55a4287a58f16635e18a5ae617d116"
+            "sha256": "8260e19457ae34a29effda2903db39b8d5984768b05bebf48a182ca9430542c8"
           },
           {
             "path": "packages/models/src/check.ts",
@@ -11346,7 +11346,7 @@
           },
           {
             "path": "packages/store/package.json",
-            "sha256": "b28e0e071fb0f8bc8ba1cfcec2902f15bdbfec244f93c021c4ed52ac18abfbe1"
+            "sha256": "ed0e58335a854d81c5333ba72415c6255a88846c37070e9dd127844d13c4b112"
           },
           {
             "path": "packages/store/src/consolidation-model.ts",
@@ -11501,7 +11501,7 @@
             "sha256": "8bf1143bbc722bb7215fea94e331faea31c7125146113091607e101c0b57ea13"
           }
         ],
-        "sha256": "a4d528385a2b30ba38400276d1a63f8a16ab319a815a5cc173807a1d86faad0c"
+        "sha256": "ebca0438a105adbe7318bb28948a4fb7db499cc53cac1eb7d7f00b667ae6bde6"
       },
       "reportId": null,
       "promptRevision": "1d390f8d00465dc21cc63a21d762343b5d869519b1030daa53a0461bb5c9ae82",
@@ -11552,7 +11552,7 @@
         "A completed graph live report with retained per-question attempts is required.",
         "no key — set OPENROUTER_AI_KEY in .env (see .env.example)"
       ],
-      "planId": "852fce529a8df67b3c2dd82e5a4362c7be26f80b209b69e6a882db6673781a32"
+      "planId": "52a3fce613680687f3accd408b52aa1e44d7d6d2ea680cf489d23e4edd19d01f"
     },
     "status": "not-run",
     "tier": "not-run",
@@ -11567,7 +11567,7 @@
     },
     "physicalRequests": 0,
     "defaultInput": false,
-    "reportId": "6756e4917e68439a0085a8b0733003d57ca38e8afea511e3850ab4a1f473f70a"
+    "reportId": "6875ad03b61c66a0e8fe2715b16b10800970446d59c4fab54b08bd66ee47a707"
   },
   "parity": {
     "document": "lightrag-parity",
@@ -11767,7 +11767,7 @@
         },
         {
           "path": "packages/lightrag/package.json",
-          "sha256": "4cf04f0122dccbdef0890eeb998de93b1571b7d47ff61ed8ae7f9fccd777f2fa"
+          "sha256": "71299da01016815c2ba7d7cf1c5865a57df5fc344118bf0e87194af7b039c63f"
         },
         {
           "path": "packages/lightrag/schemas/lightrag.schema.json",
@@ -11926,9 +11926,9 @@
           "sha256": "b7924fee427099830d4805f824f425269567da9b34f4befc877718d2549c2454"
         }
       ],
-      "sha256": "550f6ff769dca1be0eb38b13d5388914a863e7fcaa412ce3698af8d14c8403c8"
+      "sha256": "7dde15cf0e8273bc17a44860a0e0213515f2a697676da6220816627267252d37"
     },
-    "at": "2026-10-01T23:10:18.275Z",
+    "at": "2026-10-02T19:51:47.262Z",
     "sizes": [
       100,
       1000,
@@ -11949,9 +11949,9 @@
         "embeddingCalls": 15,
         "embeddingTexts": 400,
         "budgetTokens": 2228,
-        "indexingMs": 731.959445,
-        "promotionMs": 4222.407751000001,
-        "peakRssBytes": 488202240,
+        "indexingMs": 851.948946,
+        "promotionMs": 5208.602847,
+        "peakRssBytes": 478453760,
         "corpusSha256": "838b264949d9a9aeb8b3300a25078cff2e1590f84d0c0ebce0d150a9b43160c2",
         "rowsRead": {
           "graph": 6603,
@@ -11968,12 +11968,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 24.132220999999845,
-          "p95Ms": 28.952465000000302,
+          "p50Ms": 25.77133800000047,
+          "p95Ms": 31.513464999999997,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 28.952465000000302,
+              "ms": 30.58137700000043,
               "graphRows": 367,
               "documentRows": 104,
               "skipped": 0,
@@ -11983,7 +11983,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 26.222028000000137,
+              "ms": 26.91993100000036,
               "graphRows": 382,
               "documentRows": 104,
               "skipped": 0,
@@ -11993,7 +11993,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 22.931148000000576,
+              "ms": 23.959822000000713,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12003,7 +12003,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 24.672576000000845,
+              "ms": 25.41675899999973,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12013,7 +12013,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 27.18360600000051,
+              "ms": 28.405851999999868,
               "graphRows": 376,
               "documentRows": 104,
               "skipped": 0,
@@ -12023,7 +12023,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 23.77942500000063,
+              "ms": 24.339194000000134,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12033,7 +12033,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 25.02695500000027,
+              "ms": 25.775108999999247,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12043,7 +12043,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 24.371515999999247,
+              "ms": 24.8519610000003,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12053,7 +12053,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 22.35305199999948,
+              "ms": 22.81981900000028,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12063,7 +12063,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 25.244951000000583,
+              "ms": 25.77133800000047,
               "graphRows": 361,
               "documentRows": 104,
               "skipped": 0,
@@ -12073,7 +12073,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 24.132220999999845,
+              "ms": 24.616179999999986,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12083,7 +12083,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 22.997260999999526,
+              "ms": 24.97760400000061,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12093,7 +12093,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 22.84477700000025,
+              "ms": 26.882566000000224,
               "graphRows": 361,
               "documentRows": 104,
               "skipped": 0,
@@ -12103,7 +12103,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 21.761371999999938,
+              "ms": 25.66895300000033,
               "graphRows": 358,
               "documentRows": 104,
               "skipped": 0,
@@ -12113,7 +12113,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 28.147197999999662,
+              "ms": 31.513464999999997,
               "graphRows": 373,
               "documentRows": 104,
               "skipped": 0,
@@ -12123,7 +12123,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 22.99707000000035,
+              "ms": 28.42757299999994,
               "graphRows": 376,
               "documentRows": 104,
               "skipped": 0,
@@ -12133,7 +12133,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 22.48700100000042,
+              "ms": 26.769215999999687,
               "graphRows": 364,
               "documentRows": 104,
               "skipped": 0,
@@ -12143,7 +12143,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 24.750481000000036,
+              "ms": 28.321624999999585,
               "graphRows": 367,
               "documentRows": 104,
               "skipped": 0,
@@ -12168,9 +12168,9 @@
         "embeddingCalls": 127,
         "embeddingTexts": 4000,
         "budgetTokens": 22330,
-        "indexingMs": 8258.577229,
-        "promotionMs": 54049.358051,
-        "peakRssBytes": 1790394368,
+        "indexingMs": 8740.699503,
+        "promotionMs": 62524.02987200001,
+        "peakRssBytes": 1965867008,
         "corpusSha256": "fdc888f3036885d0f32a3c3d50505dd65b6926cebb1b7d8a0f5305e79c2351d6",
         "rowsRead": {
           "graph": 55446,
@@ -12187,12 +12187,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 214.32116300000052,
-          "p95Ms": 230.4600780000037,
+          "p50Ms": 222.1426849999989,
+          "p95Ms": 265.66259900000296,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 214.32116300000052,
+              "ms": 222.1426849999989,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12202,7 +12202,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 215.2075509999995,
+              "ms": 221.04479600000195,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12212,7 +12212,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 213.8257719999965,
+              "ms": 219.00811399999657,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12222,7 +12222,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 215.75463000001037,
+              "ms": 231.53983199999493,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12232,7 +12232,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 230.4600780000037,
+              "ms": 229.05449699999008,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12242,7 +12242,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 225.20877199999813,
+              "ms": 224.34872900000482,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12252,7 +12252,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 211.59495299999253,
+              "ms": 261.8619619999954,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12262,7 +12262,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 216.1808619999938,
+              "ms": 265.66259900000296,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12272,7 +12272,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 216.8447659999947,
+              "ms": 222.74037699999462,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12282,7 +12282,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 211.51139800000237,
+              "ms": 225.87103800001205,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12292,7 +12292,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 214.66193699999712,
+              "ms": 224.09402200000477,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12302,7 +12302,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 211.69585099999676,
+              "ms": 221.13817199999176,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12312,7 +12312,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 208.9538509999984,
+              "ms": 222.64322999998694,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12322,7 +12322,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 214.34473700000672,
+              "ms": 207.09280600000056,
               "graphRows": 3079,
               "documentRows": 1004,
               "skipped": 0,
@@ -12332,7 +12332,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 209.56796400000167,
+              "ms": 211.87714300000516,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12342,7 +12342,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 204.94283200000064,
+              "ms": 211.8933459999971,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12352,7 +12352,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 216.59660499999882,
+              "ms": 220.77674800000386,
               "graphRows": 3082,
               "documentRows": 1004,
               "skipped": 0,
@@ -12362,7 +12362,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 213.50147899999865,
+              "ms": 205.46566699999676,
               "graphRows": 3076,
               "documentRows": 1004,
               "skipped": 0,
@@ -12387,9 +12387,9 @@
         "embeddingCalls": 1251,
         "embeddingTexts": 40000,
         "budgetTokens": 223564,
-        "indexingMs": 280945.880307,
-        "promotionMs": 641689.366838,
-        "peakRssBytes": 8166973440,
+        "indexingMs": 293033.28437,
+        "promotionMs": 813937.5424380001,
+        "peakRssBytes": 8134815744,
         "corpusSha256": "103ca03b58669f3096ca4d6c9eed8c759c79b907e529221c745d711a009510b4",
         "rowsRead": {
           "graph": 541470,
@@ -12406,12 +12406,12 @@
           "ratio": 1
         },
         "retrieval": {
-          "p50Ms": 2537.2402689999435,
-          "p95Ms": 2735.221174999955,
+          "p50Ms": 2909.913037999999,
+          "p95Ms": 4157.34044900001,
           "samples": [
             {
               "questionId": "specific-equipment",
-              "ms": 2607.749383000075,
+              "ms": 3878.9813419999555,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12421,7 +12421,7 @@
             },
             {
               "questionId": "specific-funding",
-              "ms": 2517.4576360000065,
+              "ms": 4157.34044900001,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12431,7 +12431,7 @@
             },
             {
               "questionId": "specific-launch",
-              "ms": 2559.03328600002,
+              "ms": 3153.71392800007,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12441,7 +12441,7 @@
             },
             {
               "questionId": "specific-archive-host",
-              "ms": 2523.432045000023,
+              "ms": 3204.6407469999976,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12451,7 +12451,7 @@
             },
             {
               "questionId": "specific-timber",
-              "ms": 2699.417938000057,
+              "ms": 3065.656605999917,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12461,7 +12461,7 @@
             },
             {
               "questionId": "specific-produce",
-              "ms": 2486.7409990000306,
+              "ms": 3033.291722000111,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12471,7 +12471,7 @@
             },
             {
               "questionId": "abstract-training",
-              "ms": 2605.721684999997,
+              "ms": 2909.913037999999,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12481,7 +12481,7 @@
             },
             {
               "questionId": "abstract-grant-admin",
-              "ms": 2488.029962999979,
+              "ms": 3009.0050519998185,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12491,7 +12491,7 @@
             },
             {
               "questionId": "abstract-cargo",
-              "ms": 2568.270546999993,
+              "ms": 2925.9362089999486,
               "graphRows": 30076,
               "documentRows": 10004,
               "skipped": 0,
@@ -12501,7 +12501,7 @@
             },
             {
               "questionId": "abstract-festival-host",
-              "ms": 2465.0207459999947,
+              "ms": 2798.6169290000107,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12511,7 +12511,7 @@
             },
             {
               "questionId": "abstract-restoration",
-              "ms": 2591.5095520000905,
+              "ms": 2974.4394310000353,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12521,7 +12521,7 @@
             },
             {
               "questionId": "abstract-school-funding",
-              "ms": 2461.758054999984,
+              "ms": 2778.9189019999467,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12531,7 +12531,7 @@
             },
             {
               "questionId": "hop-shelves",
-              "ms": 2607.4485540000023,
+              "ms": 2892.8568599999417,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12541,7 +12541,7 @@
             },
             {
               "questionId": "hop-launch",
-              "ms": 2537.2402689999435,
+              "ms": 2755.503697999986,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12551,7 +12551,7 @@
             },
             {
               "questionId": "hop-archive-host",
-              "ms": 2617.2773639999796,
+              "ms": 2876.883553999942,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12561,7 +12561,7 @@
             },
             {
               "questionId": "hop-timber",
-              "ms": 2392.506487000035,
+              "ms": 2756.2922650000546,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12571,7 +12571,7 @@
             },
             {
               "questionId": "hop-grant-admin",
-              "ms": 2735.221174999955,
+              "ms": 2872.8809390000533,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12581,7 +12581,7 @@
             },
             {
               "questionId": "hop-opening",
-              "ms": 2446.190555999987,
+              "ms": 2703.4067059999797,
               "graphRows": 30082,
               "documentRows": 10004,
               "skipped": 0,
@@ -12600,16 +12600,16 @@
       "arch": "x64",
       "cpu": "AMD Ryzen 9 5900HX with Radeon Graphics",
       "logicalCpus": 16,
-      "totalMemoryBytes": 33009844224,
+      "totalMemoryBytes": 33009840128,
       "runtime": "node 24.20.0; V8 heap limit 8791261184 bytes",
       "driver": "node:sqlite",
       "loadAverage": [
-        2.24,
-        2.22,
-        2.1
+        4.85,
+        5.96,
+        6.29
       ]
     },
-    "receiptId": "bcff9307aac0c17d8540bb7fcfeec7704b2b0c4adecf1223098c6493afa9cb34"
+    "receiptId": "4b69329fabe65a46cbe10e359f43e34a902ff74a36a6ac2b051e33582bbf815b"
   },
   "gate": {
     "passed": true,
@@ -12801,5 +12801,5 @@
     "defaultChanged": false,
     "clauses": []
   },
-  "reportId": "efb36f621d94eabaa5a33a430e8b7f127229036fcc4886a2cc09932ffbe7b6a9"
+  "reportId": "8335b2a9f3f4cce30a18d2975785e1a969a12f2d7b3530a0cf1b6735ffce22bd"
 }

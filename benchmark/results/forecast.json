@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "f0780316f5048f9dc8369f5721215d43385030b0",
+    "head": "eeb6d774307e3b428cf4f0f86b9504ae55cad719",
     "clean": false,
     "files": [
       {
@@ -847,15 +847,15 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "9074f34803c660a50267d7c2dbbfb0bd571bac61e348f6fcb13e475098c1d7ab"
+        "sha256": "c7dd9d551f796b427ccd236cff17a7c5a43e4450a9ab460abf344876dc8ce0c8"
       },
       {
         "path": "package.json",
-        "sha256": "7f6a9597a9441979612b8a99e2dfaf329fd5c53c5224c806c4c2008cd86a1dc0"
+        "sha256": "011412086f89d1aa707b6d18f2d46fa6adc6f8de2b40b4f3a3420e9ccb1ec1ff"
       },
       {
         "path": "packages/agents/package.json",
-        "sha256": "2b83d0c7b083a12235c4a24ddfe1dff45893d12732ef512d7f033775adb63ba6"
+        "sha256": "c5e7a7479319c68cf17924cd2a40a533e635bc018397c3a2fd05024bcdfbaee4"
       },
       {
         "path": "packages/agents/src/agent.ts",
@@ -899,7 +899,7 @@
       },
       {
         "path": "packages/context/package.json",
-        "sha256": "89437e96aff185832edfb9dbc94c4d73509b63b00ce925f660d5c1320fe65ae0"
+        "sha256": "bc86cba16e310655b6567548ed45d966b4ac6c7c7ec1c3f537f79ca6c225a203"
       },
       {
         "path": "packages/context/src/archive.ts",
@@ -955,7 +955,7 @@
       },
       {
         "path": "packages/documents/package.json",
-        "sha256": "3d9eab5d36def1338f3b25c07f034c7216651ece39c2bec84e2a6425dad1a092"
+        "sha256": "efeea1d6fdcec079a7f21202d2a4f9cb0a72f951e9220f3186f506cac2e8b6c3"
       },
       {
         "path": "packages/documents/src/browser.ts",
@@ -1007,7 +1007,7 @@
       },
       {
         "path": "packages/forecast/package.json",
-        "sha256": "3f4f57af4fd454d7d2f3d19c59a351fb9ce8d10330faa82a4e1038d4281b1b05"
+        "sha256": "5bcc2d01337a1bbae3ded4a5066b5ca58c4cfc8cc7f88aaba0db6f356c7b40a1"
       },
       {
         "path": "packages/forecast/schemas/forecast.contract.json",
@@ -1179,7 +1179,7 @@
       },
       {
         "path": "packages/mas/package.json",
-        "sha256": "a5a71a573cb095e9d2ce02ec5f7748f4090a83f3da952b23eb2125ff7a645b5c"
+        "sha256": "040510c952120147aca229e0fe1e675127f14252ca7ddc120e5546aa9339e2a4"
       },
       {
         "path": "packages/mas/schemas/mas-registry.schema.json",
@@ -1311,7 +1311,7 @@
       },
       {
         "path": "packages/models/package.json",
-        "sha256": "540ed5015148c1f604c642611b96734aae55a4287a58f16635e18a5ae617d116"
+        "sha256": "8260e19457ae34a29effda2903db39b8d5984768b05bebf48a182ca9430542c8"
       },
       {
         "path": "packages/models/src/check.ts",
@@ -1367,7 +1367,7 @@
       },
       {
         "path": "packages/search/package.json",
-        "sha256": "0c6fa2b4f8bdf072152fba4d4a072b580fd14be58f1e0d01d953128862471756"
+        "sha256": "a12b4eb932584c137fe11a81a4a5770dedf130e0211c5ccdc735a95a05ee3130"
       },
       {
         "path": "packages/search/src/index.ts",
@@ -1379,7 +1379,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "b28e0e071fb0f8bc8ba1cfcec2902f15bdbfec244f93c021c4ed52ac18abfbe1"
+        "sha256": "ed0e58335a854d81c5333ba72415c6255a88846c37070e9dd127844d13c4b112"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -1538,7 +1538,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "76429be77e6799cd7ca902da30a69ad6b60e3790c0c70b813e5a3f5ce0144582"
+    "sha256": "f78b2d697a202f91cb2d18848e45c8b9e1ba985ecb53c170c03600f9ae6e2aae"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -43869,7 +43869,7 @@
         {
           "id": "revision-resume-identity",
           "holds": true,
-          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f."
+          "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 0a7b583605a325d8c24d5ffb34d4fc323bcf396ef5bfd75f59a41d3c3aa6b7d3."
         },
         {
           "id": "adapter-score-parity",
@@ -44865,7 +44865,7 @@
     {
       "id": "resume-identity",
       "holds": true,
-      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
+      "detail": "27 stops and resumes across 10 committed stages; 12 calls, zero extra calls, 0 physical requests. Artifact digest b432b8b1e7c2c25aa823406c9e5dc06cf9619ff76cc89161e1a2e2826d8e2eac; executable 0a7b583605a325d8c24d5ffb34d4fc323bcf396ef5bfd75f59a41d3c3aa6b7d3. Stages: checkpoint-run=3, note-create=3, checkpoint-complete=3, mas:checkpoint-plan=3, mas:checkpoint-run=3, mas:note-create=3, mas:revision-run=2, mas:revision-skip=1, mas:revision-gate=3, mas:checkpoint-complete=3."
     },
     {
       "id": "duplicate-delivery",
@@ -44910,7 +44910,7 @@
     {
       "id": "revision-resume-identity",
       "holds": true,
-      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable ed26b3f66078a8e4035cfc3baa9e1460e56a97b0cda23ad8f13e1116e574098f."
+      "detail": "2 atomic revision publication observations, four stops and resumes; 14 logical calls, zero extra calls, 0 physical requests. Artifact digest d3d259aaca753fc30058fe83c62f39d585bad54ad49bce87ffcbfbe6a5d8fbfc; executable 0a7b583605a325d8c24d5ffb34d4fc323bcf396ef5bfd75f59a41d3c3aa6b7d3."
     },
     {
       "id": "adapter-score-parity",
@@ -45003,5 +45003,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "0ee1d3ed03b269ead3c8d8791178df0874b0b17f6f27f20da3e3b65a17124e0e"
+  "reportId": "63b6eb5d0620437a13d06b27a27db67c7f04f1cbf420a3a0e73655eaf4444c37"
 }

@@ -1,5 +1,44 @@
 # @tangleai/store
 
+## 0.36.0
+
+### Minor Changes
+
+- 43cfab8: Compose resumable native trading decisions and causal backtests through one
+  financial path, retain immutable decision receipts, and settle pre-aborted runs
+  and recovered terminal segment jobs before exposing financial output.
+  Preserve identical loop output provenance across restarts under the next native
+  checkpoint identity, and count refusals from the retained provider snapshots.
+
+### Patch Changes
+
+- eeb6d77: Index MAS trace collections by run so durable workflow commits do not scan
+  unrelated historical traces. Existing databases require an explicitly reviewed
+  native model migration; trace records, queued jobs and replay semantics are
+  preserved.
+- 2a1f1d0: Add immutable point-in-time trading contracts and atomic simulated portfolio persistence with repeatable decision commits. No external order transport is provided.
+- Updated dependencies [ac6f698]
+- Updated dependencies [43cfab8]
+- Updated dependencies [eeb6d77]
+- Updated dependencies [2a1f1d0]
+- Updated dependencies [a9255aa]
+- Updated dependencies [78b00ba]
+- Updated dependencies [f078031]
+- Updated dependencies [f4926cf]
+  - @tangleai/trading@0.36.0
+  - @tangleai/mas@0.36.0
+  - @tangleai/config@0.36.0
+  - @tangleai/core@0.36.0
+  - @tangleai/documents@0.36.0
+  - @tangleai/evolve@0.36.0
+  - @tangleai/forecast@0.36.0
+  - @tangleai/grounding@0.36.0
+  - @tangleai/hera@0.36.0
+  - @tangleai/lightrag@0.36.0
+  - @tangleai/memory@0.36.0
+  - @tangleai/outcomes@0.36.0
+  - @tangleai/trace2skill@0.36.0
+
 ## 0.35.0
 
 ### Minor Changes

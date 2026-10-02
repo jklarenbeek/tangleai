@@ -1,5 +1,13 @@
 # @tangleai/gmpl
 
+## 0.36.0
+
+### Patch Changes
+
+- ac6f698: Ship compiled trading prompts and concurrent evidence-bound analyst lanes with read-only cutoff-scoped tools. Reuse GMPL's reachable-schema projection for domain prompt contracts.
+- Updated dependencies [43cfab8]
+  - @tangleai/mas@0.36.0
+
 ## 0.35.0
 
 ### Patch Changes

@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "version": "0.36.0",
+  "baseVersion": "0.35.0",
+  "baseCommit": "a0e386b62623840ce9e7f82b50b8bff848e6afe1",
+  "preparationCommit": "eeb6d774307e3b428cf4f0f86b9504ae55cad719",
+  "initial": false,
+  "inputHash": "a729d9729c17b01e58b3f1f7ace09a6229130da157cc13cf51300c06dd316141",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Index MAS trace collections by run so durable workflow commits do not scan\nunrelated historical traces. Existing databases require an explicitly reviewed\nnative model migration; trace records, queued jobs and replay semantics are\npreserved.",
+      "id": "mas-trace-run-indexes"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/gmpl",
+          "type": "patch"
+        }
+      ],
+      "summary": "Ship compiled trading prompts and concurrent evidence-bound analyst lanes with read-only cutoff-scoped tools. Reuse GMPL's reachable-schema projection for domain prompt contracts.",
+      "id": "trading-analysts"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/mas",
+          "type": "patch"
+        }
+      ],
+      "summary": "Compose resumable native trading decisions and causal backtests through one\nfinancial path, retain immutable decision receipts, and settle pre-aborted runs\nand recovered terminal segment jobs before exposing financial output.\nPreserve identical loop output provenance across restarts under the next native\ncheckpoint identity, and count refusals from the retained provider snapshots.",
+      "id": "trading-backtest"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        }
+      ],
+      "summary": "Allow explicitly scoped combined analyst invocations, qualify native workflow\nablations through the shared financial engine, and publish measured usage,\nexecution coverage and the unavailable licensed replay state.",
+      "id": "trading-comparisons"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "patch"
+        }
+      ],
+      "summary": "Add immutable point-in-time trading contracts and atomic simulated portfolio persistence with repeatable decision commits. No external order transport is provided.",
+      "id": "trading-contracts"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add immutable fixture and replay providers, independently validated market snapshots, and deterministic baseline signals over native finance indicators. Verify snapshot bar staleness against retained calendar evidence.",
+      "id": "trading-providers"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        }
+      ],
+      "summary": "Compose native bounded research and read-only trader proposals with attributed attempts, retained judgments and immutable artifact citation chains.",
+      "id": "trading-research"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        }
+      ],
+      "summary": "Compose bounded risk review and fund-manager decisions with retained claim dispositions, causal order admission, and counted hard-policy reductions.",
+      "id": "trading-risk"
+    },
+    {
+      "releases": [
+        {
+          "name": "@tangleai/trading",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add next-open broker simulation, corporate settlement, valuation, hard risk sizing, and a shared chronological strategy loop with retained execution evidence and zero-write replay. Measure all five baselines and independently reproduce the cash and oracle control ledgers.",
+      "id": "trading-simulator"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.36.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.36.0"
+    }
+  ]
+}

@@ -1,5 +1,18 @@
 # @tangleai/mas
 
+## 0.36.0
+
+### Patch Changes
+
+- 43cfab8: Compose resumable native trading decisions and causal backtests through one
+  financial path, retain immutable decision receipts, and settle pre-aborted runs
+  and recovered terminal segment jobs before exposing financial output.
+  Preserve identical loop output provenance across restarts under the next native
+  checkpoint identity, and count refusals from the retained provider snapshots.
+- @tangleai/agents@0.36.0
+  - @tangleai/context@0.36.0
+  - @tangleai/models@0.36.0
+
 ## 0.35.0
 
 ### Patch Changes
