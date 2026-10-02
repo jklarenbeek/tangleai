@@ -9,13 +9,17 @@ import { tradingArtifacts, createMemoryTradingStore, checkTradeProposal, prepare
 import type { ResearchVerdict, DebateTurn, TradeProposal, TradeProposalOutput } from '@tangleai/trading';
 import type { TradingFixture } from './trading.ts';
 import type { ResearchMeasurement, TraderMeasurement, ResearchProbeMeasurement } from './trading.types.ts';
-import { tradingAnalystExecution } from './trading-analysts.ts';
+import { tradingAnalystExecution, type TradingAnalystExecution } from './trading-analysts.ts';
 import { prepareTradingResearchDrive, checked } from './trading-research-runner.ts';
 import { scriptedModel, scriptedSpend } from './trading-analyst-runner.ts';
 
 type Output = { verdict: ResearchVerdict; turns: DebateTurn[]; proposal: TradeProposal };
+export interface TradingResearchExecution {
+  measurement: [ResearchMeasurement, TraderMeasurement]; analysts: TradingAnalystExecution;
+  cases: Array<TradingAnalystExecution['cases'][number] & { output: Output }>;
+}
 const zeroUsage = () => ({ physicalCalls: 0, normalizations: 0, repairs: 0, replays: 0, restores: 0 });
-async function executeResearch(fixture: TradingFixture): Promise<[ResearchMeasurement, TraderMeasurement]> {
+async function executeResearch(fixture: TradingFixture): Promise<TradingResearchExecution> {
   const analysts = await tradingAnalystExecution(fixture), catalog = checked(await createGmplCatalog(tradingArtifacts));
   const { manifest, portfolio } = analysts, analystMeasurementSha256 = await canonicalSha256(analysts.measurement);
   const common = () => ({ status: 'measured' as const, reason: null, total: 0, reproduced: 0, ...zeroUsage(), manifestId: manifest.id,
@@ -29,6 +33,7 @@ async function executeResearch(fixture: TradingFixture): Promise<[ResearchMeasur
   checked(await store.initializePortfolio(portfolio));
   const financial = async () => Promise.all((['decisions', 'orders', 'fills', 'ledger', 'portfolios'] as const).map(table => store.list(table)));
   const before = await financial();
+  const cases: TradingResearchExecution['cases'] = [];
   for (const [index, entry] of analysts.cases.entries()) {
     const { snapshot, reports } = entry, asset = snapshot.snapshot.asset, sessionId = snapshot.snapshot.sessionId;
     const analystOutputsSha256 = await canonicalSha256(Object.fromEntries(reports.map(r => [r.role.replace('trading-analyst-', ''), r])));
@@ -36,6 +41,7 @@ async function executeResearch(fixture: TradingFixture): Promise<[ResearchMeasur
     const drive = await prepareTradingResearchDrive({ manifest, catalog, snapshot, portfolio, reports }), run = await drive.run();
     if (run.status !== 'completed') throw Error(`Registered research failed at ${asset}/${sessionId}: ${JSON.stringify(run.trace.run.failure)}`);
     const output = run.output as Output, evidenceIds = new Set(reports.map(r => r.id));
+    cases.push({ snapshot, reports, output });
     if (output.verdict.citations.some(id => !evidenceIds.has(id)) || output.turns.some(t => t.citations.some(id => !evidenceIds.has(id))))
       throw Error('Research escaped its measured analyst artifact projection');
     const researchCalls = run.visibility.filter(v => v.node !== 'trader'), traderCalls = run.visibility.filter(v => v.node === 'trader');
@@ -110,11 +116,13 @@ async function executeResearch(fixture: TradingFixture): Promise<[ResearchMeasur
     if (row.total !== analysts.measurement.total || row.reproduced !== row.total || row.probes.length !== 4 || row.probes.some(p => !p.passed))
       throw Error(`Registered ${row.id} acceptance failed: ${JSON.stringify({ failed: row.cases.filter(c => !c.reproduced), probes: row.probes })}`);
   }
-  return [research, trader];
+  return { measurement: [research, trader], analysts, cases };
 }
-let cached: { identity: string; result: Promise<[ResearchMeasurement, TraderMeasurement]> } | undefined;
-export async function measureTradingResearch(fixture: TradingFixture): Promise<[ResearchMeasurement, TraderMeasurement]> {
+let cached: { identity: string; result: Promise<TradingResearchExecution> } | undefined;
+async function cachedResearchExecution(fixture: TradingFixture): Promise<TradingResearchExecution> {
   const identity = await canonicalSha256(fixture);
   if (cached?.identity !== identity) cached = { identity, result: executeResearch(cloneJson(fixture)) };
-  return cloneJson(await cached.result);
+  return cached.result;
 }
+export async function tradingResearchExecution(fixture: TradingFixture): Promise<TradingResearchExecution> { return cloneJson(await cachedResearchExecution(fixture)); }
+export async function measureTradingResearch(fixture: TradingFixture): Promise<[ResearchMeasurement, TraderMeasurement]> { return cloneJson((await cachedResearchExecution(fixture)).measurement); }

@@ -80,10 +80,21 @@ retain both sides' findings and raw judgments, reconcile every physical call,
 and stage the evidence chain without financial writes. Additional probes cover
 SQLite recovery, contradictory judgments, budget exhaustion, lost findings and
 invalid proposals; their calls and native restore/replay counters remain separate.
+The risk and fund-manager mechanisms consume those same measured artifacts. Three
+personas produce separate, ordered findings; a bounded facilitator preserves the
+ledger and raw judgments. The fund manager then approves, modifies or rejects,
+and a deterministic checker admits orders using published valuation quotes.
+Thirteen policy probes meter their fresh analyst/research setup separately and
+exercise holds, rejection, quantity reductions and hard financial refusals with
+all model roles advocating the tested decision. No financial row changes during
+these mechanism runs. Actual next-open execution remains separately measured.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
 `--out-dir` redirects both outputs, `--require baselines` requires all five executed baselines,
 `--require analysts` requires the analyst mechanism and its safety probes, and
-`--require research` / `--require trader` require the corresponding measured regions.
+`--require research` / `--require trader` / `--require risk` / `--require fundManager`
+require the corresponding measured regions and probes. Unknown capabilities and
+stale or noncanonical retained JSON are refused before expensive reproduction;
+accepted reports still undergo the full independent comparison.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.
 
 The frozen learning schedule has seven training events over five distinct tasks

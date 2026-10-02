@@ -1582,6 +1582,12 @@
         },
         "trader": {
           "type": "boolean"
+        },
+        "risk": {
+          "type": "boolean"
+        },
+        "fundManager": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1594,7 +1600,9 @@
         "signals",
         "analysts",
         "research",
-        "trader"
+        "trader",
+        "risk",
+        "fundManager"
       ],
       "additionalProperties": false
     },
@@ -2434,11 +2442,17 @@
               },
               {
                 "$ref": "#/$defs/traderMeasurement"
+              },
+              {
+                "$ref": "#/$defs/riskMeasurement"
+              },
+              {
+                "$ref": "#/$defs/fundManagerMeasurement"
               }
             ]
           },
-          "minItems": 5,
-          "maxItems": 5
+          "minItems": 7,
+          "maxItems": 7
         }
       },
       "required": [
@@ -2456,7 +2470,9 @@
             "signals",
             "analysts-scripted",
             "research-scripted",
-            "trader-scripted"
+            "trader-scripted",
+            "risk-scripted",
+            "fund-manager-scripted"
           ]
         ]
       }
@@ -2971,6 +2987,25 @@
             "null"
           ],
           "minLength": 1
+        },
+        "setupPhysicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "policyViolations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "admitted": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -3504,6 +3539,790 @@
               "$.exceedsPosition",
               {
                 "$count": "$.cases[?(@.exceedsPosition==true)]"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "riskCaseMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "boolean"
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedFindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disposition": {
+          "enum": [
+            "adjusted",
+            "hold",
+            "rejected",
+            "no-consensus"
+          ]
+        },
+        "researchOutputsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "verdictSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "turnsByPersona": {
+          "type": "object",
+          "properties": {
+            "risky": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "neutral": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "conservative": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "risky",
+            "neutral",
+            "conservative"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "asset",
+        "sessionId",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "reproduced",
+        "rounds",
+        "turns",
+        "retainedFindings",
+        "disposition",
+        "researchOutputsSha256",
+        "verdictSha256",
+        "turnsByPersona"
+      ],
+      "additionalProperties": false
+    },
+    "riskMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "risk-scripted"
+        },
+        "status": {
+          "const": "measured"
+        },
+        "reason": {
+          "type": "null"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "researchMeasurementSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/researchProbeMeasurement"
+          }
+        },
+        "maxRounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedFindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "adjusted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "noConsensus": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/riskCaseMeasurement"
+          }
+        },
+        "hold": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "manifestId",
+        "catalogRevision",
+        "researchMeasurementSha256",
+        "limits",
+        "probes",
+        "maxRounds",
+        "rounds",
+        "turns",
+        "retainedFindings",
+        "adjusted",
+        "rejected",
+        "noConsensus",
+        "cases",
+        "hold"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              {
+                "$sum": "$.cases[*].physicalCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.normalizations",
+              {
+                "$sum": "$.cases[*].normalizations"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.repairs",
+              {
+                "$sum": "$.cases[*].repairs"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replays",
+              {
+                "$sum": "$.cases[*].replays"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.restores",
+              {
+                "$sum": "$.cases[*].restores"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rounds",
+              {
+                "$sum": "$.cases[*].rounds"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.turns",
+              {
+                "$sum": "$.cases[*].turns"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.retainedFindings",
+              {
+                "$sum": "$.cases[*].retainedFindings"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$add": [
+                  "$.adjusted",
+                  {
+                    "$add": [
+                      "$.hold",
+                      {
+                        "$add": [
+                          "$.rejected",
+                          "$.noConsensus"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "fundManagerCaseMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "boolean"
+        },
+        "financialWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "modified",
+            "rejected"
+          ]
+        },
+        "intent": {
+          "type": "boolean"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decisionSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "admissionSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "asset",
+        "sessionId",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "reproduced",
+        "financialWrites",
+        "replayWrites",
+        "decision",
+        "intent",
+        "violations",
+        "adjustments",
+        "decisionSha256",
+        "admissionSha256"
+      ],
+      "additionalProperties": false
+    },
+    "fundManagerMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "fund-manager-scripted"
+        },
+        "status": {
+          "const": "measured"
+        },
+        "reason": {
+          "type": "null"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "researchMeasurementSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/researchProbeMeasurement"
+          }
+        },
+        "financialWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fundManagerCaseMeasurement"
+          }
+        },
+        "approved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "intents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "violations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "adjustments": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "manifestId",
+        "catalogRevision",
+        "researchMeasurementSha256",
+        "limits",
+        "probes",
+        "financialWrites",
+        "replayWrites",
+        "cases",
+        "approved",
+        "modified",
+        "rejected",
+        "intents",
+        "violations",
+        "adjustments"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              {
+                "$sum": "$.cases[*].physicalCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.normalizations",
+              {
+                "$sum": "$.cases[*].normalizations"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.repairs",
+              {
+                "$sum": "$.cases[*].repairs"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replays",
+              {
+                "$sum": "$.cases[*].replays"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.restores",
+              {
+                "$sum": "$.cases[*].restores"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.financialWrites",
+              {
+                "$sum": "$.cases[*].financialWrites"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replayWrites",
+              {
+                "$sum": "$.cases[*].replayWrites"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.approved",
+              {
+                "$count": "$.cases[?(@.decision==\"approved\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.modified",
+              {
+                "$count": "$.cases[?(@.decision==\"modified\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rejected",
+              {
+                "$count": "$.cases[?(@.decision==\"rejected\")]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.intents",
+              {
+                "$count": "$.cases[?(@.intent==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.violations",
+              {
+                "$count": "$.cases[*].violations[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.adjustments",
+              {
+                "$count": "$.cases[*].adjustments[*]"
               }
             ]
           }

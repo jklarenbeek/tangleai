@@ -165,6 +165,43 @@ an order nor change cash or positions. Raw close marks stay out of its portfolio
 view. `tradingWorkflowIssue(run)` maps native budget exhaustion to `TTRD1009`
 while retaining the native cause; an incomplete workflow produces no proposal.
 
+`materializeTradingRisk({ host, manifest, catalog })` authors and validates a
+native MAS round for risky, neutral and conservative personas, followed by a
+distinct facilitator. `buildRiskRound` and `buildRiskPattern` expose the same
+builders. Personas receive identical proposals, cash/positions, immutable
+policy, artifact evidence and prior turns. Their claim ids are qualified by
+round and persona; turns are retained in declaration order. The facilitator
+receives the current finding ledger, may disposition only delivered claim ids,
+and must retain supported findings through GMPL's evidence validator and merge.
+Raw judgments, advisory recommendations and stable native attempt keys remain
+in the verdict. Stops are recommendations. An unfinished final round explicitly
+returns `no-consensus` with the original proposal marked `unadjusted`.
+
+`buildRiskAndDecisionRegion({ riskMaterialized, catalog, profile })` adds the
+fund manager and deterministic `order-validate` task. The accompanying
+`createTradingRiskDecisionHostBindings(...)` uses injected trace/provenance
+readers and immutable snapshot content. The manager may cite only the exact
+proposal and risk verdict; `checkFundManagerDecision` preserves those identities
+and observed model spend. Only its checked output reaches order admission.
+
+`toOrderIntent({ manifest, snapshot, portfolio, proposal, riskVerdict, decision,
+valuationObservations? })` returns an uncommitted financial decision, an intent
+or null, violations and counted adjustments. It reads policy from the manifest.
+Hold and rejection yield no order. Approval cannot broaden the trader or risk
+intent; modification may only reduce size, using the same affine sizing and
+broker economics as execution. Non-null intents cite the exact proposal, risk
+verdict, fund-manager artifact and price evidence. Target weights are converted
+against the admitted marked portfolio, then whole-share policy applies.
+
+Admission values held assets with published bars at the decision cutoff;
+`valuationObservations` supplies admitted evidence for other held instruments.
+It never uses the next open or unreported close marks. Missing quotes, a missing
+next session, or a corporate action after the latest published bar produce a
+counted `TTRD1007` abstention. A fresh post-action bar is required rather than
+assuming an unobserved market repricing. These quotations do not execute or
+persist fills. Actual next-open execution still rechecks hard limits against
+its retained execution bar and current cash/positions.
+
 The five signal policies `buyAndHold`, `macdCross`, `kdjRsi`,
 `zeroMeanReversion` and `smaCross` take identity-verified bars and explicit
 `TradingSignalParameters`. Retain those parameters as `manifest.signalParameters`

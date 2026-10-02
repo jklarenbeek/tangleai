@@ -19,7 +19,7 @@ async function executeAnalysts(fixture: TradingFixture): Promise<TradingAnalystE
   if (!compiled.valid) throw Error(JSON.stringify(compiled.issues));
   const catalog = compiled.value, { id: _id, revision: _revision, kind: _kind, ...body } = source.manifest;
   const manifest = value(await createTradingRecord('manifest', { ...body, promptCatalogRevision: catalog.document.revision,
-    rolesByProfile: { ...Object.fromEntries(TRADING_ANALYST_ROLES.map(r => [`trading-analyst-${r}`, 'scripted'])), research: 'scripted', trader: 'scripted' },
+    rolesByProfile: { ...Object.fromEntries(TRADING_ANALYST_ROLES.map(r => [`trading-analyst-${r}`, 'scripted'])), research: 'scripted', trader: 'scripted', risk: 'scripted', 'fund-manager': 'scripted' },
     limits: { calls: 128, tokens: 262144, ms: 600000, toolRounds: 4, fanOut: 8, concurrency: 4, iterations: 10, contextChars: 65536, traceBytes: 2097152 } }));
   const rebind = async <T extends TradingRecord>(record: T): Promise<T> => {
     const { id: _id, revision: _revision, kind, ...data } = record;

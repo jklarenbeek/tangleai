@@ -6,7 +6,7 @@ import { validateTradingShape } from './schema.ts';
 import { accountTradingFills, fillLedgerPostings } from './accounting.ts';
 import { tradingRefuse } from './errors.ts';
 import type { TradingOutcome } from './errors.ts';
-import type { TradingRunManifest, LedgerEntry, TradingFillInput, TradingFillPlan } from './contracts.gen.ts';
+import type { TradingRunManifest, LedgerEntry, TradingFillInput, TradingFillPlan, PortfolioSnapshot, OrderIntent, BarObservation } from './contracts.gen.ts';
 
 /** The sole owner of execution price, fees and slippage, including policy quotes. */
 export function tradingFillEconomics(manifest: Pick<TradingRunManifest, 'commissionBps' | 'slippageBps'>, open: number, side: 'buy' | 'sell', quantity: number) {
@@ -27,11 +27,18 @@ export async function planFill(input: TradingFillInput): Promise<TradingOutcome<
   if (!bar) return tradingRefuse('TTRD1007', '/bar', 'Execution session has no bar');
   if (bar.asset !== intent.asset || bar.manifestId !== manifest.id || bar.sessionId !== session.key || toEpoch(bar.eventAt) !== toEpoch(session.closeAt))
     return tradingRefuse('TTRD1003', '/bar', 'Execution bar does not reproduce the intent asset and session');
+  return quoteTradingOrder({ manifest, portfolio, intent, bar, price: bar.open, sessionId: session.key });
+}
+
+/** Internal economics shared by execution and explicit decision-time quotations. A quote is never committed as an execution plan. */
+export async function quoteTradingOrder(input: { manifest: TradingRunManifest; portfolio: PortfolioSnapshot; intent: OrderIntent;
+  bar: BarObservation; price: number; sessionId: string }): Promise<TradingOutcome<TradingFillPlan>> {
+  const { manifest, portfolio, intent, bar, price, sessionId } = input;
   const fill = await createTradingRecord('fill', { manifestId: manifest.id, intentId: intent.id, decisionId: intent.decisionId, asset: intent.asset,
-    sessionId: session.key, sourceBarId: bar.id, side: intent.side, quantity: intent.quantity, ...tradingFillEconomics(manifest, bar.open, intent.side, intent.quantity) });
+    sessionId, sourceBarId: bar.id, side: intent.side, quantity: intent.quantity, ...tradingFillEconomics(manifest, price, intent.side, intent.quantity) });
   if (!fill.valid) return fill;
-  const marks = portfolio.marks.map(m => m.asset === intent.asset ? { ...m, price: bar.open } : m);
-  const accounted = accountTradingFills(manifest, portfolio, [fill.value], marks, session.key);
+  const marks = portfolio.marks.map(m => m.asset === intent.asset ? { ...m, price } : m);
+  const accounted = accountTradingFills(manifest, portfolio, [fill.value], marks, sessionId);
   if (!accounted.valid) return tradingRefuse('TTRD1005', accounted.issues[0].path, accounted.issues[0].detail, accounted.issues[0]);
   const valued = await createTradingRecord('portfolio', accounted.value); if (!valued.valid) return valued;
   const ledgerEntries: LedgerEntry[] = [];

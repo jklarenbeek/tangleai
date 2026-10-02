@@ -23,4 +23,8 @@ evidence:
 {{#if turns}}
 turns:
 {{turns}}
+{{/if}}
+{{#if findings}}
+findings:
+{{findings}}
 {{/if}}"""

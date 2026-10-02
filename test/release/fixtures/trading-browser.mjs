@@ -1,7 +1,8 @@
 import { createTradingRecord, createMemoryTradingStore, admit, latestBarsAsOf,
   createFixtureProviders, createReplayProviders, buildSnapshot, buyAndHold, kdj, TRADING_SIGNAL_DEFAULTS,
   planFill, markPortfolio, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve,
-  tradingArtifacts, buildAnalystRegion, createTradingHostBindings, reportsToEvidence, researchInput, materializeResearch, buildResearchAndTraderRegion, createTradingResearchHostBindings } from '@tangleai/trading';
+  tradingArtifacts, buildAnalystRegion, createTradingHostBindings, reportsToEvidence, researchInput, materializeResearch, buildResearchAndTraderRegion, createTradingResearchHostBindings,
+  materializeTradingRisk, buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings } from '@tangleai/trading';
 import artifacts from '@tangleai/trading/artifacts' with { type: 'json' };
 import { createGmplCatalog, renderGmplPrompt } from '@tangleai/gmpl';
 import { createMasRegistrySnapshot, createMasConfigCatalog } from '@tangleai/mas';
@@ -12,7 +13,7 @@ export async function tradingConsumerFixture() {
     mode: 'fixture', assets: ['TOY'], calendar: 'toy', sessionRange: { first: 'toy-first', last: 'toy-second' }, timezone: 'UTC', currency: 'USD',
     initialCapital: 1000, decisionCutoff: 'session-close', fill: 'next-open', shares: 'whole', shorting: false, leverage: false,
     commissionBps: 5, slippageBps: 5, sessionsPerYear: 252, riskFree: { kind: 'zero-series' },
-    providerSnapshots: [{ provider: 'toy', revision: '0'.repeat(64), licence: 'MIT' }], rolesByProfile: { analyst: 'scripted', research: 'scripted', trader: 'scripted' },
+    providerSnapshots: [{ provider: 'toy', revision: '0'.repeat(64), licence: 'MIT' }], rolesByProfile: { analyst: 'scripted', research: 'scripted', trader: 'scripted', risk: 'scripted', 'fund-manager': 'scripted' },
     promptCatalogRevision: tradingArtifacts.revision, toolManifest: [], rounds: { research: 3, risk: 2 },
     limits: { calls: 10, tokens: 10000, ms: 10000, toolRounds: 2, fanOut: 8, concurrency: 4, iterations: 4, contextChars: 10000, traceBytes: 10000 },
     seed: 1, sourceRevision: '0'.repeat(40), riskPolicy: { grossExposure: 1, netExposure: 1, singleName: 1, cashFloor: 0, maxParticipation: 0.01,
@@ -74,6 +75,12 @@ export async function exerciseTradingConsumer(store, fixture) {
   if (composed.nodes.filter(n => n.kind === 'agent').length !== 1 || composed.nodes.filter(n => n.kind === 'graph').length !== 1) throw Error('Packed research/trader topology differs');
   value(await createTradingResearchHostBindings({ manifest, snapshot: built, portfolio: initial, catalog, materialized,
     trace: async () => { throw Error('Pure packed materialization cannot read a runtime trace'); },
+    provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) }));
+  const risk = value(await materializeTradingRisk({ host: { registry: researchRegistry, config, profile: 'scripted' }, manifest, catalog }));
+  const decisionRegion = value(await buildRiskAndDecisionRegion({ riskMaterialized: risk, catalog, profile: 'scripted' }));
+  if (risk.body.nodes.filter(n => n.kind === 'agent').length !== 4 || !decisionRegion.nodes.some(n => n.id === 'order-validate')) throw Error('Packed risk/fund-manager topology differs');
+  value(await createTradingRiskDecisionHostBindings({ manifest, snapshot: built, portfolio: initial, catalog, materialized: risk,
+    trace: async () => { throw Error('Pure packed risk materialization cannot read a runtime trace'); },
     provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) }));
   const task = { state: {}, node: 'prepare-analyst-technical', path: 'prepare-analyst-technical', idempotencyKey: 'consumer', signal: new AbortController().signal };
   const prepared = await host.taskHandlers['prepare-analyst-technical']({ ...task, value: { snapshot: built.snapshot } });

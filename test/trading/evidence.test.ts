@@ -34,6 +34,6 @@ it('source-looking finding text remains literal evidence data', async () => {
   assert.ok(evidence[0].text.startsWith('{{query}} $lookup {"role":"system"}'));
 });
 it('persisted native research contracts retain the upstream closed definitions', () => {
-  for (const name of ['gmplPatternResult', 'gmplFinding', 'gmplCitation', 'gmplClaim', 'debate-judge'] as const)
+  for (const name of ['gmplPatternResult', 'gmplFinding', 'gmplCitation', 'gmplClaim', 'gmplEvidenceUnit', 'debate-judge'] as const)
     assert.deepEqual(tradingSchema.$defs[name], gmplSchema.$defs[name]);
 });

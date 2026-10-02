@@ -552,6 +552,16 @@ export interface RiskTurnModel {
  */
 export type RiskTurnPreviousTurnIdsItem = string;
 
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskTurnClaimIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskTurnRecommendationsItem = string;
+
 export interface RiskTurn {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -603,6 +613,17 @@ export interface RiskTurn {
    */
   proposalId: string;
   key: TradingDecisionKey;
+  claimIds?: Array<RiskTurnClaimIdsItem>;
+  findings?: Array<GmplFinding>;
+  recommendations?: Array<RiskTurnRecommendationsItem>;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  attemptKey?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptNumber?: number;
 }
 
 
@@ -627,6 +648,131 @@ export interface RiskVerdictModel {
  * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
  */
 export type RiskVerdictHistoryIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
+ */
+export interface TradingProposedIntentOneOf1 {
+  action?: "hold";
+  [key: string]: unknown;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["targetWeight"]}
+ */
+export interface TradingProposedIntentOneOf2OneOf1 {
+  quantity: unknown;
+  [key: string]: unknown;
+}
+
+
+/**
+ * Schema constraints this type cannot express: not={"required":["quantity"]}
+ */
+export interface TradingProposedIntentOneOf2OneOf2 {
+  targetWeight: unknown;
+  [key: string]: unknown;
+}
+
+
+export type TradingProposedIntent = (TradingProposedIntentOneOf1 | (TradingProposedIntentOneOf2OneOf1 | TradingProposedIntentOneOf2OneOf2) & { action?: "buy" | "sell"; [key: string]: unknown; }) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; };
+
+/**
+ * Schema constraints this type cannot express: if={"properties":{"action":{"enum":["hold","reject"]}},"required":["action"]}, then={"properties":{"adjustedIntent":{"properties":{"action":{"const":"hold"}}}}}
+ */
+export type RiskVerdictOutputPart1 = unknown;
+
+export interface RiskVerdictOutputAcceptedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface RiskVerdictOutputRejectedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskVerdictOutputRecommendationsItem = string;
+
+export type RiskVerdictOutput = RiskVerdictOutputPart1 & { action: "adjust" | "hold" | "reject" | "continue"; adjustedIntent: TradingProposedIntent; acceptedClaims: Array<RiskVerdictOutputAcceptedClaimsItem>; rejectedClaims: Array<RiskVerdictOutputRejectedClaimsItem>; findings: Array<GmplFinding>; recommendations: Array<RiskVerdictOutputRecommendationsItem>; summary: string; };
+
+export interface TradingRiskJudgmentModel {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  profile: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  identityId: string;
+}
+
+
+export interface TradingRiskJudgment {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  round: number;
+  output: RiskVerdictOutput;
+  model: TradingRiskJudgmentModel;
+  spend: TradingSpend;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  attemptKey: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptNumber: number;
+}
+
+
+export interface RiskVerdictAcceptedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+export interface RiskVerdictRejectedClaimsItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type RiskVerdictRecommendationsItem = string;
 
 export interface RiskVerdict {
   /**
@@ -661,7 +807,7 @@ export interface RiskVerdict {
   promptRevision: string;
   claims: Array<TradingClaim>;
   kind: "risk-verdict";
-  disposition: "accept" | "reject" | "no-consensus";
+  disposition: "accept" | "reject" | "no-consensus" | "adjusted" | "hold" | "rejected";
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -679,6 +825,17 @@ export interface RiskVerdict {
    */
   maxQuantity: number;
   key: TradingDecisionKey;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  rounds?: number;
+  adjustedIntent?: TradingProposedIntent;
+  unadjusted?: boolean;
+  findings?: Array<GmplFinding>;
+  judgments?: Array<TradingRiskJudgment>;
+  acceptedClaims?: Array<RiskVerdictAcceptedClaimsItem>;
+  rejectedClaims?: Array<RiskVerdictRejectedClaimsItem>;
+  recommendations?: Array<RiskVerdictRecommendationsItem>;
 }
 
 
@@ -722,6 +879,11 @@ export interface TradingIssue {
   cause?: TradingIssueCause;
 }
 
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type FundManagerDecisionReasonsItem = string;
 
 export interface FundManagerDecision {
   /**
@@ -775,6 +937,11 @@ export interface FundManagerDecision {
    */
   rationale: string;
   key: TradingDecisionKey;
+  decision?: "approved" | "modified" | "rejected";
+  finalIntent?: TradingProposedIntent;
+  reasons?: Array<FundManagerDecisionReasonsItem>;
+  inputProposalId?: TradingId;
+  inputRiskVerdictId?: TradingId;
 }
 
 
@@ -1025,35 +1192,6 @@ export interface Fill {
  * Schema constraints this type cannot express: if={"properties":{"decision":{"const":"rejected"}}}, then={"properties":{"finalIntent":{"properties":{"action":{"const":"hold"}}}}}
  */
 export type FundManagerOutputPart1 = unknown;
-
-/**
- * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
- */
-export interface TradingProposedIntentOneOf1 {
-  action?: "hold";
-  [key: string]: unknown;
-}
-
-
-/**
- * Schema constraints this type cannot express: not={"required":["targetWeight"]}
- */
-export interface TradingProposedIntentOneOf2OneOf1 {
-  quantity: unknown;
-  [key: string]: unknown;
-}
-
-
-/**
- * Schema constraints this type cannot express: not={"required":["quantity"]}
- */
-export interface TradingProposedIntentOneOf2OneOf2 {
-  targetWeight: unknown;
-  [key: string]: unknown;
-}
-
-
-export type TradingProposedIntent = (TradingProposedIntentOneOf1 | (TradingProposedIntentOneOf2OneOf1 | TradingProposedIntentOneOf2OneOf2) & { action?: "buy" | "sell"; [key: string]: unknown; }) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; };
 
 /**
  * Schema constraints this type cannot express: minLength=1
@@ -1326,6 +1464,8 @@ export interface OrderIntent {
   quantity: number;
   limitPrice: OrderIntentLimitPriceAnyOf1 | null;
   stopPrice: OrderIntentStopPriceAnyOf1 | null;
+  provenance?: { proposalId: TradingId; riskVerdictId: TradingId; decisionId: TradingId; };
+  priceEvidenceIds?: Array<TradingId>;
 }
 
 
@@ -1491,49 +1631,6 @@ export interface RiskTurnOutput {
    */
   claims: Array<RiskTurnOutputClaimsItem>;
   recommendations: Array<RiskTurnOutputRecommendationsItem>;
-}
-
-
-export interface RiskVerdictOutputAcceptedClaimsItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
-
-export interface RiskVerdictOutputRejectedClaimsItem {
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  id: string;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  reason: string;
-}
-
-
-/**
- * Schema constraints this type cannot express: minLength=1
- */
-export type RiskVerdictOutputRecommendationsItem = string;
-
-export interface RiskVerdictOutput {
-  action: "adjust" | "hold" | "reject" | "continue";
-  adjustedIntent: TradingProposedIntent;
-  acceptedClaims: Array<RiskVerdictOutputAcceptedClaimsItem>;
-  rejectedClaims: Array<RiskVerdictOutputRejectedClaimsItem>;
-  findings: Array<TradingFindingOutput>;
-  recommendations: Array<RiskVerdictOutputRecommendationsItem>;
-  /**
-   * Schema constraints this type cannot express: minLength=1
-   */
-  summary: string;
 }
 
 
@@ -2457,6 +2554,7 @@ export interface TradingSizingResult {
    */
   quantity: number;
   issues: Array<TradingIssue>;
+  adjustments?: Array<TradingIssue>;
 }
 
 
@@ -2572,6 +2670,48 @@ export interface TradingVisiblePortfolio {
   cash: number;
   positions: Array<PortfolioPosition>;
   asOfSessionId: TradingId | null;
+}
+
+
+export interface GmplEvidenceUnit {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  digest: string;
+  text: string;
+}
+
+
+export interface TradingRiskState {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  round: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  maxRounds: number;
+  done: boolean;
+  disposition: "adjusted" | "hold" | "rejected" | "no-consensus" | null;
+  proposal: TradeProposal;
+  evidence: Array<GmplEvidenceUnit>;
+  turns: Array<RiskTurn>;
+  currentTurns: Array<RiskTurn>;
+  findings: Array<GmplFinding>;
+  history: Array<TradingRiskJudgment>;
+}
+
+
+export interface TradingOrderAdmission {
+  intent: OrderIntent | null;
+  decision: TradingDecision;
+  decisionArtifactId: TradingId;
+  violations: Array<TradingIssue>;
+  adjustments: Array<TradingIssue>;
 }
 
 

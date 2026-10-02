@@ -60,7 +60,9 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       balanced postings and verified zero-write whole-run replay;
                       compiled role prompts and four concurrent MAS analyst lanes
                       with role-visible citations and cutoff-bound read tools;
-                      native bounded research, attributed turns and read-only proposals
+                      native bounded research, attributed turns and read-only proposals;
+                      three-persona risk review, cited fund-manager decisions and
+                      deterministic order admission from published valuation quotes
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

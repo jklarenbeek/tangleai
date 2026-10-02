@@ -45,7 +45,7 @@ describe('registered trading measurement', () => {
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
     assert.equal(report.counts.implementationMissing, 1); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts', 'research', 'trader']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts', 'research', 'trader', 'risk', 'fundManager']) assert.doesNotThrow(() => requireCapability(report, capability));
     for (const capability of ['agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
     assert.equal(leaky.transactions, 0); assert.equal(leaky.rejectedOrders, 1);
     const hold = report.rows.find(r => r.id === 'buy-and-hold')!;
@@ -58,7 +58,7 @@ describe('registered trading measurement', () => {
   it('keeps thirty independent vectors and ten signal series separate from execution returns', async () => {
     const [indicators, signals] = report.mechanisms.rows;
     assert.equal(indicators.id, 'indicators'); assert.equal(signals.id, 'signals');
-    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10], ['measured', 248, 248], ['measured', 248, 248], ['measured', 248, 248]]);
+    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10], ...Array.from({ length: 5 }, () => ['measured', 248, 248])]);
     assert.equal(indicators.cases.reduce((n, c) => n + c.positions, 0), 2880);
     assert.ok(indicators.cases.every(c => c.arraySha256 === c.float64Sha256 && c.maximumAbsoluteError < 1e-10));
     assert.ok(signals.cases.every(c => c.referenceSha256 === c.actualSha256 && c.entries === c.expectedEntries && c.exits === c.expectedExits));
@@ -71,6 +71,12 @@ describe('registered trading measurement', () => {
     assert.equal(trader.proposals, 248); assert.equal(trader.physicalCalls, 496); assert.equal(trader.financialWrites, 0); assert.equal(trader.replayWrites, 0);
     assert.ok(research.probes.every(p => p.passed)); assert.ok(trader.probes.every(p => p.passed));
     assert.ok(research.probes.find(p => p.id === 'crash-recovery')!.restores > 0);
+    const risk = report.mechanisms.rows[5], fund = report.mechanisms.rows[6]; assert.equal(risk.id, 'risk-scripted'); assert.equal(fund.id, 'fund-manager-scripted');
+    assert.equal(risk.rounds, 496); assert.equal(risk.turns, 1488); assert.equal(risk.retainedFindings, 1488); assert.equal(risk.noConsensus, 248); assert.equal(risk.physicalCalls, 3968);
+    assert.equal(fund.approved, 248); assert.equal(fund.physicalCalls, 496); assert.equal(fund.financialWrites, 0); assert.equal(fund.replayWrites, 0);
+    assert.ok(risk.probes.every(p => p.passed)); assert.equal(fund.probes.length, 13); assert.ok(fund.probes.every(p => p.passed && p.setupPhysicalCalls! > 0));
+    assert.ok(fund.probes.some(p => p.policyViolations?.includes('/riskPolicy/singleName')));
+    assert.ok(fund.probes.some(p => p.adjustments?.includes('/riskPolicy/singleName')));
 
     for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.ok(row.metrics); assert.equal(row.reason, null); }
     const dir = await mkdtemp(join(tmpdir(), 'trading-reference-'));
@@ -132,6 +138,10 @@ describe('registered trading measurement', () => {
       r => { const row = r.mechanisms.rows[3]; if (row.id === 'research-scripted') row.probes[0].restores = 0; },
       r => { const row = r.mechanisms.rows[4]; if (row.id === 'trader-scripted') row.financialWrites++; },
       r => { const row = r.mechanisms.rows[4]; if (row.id === 'trader-scripted') row.cases[0].valid = false; },
+      r => { const row = r.mechanisms.rows[5]; if (row.id === 'risk-scripted') row.turns++; },
+      r => { const row = r.mechanisms.rows[5]; if (row.id === 'risk-scripted') row.cases[0].turnsByPersona.conservative = 0; },
+      r => { const row = r.mechanisms.rows[6]; if (row.id === 'fund-manager-scripted') row.probes[0].setupPhysicalCalls = 0; },
+      r => { const row = r.mechanisms.rows[6]; if (row.id === 'fund-manager-scripted') row.financialWrites++; },
       r => { r.mechanisms.reference!.packages.ta = 'forged' as '0.11.0'; },
       r => { r.rows[3].execution!.equitySha256 = '0'.repeat(64); }, r => { r.rows[3].execution!.decisionCount++; },
     ];

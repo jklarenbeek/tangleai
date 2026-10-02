@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "ac6f69868a8407c8abde2b51c94a00c28fac2e7c",
+    "head": "78b00ba3c6fe176a1126b7deba73a9048599f65d",
     "clean": false,
     "files": [
       {
@@ -2151,7 +2151,7 @@
       },
       {
         "path": "packages/trading/artifacts/catalog.json",
-        "sha256": "118eec2d11d7d320caf077dfd9d142e1bc7e193fbe4298b8031303eecb060c84"
+        "sha256": "2f6c805cbbecc9c227d9bbb31fbe404da67013b8eac5fb01d71dfbb0c9466cbe"
       },
       {
         "path": "packages/trading/package.json",
@@ -2159,7 +2159,7 @@
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "14b7134363c2550fa1eacb7ab38e3626a39e9868a70518d890c03fc7c6c2c53c"
+        "sha256": "e55823d60033696b21f1c5ae4d41f646aa1ed49fab48bd35937478718d1f9591"
       },
       {
         "path": "packages/trading/src/accounting.ts",
@@ -2175,11 +2175,11 @@
       },
       {
         "path": "packages/trading/src/broker.ts",
-        "sha256": "640c57f732d729608d12c1d7c05b4ab85d0120667a050661d1578089a7a3b4e0"
+        "sha256": "2255b0e40d1aa669406f1a022f085dff4013ed5af8dd66b9b08b8d3a8287a0a4"
       },
       {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "728ed72024998d881dbb9d40fbeff0e73ca2ff8d9ebf787a6ce660e48a284eac"
+        "sha256": "ab4320b18a78f205f6632ebfef4216ffd65513043df90d6db960fd1b321925a6"
       },
       {
         "path": "packages/trading/src/errors.ts",
@@ -2188,6 +2188,10 @@
       {
         "path": "packages/trading/src/evidence.ts",
         "sha256": "a1f8078231f1994bddcdc1e62c32e7d121b21d0bac89a09dc3a324a2fa3ff830"
+      },
+      {
+        "path": "packages/trading/src/fund-manager.ts",
+        "sha256": "cc5b0754b5c8cb7a771e0a7403f0071bbcf7458e1abf93d386d465718b55a72f"
       },
       {
         "path": "packages/trading/src/host-bindings.ts",
@@ -2199,11 +2203,15 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "3e50fa58e112668309a34830c8c9303402e8658d2d27cb018e457bd72e2e5ae5"
+        "sha256": "490befb898a245155465c92d9834b6be1dec96b8d611f1ca9ba5886c384b1887"
       },
       {
         "path": "packages/trading/src/indicators.ts",
         "sha256": "2714b2f0062d7ae88cb70cb678717652c526ee77fc75e515ca52e92e08c3e42c"
+      },
+      {
+        "path": "packages/trading/src/order.ts",
+        "sha256": "b135b4f3f3ea119a08103a8352fbadd05f32634ce6bd69017bf43d101de0b6c6"
       },
       {
         "path": "packages/trading/src/portfolio.ts",
@@ -2222,8 +2230,20 @@
         "sha256": "e809538e841415cac4f779890b8429b3af676eefc07c8112f267f0ef573da999"
       },
       {
+        "path": "packages/trading/src/risk-decision.ts",
+        "sha256": "b38eca3dfcf10aa3d168f6cc5c7d542cfc484c18d671c6bd65cf17c6e9e24ad4"
+      },
+      {
+        "path": "packages/trading/src/risk-round.ts",
+        "sha256": "b8a20c7a63813f766b5117f1a3ad156536525830e164fab33e19d9e2d750a6ac"
+      },
+      {
+        "path": "packages/trading/src/risk-tasks.ts",
+        "sha256": "050afc999d2a80130a118e8ac7874a3ccb630b99540c588a11197e96fca0c60b"
+      },
+      {
         "path": "packages/trading/src/risk.ts",
-        "sha256": "514581f0bedf8541a33a31c032c743cc85e8ddc802c9816e7a075e65f1f5de6d"
+        "sha256": "ff957e52526a3ce19b931eeda1afe061220ef34688494d5112052e2c1babd345"
       },
       {
         "path": "packages/trading/src/schema.ts",
@@ -2258,7 +2278,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "2b78d4af3f9c7cbed51c7dc1261085693d9f0391e69f9fd97e71758f54124fb0"
+    "sha256": "2c436651dfc69b15349a7765bbba0e0ca4c4c21cab418c4a36e1211a972d4692"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85444,5 +85464,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "c3cb990f89bd1ab6a2613e33f0e195a35293a40b3963256af6152335ec236b88"
+  "reportId": "6ddb9f4021ed8c2e9bf5ed2b60434e2844238076eaf79b6c77addf6a3ee225d8"
 }

@@ -816,6 +816,29 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "modified",
+            "rejected"
+          ]
+        },
+        "finalIntent": {
+          "$ref": "#/$defs/tradingProposedIntent"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "inputProposalId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "inputRiskVerdictId": {
+          "$ref": "#/$defs/tradingId"
         }
       },
       "required": [
@@ -1248,6 +1271,32 @@
               "type": "null"
             }
           ]
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "proposalId": {
+              "$ref": "#/$defs/tradingId"
+            },
+            "riskVerdictId": {
+              "$ref": "#/$defs/tradingId"
+            },
+            "decisionId": {
+              "$ref": "#/$defs/tradingId"
+            }
+          },
+          "required": [
+            "proposalId",
+            "riskVerdictId",
+            "decisionId"
+          ],
+          "additionalProperties": false
+        },
+        "priceEvidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingId"
+          }
         }
       },
       "required": [
@@ -1812,6 +1861,34 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "attemptKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attemptNumber": {
+          "type": "integer",
+          "minimum": 1
         }
       },
       "required": [
@@ -1957,7 +2034,10 @@
           "enum": [
             "accept",
             "reject",
-            "no-consensus"
+            "no-consensus",
+            "adjusted",
+            "hold",
+            "rejected"
           ]
         },
         "summary": {
@@ -1982,6 +2062,78 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "adjustedIntent": {
+          "$ref": "#/$defs/tradingProposedIntent"
+        },
+        "unadjusted": {
+          "type": "boolean"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "judgments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingRiskJudgment"
+          }
+        },
+        "acceptedClaims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rejectedClaims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       },
       "required": [
@@ -2064,7 +2216,7 @@
         "findings": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/tradingFindingOutput"
+            "$ref": "#/$defs/gmplFinding"
           }
         },
         "recommendations": {
@@ -2088,7 +2240,35 @@
         "recommendations",
         "summary"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "enum": [
+                  "hold",
+                  "reject"
+                ]
+              }
+            },
+            "required": [
+              "action"
+            ]
+          },
+          "then": {
+            "properties": {
+              "adjustedIntent": {
+                "properties": {
+                  "action": {
+                    "const": "hold"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "tradeProposal": {
       "type": "object",
@@ -4248,6 +4428,12 @@
           "items": {
             "$ref": "#/$defs/tradingIssue"
           }
+        },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
         }
       },
       "required": [
@@ -5160,6 +5346,193 @@
         "round",
         "action",
         "judgment"
+      ],
+      "additionalProperties": false
+    },
+    "gmplEvidenceUnit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "digest",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "tradingRiskJudgment": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "output": {
+          "$ref": "#/$defs/riskVerdictOutput"
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identityId": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "profile",
+            "identityId"
+          ],
+          "additionalProperties": false
+        },
+        "spend": {
+          "$ref": "#/$defs/tradingSpend"
+        },
+        "attemptKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attemptNumber": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "round",
+        "output",
+        "model",
+        "spend",
+        "attemptKey",
+        "attemptNumber"
+      ],
+      "additionalProperties": false
+    },
+    "tradingRiskState": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "maxRounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "done": {
+          "type": "boolean"
+        },
+        "disposition": {
+          "enum": [
+            "adjusted",
+            "hold",
+            "rejected",
+            "no-consensus",
+            null
+          ]
+        },
+        "proposal": {
+          "$ref": "#/$defs/tradeProposal"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplEvidenceUnit"
+          }
+        },
+        "turns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/riskTurn"
+          }
+        },
+        "currentTurns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/riskTurn"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingRiskJudgment"
+          }
+        }
+      },
+      "required": [
+        "round",
+        "maxRounds",
+        "done",
+        "disposition",
+        "proposal",
+        "evidence",
+        "turns",
+        "currentTurns",
+        "findings",
+        "history"
+      ],
+      "additionalProperties": false
+    },
+    "tradingOrderAdmission": {
+      "type": "object",
+      "properties": {
+        "intent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/orderIntent"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "$ref": "#/$defs/tradingDecision"
+        },
+        "decisionArtifactId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingIssue"
+          }
+        }
+      },
+      "required": [
+        "intent",
+        "decision",
+        "decisionArtifactId",
+        "violations",
+        "adjustments"
       ],
       "additionalProperties": false
     }

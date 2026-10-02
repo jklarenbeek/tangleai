@@ -35,3 +35,11 @@ export { tradingResearchDomain, materializeResearch, researchVerdict } from './r
 export type { TradingResearchContext, TradingAttemptProvenance } from './research.ts';
 export { checkTradeProposal, buildResearchAndTraderRegion, createTradingResearchHostBindings } from './trader.ts';
 export type { MaterializedTradingResearch } from './trader.ts';
+export { TRADING_RISK_PERSONAS, initializeTradingRisk, checkRiskTurn, collectTradingRiskTurns, gateTradingRiskRound, finalizeTradingRisk } from './risk-tasks.ts';
+export type { TradingRiskWorkflowInput, TradingRiskContext, TradingRiskProvenance } from './risk-tasks.ts';
+export { buildRiskRound, buildRiskPattern, materializeTradingRisk, createTradingRiskHostBindings } from './risk-round.ts';
+export type { MaterializedTradingRisk } from './risk-round.ts';
+export { checkFundManagerDecision } from './fund-manager.ts';
+export { toOrderIntent } from './order.ts';
+export type { TradingOrderInput } from './order.ts';
+export { buildRiskAndDecisionRegion, createTradingRiskDecisionHostBindings } from './risk-decision.ts';
