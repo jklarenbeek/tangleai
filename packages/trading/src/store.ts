@@ -132,8 +132,24 @@ export function createTradingStoreAdapter(persistence: TradingPersistence, optio
         const snapshot = await tx.get('snapshots', valid.value.snapshotId);
         if (!snapshot || snapshot.manifestId !== key.manifestId || snapshot.asset !== key.asset || snapshot.sessionId !== key.sessionId)
           return tradingRefuse('TTRD1004', '/snapshotId', 'Artifact has no matching retained snapshot');
-        if (valid.value.citations.some(id => !snapshot.observationIds.includes(id)) || valid.value.claims.some(c => c.citations.some(id => !valid.value.citations.includes(id))))
-          return tradingRefuse('TTRD1004', '/citations', 'Artifact cites information outside its snapshot');
+        const snapshotValid = await checked(snapshot); if (!snapshotValid.valid) return snapshotValid;
+        if (valid.value.claims.some(c => c.citations.some(id => !valid.value.citations.includes(id))))
+          return tradingRefuse('TTRD1004', '/claims', 'A claim cites information absent from its artifact');
+        const predecessors = [
+          ...('previousTurnIds' in valid.value ? valid.value.previousTurnIds : []),
+          ...('historyIds' in valid.value ? valid.value.historyIds : []),
+          ...('researchVerdictId' in valid.value ? [valid.value.researchVerdictId] : []),
+          ...('proposalId' in valid.value ? [valid.value.proposalId] : []),
+          ...('riskVerdictId' in valid.value ? [valid.value.riskVerdictId] : []),
+        ];
+        for (const id of new Set([...valid.value.citations, ...predecessors])) {
+          if (!predecessors.includes(id) && snapshot.observationIds.includes(id)) continue;
+          const prior = await tx.get('artifacts', id);
+          if (!prior || prior.id === valid.value.id || prior.snapshotId !== snapshot.id || prior.manifestId !== key.manifestId
+            || prior.key.asset !== key.asset || prior.key.sessionId !== key.sessionId)
+            return tradingRefuse('TTRD1004', '/citations', 'Artifact predecessor is not retained in the same snapshot');
+          const priorValid = await checked(prior); if (!priorValid.valid) return priorValid;
+        }
         const existing = await tx.query('artifacts', { key });
         if (existing.length && !equalsJson(existing[0], valid.value)) return tradingRefuse('TTRD1006', '/key', 'Artifact stage is already committed with different bytes');
         return immutablePut(tx, 'artifacts', valid.value);

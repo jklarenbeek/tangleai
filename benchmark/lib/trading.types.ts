@@ -650,6 +650,8 @@ export interface Capabilities {
   indicators: boolean;
   signals: boolean;
   analysts: boolean;
+  research: boolean;
+  trader: boolean;
 }
 
 
@@ -1094,15 +1096,383 @@ export interface AnalystMeasurement {
 }
 
 
+export interface ResearchMeasurementLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBytes: number;
+}
+
+
+export interface ResearchProbeMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  passed: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusals: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  refusalCode: string | null;
+}
+
+
+export interface ResearchCaseMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  reproduced: boolean;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retainedFindings: number;
+  disposition: "completed" | "no-consensus" | "rejected";
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  analystOutputsSha256: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  verdictSha256: string;
+}
+
+
 /**
- * Schema constraints this type cannot express: $query={"$eq":[["$.rows[*].id"],["indicators","signals","analysts-scripted"]]}
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.total",{"$count":"$.cases[*]"}]},{"$eq":["$.reproduced",{"$count":"$.cases[?(@.reproduced==true)]"}]},{"$eq":["$.physicalCalls",{"$sum":"$.cases[*].physicalCalls"}]},{"$eq":["$.normalizations",{"$sum":"$.cases[*].normalizations"}]},{"$eq":["$.repairs",{"$sum":"$.cases[*].repairs"}]},{"$eq":["$.replays",{"$sum":"$.cases[*].replays"}]},{"$eq":["$.restores",{"$sum":"$.cases[*].restores"}]},{"$eq":["$.rounds",{"$sum":"$.cases[*].rounds"}]},{"$eq":["$.turns",{"$sum":"$.cases[*].turns"}]},{"$eq":["$.retainedFindings",{"$sum":"$.cases[*].retainedFindings"}]},{"$eq":["$.total",{"$add":["$.completed",{"$add":["$.rejected","$.noConsensus"]}]}]}]}
+ */
+export interface ResearchMeasurement {
+  id: "research-scripted";
+  status: "measured";
+  reason: null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reproduced: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  manifestId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  catalogRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  analystMeasurementSha256: string;
+  limits: ResearchMeasurementLimits;
+  probes: Array<ResearchProbeMeasurement>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  maxRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  turns: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  retainedFindings: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  completed: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  rejected: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  noConsensus: number;
+  cases: Array<ResearchCaseMeasurement>;
+}
+
+
+export interface TraderMeasurementLimits {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  calls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  tokens: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  toolRounds: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  fanOut: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  concurrency: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  iterations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  contextChars: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  traceBytes: number;
+}
+
+
+export interface TraderCaseMeasurement {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  asset: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  sessionId: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  reproduced: boolean;
+  valid: boolean;
+  exceedsPosition: boolean;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  proposalSha256: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  financialWrites: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayWrites: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.total",{"$count":"$.cases[*]"}]},{"$eq":["$.reproduced",{"$count":"$.cases[?(@.reproduced==true)]"}]},{"$eq":["$.physicalCalls",{"$sum":"$.cases[*].physicalCalls"}]},{"$eq":["$.normalizations",{"$sum":"$.cases[*].normalizations"}]},{"$eq":["$.repairs",{"$sum":"$.cases[*].repairs"}]},{"$eq":["$.replays",{"$sum":"$.cases[*].replays"}]},{"$eq":["$.restores",{"$sum":"$.cases[*].restores"}]},{"$eq":["$.financialWrites",{"$sum":"$.cases[*].financialWrites"}]},{"$eq":["$.replayWrites",{"$sum":"$.cases[*].replayWrites"}]},{"$eq":["$.proposals",{"$count":"$.cases[?(@.valid==true)]"}]},{"$eq":["$.exceedsPosition",{"$count":"$.cases[?(@.exceedsPosition==true)]"}]}]}
+ */
+export interface TraderMeasurement {
+  id: "trader-scripted";
+  status: "measured";
+  reason: null;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  total: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  reproduced: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  physicalCalls: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  normalizations: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  repairs: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replays: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  restores: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  manifestId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  catalogRevision: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  analystMeasurementSha256: string;
+  limits: TraderMeasurementLimits;
+  probes: Array<ResearchProbeMeasurement>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  proposals: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  exceedsPosition: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  financialWrites: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  replayWrites: number;
+  cases: Array<TraderCaseMeasurement>;
+}
+
+
+/**
+ * Schema constraints this type cannot express: $query={"$eq":[["$.rows[*].id"],["indicators","signals","analysts-scripted","research-scripted","trader-scripted"]]}
  */
 export interface MechanismMeasurements {
   reference: IndicatorReferenceMetadata | null;
   /**
-   * Schema constraints this type cannot express: minItems=3, maxItems=3
+   * Schema constraints this type cannot express: minItems=5, maxItems=5
    */
-  rows: Array<IndicatorMeasurement | SignalMeasurement | AnalystMeasurement>;
+  rows: Array<IndicatorMeasurement | SignalMeasurement | AnalystMeasurement | ResearchMeasurement | TraderMeasurement>;
 }
 
 

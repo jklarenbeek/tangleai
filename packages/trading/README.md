@@ -2,7 +2,7 @@
 
 Closed trading records, point-in-time providers, deterministic signals and
 atomic simulated execution with corporate settlement and hard risk limits, plus
-compiled prompts and concurrent evidence-bound analyst lanes. Importing the package performs no
+compiled prompts, concurrent analyst lanes, bounded research and read-only trade proposals. Importing the package performs no
 filesystem, network or database work. Hosts supply market observations and a
 store; the package has no live broker connection.
 
@@ -117,6 +117,54 @@ Completed reports retain the normalized analysis, claims, limitations, horizon,
 confidence, prompt revision, model identity and spend in their content address.
 Analyst tasks cannot create orders or change a portfolio.
 
+`reportsToEvidence(reports)` projects the four immutable analyst reports in a
+fixed role order. Each finding becomes a native GMPL evidence unit named
+`<report id>:f<ordinal>`; its digest binds the finding text and cited observation
+ids. `researchInput({ manifest, asset, session, reports })` binds that projection
+to the decision scope. Researchers receive these report units and permitted
+round history; they do not receive raw observations or a data tool.
+
+`tradingResearchDomain(catalog)` binds the compiled trading prompts to GMPL's
+structured debate. `materializeResearch({ host, manifest, catalog })` returns
+the native template instance, validated workflow, plan, registry, CONFIG catalog
+and content bindings. The manifest declares every research role's profile; the
+native pattern uses the selected host profile for those roles. Its two
+participants and maximum rounds come from the manifest. Native ceilings, host
+caps and manifest caps can only narrow execution. Materialization preserves
+native GMPL/MAS diagnostics; trading content refusals retain the `TTRD` codes.
+
+`buildResearchAndTraderRegion({ materialized, catalog, profile })` embeds that
+native child and adds preparation, verdict reconstruction and trader checks.
+Composition and host binding check the compiled catalog and native policy;
+host binding also checks the manifest's round count, profiles and limits.
+It returns the region and the merged registry document. It does not replace
+any native task handler or round controller. The trader profile is independent
+of the research profile. `createTradingResearchHostBindings({ manifest,
+snapshot, portfolio, catalog, materialized, trace, provenance })` supplies the
+content bindings. The injected `trace()` reads the active MAS run;
+`provenance(attempt)` supplies the observed model identity and spend. Calls,
+tokens, tool usage and active time must agree with the durable attempt.
+
+`researchVerdict(...)` reconstructs attributed position/rebuttal artifacts,
+including their prompt revision, model, spend, round, phase, native idempotency
+key, attempt number and prior visible turns. These semantic keys keep artifact
+identities stable when recovery allocates additional database sequence numbers.
+The verdict retains the exact native result, raw judge output, effective
+gate action, terminal disposition and unresolved findings. A supported
+contradiction can overrule an `accept`; the original judgment remains visible.
+The final permitted round explicitly yields `no-consensus`. SQLite recovery
+retains completed attempts without repeating model calls; restored nodes and
+replay events remain separate native counters.
+
+`checkTradeProposal(...)` accepts buy, sell or hold, next-open timing, a horizon,
+an assumed portfolio and citations to the visible reports or verdict. Buy/sell
+requires either a quantity or a target weight. Numeric sell quantities above
+the position are retained with `exceedsPosition: true`; the hard policy gate owns
+execution eligibility and weight conversion. The proposal can neither place
+an order nor change cash or positions. Raw close marks stay out of its portfolio
+view. `tradingWorkflowIssue(run)` maps native budget exhaustion to `TTRD1009`
+while retaining the native cause; an incomplete workflow produces no proposal.
+
 The five signal policies `buyAndHold`, `macdCross`, `kdjRsi`,
 `zeroMeanReversion` and `smaCross` take identity-verified bars and explicit
 `TradingSignalParameters`. Retain those parameters as `manifest.signalParameters`
@@ -144,7 +192,11 @@ The injected `TradingStore` has eleven record tables. Retain the manifest and
 sessions, put observations, then call `initializePortfolio` with the declared
 cash and zero positions. Snapshots reference a retained portfolio and admitted
 evidence for their asset and session. `stageArtifact` binds one immutable
-artifact to a decision-stage key and restricts citations to that snapshot.
+artifact to a decision-stage key. Citations and structural predecessor references
+must name admitted observations or already retained artifacts in that same
+manifest, asset, session and snapshot. Retain reports before turns, turns before
+the verdict, and the verdict before its proposal; immutable predecessor order
+prevents a circular evidence chain.
 
 `commitDecision` is the sole financial write boundary. Its input carries
 `expectedPortfolioId`, a decision key, decision, optional intent, fills,

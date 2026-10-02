@@ -122,6 +122,37 @@ export function qualifyTradingStore(name: string, open: OpenTradingHarness): voi
         assert.deepEqual(await h.store.list('artifacts'), [artifact]);
       } finally { await h.close(); }
     });
+    it('artifact citation chains require retained immutable predecessors in the same snapshot', async () => {
+      const h = await open();
+      try {
+        await seed(h.store); value(await h.store.put('observations', fixture.observations[0]));
+        const key = { ...plan.key, sessionId: fixture.sessions[1].key, stage: 'analyst' };
+        const snapshot = value(await createTradingRecord('snapshot', { manifestId: fixture.manifest.id, asset: key.asset, sessionId: key.sessionId,
+          cutoffAt: fixture.sessions[1].closeAt, observationIds: [fixture.observations[0].id], refused: [], providerErrors: [], portfolioId: fixture.initial.id, staleness: 1 }));
+        value(await h.store.put('snapshots', snapshot));
+        const report = value(await createTradingRecord('analyst-report', { manifestId: fixture.manifest.id, key, role: 'market-analyst', snapshotId: snapshot.id,
+          citations: snapshot.observationIds, model: { profile: 'scripted', identityId: '0'.repeat(64) }, promptRevision: '0'.repeat(64),
+          spend: { calls: 1, toolCalls: 0, tokens: 10, usd: 0, retries: 0, repairs: 0, ms: 0 }, claims: [], summary: 'One available bar', signals: [], gaps: [] }));
+        const researchKey = { ...key, stage: 'research' };
+        const verdict = value(await createTradingRecord('research-verdict', { manifestId: fixture.manifest.id, key: researchKey, role: 'research', snapshotId: snapshot.id,
+          citations: [report.id], claims: [{ text: 'An attributed research claim', citations: [report.id] }], model: report.model, promptRevision: report.promptRevision,
+          spend: report.spend, disposition: 'no-consensus', summary: 'Retained disagreement', historyIds: [] }));
+        const missing = await h.store.stageArtifact(researchKey, verdict); assert.equal(missing.valid, false);
+        value(await h.store.stageArtifact(key, report));
+        const before = await contents(h.store);
+        const alteredSnapshot = await reidentify(snapshot, { refused: [{ id: 'hidden-observation', reason: 'TTRD1003' }] });
+        value(await h.store.put('snapshots', alteredSnapshot));
+        for (const delta of [{ snapshotId: alteredSnapshot.id }, { citations: ['missing-artifact'] }, { historyIds: ['missing-artifact'] }, { claims: [{ text: 'Hidden claim', citations: ['missing-artifact'] }] }]) {
+          const bad = await reidentify(verdict, delta); const rejected = await h.store.stageArtifact(researchKey, bad);
+          assert.equal(rejected.valid, false); if (!rejected.valid) assert.equal(rejected.issues[0].code, 'TTRD1004');
+        }
+        assert.equal(value(await h.store.stageArtifact(researchKey, verdict)).writes, 1);
+        const reopened = h.reopen ? await h.reopen() : h.store;
+        assert.equal(value(await reopened.stageArtifact(researchKey, verdict)).writes, 0);
+        assert.deepEqual(await reopened.list('fills'), before.fills); assert.deepEqual(await reopened.list('portfolios'), before.portfolios);
+        assert.equal((await reopened.list('artifacts')).length, 2);
+      } finally { await h.close(); }
+    });
     it('snapshots refuse missing records, cross-asset evidence and observations published after the cutoff', async () => {
       const h = await open();
       try {

@@ -3,19 +3,23 @@ import { canonicalSha256 } from '@jarenjs/json/canonical';
 import { cloneJson } from '@jarenjs/core/object';
 import { createGmplCatalog } from '@tangleai/gmpl';
 import { createTradingRecord, createFixtureProviders, buildSnapshot, tradingArtifacts, TRADING_ANALYST_ROLES } from '@tangleai/trading';
-import type { TradingRecord, TradingOutcome, TradingAnalystRole, AnalystReport, TradingSpend, MarketSession, Observation } from '@tangleai/trading';
+import type { TradingRecord, TradingOutcome, TradingAnalystRole, AnalystReport, TradingSpend, MarketSession, Observation, TradingRunManifest, PortfolioSnapshot, TradingSnapshotBundle } from '@tangleai/trading';
 import type { TradingFixture } from './trading.ts';
 import type { AnalystMeasurement } from './trading.types.ts';
 import { tradingExecutionInput } from './trading-execution.ts';
 import { prepareTradingAnalystDrive } from './trading-analyst-runner.ts';
 
 const value = <T>(outcome: TradingOutcome<T>): T => { if (!outcome.valid) throw Error(JSON.stringify(outcome.issues)); return outcome.value; };
-async function executeAnalysts(fixture: TradingFixture): Promise<AnalystMeasurement> {
+export interface TradingAnalystExecution {
+  measurement: AnalystMeasurement; manifest: TradingRunManifest; portfolio: PortfolioSnapshot; sessions: MarketSession[]; observations: Observation[];
+  cases: Array<{ snapshot: TradingSnapshotBundle; reports: AnalystReport[] }>;
+}
+async function executeAnalysts(fixture: TradingFixture): Promise<TradingAnalystExecution> {
   const source = await tradingExecutionInput(fixture, 'analysts-scripted'), compiled = await createGmplCatalog(tradingArtifacts);
   if (!compiled.valid) throw Error(JSON.stringify(compiled.issues));
   const catalog = compiled.value, { id: _id, revision: _revision, kind: _kind, ...body } = source.manifest;
   const manifest = value(await createTradingRecord('manifest', { ...body, promptCatalogRevision: catalog.document.revision,
-    rolesByProfile: Object.fromEntries(TRADING_ANALYST_ROLES.map(r => [`trading-analyst-${r}`, 'scripted'])),
+    rolesByProfile: { ...Object.fromEntries(TRADING_ANALYST_ROLES.map(r => [`trading-analyst-${r}`, 'scripted'])), research: 'scripted', trader: 'scripted' },
     limits: { calls: 128, tokens: 262144, ms: 600000, toolRounds: 4, fanOut: 8, concurrency: 4, iterations: 10, contextChars: 65536, traceBytes: 2097152 } }));
   const rebind = async <T extends TradingRecord>(record: T): Promise<T> => {
     const { id: _id, revision: _revision, kind, ...data } = record;
@@ -30,6 +34,7 @@ async function executeAnalysts(fixture: TradingFixture): Promise<AnalystMeasurem
   const row: AnalystMeasurement = { id: 'analysts-scripted', status: 'measured', reason: null, total: 0, reproduced: 0, reports: 0, citations: 0, resolved: 0,
     manifestId: manifest.id, catalogRevision: catalog.document.revision, limits: manifest.limits,
     physicalCalls: 0, normalizations: 0, repairs: 0, toolRequests: 0, refusedToolRequests: 0, cases: [], probes: [] };
+  const cases: TradingAnalystExecution['cases'] = [];
   for (const session of sessions) for (const asset of manifest.assets) {
     const snapshot = value(await buildSnapshot({ manifest, asset, session, portfolio, providers: captured.providers }));
     const drive = await prepareTradingAnalystDrive({ catalog, manifest, snapshot, portfolio, providers: captured.providers });
@@ -65,6 +70,7 @@ async function executeAnalysts(fixture: TradingFixture): Promise<AnalystMeasurem
     measured.reproduced = measured.reports === 4 && citations === resolved && measured.concurrent && measured.physicalCalls === 10 && measured.normalizations === 4
       && measured.repairs === 1 && measured.toolRequests === 1 && measured.refusedToolRequests === 1;
     row.cases.push(measured);
+    cases.push({ snapshot, reports: TRADING_ANALYST_ROLES.map(role => reports[role]) });
     for (const key of ['reports', 'citations', 'resolved', 'physicalCalls', 'normalizations', 'repairs', 'toolRequests', 'refusedToolRequests'] as const) row[key] += measured[key];
     if (session === sessions.at(-1) && asset === manifest.assets[0]) {
       for (const id of ['invented-citation', 'invalid-after-repair', 'shared-budget', 'context-budget'] as const) {
@@ -84,11 +90,17 @@ async function executeAnalysts(fixture: TradingFixture): Promise<AnalystMeasurem
   }
   row.total = row.cases.length; row.reproduced = row.cases.filter(c => c.reproduced).length;
   if (row.total !== sessions.length * manifest.assets.length || row.reproduced !== row.total || row.probes.some(p => !p.passed)) throw Error('Analyst mechanism acceptance failed');
-  return row;
+  return { measurement: row, manifest, portfolio, sessions, observations, cases };
 }
-let cached: { identity: string; result: Promise<AnalystMeasurement> } | undefined;
-export async function measureTradingAnalysts(fixture: TradingFixture): Promise<AnalystMeasurement> {
+let cached: { identity: string; result: Promise<TradingAnalystExecution> } | undefined;
+async function cachedAnalystExecution(fixture: TradingFixture): Promise<TradingAnalystExecution> {
   const identity = await canonicalSha256(fixture);
   if (cached?.identity !== identity) cached = { identity, result: executeAnalysts(cloneJson(fixture)) };
-  return cloneJson(await cached.result);
+  return cached.result;
+}
+export async function measureTradingAnalysts(fixture: TradingFixture): Promise<AnalystMeasurement> {
+  return cloneJson((await cachedAnalystExecution(fixture)).measurement);
+}
+export async function tradingAnalystExecution(fixture: TradingFixture): Promise<TradingAnalystExecution> {
+  return cloneJson(await cachedAnalystExecution(fixture));
 }

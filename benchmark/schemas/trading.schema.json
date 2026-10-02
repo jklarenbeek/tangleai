@@ -1576,6 +1576,12 @@
         },
         "analysts": {
           "type": "boolean"
+        },
+        "research": {
+          "type": "boolean"
+        },
+        "trader": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -1586,7 +1592,9 @@
         "complete",
         "indicators",
         "signals",
-        "analysts"
+        "analysts",
+        "research",
+        "trader"
       ],
       "additionalProperties": false
     },
@@ -2420,11 +2428,17 @@
               },
               {
                 "$ref": "#/$defs/analystMeasurement"
+              },
+              {
+                "$ref": "#/$defs/researchMeasurement"
+              },
+              {
+                "$ref": "#/$defs/traderMeasurement"
               }
             ]
           },
-          "minItems": 3,
-          "maxItems": 3
+          "minItems": 5,
+          "maxItems": 5
         }
       },
       "required": [
@@ -2440,7 +2454,9 @@
           [
             "indicators",
             "signals",
-            "analysts-scripted"
+            "analysts-scripted",
+            "research-scripted",
+            "trader-scripted"
           ]
         ]
       }
@@ -2764,6 +2780,735 @@
         "refusals"
       ],
       "additionalProperties": false
+    },
+    "researchCaseMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "boolean"
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedFindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "rejected"
+          ]
+        },
+        "analystOutputsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "verdictSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "asset",
+        "sessionId",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "reproduced",
+        "rounds",
+        "turns",
+        "retainedFindings",
+        "disposition",
+        "analystOutputsSha256",
+        "verdictSha256"
+      ],
+      "additionalProperties": false
+    },
+    "traderCaseMeasurement": {
+      "type": "object",
+      "properties": {
+        "asset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "exceedsPosition": {
+          "type": "boolean"
+        },
+        "proposalSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "financialWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayWrites": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "asset",
+        "sessionId",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "reproduced",
+        "valid",
+        "exceedsPosition",
+        "proposalSha256",
+        "financialWrites",
+        "replayWrites"
+      ],
+      "additionalProperties": false
+    },
+    "researchProbeMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusalCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "passed",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "refusals",
+        "refusalCode"
+      ],
+      "additionalProperties": false
+    },
+    "researchMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "research-scripted"
+        },
+        "status": {
+          "const": "measured"
+        },
+        "reason": {
+          "type": "null"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "analystMeasurementSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/researchProbeMeasurement"
+          }
+        },
+        "maxRounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retainedFindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "noConsensus": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/researchCaseMeasurement"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "manifestId",
+        "catalogRevision",
+        "analystMeasurementSha256",
+        "limits",
+        "probes",
+        "maxRounds",
+        "rounds",
+        "turns",
+        "retainedFindings",
+        "completed",
+        "rejected",
+        "noConsensus",
+        "cases"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              {
+                "$sum": "$.cases[*].physicalCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.normalizations",
+              {
+                "$sum": "$.cases[*].normalizations"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.repairs",
+              {
+                "$sum": "$.cases[*].repairs"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replays",
+              {
+                "$sum": "$.cases[*].replays"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.restores",
+              {
+                "$sum": "$.cases[*].restores"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.rounds",
+              {
+                "$sum": "$.cases[*].rounds"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.turns",
+              {
+                "$sum": "$.cases[*].turns"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.retainedFindings",
+              {
+                "$sum": "$.cases[*].retainedFindings"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$add": [
+                  "$.completed",
+                  {
+                    "$add": [
+                      "$.rejected",
+                      "$.noConsensus"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "traderMeasurement": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "trader-scripted"
+        },
+        "status": {
+          "const": "measured"
+        },
+        "reason": {
+          "type": "null"
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reproduced": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physicalCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalizations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replays": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restores": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "manifestId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "analystMeasurementSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "toolRounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fanOut": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "concurrency": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "iterations": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "contextChars": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "traceBytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "calls",
+            "tokens",
+            "ms",
+            "toolRounds",
+            "fanOut",
+            "concurrency",
+            "iterations",
+            "contextChars",
+            "traceBytes"
+          ],
+          "additionalProperties": false
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/researchProbeMeasurement"
+          }
+        },
+        "proposals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exceedsPosition": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "financialWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replayWrites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/traderCaseMeasurement"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "reason",
+        "total",
+        "reproduced",
+        "physicalCalls",
+        "normalizations",
+        "repairs",
+        "replays",
+        "restores",
+        "manifestId",
+        "catalogRevision",
+        "analystMeasurementSha256",
+        "limits",
+        "probes",
+        "proposals",
+        "exceedsPosition",
+        "financialWrites",
+        "replayWrites",
+        "cases"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.total",
+              {
+                "$count": "$.cases[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.reproduced",
+              {
+                "$count": "$.cases[?(@.reproduced==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.physicalCalls",
+              {
+                "$sum": "$.cases[*].physicalCalls"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.normalizations",
+              {
+                "$sum": "$.cases[*].normalizations"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.repairs",
+              {
+                "$sum": "$.cases[*].repairs"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replays",
+              {
+                "$sum": "$.cases[*].replays"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.restores",
+              {
+                "$sum": "$.cases[*].restores"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.financialWrites",
+              {
+                "$sum": "$.cases[*].financialWrites"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.replayWrites",
+              {
+                "$sum": "$.cases[*].replayWrites"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.proposals",
+              {
+                "$count": "$.cases[?(@.valid==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.exceedsPosition",
+              {
+                "$count": "$.cases[?(@.exceedsPosition==true)]"
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 }

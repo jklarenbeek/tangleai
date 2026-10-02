@@ -2,7 +2,7 @@
 import { compileMasRuntime, createMasConfigCatalog, createMasRegistrySnapshot, defineMasWorkflow,
   MasInfrastructureCrash, agentInvocation, masRevisionOf, validateMasWorkflow, planMasWorkflow,
   type MasChatCompletion, type MasIssue, type MasHostBindings, type MasRegistrySnapshot, type MasConfigCatalog,
-  type ValidatedMasWorkflow, type MasWorkflowPlan, type MasChatClient } from '@tangleai/mas';
+  type ValidatedMasWorkflow, type MasWorkflowPlan, type MasChatClient, type MasStore } from '@tangleai/mas';
 import { createMasStore, openTangleDb, createMasSegmentHandlers, enqueueMasSegment, ensurePendingMasSegments } from '@tangleai/store';
 import {gmplSchemaOf} from '@tangleai/gmpl';
 import schema from '../schemas/gmpl-conformance.schema.json' with { type: 'json' };
@@ -15,6 +15,7 @@ export const emptyUsage = (): Usage => ({ roles:0, completion:0, normalization:0
 export interface PreparedDrive { validated: ValidatedMasWorkflow; plan: MasWorkflowPlan; snapshot: MasRegistrySnapshot; catalog: MasConfigCatalog; }
 export interface ScriptedDriveOptions {
   clock?: { value:number };
+  onStore?: (store: Pick<MasStore, 'readTrace'>) => void;
   runLimits?: Record<string,number>;
   provider?: string;
   input: unknown;
@@ -48,7 +49,7 @@ export async function driveGmplWorkflow(prepared: PreparedDrive, options: Script
         return result;
       }};
     };
-    let store=makeStore();
+    let store=makeStore();options.onStore?.(store);
     const usage=emptyUsage(), visibility: Visibility[]=[], events:string[]=[];
     const cursors=new Map<string, { invocation:number; phase:Visibility['phase'] }>();
     const clientFor=(node:{id:string}):MasChatClient=>({ endpoint:{provider:options.provider??'scripted'}, complete:async request=>{
@@ -110,7 +111,7 @@ export async function driveGmplWorkflow(prepared: PreparedDrive, options: Script
     let handlers=makeHandlers();const kind=Object.keys(handlers)[0];let responseIndex=0,acceptedResponses=0;const responseIssues:MasIssue[]=[];
     const reopen=async()=>{
       if(!options.databasePath)throw Error('SQLite reopen needs an explicit temporary databasePath');
-      await db.close();db=await open();store=makeStore();runtime=compileRuntime();if(!runtime.valid)throw Error(JSON.stringify(runtime.issues));handlers=makeHandlers();reopens++;
+      await db.close();db=await open();store=makeStore();options.onStore?.(store);runtime=compileRuntime();if(!runtime.valid)throw Error(JSON.stringify(runtime.issues));handlers=makeHandlers();reopens++;
     };
     for(let segment=0;segment<32;segment++){
       const jobs=db.jobs!;

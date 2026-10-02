@@ -531,7 +531,7 @@
       },
       {
         "path": "benchmark/lib/gmpl-runner.ts",
-        "sha256": "c9b872e1a793b59d4818b406e5b814cf58a1d0c9e4422e54f47463a03e632028"
+        "sha256": "a059136477b8737609659590b581d5e2008a47ef5bfbf2d11f4ce310c6f70c95"
       },
       {
         "path": "benchmark/lib/gmpl-scripts.ts",
@@ -991,7 +991,7 @@
       },
       {
         "path": "benchmark/lib/trading-analysts.ts",
-        "sha256": "50b41f7950ab693d0168ff66cb63bebc74764638c97c6660d1e113a5eefc750c"
+        "sha256": "5b3b94f297d4ece61fadf8897c3109177964ed7a14c77b8bba1523a2cef66b75"
       },
       {
         "path": "benchmark/lib/trading-execution.ts",
@@ -999,7 +999,7 @@
       },
       {
         "path": "benchmark/lib/trading-mechanisms.ts",
-        "sha256": "d327deb1f143e60f5efc6c610614d010d92d28b0396b41e82a45f09ad183e91d"
+        "sha256": "a5d77b6bb925d7ab35506e9e48249fef3157028265c75d318966888eb7b83d32"
       },
       {
         "path": "benchmark/lib/trading-metrics.ts",
@@ -1007,7 +1007,15 @@
       },
       {
         "path": "benchmark/lib/trading-report.ts",
-        "sha256": "c0158c44dc9eadc0f9cebba992dc3ca923f7c367720400d4b121a9ff1eb6b7da"
+        "sha256": "2635b791a3b3bd94458cfa403b9f4179a66c312c1b580e146dc615564e7762bd"
+      },
+      {
+        "path": "benchmark/lib/trading-research-runner.ts",
+        "sha256": "cd2234da9dbbbe9024634a4eccd15e851495e36b426af004792240cfd5fbb6ec"
+      },
+      {
+        "path": "benchmark/lib/trading-research.ts",
+        "sha256": "02592a2859af8292732652e96b1961e8c76d503fb64393ab550bac3773bc9dcb"
       },
       {
         "path": "benchmark/lib/trading.ts",
@@ -1015,7 +1023,7 @@
       },
       {
         "path": "benchmark/lib/trading.types.ts",
-        "sha256": "406521eba2be33c452be30a95fbda1c36dbcdbb1660dfb8a69f519a09d1833a6"
+        "sha256": "660153633aba9399d86a66e31b1035ed77b58527f30b3485f5365e391a8aca8c"
       },
       {
         "path": "benchmark/lib/validate.ts",
@@ -3083,7 +3091,7 @@
       },
       {
         "path": "packages/trading/artifacts/catalog.json",
-        "sha256": "e23fa74853512b96774e41106786c8d39251f1414afc461b180e89a21630949f"
+        "sha256": "118eec2d11d7d320caf077dfd9d142e1bc7e193fbe4298b8031303eecb060c84"
       },
       {
         "path": "packages/trading/package.json",
@@ -3091,7 +3099,7 @@
       },
       {
         "path": "packages/trading/schemas/trading.schema.json",
-        "sha256": "4eb62a1e9263a94f34e023eb536738457185368cfb420c5ce92d29cc4799e2ae"
+        "sha256": "14b7134363c2550fa1eacb7ab38e3626a39e9868a70518d890c03fc7c6c2c53c"
       },
       {
         "path": "packages/trading/src/accounting.ts",
@@ -3111,11 +3119,15 @@
       },
       {
         "path": "packages/trading/src/contracts.gen.ts",
-        "sha256": "4759f942380d20461b7ab831b58b7c3feca1f824f8cec4774de2078dabe7fbe8"
+        "sha256": "728ed72024998d881dbb9d40fbeff0e73ca2ff8d9ebf787a6ce660e48a284eac"
       },
       {
         "path": "packages/trading/src/errors.ts",
-        "sha256": "268feea9d3bf1d6287b5067c81d5b21618f58400fcb9e4a2183fc75b4b5ac837"
+        "sha256": "f361a8ab0ebbc9dc0315cafb423e8ab8bd80579e7e0b5eddca116ab5a1ca66da"
+      },
+      {
+        "path": "packages/trading/src/evidence.ts",
+        "sha256": "a1f8078231f1994bddcdc1e62c32e7d121b21d0bac89a09dc3a324a2fa3ff830"
       },
       {
         "path": "packages/trading/src/host-bindings.ts",
@@ -3127,7 +3139,7 @@
       },
       {
         "path": "packages/trading/src/index.ts",
-        "sha256": "313d73569ed11a2d331cf91afa7191a7bf4796696f0946fe21b7891b84c48386"
+        "sha256": "3e50fa58e112668309a34830c8c9303402e8658d2d27cb018e457bd72e2e5ae5"
       },
       {
         "path": "packages/trading/src/indicators.ts",
@@ -3146,12 +3158,16 @@
         "sha256": "154ece29ad0d0739a863f8aeccec46feb6871fd5e737f7327f7c6a15b6fead94"
       },
       {
+        "path": "packages/trading/src/research.ts",
+        "sha256": "e809538e841415cac4f779890b8429b3af676eefc07c8112f267f0ef573da999"
+      },
+      {
         "path": "packages/trading/src/risk.ts",
         "sha256": "514581f0bedf8541a33a31c032c743cc85e8ddc802c9816e7a075e65f1f5de6d"
       },
       {
         "path": "packages/trading/src/schema.ts",
-        "sha256": "060aaa17fb04021ef129afdca1b386f77b068cdd479034d0c21b48fa4258d259"
+        "sha256": "d830623297fe165d290c84a9a47a197fd06897044fe11ed749f1875e283356fc"
       },
       {
         "path": "packages/trading/src/snapshot.ts",
@@ -3159,7 +3175,7 @@
       },
       {
         "path": "packages/trading/src/store.ts",
-        "sha256": "d061e9d3f787b8bd3d5b0829bda894b5c9daead7e3f0e2993f7a4de726ccdc76"
+        "sha256": "bb667e3a252a7043fffd82052e6910e5c91bd570622648f3eeb63249559d39c6"
       },
       {
         "path": "packages/trading/src/strategy.ts",
@@ -3172,9 +3188,13 @@
       {
         "path": "packages/trading/src/tools.ts",
         "sha256": "d9ceba36640d8f5fc90db5a6f5733dbd8ee5b8f25b55ba964995776e03ad4e1c"
+      },
+      {
+        "path": "packages/trading/src/trader.ts",
+        "sha256": "58d4290006a1f1174e0d0ba42ec477bcac33101c6e75cdfdd16840ddd9902832"
       }
     ],
-    "sha256": "bbdc77cb814f861e3920262178e646b1b8f41497a10a408adc062dff2add9405"
+    "sha256": "749db3679902124d03a42ede4b10c72cade8b8f38ab859eed6aff4185230bb75"
   },
   "fixtureSource": {
     "files": [
@@ -68364,7 +68384,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "bbdc77cb814f861e3920262178e646b1b8f41497a10a408adc062dff2add9405",
+      "sourceSha256": "749db3679902124d03a42ede4b10c72cade8b8f38ab859eed6aff4185230bb75",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68448,7 +68468,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "b0c60c99c1e4797f626b3d183cd30dfc2423c86f640e6059f68faed7f1cc3c36"
+      "planId": "5e3691c4373d5b70272735c4146e22f120632158a61726c99ee852c3bdadb998"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68695,5 +68715,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "e3ddd7bb33a07f497b0b624513ade290174253fe1a036f8aacc33a564809da84"
+  "reportId": "846022d06766afd857740d176c09f318d933de4c4b7d98e8001ab63f31a0ce21"
 }

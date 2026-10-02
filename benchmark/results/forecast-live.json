@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "f4926cff6148b0c91832a64dda2b281295ccb32b",
-      "sha256": "90727b142c0be63ac4531a0f417806af7d5431efc22c4d3ee2748972418ccc7d",
+      "head": "ac6f69868a8407c8abde2b51c94a00c28fac2e7c",
+      "sha256": "b241bb4ba7b8dbf53aecd08abd2ccfc4afb80b934b5a7d9a19c0ad78a0b2d298",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -282,7 +282,7 @@
         },
         {
           "path": "benchmark/lib/gmpl-runner.ts",
-          "sha256": "c9b872e1a793b59d4818b406e5b814cf58a1d0c9e4422e54f47463a03e632028"
+          "sha256": "a059136477b8737609659590b581d5e2008a47ef5bfbf2d11f4ce310c6f70c95"
         },
         {
           "path": "benchmark/lib/gmpl-scripts.ts",
@@ -742,7 +742,7 @@
         },
         {
           "path": "benchmark/lib/trading-analysts.ts",
-          "sha256": "50b41f7950ab693d0168ff66cb63bebc74764638c97c6660d1e113a5eefc750c"
+          "sha256": "5b3b94f297d4ece61fadf8897c3109177964ed7a14c77b8bba1523a2cef66b75"
         },
         {
           "path": "benchmark/lib/trading-execution.ts",
@@ -750,7 +750,7 @@
         },
         {
           "path": "benchmark/lib/trading-mechanisms.ts",
-          "sha256": "d327deb1f143e60f5efc6c610614d010d92d28b0396b41e82a45f09ad183e91d"
+          "sha256": "a5d77b6bb925d7ab35506e9e48249fef3157028265c75d318966888eb7b83d32"
         },
         {
           "path": "benchmark/lib/trading-metrics.ts",
@@ -758,7 +758,15 @@
         },
         {
           "path": "benchmark/lib/trading-report.ts",
-          "sha256": "c0158c44dc9eadc0f9cebba992dc3ca923f7c367720400d4b121a9ff1eb6b7da"
+          "sha256": "2635b791a3b3bd94458cfa403b9f4179a66c312c1b580e146dc615564e7762bd"
+        },
+        {
+          "path": "benchmark/lib/trading-research-runner.ts",
+          "sha256": "cd2234da9dbbbe9024634a4eccd15e851495e36b426af004792240cfd5fbb6ec"
+        },
+        {
+          "path": "benchmark/lib/trading-research.ts",
+          "sha256": "02592a2859af8292732652e96b1961e8c76d503fb64393ab550bac3773bc9dcb"
         },
         {
           "path": "benchmark/lib/trading.ts",
@@ -766,7 +774,7 @@
         },
         {
           "path": "benchmark/lib/trading.types.ts",
-          "sha256": "406521eba2be33c452be30a95fbda1c36dbcdbb1660dfb8a69f519a09d1833a6"
+          "sha256": "660153633aba9399d86a66e31b1035ed77b58527f30b3485f5365e391a8aca8c"
         },
         {
           "path": "benchmark/lib/validate.ts",
@@ -1713,7 +1721,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "de410e73fdd4947c8761a8d54bb764f944085cf3904b97f2b998f65300eeb46a",
+    "planId": "53902cdd10fc70027843e5e0aeb756a68331539c788a3a8633cfa0bdfb2e5b46",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

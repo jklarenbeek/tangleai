@@ -64,5 +64,11 @@ export function validateTradingRecordSemantics(record: TradingRecord): TradingOu
     return tradingRefuse('TTRD1001', '/high', 'OHLC prices must lie within the declared range');
   if (record.kind === 'corporate-action' && (record.action === 'split' ? record.ratio === null || record.cashPerShare !== null : record.cashPerShare === null || record.ratio !== null))
     return tradingRefuse('TTRD1001', '/action', 'Corporate action fields do not match their kind');
+  if (record.kind === 'trade-proposal') {
+    const intent = validateTradingShape('tradingProposedIntent', { action: record.action,
+      ...(record.quantity === undefined || record.action === 'hold' && record.quantity === 0 ? {} : { quantity: record.quantity }),
+      ...(record.targetWeight === undefined ? {} : { targetWeight: record.targetWeight }) });
+    if (!intent.valid) return intent as TradingOutcome<TradingRecord>;
+  }
   return { valid: true, value: record };
 }

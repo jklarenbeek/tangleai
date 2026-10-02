@@ -218,7 +218,7 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   costs, failures and losses; official scorer parity on the named slices; and
   an evidenced, idempotent correction/revocation protocol with recovery tests.
 - [ ] **A complete trading decision workflow (TradingAgents).** *Wanted:*
-  analyst reports → debate → trader → risk → fund manager as an immutable flow
+  validated research and proposal artifacts → risk → fund manager as one immutable flow
   over the point-in-time providers and atomic simulator, with every turn and
   decision citing artifacts visible to its role at its time. *Constraint:*
   independent analyst lanes must compose into one bounded decision without

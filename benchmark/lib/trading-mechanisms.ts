@@ -13,6 +13,7 @@ import { TRADING_ROOT } from './trading.ts';
 import type { TradingFixture } from './trading.ts';
 import type { IndicatorReference, MechanismMeasurements, IndicatorMeasurement, SignalMeasurement } from './trading.types.ts';
 import { measureTradingAnalysts } from './trading-analysts.ts';
+import { measureTradingResearch } from './trading-research.ts';
 
 const validateReference = createReportValidator({ $defs: schema.$defs, $ref: '#/$defs/indicatorReference' });
 const sha = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
@@ -21,13 +22,13 @@ const crossings = (targets: ReadonlyArray<string | null>) => ({ entries: targets
   exits: targets.filter((t, i) => t === 'flat' && targets[i - 1] === 'long').length });
 
 export async function measureTradingMechanisms(fixture: TradingFixture, referencePath = join(TRADING_ROOT, 'test/fixtures/trading-indicators.json')): Promise<MechanismMeasurements> {
-  const analysts = await measureTradingAnalysts(fixture);
+  const analysts = await measureTradingAnalysts(fixture), research = await measureTradingResearch(fixture);
   const indicators: IndicatorMeasurement = { id: 'indicators', status: 'not-run', reason: 'Independent reference fixture is absent', total: 0, reproduced: 0, inputKinds: ['array', 'Float64Array'], tolerance: 1e-10, cases: [] };
   const signals: SignalMeasurement = { id: 'signals', status: 'not-run', reason: 'Independent reference fixture is absent', total: 0, reproduced: 0,
     parametersSha256: await canonicalSha256(TRADING_SIGNAL_DEFAULTS), cases: [] };
   let bytes: Uint8Array;
   try { bytes = await readFile(referencePath); }
-  catch (cause) { if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return { reference: null, rows: [indicators, signals, analysts] }; throw cause; }
+  catch (cause) { if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return { reference: null, rows: [indicators, signals, analysts, ...research] }; throw cause; }
   const parsed: unknown = JSON.parse(new TextDecoder().decode(bytes)), checked = validateReference(parsed);
   if (!checked.valid) throw Error('Invalid trading indicator reference: ' + JSON.stringify(checked.errors));
   const reference = parsed as IndicatorReference, parameters = validateTradingSignalParameters(reference.signalParameters);
@@ -85,5 +86,5 @@ export async function measureTradingMechanisms(fixture: TradingFixture, referenc
     }
   }
   for (const row of [indicators, signals]) { row.status = 'measured'; row.reason = null; row.total = row.cases.length; row.reproduced = row.cases.filter(c => c.reproduced).length; }
-  return { reference: reference.reference, rows: [indicators, signals, analysts] };
+  return { reference: reference.reference, rows: [indicators, signals, analysts, ...research] };
 }

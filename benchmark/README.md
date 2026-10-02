@@ -74,9 +74,16 @@ asset/session. It checks role-scoped citations and concurrent starts and meters
 native tool refusals, normalizations and repairs. Its portfolio remains cash-only;
 it does not supply a return for the incomplete agent strategy. Declared per-case
 limits and failed citation, repair and budget probes are retained in the report.
+The research and trader mechanisms reuse the artifacts from that measured analyst
+run. They execute the native bounded debate and a read-only proposal through MAS,
+retain both sides' findings and raw judgments, reconcile every physical call,
+and stage the evidence chain without financial writes. Additional probes cover
+SQLite recovery, contradictory judgments, budget exhaustion, lost findings and
+invalid proposals; their calls and native restore/replay counters remain separate.
 `npm run benchmark:trading` writes the report; `--check` verifies without writing,
 `--out-dir` redirects both outputs, `--require baselines` requires all five executed baselines,
-and `--require analysts` requires the analyst mechanism and its safety probes.
+`--require analysts` requires the analyst mechanism and its safety probes, and
+`--require research` / `--require trader` require the corresponding measured regions.
 `npm run benchmark:trading:fixture -- --check` verifies every generated fixture byte.
 
 The frozen learning schedule has seven training events over five distinct tasks

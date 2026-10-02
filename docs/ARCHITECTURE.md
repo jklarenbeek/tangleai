@@ -59,7 +59,8 @@ it that way, and [PAPERS.md](PAPERS.md) for where each research idea stands.
                       next-open fills, once-only actions, risk limits and baseline execution;
                       balanced postings and verified zero-write whole-run replay;
                       compiled role prompts and four concurrent MAS analyst lanes
-                      with role-visible citations and cutoff-bound read tools
+                      with role-visible citations and cutoff-bound read tools;
+                      native bounded research, attributed turns and read-only proposals
 ```
 
 The mechanisms live in three Tangle packages: `@tangleai/models` owns chat,

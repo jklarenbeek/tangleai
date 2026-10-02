@@ -1,9 +1,12 @@
 import { createMemoryTradingStore, createTradingRecord, admit, latestBarsAsOf, sessionIndex, planTradingCommit,
   createFixtureProviders, createReplayProviders, buildSnapshot, TRADING_SIGNAL_DEFAULTS, buyAndHold, macdCross, kdjRsi, zeroMeanReversion, smaCross, adx, cci, vwap, volumeRatio, kdj,
   planFill, markPortfolio, applyCorporateActions, checkRiskPolicy, sizeToPolicy, runStrategy, equityCurve,
-  tradingArtifacts, buildAnalystRegion, createTradingHostBindings, prepareTradingAnalystContext } from '@tangleai/trading';
+  tradingArtifacts, buildAnalystRegion, createTradingHostBindings, prepareTradingAnalystContext, reportsToEvidence, researchInput, materializeResearch, buildResearchAndTraderRegion, createTradingResearchHostBindings, researchVerdict, checkTradeProposal, tradingWorkflowIssue } from '@tangleai/trading';
 import artifacts from '@tangleai/trading/artifacts' with { type: 'json' };
-import { createGmplCatalog, gmplSchemaDefinition } from '@tangleai/gmpl';
+import { createGmplCatalog, gmplSchemaDefinition, type GmplHostSnapshot } from '@tangleai/gmpl';
+import type { AnalystReport, ResearchVerdict, TradingAttemptProvenance, TradeProposalOutput } from '@tangleai/trading';
+import type { TraceView } from '@tangleai/mas';
+declare const reports: AnalystReport[], verdict: ResearchVerdict, host: GmplHostSnapshot, trace: TraceView, provenance: TradingAttemptProvenance, proposal: TradeProposalOutput;
 import type { TradingRunManifest, TradingCommit, MarketSession, Observation, PortfolioSnapshot, BarObservation } from '@tangleai/trading/contracts';
 import schema from '@tangleai/trading/schemas/trading' with { type: 'json' };
 declare const manifest: TradingRunManifest, plan: TradingCommit, previous: PortfolioSnapshot, session: MarketSession, observations: Observation[], bars: BarObservation[];
@@ -19,6 +22,18 @@ if (captured.valid) {
     const catalog = await createGmplCatalog(artifacts);
     if (snapshot.valid && catalog.valid) {
       await buildAnalystRegion({ catalog: catalog.value, profile: 'scripted', limits: manifest.limits });
+      await reportsToEvidence(reports); await researchInput({ manifest, asset: manifest.assets[0], session, reports });
+      const research = await materializeResearch({ host, manifest, catalog: catalog.value });
+      if (research.valid) {
+        await buildResearchAndTraderRegion({ materialized: research.value, catalog: catalog.value, profile: host.profile });
+        await createTradingResearchHostBindings({ manifest, snapshot: snapshot.value, portfolio: previous, catalog: catalog.value, materialized: research.value, trace: async () => trace, provenance });
+        await researchVerdict({ manifest, snapshot: snapshot.value.snapshot, session, reports, catalog: catalog.value, result: verdict.result, trace, provenance });
+      }
+      const context = await prepareTradingAnalystContext({ manifest, snapshot: snapshot.value, portfolio: previous });
+      if (context.valid) await checkTradeProposal({ output: proposal, snapshot: snapshot.value.snapshot, portfolio: context.value.portfolio, reports, verdict,
+        artifact: catalog.value.prompt('trading-trader')!, provenance: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } });
+      tradingWorkflowIssue(trace.run);
+
       await prepareTradingAnalystContext({ manifest, snapshot: snapshot.value, portfolio: previous });
       await createTradingHostBindings({ manifest, snapshot: snapshot.value, portfolio: previous, providers: replay.value, catalog: catalog.value,
         provenance: () => ({ valid: true, value: { model: { profile: 'scripted', identityId: '0'.repeat(64) }, spend: { calls: 0, toolCalls: 0, tokens: 0, usd: 0, retries: 0, repairs: 0, ms: 0 } } }) });

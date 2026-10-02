@@ -45,7 +45,7 @@ describe('registered trading measurement', () => {
     assert.equal(fixture.manifest.loserAsset, 'SYN-B');
     const loser = fixture.bars.filter(b => b.asset === 'SYN-B'); assert.ok(loser.at(-1)!.adjustedClose < loser[0].adjustedClose);
     assert.equal(report.counts.implementationMissing, 1); assert.equal(report.counts.notRun, 1);
-    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts']) assert.doesNotThrow(() => requireCapability(report, capability));
+    for (const capability of ['instrument', 'controls', 'indicators', 'signals', 'baselines', 'analysts', 'research', 'trader']) assert.doesNotThrow(() => requireCapability(report, capability));
     for (const capability of ['agent', 'complete', 'unknown']) assert.throws(() => requireCapability(report, capability));
     assert.equal(leaky.transactions, 0); assert.equal(leaky.rejectedOrders, 1);
     const hold = report.rows.find(r => r.id === 'buy-and-hold')!;
@@ -58,7 +58,7 @@ describe('registered trading measurement', () => {
   it('keeps thirty independent vectors and ten signal series separate from execution returns', async () => {
     const [indicators, signals] = report.mechanisms.rows;
     assert.equal(indicators.id, 'indicators'); assert.equal(signals.id, 'signals');
-    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10], ['measured', 248, 248]]);
+    assert.deepEqual(report.mechanisms.rows.map(r => [r.status, r.total, r.reproduced]), [['measured', 30, 30], ['measured', 10, 10], ['measured', 248, 248], ['measured', 248, 248], ['measured', 248, 248]]);
     assert.equal(indicators.cases.reduce((n, c) => n + c.positions, 0), 2880);
     assert.ok(indicators.cases.every(c => c.arraySha256 === c.float64Sha256 && c.maximumAbsoluteError < 1e-10));
     assert.ok(signals.cases.every(c => c.referenceSha256 === c.actualSha256 && c.entries === c.expectedEntries && c.exits === c.expectedExits));
@@ -66,11 +66,17 @@ describe('registered trading measurement', () => {
     assert.equal(analysts.reports, 992); assert.equal(analysts.citations, analysts.resolved); assert.ok(analysts.citations > 0);
     assert.equal(analysts.physicalCalls, 2480); assert.equal(analysts.repairs, 248); assert.equal(analysts.refusedToolRequests, 248);
     assert.ok(analysts.cases.every(c => c.concurrent && c.reports === 4 && c.reproduced)); assert.ok(analysts.probes.every(p => p.passed));
+    const research = report.mechanisms.rows[3], trader = report.mechanisms.rows[4]; assert.equal(research.id, 'research-scripted'); assert.equal(trader.id, 'trader-scripted');
+    assert.equal(research.turns, 2976); assert.equal(research.rounds, 744); assert.equal(research.noConsensus, 248); assert.equal(research.physicalCalls, 7936);
+    assert.equal(trader.proposals, 248); assert.equal(trader.physicalCalls, 496); assert.equal(trader.financialWrites, 0); assert.equal(trader.replayWrites, 0);
+    assert.ok(research.probes.every(p => p.passed)); assert.ok(trader.probes.every(p => p.passed));
+    assert.ok(research.probes.find(p => p.id === 'crash-recovery')!.restores > 0);
+
     for (const row of report.rows.filter(r => r.kind === 'baseline')) { assert.ok(row.metrics); assert.equal(row.reason, null); }
     const dir = await mkdtemp(join(tmpdir(), 'trading-reference-'));
     try {
       const missing = await measureTradingMechanisms(fixture, join(dir, 'absent.json'));
-      assert.equal(missing.reference, null); assert.ok(missing.rows.filter(r => r.id !== 'analysts-scripted').every(r => r.status === 'not-run' && r.total === 0 && r.reason));
+      assert.equal(missing.reference, null); assert.ok(missing.rows.filter(r => r.id === 'indicators' || r.id === 'signals').every(r => r.status === 'not-run' && r.total === 0 && r.reason));
       assert.equal(missing.rows.find(r => r.id === 'analysts-scripted')!.status, 'measured');
       const file = join(dir, 'reference.json'), parsed = JSON.parse(await readFile('test/fixtures/trading-indicators.json', 'utf8'));
       parsed.reference.generatorSha256 = '0'.repeat(64); await writeFile(file, JSON.stringify(parsed));
@@ -121,6 +127,11 @@ describe('registered trading measurement', () => {
       r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.resolved++; },
       r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.cases[0].concurrent = false; },
       r => { const row = r.mechanisms.rows[2]; if (row.id === 'analysts-scripted') row.probes[0].passed = false; },
+      r => { const row = r.mechanisms.rows[3]; if (row.id === 'research-scripted') row.turns++; },
+      r => { const row = r.mechanisms.rows[3]; if (row.id === 'research-scripted') row.cases[0].verdictSha256 = '0'.repeat(64); },
+      r => { const row = r.mechanisms.rows[3]; if (row.id === 'research-scripted') row.probes[0].restores = 0; },
+      r => { const row = r.mechanisms.rows[4]; if (row.id === 'trader-scripted') row.financialWrites++; },
+      r => { const row = r.mechanisms.rows[4]; if (row.id === 'trader-scripted') row.cases[0].valid = false; },
       r => { r.mechanisms.reference!.packages.ta = 'forged' as '0.11.0'; },
       r => { r.rows[3].execution!.equitySha256 = '0'.repeat(64); }, r => { r.rows[3].execution!.decisionCount++; },
     ];

@@ -574,6 +574,46 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "participant": {
+          "enum": [
+            "position-1",
+            "position-2",
+            "rebuttal-1",
+            "rebuttal-2"
+          ]
+        },
+        "phase": {
+          "enum": [
+            "position",
+            "rebuttal"
+          ]
+        },
+        "attemptKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attemptNumber": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attemptStatus": {
+          "enum": [
+            "completed",
+            "failed",
+            "aborted",
+            "uncertain"
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/gmplPatternResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1551,7 +1591,9 @@
           "enum": [
             "accept",
             "reject",
-            "no-consensus"
+            "no-consensus",
+            "completed",
+            "rejected"
           ]
         },
         "summary": {
@@ -1568,6 +1610,37 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "prevailingThesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recommendation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "judgments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tradingResearchJudgment"
+          }
+        },
+        "unresolvedFindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
         }
       },
       "required": [
@@ -2110,6 +2183,21 @@
         },
         "key": {
           "$ref": "#/$defs/tradingDecisionKey"
+        },
+        "targetWeight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "horizon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assumedPortfolioId": {
+          "$ref": "#/$defs/tradingId"
+        },
+        "exceedsPosition": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2125,12 +2213,14 @@
         "claims",
         "kind",
         "action",
-        "quantity",
         "asset",
         "timing",
         "rationale",
         "researchVerdictId",
-        "key"
+        "key",
+        "horizon",
+        "assumedPortfolioId",
+        "exceedsPosition"
       ],
       "additionalProperties": false
     },
@@ -2205,7 +2295,8 @@
                 ]
               }
             ]
-          }
+          },
+          "type": "object"
         },
         {
           "properties": {
@@ -2225,7 +2316,8 @@
                 "required": [
                   "targetWeight"
                 ]
-              }
+              },
+              "type": "object"
             },
             {
               "required": [
@@ -2235,9 +2327,11 @@
                 "required": [
                   "quantity"
                 ]
-              }
+              },
+              "type": "object"
             }
-          ]
+          ],
+          "type": "object"
         }
       ]
     },
@@ -3373,7 +3467,8 @@
                 ]
               }
             ]
-          }
+          },
+          "type": "object"
         },
         {
           "properties": {
@@ -3393,7 +3488,8 @@
                 "required": [
                   "targetWeight"
                 ]
-              }
+              },
+              "type": "object"
             },
             {
               "required": [
@@ -3403,9 +3499,11 @@
                 "required": [
                   "quantity"
                 ]
-              }
+              },
+              "type": "object"
             }
-          ]
+          ],
+          "type": "object"
         }
       ]
     },
@@ -4887,6 +4985,181 @@
         "text",
         "providerSentiment",
         "modelInterpretation"
+      ],
+      "additionalProperties": false
+    },
+    "debate-judge": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/gmplPatternResult"
+        },
+        "action": {
+          "enum": [
+            "accept",
+            "reject",
+            "continue",
+            "escalate"
+          ]
+        }
+      },
+      "required": [
+        "result",
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "gmplCitation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "gmplClaim": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "text",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "gmplFinding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disposition": {
+          "enum": [
+            "supported",
+            "contested",
+            "rejected-with-reason",
+            "unresolved"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplCitation"
+          },
+          "minItems": 1
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "contradictory": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "disposition",
+        "reason",
+        "citations"
+      ],
+      "additionalProperties": false
+    },
+    "gmplPatternResult": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "completed",
+            "no-consensus",
+            "needs-information",
+            "rejected"
+          ]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplClaim"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/gmplFinding"
+          }
+        },
+        "outstandingQuestions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "answer",
+        "disposition",
+        "claims",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "tradingResearchJudgment": {
+      "type": "object",
+      "properties": {
+        "round": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "action": {
+          "enum": [
+            "accept",
+            "continue",
+            "reject",
+            "escalate"
+          ]
+        },
+        "judgment": {
+          "$ref": "#/$defs/debate-judge"
+        }
+      },
+      "required": [
+        "round",
+        "action",
+        "judgment"
       ],
       "additionalProperties": false
     }

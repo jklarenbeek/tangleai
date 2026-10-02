@@ -219,6 +219,67 @@ export interface DebateTurnModel {
  */
 export type DebateTurnPreviousTurnIdsItem = string;
 
+export interface GmplCitation {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  digest: string;
+}
+
+
+export interface GmplClaim {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  text: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  citations: Array<GmplCitation>;
+}
+
+
+export interface GmplFinding {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  id: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  origin: string;
+  disposition: "supported" | "contested" | "rejected-with-reason" | "unresolved";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  reason: string;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  citations: Array<GmplCitation>;
+  critical?: boolean;
+  contradictory?: boolean;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type GmplPatternResultOutstandingQuestionsItem = string;
+
+export interface GmplPatternResult {
+  answer: string;
+  disposition: "completed" | "no-consensus" | "needs-information" | "rejected";
+  claims: Array<GmplClaim>;
+  findings: Array<GmplFinding>;
+  outstandingQuestions?: Array<GmplPatternResultOutstandingQuestionsItem>;
+}
+
+
 export interface DebateTurn {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -266,6 +327,18 @@ export interface DebateTurn {
    */
   previousTurnIds: Array<DebateTurnPreviousTurnIdsItem>;
   key: TradingDecisionKey;
+  participant?: "position-1" | "position-2" | "rebuttal-1" | "rebuttal-2";
+  phase?: "position" | "rebuttal";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  attemptKey?: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  attemptNumber?: number;
+  attemptStatus?: "completed" | "failed" | "aborted" | "uncertain";
+  result?: GmplPatternResult | null;
 }
 
 
@@ -290,6 +363,27 @@ export interface ResearchVerdictModel {
  * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
  */
 export type ResearchVerdictHistoryIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ResearchVerdictRecommendationItem = string;
+
+export interface DebateJudge {
+  result: GmplPatternResult;
+  action: "accept" | "reject" | "continue" | "escalate";
+}
+
+
+export interface TradingResearchJudgment {
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  round: number;
+  action: "accept" | "continue" | "reject" | "escalate";
+  judgment: DebateJudge;
+}
+
 
 export interface ResearchVerdict {
   /**
@@ -324,7 +418,7 @@ export interface ResearchVerdict {
   promptRevision: string;
   claims: Array<TradingClaim>;
   kind: "research-verdict";
-  disposition: "accept" | "reject" | "no-consensus";
+  disposition: "accept" | "reject" | "no-consensus" | "completed" | "rejected";
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -334,6 +428,18 @@ export interface ResearchVerdict {
    */
   historyIds: Array<ResearchVerdictHistoryIdsItem>;
   key: TradingDecisionKey;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  prevailingThesis?: string;
+  recommendation?: Array<ResearchVerdictRecommendationItem>;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1, maximum=10
+   */
+  rounds?: number;
+  result?: GmplPatternResult;
+  judgments?: Array<TradingResearchJudgment>;
+  unresolvedFindings?: Array<GmplFinding>;
 }
 
 
@@ -353,6 +459,11 @@ export interface TradeProposalModel {
   identityId: string;
 }
 
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
+ */
+export type TradingId = string;
 
 export interface TradeProposal {
   /**
@@ -391,7 +502,7 @@ export interface TradeProposal {
   /**
    * Schema constraints this type cannot express: minimum=0
    */
-  quantity: number;
+  quantity?: number;
   /**
    * Schema constraints this type cannot express: minLength=1
    */
@@ -406,6 +517,16 @@ export interface TradeProposal {
    */
   researchVerdictId: string;
   key: TradingDecisionKey;
+  /**
+   * Schema constraints this type cannot express: maximum=1, exclusiveMinimum=0
+   */
+  targetWeight?: number;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  horizon: string;
+  assumedPortfolioId: TradingId;
+  exceedsPosition: boolean;
 }
 
 
@@ -845,11 +966,6 @@ export interface CorporateActionObservation {
 }
 
 
-/**
- * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
- */
-export type TradingId = string;
-
 export interface Fill {
   /**
    * Schema constraints this type cannot express: pattern="^[a-z][a-z0-9-]*$"
@@ -913,19 +1029,31 @@ export type FundManagerOutputPart1 = unknown;
 /**
  * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
  */
-export type TradingProposedIntentOneOf1 = { action?: "hold"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradingProposedIntentOneOf1 {
+  action?: "hold";
+  [key: string]: unknown;
+}
+
 
 /**
  * Schema constraints this type cannot express: not={"required":["targetWeight"]}
  */
-export type TradingProposedIntentOneOf2OneOf1 = { quantity: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradingProposedIntentOneOf2OneOf1 {
+  quantity: unknown;
+  [key: string]: unknown;
+}
+
 
 /**
  * Schema constraints this type cannot express: not={"required":["quantity"]}
  */
-export type TradingProposedIntentOneOf2OneOf2 = { targetWeight: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradingProposedIntentOneOf2OneOf2 {
+  targetWeight: unknown;
+  [key: string]: unknown;
+}
 
-export type TradingProposedIntent = (TradingProposedIntentOneOf1 | (TradingProposedIntentOneOf2OneOf1 | TradingProposedIntentOneOf2OneOf2) & ({ action?: "buy" | "sell"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null)) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; };
+
+export type TradingProposedIntent = (TradingProposedIntentOneOf1 | (TradingProposedIntentOneOf2OneOf1 | TradingProposedIntentOneOf2OneOf2) & { action?: "buy" | "sell"; [key: string]: unknown; }) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; };
 
 /**
  * Schema constraints this type cannot express: minLength=1
@@ -1412,19 +1540,31 @@ export interface RiskVerdictOutput {
 /**
  * Schema constraints this type cannot express: not={"anyOf":[{"required":["quantity"]},{"required":["targetWeight"]}]}
  */
-export type TradeProposalOutputOneOf1 = { action?: "hold"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradeProposalOutputOneOf1 {
+  action?: "hold";
+  [key: string]: unknown;
+}
+
 
 /**
  * Schema constraints this type cannot express: not={"required":["targetWeight"]}
  */
-export type TradeProposalOutputOneOf2OneOf1 = { quantity: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradeProposalOutputOneOf2OneOf1 {
+  quantity: unknown;
+  [key: string]: unknown;
+}
+
 
 /**
  * Schema constraints this type cannot express: not={"required":["quantity"]}
  */
-export type TradeProposalOutputOneOf2OneOf2 = { targetWeight: unknown; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null;
+export interface TradeProposalOutputOneOf2OneOf2 {
+  targetWeight: unknown;
+  [key: string]: unknown;
+}
 
-export type TradeProposalOutput = (TradeProposalOutputOneOf1 | (TradeProposalOutputOneOf2OneOf1 | TradeProposalOutputOneOf2OneOf2) & ({ action?: "buy" | "sell"; [key: string]: unknown; } | Array<unknown> | string | number | boolean | null)) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; timing: "next-open"; horizon: string; rationale: string; citations: Array<TradingCitation>; assumedPortfolioId: TradingId; };
+
+export type TradeProposalOutput = (TradeProposalOutputOneOf1 | (TradeProposalOutputOneOf2OneOf1 | TradeProposalOutputOneOf2OneOf2) & { action?: "buy" | "sell"; [key: string]: unknown; }) & { action: "buy" | "sell" | "hold"; quantity?: number; targetWeight?: number; timing: "next-open"; horizon: string; rationale: string; citations: Array<TradingCitation>; assumedPortfolioId: TradingId; };
 
 /**
  * Schema constraints this type cannot express: minLength=1

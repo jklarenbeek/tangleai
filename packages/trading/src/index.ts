@@ -1,6 +1,7 @@
 /** Immutable trading contracts; time, providers, persistence and execution are injected. */
 export type * from './contracts.gen.ts';
 export type * from './errors.ts';
+export { tradingWorkflowIssue } from './errors.ts';
 export type * from './records.ts';
 export { tradingSchema, tradingSchemaOf, validateTradingShape } from './schema.ts';
 export { createTradingRecord, validateTradingRecord } from './records.ts';
@@ -29,3 +30,8 @@ export { TRADING_READ_TOOLS, createTradingReadTools } from './tools.ts';
 export type { TradingToolAudit } from './tools.ts';
 export { tradingArtifacts, tradingAnalystRegistry, createTradingHostBindings } from './host-bindings.ts';
 export type { TradingHostInput } from './host-bindings.ts';
+export { reportsToEvidence, researchInput } from './evidence.ts';
+export { tradingResearchDomain, materializeResearch, researchVerdict } from './research.ts';
+export type { TradingResearchContext, TradingAttemptProvenance } from './research.ts';
+export { checkTradeProposal, buildResearchAndTraderRegion, createTradingResearchHostBindings } from './trader.ts';
+export type { MaterializedTradingResearch } from './trader.ts';
