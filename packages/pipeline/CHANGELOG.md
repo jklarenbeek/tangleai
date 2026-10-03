@@ -1,5 +1,14 @@
 # @tangleai/pipeline
 
+## 0.37.0
+
+### Patch Changes
+
+- Updated dependencies [364b336]
+  - @tangleai/core@0.37.0
+  - @tangleai/memory@0.37.0
+  - @tangleai/models@0.37.0
+
 ## 0.36.0
 
 ### Patch Changes

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "version": "0.37.0",
+  "baseVersion": "0.36.0",
+  "baseCommit": "623f07dd1413e56122a701694875d90aff82c878",
+  "preparationCommit": "c90f810d316c71b96401ed54d185b7c5d37d26d2",
+  "initial": false,
+  "inputHash": "e7a51f84b44ec901b6c48169ddc9d0fceb9c93baadde2b5607b623e66cc69b0e",
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@tangleai/core",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/memory",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/store",
+          "type": "minor"
+        },
+        {
+          "name": "@tangleai/jaren",
+          "type": "minor"
+        }
+      ],
+      "summary": "Add closed sourced-place contracts, exact cited alias matching, temporal location claims and atomic gazetteer persistence with verified zero-write replay. Support explicit spatial intent and recognize location, residence and proximity questions in the existing authoring gates.",
+      "id": "sourced-place-contracts"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@tangleai/models",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/context",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/agents",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/linq",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/jaren",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/assistant",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/core",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/config",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/mas",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/documents",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/memory",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/search",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/pipeline",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/outcomes",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/trace2skill",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/evolve",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/gmpl",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/hera",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/forecast",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/grounding",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/lightrag",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/trading",
+      "version": "0.37.0"
+    },
+    {
+      "name": "@tangleai/store",
+      "version": "0.37.0"
+    }
+  ]
+}

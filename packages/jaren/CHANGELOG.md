@@ -1,5 +1,17 @@
 # @tangleai/jaren
 
+## 0.37.0
+
+### Minor Changes
+
+- 364b336: Add closed sourced-place contracts, exact cited alias matching, temporal location claims and atomic gazetteer persistence with verified zero-write replay. Support explicit spatial intent and recognize location, residence and proximity questions in the existing authoring gates.
+
+### Patch Changes
+
+- @tangleai/agents@0.37.0
+  - @tangleai/context@0.37.0
+  - @tangleai/models@0.37.0
+
 ## 0.36.0
 
 ### Patch Changes

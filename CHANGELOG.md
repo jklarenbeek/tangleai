@@ -1,5 +1,9 @@
 # Tangle releases
 
+## 0.37.0
+
+Add closed sourced-place contracts, exact cited alias matching, temporal location claims and atomic gazetteer persistence with verified zero-write replay. Support explicit spatial intent and recognize location, residence and proximity questions in the existing authoring gates.
+
 ## 0.36.0
 
 Index MAS trace collections by run so durable workflow commits do not scan

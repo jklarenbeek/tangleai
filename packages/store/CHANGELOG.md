@@ -1,5 +1,28 @@
 # @tangleai/store
 
+## 0.37.0
+
+### Minor Changes
+
+- 364b336: Add closed sourced-place contracts, exact cited alias matching, temporal location claims and atomic gazetteer persistence with verified zero-write replay. Support explicit spatial intent and recognize location, residence and proximity questions in the existing authoring gates.
+
+### Patch Changes
+
+- Updated dependencies [364b336]
+  - @tangleai/core@0.37.0
+  - @tangleai/memory@0.37.0
+  - @tangleai/documents@0.37.0
+  - @tangleai/evolve@0.37.0
+  - @tangleai/grounding@0.37.0
+  - @tangleai/lightrag@0.37.0
+  - @tangleai/outcomes@0.37.0
+  - @tangleai/hera@0.37.0
+  - @tangleai/config@0.37.0
+  - @tangleai/forecast@0.37.0
+  - @tangleai/mas@0.37.0
+  - @tangleai/trace2skill@0.37.0
+  - @tangleai/trading@0.37.0
+
 ## 0.36.0
 
 ### Minor Changes
