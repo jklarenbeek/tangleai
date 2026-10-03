@@ -24,7 +24,7 @@ export const SOURCE_MANIFEST = [
   'benchmark/lib/research-oracle.ts', 'benchmark/lib/research-runner.ts', 'benchmark/lib/research-validation.ts',
   'benchmark/lib/args.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts',
   'benchmark/lib/suite-packages.ts', 'benchmark/lib/report-envelope.ts', 'benchmark/lib/table.ts',
-  'benchmark/schemas/research-records.schema.json', 'benchmark/schemas/research.schema.json',
+  'packages/research/schemas/research.schema.json', 'benchmark/schemas/research.schema.json',
 ] as const;
 export interface ResearchContext {
   loaded: LoadedResearchFixture;
@@ -35,8 +35,9 @@ export async function researchContext(root = process.cwd()): Promise<ResearchCon
   const loaded = await loadResearchFixture(root);
   return { loaded, source: await sourceManifest(root, [...SOURCE_MANIFEST,
     ...loaded.manifest.members.map(member => RESEARCH_FIXTURE_PATH + '/' + member.path)],
-  [RESEARCH_FIXTURE_PATH, 'packages/core', 'packages/models', 'packages/documents', 'packages/context', 'packages/config', 'packages/jaren']),
-  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'context', 'config']) };
+  [RESEARCH_FIXTURE_PATH, 'packages/core', 'packages/models', 'packages/documents', 'packages/context', 'packages/config',
+    'packages/jaren', 'packages/research', 'packages/gmpl']),
+  suite: await installedSuitePackages(root, ['core', 'models', 'documents', 'context', 'config', 'research', 'gmpl']) };
 }
 const same = (left: unknown, right: unknown): boolean => canonicalizeJson(left) === canonicalizeJson(right);
 const ratio = (values: readonly boolean[]): ResearchScore => researchScore(values.filter(Boolean).length, values.length);

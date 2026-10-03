@@ -35,7 +35,8 @@ and measured topology mutations over the same runtime. Its
 explicit `not-measured-live` decision. Fourteen read operations expose the
 retained evidence. `@tangleai/trading` adds a causal simulated broker, resumable
 decision workflows and registered synthetic ablations. Licensed historical replay
-and live trading quality remain unmeasured; research applications remain roadmap work.
+and live trading quality remain unmeasured. Research contracts and artifact storage
+are available; the complete research workflow remains roadmap work.
 
 ## What runs today
 
@@ -106,6 +107,7 @@ Tangle policy refuse to compare vectors from two models.
 | `@tangleai/mas` | the durable typed multi-agent runtime: one closed content-addressed workflow IR (`agent`/`task`/`graph`/`loop`/`switch`/`interaction`), a pure nine-gate validator with stable `TMAS1xxx` refusals, LINQ-pen lowering to compile-proven `jaren-dag`/`jaren-fsm` documents, and the transactional node lifecycle over `createAgent`/`createToolbox`/`createStructuredOutput`/`createBudgetAccount` ([packages/mas/README.md](packages/mas/README.md)) |
 | `@tangleai/gmpl` | immutable schemas, fourteen compiled TOML/JTLT prompt artifacts and six multi-agent pattern recipes; pure domain/host bindings materialize the canonical MAS workflow and use its durable executor ([packages/gmpl/README.md](packages/gmpl/README.md)) |
 | `@tangleai/trading` | immutable trading contracts, causal providers and indicators, concurrent analysts, bounded research and risk, fund-manager decisions, policy-limited orders and resumable backtests over one accounting path ([API](packages/trading/README.md)) |
+| `@tangleai/research` | closed research records, byte-addressed artifacts with immutable producer and parent provenance, pure lifecycle plans, preregistration and atomic memory/SQLite storage ([API](packages/research/README.md)) |
 | `@tangleai/trace2skill` | one bounded-domain skill directory evolved from labeled trajectories: a directory — a root `SKILL.md` plus optional `references/`, `scripts/` and `assets/` — sealed immutable under the canonical hash of its manifest, so activating, archiving or superseding it cannot rename it; an anchored text-edit compiler whose five verbs must resolve exactly once in the frozen page and compile to hunks carrying that page's base hash and an exact line interval, with overlapping intervals withheld rather than merged; a bounded executor that composes the active `SKILL.md` into the request as data and reaches the rest of the directory through one read-only tool, with no ledger, skill bank or index between the directory and the task; and revision-fenced activation that reuses the outcomes head planner instead of forking a second compare-and-swap ([API](packages/trace2skill/README.md)) |
 | `@tangleai/evolve` | isolated repository experiments: closed content-addressed records whose principal vocabulary has no `merge`, `push` or `promote` member, an RFC 6902 patch path that refuses renames, symlinks and every edit to a protected or generated file, a Node host driving git through an allow-list of whole argument vectors, a gate read by its exit code and nothing it printed, and one pure planner that keeps a change only on a strict improvement — leaving a branch and a review bundle for a person to merge. A round of decisions also reduces to failure patterns and one scalar, published beside them as evidence; acceptance is still per experiment, and the round comparator is exported but not yet wired into any loop ([API](packages/evolve/README.md)) |
 

@@ -70,6 +70,9 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['trading-consumer.mjs', 'trading-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'trading-consumer.mjs']);
     await sqliteFixture('bun', ['trading-consumer.mjs']);
+    for (const file of ['research-consumer.mjs', 'research-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'research-consumer.mjs']);
+    await sqliteFixture('bun', ['research-consumer.mjs']);
     writeFileSync(resolve(directory, 'grounding-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/grounding.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['grounding-consumer.mjs', 'grounding-browser.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'grounding-consumer.mjs']);
@@ -152,6 +155,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       imports.push("import './gmpl-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/trading-types.ts'), resolve(directory, 'trading-types.ts'));
       imports.push("import './trading-types.js';");
+      cpSync(resolve(root, 'test/release/fixtures/research-types.ts'), resolve(directory, 'research-types.ts'));
+      imports.push("import './research-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/grounding-types.ts'), resolve(directory, 'grounding-types.ts'));
       imports.push("import './grounding-types.js';");
       cpSync(resolve(root, 'test/release/fixtures/lightrag-types.ts'), resolve(directory, 'lightrag-types.ts'));
@@ -207,6 +212,8 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.place)), { entries: 71, grounded: 1, cells: 9, claim: true,
         refusal: 'TPLC1007', cause: 'AI0230', movementMetres: 13393632, citedSources: 2, nearby: ['shibuya-q595153'] });
       assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.trading)), { writes: 9, replayWrites: 0, quantity: 10, refused: 1, missing: 1 });
+      assert.deepEqual(JSON.parse(JSON.stringify(await browser.tangleConsumer.research)), { state: 'LITERATURE_GATE', attempts: 1,
+        replayed: true, bytes: [97, 98, 99], artifactId: 'art-ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', refusal: 'TRSH1001' });
       const groundingBrowser = await browser.tangleConsumer.grounding;
       const graphBrowser = await browser.tangleConsumer.lightrag;
       const graphPreparation = await browser.tangleConsumer.lightragPreparation;

@@ -26,6 +26,7 @@
       "@tangleai/grounding",
       "@tangleai/lightrag",
       "@tangleai/trading",
+      "@tangleai/research",
       "@tangleai/store"
     ]
   ],

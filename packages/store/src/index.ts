@@ -9,7 +9,7 @@ export type { OutcomeStoreOptions } from './outcome-store.ts';
 export type { DbMemoryStoreOptions } from './memory-store.ts';
 export { createRunLog, frameIdOf, FRAME_KINDS, FRAME_BODIES, MAX_FRAME_BODY_BYTES } from './runs.ts';
 export type {
-  RunLog, RunRecord, RunEvent, RunLogOptions, RunIdentityStatus, RunView,
+  RunLog, RunLogStore, RunRecord, RunEvent, RunLogOptions, RunIdentityStatus, RunView,
   RunFrame, FrameKind, FrameRefusalCode, AppendFrameOutcome, FrameReplayPage, RunSubscription,
 } from './runs.ts';
 export { createIdentityRepository } from './identities.ts';
@@ -67,6 +67,9 @@ export { createLightRagStore, applyLightRagPlanWithin, type LightRagDbOptions } 
 export { LIGHTRAG_COLLECTIONS } from './lightrag-model.ts';
 export { createTradingStore } from './trading-store.ts';
 export { TRADING_COLLECTIONS } from './trading-model.ts';
+export { createResearchStore, createResearchDbPersistence, researchRunLogId } from './research-store.ts';
+export type { ResearchDbOptions } from './research-store.ts';
+export { RESEARCH_COLLECTIONS } from './research-model.ts';
 
 export { activateDocumentWithin } from './document-store.ts';
 export * from './corpus-promotion.ts';

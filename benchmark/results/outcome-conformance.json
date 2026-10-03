@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
+    "head": "e229e6339f693fa5df98c6e5f5809313970875fa",
     "clean": false,
     "files": [
       {
@@ -107,11 +107,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a1247155930ed7d11a8d14fb040fca0467a9c3a42c1008827c9750dcf755a053"
+        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
       },
       {
         "path": "package.json",
-        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
+        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
       },
       {
         "path": "packages/agents/package.json",
@@ -1930,6 +1930,50 @@
         "sha256": "3399c8277d7d927de7df1dc1a0ad68ff77cb04a76e6d644bb4c2d13f1eb5c8b0"
       },
       {
+        "path": "packages/research/package.json",
+        "sha256": "3b4c94a93e66388ca997270ecb2baf0d10da4ebbe3258a2ae096c2cf2f4447a5"
+      },
+      {
+        "path": "packages/research/schemas/research.schema.json",
+        "sha256": "b2f640b50584cde6c3d26dfca6499439bf4256fbbd2fc1a61d513981930d6dc3"
+      },
+      {
+        "path": "packages/research/src/contracts.gen.ts",
+        "sha256": "cb2d750c830d72e6d507b7a184db3539acd3164e752525d8840ac72f06f62e08"
+      },
+      {
+        "path": "packages/research/src/errors.ts",
+        "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
+      },
+      {
+        "path": "packages/research/src/identity.ts",
+        "sha256": "e37ae216c1d4d4d168dd6a8d81ebf7bde681372673c29ea96e53e4d43a8b5274"
+      },
+      {
+        "path": "packages/research/src/index.ts",
+        "sha256": "3feda0804d5d5fb1473e4b1eab7027de3a45bcf70e8eb731b5e49594271a26ad"
+      },
+      {
+        "path": "packages/research/src/records.ts",
+        "sha256": "186b39b0399d64cccc901e6b39febf5f4c2494944e3d7e5ee498dd46b2141500"
+      },
+      {
+        "path": "packages/research/src/schema.ts",
+        "sha256": "3fab14e5ebb04c02639611c9c6b241b7092d63584b779782348b54d0d4b1f48e"
+      },
+      {
+        "path": "packages/research/src/store-policy.ts",
+        "sha256": "f0afb7f51caa8a1333a0f623c91b395241900edd959e6d4b676e9ca4cf18c952"
+      },
+      {
+        "path": "packages/research/src/store.ts",
+        "sha256": "b4468a73fdceb3c9091c18d1fa08f96f7447f819e445c088f5602539dfc80e3d"
+      },
+      {
+        "path": "packages/research/src/transitions.ts",
+        "sha256": "524e3f9f939b06c1fc74d11bb17fadbe36019e7115c47e10731be81768d46467"
+      },
+      {
         "path": "packages/search/package.json",
         "sha256": "35155c10cf87c77c1989a5fd85302c993898b0c53a232764e6d645606b6cc408"
       },
@@ -1943,7 +1987,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "d4c770ddccaef2b3418463f572d3ed4fca6b8949c12b5155f3544788c1d6b714"
+        "sha256": "bec22691f5889073cef28c370553cb5bf6df9bc461fb74288a2d8de498d5738e"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -2023,7 +2067,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "70afada5984d57f51528db60f4900d3daa5e5b4eb3f916a5cf6c9df560706857"
+        "sha256": "4768cfb8e45acc0bbf8a646bfde63986341e69b68c1a9989f38c8f71ef920b2e"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -2055,7 +2099,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "800bea47963ea130e8310b34d8f0f4f521b720c26b8fa0471d7fe8b65877e9fe"
+        "sha256": "e7bd807532cabfbffe1c7951979805509f04a97210834a060d7d16a55b4be920"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -2070,8 +2114,16 @@
         "sha256": "a5bdefe05b9fe8784d1518281657189e457c525839ba6e90d20093e0e56f0841"
       },
       {
+        "path": "packages/store/src/research-model.ts",
+        "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+      },
+      {
+        "path": "packages/store/src/research-store.ts",
+        "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+      },
+      {
         "path": "packages/store/src/runs.ts",
-        "sha256": "8423f75d14c39bf5f1e302140de01d51dbc2afb59d3427fcf87cb10e376baaf4"
+        "sha256": "148dbfbea9c65f5aff6fb89b654d6cf0dfaac1da39ec4cc80ad46781764c0deb"
       },
       {
         "path": "packages/store/src/temporal-backfill.ts",
@@ -2374,7 +2426,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "9ebaab06be5a9955d1036895a93b58c06e28e606cc2f79b51593609adbe2d1fd"
+    "sha256": "69ea8f8fd8cecf40c16530d33892384ed84c06677bf883be9b6fb0640c144a93"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85560,5 +85612,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "76201c206a3e62ec8e64e86a27b765552b0463342986da21706d90b539873788"
+  "reportId": "056fa858e189173ad7387f76eb540904c08fe37b59388cca553f074505a6da49"
 }

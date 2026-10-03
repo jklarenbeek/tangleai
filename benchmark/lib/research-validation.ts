@@ -1,8 +1,7 @@
 /** All research instrument validation uses the shared validator factory and exact owners. */
 import { runIdentitySchema } from '@tangleai/config';
 import { canonicalizeJson } from '@jarenjs/json/canonical';
-import { encodeJSONPointerSegment } from '@jarenjs/json/pointer';
-import records from '../schemas/research-records.schema.json' with { type: 'json' };
+import { researchSchema as records, validateResearchShape, researchValidationIssues, type ResearchSchemaName } from '@tangleai/research';
 import report from '../schemas/research.schema.json' with { type: 'json' };
 import { createReportValidator, type ReportValidator } from './validate.ts';
 import type { ResearchIssue } from './research.types.ts';
@@ -10,7 +9,11 @@ import type { ResearchIssue } from './research.types.ts';
 export { records as researchRecordSchema, report as researchReportSchema };
 const cache = new Map<string, ReportValidator>();
 export function researchShape(name: string, value: unknown): ResearchIssue[] {
-  const owner = Object.hasOwn(records.$defs, name) ? records : report;
+  if (Object.hasOwn(records.$defs, name)) {
+    const result = validateResearchShape(name as ResearchSchemaName, value);
+    return result.valid ? [] : result.issues;
+  }
+  const owner = report;
   if (!Object.hasOwn(owner.$defs, name)) throw new TypeError('Unknown research schema: ' + name);
   try { canonicalizeJson(value); }
   catch (cause) {
@@ -22,12 +25,7 @@ export function researchShape(name: string, value: unknown): ResearchIssue[] {
     cache.set(name, validate);
   }
   const result = validate(value);
-  return result.valid ? [] : (result.errors ?? []).map(error => {
-    const item = error as { instancePath?: string; message?: string; params?: { missingProperty?: string; additionalProperty?: string } };
-    const member = item.params?.missingProperty ?? item.params?.additionalProperty;
-    const path = (item.instancePath ?? '') + (member === undefined ? '' : '/' + encodeJSONPointerSegment(member));
-    return { code: 'TRSH1001', path, detail: item.message ?? 'Invalid research record.' };
-  });
+  return result.valid ? [] : researchValidationIssues(result.errors);
 }
 export const validateResearchReportShape = createReportValidator(report, [records, runIdentitySchema]);
 export function requireResearchShape<T>(name: string, value: unknown): T {

@@ -1643,6 +1643,1117 @@
         "disclosure"
       ],
       "additionalProperties": false
+    },
+    "ResearchLifecycle": {
+      "enum": [
+        "CREATED",
+        "DISCOVERY",
+        "LITERATURE_GATE",
+        "SYNTHESIS",
+        "HYPOTHESIS_GATE",
+        "DESIGN",
+        "DESIGN_GATE",
+        "EXECUTE",
+        "ANALYZE",
+        "DECIDE",
+        "WRITE",
+        "VERIFY",
+        "QUALITY_GATE",
+        "COMPLETE",
+        "STOPPED"
+      ]
+    },
+    "ResearchToolVersions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "ResearchEvaluatorIdentity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchProject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domainProfile": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "gate-only",
+            "full-auto"
+          ]
+        },
+        "safetyClass": {
+          "enum": [
+            "computational"
+          ]
+        },
+        "budget": {
+          "$ref": "#/$defs/ResearchCost"
+        },
+        "status": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "createdAt": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "topic",
+        "domainProfile",
+        "question",
+        "owner",
+        "mode",
+        "safetyClass",
+        "budget",
+        "status",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchState": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "status": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contractHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planHash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exploratoryObservationIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "projectId",
+        "status",
+        "revision",
+        "contractHash",
+        "planHash",
+        "exploratoryObservationIds"
+      ],
+      "additionalProperties": false
+    },
+    "StageAttemptKey": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "stage": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "attemptOrdinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "inputManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "projectId",
+        "stage",
+        "attemptOrdinal",
+        "inputManifestHash"
+      ],
+      "additionalProperties": false
+    },
+    "InputManifest": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "stage": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "artifactId": {
+                "type": "string",
+                "pattern": "^art-[0-9a-f]{64}$"
+              },
+              "sha256": {
+                "$ref": "#/$defs/Sha256"
+              }
+            },
+            "required": [
+              "artifactId",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "promptRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "toolVersions": {
+          "$ref": "#/$defs/ResearchToolVersions"
+        },
+        "evaluator": {
+          "$ref": "#/$defs/ResearchEvaluatorIdentity"
+        },
+        "reservation": {
+          "$ref": "#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "projectId",
+        "stage",
+        "inputs",
+        "promptRevision",
+        "runIdentityId",
+        "toolVersions",
+        "evaluator",
+        "reservation"
+      ],
+      "additionalProperties": false
+    },
+    "StageAttempt": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "stage": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "attemptOrdinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "inputManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "masPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promptRevision": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "runIdentityId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "toolVersions": {
+          "$ref": "#/$defs/ResearchToolVersions"
+        },
+        "spend": {
+          "$ref": "#/$defs/ResearchCost"
+        },
+        "stopReason": {
+          "enum": [
+            "completed",
+            "refused",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "outputArtifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^art-[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchIssue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mode": {
+          "enum": [
+            "scripted",
+            "single-agent",
+            "debate"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "stage",
+        "attemptOrdinal",
+        "inputManifestHash",
+        "masPath",
+        "promptRevision",
+        "runIdentityId",
+        "toolVersions",
+        "spend",
+        "stopReason",
+        "interventions",
+        "outputArtifactIds",
+        "error",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchArtifact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^art-[0-9a-f]{64}$"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "producingStage": {
+          "$ref": "#/$defs/ResearchLifecycle"
+        },
+        "parentIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "storage": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "content"
+            },
+            "address": {
+              "type": "string",
+              "pattern": "^art-[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "kind",
+            "address"
+          ],
+          "additionalProperties": false
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "verification": {
+          "enum": [
+            "pending",
+            "verified",
+            "refused"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "mediaType",
+        "producingStage",
+        "parentIds",
+        "storage",
+        "bytes",
+        "verification"
+      ],
+      "additionalProperties": false
+    },
+    "ArtifactParent": {
+      "type": "object",
+      "properties": {
+        "artifactId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "admissionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "artifactId",
+        "admissionId"
+      ],
+      "additionalProperties": false
+    },
+    "ArtifactAdmission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "attempt": {
+          "$ref": "#/$defs/StageAttemptKey"
+        },
+        "artifact": {
+          "$ref": "#/$defs/ResearchArtifact"
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ArtifactParent"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "attempt",
+        "artifact",
+        "parents"
+      ],
+      "additionalProperties": false
+    },
+    "ScreeningDecision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "literatureId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "decision": {
+          "enum": [
+            "keep",
+            "exclude",
+            "unresolved"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "screenerRevision": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "literatureId",
+        "decision",
+        "reason",
+        "screenerRevision"
+      ],
+      "additionalProperties": false
+    },
+    "Synthesis": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "question",
+        "summary",
+        "evidenceIds",
+        "conflicts",
+        "gaps"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchHypothesis": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "synthesisId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nullHypothesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "predictedObservation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "disconfirmingObservation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "baselineIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "confounds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "hypothesisHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "synthesisId",
+        "statement",
+        "nullHypothesis",
+        "predictedObservation",
+        "disconfirmingObservation",
+        "evidenceIds",
+        "baselineIds",
+        "confounds",
+        "hypothesisHash"
+      ],
+      "additionalProperties": false
+    },
+    "ExperimentBranch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "planHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "hypothesisHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attemptOrdinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "executing",
+            "completed",
+            "failed",
+            "stopped"
+          ]
+        },
+        "runIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "spend": {
+          "$ref": "#/$defs/ResearchCost"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "contractHash",
+        "planHash",
+        "hypothesisHash",
+        "parentId",
+        "attemptOrdinal",
+        "status",
+        "runIds",
+        "spend"
+      ],
+      "additionalProperties": false
+    },
+    "WorkspaceManifest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifactId": {
+                "type": "string",
+                "pattern": "^art-[0-9a-f]{64}$"
+              },
+              "mode": {
+                "enum": [
+                  "read-only",
+                  "writable"
+                ]
+              },
+              "role": {
+                "enum": [
+                  "input",
+                  "code",
+                  "output",
+                  "evaluator"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "artifactId",
+              "mode",
+              "role"
+            ],
+            "additionalProperties": false
+          },
+          "uniqueItems": true
+        },
+        "datasetIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "splitIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "workspaceHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "entries",
+        "datasetIds",
+        "splitIds",
+        "workspaceHash"
+      ],
+      "additionalProperties": false
+    },
+    "ExecutionManifest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "workspaceHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "contractHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "planHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "branchId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "programId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codeArtifactId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^art-[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "params": {
+          "$ref": "#/$defs/ProgramParams"
+        },
+        "imageDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "dependencyLockHash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "memoryBytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "pids": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "wallMs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "outputBytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "cpu",
+            "memoryBytes",
+            "pids",
+            "wallMs",
+            "outputBytes"
+          ],
+          "additionalProperties": false
+        },
+        "network": {
+          "type": "object",
+          "properties": {
+            "setup": {
+              "enum": [
+                "logged",
+                "off"
+              ]
+            },
+            "measured": {
+              "const": "off"
+            }
+          },
+          "required": [
+            "setup",
+            "measured"
+          ],
+          "additionalProperties": false
+        },
+        "evaluator": {
+          "$ref": "#/$defs/ResearchEvaluatorIdentity"
+        },
+        "stopReasons": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "completed",
+              "timeout",
+              "memory",
+              "pids",
+              "output-bytes",
+              "cancelled",
+              "isolation-refused"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "executionManifestHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "workspaceHash",
+        "contractHash",
+        "planHash",
+        "branchId",
+        "programId",
+        "codeArtifactId",
+        "seed",
+        "params",
+        "imageDigest",
+        "dependencyLockHash",
+        "resources",
+        "network",
+        "evaluator",
+        "stopReasons",
+        "executionManifestHash"
+      ],
+      "additionalProperties": false
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "reviewerIdentityId": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "artifactIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^art-[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "claimIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "verdict": {
+          "enum": [
+            "accept",
+            "revise",
+            "reject"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "reviewerIdentityId",
+        "artifactIds",
+        "claimIds",
+        "verdict",
+        "findings"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchLesson": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "failurePattern": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "applicability": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "validationRecordId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResearchId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "failurePattern",
+        "fix",
+        "evidenceIds",
+        "applicability",
+        "validationRecordId",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "StageArtifactDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectId",
+        "attempt",
+        "mediaType",
+        "verification",
+        "parents"
+      ],
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ResearchId"
+        },
+        "attempt": {
+          "$ref": "#/$defs/StageAttemptKey"
+        },
+        "mediaType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification": {
+          "enum": [
+            "pending",
+            "verified",
+            "refused"
+          ]
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ArtifactParent"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "StageCommitReceipt": {
+      "type": "object",
+      "properties": {
+        "attempt": {
+          "$ref": "#/$defs/StageAttempt"
+        },
+        "artifactAdmissionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^admission-[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "recordIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ResearchId"
+          },
+          "uniqueItems": true
+        },
+        "nextState": {
+          "$ref": "#/$defs/ResearchState"
+        },
+        "operationHash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "attempt",
+        "artifactAdmissionIds",
+        "recordIds",
+        "nextState",
+        "operationHash"
+      ],
+      "additionalProperties": false
     }
   }
 }

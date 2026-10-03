@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { openTangleDb, createResearchStore, researchRunLogId, createRunLog } from '@tangleai/store';
+import { exerciseResearchConsumer, qualifyResearchBrowser } from './research-browser.mjs';
+
+assert.match(import.meta.resolve('@tangleai/research'), /\.js$/);
+const directory = process.env.TANGLE_FIXTURE_DIRECTORY; assert.ok(directory);
+const original = globalThis.fetch; globalThis.fetch = () => { throw new Error('Research consumer forbids network access'); };
+let db;
+try {
+  const expected = { state: 'LITERATURE_GATE', attempts: 1, replayed: true, bytes: [97, 98, 99],
+    artifactId: 'art-ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', refusal: 'TRSH1001' };
+  assert.deepEqual(await qualifyResearchBrowser(), expected);
+  const path = join(directory, 'research.db'); db = await openTangleDb({ path });
+  const run = await exerciseResearchConsumer(createResearchStore(db)); assert.deepEqual(run.summary, expected);
+  const runLogId = await researchRunLogId(db, 'packed-research'); assert.ok(runLogId);
+  await db.close(); db = await openTangleDb({ path });
+  const replay = await createResearchStore(db).commitStage(run.plan); assert.ok(replay.ok && replay.replayed);
+  assert.equal((await createRunLog(db).frames(runLogId)).length, 1);
+  console.log(JSON.stringify({ researchInstalled: true, reopened: true, ...expected }));
+} finally { await db?.close(); globalThis.fetch = original; }

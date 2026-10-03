@@ -292,7 +292,10 @@ function addedSeq(patch: unknown): number | null {
   return top;
 }
 
-export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog {
+/** A root store or the native handle of a caller-owned transaction. */
+export type RunLogStore = Pick<TangleDb, 'collection' | 'transaction'>;
+
+export function createRunLog(db: RunLogStore, options: RunLogOptions = {}): RunLog {
   const now = options.now ?? ((): string => new Date().toISOString());
   const configAware = new Set(options.configAwareKinds ?? []);
   const runs = db.collection<RunRecord>('runs');
@@ -347,12 +350,21 @@ export function createRunLog(db: TangleDb, options: RunLogOptions = {}): RunLog 
   return {
     async startRun(kind, startOptions = {}) {
       const startedAt = now();
-      sequence += 1;
-      const id = `r-${hashContent(`${startedAt}|${kind}|${sequence}`)}`;
-      const run: RunRecord = { id, kind, startedAt, finishedAt: null, status: 'running', summary: null };
-      if (startOptions.identityId !== undefined) run.identityId = startOptions.identityId;
-      await runs.put(run);
-      return run;
+      const identityId = startOptions.identityId;
+      return db.transaction(async tx => {
+        const collection = tx.collection<RunRecord>('runs');
+        let id: string;
+        // Existing rows arbitrate identity across instances, restarts and hash collisions.
+        do {
+          if (!Number.isSafeInteger(sequence + 1)) throw callerError('run sequence exhausted');
+          sequence += 1;
+          id = `r-${hashContent(`${startedAt}|${kind}|${sequence}`)}`;
+        } while (await collection.get(id) !== undefined);
+        const run: RunRecord = { id, kind, startedAt, finishedAt: null, status: 'running', summary: null };
+        if (identityId !== undefined) run.identityId = identityId;
+        await collection.put(run);
+        return run;
+      }, { mode: 'immediate' });
     },
 
     async attachIdentity(runId, identityId) {

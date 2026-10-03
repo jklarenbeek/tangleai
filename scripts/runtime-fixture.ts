@@ -11,6 +11,8 @@ export interface RuntimeFixtureOptions {
   timeout?: number;
   maxBuffer?: number;
   scratchRoot?: string;
+  /** Explicit child environment overrides, including removal of inherited runner context. */
+  env?: NodeJS.ProcessEnv;
   /** Inspect persisted files after process close and before parent cleanup. */
   afterExit?: (directory: string) => Promise<void>;
 }
@@ -21,7 +23,7 @@ export async function runRuntimeFixture(runtime: string, args: string[], options
     // runs while the child can still write or retain its native SQLite handles.
     const result = await execute(runtime, args, {
       cwd: options.cwd, timeout: options.timeout ?? 60000, maxBuffer: options.maxBuffer ?? 4 * 1024 * 1024,
-      env: { ...process.env, TANGLE_FIXTURE_DIRECTORY: directory },
+      env: { ...process.env, ...options.env, TANGLE_FIXTURE_DIRECTORY: directory },
     });
     await options.afterExit?.(directory);
     return result;

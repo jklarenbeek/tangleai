@@ -29,6 +29,7 @@
     "packages/grounding",
     "packages/lightrag",
     "packages/trading",
+    "packages/research",
     "packages/store"
   ],
   "privateWorkspaces": [

@@ -1,5 +1,11 @@
 # @tangleai/store
 
+`createResearchStore(db)` persists immutable research records, artifact admissions
+and revision-fenced lifecycle state through the shared
+[research contract](../research/README.md). Stage commits and native RunLog frames
+share one immediate transaction. `researchRunLogId(db, projectId)` returns the
+explicit projection association; the adapter does not equate it with a MAS run id.
+
 `createTradingStore(db)` persists the eleven `trading_*` collections through
 the [trading contract](../trading/README.md). One immediate transaction retains
 each decision, its replay marker, intent, fills, balanced postings and portfolio;

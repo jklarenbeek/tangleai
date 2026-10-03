@@ -52,6 +52,7 @@ import { FORECAST_COLLECTIONS } from './forecast-model.ts';
 import { GROUNDING_COLLECTIONS } from './grounding-model.ts';
 import { LIGHTRAG_COLLECTIONS } from './lightrag-model.ts';
 import { TRADING_COLLECTIONS } from './trading-model.ts';
+import { RESEARCH_COLLECTIONS } from './research-model.ts';
 import { FRAME_KINDS } from './runs.ts';
 
 const ID: JsonSchema = { type: 'string', minLength: 1 };
@@ -69,6 +70,7 @@ export const TANGLE_DB_MODEL = {
     ...GROUNDING_COLLECTIONS,
     ...LIGHTRAG_COLLECTIONS,
     ...TRADING_COLLECTIONS,
+    ...RESEARCH_COLLECTIONS,
     outcome_records: {
       schema: { type: 'object', required: ['id', 'scopeId'], properties: { id: ID, scopeId: ID, artifactKey: ID, kind: ID, seq: { type: 'integer' } } },
       key: '/id',

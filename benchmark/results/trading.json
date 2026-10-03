@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
+    "head": "e229e6339f693fa5df98c6e5f5809313970875fa",
     "clean": false,
     "files": [
       {
@@ -211,11 +211,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a1247155930ed7d11a8d14fb040fca0467a9c3a42c1008827c9750dcf755a053"
+        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
       },
       {
         "path": "package.json",
-        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
+        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
       },
       {
         "path": "packages/agents/package.json",
@@ -735,7 +735,7 @@
       },
       {
         "path": "packages/store/package.json",
-        "sha256": "d4c770ddccaef2b3418463f572d3ed4fca6b8949c12b5155f3544788c1d6b714"
+        "sha256": "bec22691f5889073cef28c370553cb5bf6df9bc461fb74288a2d8de498d5738e"
       },
       {
         "path": "packages/store/src/consolidation-model.ts",
@@ -815,7 +815,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "70afada5984d57f51528db60f4900d3daa5e5b4eb3f916a5cf6c9df560706857"
+        "sha256": "4768cfb8e45acc0bbf8a646bfde63986341e69b68c1a9989f38c8f71ef920b2e"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -847,7 +847,7 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "800bea47963ea130e8310b34d8f0f4f521b720c26b8fa0471d7fe8b65877e9fe"
+        "sha256": "e7bd807532cabfbffe1c7951979805509f04a97210834a060d7d16a55b4be920"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
@@ -862,8 +862,16 @@
         "sha256": "a5bdefe05b9fe8784d1518281657189e457c525839ba6e90d20093e0e56f0841"
       },
       {
+        "path": "packages/store/src/research-model.ts",
+        "sha256": "98b23720420f9741ff815d6816c4c18022dfaa40f0134a8fcc7aa8f33f652770"
+      },
+      {
+        "path": "packages/store/src/research-store.ts",
+        "sha256": "44853118163a636edf1a20e58d381a02e3fc0f0db06b69360f4d244225f69389"
+      },
+      {
         "path": "packages/store/src/runs.ts",
-        "sha256": "8423f75d14c39bf5f1e302140de01d51dbc2afb59d3427fcf87cb10e376baaf4"
+        "sha256": "148dbfbea9c65f5aff6fb89b654d6cf0dfaac1da39ec4cc80ad46781764c0deb"
       },
       {
         "path": "packages/store/src/temporal-backfill.ts",
@@ -1230,7 +1238,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "4774833080e28a03bdf2cb1c3f84c5f48dac79a3118faad1a7082eca4b2651c5"
+    "sha256": "3d0e3bfc46323d23de0690e714c39bae6be97cf79f01051cc10bfb2f03d05344"
   },
   "suite": {
     "tangle": "0.37.0",
@@ -26031,5 +26039,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "5e77a2de8bf7f14df8ece2ca03ec58a4b87b51d73395c613a251f4be9e249954"
+  "reportId": "aaa46746d4bb39d95fccae61d7b8c6a0fbcb147d8b474c8fad08b4107b326188"
 }

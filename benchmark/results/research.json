@@ -2,7 +2,7 @@
   "benchmark": "research",
   "schemaVersion": 1,
   "source": {
-    "head": "82ff89dde495a23091cffc1e8151fd61b329f1f8",
+    "head": "e229e6339f693fa5df98c6e5f5809313970875fa",
     "clean": false,
     "files": [
       {
@@ -295,19 +295,19 @@
       },
       {
         "path": "benchmark/lib/research-schema.ts",
-        "sha256": "8f84aa39e60a064a697263c38e213ee462c81048e862bc4e9f10ca77198b72ec"
+        "sha256": "a5745c51bea3a5712482f96382da2b9d7040f41dcfebf7b900ddd1e543ddfafa"
       },
       {
         "path": "benchmark/lib/research-validation.ts",
-        "sha256": "968cb956c6ec3f3641a0cf1b3ed4508d06be222c596404703eb4f4a0ead8df13"
+        "sha256": "f4a732c8faff6ae7a55a5ce0c8374279cd3feee5b24f1f2dcc8b27e31c936132"
       },
       {
         "path": "benchmark/lib/research.ts",
-        "sha256": "7c0a143ef35e3376788197da7339ba22a1ce7ef9c28ee2494ac78f9ca8f0b312"
+        "sha256": "9f5cf8d180e5ca724a83c417f3ce2c1f91277232c1528ce758d99f7a68ce704f"
       },
       {
         "path": "benchmark/lib/research.types.ts",
-        "sha256": "ddbca12df5e12f7c73ab36904c40661de2d80e6119f014560e01bc8865bab346"
+        "sha256": "f063f5e2dffad1b34fb85efc92ba35787fb4e3057bcdee565f1b7032f0f84ced"
       },
       {
         "path": "benchmark/lib/source-manifest.ts",
@@ -330,10 +330,6 @@
         "sha256": "fc25fe6965bd2a45fd00104796c2fc34983c947ae45964700de8e2658b073d13"
       },
       {
-        "path": "benchmark/schemas/research-records.schema.json",
-        "sha256": "b28529016312010046a428819f49ec0d47c2738f83a7e79b17cedd5a11f526c3"
-      },
-      {
         "path": "benchmark/schemas/research.schema.json",
         "sha256": "c6b5b9d48a9f738db1ae0217103b52e28ea6d7eb3e98579708b025f9ddf618f8"
       },
@@ -343,11 +339,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a1247155930ed7d11a8d14fb040fca0467a9c3a42c1008827c9750dcf755a053"
+        "sha256": "00a5d755be04483d159e187c268ca06d60558aacfaa9e68d41e13381423ea28d"
       },
       {
         "path": "package.json",
-        "sha256": "41cdac0ab356bc4cff05677e0b611e1eab1a9ff48cf97d4277d360bd4515f4fe"
+        "sha256": "1887b6bc8206d0e3a01bd41947b62aa60161c420eddea4e202b4417f89c099cd"
       },
       {
         "path": "packages/config/package.json",
@@ -570,6 +566,122 @@
         "sha256": "15d22a3916e39395b7f4dccbd31acf507b1707e535540ab630fa8d8237754ffe"
       },
       {
+        "path": "packages/gmpl/artifacts/catalog.json",
+        "sha256": "d9ed36f9e3f08b4d7c46382f5c84ce4b979da64665fdcc6554d2e6b6eecf8efb"
+      },
+      {
+        "path": "packages/gmpl/package.json",
+        "sha256": "1f4a6225d8a8d6e1f06e47646070478be8ad5d987e4dd05b0ab879f8f6cabc30"
+      },
+      {
+        "path": "packages/gmpl/schemas/gmpl.schema.json",
+        "sha256": "45d35251829b16633dd964a7eda0ffa8dd8018cb7b99311a3e1ea85ed3f1df45"
+      },
+      {
+        "path": "packages/gmpl/src/catalog.ts",
+        "sha256": "ad6a29b646dd6be5022e5288596a394ffa03ddd35167b84450c368ae3c8508c5"
+      },
+      {
+        "path": "packages/gmpl/src/clarification-tasks.ts",
+        "sha256": "17879e6c723f13fe4e94618dd48a9e0e4bbec605a06a28f85f5015e06219d20a"
+      },
+      {
+        "path": "packages/gmpl/src/contracts.gen.ts",
+        "sha256": "c12882e66d4ab5f55e56992a67ef9bd317594a9cbd79bdaf77870ca4ef1653cb"
+      },
+      {
+        "path": "packages/gmpl/src/debate-tasks.ts",
+        "sha256": "1274e87db97043d9b39ea62156e0d3411249840e45b962c36e1ead183d2e1497"
+      },
+      {
+        "path": "packages/gmpl/src/defaults.ts",
+        "sha256": "e33e274dd82fffb0bfc4b6b03fa8da850e5eb9d22441343ae67ee3b50a913b4d"
+      },
+      {
+        "path": "packages/gmpl/src/delphi-tasks.ts",
+        "sha256": "23682c1e261ad91a93140000489f1a5d069b43c17d23fb2ae324799e33421f56"
+      },
+      {
+        "path": "packages/gmpl/src/errors.ts",
+        "sha256": "5b3aedc6d1e80975c5ed7ee72184999d56ddba0ca4200df4cbbf4678a9bfea3a"
+      },
+      {
+        "path": "packages/gmpl/src/evidence.ts",
+        "sha256": "3b2d0f03f8bf5d8cee08b837c523a8aa5bb8f46c94c002a8f8be4b9a6e720ce9"
+      },
+      {
+        "path": "packages/gmpl/src/host-bindings.ts",
+        "sha256": "0f17cfb88ab0db0ac2f8c6bac20b29ed501acbe43c40620c393b4d4416f1efda"
+      },
+      {
+        "path": "packages/gmpl/src/identity.ts",
+        "sha256": "1c0218118d8407927bbb07d68924af6a671ce9c1346022618a961224bba80848"
+      },
+      {
+        "path": "packages/gmpl/src/index.ts",
+        "sha256": "48969d8380cb6264f3ceac1855cb81869f5138b110dfbe1ecf9d1a7d80ae99dd"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/clarification.ts",
+        "sha256": "b4e783917874f68a0bebd42b095097248b6ce058e2bbb266803950b3c22dca1d"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/controller.ts",
+        "sha256": "d3e4758165567f74a68f256fd7bc554ab529701c3ace48351647813f5c0a7f6a"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/delphi-panel.ts",
+        "sha256": "fc0243e43de1064bbb6343724b640036f7dc09872d8e9a792c17c619bda4df4e"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/parallel-analysis.ts",
+        "sha256": "03bbf2daefbcc562db2702e92220fbf65b08abfa0a7dd63146611497a7e2561f"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/peer-review.ts",
+        "sha256": "a6f5c2b2fb1b4883145b5946cfe5b0c9df8ce6510ae3a29d0aaf7a98ee2e29d3"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/red-team.ts",
+        "sha256": "d12d0f348b32622f246ec6a0db22de1d6deec9fedc22ee600285442246021c78"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/round.ts",
+        "sha256": "16ee96814fcf43bd8bd56b7eeec77ba7069922de2bb3b69267fa3f5282a66942"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/shared.ts",
+        "sha256": "b295cbbf853ae600148d9ddca5b0ca5f4fe8b18e0802609f234fbb6653d44771"
+      },
+      {
+        "path": "packages/gmpl/src/patterns/structured-debate.ts",
+        "sha256": "3606fc971bd903ed510b45e85e793d5bb1436daea93e5c6679b942196e3e2b1b"
+      },
+      {
+        "path": "packages/gmpl/src/projection.ts",
+        "sha256": "9120cb1b195bfa022a989d9cccda98703030144974bc4b80fc9992f9e3781a44"
+      },
+      {
+        "path": "packages/gmpl/src/prompts.ts",
+        "sha256": "c7b785b1ee8f0de187514c801deb4758ead955bf832408c10668b3a52b9fb975"
+      },
+      {
+        "path": "packages/gmpl/src/round-tasks.ts",
+        "sha256": "bf7ba5d1c22d2327f1b71bb51b43fd446b25da6dec2343ef08c2a55f3282d69a"
+      },
+      {
+        "path": "packages/gmpl/src/schema.ts",
+        "sha256": "0f5e4027ef6181ac4809f99062a02a65db103e5a119a5b74aa6f78bfd08b39e4"
+      },
+      {
+        "path": "packages/gmpl/src/specialize.ts",
+        "sha256": "4eaec241dd7aa6728e479437edb828230cc209ac8136619e377e49a9866f2ee7"
+      },
+      {
+        "path": "packages/gmpl/src/tasks.ts",
+        "sha256": "17d0457b6a04669dce2de693d568ad7ec14df0526dd6fc44cb0090295349661e"
+      },
+      {
         "path": "packages/jaren/package.json",
         "sha256": "fbbf0676d16e84c840a9b668c6f1a51d9df53237c007f9465eaf9ca96363b150"
       },
@@ -662,11 +774,55 @@
         "sha256": "43dafdff66bfe4d6933fb8bbfcef9a8ded801b366ed5eebf02402e84d91bd1e5"
       },
       {
+        "path": "packages/research/package.json",
+        "sha256": "3b4c94a93e66388ca997270ecb2baf0d10da4ebbe3258a2ae096c2cf2f4447a5"
+      },
+      {
+        "path": "packages/research/schemas/research.schema.json",
+        "sha256": "b2f640b50584cde6c3d26dfca6499439bf4256fbbd2fc1a61d513981930d6dc3"
+      },
+      {
+        "path": "packages/research/src/contracts.gen.ts",
+        "sha256": "cb2d750c830d72e6d507b7a184db3539acd3164e752525d8840ac72f06f62e08"
+      },
+      {
+        "path": "packages/research/src/errors.ts",
+        "sha256": "ce988e24b2f99a7bee7b7dd2b418fd7ccf5260cad4f104b029463ef82878d486"
+      },
+      {
+        "path": "packages/research/src/identity.ts",
+        "sha256": "e37ae216c1d4d4d168dd6a8d81ebf7bde681372673c29ea96e53e4d43a8b5274"
+      },
+      {
+        "path": "packages/research/src/index.ts",
+        "sha256": "3feda0804d5d5fb1473e4b1eab7027de3a45bcf70e8eb731b5e49594271a26ad"
+      },
+      {
+        "path": "packages/research/src/records.ts",
+        "sha256": "186b39b0399d64cccc901e6b39febf5f4c2494944e3d7e5ee498dd46b2141500"
+      },
+      {
+        "path": "packages/research/src/schema.ts",
+        "sha256": "3fab14e5ebb04c02639611c9c6b241b7092d63584b779782348b54d0d4b1f48e"
+      },
+      {
+        "path": "packages/research/src/store-policy.ts",
+        "sha256": "f0afb7f51caa8a1333a0f623c91b395241900edd959e6d4b676e9ca4cf18c952"
+      },
+      {
+        "path": "packages/research/src/store.ts",
+        "sha256": "b4468a73fdceb3c9091c18d1fa08f96f7447f819e445c088f5602539dfc80e3d"
+      },
+      {
+        "path": "packages/research/src/transitions.ts",
+        "sha256": "524e3f9f939b06c1fc74d11bb17fadbe36019e7115c47e10731be81768d46467"
+      },
+      {
         "path": "scripts/research-schema.ts",
-        "sha256": "982e529370df22c013258936d4a40ad586de93786ec256c951d81368213ab9ec"
+        "sha256": "6bebf3c7da35254479d2d80d532591ea773ac0f32aa48405a7474441a7f1c5c4"
       }
     ],
-    "sha256": "6b47e836a3a93e8a63c1928ddf44aaac6ed790105b431a8c865dcfde2e841d26"
+    "sha256": "7f836de1381caacd364ee2239fe0c499ef0b55e0a3e7118bf68e691af4ef623a"
   },
   "suite": {
     "packages": [
@@ -779,7 +935,15 @@
         "version": "0.37.0"
       },
       {
+        "name": "@tangleai/gmpl",
+        "version": "0.37.0"
+      },
+      {
         "name": "@tangleai/models",
+        "version": "0.37.0"
+      },
+      {
+        "name": "@tangleai/research",
         "version": "0.37.0"
       }
     ]
@@ -11793,5 +11957,5 @@
     "Every comparison retains ties and losses. A confidence interval touching zero does not establish improvement; saturated results stop without threshold changes.",
     "Completion records reaching the registered decision and is not the primary quality score. Six mechanism rows have no implementation yet."
   ],
-  "reportId": "388e46ea90bba1a80cacffaa9ddc757273e10f077108236af4011210af6ade63"
+  "reportId": "4e7d7452cfd2e487bd220cc311c3b3a60a86028ba757c6297abf7908edc8068a"
 }
