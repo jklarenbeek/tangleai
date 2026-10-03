@@ -91,7 +91,9 @@ pageLimit?, maxPages? })` reads the complete qualified location membership.
 Defaults are 256 rows per page and 128 pages. Every row and numeric mirror must
 match the captured validated projection; a short, repeated, altered or foreign
 page cannot prove completeness. The table retains unknown and conflicting
-assertions and counts them as unplaceable. Known starts produce numeric
+assertions. Unplaceable counts statuses other than accepted and time kinds
+other than state/point; an accepted state with an unknown end is instead
+checked for exact validity after the join. Known starts produce numeric
 `{ at, value: tableIndex }` samples; unknown starts receive no invented instant.
 These native samples differ from the serialized `PositionSample` contract.
 
@@ -141,5 +143,18 @@ Run the [three-entry public example](https://github.com/jklarenbeek/tangleai/blo
 with `npm run place:smoke`. Its companion gazetteer copies the cited Wikidata
 CC0 coordinates unchanged; its persona assertions are synthetic host reporting
 events. The [place benchmark](https://github.com/jklarenbeek/tangleai/blob/main/docs/PLACE_BENCHMARK.md)
-measures the separately licensed annotation fixture. Neither changes ordinary
-LoCoMo scores or default pipeline routing.
+measures the separately licensed annotation fixture: 174 of 197 audited mentions
+are grounded; 57 position assertions cover 16 personas. All 124 original
+questions pass on memory, Node SQLite and Bun SQLite. The equal-budget paired
+table retains temporal eligibility's five location losses alongside its 40 wins;
+distance/proximity gains over baselines without geometry are labelled structural.
+Correct refusals are scored, and no paired interval or live-model gain is claimed.
+
+The separate [candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale.json)
+measures the shared sweep over 50,000 sparse synthetic points. Node and Bun both
+meet the 50 ms warm p95 target, so no bbox or R-tree is adopted. These timings
+exclude gazetteer validation, semantic ranking and full SQLite adapter I/O.
+The public source contract rejects synthetic entries; only the private geometry
+measurement uses them. Live mention extraction and placement proposals through
+the structured seam remain unmeasured. Neither fixture changes ordinary LoCoMo
+scores or default pipeline routing.

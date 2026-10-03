@@ -10,7 +10,7 @@ import { recallByEmbedding, type RankOptions } from '../retrieval.ts';
 import { checkPlace, fromTemporal, placeRefuse, placeSuccess, type PlaceResult, type PlaceQuery,
   type PlaceAnswer, type PlaceCoverage, type PlaceRefusal } from './contracts.ts';
 import type { GazetteerView } from './gazetteer.ts';
-import { capturePlaceSnapshot, readPositionSeries } from './series.ts';
+import { capturePlaceSnapshot, readPositionSeries, unplaceablePosition } from './series.ts';
 import { locationAtInstant, locationAtEvent, movementDistance } from './join.ts';
 import { nearbyEntries, type NearbyOptions } from './nearby.ts';
 
@@ -43,7 +43,7 @@ export async function recallPlace(stores: PlaceStores, input: PlaceQuery): Promi
   coverage.comparable = pool.comparable; coverage.semanticCandidates = pool.pool.length; coverage.poolTruncated = pool.poolTruncated;
   const positions = captured.value.rows.filter(row => row.subject === query.subject && row.series === 'location');
   coverage.positions = positions.length;
-  coverage.unplaceable = positions.filter(row => row.claim.status !== 'accepted' || !['state', 'point'].includes(row.claim.time.kind)).length;
+  coverage.unplaceable = positions.filter(row => unplaceablePosition(row.claim)).length;
   const selected = new Map<string, TemporalClaim>();
   function budget(): PlaceRefusal | null {
     const cited = new Set([...selected.values()].flatMap(claim => claim.citations.map(span => span.sourceId)));

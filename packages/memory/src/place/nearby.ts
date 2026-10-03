@@ -1,9 +1,10 @@
 /** Nine native cells are only a prefilter; the whole radius must fit before refinement. */
-import { circleBounds, geohashBounds, geohashEncode, bboxUnion, bboxContains, geoDistance } from '@jarenjs/core/geo';
+import { circleBounds, geohashBounds, bboxUnion, bboxContains, geoDistance } from '@jarenjs/core/geo';
 import { compareCodePoints } from '@jarenjs/core/string';
 import { sameTemporalValue } from '../temporal/contracts.ts';
 import { placeCell, placeNeighbourhood } from './geometry.ts';
 import { checkGazetteerEntry, type GazetteerView } from './gazetteer.ts';
+import { entriesInPlaceCells } from './candidates.ts';
 import { placeRefuse, placeSuccess, type PlaceResult, type GazetteerEntry } from './contracts.ts';
 
 export interface NearbyOptions {
@@ -38,10 +39,9 @@ export async function nearbyEntries(gazetteer: GazetteerView, entry: GazetteerEn
     if (!tiled || !circle || !bboxContains(footprint, circle[0], circle[1]) || !bboxContains(footprint, circle[2], circle[3])) {
       return placeRefuse('TPLC1011', `radius is not covered by the nine-cell footprint; centre=${JSON.stringify(centreBox)}, footprint=${JSON.stringify(footprint)}, probedCells=${cells.length}`);
     }
-    const cellSet = new Set(cells);
     // GazetteerView has already validated and frozen every position. No new
     // coordinate spelling, geographic arithmetic or partial prefix lookup.
-    const expected = gazetteer.entries.filter(candidate => cellSet.has(geohashEncode(...candidate.geometry.coordinates, options.precision)));
+    const expected = entriesInPlaceCells(gazetteer.entries, cells, options.precision);
     let candidates = expected;
     if (options.entriesInCells) {
       const loaded = await options.entriesInCells(cells); if (loaded.status !== 'success') return loaded;

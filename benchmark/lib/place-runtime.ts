@@ -8,6 +8,7 @@ import { createGazetteer, answerPlace, matchPlaceMentions, placeCell, checkAutho
 import { createTemporalMemoryStore, createTemporalProjection, type TemporalStore, type TemporalResult } from '@tangleai/memory/temporal';
 import { openTangleDb, createPlaceDbStore, createTemporalDbStore, type TangleDb } from '@tangleai/store';
 import { temporalSourcePool } from '../../packages/memory/src/temporal/source-pool.ts';
+import { unplaceablePosition } from '../../packages/memory/src/place/series.ts';
 import { runRuntimeFixture } from '../../scripts/runtime-fixture.ts';
 import { preparePlaceBaselines, type PlaceBaselineContext } from './place-baselines.ts';
 import { loadPlaceFixture, type LoadedPlaceFixture, type PlaceInput } from './place-fixture.ts';
@@ -43,7 +44,7 @@ async function runQuestion(prepared: PlaceBaselineContext, question: PlaceInput,
     const pool = temporalSourcePool(snapshot.sources, snapshot.projection, { embedding, candidatePool, minScore });
     const positionClaims = snapshot.claims.filter(c => c.series.subject === question.subject && c.series.key === 'location');
     const coverage: PlaceCoverage = { occurrences: snapshot.sources.length, comparable: pool.comparable, semanticCandidates: pool.pool.length,
-      positions: positionClaims.length, unplaceable: positionClaims.filter(c => c.status !== 'accepted' || !['point', 'state'].includes(c.time.kind)).length,
+      positions: positionClaims.length, unplaceable: positionClaims.filter(unplaceablePosition).length,
       poolTruncated: pool.poolTruncated, complete: false };
     if (!pool.poolIds.has(source.id)) return { outcome: { refused: 'TPLC1011' }, coverage };
     const qualifications = new Map(loaded.fixture.mentions.filter(m => m.sampleId === question.sampleId && m.diaId === annotation.diaId)

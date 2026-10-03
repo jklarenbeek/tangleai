@@ -6,6 +6,11 @@ import { temporalProjectionRecords, type TemporalStore } from '../temporal/store
 import { fromTemporal, placeRefuse, placeSuccess, type GazetteerEntry, type PlaceResult } from './contracts.ts';
 import type { GazetteerView } from './gazetteer.ts';
 
+/** Internal classification; an accepted unknown state end is checked at query time. */
+export function unplaceablePosition(claim: TemporalClaim): boolean {
+  return claim.status !== 'accepted' || !['state', 'point'].includes(claim.time.kind);
+}
+
 export interface PositionRow {
   claim: TemporalClaim; entry: GazetteerEntry; atEpoch: number | null; untilEpoch: number | null; unplaceable: boolean;
 }
@@ -66,7 +71,7 @@ export async function readPositionSeries(store: TemporalStore, options: Position
         }
         seen.add(row.id); afterId = row.id;
         const entry = gazetteer.byId(row.claim.value); if (entry.status !== 'success') return entry;
-        const unusable = row.claim.status !== 'accepted' || !['state', 'point'].includes(row.claim.time.kind);
+        const unusable = unplaceablePosition(row.claim);
         if (unusable) unplaceable++;
         const index = table.length;
         table.push({ claim: row.claim, entry: entry.value, atEpoch: row.validFromEpochMs, untilEpoch: row.validUntilEpochMs, unplaceable: unusable });

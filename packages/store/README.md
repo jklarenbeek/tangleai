@@ -132,6 +132,13 @@ Longitude and latitude are numeric mirrors in each JSON row; the declared
 gazetteer and cell indexes materialize their own native scalar columns. No
 longitude/latitude index, derived bounding box or R-tree is created.
 
+The [registered candidate-scale receipt](https://github.com/jklarenbeek/tangleai/blob/main/benchmark/receipts/place-scale.json)
+keeps the in-memory sweep after both Node and Bun meet the target on the
+50,000-entry sparse synthetic workload. Bbox and R-tree trials remain
+untriggered. That measurement reuses the internal candidate owner; synthetic
+sources are still refused by the public loader. It excludes the complete
+sourced adapter's inventory validation and does not qualify its end-to-end I/O.
+
 The additive collection preserves existing memory and temporal records. The
 [place API guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/PLACE.md)
 describes the shared source, geometry and refusal contracts.

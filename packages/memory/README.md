@@ -64,21 +64,23 @@ unmeasured. Ordinary recall and the selected policy above remain the default.
 
 ## Place memory
 
-`@tangleai/memory/place` validates sourced point gazetteers, matches exact aliases
-with cited original spans and explicit ambiguity, creates temporal location
-claims, and applies spatial authoring gates with host-supplied intent. It uses
-Jaren's geometry and geohash kernels and the temporal lane's identity and time
-rules. See the [place API guide](docs/PLACE.md) for qualification callbacks,
-uncertain time bounds, refusal values and the separate SQLite adapter.
+`@tangleai/memory/place` supplies immutable sourced point gazetteers, exact alias
+matching with original citations, qualified location claims and explicit spatial
+gates. `recallPlace` and `answerPlace` combine the declared semantic pool with
+complete subject-qualified histories, native backward joins, validity checks and
+geodesic movement. Nearby queries cover nine contiguous cells before distance
+refinement; uncertainty, missing positions and exhausted budgets return coded
+refusals. Geometry kernels stay in Jaren and evidence/time semantics stay in the
+temporal owner.
 
-`recallPlace` and `answerPlace` compose source ranking with complete scoped
-position reads, native backward joins and geodesic distance. Event and position
-citations must fit the declared candidate pool and final k; unknown validity,
-unmatched positions and incomplete radius coverage remain visible refusals.
-`nearbyEntries` probes nine native cells and refines by metres, excluding the
-centre entry. The [keyless public example](https://github.com/jklarenbeek/tangleai/blob/main/examples/place.ts)
-demonstrates two personas, cited location and movement answers, actual SQLite
-reopen and zero-write replay. Default pipeline routing remains off.
+The [API guide](docs/PLACE.md) documents source policy, query budgets and limits.
+The [measured fixture](https://github.com/jklarenbeek/tangleai/blob/main/docs/PLACE_BENCHMARK.md)
+retains paired losses, coverage, correct refusals and actual memory/Node/Bun
+SQLite outcomes. Its registered sparse candidate sweep meets the target without
+another index; complete adapter validation is outside that timing. Live
+extraction is unmeasured and ordinary routing remains off. Run
+`npm run place:smoke` for the [three-entry public example](https://github.com/jklarenbeek/tangleai/blob/main/examples/place.ts)
+with SQLite reopen and zero-write replay.
 
 ## Outcome confidence
 

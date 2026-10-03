@@ -133,34 +133,20 @@ direct-answer comparisons rather than against the earlier empty-answer count.
   periods; unsupported inputs currently refuse. BEAM, RealMem and HaluMem remain
   researched future options, not implemented adapters. No resampling, timeline
   UI or spatial inference is implied by the temporal API.
-- [ ] **The place lane: spatial, and honest about what it cannot score.**
-  *Wanted:* `@jarenjs/core/geo` and `@tangleai/jaren`'s spatial profile have sat unused
-  inside the pin since the suite's geo campaign; LoCoMo's personas move, and
-  "where was she living when she started the job" is a spatiotemporal as-of join
-  the temporal lane makes expressible. Test whether grounding place mentions buys
-  retrieval quality that meaning-plus-time alone does not. *Constraint:* **LoCoMo
-  has no spatial category** — nothing in the benchmark scores geography, and a
-  claim that a spatial feature "improved LoCoMo" would be a category-1/3 side
-  effect wearing a borrowed name. So this lane is measured on its own committed
-  fixture set and must additionally not move the LoCoMo number. *Decisions already
-  taken:* positions come from a committed gazetteer fixture (the place names the
-  ten conversations mention, each with a WGS 84 `[lon, lat]`, a source and a
-  confidence) or the work stops — a guessed coordinate is a fabricated memory and
-  the evidence rule outranks the feature; a placed memory is a memory with a
-  GeoJSON member (RFC 7946), no geometry type, no CRS wrapper; the suite's two
-  spatial refusals are adopted as written — geodesic metres (`$distance`,
-  `$area`), and a geohash prefix is bucketing, never proximity
-  (`geohashNeighbours`, nine cells) — with `spatialGates` on every LLM-authored
-  spatial query and a refusal a counted value; the spatiotemporal join
-  (`asOfJoin` over a persona's positions, `$distance` between matches) is the
-  actual claim, the only thing a vector ranker structurally cannot do; the
-  database side is `derive: 'bbox'` or nothing, `physical: 'rtree'` only if a
-  measurement asks. *Salvage:* none — memflow never had geography; the prior art
-  is `@tangleai/jaren`'s `SPATIAL_OPERATORS` table. *Closes on:* place-grounded
-  recall against the temporal-lane baseline on the fixture set, with the
-  gazetteer's coverage (mentions grounded / total) beside it; a hard
-  non-regression gate on LoCoMo categories 1–4; the `spatialGates` refusal counts
-  as a correctness result.
+- [ ] **Live place extraction and placement proposals.** The sourced
+  [place API](../packages/memory/docs/PLACE.md) computes cited joins, movement
+  and bounded nearby answers; its [fixture measurement](PLACE_BENCHMARK.md)
+  grounds 174/197 audited mentions and passes all 124 questions on memory and
+  Node/Bun SQLite. The registered sparse candidate sweep meets its target on
+  both runtimes, so an additional spatial index is not indicated by that row.
+  What remains is extraction of locative mentions and supported placement
+  proposals through the existing structured seam, with `@tangleai/jaren/spatial`
+  gates and the `@tangleai/jaren/geo-tools` toolbox for authored queries.
+  Live quality and cost are unmeasured. A model cannot invent coordinates,
+  validity, sources or distance; ambiguity and ungrounded proposals stay counted.
+  Close on independently scored held-out extraction and placement, with coverage,
+  refusals, losses and full retrieval cost beside the quality result and unchanged
+  canonical LoCoMo controls. No fixture result is a LoCoMo spatial score.
 
 - [ ] **MAS head revision fencing.** `packages/store/src/mas-store.ts`
   `activateHead` stores a revision but currently compares only the expected active

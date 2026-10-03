@@ -2,7 +2,7 @@
   "benchmark": "outcome-conformance",
   "schemaVersion": 1,
   "source": {
-    "head": "364b3369e9ac5f25ef6d98d6d282efc9fdb22836",
+    "head": "83d9a524efb428f51f5ee0dbfe606925d72018af",
     "clean": false,
     "files": [
       {
@@ -111,7 +111,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
+        "sha256": "e446beef921138dff3835f6e7a47e3e9dba2a8a934a6d768dd47a5cec795b4c2"
       },
       {
         "path": "packages/agents/package.json",
@@ -1578,6 +1578,10 @@
         "sha256": "30ca667575aee0049a8ab6a45955cb0ff6e04fbd986a79b958628cd9223d29df"
       },
       {
+        "path": "packages/memory/src/place/candidates.ts",
+        "sha256": "fe5c3fbfdec1b5649f2a4c5ca38e5c597a2314d8ca8c5f3329c78721dc896c3a"
+      },
+      {
         "path": "packages/memory/src/place/claims.ts",
         "sha256": "4ab4dd8f0189b0a751328b3598c249437b6d27f0244a6aa9963187103d6501cb"
       },
@@ -1611,15 +1615,15 @@
       },
       {
         "path": "packages/memory/src/place/nearby.ts",
-        "sha256": "4f922908f048641adcc75420eb52c090354ab689b1b4edb024e819e6615bc105"
+        "sha256": "876de2a9dee62648a01c2ecac01b0846048466befda889392e9665d685c69666"
       },
       {
         "path": "packages/memory/src/place/retrieval.ts",
-        "sha256": "29327951859163a2dbd788ea11332d5543c861faf7f8059cf3710a428467a9c7"
+        "sha256": "db0407c45d4454955540c50cd875bc405b695a2511d0e36bc91303175d560649"
       },
       {
         "path": "packages/memory/src/place/series.ts",
-        "sha256": "91043c3460f93e04d68cadf7fe67706000402970aca78d477ed1eb518b4ff185"
+        "sha256": "c4e3f77afc2b2111bd2ea9793553b112873c1fe4dc2090d06d861690c473478d"
       },
       {
         "path": "packages/memory/src/policy.gen.ts",
@@ -2370,7 +2374,7 @@
         "sha256": "7fe49d004e1c573b50e00c734e1c3376fc94ee1096d62b373f55c1d60d9b3fc3"
       }
     ],
-    "sha256": "bf5058c2d5ce3176e13acc5dbebeb88dc741d1e95e4fc1171363c42b0a8f5c39"
+    "sha256": "fc8f8f75e23da9d88716f2851cfef5c83bc05c5b7b2e8280d6650117a7155ebe"
   },
   "registration": {
     "schemaVersion": 1,
@@ -85556,5 +85560,5 @@
     "Legacy confidence projection is not atomic or replay-safe.",
     "Scripted calls count registered candidate submissions; deterministic interpreter and scorer calls are separate computations."
   ],
-  "reportId": "92fa88398612b5d846b61a672e2adee61f668df3a2859a5bf90e5e351b36bfd8"
+  "reportId": "ffd265c183bdf7f6a6ab59525f27487b3f694546d04d3fd1abbe04002bd8b6d4"
 }

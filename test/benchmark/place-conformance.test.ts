@@ -37,6 +37,8 @@ test('place reports reconcile registered denominators and reject rehashed false 
     (r: typeof report) => { r.refusals.byCode.forged = 1; },
     (r: typeof report) => { r.rows[0].projectionId = '0'.repeat(64); },
     (r: typeof report) => { r.scale.targetP95Ms++; },
+    (r: typeof report) => { const pair = r.ablation.pairs[0]; [pair.wins, pair.losses] = [pair.losses, pair.wins]; },
+    (r: typeof report) => { r.index.receiptSha256 = '0'.repeat(64); },
     (r: typeof report) => { r.rows.find(row => row.runtimeCoverage !== null)!.runtimeCoverage!.unplaceable = Number.MAX_SAFE_INTEGER; },
   ]) {
     const copy = structuredClone(report); mutate(copy); const { sha256: _, ...body } = copy; copy.sha256 = await canonicalSha256(body);
@@ -89,7 +91,7 @@ test('place committed report and document reproduce from current measured owner 
   assert.deepEqual(committed.source.files, context.source.files);
   const reproduced = await runPlaceConformance({ ...context, source: committed.source }, adapters, prepared);
   assert.equal(JSON.stringify(reproduced, null, 2) + '\n', await readFile('benchmark/results/place.json', 'utf8'));
-  assert.equal(renderPlaceReport(reproduced), await readFile('docs/PLACE_BENCHMARK.md', 'utf8'));
+  assert.equal(renderPlaceReport(reproduced, context.scaleReceipt), await readFile('docs/PLACE_BENCHMARK.md', 'utf8'));
 });
 
 test('an absent corpus keeps every registered row and cannot claim a verified oracle', async () => {

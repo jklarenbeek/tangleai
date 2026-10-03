@@ -774,12 +774,16 @@
         "sha256": "a3776dee6663c1dc360ecc80a47ccf6c97f7b337444aca207145ee9f8ba20833"
       },
       {
+        "path": "benchmark/lib/place-ablation.ts",
+        "sha256": "13f3bd8ba18760235e392df944341177ab5b4b1a4c811131c6d3f0068b18cd3b"
+      },
+      {
         "path": "benchmark/lib/place-baselines.ts",
         "sha256": "dd6d88838bec921b79f87dfcc6c8e6bae188a12d156bfc8fa282c69d251f6490"
       },
       {
         "path": "benchmark/lib/place-conformance.ts",
-        "sha256": "87a3748bda0c1a8ec7647d8841cec7afbfc12bf17c4049e3f2d0e0fdad426e5b"
+        "sha256": "fde9da21986f579ea2b6206c671bc2f151308a65853dd6e051056e2249ab3ef9"
       },
       {
         "path": "benchmark/lib/place-fixture.ts",
@@ -795,15 +799,23 @@
       },
       {
         "path": "benchmark/lib/place-render.ts",
-        "sha256": "f91777f612465f02f2b5c269dc43ce67930c5f7a66e4040ca0c14943977ac41c"
+        "sha256": "4dbae95260721720fdcf9e05f7b538ebdde90d627200ffc47e21723b7742d3e0"
       },
       {
         "path": "benchmark/lib/place-report.types.ts",
-        "sha256": "d1b4c7d28d689d631cab0fd8a2287edd22282ebbd24cb5130a22a9b8f0ee3a89"
+        "sha256": "46ba3954566054befb3b47d2695dd19526c7f59c8de6830f59892c88213f25bf"
       },
       {
         "path": "benchmark/lib/place-runtime.ts",
-        "sha256": "142abeb7207a489ebf815a2c013a2958832df3dd3a8cad0866e435eca3fe428d"
+        "sha256": "5311aabba1b6cf49186b18e7865cb1a3fe930faea24038f28abce31ec752de6a"
+      },
+      {
+        "path": "benchmark/lib/place-scale-receipt.ts",
+        "sha256": "dce6f2a6aab3d90782f5857126637193c4776ba511da9feabd1733cf8f81d84a"
+      },
+      {
+        "path": "benchmark/lib/place-scale.ts",
+        "sha256": "5037a247088b846a04fadee673ac2b77705c70d9c75ece6eabc4a5c03875613c"
       },
       {
         "path": "benchmark/lib/place-validation.ts",
@@ -1139,7 +1151,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
+        "sha256": "e446beef921138dff3835f6e7a47e3e9dba2a8a934a6d768dd47a5cec795b4c2"
       },
       {
         "path": "packages/agents/package.json",
@@ -2606,6 +2618,10 @@
         "sha256": "30ca667575aee0049a8ab6a45955cb0ff6e04fbd986a79b958628cd9223d29df"
       },
       {
+        "path": "packages/memory/src/place/candidates.ts",
+        "sha256": "fe5c3fbfdec1b5649f2a4c5ca38e5c597a2314d8ca8c5f3329c78721dc896c3a"
+      },
+      {
         "path": "packages/memory/src/place/claims.ts",
         "sha256": "4ab4dd8f0189b0a751328b3598c249437b6d27f0244a6aa9963187103d6501cb"
       },
@@ -2639,15 +2655,15 @@
       },
       {
         "path": "packages/memory/src/place/nearby.ts",
-        "sha256": "4f922908f048641adcc75420eb52c090354ab689b1b4edb024e819e6615bc105"
+        "sha256": "876de2a9dee62648a01c2ecac01b0846048466befda889392e9665d685c69666"
       },
       {
         "path": "packages/memory/src/place/retrieval.ts",
-        "sha256": "29327951859163a2dbd788ea11332d5543c861faf7f8059cf3710a428467a9c7"
+        "sha256": "db0407c45d4454955540c50cd875bc405b695a2511d0e36bc91303175d560649"
       },
       {
         "path": "packages/memory/src/place/series.ts",
-        "sha256": "91043c3460f93e04d68cadf7fe67706000402970aca78d477ed1eb518b4ff185"
+        "sha256": "c4e3f77afc2b2111bd2ea9793553b112873c1fe4dc2090d06d861690c473478d"
       },
       {
         "path": "packages/memory/src/policy.gen.ts",
@@ -3394,7 +3410,7 @@
         "sha256": "6d610eb2919267727161294689f571c2df33166707a2fc60741f3bd152cdcd9e"
       }
     ],
-    "sha256": "79a7144d2db726fc1fda44bb5765fad6645d0085c416d15941a133cea123d740"
+    "sha256": "a2f00ee87c1c2f86654e3eea128fadac112a80d9dbf360e73f54d9249131fe3a"
   },
   "fixtureSource": {
     "files": [
@@ -68584,7 +68600,7 @@
     "status": "not-run",
     "plan": {
       "registrationId": "d31f045a2500eafe2d022192f7d35f0efabc38c7b47713d243d12849bb14492d",
-      "sourceSha256": "79a7144d2db726fc1fda44bb5765fad6645d0085c416d15941a133cea123d740",
+      "sourceSha256": "a2f00ee87c1c2f86654e3eea128fadac112a80d9dbf360e73f54d9249131fe3a",
       "fixtureId": "7f8d166096abe1c31d3604c720e7d938f2bc90f030d938a55f817901bd2930ea",
       "fixtureSourceSha256": "4762070112c1aa7cd32015ffa39f087bd3ab12998f266bb7ba57f3bd684abd33",
       "wire": {
@@ -68668,7 +68684,7 @@
         "robotsPerHop": true
       },
       "cacheHits": 0,
-      "planId": "1809557480ca9284507908afe2ab094891324859deb58828fcd84f960ea16554"
+      "planId": "b5cebf62b7b587fe7f1b0a0ddb4f0f24057fa3d401078f3631f04ce7ff2442f1"
     },
     "physicalRequests": 0,
     "reason": "A new explicit approval naming this exact plan is required. This registration is not a provider receipt; live quality and healthcare deployment remain unmeasured.",
@@ -68915,5 +68931,5 @@
     "failedControls": 0,
     "providerRequests": 0
   },
-  "reportId": "6788fe22e9c8f48037f4568382b19adf2028214a9392b8205e767717ca64a107"
+  "reportId": "2253c4e3493e59a3957725f5adc9419feb8413e96b512524ba0b23717ffb27d9"
 }

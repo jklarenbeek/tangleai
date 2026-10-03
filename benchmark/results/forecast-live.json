@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "364b3369e9ac5f25ef6d98d6d282efc9fdb22836",
-      "sha256": "9fcc7297f07fbb8bdd0961c8d71ec80ffcf851bd1a43db799cb5691ad8e61c39",
+      "head": "83d9a524efb428f51f5ee0dbfe606925d72018af",
+      "sha256": "147db7e5fc603a23964956493808f3301d0671af1798900863817a60729c6a4b",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -525,12 +525,16 @@
           "sha256": "a3776dee6663c1dc360ecc80a47ccf6c97f7b337444aca207145ee9f8ba20833"
         },
         {
+          "path": "benchmark/lib/place-ablation.ts",
+          "sha256": "13f3bd8ba18760235e392df944341177ab5b4b1a4c811131c6d3f0068b18cd3b"
+        },
+        {
           "path": "benchmark/lib/place-baselines.ts",
           "sha256": "dd6d88838bec921b79f87dfcc6c8e6bae188a12d156bfc8fa282c69d251f6490"
         },
         {
           "path": "benchmark/lib/place-conformance.ts",
-          "sha256": "87a3748bda0c1a8ec7647d8841cec7afbfc12bf17c4049e3f2d0e0fdad426e5b"
+          "sha256": "fde9da21986f579ea2b6206c671bc2f151308a65853dd6e051056e2249ab3ef9"
         },
         {
           "path": "benchmark/lib/place-fixture.ts",
@@ -546,15 +550,23 @@
         },
         {
           "path": "benchmark/lib/place-render.ts",
-          "sha256": "f91777f612465f02f2b5c269dc43ce67930c5f7a66e4040ca0c14943977ac41c"
+          "sha256": "4dbae95260721720fdcf9e05f7b538ebdde90d627200ffc47e21723b7742d3e0"
         },
         {
           "path": "benchmark/lib/place-report.types.ts",
-          "sha256": "d1b4c7d28d689d631cab0fd8a2287edd22282ebbd24cb5130a22a9b8f0ee3a89"
+          "sha256": "46ba3954566054befb3b47d2695dd19526c7f59c8de6830f59892c88213f25bf"
         },
         {
           "path": "benchmark/lib/place-runtime.ts",
-          "sha256": "142abeb7207a489ebf815a2c013a2958832df3dd3a8cad0866e435eca3fe428d"
+          "sha256": "5311aabba1b6cf49186b18e7865cb1a3fe930faea24038f28abce31ec752de6a"
+        },
+        {
+          "path": "benchmark/lib/place-scale-receipt.ts",
+          "sha256": "dce6f2a6aab3d90782f5857126637193c4776ba511da9feabd1733cf8f81d84a"
+        },
+        {
+          "path": "benchmark/lib/place-scale.ts",
+          "sha256": "5037a247088b846a04fadee673ac2b77705c70d9c75ece6eabc4a5c03875613c"
         },
         {
           "path": "benchmark/lib/place-validation.ts",
@@ -890,7 +902,7 @@
         },
         {
           "path": "package.json",
-          "sha256": "7fbbf741a1d0b171a2fef6e9aaa46f483ee0812b7fd5e76cc3d14ffc15d8d002"
+          "sha256": "e446beef921138dff3835f6e7a47e3e9dba2a8a934a6d768dd47a5cec795b4c2"
         },
         {
           "path": "packages/agents/package.json",
@@ -1821,7 +1833,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "2727f702d34cbd8218f51b2d62f4efab71f70772153230e0b8b1b659712bd104",
+    "planId": "430f52b1ddb93ee1770e460f739517085db044d99416aa8a671bbd2f2f0c3901",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

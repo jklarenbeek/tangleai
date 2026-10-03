@@ -178,6 +178,19 @@ remains opt-in/off while held-out quality and deployment costs are unmeasured.
 LoCoMo retains its original scorer and canonical reports; its session dates do
 not supply missing question anchors.
 
+## Sourced place memory
+
+The opt-in `@tangleai/memory/place` API joins cited events with complete
+subject-qualified location histories, resolves sourced gazetteer points and
+computes movement or bounded nearby results through Jaren's native kernels.
+The [fixture report](docs/PLACE_BENCHMARK.md) publishes 174 grounded mentions
+out of 197, all 124 questions on memory and Node/Bun SQLite, paired losses,
+refusals and the registered candidate-scale decision. These are host-asserted
+reporting annotations, not historical trip truth or a LoCoMo score. Live
+extraction is unmeasured and default routing stays off. See the
+[API guide](packages/memory/docs/PLACE.md); run `npm run place:smoke` for the
+sourced three-entry example with SQLite reopen and zero-write replay.
+
 ## Immutable consolidation
 
 `@tangleai/memory/consolidation` provides deterministic previews, supported

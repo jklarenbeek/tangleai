@@ -19,14 +19,14 @@ export async function runPlaceCli(argv: string[]): Promise<Report> {
   if (args.flags.has('require') && context.loaded.corpus.status !== 'available') throw new Error(`required place corpus unavailable: ${context.loaded.corpus.detail}`);
   if (args.flags.has('check')) {
     const previous = JSON.parse(await readFile(json, 'utf8')) as Report;
-    if (!await validatePlaceReport(previous, context.loaded)) throw new Error('existing place report does not validate');
+    if (!await validatePlaceReport(previous, context.loaded, context.scaleReceipt)) throw new Error('existing place report does not validate');
     if (canonicalizeJson(previous.source.files) !== canonicalizeJson(context.source.files)) throw new Error('place report source drift');
     context = { ...context, source: previous.source };
   }
   const prepared = await preparePlaceBaselines(context.loaded);
   const report = await runPlaceConformance(context, await placeRuntimeAdapters(context.loaded, prepared), prepared);
   if (args.flags.has('require') && report.counts.failed) throw new Error('required place measurement contains failed executions');
-  const outputs = [[json, JSON.stringify(report, null, 2) + '\n'], [md, renderPlaceReport(report)]];
+  const outputs = [[json, JSON.stringify(report, null, 2) + '\n'], [md, renderPlaceReport(report, context.scaleReceipt)]];
   if (args.flags.has('check')) {
     for (const [path, bytes] of outputs) if (await readFile(path, 'utf8') !== bytes) throw new Error(`place output drift: ${path}`);
   } else for (const [path, bytes] of outputs) { await mkdir(dirname(path), { recursive: true }); await writeFile(path, bytes); }

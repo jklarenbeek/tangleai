@@ -23,6 +23,12 @@
     },
     {
       "$ref": "#/$defs/report"
+    },
+    {
+      "$ref": "#/$defs/placeScaleReceipt"
+    },
+    {
+      "$ref": "#/$defs/scaleWorker"
     }
   ],
   "$defs": {
@@ -1689,6 +1695,12 @@
         },
         "scale": {
           "$ref": "#/$defs/fixtureManifest/properties/scale"
+        },
+        "ablation": {
+          "$ref": "#/$defs/ablation"
+        },
+        "index": {
+          "$ref": "#/$defs/placeIndex"
         }
       },
       "required": [
@@ -1712,7 +1724,9 @@
         "liveRequests",
         "default",
         "sha256",
-        "scale"
+        "scale",
+        "ablation",
+        "index"
       ],
       "additionalProperties": false,
       "$query": {
@@ -1859,6 +1873,697 @@
         "unplaceable",
         "poolTruncated",
         "complete"
+      ],
+      "additionalProperties": false
+    },
+    "ablationPair": {
+      "type": "object",
+      "properties": {
+        "left": {
+          "enum": [
+            "meaning-only",
+            "meaning-time",
+            "meaning-time-place"
+          ]
+        },
+        "right": {
+          "enum": [
+            "meaning-only",
+            "meaning-time",
+            "meaning-time-place"
+          ]
+        },
+        "backend": {
+          "const": "memory"
+        },
+        "kind": {
+          "$ref": "#/$defs/kind"
+        },
+        "comparison": {
+          "enum": [
+            "structural",
+            "paired-exactness"
+          ]
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paired": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unpaired": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wins": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "losses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ties": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedLeft": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refusedRight": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "left",
+        "right",
+        "backend",
+        "kind",
+        "comparison",
+        "questions",
+        "paired",
+        "unpaired",
+        "wins",
+        "losses",
+        "ties",
+        "refusedLeft",
+        "refusedRight"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.questions",
+              {
+                "$add": [
+                  "$.paired",
+                  "$.unpaired"
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.paired",
+              {
+                "$add": [
+                  "$.wins",
+                  {
+                    "$add": [
+                      "$.losses",
+                      "$.ties"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$le": [
+              "$.refusedLeft",
+              "$.paired"
+            ]
+          },
+          {
+            "$le": [
+              "$.refusedRight",
+              "$.paired"
+            ]
+          }
+        ]
+      }
+    },
+    "ablation": {
+      "type": "object",
+      "properties": {
+        "embeddedBy": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dims": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "model",
+            "dims"
+          ],
+          "additionalProperties": false
+        },
+        "candidatePool": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minScore": {
+          "type": "number"
+        },
+        "projectionIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ablationPair"
+          }
+        }
+      },
+      "required": [
+        "embeddedBy",
+        "candidatePool",
+        "k",
+        "minScore",
+        "projectionIds",
+        "pairs"
+      ],
+      "additionalProperties": false
+    },
+    "placeIndex": {
+      "type": "object",
+      "properties": {
+        "decision": {
+          "enum": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ]
+        },
+        "targetMet": {
+          "type": "boolean"
+        },
+        "targetP95Ms": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "receiptSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "measured": {
+          "type": "object",
+          "properties": {
+            "sweep": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "node",
+                  "bun"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "bbox": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "node",
+                  "bun"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "rtree": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "node",
+                  "bun"
+                ]
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "decision",
+        "targetMet",
+        "targetP95Ms",
+        "receiptSha256",
+        "measured"
+      ],
+      "additionalProperties": false
+    },
+    "scaleSample": {
+      "type": "object",
+      "properties": {
+        "probeId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "refined": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resultSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "probeId",
+        "ms",
+        "candidates",
+        "refined",
+        "resultSha256"
+      ],
+      "additionalProperties": false
+    },
+    "scalePhase": {
+      "type": "object",
+      "properties": {
+        "p50Ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p95Ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scaleSample"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "p50Ms",
+        "p95Ms",
+        "samples"
+      ],
+      "additionalProperties": false
+    },
+    "scaleMeasurement": {
+      "type": "object",
+      "properties": {
+        "shape": {
+          "enum": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ]
+        },
+        "via": {
+          "enum": [
+            "memory",
+            "columns",
+            "rtree"
+          ]
+        },
+        "explain": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cold": {
+          "$ref": "#/$defs/scalePhase"
+        },
+        "warm": {
+          "$ref": "#/$defs/scalePhase"
+        }
+      },
+      "required": [
+        "shape",
+        "via",
+        "explain",
+        "cold",
+        "warm"
+      ],
+      "additionalProperties": false
+    },
+    "scaleWorker": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-scale-worker"
+        },
+        "runtime": {
+          "enum": [
+            "node",
+            "bun"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rtree": {
+          "type": "boolean"
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "workloadId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "measurement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/scaleMeasurement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unavailable": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "document",
+        "runtime",
+        "version",
+        "platform",
+        "rtree",
+        "registrationId",
+        "workloadId",
+        "measurement",
+        "unavailable"
+      ],
+      "additionalProperties": false
+    },
+    "scaleRuntime": {
+      "type": "object",
+      "properties": {
+        "runtime": {
+          "enum": [
+            "node",
+            "bun"
+          ]
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "unavailable"
+          ]
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rtree": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "type": "object",
+          "properties": {
+            "sweep": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/scaleMeasurement"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bbox": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/scaleMeasurement"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rtree": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/scaleMeasurement"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ],
+          "additionalProperties": false
+        },
+        "notRun": {
+          "type": "object",
+          "properties": {
+            "sweep": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "bbox": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rtree": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "runtime",
+        "status",
+        "version",
+        "platform",
+        "rtree",
+        "detail",
+        "rows",
+        "notRun"
+      ],
+      "additionalProperties": false
+    },
+    "scaleSource": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        },
+        "native": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "integrity": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "name",
+              "version",
+              "integrity"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "files",
+        "native",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "placeScaleReceipt": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-scale"
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "registration": {
+          "$ref": "#/$defs/fixtureManifest/properties/scale"
+        },
+        "registrationId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "workloadId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source": {
+          "$ref": "#/$defs/scaleSource"
+        },
+        "runtimes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scaleRuntime"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "decision": {
+          "enum": [
+            "sweep",
+            "bbox",
+            "rtree"
+          ]
+        },
+        "targetMet": {
+          "type": "boolean"
+        },
+        "physicalRequests": {
+          "const": 0
+        },
+        "limits": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "document",
+        "schemaVersion",
+        "registration",
+        "registrationId",
+        "workloadId",
+        "source",
+        "runtimes",
+        "decision",
+        "targetMet",
+        "physicalRequests",
+        "limits",
+        "sha256"
       ],
       "additionalProperties": false
     }

@@ -1,7 +1,7 @@
 /** Consumers install real tarballs outside the checkout; no workspace symlinks. */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import vm from 'node:vm';
@@ -98,6 +98,13 @@ export async function testConsumers(root = ROOT, options: { registry?: boolean; 
     for (const file of ['place-browser.mjs', 'place-consumer.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'place-consumer.mjs']);
     await sqliteFixture('bun', ['place-consumer.mjs']);
+    mkdirSync(resolve(directory, 'place-example'));
+    cpSync(resolve(root, 'examples/place-gazetteer.json'), resolve(directory, 'place-example/place-gazetteer.json'));
+    writeFileSync(resolve(directory, 'place-example/place-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/place.ts'), 'utf8'),
+      { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
+    cpSync(resolve(root, 'test/release/fixtures/place-example-consumer.mjs'), resolve(directory, 'place-example-consumer.mjs'));
+    await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'place-example-consumer.mjs']);
+    await sqliteFixture('bun', ['place-example-consumer.mjs']);
     writeFileSync(resolve(directory, 'trace2skill-example.mjs'), ts.transpileModule(readFileSync(resolve(root, 'examples/trace2skill.ts'), 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText);
     for (const file of ['trace2skill-browser.mjs', 'trace2skill-consumer.mjs']) cpSync(resolve(root, 'test/release/fixtures', file), resolve(directory, file));
     await sqliteFixture(process.execPath, ['--no-experimental-strip-types', 'trace2skill-consumer.mjs']);

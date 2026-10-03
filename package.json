@@ -180,7 +180,8 @@
     "benchmark:place": "node benchmark/place.ts",
     "emit:place-report": "jaren-emit --schema benchmark/schemas/place.schema.json --out benchmark/lib --bundle place-report.types.ts",
     "emit:place": "node scripts/place-schema.ts",
-    "place:smoke": "node examples/place.ts"
+    "place:smoke": "node examples/place.ts",
+    "benchmark:place:scale": "node benchmark/place-scale.ts"
   },
   "devDependencies": {
     "@changesets/apply-release-plan": "8.1.0",

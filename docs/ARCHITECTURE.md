@@ -318,6 +318,33 @@ provider ownership. [Strict conformance](TEMPORAL_BENCHMARK.md) and the
 source-only roundtrips, retrieval diagnostics and unmeasured live QA. The lane
 stays opt-in/off; no temporal UI or default pipeline routing is added.
 
+## Sourced place memory
+
+Core owns the closed source, point, query, answer and refusal contracts.
+`@tangleai/memory/place` composes the temporal occurrence/citation/projection
+owners with Jaren's geometry and series kernels. A location claim stores a
+gazetteer entry id; its immutable sourced geometry stays in the gazetteer.
+Complete subject-qualified position pages are verified against one captured
+projection before a native backward as-of join. The matched claim must contain
+the event instant; unknown validity and unmatched endpoints are counted refusals.
+Every event and position citation fits the declared semantic pool and final k.
+
+Nearby queries prove that nine contiguous native cells cover the requested
+radius, then refine their candidates by geodesic distance. A cell prefix never
+establishes proximity. The SQLite gazetteer adapter verifies its full immutable
+inventory and coordinate mirrors on reads and replays loads with zero writes.
+The [registered scale receipt](../benchmark/receipts/place-scale.json) retains
+the in-memory candidate sweep: both measured runtimes meet the target, so no
+derived bbox or R-tree is adopted. Full adapter validation and semantic
+retrieval are outside that timing claim.
+
+The [API guide](../packages/memory/docs/PLACE.md),
+[public example](../examples/place.ts) and
+[conformance report](PLACE_BENCHMARK.md) describe the measured boundaries.
+Reporting-session annotations do not establish historical trip times; source
+point proxies do not establish traveled routes. Ordinary routing remains off,
+live extraction is unmeasured and canonical LoCoMo controls remain unchanged.
+
 ## Immutable consolidation
 
 Core owns the closed consolidation schemas and emitted declarations. The

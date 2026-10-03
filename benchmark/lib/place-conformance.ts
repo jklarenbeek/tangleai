@@ -9,19 +9,22 @@ import { loadPlaceFixture, PLACE_FIXTURE_PATH, PLACE_MEMBERS, placeHash, type Lo
 import { placeOracle, placeGateFixtures } from './place-oracle.ts';
 import { preparePlaceBaselines, meaningOnly, meaningTime, type PlaceBaselineContext } from './place-baselines.ts';
 import { validatePlaceShape } from './place-validation.ts';
-import type { Report, Source, Outcome, Measurement, Counts, Summary } from './place-report.types.ts';
+import type { Report, Source, Outcome, Measurement, Counts, Summary, PlaceScaleReceipt } from './place-report.types.ts';
 import type { PlaceCoverage } from '@tangleai/memory/place';
+import { placeAblation } from './place-ablation.ts';
+import { readPlaceScaleReceipt, validatePlaceScaleReceipt, placeScaleIndex } from './place-scale-receipt.ts';
 
-export interface PlaceContext { loaded: LoadedPlaceFixture; source: Source; locomo: Report['locomo']; }
+export interface PlaceContext { loaded: LoadedPlaceFixture; source: Source; locomo: Report['locomo']; scaleReceipt: PlaceScaleReceipt; }
 export interface PlaceRuntimeMeasurement { outcome: Outcome; coverage: PlaceCoverage; }
 export type PlaceAdapter = (question: PlaceInput) => Promise<Outcome | PlaceRuntimeMeasurement | { unavailable: string }>;
 export type PlaceAdapters = Partial<Record<string, PlaceAdapter>>;
 export async function placeContext(loaded?: LoadedPlaceFixture, root = process.cwd()): Promise<PlaceContext> {
-  return { loaded: loaded ?? await loadPlaceFixture({ root }), source: await sourceManifest(root,
+  return { loaded: loaded ?? await loadPlaceFixture({ root }), scaleReceipt: await readPlaceScaleReceipt(root), source: await sourceManifest(root,
     ['package.json', 'package-lock.json', 'benchmark/place.ts', 'benchmark/schemas/place.schema.json',
       'benchmark/lib/place-validation.ts', 'benchmark/lib/place-fixture.ts', 'benchmark/lib/place-oracle.ts', 'benchmark/lib/place-projection.ts',
       'benchmark/lib/place-baselines.ts', 'benchmark/lib/place-conformance.ts', 'benchmark/lib/place-report.types.ts', 'benchmark/lib/place-render.ts',
       'benchmark/lib/place-runtime.ts', 'benchmark/scripts/place-backend.ts', 'scripts/runtime-fixture.ts',
+      'benchmark/lib/place-ablation.ts', 'benchmark/lib/place-scale.ts', 'benchmark/lib/place-scale-receipt.ts', 'benchmark/place-scale.ts', 'benchmark/receipts/place-scale.json',
       'benchmark/lib/locomo.ts', 'benchmark/lib/locomo-corpus.ts', 'benchmark/lib/validate.ts', 'benchmark/lib/source-manifest.ts', 'benchmark/lib/report-envelope.ts',
       `${PLACE_FIXTURE_PATH}/manifest.json`, ...PLACE_MEMBERS.map(p => `${PLACE_FIXTURE_PATH}/${p}`)],
     ['packages/core', 'packages/memory', 'packages/models', 'packages/jaren', 'packages/store']),
@@ -93,21 +96,24 @@ export async function runPlaceConformance(context: PlaceContext, adapters: Place
       registration: structuredClone(fixture.manifest.registration), scale: structuredClone(fixture.manifest.scale),
       corpus: { status: corpus.status, detail: corpus.detail, unresolvedMentions: corpus.unresolvedMentions },
       rows, counts: placeCounts(rows), summaries: placeSummaries(rows, loaded), refusals: placeRefusals(rows),
+      ablation: placeAblation({ registration: fixture.manifest.registration, census: fixture.manifest.census, rows }), index: placeScaleIndex(context.scaleReceipt),
       wrongControls: fixture.wrongControls.map(c => ({ id: c.id, questionId: c.questionId, rejected: !scorePlace(fixture.questions.find(q => q.id === c.questionId)!.expected, c.actual) })),
       gateFixtures: placeGateFixtures(loaded), randomFloor: randomFloor(rows, loaded), locomo,
       identity: analyticEnvelope(fixture.manifest.registration.rows.map(r => `${r.row}/${r.backend}`)), source, liveRequests: 0, default: 'off' };
     const report = { ...body, sha256: await canonicalSha256(body) };
-    if (!await validatePlaceReport(report, loaded)) throw new Error(`place report refused: ${JSON.stringify(validatePlaceShape(report).errors?.slice(-3) ?? report.rows.filter(r => r.row === 'oracle' && r.passed !== true).slice(0, 3))}`);
+    if (!await validatePlaceReport(report, loaded, context.scaleReceipt)) throw new Error(`place report refused: ${JSON.stringify(validatePlaceShape(report).errors?.slice(-3) ?? report.rows.filter(r => r.row === 'oracle' && r.passed !== true).slice(0, 3))}`);
     return report;
   } finally { globalThis.fetch = before; }
 }
 
-export async function validatePlaceReport(value: unknown, loaded: LoadedPlaceFixture): Promise<boolean> {
+export async function validatePlaceReport(value: unknown, loaded: LoadedPlaceFixture, scaleReceipt?: PlaceScaleReceipt): Promise<boolean> {
   if (!validatePlaceShape(value).valid || (value as Report).instrument !== 'place-conformance-v1') return false;
   const r = value as Report, f = loaded.fixture, equal = (a: unknown, b: unknown) => canonicalizeJson(a) === canonicalizeJson(b);
+  const receipt = scaleReceipt ? await validatePlaceScaleReceipt(scaleReceipt) : await readPlaceScaleReceipt();
   const { sha256, ...body } = r;
   if (sha256 !== await canonicalSha256(body) || r.fixtureHash !== loaded.fixtureHash || !equal(r.census, f.manifest.census) ||
-    !equal(r.coverage, f.manifest.coverage) || !equal(r.floor, f.manifest.floor) || !equal(r.registration, f.manifest.registration) || !equal(r.scale, f.manifest.scale)) return false;
+    !equal(r.coverage, f.manifest.coverage) || !equal(r.floor, f.manifest.floor) || !equal(r.registration, f.manifest.registration) || !equal(r.scale, f.manifest.scale) ||
+    !equal(r.index, placeScaleIndex(receipt))) return false;
   if (!equal(r.corpus, { status: loaded.corpus.status, detail: loaded.corpus.detail, unresolvedMentions: loaded.corpus.unresolvedMentions })) return false;
   const keys = f.manifest.registration.rows.flatMap(row => f.questions.map(q => `${row.row}/${row.backend}/${q.id}`)).sort();
   if (!equal(keys, r.rows.map(row => `${row.row}/${row.backend}/${row.questionId}`).sort())) return false;
@@ -136,7 +142,7 @@ export async function validatePlaceReport(value: unknown, loaded: LoadedPlaceFix
   }
   const wrong = f.wrongControls.map(c => ({ id: c.id, questionId: c.questionId, rejected: !scorePlace(f.questions.find(q => q.id === c.questionId)!.expected, c.actual) }));
   const gates = placeGateFixtures(loaded), floor = randomFloor(r.rows, loaded);
-  return equal(r.counts, placeCounts(r.rows)) && equal(r.summaries, placeSummaries(r.rows, loaded)) && equal(r.refusals, placeRefusals(r.rows)) &&
+  return equal(r.counts, placeCounts(r.rows)) && equal(r.summaries, placeSummaries(r.rows, loaded)) && equal(r.refusals, placeRefusals(r.rows)) && equal(r.ablation, placeAblation(r)) &&
     equal(r.wrongControls, wrong) && wrong.every(c => c.rejected) && equal(r.gateFixtures, gates) && gates.every(g => g.passed) && equal(r.randomFloor, floor) && floor.holds &&
     equal(r.identity, analyticEnvelope(f.manifest.registration.rows.map(row => `${row.row}/${row.backend}`))) &&
     r.source.sha256 === await canonicalSha256({ head: r.source.head, files: r.source.files }) &&

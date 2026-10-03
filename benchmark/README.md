@@ -61,11 +61,19 @@ calls. `npm run benchmark:hera -- --require complete` generates the report;
 
 The [sourced place instrument](../docs/PLACE_BENCHMARK.md) measures original
 reporting-session annotations against source-backed Wikidata point coordinates.
-It audits coverage, checks an independent oracle, and compares ordinary and
-temporal retrieval with a seeded control. The place runtime rows remain explicitly
-unimplemented. No fixture result is a LoCoMo score. Run `npm run benchmark:place`
-to regenerate the JSON and Markdown, or add `-- --check --require` to verify both
-without writing and require the optional source corpus.
+It audits coverage, checks an independent oracle, and compares ordinary,
+temporal and sourced-place retrieval with a seeded control. Actual memory,
+Node SQLite and Bun SQLite rows retain exact outcomes, semantic budgets and
+refusals; paired losses sit beside wins. No fixture result is a LoCoMo score.
+Run `npm run benchmark:place` to regenerate the JSON and Markdown, or add
+`-- --check --require` to verify both without writing and require the optional
+source corpus. The separate `npm run benchmark:place:scale` command measures
+registered candidate lookup with conditional native bbox/R-tree trials. Its
+frozen receipt keeps observed timings outside canonical conformance; add
+`-- --check` to verify the receipt, or `-- --json <new-path>` to retain a new
+measurement without overwriting the earlier one. The registered sweep meets
+the target on Node and Bun; the sparse workload does not qualify dense-city
+or complete SQLite-adapter latency.
 
 The [trading instrument](../docs/TRADING_BENCHMARK.md) registers ten strategies
 over an original MIT two-asset fixture. Its privileged oracle and cash-only
@@ -181,7 +189,8 @@ verifies and preserves those dated results without buying another execution.
 
 | Instrument | What it answers | Command |
 |---|---|---|
-| [`place.ts`](./place.ts) | Sourced annotation coverage, an exact native-kernel oracle, seeded control, and matched ordinary/temporal baselines. The three place-runtime rows are explicitly unimplemented. No result is a LoCoMo score. [Report](../docs/PLACE_BENCHMARK.md) | `npm run benchmark:place` (`--json`, `--md`, `--check`, `--require`) |
+| [`place.ts`](./place.ts) | Sourced annotation coverage, native oracle, seeded control and measured ordinary/temporal/place rows, with equal-budget paired losses and explicit refusals. No result is a LoCoMo score. [Report](../docs/PLACE_BENCHMARK.md) | `npm run benchmark:place` (`--json`, `--md`, `--check`, `--require`) |
+| [`place-scale.ts`](./place-scale.ts) | Registered sparse candidate sweep on Node/Bun; bbox and R-tree trials only after a target miss. Raw samples, native plans and quantiles remain in the separate [receipt](receipts/place-scale.json). | `npm run benchmark:place:scale` (`--json`, `--check`) |
 | [`trading.ts`](./trading.ts) | Causal fixture controls, five baselines, complete scripted native workflow, registered ablations, durable recovery and explicit licensed-replay availability. [Report](../docs/TRADING_BENCHMARK.md). | `npm run benchmark:trading -- --require complete` (`--check`, `--profile paper`, `--live` dry plan) |
 | [`lightrag.ts`](./lightrag.ts) | Oracle/random/dense controls and all four bounded graph modes; coverage, indexing, incremental replacement, citation resolution and losses. Paired answer and order-swapped judge tiers print separate exact-authorized plans. [Report](../docs/LIGHTRAG_BENCHMARK.md). | `npm run benchmark:lightrag` (`--check`, `--live`, `--rows`, `--judge`) |
 | [`lightrag-ladder.ts`](./lightrag-ladder.ts) | Native SQLite at 100 / 1,000 / 10,000 chunks: admission, p50/p95, process peak RSS, logical rows read and the registered 250 ms target. Timings are a source-bound operational receipt. The command grants Node 8 GiB of old-space heap for admission; this is not an RSS cap. | `npm run benchmark:lightrag:ladder` (`--check`) |
@@ -207,7 +216,8 @@ verifies and preserves those dated results without buying another execution.
 
 | Module | Why it is not an import |
 |---|---|
-| `place-{fixture,validation,projection,oracle,baselines,conformance,render}.ts` | Original sourced-place annotations, a host-asserted reporting index, an independent native-kernel oracle, matched retrieval controls and reconciled reports. Geometry/time kernels remain in Jaren and the shipped temporal lane. |
+| `place-{fixture,validation,projection,oracle,baselines,runtime,conformance,ablation,render}.ts` | Original sourced-place annotations, host reporting index, native oracle, actual backend adapters, matched retrieval controls and reconciled paired reports. Geometry/time kernels remain in Jaren and the shipped temporal lane. |
+| `place-scale.ts`, `place-scale-receipt.ts` | Shared native candidate workload, conditional physical trials and frozen timing receipt verification bound to exact source bytes, dependency pins, registration, outcomes and raw-sample quantiles. |
 | [`lib/stats.ts`](./lib/stats.ts) | Report shaping over `@jarenjs/core/stats`: nearest-rank p50/p95 and `null` for an empty rendered cell. No local arithmetic. |
 | [`lib/table.ts`](./lib/table.ts) | The Markdown table idiom `docs/DOCUMENT_BENCHMARK.md` already publishes, extracted so a second instrument does not invent a second format. |
 | [`lib/args.ts`](./lib/args.ts) | An unknown flag is an error, not a silent default — a benchmark that ignored `--sizes` would publish the wrong row under the right name. |

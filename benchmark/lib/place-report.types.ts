@@ -918,6 +918,117 @@ export interface ReportLocomo {
 }
 
 
+export interface AblationEmbeddedBy {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  model: string;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  dims: number;
+}
+
+
+/**
+ * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+ */
+export type AblationProjectionIdsItem = string;
+
+/**
+ * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.questions",{"$add":["$.paired","$.unpaired"]}]},{"$eq":["$.paired",{"$add":["$.wins",{"$add":["$.losses","$.ties"]}]}]},{"$le":["$.refusedLeft","$.paired"]},{"$le":["$.refusedRight","$.paired"]}]}
+ */
+export interface AblationPair {
+  left: "meaning-only" | "meaning-time" | "meaning-time-place";
+  right: "meaning-only" | "meaning-time" | "meaning-time-place";
+  backend: "memory";
+  kind: Kind;
+  comparison: "structural" | "paired-exactness";
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  questions: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  paired: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  unpaired: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  wins: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  losses: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  ties: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedLeft: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refusedRight: number;
+}
+
+
+export interface Ablation {
+  embeddedBy: AblationEmbeddedBy;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  candidatePool: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=1
+   */
+  k: number;
+  minScore: number;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  projectionIds: Array<AblationProjectionIdsItem>;
+  pairs: Array<AblationPair>;
+}
+
+
+export interface PlaceIndexMeasured {
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  sweep: Array<"node" | "bun">;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  bbox: Array<"node" | "bun">;
+  /**
+   * Schema constraints this type cannot express: uniqueItems=true
+   */
+  rtree: Array<"node" | "bun">;
+}
+
+
+export interface PlaceIndex {
+  decision: "sweep" | "bbox" | "rtree";
+  targetMet: boolean;
+  /**
+   * Schema constraints this type cannot express: exclusiveMinimum=0
+   */
+  targetP95Ms: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  receiptSha256: string;
+  measured: PlaceIndexMeasured;
+}
+
+
 /**
  * Schema constraints this type cannot express: $query={"$and":[{"$eq":["$.coverage.mentionSites",{"$add":["$.coverage.grounded",{"$add":["$.coverage.ungrounded","$.coverage.ambiguous"]}]}]},{"$eq":["$.counts.planned",{"$count":"$.rows[*]"}]},{"$eq":["$.counts.measured",{"$count":"$.rows[?(@.status=='measured')]"}]},{"$eq":["$.counts.failed",{"$count":"$.rows[?(@.status=='failed')]"}]},{"$eq":["$.counts.implementationMissing",{"$count":"$.rows[?(@.status=='implementation-missing')]"}]},{"$eq":["$.counts.unavailable",{"$count":"$.rows[?(@.status=='unavailable')]"}]},{"$eq":["$.counts.passed",{"$count":"$.rows[?(@.passed==true)]"}]},{"$eq":["$.counts.incorrect",{"$count":"$.rows[?(@.status=='measured' && @.passed==false)]"}]},{"$eq":["$.liveRequests",0]},{"$or":[{"$eq":["$.corpus.status","unavailable"]},{"$eq":[{"$count":"$.rows[?(@.row=='oracle' && @.passed==true)]"},"$.census.questions"]}]}]}
  */
@@ -949,7 +1060,187 @@ export interface Report {
    */
   sha256: string;
   scale: FixtureManifestScale;
+  ablation: Ablation;
+  index: PlaceIndex;
 }
 
 
-export type Place = FixtureManifest | GazetteerFile | MentionsFile | QuestionsFile | WrongControlsFile | ProvenanceFile | Report;
+export interface ScaleSample {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  probeId: string;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  ms: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  candidates: number;
+  /**
+   * Schema constraints this type cannot express: type="integer", minimum=0
+   */
+  refined: number;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  resultSha256: string;
+}
+
+
+export interface ScalePhase {
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p50Ms: number;
+  /**
+   * Schema constraints this type cannot express: minimum=0
+   */
+  p95Ms: number;
+  /**
+   * Schema constraints this type cannot express: minItems=1
+   */
+  samples: Array<ScaleSample>;
+}
+
+
+export interface ScaleMeasurement {
+  shape: "sweep" | "bbox" | "rtree";
+  via: "memory" | "columns" | "rtree";
+  explain: { [key: string]: unknown; } | null;
+  cold: ScalePhase;
+  warm: ScalePhase;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleWorkerUnavailableAnyOf1 = string;
+
+export interface ScaleWorker {
+  document: "place-scale-worker";
+  runtime: "node" | "bun";
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  platform: string;
+  rtree: boolean;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  registrationId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  workloadId: string;
+  measurement: ScaleMeasurement | null;
+  unavailable: ScaleWorkerUnavailableAnyOf1 | null;
+}
+
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimeVersionAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimePlatformAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimeDetailAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimeNotRunSweepAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimeNotRunBboxAnyOf1 = string;
+
+/**
+ * Schema constraints this type cannot express: minLength=1
+ */
+export type ScaleRuntimeNotRunRtreeAnyOf1 = string;
+
+export interface ScaleRuntime {
+  runtime: "node" | "bun";
+  status: "measured" | "unavailable";
+  version: ScaleRuntimeVersionAnyOf1 | null;
+  platform: ScaleRuntimePlatformAnyOf1 | null;
+  rtree: boolean | null;
+  detail: ScaleRuntimeDetailAnyOf1 | null;
+  rows: { sweep: ScaleMeasurement | null; bbox: ScaleMeasurement | null; rtree: ScaleMeasurement | null; };
+  notRun: { sweep: ScaleRuntimeNotRunSweepAnyOf1 | null; bbox: ScaleRuntimeNotRunBboxAnyOf1 | null; rtree: ScaleRuntimeNotRunRtreeAnyOf1 | null; };
+}
+
+
+export interface ScaleSourceNativeItem {
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  name: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  version: string;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  integrity: string;
+}
+
+
+export interface ScaleSource {
+  files: Array<Member>;
+  native: Array<ScaleSourceNativeItem>;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+}
+
+
+export interface PlaceScaleReceipt {
+  document: "place-scale";
+  schemaVersion: 1;
+  registration: FixtureManifestScale;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  registrationId: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  workloadId: string;
+  source: ScaleSource;
+  /**
+   * Schema constraints this type cannot express: minItems=2, maxItems=2
+   */
+  runtimes: Array<ScaleRuntime>;
+  decision: "sweep" | "bbox" | "rtree";
+  targetMet: boolean;
+  physicalRequests: 0;
+  /**
+   * Schema constraints this type cannot express: minLength=1
+   */
+  limits: string;
+  /**
+   * Schema constraints this type cannot express: pattern="^[a-f0-9]{64}$"
+   */
+  sha256: string;
+}
+
+
+export type Place = FixtureManifest | GazetteerFile | MentionsFile | QuestionsFile | WrongControlsFile | ProvenanceFile | Report | PlaceScaleReceipt | ScaleWorker;
