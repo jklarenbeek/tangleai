@@ -44,6 +44,7 @@
 import type { JsonSchema } from '@tangleai/core/schemas/memory';
 import { CONSOLIDATION_COLLECTIONS } from './consolidation-model.ts';
 import { TEMPORAL_COLLECTIONS } from './temporal-model.ts';
+import { PLACE_COLLECTIONS } from './place-model.ts';
 import { TRACE2SKILL_COLLECTIONS } from './trace2skill-model.ts';
 import { EVOLVE_COLLECTIONS } from './evolve-model.ts';
 import { HERA_COLLECTIONS } from './hera-model.ts';
@@ -59,6 +60,7 @@ export const TANGLE_DB_MODEL = {
   $model: '0.1',
   collections: {
     ...TEMPORAL_COLLECTIONS,
+    ...PLACE_COLLECTIONS,
     ...CONSOLIDATION_COLLECTIONS,
     ...TRACE2SKILL_COLLECTIONS,
     ...EVOLVE_COLLECTIONS,

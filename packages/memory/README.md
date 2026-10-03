@@ -62,6 +62,15 @@ The lane remains opt-in/off: strict fixtures and full LongMemEval source
 qualification pass, while live QA improvement and deployment cost remain
 unmeasured. Ordinary recall and the selected policy above remain the default.
 
+## Sourced places
+
+`@tangleai/memory/place` validates sourced point gazetteers, matches exact aliases
+with cited original spans and explicit ambiguity, creates temporal location
+claims, and applies spatial authoring gates with host-supplied intent. It uses
+Jaren's geometry and geohash kernels and the temporal lane's identity and time
+rules. See the [place API guide](docs/PLACE.md) for qualification callbacks,
+uncertain time bounds, refusal values and the separate SQLite adapter.
+
 ## Outcome confidence
 
 `applyOutcome(store, report, {options}?)` adjusts confidence once per cited entry

@@ -15,6 +15,13 @@ Shape validation does not establish calendar validity or evidence truth; use
 `@tangleai/memory/temporal`'s semantic constructors and validators for that.
 See the [temporal API guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/TEMPORAL.md).
 
+`@tangleai/core/schemas/place` exports the closed place schema, generated types,
+`validatePlaceShape` and the code/reason vocabulary. The JSON asset is exported
+at `@tangleai/core/schemas/place.schema.json`. Sourced entries, mentions, intent,
+claims' position references, queries and answers reuse temporal evidence
+definitions. `@tangleai/memory/place` owns source-coordinate consistency,
+gazetteer revision checks and citation semantics beyond shape validation.
+
 
 `@tangleai/core/schemas/consolidation` exposes the closed consolidation schema,
 `validateConsolidationShape` and generated source/artifact/buffer/operation,

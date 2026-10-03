@@ -123,9 +123,9 @@ export function spatialIntent(question: string): {
   spatial: boolean;
 } {
   const text = String(question ?? '');
-  const proximity = /\b(near(by|est)?|clos(e|est)(\s+to)?|within\s+\d|distance|radius|around|proximit\w*|kilomet\w*|\bkm\b|metres?|meters?|miles?|far(thest)?)\b/i.test(text);
+  const proximity = /\b(near(by|est)?|next\s+to|beside|clos(e|est)(\s+to)?|within\s+\d|distance|radius|around|proximit\w*|kilomet\w*|\bkm\b|metres?|meters?|miles?|far(thest)?)\b/i.test(text);
   const containment = /\b(within|inside|in the (region|area|polygon|box|bounds)|contain\w*|intersect\w*|overlap\w*|bounding|bbox)\b/i.test(text);
-  const geographic = /\b(geo\w*|map|location\w*|coordinates?|polygon|point|latitude|longitude|\blat\b|\blon\b|region|area|cell|wkt|gps|route|place\w*|cit(y|ies))\b/i.test(text);
+  const geographic = /\b(geo\w*|map|location\w*|coordinates?|polygon|latitude|longitude|\blat\b|\blon\b|region|area|cell|wkt|gps|route|places?|cit(y|ies)|where|whereabouts|next\s+to|beside|living|lived|moved|trip|travel\w*|visit\w*)\b/i.test(text);
   return { proximity, spatial: proximity || containment || geographic };
 }
 
@@ -391,13 +391,19 @@ export function spatialOperatorGate(options: {
  * The spatial gates for one authoring call, from the question and the
  * sample: the prefix refusal when proximity was asked, the arithmetic
  * refusal over the sample's position members, and the no-operator
- * refusal when the ask was geographic at all.
+ * refusal when the ask was geographic at all. A host's explicit operation
+ * intent overrides each supplied field; omitted fields retain word inference.
  */
 export function spatialGates(call: {
   question: string;
   sample?: any;
+  intent?: { proximity?: boolean; spatial?: boolean };
 }): Array<(doc: any) => any> {
-  const intent = spatialIntent(call.question);
+  const inferred = spatialIntent(call.question);
+  const intent = {
+    proximity: call.intent?.proximity ?? inferred.proximity,
+    spatial: call.intent?.spatial ?? inferred.spatial,
+  };
   return [
     prefixProximityGate({ proximity: intent.proximity }),
     planarArithmeticGate({ members: coordinateMembers(call.sample) }),

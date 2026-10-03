@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "623f07dd1413e56122a701694875d90aff82c878",
+    "head": "22872322080dd7955acc9afbd39244f224307a80",
     "clean": false,
     "files": [
       {
@@ -211,11 +211,11 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "c7dd9d551f796b427ccd236cff17a7c5a43e4450a9ab460abf344876dc8ce0c8"
+        "sha256": "43106937f7e9c1f25666692e22f0f244b74bdc5d24494c4f820698da6acb7c8b"
       },
       {
         "path": "package.json",
-        "sha256": "cc4973fa39f3446555f89b4b6db7bcab028e8ca8e655a793ce917c24daa34b04"
+        "sha256": "0ded8d682a2eb2cf89eca1825ecba90765d92fbbe41215748b9f39bfce80456d"
       },
       {
         "path": "packages/agents/package.json",
@@ -355,11 +355,15 @@
       },
       {
         "path": "packages/core/package.json",
-        "sha256": "58374028ad1eb880c76a00a22b8c6c8b06a474389b54e06471e124fead7fff75"
+        "sha256": "03ff47376093309b8f7390b3706b361ae906be6571ae9c93619d4341d5854525"
       },
       {
         "path": "packages/core/schemas/consolidation.schema.json",
         "sha256": "b4bc1fd472f846c38d73ac375ba00255d2a9811bdeaa238d8ce937a1fd093296"
+      },
+      {
+        "path": "packages/core/schemas/place.schema.json",
+        "sha256": "4fe51c587fad2dea8ba88aeb5b1f84d8e845dde130dadacbe7d443003b3bb931"
       },
       {
         "path": "packages/core/schemas/temporal.schema.json",
@@ -400,6 +404,18 @@
       {
         "path": "packages/core/src/schemas/memory.ts",
         "sha256": "0d38bcbf2ee4d4c18dc0980a4f827d96d5767cb056fababea4940f2e0c6a38d4"
+      },
+      {
+        "path": "packages/core/src/schemas/place-definition.ts",
+        "sha256": "98b03ecc58a02a26b38ca3e09d76024c7c40f6c2daf433fbc2c826b96586481d"
+      },
+      {
+        "path": "packages/core/src/schemas/place.gen.ts",
+        "sha256": "5031495c50dff62af9a573d852bd5f9e1297aaba5ec424d242c2970cae658c15"
+      },
+      {
+        "path": "packages/core/src/schemas/place.ts",
+        "sha256": "f50a75a6aa1e56e6f73bbb175c021a164d94a57cf0c6063936d7ac7ccbfe13f4"
       },
       {
         "path": "packages/core/src/schemas/temporal.gen.ts",
@@ -799,7 +815,7 @@
       },
       {
         "path": "packages/store/src/index.ts",
-        "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
+        "sha256": "70afada5984d57f51528db60f4900d3daa5e5b4eb3f916a5cf6c9df560706857"
       },
       {
         "path": "packages/store/src/ledger-storage.ts",
@@ -831,11 +847,19 @@
       },
       {
         "path": "packages/store/src/model.ts",
-        "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
+        "sha256": "800bea47963ea130e8310b34d8f0f4f521b720c26b8fa0471d7fe8b65877e9fe"
       },
       {
         "path": "packages/store/src/outcome-store.ts",
         "sha256": "4f0c579060c928a57b8002687dc8224321d8264f91b61afd40d4bacbab6faea4"
+      },
+      {
+        "path": "packages/store/src/place-model.ts",
+        "sha256": "05f276115d4877b012ec71623096fd0a0e8ca49583d59d658541c803b47e4f26"
+      },
+      {
+        "path": "packages/store/src/place-store.ts",
+        "sha256": "a5bdefe05b9fe8784d1518281657189e457c525839ba6e90d20093e0e56f0841"
       },
       {
         "path": "packages/store/src/runs.ts",
@@ -1206,7 +1230,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "98fd8999909d25ec0dd2a3dd3e72d6bed213e65d0ac7e6b92df8fcc3e333dd35"
+    "sha256": "924a4eb6f2a08eca366c39697954626b5ccc38a0fc7a3da6de7fd312b739db01"
   },
   "suite": {
     "tangle": "0.36.0",
@@ -26007,5 +26031,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "fab8c5a8ff983b5abe46cf9ee4aff789a388d7bfea8dd06987ffc7d9dc3de2a0"
+  "reportId": "f3743146b183bc9aebd6a48e82ffcc23ebd6734e3c239b1dad365be41396d109"
 }

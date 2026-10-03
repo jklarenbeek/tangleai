@@ -108,6 +108,34 @@ chain again performs zero migrations. The application still owns migration
 approval, backups and worker coordination; this package does not run DDL during
 normal trace operations.
 
+## Sourced gazetteers
+
+`createPlaceDbStore(db)` persists a header and one canonical row per entry in
+`PLACE_COLLECTIONS.place_gazetteer`, included in `TANGLE_DB_MODEL`. Loads accept
+a closed gazetteer document or the frozen view from `createGazetteer`. Each load
+uses a native immediate transaction. Identical replay checks the complete row
+inventory, payloads and coordinate mirrors and writes zero rows; a changed
+revision under the same id is refused. Use a new id for a revised gazetteer.
+Failures return `TPLC1010`; partial writes roll back.
+
+`entry(id, entryId)`, `entries(id)` and `entriesInCells(id, cells)` return place
+result values. Reads verify the full revision and mirrors in one transaction.
+Cell queries accept only native precision-six geohashes. Their predicates lower
+to native SQL; `placeReadDocument` exposes the actual plan. On the sourced
+fixture SQLite chooses the `by_gazetteer` seek and filters cells, despite the
+declared `by_gazetteer_cell` index. Full inventory verification still reads the gazetteer, so this
+adapter makes no bounded read-I/O claim. Distance refinement and radius coverage
+remain the caller's responsibility. `stats()` counts committed row writes and
+entered transactions, including reads and failed attempts.
+
+Longitude and latitude are numeric mirrors in each JSON row; the declared
+gazetteer and cell indexes materialize their own native scalar columns. No
+longitude/latitude index, derived bounding box or R-tree is created.
+
+The additive collection preserves existing memory and temporal records. The
+[place API guide](https://github.com/jklarenbeek/tangleai/blob/main/packages/memory/docs/PLACE.md)
+describes the shared source, geometry and refusal contracts.
+
 ## Temporal projections
 
 `createTemporalDbStore(db)` implements `@tangleai/memory/temporal`'s transactional

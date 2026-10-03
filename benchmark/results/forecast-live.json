@@ -5,8 +5,8 @@
   "plan": {
     "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
     "source": {
-      "head": "623f07dd1413e56122a701694875d90aff82c878",
-      "sha256": "adacb2d103e89e791a3b48b68e28d65a1e7aa2a204df22abc8275da74c50f1d0",
+      "head": "22872322080dd7955acc9afbd39244f224307a80",
+      "sha256": "9f6751ad7e6fb2e363593b0baadba04d5cda29f77124eadce42a1253c6ba9472",
       "files": [
         {
           "path": "benchmark/fixtures/forecast/harness/candidates.json",
@@ -882,11 +882,11 @@
         },
         {
           "path": "package-lock.json",
-          "sha256": "c7dd9d551f796b427ccd236cff17a7c5a43e4450a9ab460abf344876dc8ce0c8"
+          "sha256": "43106937f7e9c1f25666692e22f0f244b74bdc5d24494c4f820698da6acb7c8b"
         },
         {
           "path": "package.json",
-          "sha256": "cc4973fa39f3446555f89b4b6db7bcab028e8ca8e655a793ce917c24daa34b04"
+          "sha256": "0ded8d682a2eb2cf89eca1825ecba90765d92fbbe41215748b9f39bfce80456d"
         },
         {
           "path": "packages/agents/package.json",
@@ -1494,7 +1494,7 @@
         },
         {
           "path": "packages/store/src/index.ts",
-          "sha256": "05665ad2d772d577fbae677386c88cc4829e532be3e1c40368f6d0c5ec42dfe6"
+          "sha256": "70afada5984d57f51528db60f4900d3daa5e5b4eb3f916a5cf6c9df560706857"
         },
         {
           "path": "packages/store/src/ledger-storage.ts",
@@ -1526,11 +1526,19 @@
         },
         {
           "path": "packages/store/src/model.ts",
-          "sha256": "57930d883cfb30841a9722d7778ec58d89e9a63207046e9db3cd9e57655eafd0"
+          "sha256": "800bea47963ea130e8310b34d8f0f4f521b720c26b8fa0471d7fe8b65877e9fe"
         },
         {
           "path": "packages/store/src/outcome-store.ts",
           "sha256": "4f0c579060c928a57b8002687dc8224321d8264f91b61afd40d4bacbab6faea4"
+        },
+        {
+          "path": "packages/store/src/place-model.ts",
+          "sha256": "05f276115d4877b012ec71623096fd0a0e8ca49583d59d658541c803b47e4f26"
+        },
+        {
+          "path": "packages/store/src/place-store.ts",
+          "sha256": "a5bdefe05b9fe8784d1518281657189e457c525839ba6e90d20093e0e56f0841"
         },
         {
           "path": "packages/store/src/runs.ts",
@@ -1809,7 +1817,7 @@
     "cache": "none",
     "evidence": "frozen-cutoff-replay",
     "pairedEvaluation": "executed-digests-only",
-    "planId": "89870d632a783223ddd6716f0f54a880a378b06ebd8bb05046ea2ea1400992d9",
+    "planId": "4ff1cd3369a1f7d4c7ec649b73187a77d266518e08520d8433eff723b0210cc1",
     "skipped": "No live key or configured local wire; configure the shared AI environment."
   },
   "physicalRequests": 0,

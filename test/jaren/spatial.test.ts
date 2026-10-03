@@ -153,6 +153,52 @@ function replaying(...replies: any[]) {
 
 const run = (doc: any) => compileJsltStylesheet(doc)(SAMPLE);
 
+describe('spatial intent and explicit operation intent', () => {
+  it('recognizes location, residence and travel questions', () => {
+    for (const question of ['where was she living when she started the job',
+      'where did Caroline go on her trip', 'her whereabouts', 'where she lived',
+      'she moved to Boston', 'traveling in Japan', 'visiting the museum']) {
+      assert.strictEqual(spatialIntent(question).spatial, true, question);
+    }
+  });
+
+  it('recognizes next-to, beside and nearby as proximity', () => {
+    for (const question of ['which cafe is next to the museum', 'the cafe beside the museum', 'cafes nearby']) {
+      assert.deepStrictEqual(spatialIntent(question), { proximity: true, spatial: true }, question);
+    }
+  });
+
+  it('does not treat the point of an argument as a location', () => {
+    assert.deepStrictEqual(spatialIntent('what is the point of the argument'), { proximity: false, spatial: false });
+  });
+
+  it('does not treat placement or a placeholder as a place noun', () => {
+    for (const question of ['she placed second in the race', 'replace the placeholder']) {
+      assert.deepStrictEqual(spatialIntent(question), { proximity: false, spatial: false }, question);
+    }
+    assert.strictEqual(spatialIntent('group the places').spatial, true);
+    assert.strictEqual(spatialIntent('find the place').spatial, true);
+  });
+
+  it('honors each explicit intent field while preserving inferred defaults and all three gates', () => {
+    const explicit = { question: 'which cafe is next to the museum', sample: SAMPLE, intent: { proximity: true } };
+    assert.strictEqual(withMember(spatialGates(explicit)[0](PREFIX_FOLKLORE), 'errors').errors[0].code, 'AI0230');
+    const neutral = { question: 'select the result', sample: SAMPLE, intent: { proximity: true, spatial: true } };
+    assert.strictEqual(withMember(spatialGates(neutral)[0](PREFIX_FOLKLORE), 'errors').errors[0].code, 'AI0230');
+    assert.strictEqual(withMember(spatialGates(neutral)[2](LATLON_BOX), 'errors').errors[0].code, 'AI0232');
+    const disabled = { question: 'places near here', sample: SAMPLE, intent: { proximity: false, spatial: false } };
+    assert.strictEqual(spatialGates(disabled)[0](PREFIX_FOLKLORE), true);
+    assert.strictEqual(spatialGates(disabled)[2](LATLON_BOX), true);
+    assert.strictEqual(withMember(spatialGates(disabled)[1](PLANAR), 'errors').errors[0].code, 'AI0231');
+    for (const question of ['places near here', 'group the places by geohash cell', 'the highest-scoring item']) {
+      const implicit = { question, sample: SAMPLE }, empty = { ...implicit, intent: {} };
+      for (const document of [PREFIX_FOLKLORE, PLANAR, LATLON_BOX, NINE_CELLS]) {
+        assert.deepStrictEqual(spatialGates(empty).map(g => g(document)), spatialGates(implicit).map(g => g(document)));
+      }
+    }
+  });
+});
+
 describe('ai — the spatial profile teaches exactly §8.14', function () {
   it('names the operators QUERY-FORMAT §8.14 publishes, and no other', function () {
     const format = readFileSync(new URL('./docs/QUERY-FORMAT.md', import.meta.resolve('@jarenjs/json/package.json')), 'utf8');

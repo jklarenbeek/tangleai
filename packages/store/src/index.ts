@@ -39,6 +39,8 @@ export type {
 
 export { createTemporalDbStore, createTemporalDbPersistence, inspectTemporalSeek, temporalSeekDocument, selectTemporalDbAsOf } from './temporal-store.ts';
 export type { TemporalDbOptions, TemporalSeek } from './temporal-store.ts';
+export { createPlaceDbStore, placeReadDocument, type PlaceDbStore, type PlaceDbOptions } from './place-store.ts';
+export { PLACE_COLLECTIONS } from './place-model.ts';
 export { backfillTemporalBatch } from './temporal-backfill.ts';
 export type { TemporalBackfillOptions } from './temporal-backfill.ts';
 

@@ -6,6 +6,7 @@ import { qualifyHeraBrowser } from './hera-browser.mjs';
 import { qualifyForecastBrowser } from './forecast-browser.mjs';
 import { qualifyTradingBrowser } from './trading-browser.mjs';
 import { qualifyTemporal } from './temporal-browser.mjs';
+import { qualifyPlace } from './place-browser.mjs';
 import { qualifyTrace2SkillBrowser } from './trace2skill-browser.mjs';
 import { createMemoryOutcomeStore, createOutcomeContract } from '@tangleai/outcomes';
 import { program as pen, LinqBuildError } from '@tangleai/linq';
@@ -27,6 +28,7 @@ globalThis.tangleConsumer = {
   trading: qualifyTradingBrowser(),
   consolidation: qualifyConsolidation(),
   temporal: qualifyTemporal(),
+  place: qualifyPlace().then(result => result.summary),
   trace2skill: qualifyTrace2SkillBrowser(),
   outcomeStore: createMemoryOutcomeStore(),
   outcomeContract: createOutcomeContract(),

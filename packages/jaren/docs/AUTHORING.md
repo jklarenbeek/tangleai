@@ -267,6 +267,13 @@ guess. And three gates run beside the stylesheet author's, each with a pointer a
 
 The gate reads the *question* (`spatialIntent`: near, within N km, closest → proximity;
 inside, region, polygon → spatial) so a prefix is refused only when nearness was asked for.
+`spatialGates({ question, sample, intent? })` also accepts explicit `proximity`
+and `spatial` booleans. Each supplied field, including `false`, overrides word
+inference; an omitted field keeps it. Coordinate-arithmetic checks always run.
+Word inference recognizes location/residence/travel terms such as “where”,
+“living” and “trip”, and proximity terms “next to” and “beside”. Bare “point”,
+“placed” and “placeholder” do not establish spatial intent. Inference remains a
+word heuristic; a host with a known operation should provide explicit intent.
 The run gate stays: the worked example is proven to compile **and run** on the repository's
 own five-city dataset, answering Amsterdam 0 km, Utrecht 34, Rotterdam 57.
 
