@@ -1,0 +1,1809 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tangleai.dev/schemas/place-report",
+  "title": "PlaceReportDocuments",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/fixtureManifest"
+    },
+    {
+      "$ref": "#/$defs/gazetteerFile"
+    },
+    {
+      "$ref": "#/$defs/mentionsFile"
+    },
+    {
+      "$ref": "#/$defs/questionsFile"
+    },
+    {
+      "$ref": "#/$defs/wrongControlsFile"
+    },
+    {
+      "$ref": "#/$defs/provenanceFile"
+    },
+    {
+      "$ref": "#/$defs/report"
+    }
+  ],
+  "$defs": {
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "mentionSites": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "grounded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ungrounded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "positions": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "mentionSites",
+        "grounded",
+        "ungrounded",
+        "ambiguous",
+        "personas",
+        "positions"
+      ],
+      "additionalProperties": false
+    },
+    "kind": {
+      "enum": [
+        "location-at-event",
+        "movement-distance",
+        "nearby",
+        "ungrounded",
+        "ambiguous",
+        "no-position",
+        "false-proximity"
+      ]
+    },
+    "rowName": {
+      "enum": [
+        "oracle",
+        "seeded-random",
+        "meaning-only",
+        "meaning-time",
+        "meaning-time-place"
+      ]
+    },
+    "backend": {
+      "enum": [
+        "reference",
+        "memory",
+        "node-sqlite",
+        "bun-sqlite"
+      ]
+    },
+    "registration": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dims": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "candidatePool": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minScore": {
+          "type": "number"
+        },
+        "random": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "row": {
+                "$ref": "#/$defs/rowName"
+              },
+              "backend": {
+                "$ref": "#/$defs/backend"
+              }
+            },
+            "required": [
+              "row",
+              "backend"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "seed",
+        "dims",
+        "candidatePool",
+        "k",
+        "minScore",
+        "random",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "census": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "questions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "byKind": {
+          "type": "object",
+          "properties": {
+            "location-at-event": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "movement-distance": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "nearby": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ungrounded": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ambiguous": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "no-position": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "false-proximity": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "location-at-event",
+            "movement-distance",
+            "nearby",
+            "ungrounded",
+            "ambiguous",
+            "no-position",
+            "false-proximity"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "entries",
+        "turns",
+        "questions",
+        "byKind"
+      ],
+      "additionalProperties": false
+    },
+    "floor": {
+      "type": "object",
+      "properties": {
+        "minimumGroundedFraction": {
+          "const": 0.8
+        },
+        "minimumLocationConversations": {
+          "const": 6
+        },
+        "minimumMovementConversations": {
+          "const": 4
+        },
+        "maximumUnsourcedEntries": {
+          "const": 0
+        },
+        "groundedFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "locationConversations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "movementConversations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unsourcedEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "minimumGroundedFraction",
+        "minimumLocationConversations",
+        "minimumMovementConversations",
+        "maximumUnsourcedEntries",
+        "groundedFraction",
+        "locationConversations",
+        "movementConversations",
+        "unsourcedEntries",
+        "passed"
+      ],
+      "additionalProperties": false
+    },
+    "member": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "fixtureManifest": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-fixture"
+        },
+        "benchmark": {
+          "const": "place"
+        },
+        "license": {
+          "const": "MIT"
+        },
+        "authorship": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "census": {
+          "$ref": "#/$defs/census"
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        },
+        "floor": {
+          "$ref": "#/$defs/floor"
+        },
+        "conventions": {
+          "type": "object",
+          "properties": {
+            "time": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observedPrecision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claimPrecision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unknownResidenceEnd": {
+              "type": "string",
+              "minLength": 1
+            },
+            "distance": {
+              "type": "string",
+              "minLength": 1
+            },
+            "ranking": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "time",
+            "observedPrecision",
+            "claimPrecision",
+            "unknownResidenceEnd",
+            "distance",
+            "ranking"
+          ],
+          "additionalProperties": false
+        },
+        "registration": {
+          "$ref": "#/$defs/registration"
+        },
+        "scale": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "const": 50000
+            },
+            "probes": {
+              "const": 200
+            },
+            "targetP95Ms": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "precision": {
+              "const": 6
+            },
+            "radiusMetres": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "warmups": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "distribution": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "entries",
+            "probes",
+            "targetP95Ms",
+            "seed",
+            "precision",
+            "radiusMetres",
+            "warmups",
+            "distribution"
+          ],
+          "additionalProperties": false
+        },
+        "knownUngrounded": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        }
+      },
+      "required": [
+        "document",
+        "benchmark",
+        "license",
+        "authorship",
+        "attribution",
+        "source",
+        "census",
+        "coverage",
+        "floor",
+        "conventions",
+        "registration",
+        "scale",
+        "knownUngrounded",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "geometry": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "Point"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "additionalProperties": false
+        },
+        "sourceLatLon": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lon": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ],
+          "additionalProperties": false
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "wikidata",
+                "geonames"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            },
+            "retrieved": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "url",
+            "retrieved"
+          ],
+          "additionalProperties": false
+        },
+        "confidence": {
+          "enum": [
+            "exact",
+            "settlement",
+            "region"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "names",
+        "geometry",
+        "sourceLatLon",
+        "source",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "mention": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sampleId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "diaId": {
+          "type": "string",
+          "pattern": "^D[0-9]+:[0-9]+$"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quoteSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entryId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "grounded",
+            "ungrounded",
+            "ambiguous"
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "kind": {
+          "enum": [
+            "state",
+            "event"
+          ]
+        },
+        "assertion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "positionEligible": {
+          "type": "boolean"
+        },
+        "qualification": {
+          "enum": [
+            "locative",
+            "nonlocative-adjective"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sampleId",
+        "diaId",
+        "start",
+        "end",
+        "quoteSha256",
+        "subject",
+        "entryId",
+        "status",
+        "candidates",
+        "kind",
+        "assertion",
+        "positionEligible",
+        "qualification"
+      ],
+      "additionalProperties": false
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "entryId": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "entryId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "fromEntryId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "toEntryId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "metres": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "fromEntryId",
+            "toEntryId",
+            "metres"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "entryIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "entryIds"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "refused": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cause": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "refused"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ninecell": {
+              "type": "boolean"
+            },
+            "singlePrefix": {
+              "type": "boolean"
+            },
+            "gate": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "ninecell",
+            "singlePrefix",
+            "gate"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "question": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "location-at-event"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sampleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "eventDiaId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "sampleId",
+            "subject",
+            "eventDiaId",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "movement-distance"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sampleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fromDiaId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "toDiaId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "sampleId",
+            "subject",
+            "fromDiaId",
+            "toDiaId",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "nearby"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "entryId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "radiusMetres": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "entryId",
+            "radiusMetres",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "ungrounded"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sampleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mentionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "sampleId",
+            "subject",
+            "mentionId",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "ambiguous"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sampleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mentionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "sampleId",
+            "subject",
+            "mentionId",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "no-position"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sampleId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1
+            },
+            "eventDiaId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "sampleId",
+            "subject",
+            "eventDiaId",
+            "expected"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "const": "false-proximity"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "entryId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "radiusMetres": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "otherEntryId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expected": {
+              "$ref": "#/$defs/outcome"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "text",
+            "entryId",
+            "radiusMetres",
+            "otherEntryId",
+            "expected"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "gazetteerFile": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-gazetteer"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        }
+      },
+      "required": [
+        "document",
+        "entries"
+      ],
+      "additionalProperties": false
+    },
+    "mentionsFile": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-mentions"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mention"
+          }
+        }
+      },
+      "required": [
+        "document",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "questionsFile": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-questions"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/question"
+          }
+        }
+      },
+      "required": [
+        "document",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "wrongControlsFile": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-wrong-controls"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "questionId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actual": {
+                "$ref": "#/$defs/outcome"
+              }
+            },
+            "required": [
+              "id",
+              "questionId",
+              "actual"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "document",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "provenanceFile": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "const": "place-provenance"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "revisionUrl": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rawSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "claimId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rank": {
+                "enum": [
+                  "normal",
+                  "preferred"
+                ]
+              },
+              "precision": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "globe": {
+                "const": "http://www.wikidata.org/entity/Q2"
+              },
+              "license": {
+                "const": "CC0-1.0"
+              }
+            },
+            "required": [
+              "entryId",
+              "revision",
+              "revisionUrl",
+              "rawSha256",
+              "claimId",
+              "rank",
+              "precision",
+              "globe",
+              "license"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "spellings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entryId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "alias": {
+                "type": "string",
+                "minLength": 1
+              },
+              "spelling": {
+                "const": "as-seen"
+              }
+            },
+            "required": [
+              "entryId",
+              "alias",
+              "spelling"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "document",
+        "coordinates",
+        "spellings"
+      ],
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/$defs/rowName"
+        },
+        "backend": {
+          "$ref": "#/$defs/backend"
+        },
+        "kind": {
+          "$ref": "#/$defs/kind"
+        },
+        "questionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "$ref": "#/$defs/outcome"
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/outcome"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "measured",
+            "implementation-missing",
+            "unavailable",
+            "failed"
+          ]
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projectionId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "row",
+        "backend",
+        "kind",
+        "questionId",
+        "expected",
+        "actual",
+        "status",
+        "passed",
+        "detail",
+        "projectionId"
+      ],
+      "additionalProperties": false
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "planned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "measured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incorrect": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "implementationMissing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unavailable": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "planned",
+        "measured",
+        "passed",
+        "incorrect",
+        "failed",
+        "implementationMissing",
+        "unavailable"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/$defs/rowName"
+        },
+        "backend": {
+          "$ref": "#/$defs/backend"
+        },
+        "kind": {
+          "enum": [
+            "location-at-event",
+            "movement-distance",
+            "nearby",
+            "ungrounded",
+            "ambiguous",
+            "no-position",
+            "false-proximity",
+            "all"
+          ]
+        },
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "exactness": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "row",
+        "backend",
+        "kind",
+        "counts",
+        "exactness"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "head",
+        "clean",
+        "files",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "instrument": {
+          "const": "place-conformance-v1"
+        },
+        "fixtureHash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "census": {
+          "$ref": "#/$defs/census"
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        },
+        "floor": {
+          "$ref": "#/$defs/floor"
+        },
+        "registration": {
+          "$ref": "#/$defs/registration"
+        },
+        "corpus": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "available",
+                "unavailable"
+              ]
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "unresolvedMentions": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "status",
+            "detail",
+            "unresolvedMentions"
+          ],
+          "additionalProperties": false
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/measurement"
+          }
+        },
+        "counts": {
+          "$ref": "#/$defs/counts"
+        },
+        "summaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/summary"
+          }
+        },
+        "refusals": {
+          "type": "object",
+          "properties": {
+            "byCode": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "byCause": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "unmatchedJoins": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "byCode",
+            "byCause",
+            "unmatchedJoins"
+          ],
+          "additionalProperties": false
+        },
+        "wrongControls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "questionId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rejected": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "questionId",
+              "rejected"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "gateFixtures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expectedCode": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actualCode": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "passed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "path",
+              "expectedCode",
+              "actualCode",
+              "passed"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "randomFloor": {
+          "type": "object",
+          "properties": {
+            "planned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "passed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "expectedPasses": {
+              "type": "number",
+              "minimum": 0
+            },
+            "standardDeviation": {
+              "type": "number",
+              "minimum": 0
+            },
+            "lowerPasses": {
+              "type": "number"
+            },
+            "upperPasses": {
+              "type": "number"
+            },
+            "holds": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "planned",
+            "passed",
+            "expectedPasses",
+            "standardDeviation",
+            "lowerPasses",
+            "upperPasses",
+            "holds"
+          ],
+          "additionalProperties": false
+        },
+        "locomo": {
+          "type": "object",
+          "properties": {
+            "recallSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "qaSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "recallSha256",
+            "qaSha256"
+          ],
+          "additionalProperties": false
+        },
+        "identity": {
+          "$ref": "https://tangleai.dev/schemas/run-identity#/$defs/identityEnvelope"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "liveRequests": {
+          "const": 0
+        },
+        "default": {
+          "const": "off"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "scale": {
+          "$ref": "#/$defs/fixtureManifest/properties/scale"
+        }
+      },
+      "required": [
+        "instrument",
+        "fixtureHash",
+        "census",
+        "coverage",
+        "floor",
+        "registration",
+        "corpus",
+        "rows",
+        "counts",
+        "summaries",
+        "refusals",
+        "wrongControls",
+        "gateFixtures",
+        "randomFloor",
+        "locomo",
+        "identity",
+        "source",
+        "liveRequests",
+        "default",
+        "sha256",
+        "scale"
+      ],
+      "additionalProperties": false,
+      "$query": {
+        "$and": [
+          {
+            "$eq": [
+              "$.coverage.mentionSites",
+              {
+                "$add": [
+                  "$.coverage.grounded",
+                  {
+                    "$add": [
+                      "$.coverage.ungrounded",
+                      "$.coverage.ambiguous"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.planned",
+              {
+                "$count": "$.rows[*]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.measured",
+              {
+                "$count": "$.rows[?(@.status=='measured')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.failed",
+              {
+                "$count": "$.rows[?(@.status=='failed')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.implementationMissing",
+              {
+                "$count": "$.rows[?(@.status=='implementation-missing')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.unavailable",
+              {
+                "$count": "$.rows[?(@.status=='unavailable')]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.passed",
+              {
+                "$count": "$.rows[?(@.passed==true)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.counts.incorrect",
+              {
+                "$count": "$.rows[?(@.status=='measured' && @.passed==false)]"
+              }
+            ]
+          },
+          {
+            "$eq": [
+              "$.liveRequests",
+              0
+            ]
+          },
+          {
+            "$or": [
+              {
+                "$eq": [
+                  "$.corpus.status",
+                  "unavailable"
+                ]
+              },
+              {
+                "$eq": [
+                  {
+                    "$count": "$.rows[?(@.row=='oracle' && @.passed==true)]"
+                  },
+                  "$.census.questions"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

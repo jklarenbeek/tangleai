@@ -2,7 +2,7 @@
   "instrument": "trading",
   "version": 1,
   "source": {
-    "head": "eeb6d774307e3b428cf4f0f86b9504ae55cad719",
+    "head": "623f07dd1413e56122a701694875d90aff82c878",
     "clean": false,
     "files": [
       {
@@ -215,7 +215,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "011412086f89d1aa707b6d18f2d46fa6adc6f8de2b40b4f3a3420e9ccb1ec1ff"
+        "sha256": "cc4973fa39f3446555f89b4b6db7bcab028e8ca8e655a793ce917c24daa34b04"
       },
       {
         "path": "packages/agents/package.json",
@@ -1206,7 +1206,7 @@
         "sha256": "6eabc4d6f96e06871b631bc8cf91cdd991fd49f8e7f0267ffefae3119d95517d"
       }
     ],
-    "sha256": "c1598c3bc67647b9f46ac41261abc8ed11123275e567b853423968012cf7f87f"
+    "sha256": "98fd8999909d25ec0dd2a3dd3e72d6bed213e65d0ac7e6b92df8fcc3e333dd35"
   },
   "suite": {
     "tangle": "0.36.0",
@@ -26007,5 +26007,5 @@
       "peakGrossExposure": 0.004040271631753056
     }
   ],
-  "reportId": "b9ec8d34197643824559c3d536e0ac61e43f3474904586475169227fe80556b6"
+  "reportId": "fab8c5a8ff983b5abe46cf9ee4aff789a388d7bfea8dd06987ffc7d9dc3de2a0"
 }

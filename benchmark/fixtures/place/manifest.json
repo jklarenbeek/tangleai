@@ -1,0 +1,145 @@
+{
+  "document": "place-fixture",
+  "benchmark": "place",
+  "license": "MIT",
+  "authorship": "Original audited location annotations and questions; source-coordinate facts are Wikidata CC0. Conversation prose is read only from the separately licensed LoCoMo submodule and is not redistributed.",
+  "attribution": "Wikidata coordinate facts are CC0-1.0; LoCoMo remains CC BY-NC 4.0 in its submodule.",
+  "source": {
+    "path": "benchmark/locomo/data/locomo10.json",
+    "sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+  },
+  "census": {
+    "entries": 71,
+    "turns": 5882,
+    "questions": 124,
+    "byKind": {
+      "location-at-event": 56,
+      "movement-distance": 29,
+      "ambiguous": 10,
+      "ungrounded": 13,
+      "no-position": 13,
+      "nearby": 2,
+      "false-proximity": 1
+    }
+  },
+  "coverage": {
+    "mentionSites": 197,
+    "grounded": 174,
+    "ungrounded": 13,
+    "ambiguous": 10,
+    "personas": 16,
+    "positions": 57
+  },
+  "floor": {
+    "minimumGroundedFraction": 0.8,
+    "minimumLocationConversations": 6,
+    "minimumMovementConversations": 4,
+    "maximumUnsourcedEntries": 0,
+    "groundedFraction": 0.883248730964467,
+    "locationConversations": 9,
+    "movementConversations": 6,
+    "unsourcedEntries": 0,
+    "passed": true
+  },
+  "conventions": {
+    "time": "reporting-session-annotation-index-v1",
+    "observedPrecision": "minute",
+    "claimPrecision": "millisecond",
+    "unknownResidenceEnd": "unknown",
+    "distance": "rounded native spherical metres between source point proxies; no route or ellipsoid claim",
+    "ranking": "cosine descending, then source occurrence id, common source pool before eligibility"
+  },
+  "registration": {
+    "seed": 93457,
+    "dims": 512,
+    "candidatePool": 1000,
+    "k": 10,
+    "minScore": 0,
+    "random": "uniform gazetteer entry for every question; structurally incompatible answers count as losses",
+    "rows": [
+      {
+        "row": "oracle",
+        "backend": "reference"
+      },
+      {
+        "row": "seeded-random",
+        "backend": "reference"
+      },
+      {
+        "row": "meaning-only",
+        "backend": "memory"
+      },
+      {
+        "row": "meaning-time",
+        "backend": "memory"
+      },
+      {
+        "row": "meaning-time-place",
+        "backend": "memory"
+      },
+      {
+        "row": "meaning-time-place",
+        "backend": "node-sqlite"
+      },
+      {
+        "row": "meaning-time-place",
+        "backend": "bun-sqlite"
+      }
+    ]
+  },
+  "scale": {
+    "entries": 50000,
+    "probes": 200,
+    "targetP95Ms": 50,
+    "seed": 67129,
+    "precision": 6,
+    "radiusMetres": 100,
+    "warmups": 20,
+    "distribution": "uniform longitude [-150,150] and latitude [-50,50]; probe centres are generated entry positions"
+  },
+  "knownUngrounded": [
+    "Ferrari dealership",
+    "House of Blues",
+    "McGee's Pub",
+    "McGee's bar",
+    "McGee's pub",
+    "Starbucks",
+    "West County",
+    "mount Talkeetna",
+    "westendell"
+  ],
+  "files": [
+    {
+      "path": "gazetteer.json",
+      "sha256": "953cfe5ea5594a3c093dd3415b9ac1dc14cd4960c872ba78b68ee4001ee3cf48"
+    },
+    {
+      "path": "mentions.json",
+      "sha256": "5abf8bd6803e1a76b872c3ffed2c31173b22f4f3a327b5b1e2eb2da53adf40ff"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "7d23f97343e8afad05603cc0b707bba5cd21b0f405476747e50057315082099b"
+    },
+    {
+      "path": "questions.json",
+      "sha256": "2002bb7dfb4505cb9b99e7db529015572cc3a73b6193ddda3507c2fd722cd826"
+    },
+    {
+      "path": "refusals/no-spatial-operator.json",
+      "sha256": "a51e144410bdf94b68ec7a7bf1459e0fa6486f8a49fc0aa1cfb7aa9309da9cfa"
+    },
+    {
+      "path": "refusals/planar-degrees.json",
+      "sha256": "88e0142fa49e40e5998e8ecd3f77c7559993ab7c03cee545b0632528de8cf5d3"
+    },
+    {
+      "path": "refusals/prefix-as-proximity.json",
+      "sha256": "f7b88143f8ab18440f6b18638584901c7948f0aa29652fa9c5ab08a529bdac49"
+    },
+    {
+      "path": "refusals/wrong-controls.json",
+      "sha256": "0fc01ead6fb7cf157e20a64d816ab9ad08a43b8880af23f0d0746920c1a233f9"
+    }
+  ]
+}

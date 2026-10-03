@@ -1,0 +1,28 @@
+{
+  "document": "place-wrong-controls",
+  "rows": [
+    {
+      "id": "wrong-location",
+      "questionId": "location:conv-26/D18:5",
+      "actual": {
+        "entryId": "bali-island-q4648"
+      }
+    },
+    {
+      "id": "wrong-metre",
+      "questionId": "movement:conv-30/Jon/D2:4-D15:1",
+      "actual": {
+        "fromEntryId": "paris-q90",
+        "toEntryId": "rome-q220",
+        "metres": 1105333
+      }
+    },
+    {
+      "id": "refusal-as-success",
+      "questionId": "ungrounded:conv-41/D14:21:131-142",
+      "actual": {
+        "entryId": "bali-island-q4648"
+      }
+    }
+  ]
+}

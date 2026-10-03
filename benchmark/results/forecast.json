@@ -2,7 +2,7 @@
   "instrument": "forecast",
   "schemaVersion": 1,
   "source": {
-    "head": "eeb6d774307e3b428cf4f0f86b9504ae55cad719",
+    "head": "623f07dd1413e56122a701694875d90aff82c878",
     "clean": false,
     "files": [
       {
@@ -522,6 +522,38 @@
         "sha256": "a3776dee6663c1dc360ecc80a47ccf6c97f7b337444aca207145ee9f8ba20833"
       },
       {
+        "path": "benchmark/lib/place-baselines.ts",
+        "sha256": "dd6d88838bec921b79f87dfcc6c8e6bae188a12d156bfc8fa282c69d251f6490"
+      },
+      {
+        "path": "benchmark/lib/place-conformance.ts",
+        "sha256": "d8e220c5e3510f5a5e6005b7ccdf24ed206f009d0aa25c2c1727edcaa99a5999"
+      },
+      {
+        "path": "benchmark/lib/place-fixture.ts",
+        "sha256": "24f8bee705d3bf0924405e6b9d35f9b9cb00a7384538e6da938f6db6ec247d35"
+      },
+      {
+        "path": "benchmark/lib/place-oracle.ts",
+        "sha256": "21cb603c9aede364f86da86ba1c299e8c8564f91240de9241794d9f333b71ba9"
+      },
+      {
+        "path": "benchmark/lib/place-projection.ts",
+        "sha256": "9eb686bf6db6033f13d7f040e6c2965ddade033cd12882ce01ec13f21d4c84b9"
+      },
+      {
+        "path": "benchmark/lib/place-render.ts",
+        "sha256": "c78043a8a3087dd032e4427ff22357e18d27679b8862cb32f675a8ac7825d0ec"
+      },
+      {
+        "path": "benchmark/lib/place-report.types.ts",
+        "sha256": "37a89cd26011251a69998a093524f4f1bfdbb48fa6406d2cf3af7f691a87fb0f"
+      },
+      {
+        "path": "benchmark/lib/place-validation.ts",
+        "sha256": "2d81afeda100687f6169971fc4ead5d032044adfc83a6be918c3695dacc60a2f"
+      },
+      {
         "path": "benchmark/lib/policy-execution.ts",
         "sha256": "7d70d7d93a44dff2bf419b276c59325258696df603ed64c51736cd6aeaccd618"
       },
@@ -851,7 +883,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "011412086f89d1aa707b6d18f2d46fa6adc6f8de2b40b4f3a3420e9ccb1ec1ff"
+        "sha256": "cc4973fa39f3446555f89b4b6db7bcab028e8ca8e655a793ce917c24daa34b04"
       },
       {
         "path": "packages/agents/package.json",
@@ -1538,7 +1570,7 @@
         "sha256": "f0a13346c1fdf713a10982507b06b2890afc177169e3ab8d1d2a821949f31d6c"
       }
     ],
-    "sha256": "f78b2d697a202f91cb2d18848e45c8b9e1ba985ecb53c170c03600f9ae6e2aae"
+    "sha256": "adacb2d103e89e791a3b48b68e28d65a1e7aa2a204df22abc8275da74c50f1d0"
   },
   "registrationId": "f4116541e9d258a8638b005b7499f5064090bdd595053d5a2f81701c54d76bf3",
   "fixture": {
@@ -45003,5 +45035,5 @@
     "No provider stack executes; the provider identity envelope stays not-run. Runtime rows bind actual configuration, role prompts, toolset, artifacts and request digests. All four runtime identities are retained.",
     "Live forecasting quality is unmeasured. The credential-free live registration is not a provider execution receipt."
   ],
-  "reportId": "63b6eb5d0620437a13d06b27a27db67c7f04f1cbf420a3a0e73655eaf4444c37"
+  "reportId": "627b35c35be1f005d57b4391ae295416fb018a3e2824c702987b3fc95e801066"
 }

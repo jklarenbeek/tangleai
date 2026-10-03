@@ -1,0 +1,25 @@
+{
+  "$jslt": "0.1",
+  "rules": [
+    {
+      "match": "$",
+      "body": {
+        "$for": {
+          "c": "$.places[*]"
+        },
+        "$where": {
+          "$starts-with": [
+            {
+              "$geohash": [
+                "$c.at",
+                6
+              ]
+            },
+            "xn76fg"
+          ]
+        },
+        "$return": "$c"
+      }
+    }
+  ]
+}

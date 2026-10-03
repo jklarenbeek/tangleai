@@ -1,0 +1,1458 @@
+{
+  "document": "place-questions",
+  "rows": [
+    {
+      "id": "location:conv-26/D18:5",
+      "kind": "location-at-event",
+      "text": "Where did Melanie report a visit in D18:5?",
+      "sampleId": "conv-26",
+      "subject": "conv-26/Melanie",
+      "eventDiaId": "D18:5",
+      "expected": {
+        "entryId": "grand-canyon-q118841"
+      }
+    },
+    {
+      "id": "location:conv-30/D2:4",
+      "kind": "location-at-event",
+      "text": "Where did Jon report a visit in D2:4?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Jon",
+      "eventDiaId": "D2:4",
+      "expected": {
+        "entryId": "paris-q90"
+      }
+    },
+    {
+      "id": "location:conv-30/D2:5",
+      "kind": "location-at-event",
+      "text": "Where did Gina report a visit in D2:5?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Gina",
+      "eventDiaId": "D2:5",
+      "expected": {
+        "entryId": "rome-q220"
+      }
+    },
+    {
+      "id": "location:conv-30/D15:1",
+      "kind": "location-at-event",
+      "text": "Where did Jon report a visit in D15:1?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Jon",
+      "eventDiaId": "D15:1",
+      "expected": {
+        "entryId": "rome-q220"
+      }
+    },
+    {
+      "id": "location:conv-41/D8:17",
+      "kind": "location-at-event",
+      "text": "Where did Maria report a visit in D8:17?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "eventDiaId": "D8:17",
+      "expected": {
+        "entryId": "london-q84"
+      }
+    },
+    {
+      "id": "location:conv-41/D11:5",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D11:5?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "eventDiaId": "D11:5",
+      "expected": {
+        "entryId": "pacific-northwest-q12603"
+      }
+    },
+    {
+      "id": "location:conv-41/D13:24",
+      "kind": "location-at-event",
+      "text": "Where did Maria report a visit in D13:24?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "eventDiaId": "D13:24",
+      "expected": {
+        "entryId": "spain-q29"
+      }
+    },
+    {
+      "id": "location:conv-41/D18:3",
+      "kind": "location-at-event",
+      "text": "Where did Maria report a visit in D18:3?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "eventDiaId": "D18:3",
+      "expected": {
+        "entryId": "oregon-q824"
+      }
+    },
+    {
+      "id": "location:conv-41/D19:22",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D19:22?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "eventDiaId": "D19:22",
+      "expected": {
+        "entryId": "california-q99"
+      }
+    },
+    {
+      "id": "location:conv-41/D19:23",
+      "kind": "location-at-event",
+      "text": "Where did Maria report a visit in D19:23?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "eventDiaId": "D19:23",
+      "expected": {
+        "entryId": "florida-q812"
+      }
+    },
+    {
+      "id": "location:conv-42/D17:4",
+      "kind": "location-at-event",
+      "text": "Where did Joanna report a visit in D17:4?",
+      "sampleId": "conv-42",
+      "subject": "conv-42/Joanna",
+      "eventDiaId": "D17:4",
+      "expected": {
+        "entryId": "woodhaven-q1842497"
+      }
+    },
+    {
+      "id": "location:conv-42/D29:6",
+      "kind": "location-at-event",
+      "text": "Where did Nate report a visit in D29:6?",
+      "sampleId": "conv-42",
+      "subject": "conv-42/Nate",
+      "eventDiaId": "D29:6",
+      "expected": {
+        "entryId": "tampa-q49255"
+      }
+    },
+    {
+      "id": "location:conv-43/D1:18",
+      "kind": "location-at-event",
+      "text": "Where did Tim report a visit in D1:18?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "eventDiaId": "D1:18",
+      "expected": {
+        "entryId": "london-q84"
+      }
+    },
+    {
+      "id": "location:conv-43/D3:2",
+      "kind": "location-at-event",
+      "text": "Where did Tim report a visit in D3:2?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "eventDiaId": "D3:2",
+      "expected": {
+        "entryId": "california-q99"
+      }
+    },
+    {
+      "id": "location:conv-43/D6:3",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D6:3?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D6:3",
+      "expected": {
+        "entryId": "chicago-q1297"
+      }
+    },
+    {
+      "id": "location:conv-43/D9:6",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D9:6?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D9:6",
+      "expected": {
+        "entryId": "new-york-city-q60"
+      }
+    },
+    {
+      "id": "location:conv-43/D13:1",
+      "kind": "location-at-event",
+      "text": "Where did Tim report a visit in D13:1?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "eventDiaId": "D13:1",
+      "expected": {
+        "entryId": "united-kingdom-q145"
+      }
+    },
+    {
+      "id": "location:conv-43/D14:16",
+      "kind": "location-at-event",
+      "text": "Where did Tim report a visit in D14:16?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "eventDiaId": "D14:16",
+      "expected": {
+        "entryId": "great-smoky-mountains-q1360486"
+      }
+    },
+    {
+      "id": "location:conv-43/D17:3",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D17:3?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D17:3",
+      "expected": {
+        "entryId": "europe-q46"
+      }
+    },
+    {
+      "id": "location:conv-43/D18:1",
+      "kind": "location-at-event",
+      "text": "Where did Tim report a visit in D18:1?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "eventDiaId": "D18:1",
+      "expected": {
+        "entryId": "united-kingdom-q145"
+      }
+    },
+    {
+      "id": "location:conv-43/D20:40",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D20:40?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D20:40",
+      "expected": {
+        "entryId": "rocky-mountains-q5463"
+      }
+    },
+    {
+      "id": "location:conv-43/D27:2",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D27:2?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D27:2",
+      "expected": {
+        "entryId": "italy-q38"
+      }
+    },
+    {
+      "id": "location:conv-47/D6:15",
+      "kind": "location-at-event",
+      "text": "Where did John report a visit in D6:15?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/John",
+      "eventDiaId": "D6:15",
+      "expected": {
+        "entryId": "japan-q17"
+      }
+    },
+    {
+      "id": "location:conv-47/D17:22",
+      "kind": "location-at-event",
+      "text": "Where did James report a visit in D17:22?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "eventDiaId": "D17:22",
+      "expected": {
+        "entryId": "nuuk-q226"
+      }
+    },
+    {
+      "id": "location:conv-48/D1:8",
+      "kind": "location-at-event",
+      "text": "Where did Jolene report a visit in D1:8?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "eventDiaId": "D1:8",
+      "expected": {
+        "entryId": "paris-q90"
+      }
+    },
+    {
+      "id": "location:conv-48/D2:24",
+      "kind": "location-at-event",
+      "text": "Where did Jolene report a visit in D2:24?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "eventDiaId": "D2:24",
+      "expected": {
+        "entryId": "paris-q90"
+      }
+    },
+    {
+      "id": "location:conv-48/D4:33",
+      "kind": "location-at-event",
+      "text": "Where did Jolene report a visit in D4:33?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "eventDiaId": "D4:33",
+      "expected": {
+        "entryId": "bogota-q2841"
+      }
+    },
+    {
+      "id": "location:conv-48/D6:10",
+      "kind": "location-at-event",
+      "text": "Where did Deborah report a visit in D6:10?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Deborah",
+      "eventDiaId": "D6:10",
+      "expected": {
+        "entryId": "bali-island-q4648"
+      }
+    },
+    {
+      "id": "location:conv-48/D23:1",
+      "kind": "location-at-event",
+      "text": "Where did Jolene report a visit in D23:1?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "eventDiaId": "D23:1",
+      "expected": {
+        "entryId": "rio-de-janeiro-q8678"
+      }
+    },
+    {
+      "id": "location:conv-48/D23:18",
+      "kind": "location-at-event",
+      "text": "Where did Deborah report a visit in D23:18?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Deborah",
+      "eventDiaId": "D23:18",
+      "expected": {
+        "entryId": "rio-de-janeiro-q8678"
+      }
+    },
+    {
+      "id": "location:conv-48/D28:16",
+      "kind": "location-at-event",
+      "text": "Where did Jolene report a visit in D28:16?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "eventDiaId": "D28:16",
+      "expected": {
+        "entryId": "thailand-q869"
+      }
+    },
+    {
+      "id": "location:conv-49/D1:4",
+      "kind": "location-at-event",
+      "text": "Where did Evan report a visit in D1:4?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "eventDiaId": "D1:4",
+      "expected": {
+        "entryId": "rocky-mountains-q5463"
+      }
+    },
+    {
+      "id": "location:conv-49/D2:1",
+      "kind": "location-at-event",
+      "text": "Where did Evan report a visit in D2:1?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "eventDiaId": "D2:1",
+      "expected": {
+        "entryId": "jasper-q999429"
+      }
+    },
+    {
+      "id": "location:conv-49/D5:1",
+      "kind": "location-at-event",
+      "text": "Where did Evan report a visit in D5:1?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "eventDiaId": "D5:1",
+      "expected": {
+        "entryId": "canada-q16"
+      }
+    },
+    {
+      "id": "location:conv-49/D6:1",
+      "kind": "location-at-event",
+      "text": "Where did Evan report a visit in D6:1?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "eventDiaId": "D6:1",
+      "expected": {
+        "entryId": "canada-q16"
+      }
+    },
+    {
+      "id": "location:conv-49/D9:10",
+      "kind": "location-at-event",
+      "text": "Where did Evan report a visit in D9:10?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "eventDiaId": "D9:10",
+      "expected": {
+        "entryId": "rocky-mountains-q5463"
+      }
+    },
+    {
+      "id": "location:conv-50/D2:8",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D2:8?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D2:8",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D3:1",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D3:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D3:1",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D6:15",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D6:15?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D6:15",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D7:1",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D7:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D7:1",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D8:6",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D8:6?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D8:6",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D14:1",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D14:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D14:1",
+      "expected": {
+        "entryId": "san-francisco-q62"
+      }
+    },
+    {
+      "id": "location:conv-50/D14:6",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D14:6?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D14:6",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D15:4",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D15:4?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D15:4",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D16:8",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D16:8?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D16:8",
+      "expected": {
+        "entryId": "miami-q8652"
+      }
+    },
+    {
+      "id": "location:conv-50/D17:1",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D17:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D17:1",
+      "expected": {
+        "entryId": "san-francisco-q62"
+      }
+    },
+    {
+      "id": "location:conv-50/D19:1",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D19:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D19:1",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D20:4",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D20:4?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D20:4",
+      "expected": {
+        "entryId": "japan-q17"
+      }
+    },
+    {
+      "id": "location:conv-50/D21:1",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D21:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D21:1",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D24:11",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D24:11?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D24:11",
+      "expected": {
+        "entryId": "tokyo-q1490"
+      }
+    },
+    {
+      "id": "location:conv-50/D24:20",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D24:20?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D24:20",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D26:1",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D26:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D26:1",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D26:2",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D26:2?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D26:2",
+      "expected": {
+        "entryId": "detroit-q12439"
+      }
+    },
+    {
+      "id": "location:conv-50/D27:6",
+      "kind": "location-at-event",
+      "text": "Where did Dave report a visit in D27:6?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D27:6",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D29:1",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D29:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D29:1",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "location:conv-50/D30:2",
+      "kind": "location-at-event",
+      "text": "Where did Calvin report a visit in D30:2?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D30:2",
+      "expected": {
+        "entryId": "boston-q100"
+      }
+    },
+    {
+      "id": "movement:conv-30/Jon/D2:4-D15:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Jon reported in D2:4 and D15:1?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Jon",
+      "fromDiaId": "D2:4",
+      "toDiaId": "D15:1",
+      "expected": {
+        "fromEntryId": "paris-q90",
+        "toEntryId": "rome-q220",
+        "metres": 1105332
+      }
+    },
+    {
+      "id": "movement:conv-41/Maria/D8:17-D13:24",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Maria reported in D8:17 and D13:24?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "fromDiaId": "D8:17",
+      "toDiaId": "D13:24",
+      "expected": {
+        "fromEntryId": "london-q84",
+        "toEntryId": "spain-q29",
+        "metres": 1283785
+      }
+    },
+    {
+      "id": "movement:conv-41/Maria/D13:24-D18:3",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Maria reported in D13:24 and D18:3?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "fromDiaId": "D13:24",
+      "toDiaId": "D18:3",
+      "expected": {
+        "fromEntryId": "spain-q29",
+        "toEntryId": "oregon-q824",
+        "metres": 8740917
+      }
+    },
+    {
+      "id": "movement:conv-41/Maria/D18:3-D19:23",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Maria reported in D18:3 and D19:23?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "fromDiaId": "D18:3",
+      "toDiaId": "D19:23",
+      "expected": {
+        "fromEntryId": "oregon-q824",
+        "toEntryId": "florida-q812",
+        "metres": 3870356
+      }
+    },
+    {
+      "id": "movement:conv-41/John/D11:5-D19:22",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations John reported in D11:5 and D19:22?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "fromDiaId": "D11:5",
+      "toDiaId": "D19:22",
+      "expected": {
+        "fromEntryId": "pacific-northwest-q12603",
+        "toEntryId": "california-q99",
+        "metres": 982084
+      }
+    },
+    {
+      "id": "movement:conv-43/Tim/D1:18-D3:2",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Tim reported in D1:18 and D3:2?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "fromDiaId": "D1:18",
+      "toDiaId": "D3:2",
+      "expected": {
+        "fromEntryId": "london-q84",
+        "toEntryId": "california-q99",
+        "metres": 8571838
+      }
+    },
+    {
+      "id": "movement:conv-43/Tim/D3:2-D13:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Tim reported in D3:2 and D13:1?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "fromDiaId": "D3:2",
+      "toDiaId": "D13:1",
+      "expected": {
+        "fromEntryId": "california-q99",
+        "toEntryId": "united-kingdom-q145",
+        "metres": 8243509
+      }
+    },
+    {
+      "id": "movement:conv-43/Tim/D13:1-D14:16",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Tim reported in D13:1 and D14:16?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "fromDiaId": "D13:1",
+      "toDiaId": "D14:16",
+      "expected": {
+        "fromEntryId": "united-kingdom-q145",
+        "toEntryId": "great-smoky-mountains-q1360486",
+        "metres": 6344960
+      }
+    },
+    {
+      "id": "movement:conv-43/Tim/D14:16-D18:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Tim reported in D14:16 and D18:1?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "fromDiaId": "D14:16",
+      "toDiaId": "D18:1",
+      "expected": {
+        "fromEntryId": "great-smoky-mountains-q1360486",
+        "toEntryId": "united-kingdom-q145",
+        "metres": 6344960
+      }
+    },
+    {
+      "id": "movement:conv-43/John/D6:3-D9:6",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations John reported in D6:3 and D9:6?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "fromDiaId": "D6:3",
+      "toDiaId": "D9:6",
+      "expected": {
+        "fromEntryId": "chicago-q1297",
+        "toEntryId": "new-york-city-q60",
+        "metres": 1144131
+      }
+    },
+    {
+      "id": "movement:conv-43/John/D9:6-D17:3",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations John reported in D9:6 and D17:3?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "fromDiaId": "D9:6",
+      "toDiaId": "D17:3",
+      "expected": {
+        "fromEntryId": "new-york-city-q60",
+        "toEntryId": "europe-q46",
+        "metres": 6462102
+      }
+    },
+    {
+      "id": "movement:conv-43/John/D17:3-D20:40",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations John reported in D17:3 and D20:40?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "fromDiaId": "D17:3",
+      "toDiaId": "D20:40",
+      "expected": {
+        "fromEntryId": "europe-q46",
+        "toEntryId": "rocky-mountains-q5463",
+        "metres": 8135744
+      }
+    },
+    {
+      "id": "movement:conv-43/John/D20:40-D27:2",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations John reported in D20:40 and D27:2?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "fromDiaId": "D20:40",
+      "toDiaId": "D27:2",
+      "expected": {
+        "fromEntryId": "rocky-mountains-q5463",
+        "toEntryId": "italy-q38",
+        "metres": 9000612
+      }
+    },
+    {
+      "id": "movement:conv-48/Jolene/D2:24-D4:33",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Jolene reported in D2:24 and D4:33?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "fromDiaId": "D2:24",
+      "toDiaId": "D4:33",
+      "expected": {
+        "fromEntryId": "paris-q90",
+        "toEntryId": "bogota-q2841",
+        "metres": 8631223
+      }
+    },
+    {
+      "id": "movement:conv-48/Jolene/D4:33-D23:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Jolene reported in D4:33 and D23:1?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "fromDiaId": "D4:33",
+      "toDiaId": "D23:1",
+      "expected": {
+        "fromEntryId": "bogota-q2841",
+        "toEntryId": "rio-de-janeiro-q8678",
+        "metres": 4539403
+      }
+    },
+    {
+      "id": "movement:conv-48/Jolene/D23:1-D28:16",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Jolene reported in D23:1 and D28:16?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "fromDiaId": "D23:1",
+      "toDiaId": "D28:16",
+      "expected": {
+        "fromEntryId": "rio-de-janeiro-q8678",
+        "toEntryId": "thailand-q869",
+        "metres": 16122920
+      }
+    },
+    {
+      "id": "movement:conv-48/Deborah/D6:10-D23:18",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Deborah reported in D6:10 and D23:18?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Deborah",
+      "fromDiaId": "D6:10",
+      "toDiaId": "D23:18",
+      "expected": {
+        "fromEntryId": "bali-island-q4648",
+        "toEntryId": "rio-de-janeiro-q8678",
+        "metres": 15810717
+      }
+    },
+    {
+      "id": "movement:conv-49/Evan/D1:4-D2:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Evan reported in D1:4 and D2:1?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "fromDiaId": "D1:4",
+      "toDiaId": "D2:1",
+      "expected": {
+        "fromEntryId": "rocky-mountains-q5463",
+        "toEntryId": "jasper-q999429",
+        "metres": 1019495
+      }
+    },
+    {
+      "id": "movement:conv-49/Evan/D2:1-D5:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Evan reported in D2:1 and D5:1?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "fromDiaId": "D2:1",
+      "toDiaId": "D5:1",
+      "expected": {
+        "fromEntryId": "jasper-q999429",
+        "toEntryId": "canada-q16",
+        "metres": 681764
+      }
+    },
+    {
+      "id": "movement:conv-49/Evan/D6:1-D9:10",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Evan reported in D6:1 and D9:10?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "fromDiaId": "D6:1",
+      "toDiaId": "D9:10",
+      "expected": {
+        "fromEntryId": "canada-q16",
+        "toEntryId": "rocky-mountains-q5463",
+        "metres": 1360629
+      }
+    },
+    {
+      "id": "movement:conv-50/Dave/D8:6-D14:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Dave reported in D8:6 and D14:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "fromDiaId": "D8:6",
+      "toDiaId": "D14:1",
+      "expected": {
+        "fromEntryId": "boston-q100",
+        "toEntryId": "san-francisco-q62",
+        "metres": 4333757
+      }
+    },
+    {
+      "id": "movement:conv-50/Dave/D17:1-D19:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Dave reported in D17:1 and D19:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "fromDiaId": "D17:1",
+      "toDiaId": "D19:1",
+      "expected": {
+        "fromEntryId": "san-francisco-q62",
+        "toEntryId": "boston-q100",
+        "metres": 4333757
+      }
+    },
+    {
+      "id": "movement:conv-50/Dave/D24:20-D26:2",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Dave reported in D24:20 and D26:2?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "fromDiaId": "D24:20",
+      "toDiaId": "D26:2",
+      "expected": {
+        "fromEntryId": "boston-q100",
+        "toEntryId": "detroit-q12439",
+        "metres": 984542
+      }
+    },
+    {
+      "id": "movement:conv-50/Dave/D26:2-D27:6",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Dave reported in D26:2 and D27:6?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "fromDiaId": "D26:2",
+      "toDiaId": "D27:6",
+      "expected": {
+        "fromEntryId": "detroit-q12439",
+        "toEntryId": "boston-q100",
+        "metres": 984542
+      }
+    },
+    {
+      "id": "movement:conv-50/Calvin/D15:4-D16:8",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Calvin reported in D15:4 and D16:8?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "fromDiaId": "D15:4",
+      "toDiaId": "D16:8",
+      "expected": {
+        "fromEntryId": "tokyo-q1490",
+        "toEntryId": "miami-q8652",
+        "metres": 11999205
+      }
+    },
+    {
+      "id": "movement:conv-50/Calvin/D16:8-D20:4",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Calvin reported in D16:8 and D20:4?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "fromDiaId": "D16:8",
+      "toDiaId": "D20:4",
+      "expected": {
+        "fromEntryId": "miami-q8652",
+        "toEntryId": "japan-q17",
+        "metres": 12257813
+      }
+    },
+    {
+      "id": "movement:conv-50/Calvin/D20:4-D21:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Calvin reported in D20:4 and D21:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "fromDiaId": "D20:4",
+      "toDiaId": "D21:1",
+      "expected": {
+        "fromEntryId": "japan-q17",
+        "toEntryId": "boston-q100",
+        "metres": 10983391
+      }
+    },
+    {
+      "id": "movement:conv-50/Calvin/D21:1-D24:11",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Calvin reported in D21:1 and D24:11?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "fromDiaId": "D21:1",
+      "toDiaId": "D24:11",
+      "expected": {
+        "fromEntryId": "boston-q100",
+        "toEntryId": "tokyo-q1490",
+        "metres": 10791184
+      }
+    },
+    {
+      "id": "movement:conv-50/Calvin/D24:11-D26:1",
+      "kind": "movement-distance",
+      "text": "How far apart were the locations Calvin reported in D24:11 and D26:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "fromDiaId": "D24:11",
+      "toDiaId": "D26:1",
+      "expected": {
+        "fromEntryId": "tokyo-q1490",
+        "toEntryId": "boston-q100",
+        "metres": 10791184
+      }
+    },
+    {
+      "id": "ambiguous:conv-41/D12:17:27-37",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D12:17:27 identify?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "mentionId": "conv-41/D12:17:27-37",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ungrounded:conv-41/D14:21:131-142",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D14:21:131 identify?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "mentionId": "conv-41/D14:21:131-142",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ambiguous:conv-42/D11:7:57-73",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D11:7:57 identify?",
+      "sampleId": "conv-42",
+      "subject": "conv-42/Joanna",
+      "mentionId": "conv-42/D11:7:57-73",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ambiguous:conv-43/D10:9:90-107",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D10:9:90 identify?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "mentionId": "conv-43/D10:9:90-107",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ambiguous:conv-43/D10:10:64-81",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D10:10:64 identify?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "mentionId": "conv-43/D10:10:64-81",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ungrounded:conv-43/D21:1:277-287",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D21:1:277 identify?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/Tim",
+      "mentionId": "conv-43/D21:1:277-287",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ambiguous:conv-44/D1:20:0-10",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D1:20:0 identify?",
+      "sampleId": "conv-44",
+      "subject": "conv-44/Andrew",
+      "mentionId": "conv-44/D1:20:0-10",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ambiguous:conv-47/D5:1:64-72",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D5:1:64 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "mentionId": "conv-47/D5:1:64-72",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D21:13:18-27",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D21:13:18 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "mentionId": "conv-47/D21:13:18-27",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D21:14:33-42",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D21:14:33 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/John",
+      "mentionId": "conv-47/D21:14:33-42",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D21:15:25-36",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D21:15:25 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "mentionId": "conv-47/D21:15:25-36",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D21:18:41-52",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D21:18:41 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/John",
+      "mentionId": "conv-47/D21:18:41-52",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D23:3:95-106",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D23:3:95 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "mentionId": "conv-47/D23:3:95-106",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-47/D29:10:88-99",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D29:10:88 identify?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "mentionId": "conv-47/D29:10:88-99",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-48/D13:15:94-109",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D13:15:94 identify?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "mentionId": "conv-48/D13:15:94-109",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ambiguous:conv-48/D27:1:137-143",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D27:1:137 identify?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Jolene",
+      "mentionId": "conv-48/D27:1:137-143",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ambiguous:conv-49/D8:27:54-59",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D8:27:54 identify?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Sam",
+      "mentionId": "conv-49/D8:27:54-59",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ambiguous:conv-49/D19:7:36-41",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D19:7:36 identify?",
+      "sampleId": "conv-49",
+      "subject": "conv-49/Evan",
+      "mentionId": "conv-49/D19:7:36-41",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ungrounded:conv-50/D3:10:188-202",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D3:10:188 identify?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "mentionId": "conv-50/D3:10:188-202",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-50/D11:4:110-118",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D11:4:110 identify?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "mentionId": "conv-50/D11:4:110-118",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ungrounded:conv-50/D12:7:103-121",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D12:7:103 identify?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "mentionId": "conv-50/D12:7:103-121",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "ambiguous:conv-50/D24:20:0-7",
+      "kind": "ambiguous",
+      "text": "Which sourced place does the mention at D24:20:0 identify?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "mentionId": "conv-50/D24:20:0-7",
+      "expected": {
+        "refused": "TPLC1006"
+      }
+    },
+    {
+      "id": "ungrounded:conv-50/D28:1:99-107",
+      "kind": "ungrounded",
+      "text": "Which sourced place does the mention at D28:1:99 identify?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "mentionId": "conv-50/D28:1:99-107",
+      "expected": {
+        "refused": "TPLC1005"
+      }
+    },
+    {
+      "id": "no-position:conv-26/Melanie/D1:10",
+      "kind": "no-position",
+      "text": "Where was Melanie at the reporting event D1:10?",
+      "sampleId": "conv-26",
+      "subject": "conv-26/Melanie",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-30/Jon/D1:10",
+      "kind": "no-position",
+      "text": "Where was Jon at the reporting event D1:10?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Jon",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-30/Gina/D1:1",
+      "kind": "no-position",
+      "text": "Where was Gina at the reporting event D1:1?",
+      "sampleId": "conv-30",
+      "subject": "conv-30/Gina",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-41/Maria/D1:1",
+      "kind": "no-position",
+      "text": "Where was Maria at the reporting event D1:1?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/Maria",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-41/John/D1:10",
+      "kind": "no-position",
+      "text": "Where was John at the reporting event D1:10?",
+      "sampleId": "conv-41",
+      "subject": "conv-41/John",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-42/Joanna/D1:10",
+      "kind": "no-position",
+      "text": "Where was Joanna at the reporting event D1:10?",
+      "sampleId": "conv-42",
+      "subject": "conv-42/Joanna",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-42/Nate/D1:1",
+      "kind": "no-position",
+      "text": "Where was Nate at the reporting event D1:1?",
+      "sampleId": "conv-42",
+      "subject": "conv-42/Nate",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-43/John/D1:1",
+      "kind": "no-position",
+      "text": "Where was John at the reporting event D1:1?",
+      "sampleId": "conv-43",
+      "subject": "conv-43/John",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-47/John/D1:1",
+      "kind": "no-position",
+      "text": "Where was John at the reporting event D1:1?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/John",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-47/James/D1:10",
+      "kind": "no-position",
+      "text": "Where was James at the reporting event D1:10?",
+      "sampleId": "conv-47",
+      "subject": "conv-47/James",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-48/Deborah/D1:1",
+      "kind": "no-position",
+      "text": "Where was Deborah at the reporting event D1:1?",
+      "sampleId": "conv-48",
+      "subject": "conv-48/Deborah",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-50/Dave/D1:10",
+      "kind": "no-position",
+      "text": "Where was Dave at the reporting event D1:10?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Dave",
+      "eventDiaId": "D1:10",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "no-position:conv-50/Calvin/D1:1",
+      "kind": "no-position",
+      "text": "Where was Calvin at the reporting event D1:1?",
+      "sampleId": "conv-50",
+      "subject": "conv-50/Calvin",
+      "eventDiaId": "D1:1",
+      "expected": {
+        "refused": "TPLC1008"
+      }
+    },
+    {
+      "id": "nearby:shibuya-scramble-crossing-q21083961",
+      "kind": "nearby",
+      "text": "Which sourced entries are within 400 metres of Shibuya?",
+      "entryId": "shibuya-scramble-crossing-q21083961",
+      "radiusMetres": 400,
+      "expected": {
+        "entryIds": [
+          "shibuya-q595153"
+        ]
+      }
+    },
+    {
+      "id": "nearby:boston-q100",
+      "kind": "nearby",
+      "text": "Which sourced entries are within 100 metres of Boston?",
+      "entryId": "boston-q100",
+      "radiusMetres": 100,
+      "expected": {
+        "entryIds": []
+      }
+    },
+    {
+      "id": "false-proximity:shibuya",
+      "kind": "false-proximity",
+      "text": "Does the adjacent sourced Shibuya point lie within 400 metres across the cell boundary?",
+      "entryId": "shibuya-scramble-crossing-q21083961",
+      "otherEntryId": "shibuya-q595153",
+      "radiusMetres": 400,
+      "expected": {
+        "ninecell": true,
+        "singlePrefix": false,
+        "gate": "AI0230"
+      }
+    }
+  ]
+}

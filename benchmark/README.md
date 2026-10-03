@@ -59,6 +59,14 @@ execute through durable MAS with injected scripted clients and zero network
 calls. `npm run benchmark:hera -- --require complete` generates the report;
 `--check` verifies bytes without writing and `--out-dir` redirects both outputs.
 
+The [sourced place instrument](../docs/PLACE_BENCHMARK.md) measures original
+reporting-session annotations against source-backed Wikidata point coordinates.
+It audits coverage, checks an independent oracle, and compares ordinary and
+temporal retrieval with a seeded control. The place runtime rows remain explicitly
+unimplemented. No fixture result is a LoCoMo score. Run `npm run benchmark:place`
+to regenerate the JSON and Markdown, or add `-- --check --require` to verify both
+without writing and require the optional source corpus.
+
 The [trading instrument](../docs/TRADING_BENCHMARK.md) registers ten strategies
 over an original MIT two-asset fixture. Its privileged oracle and cash-only
 control and five baselines execute through one policy-limited simulator; the
@@ -173,6 +181,7 @@ verifies and preserves those dated results without buying another execution.
 
 | Instrument | What it answers | Command |
 |---|---|---|
+| [`place.ts`](./place.ts) | Sourced annotation coverage, an exact native-kernel oracle, seeded control, and matched ordinary/temporal baselines. The three place-runtime rows are explicitly unimplemented. No result is a LoCoMo score. [Report](../docs/PLACE_BENCHMARK.md) | `npm run benchmark:place` (`--json`, `--md`, `--check`, `--require`) |
 | [`trading.ts`](./trading.ts) | Causal fixture controls, five baselines, complete scripted native workflow, registered ablations, durable recovery and explicit licensed-replay availability. [Report](../docs/TRADING_BENCHMARK.md). | `npm run benchmark:trading -- --require complete` (`--check`, `--profile paper`, `--live` dry plan) |
 | [`lightrag.ts`](./lightrag.ts) | Oracle/random/dense controls and all four bounded graph modes; coverage, indexing, incremental replacement, citation resolution and losses. Paired answer and order-swapped judge tiers print separate exact-authorized plans. [Report](../docs/LIGHTRAG_BENCHMARK.md). | `npm run benchmark:lightrag` (`--check`, `--live`, `--rows`, `--judge`) |
 | [`lightrag-ladder.ts`](./lightrag-ladder.ts) | Native SQLite at 100 / 1,000 / 10,000 chunks: admission, p50/p95, process peak RSS, logical rows read and the registered 250 ms target. Timings are a source-bound operational receipt. The command grants Node 8 GiB of old-space heap for admission; this is not an RSS cap. | `npm run benchmark:lightrag:ladder` (`--check`) |
@@ -198,6 +207,7 @@ verifies and preserves those dated results without buying another execution.
 
 | Module | Why it is not an import |
 |---|---|
+| `place-{fixture,validation,projection,oracle,baselines,conformance,render}.ts` | Original sourced-place annotations, a host-asserted reporting index, an independent native-kernel oracle, matched retrieval controls and reconciled reports. Geometry/time kernels remain in Jaren and the shipped temporal lane. |
 | [`lib/stats.ts`](./lib/stats.ts) | Report shaping over `@jarenjs/core/stats`: nearest-rank p50/p95 and `null` for an empty rendered cell. No local arithmetic. |
 | [`lib/table.ts`](./lib/table.ts) | The Markdown table idiom `docs/DOCUMENT_BENCHMARK.md` already publishes, extracted so a second instrument does not invent a second format. |
 | [`lib/args.ts`](./lib/args.ts) | An unknown flag is an error, not a silent default — a benchmark that ignored `--sizes` would publish the wrong row under the right name. |

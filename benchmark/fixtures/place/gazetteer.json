@@ -1,0 +1,1718 @@
+{
+  "document": "place-gazetteer",
+  "entries": [
+    {
+      "id": "bali-island-q4648",
+      "names": [
+        "Bali"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.071941666667,
+          -8.35638888888889
+        ]
+      },
+      "sourceLatLon": {
+        "lat": -8.35638888888889,
+        "lon": 115.071941666667
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q4648",
+        "url": "https://www.wikidata.org/wiki/Q4648",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "banff-national-park-q41858",
+      "names": [
+        "Banff"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -115.55,
+          51.166666666667
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 51.166666666667,
+        "lon": -115.55
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q41858",
+        "url": "https://www.wikidata.org/wiki/Q41858",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "banff-q58337",
+      "names": [
+        "Banff"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -115.572,
+          51.1781
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 51.1781,
+        "lon": -115.572
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q58337",
+        "url": "https://www.wikidata.org/wiki/Q58337",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "barcelona-q1492",
+      "names": [
+        "Barcelona"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.1769444444444,
+          41.3825
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41.3825,
+        "lon": 2.1769444444444
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1492",
+        "url": "https://www.wikidata.org/wiki/Q1492",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "bogota-q2841",
+      "names": [
+        "Bogota"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.08175,
+          4.60971
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 4.60971,
+        "lon": -74.08175
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q2841",
+        "url": "https://www.wikidata.org/wiki/Q2841",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "boston-q100",
+      "names": [
+        "Boston"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.05777777777777,
+          42.360277777777775
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.360277777777775,
+        "lon": -71.05777777777777
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q100",
+        "url": "https://www.wikidata.org/wiki/Q100",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "california-q99",
+      "names": [
+        "CA",
+        "California"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120,
+          37
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 37,
+        "lon": -120
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q99",
+        "url": "https://www.wikidata.org/wiki/Q99",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "canada-q16",
+      "names": [
+        "Canada"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -109,
+          56
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 56,
+        "lon": -109
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q16",
+        "url": "https://www.wikidata.org/wiki/Q16",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "chicago-q1297",
+      "names": [
+        "Chicago"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.62777777777778,
+          41.88194444444444
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41.88194444444444,
+        "lon": -87.62777777777778
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1297",
+        "url": "https://www.wikidata.org/wiki/Q1297",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "cliffs-of-moher-q239477",
+      "names": [
+        "The Cliffs of Moher"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.4708333333333,
+          52.936111111111
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 52.936111111111,
+        "lon": -9.4708333333333
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q239477",
+        "url": "https://www.wikidata.org/wiki/Q239477",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "detroit-q12439",
+      "names": [
+        "Detroit"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.0475,
+          42.331666666667
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.331666666667,
+        "lon": -83.0475
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q12439",
+        "url": "https://www.wikidata.org/wiki/Q12439",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "east-coast-of-the-united-states-q4268",
+      "names": [
+        "East Coast"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.36954,
+          37.02332
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 37.02332,
+        "lon": -77.36954
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q4268",
+        "url": "https://www.wikidata.org/wiki/Q4268",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "eastern-states-of-australia-q5330629",
+      "names": [
+        "East Coast"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          146,
+          -27
+        ]
+      },
+      "sourceLatLon": {
+        "lat": -27,
+        "lon": 146
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q5330629",
+        "url": "https://www.wikidata.org/wiki/Q5330629",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "edinburgh-q23436",
+      "names": [
+        "Edinburgh"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.1891666666666665,
+          55.95333333333333
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 55.95333333333333,
+        "lon": -3.1891666666666665
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q23436",
+        "url": "https://www.wikidata.org/wiki/Q23436",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "eiffel-tower-q243",
+      "names": [
+        "Eiffel Tower",
+        "eiffel tower"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.294479,
+          48.858296
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 48.858296,
+        "lon": 2.294479
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q243",
+        "url": "https://www.wikidata.org/wiki/Q243",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "england-q21",
+      "names": [
+        "England"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1,
+          53
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 53,
+        "lon": -1
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q21",
+        "url": "https://www.wikidata.org/wiki/Q21",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "europe-q46",
+      "names": [
+        "European"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.5,
+          53.5
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 53.5,
+        "lon": 15.5
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q46",
+        "url": "https://www.wikidata.org/wiki/Q46",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "fenway-park-q49136",
+      "names": [
+        "Fenway Park"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.0975,
+          42.346388888889
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.346388888889,
+        "lon": -71.0975
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q49136",
+        "url": "https://www.wikidata.org/wiki/Q49136",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "florida-q812",
+      "names": [
+        "Florida"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.631666666667,
+          28.133333333333
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 28.133333333333,
+        "lon": -81.631666666667
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q812",
+        "url": "https://www.wikidata.org/wiki/Q812",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "fort-wayne-q49268",
+      "names": [
+        "Fort Wayne"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.13915,
+          41.08045
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41.08045,
+        "lon": -85.13915
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q49268",
+        "url": "https://www.wikidata.org/wiki/Q49268",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "fox-hollow-q34674041",
+      "names": [
+        "Fox Hollow"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.37483,
+          42.84036
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.84036,
+        "lon": -73.37483
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q34674041",
+        "url": "https://www.wikidata.org/wiki/Q34674041",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "fox-hollow-q49802713",
+      "names": [
+        "Fox Hollow"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.245,
+          43.905555555556
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 43.905555555556,
+        "lon": -123.245
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q49802713",
+        "url": "https://www.wikidata.org/wiki/Q49802713",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "galway-q129610",
+      "names": [
+        "Galway"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.0488,
+          53.2719
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 53.2719,
+        "lon": -9.0488
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q129610",
+        "url": "https://www.wikidata.org/wiki/Q129610",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "grand-canyon-q118841",
+      "names": [
+        "Grand Canyon"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -112.09527777777778,
+          36.0975
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 36.0975,
+        "lon": -112.09527777777778
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q118841",
+        "url": "https://www.wikidata.org/wiki/Q118841",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "great-smoky-mountains-q1360486",
+      "names": [
+        "Smoky Mountains"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.4986,
+          35.5628
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35.5628,
+        "lon": -83.4986
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1360486",
+        "url": "https://www.wikidata.org/wiki/Q1360486",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "himalayas-q5451",
+      "names": [
+        "Himalayas"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84,
+          29
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 29,
+        "lon": 84
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q5451",
+        "url": "https://www.wikidata.org/wiki/Q5451",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "icefields-parkway-q1344271",
+      "names": [
+        "Icefields Parkway"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.6910288888889,
+          52.55908194444444
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 52.55908194444444,
+        "lon": -117.6910288888889
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1344271",
+        "url": "https://www.wikidata.org/wiki/Q1344271",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "ireland-q27",
+      "names": [
+        "Ireland"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8,
+          53
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 53,
+        "lon": -8
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q27",
+        "url": "https://www.wikidata.org/wiki/Q27",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "italy-q38",
+      "names": [
+        "Italy"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.5,
+          42.5
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.5,
+        "lon": 12.5
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q38",
+        "url": "https://www.wikidata.org/wiki/Q38",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "japan-q17",
+      "names": [
+        "Japan",
+        "Japanese"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136,
+          35
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35,
+        "lon": 136
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q17",
+        "url": "https://www.wikidata.org/wiki/Q17",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "jasper-q999429",
+      "names": [
+        "Jasper"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118.082,
+          52.8731
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 52.8731,
+        "lon": -118.082
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q999429",
+        "url": "https://www.wikidata.org/wiki/Q999429",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "lake-tahoe-q169962",
+      "names": [
+        "Lake Tahoe"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120.03333333333,
+          39.083333333333
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 39.083333333333,
+        "lon": -120.03333333333
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q169962",
+        "url": "https://www.wikidata.org/wiki/Q169962",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "london-q84",
+      "names": [
+        "London",
+        "London's"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1275,
+          51.507222222222
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 51.507222222222,
+        "lon": -0.1275
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q84",
+        "url": "https://www.wikidata.org/wiki/Q84",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "mexico-q96",
+      "names": [
+        "Mexico"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -102,
+          23
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 23,
+        "lon": -102
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q96",
+        "url": "https://www.wikidata.org/wiki/Q96",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "miami-q8652",
+      "names": [
+        "Miami"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.19361111111111,
+          25.774166666666666
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 25.774166666666666,
+        "lon": -80.19361111111111
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q8652",
+        "url": "https://www.wikidata.org/wiki/Q8652",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "michigan-q1166",
+      "names": [
+        "Michigan"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.58,
+          44.34
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 44.34,
+        "lon": -85.58
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1166",
+        "url": "https://www.wikidata.org/wiki/Q1166",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "midwestern-united-states-q186545",
+      "names": [
+        "Midwest",
+        "Midwestern"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -90,
+          41
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41,
+        "lon": -90
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q186545",
+        "url": "https://www.wikidata.org/wiki/Q186545",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "new-york-city-q60",
+      "names": [
+        "NYC",
+        "New York City"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.00611111111111,
+          40.71277777777778
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 40.71277777777778,
+        "lon": -74.00611111111111
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q60",
+        "url": "https://www.wikidata.org/wiki/Q60",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "nuuk-q226",
+      "names": [
+        "Nuuk"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -51.733333333333,
+          64.175
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 64.175,
+        "lon": -51.733333333333
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q226",
+        "url": "https://www.wikidata.org/wiki/Q226",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "oregon-q824",
+      "names": [
+        "Oregon"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120.575,
+          43.935833333333335
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 43.935833333333335,
+        "lon": -120.575
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q824",
+        "url": "https://www.wikidata.org/wiki/Q824",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "pacific-northwest-q12603",
+      "names": [
+        "Pacific Northwest"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -120.32227,
+          45.8288
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 45.8288,
+        "lon": -120.32227
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q12603",
+        "url": "https://www.wikidata.org/wiki/Q12603",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "paradise-rock-club-q7134354",
+      "names": [
+        "Paradise Rock"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.1194234,
+          42.3518676
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.3518676,
+        "lon": -71.1194234
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q7134354",
+        "url": "https://www.wikidata.org/wiki/Q7134354",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "paris-q90",
+      "names": [
+        "Paris"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.352222222222222,
+          48.85666666666667
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 48.85666666666667,
+        "lon": 2.352222222222222
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q90",
+        "url": "https://www.wikidata.org/wiki/Q90",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "phuket-q1777775",
+      "names": [
+        "Phuket"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.34388888888888,
+          7.993611111111111
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 7.993611111111111,
+        "lon": 98.34388888888888
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1777775",
+        "url": "https://www.wikidata.org/wiki/Q1777775",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "phuket-q844430",
+      "names": [
+        "Phuket"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          98.3975,
+          7.8880555555556
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 7.8880555555556,
+        "lon": 98.3975
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q844430",
+        "url": "https://www.wikidata.org/wiki/Q844430",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "rio-de-janeiro-q8678",
+      "names": [
+        "Rio de Janeiro"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -43.205555555555556,
+          -22.91111111111111
+        ]
+      },
+      "sourceLatLon": {
+        "lat": -22.91111111111111,
+        "lon": -43.205555555555556
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q8678",
+        "url": "https://www.wikidata.org/wiki/Q8678",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "rocky-mountains-q5463",
+      "names": [
+        "Rockies",
+        "Rocky Mountains"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -113.8,
+          44.15
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 44.15,
+        "lon": -113.8
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q5463",
+        "url": "https://www.wikidata.org/wiki/Q5463",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "rome-q220",
+      "names": [
+        "Rome"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.482777777778,
+          41.893055555556
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41.893055555556,
+        "lon": 12.482777777778
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q220",
+        "url": "https://www.wikidata.org/wiki/Q220",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "san-francisco-q62",
+      "names": [
+        "San Francisco",
+        "San Francsico"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.41944444444445,
+          37.775
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 37.775,
+        "lon": -122.41944444444445
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q62",
+        "url": "https://www.wikidata.org/wiki/Q62",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "scotland-q22",
+      "names": [
+        "Scotland"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5,
+          57
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 57,
+        "lon": -5
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q22",
+        "url": "https://www.wikidata.org/wiki/Q22",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "seattle-q5083",
+      "names": [
+        "Seattle"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.33,
+          47.605
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 47.605,
+        "lon": -122.33
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q5083",
+        "url": "https://www.wikidata.org/wiki/Q5083",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "shibuya-q595153",
+      "names": [
+        "Shibuya"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.7039611111111,
+          35.65923333333333
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35.65923333333333,
+        "lon": 139.7039611111111
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q595153",
+        "url": "https://www.wikidata.org/wiki/Q595153",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "shibuya-scramble-crossing-q21083961",
+      "names": [
+        "Shibuya",
+        "Shibuya Crossing"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.70054444444,
+          35.659502777778
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35.659502777778,
+        "lon": 139.70054444444
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q21083961",
+        "url": "https://www.wikidata.org/wiki/Q21083961",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "shinjuku-q179645",
+      "names": [
+        "Shinjuku"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.70341666666667,
+          35.693888888888885
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35.693888888888885,
+        "lon": 139.70341666666667
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q179645",
+        "url": "https://www.wikidata.org/wiki/Q179645",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "spain-q29",
+      "names": [
+        "Spain"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.5,
+          40.2
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 40.2,
+        "lon": -3.5
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q29",
+        "url": "https://www.wikidata.org/wiki/Q29",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "stamford-q1000662",
+      "names": [
+        "Stamford"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.4837,
+          52.6556
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 52.6556,
+        "lon": -0.4837
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1000662",
+        "url": "https://www.wikidata.org/wiki/Q1000662",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "stamford-q49169",
+      "names": [
+        "Stamford"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.552222222222,
+          41.096666666667
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 41.096666666667,
+        "lon": -73.552222222222
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q49169",
+        "url": "https://www.wikidata.org/wiki/Q49169",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "sweden-q34",
+      "names": [
+        "Sweden"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15,
+          61
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 61,
+        "lon": 15
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q34",
+        "url": "https://www.wikidata.org/wiki/Q34",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "tampa-q49255",
+      "names": [
+        "Tampa"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.45861111111111,
+          27.9475
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 27.9475,
+        "lon": -82.45861111111111
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q49255",
+        "url": "https://www.wikidata.org/wiki/Q49255",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "thailand-q869",
+      "names": [
+        "Thailand"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          101,
+          14
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 14,
+        "lon": 101
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q869",
+        "url": "https://www.wikidata.org/wiki/Q869",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "times-square-q11259",
+      "names": [
+        "Times Square"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.98583333333333,
+          40.7575
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 40.7575,
+        "lon": -73.98583333333333
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q11259",
+        "url": "https://www.wikidata.org/wiki/Q11259",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "tokyo-q1490",
+      "names": [
+        "Tokyo"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.69166666666666,
+          35.68944444444445
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 35.68944444444445,
+        "lon": 139.69166666666666
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1490",
+        "url": "https://www.wikidata.org/wiki/Q1490",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "toronto-q172",
+      "names": [
+        "Toronto"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.386666666667,
+          43.670277777778
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 43.670277777778,
+        "lon": -79.386666666667
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q172",
+        "url": "https://www.wikidata.org/wiki/Q172",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "turkey-q43",
+      "names": [
+        "Turkey"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36,
+          39
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 39,
+        "lon": 36
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q43",
+        "url": "https://www.wikidata.org/wiki/Q43",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "united-kingdom-q145",
+      "names": [
+        "UK"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2,
+          54.6
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 54.6,
+        "lon": -2
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q145",
+        "url": "https://www.wikidata.org/wiki/Q145",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "universal-studios-florida-q1880820",
+      "names": [
+        "Universal Studios"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.47,
+          28.475
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 28.475,
+        "lon": -81.47
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1880820",
+        "url": "https://www.wikidata.org/wiki/Q1880820",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "universal-studios-hollywood-q1337576",
+      "names": [
+        "Universal Studios"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118.3539,
+          34.13585556
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 34.13585556,
+        "lon": -118.3539
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1337576",
+        "url": "https://www.wikidata.org/wiki/Q1337576",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "exact"
+    },
+    {
+      "id": "vancouver-q24639",
+      "names": [
+        "Vancouver"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -123.1138888888889,
+          49.26083333333333
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 49.26083333333333,
+        "lon": -123.1138888888889
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q24639",
+        "url": "https://www.wikidata.org/wiki/Q24639",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    },
+    {
+      "id": "whispering-falls-q105942853",
+      "names": [
+        "Whispering Falls"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          173.238317,
+          -41.392533
+        ]
+      },
+      "sourceLatLon": {
+        "lat": -41.392533,
+        "lon": 173.238317
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q105942853",
+        "url": "https://www.wikidata.org/wiki/Q105942853",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "whispering-falls-q34682419",
+      "names": [
+        "Whispering Falls"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          170.386,
+          -43.567
+        ]
+      },
+      "sourceLatLon": {
+        "lat": -43.567,
+        "lon": 170.386
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q34682419",
+        "url": "https://www.wikidata.org/wiki/Q34682419",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "region"
+    },
+    {
+      "id": "woodhaven-q1842497",
+      "names": [
+        "Woodhaven"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.241666666667,
+          42.138888888889
+        ]
+      },
+      "sourceLatLon": {
+        "lat": 42.138888888889,
+        "lon": -83.241666666667
+      },
+      "source": {
+        "kind": "wikidata",
+        "id": "Q1842497",
+        "url": "https://www.wikidata.org/wiki/Q1842497",
+        "retrieved": "2026-10-02"
+      },
+      "confidence": "settlement"
+    }
+  ]
+}
